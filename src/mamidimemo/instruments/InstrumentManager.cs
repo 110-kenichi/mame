@@ -94,6 +94,27 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<InstrumentBase> ClearAllInstruments()
+        {
+            List<InstrumentBase> insts = new List<InstrumentBase>();
+            lock (InstrumentManager.ExclusiveLockObject)
+            {
+                for (int i = instruments.Count - 1; i >= 0; i--)
+                {
+                    for (int j = instruments[i].Count - 1; j >= 0; j--)
+                    {
+                        instruments[i][j].Dispose();
+                        instruments[i].RemoveAt(j);
+                    }
+                }
+            }
+            return insts.AsEnumerable();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static void RestoreSettings(EnvironmentSettings settings)
         {
             lock (InstrumentManager.ExclusiveLockObject)
@@ -317,6 +338,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         private static void MidiManager_MidiEventReceived(object sender, MidiEvent e)
         {
+            if (e is ActiveSensingEvent)
+                return;
+
             lock (InstrumentManager.ExclusiveLockObject)
             {
                 processCC(e);

@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -59,8 +60,8 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
+        [Editor(typeof(DropDownTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]
         [Description("You can copy and paste this text data to other same type timber.\r\nNote: Open dropdown editor then copy all text and paste to dropdown editor. Do not copy and paste one liner text.")]

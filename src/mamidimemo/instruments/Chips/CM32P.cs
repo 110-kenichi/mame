@@ -172,7 +172,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public CM32PTimbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         [Browsable(false)]
@@ -374,8 +374,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<CM32P>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<CM32P>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -830,6 +830,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.KeyOff(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -883,6 +888,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+            }
         }
 
 

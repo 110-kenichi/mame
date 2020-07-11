@@ -92,7 +92,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public C140PcmSoundTable DrumSoundTable
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return f_Timbres;
             }
-            private set
+            set
             {
                 f_Timbres = value;
             }
@@ -169,8 +169,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<C140>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<C140>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                C140SetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
             {
@@ -298,7 +299,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             this.soundManager = new C140SoundManager(this);
 
             f_read_byte_callback = new delg_callback(read_byte_callback);
-
             C140SetCallback(UnitNumber, f_read_byte_callback);
 
             GainLeft = DEFAULT_GAIN;
@@ -414,6 +414,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
 
         /// <summary>
         /// 
@@ -479,6 +483,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var timbre = parentModule.Timbres[programNumber];
                 emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 24));
                 return emptySlot;
+            }
+
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 24; i++)
+                {
+                    uint reg = (uint)(i * 16);
+                    //mode keyoff(0x00)
+                    C140WriteData(parentModule.UnitNumber, (reg + 5), 0x00);
+                }
             }
 
         }

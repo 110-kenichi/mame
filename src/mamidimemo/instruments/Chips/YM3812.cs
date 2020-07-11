@@ -140,7 +140,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public YM3812Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -162,8 +162,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<YM3812>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<YM3812>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -360,6 +360,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -413,6 +418,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 9; i++)
+                {
+                    YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
+                }
+            }
         }
 
 

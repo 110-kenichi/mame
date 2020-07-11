@@ -112,8 +112,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Melanchall.DryWetMidi, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.0.0\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -171,6 +174,20 @@
     <Compile Include="Gui\FormSplash.Designer.cs">
       <DependentUpon>FormSplash.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\TextEditorControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\TextEditorControl.Designer.cs">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormTextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormTextEditor.Designer.cs">
+      <DependentUpon>FormTextEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DropDownTextUITypeEditor.cs" />
+    <Compile Include="Gui\FormTextUITypeEditor.cs" />
     <Compile Include="Gui\WsgBitWideAttribute.cs" />
     <Compile Include="ComponentModel\InstancePropertyInfo.cs" />
     <Compile Include="ComponentModel\MaskAttribute.cs" />
@@ -318,6 +335,9 @@
     <EmbeddedResource Include="Gui\FormProp.resx">
       <DependentUpon>FormProp.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\TextEditorControl.resx">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormVstEditorFrame.resx">
       <DependentUpon>FormVstEditorFrame.cs</DependentUpon>
     </EmbeddedResource>
@@ -333,6 +353,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormTextEditor.resx">
+      <DependentUpon>FormTextEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormWsgEditor.resx">
       <DependentUpon>FormWsgEditor.cs</DependentUpon>

@@ -812,7 +812,6 @@
             // 
             // toolStrip1
             // 
-            resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.ClickThrough = false;
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(609, 609);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -824,6 +823,7 @@
             this.toolStripSeparator1,
             this.toolStripButton20,
             this.toolStripButton21});
+            resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
             // toolStripLabel1

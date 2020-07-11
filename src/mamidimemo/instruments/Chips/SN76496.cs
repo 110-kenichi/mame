@@ -87,7 +87,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public SN76496Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<SN76496>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<SN76496>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -268,6 +268,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -343,6 +348,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 3; i++)
+                    Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | i << 5 | 0x1f));
+                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | 3 << 5 | 0x1f));
+            }
 
         }
 

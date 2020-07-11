@@ -32,7 +32,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "1.3.1.0";
+        public const string FILE_VERSION = "1.3.2.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2020 Itoken.All rights reserved.";
@@ -159,6 +159,7 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                         try
                         {
                             var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
+                            InstrumentManager.ClearAllInstruments();
                             var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
                             InstrumentManager.RestoreSettings(settings);
                         }

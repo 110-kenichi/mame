@@ -506,6 +506,7 @@ namespace zanac.MAmidiMEmo.Gui
                 try
                 {
                     string text = StringCompressionUtility.Decompress(File.ReadAllText(openFileDialog1.FileName));
+                    InstrumentManager.ClearAllInstruments();
                     var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
                     InstrumentManager.RestoreSettings(settings);
                 }
@@ -536,6 +537,9 @@ namespace zanac.MAmidiMEmo.Gui
             //All Sounds Off
             me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
             MidiManager.SendMidiEvent(me);
+
+            foreach (var inst in InstrumentManager.GetAllInstruments())
+                inst.AllSoundOff();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)

@@ -172,7 +172,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public AY8910Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         private const float DEFAULT_GAIN = 2.0f;
@@ -215,8 +215,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<AY8910>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<AY8910>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -403,6 +403,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -471,6 +476,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                Ay8910WriteData(parentModule.UnitNumber, 0, (byte)(7));
+                Ay8910WriteData(parentModule.UnitNumber, 1, 0xff);
+            }
 
         }
 

@@ -87,7 +87,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public SCC1Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
-            var obj = JsonConvert.DeserializeObject<SCC1>(serializeData);
-            this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+            using (var obj = JsonConvert.DeserializeObject<SCC1>(serializeData))
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -326,6 +326,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -373,6 +378,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return SearchEmptySlotAndOff(sccOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 5));
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 5; i++)
+                    Scc1KeyOnOffWriteData(parentModule.UnitNumber, 0);
+            }
         }
 
 

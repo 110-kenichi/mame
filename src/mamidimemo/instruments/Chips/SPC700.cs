@@ -191,7 +191,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("Echo enable")]
-        [DefaultValue((byte)0)]
+        [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte ECEN
@@ -217,7 +217,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("Echo Feedback")]
-        [DefaultValue(typeof(sbyte), "0")]
+        [DefaultValue(typeof(sbyte), "31")]
         [SlideParametersAttribute(-128, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public sbyte EFB
@@ -242,7 +242,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("EDL specifies the delay between the main sound and the echoed sound. The delay is calculated as EDL * 16ms.")]
-        [DefaultValue((byte)0)]
+        [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 15)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte EDL
@@ -337,7 +337,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private sbyte f_COEF4 = 0;
+        private sbyte f_COEF4;
 
         [DataMember]
         [Category("Filter")]
@@ -388,7 +388,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private sbyte f_COEF6 = 0;
+        private sbyte f_COEF6;
 
         [DataMember]
         [Category("Filter")]
@@ -504,7 +504,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return f_Timbres;
             }
-            private set
+            set
             {
                 f_Timbres = value;
             }
@@ -552,8 +552,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<SPC700>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<SPC700>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                SPC700SetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
             {
@@ -748,7 +749,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             this.soundManager = new SPC700SoundManager(this);
 
             f_read_byte_callback = new delg_callback(read_byte_callback);
-
             SPC700SetCallback(UnitNumber, f_read_byte_callback);
 
             GainLeft = DEFAULT_GAIN;
@@ -879,6 +879,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
 
         /// <summary>
         /// 
@@ -944,6 +948,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var timbre = parentModule.Timbres[programNumber];
                 emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
                 return emptySlot;
+            }
+
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    byte bitPos = (byte)(1 << i);
+
+                    byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) & ~bitPos);
+                    SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
+                    byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) | bitPos);
+                    SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                }
             }
 
         }
@@ -1821,7 +1841,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private sbyte? f_COEF4 = 0;
+            private sbyte? f_COEF4;
 
             [DataMember]
             [Category("Filter")]
@@ -1862,7 +1882,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
 
-            private sbyte? f_COEF6 = 0;
+            private sbyte? f_COEF6;
 
             [DataMember]
             [Category("Filter")]

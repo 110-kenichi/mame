@@ -83,7 +83,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public AdpcmSoundTable AdpcmASoundTable
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public YM2610BTimbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -314,8 +314,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<YM2610B>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<YM2610B>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                YM2610BSetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
             {
@@ -575,7 +576,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             this.soundManager = new YM2610BSoundManager(this);
 
             f_read_byte_callback = new delg_adpcm_callback(read_byte_callback);
-
             YM2610BSetCallback(UnitNumber, f_read_byte_callback);
         }
 
@@ -842,6 +842,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -948,6 +953,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    uint reg = (uint)(i / 3) * 2;
+                    YM2610BWriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(i % 3)));
+                }
+                YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0xff);
+                YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)0xff);
+                YM2610BWriteData(parentModule.UnitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
+            }
         }
 
 
@@ -1462,6 +1482,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                         YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)data);
+                        break;
+                    case ToneType.ADPCM_A:
+                        {
+                            byte kon = YM2610BReadData(parentModule.UnitNumber, (byte)(0), 0, 3);
+                            YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)(kon & ~(1 << Slot)));
+                        }
+                        break;
+                    case ToneType.ADPCM_B:
+                        {
+                            byte loop = timbre.LoopEnable ? (byte)0x10 : (byte)0x00;
+                            YM2610BWriteData(parentModule.UnitNumber, (byte)(0x10), 0, 0, (byte)(0x00 | loop));
+                        }
                         break;
                 }
             }

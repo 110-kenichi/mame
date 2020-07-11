@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Properties;
@@ -247,8 +248,8 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-        typeof(UITypeEditor)), Localizable(false)]
+        [Editor(typeof(DropDownTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]
         [Description("You can copy and paste this text data to other same type Instrument.\r\nNote: Open dropdown editor then copy all text and paste to dropdown editor. Do not copy and paste one liner text.")]
@@ -261,6 +262,7 @@ namespace zanac.MAmidiMEmo.Instruments
             set
             {
                 RestoreFrom(value);
+                SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
             }
         }
 
@@ -334,7 +336,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual bool[] Channels
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeChannels()
@@ -365,7 +367,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual ushort[] Pitchs
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePitchs()
@@ -393,7 +395,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] PitchBendRanges
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePitchBendRanges()
@@ -421,7 +423,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ProgramNumbers
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeProgramNumbers()
@@ -456,7 +458,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] Volumes
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeVolumes()
@@ -484,7 +486,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] Expressions
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -513,7 +515,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] Panpots
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePanpots()
@@ -541,7 +543,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] Modulations
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulations()
@@ -570,7 +572,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ModulationRates
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -613,7 +615,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ModulationDepthes
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDepthes()
@@ -641,7 +643,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ModulationDelays
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDelays()
@@ -686,7 +688,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ModulationDepthRangesNote
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDepthRangesNote()
@@ -715,7 +717,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] ModulationDepthRangesCent
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -745,7 +747,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] Portamentos
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -775,7 +777,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] PortamentoTimes
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -804,7 +806,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual byte[] MonoMode
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -1166,14 +1168,14 @@ namespace zanac.MAmidiMEmo.Instruments
 
             device_reset(UnitNumber, SoundInterfaceTagNamePrefix);
 
-            SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
+            SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
-            set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
-            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
+            set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
             vstHandle = GCHandle.Alloc(this);
 
+            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
             SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
 
             Channels = new bool[] {
@@ -1369,6 +1371,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 0);
 
                 SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
+
                 lock (InstrumentBase.VstPluginContextLockObject)
                 {
                     foreach (var vp in VSTPlugins)
@@ -1631,6 +1634,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        abstract internal void AllSoundOff();
 
         private void processNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {

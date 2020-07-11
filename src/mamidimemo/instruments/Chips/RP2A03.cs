@@ -81,7 +81,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public DPcmSoundTable DeltaPcmSoundTable
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public RP2A03Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -128,8 +128,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<RP2A03>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<RP2A03>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -365,6 +365,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.PitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -495,6 +500,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
+            internal override void AllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ControlChange(me);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
+                RP2A03WriteData(parentModule.UnitNumber, 0x15, 0);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0x83, 0xc0);
+
+                RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (0 << 12)), 0x00);
+                RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (1 << 12)), 0x00);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0xb002, 0x00);
+            }
         }
 
 
