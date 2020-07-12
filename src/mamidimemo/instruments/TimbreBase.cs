@@ -24,6 +24,17 @@ namespace zanac.MAmidiMEmo.Instruments
     public abstract class TimbreBase : ContextBoundObject
     {
 
+
+        [DataMember]
+        [Description("Whether to ignore the keyoff event")]
+        [DefaultValue(false)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public bool IgnoreKeyOff
+        {
+            get;
+            set;
+        }
+
         [DataMember]
         [Description("Base frequency offset[Semitone]")]
         [DefaultValue(0)]

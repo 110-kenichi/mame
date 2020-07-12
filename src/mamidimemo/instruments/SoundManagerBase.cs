@@ -530,15 +530,16 @@ namespace zanac.MAmidiMEmo.Instruments
 
             for (int i = 0; i < AllSounds.Count; i++)
             {
-                if (AllSounds[i].IsKeyOff)
+                offsnd = AllSounds[i];
+                if (offsnd.IsKeyOff)
                     continue;
 
-                if (AllSounds[i].NoteOnEvent.Channel == note.Channel)
+                if (offsnd.NoteOnEvent.Channel == note.Channel)
                 {
-                    if (AllSounds[i].NoteOnEvent.NoteNumber == note.NoteNumber)
+                    if (offsnd.NoteOnEvent.NoteNumber == note.NoteNumber)
                     {
-                        offsnd = AllSounds[i];
-                        offsnd.KeyOff();
+                        if (!offsnd.Timbre.IgnoreKeyOff)
+                            offsnd.KeyOff();
                         break;
                     }
                 }
