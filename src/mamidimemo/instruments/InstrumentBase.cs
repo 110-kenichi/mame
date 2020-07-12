@@ -258,6 +258,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
+                //return JsonHelper.SerializeToMinimalJson(this);   NG: cant reset child member value
                 return JsonConvert.SerializeObject(this, Formatting.Indented);
             }
             set

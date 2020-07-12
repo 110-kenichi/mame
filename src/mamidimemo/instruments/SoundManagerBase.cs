@@ -209,6 +209,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         abstract internal void AllSoundOff();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
         private void processSCCS(ControlChangeEvent midiEvent)
         {
             var tim = parentModule.BaseTimbres[midiEvent.Channel];

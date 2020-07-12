@@ -23,6 +23,18 @@ namespace zanac.MAmidiMEmo.Instruments
     [MidiHook]
     public abstract class TimbreBase : ContextBoundObject
     {
+
+        [DataMember]
+        [Description("Base frequency offset[Semitone]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int BaseFreqOffset
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -79,6 +91,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         protected virtual string SerializeObject()
         {
+            //return JsonHelper.SerializeToMinimalJson(this); NG: cant reset child member value
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 

@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        [DataMember]
+        [IgnoreDataMember]
         public String KeyName
         {
             get;

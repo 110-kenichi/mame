@@ -166,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModel\CacheMemory.cs" />
+    <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
     <Compile Include="Gui\FormSplash.cs">
