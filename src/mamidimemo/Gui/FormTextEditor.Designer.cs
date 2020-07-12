@@ -56,8 +56,8 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonOk.Location = new System.Drawing.Point(641, 488);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 1;
-            this.buttonOk.Text = "OK";
+            this.buttonOk.TabIndex = 2;
+            this.buttonOk.Text = "&OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             // 
             // textBoxWsgDataText
@@ -82,15 +82,16 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.textBoxWsgDataText.IsReplaceMode = false;
+            this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
             this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 12);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
+            this.textBoxWsgDataText.ShowFoldingLines = true;
             this.textBoxWsgDataText.Size = new System.Drawing.Size(707, 470);
-            this.textBoxWsgDataText.TabIndex = 2;
+            this.textBoxWsgDataText.TabIndex = 0;
             this.textBoxWsgDataText.Zoom = 100;
             // 
             // FormTextEditor

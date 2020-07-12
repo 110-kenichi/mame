@@ -60,7 +60,7 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        [Editor(typeof(DropDownTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]

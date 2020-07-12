@@ -4,6 +4,7 @@ using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -248,7 +249,7 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        [Editor(typeof(DropDownTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]
@@ -261,8 +262,12 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
-                RestoreFrom(value);
+                JObject jo = JObject.Parse(value);
+                jo["UnitNumber"] = UnitNumber;
+
+                RestoreFrom(jo.ToString());
                 SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+                set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
             }
         }
 
@@ -352,7 +357,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetChannels()
         {
             for (int i = 0; i < Channels.Length; i++)
-                Channels[i] = false;
+                Channels[i] = true;
         }
 
         /// <summary>

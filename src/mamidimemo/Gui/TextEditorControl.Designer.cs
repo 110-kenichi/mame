@@ -49,15 +49,15 @@ namespace zanac.MAmidiMEmo.Gui
         '\"',
         '\'',
         '\''};
-            this.textBoxWsgDataText.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.textBoxWsgDataText.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.textBoxWsgDataText.BackBrush = null;
             this.textBoxWsgDataText.CharHeight = 14;
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.textBoxWsgDataText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.textBoxWsgDataText.IsReplaceMode = false;
+            this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
             this.textBoxWsgDataText.Location = new System.Drawing.Point(0, 0);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
@@ -70,7 +70,6 @@ namespace zanac.MAmidiMEmo.Gui
             // TextEditorControl
             // 
             this.Controls.Add(this.textBoxWsgDataText);
-            this.Name = "TextEditorControl";
             this.Size = new System.Drawing.Size(613, 612);
             ((System.ComponentModel.ISupportInitialize)(this.textBoxWsgDataText)).EndInit();
             this.ResumeLayout(false);

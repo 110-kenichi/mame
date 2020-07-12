@@ -24,6 +24,7 @@ namespace zanac.MAmidiMEmo.Gui
             set
             {
                 textBoxWsgDataText.Text = value;
+                textBoxWsgDataText.ClearUndo();
             }
         }
 
