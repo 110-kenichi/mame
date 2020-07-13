@@ -267,16 +267,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -437,8 +427,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new PokeyTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new PokeyTimbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new PokeyTimbre();
             setPresetInstruments();
 
@@ -540,46 +530,48 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                PokeySound snd = new PokeySound(parentModule, this, timbre, note, emptySlot);
-                switch (((PokeyTimbre)timbre).Channel)
+                foreach (PokeyTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    case ChannelType.CH1:
-                        ch1OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH2:
-                        ch2OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH3:
-                        ch3OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH4:
-                        ch4OnSounds.Add(snd);
-                        break;
-                }
-                FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    PokeySound snd = new PokeySound(parentModule, this, timbre, note, emptySlot);
+                    switch (((PokeyTimbre)timbre).Channel)
+                    {
+                        case ChannelType.CH1:
+                            ch1OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH2:
+                            ch2OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH3:
+                            ch3OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH4:
+                            ch4OnSounds.Add(snd);
+                            break;
+                    }
+                    FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, PokeyTimbre timbre)
             {
                 int emptySlot = -1;
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (((PokeyTimbre)timbre).Channel)
                 {
                     case ChannelType.CH1:
@@ -618,8 +610,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private POKEY parentModule;
 
-            private SevenBitNumber programNumber;
-
             private PokeyTimbre timbre;
 
             private ChannelType lastChType;
@@ -636,8 +626,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public PokeySound(POKEY parentModule, PokeySoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (PokeyTimbre)timbre;
 
                 lastChType = this.timbre.Channel;
                 lastCH43_21 = this.timbre.CH43_21;

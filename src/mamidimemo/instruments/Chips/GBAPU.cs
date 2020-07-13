@@ -95,16 +95,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -277,8 +267,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new GBAPUTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new GBAPUTimbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new GBAPUTimbre();
             setPresetInstruments();
 
@@ -402,45 +392,47 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                GbSound snd = new GbSound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.SoundType)
+                foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    case SoundType.SPSG:
-                        spsgOnSounds.Add(snd);
-                        break;
-                    case SoundType.PSG:
-                        psgOnSounds.Add(snd);
-                        break;
-                    case SoundType.WAV:
-                        wavOnSounds.Add(snd);
-                        break;
-                    case SoundType.NOISE:
-                        noiseOnSounds.Add(snd);
-                        break;
-                }
-                snd.KeyOn();
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    GbSound snd = new GbSound(parentModule, this, timbre, note, emptySlot);
+                    switch (timbre.SoundType)
+                    {
+                        case SoundType.SPSG:
+                            spsgOnSounds.Add(snd);
+                            break;
+                        case SoundType.PSG:
+                            psgOnSounds.Add(snd);
+                            break;
+                        case SoundType.WAV:
+                            wavOnSounds.Add(snd);
+                            break;
+                        case SoundType.NOISE:
+                            noiseOnSounds.Add(snd);
+                            break;
+                    }
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, GBAPUTimbre timbre)
             {
                 int emptySlot = -1;
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 switch (timbre.SoundType)
                 {
                     case SoundType.SPSG:
@@ -492,8 +484,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private GB_APU parentModule;
 
-            private SevenBitNumber programNumber;
-
             private GBAPUTimbre timbre;
 
             private SoundType lastSoundType;
@@ -510,8 +500,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public GbSound(GB_APU parentModule, GBSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (GBAPUTimbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
                 if (lastSoundType == SoundType.PSG && this.timbre.PartialReserveSPSG)

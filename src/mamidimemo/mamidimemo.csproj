@@ -264,6 +264,9 @@
     <Compile Include="Instruments\Envelopes\BasicFxSettings.cs" />
     <Compile Include="Instruments\GeneralPurposeControlSettings.cs" />
     <Compile Include="Instruments\HighPrecisionTimer.cs" />
+    <Compile Include="Instruments\ProgramAssignmentNumber.cs" />
+    <Compile Include="Instruments\ProgramAssignmentType.cs" />
+    <Compile Include="Instruments\PatchTimbre.cs" />
     <Compile Include="Instruments\VstEffectControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundList.cs" />

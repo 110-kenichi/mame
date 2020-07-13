@@ -175,6 +175,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override PatchTimbre[] PatchTimbres
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override ProgramAssignmentType[] ProgrameAssignmentTypes
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override ProgramAssignmentNumber[] ProgrameAssignments
+        {
+            get;
+            set;
+        }
+
         [Browsable(false)]
         public override bool[] Channels
         {
@@ -354,16 +384,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void ResetFilterMode()
         {
             FilterMode = FilterMode.None;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
         }
 
         /// <summary>
@@ -655,8 +675,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             this.soundManager = new CM32PSoundManager(this);
 
-            Timbres = new CM32PTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new CM32PTimbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new CM32PTimbre();
         }
 
@@ -857,21 +877,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                CM32PSound snd = new CM32PSound(parentModule, this, timbre, note, emptySlot);
-                instOnSounds.Add(snd);
+                foreach (CM32PTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                {
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
 
-                FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                    CM32PSound snd = new CM32PSound(parentModule, this, timbre, note, emptySlot);
+                    instOnSounds.Add(snd);
 
-                return snd;
+                    FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -882,8 +906,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int emptySlot = -1;
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 24));
                 return emptySlot;
             }

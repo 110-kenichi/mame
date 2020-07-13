@@ -42,10 +42,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Description("ADSR Settings")]
-        public AdsrSettings ADSR
+        public virtual AdsrSettings ADSR
         {
             get;
-            private set;
+            set;
         }
 
         #endregion
@@ -57,10 +57,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Description("Dynamic Arpeggio Settings")]
-        public ArpSettings ARP
+        public virtual ArpSettings ARP
         {
             get;
-            private set;
+            set;
         }
 
         #endregion
@@ -74,7 +74,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Fx Settings")]
         [JsonConverter(typeof(NoTypeConverterJsonConverterObject<AbstractFxSettingsBase>))]
-        public AbstractFxSettingsBase FxS
+        public virtual AbstractFxSettingsBase FxS
         {
             get;
             set;
@@ -109,7 +109,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        public void RestoreFrom(string serializeData)
+        public virtual void RestoreFrom(string serializeData)
         {
             try
             {

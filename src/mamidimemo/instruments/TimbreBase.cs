@@ -24,7 +24,6 @@ namespace zanac.MAmidiMEmo.Instruments
     public abstract class TimbreBase : ContextBoundObject
     {
 
-
         [DataMember]
         [Description("Whether to ignore the keyoff event")]
         [DefaultValue(false)]
@@ -40,7 +39,18 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public int BaseFreqOffset
+        public int KeyShift
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        [Description("Base frequency offset[Cent]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-1200, 1200)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int PitchShift
         {
             get;
             set;
@@ -58,7 +68,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Sound Driver Settings")]
         [DisplayName("Sound Driver Settings(SDS)")]
-        public SoundDriverSettings SDS
+        public virtual SoundDriverSettings SDS
         {
             get;
             set;
@@ -69,7 +79,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "Link Data Entry message value with the Timbre property value (Only the property that has a slider editor)\r\n" +
             "eg) \"DutyCycle,Volume\" ... You can change DutyCycle and Volume property values dynamically via MIDI Control Change No.7x message.")]
         [DisplayName("Sound Control Change Settings(SCCS)")]
-        public SoundControlChangeSettings SCCS
+        public virtual SoundControlChangeSettings SCCS
         {
             get;
             set;

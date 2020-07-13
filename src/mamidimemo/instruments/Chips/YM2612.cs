@@ -64,16 +64,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
         private byte f_LFOEN;
 
         /// <summary>
@@ -266,8 +256,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YM2612Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new YM2612Timbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new YM2612Timbre();
             setPresetInstruments();
 
@@ -534,20 +524,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
-                YM2612Sound snd = new YM2612Sound(parentModule, this, timbre, note, emptySlot);
-                fmOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (YM2612Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                {
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    YM2612Sound snd = new YM2612Sound(parentModule, this, timbre, note, emptySlot);
+                    fmOnSounds.Add(snd);
+                    FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -557,10 +551,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private int searchEmptySlot(NoteOnEvent note)
             {
                 int emptySlot = -1;
-
-                var pn = parentModule.ProgramNumbers[note.Channel];
-
-                var timbre = parentModule.Timbres[pn];
                 emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                 return emptySlot;
             }
@@ -588,8 +578,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private YM2612 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private YM2612Timbre timbre;
 
             /// <summary>
@@ -602,8 +590,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public YM2612Sound(YM2612 parentModule, YM2612SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (YM2612Timbre)timbre;
             }
 
             /// <summary>

@@ -93,16 +93,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -261,8 +251,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new SCC1Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new SCC1Timbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new SCC1Timbre();
             setPresetInstruments();
 
@@ -353,20 +343,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                SCC1Sound snd = new SCC1Sound(parentModule, this, timbre, note, emptySlot);
-                sccOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn SCC ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (SCC1Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                {
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    SCC1Sound snd = new SCC1Sound(parentModule, this, timbre, note, emptySlot);
+                    sccOnSounds.Add(snd);
+                    FormMain.OutputDebugLog("KeyOn SCC ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -397,8 +391,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SCC1 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private SCC1Timbre timbre;
 
             /// <summary>
@@ -411,8 +403,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public SCC1Sound(SCC1 parentModule, SCC1SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (SCC1Timbre)timbre;
             }
 
             /// <summary>

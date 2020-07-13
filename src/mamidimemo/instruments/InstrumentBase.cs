@@ -331,6 +331,184 @@ namespace zanac.MAmidiMEmo.Instruments
             get;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase GetFinalTimbre(int channel)
+        {
+            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
+
+            int btn = pn;
+            if (btn >= BaseTimbres.Length)
+                btn = BaseTimbres.Length - 1;
+
+            int pan = pn;
+            if (pan >= ProgrameAssignmentTypes.Length)
+                pan = ProgrameAssignmentTypes.Length - 1;
+            switch (ProgrameAssignmentTypes[pan])
+            {
+                case ProgramAssignmentType.PatchTimbre:
+                    int ptn = pn;
+                    if (ptn >= PatchTimbres.Length)
+                        ptn = PatchTimbres.Length - 1;
+                    var pts = PatchTimbres[ptn];
+                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
+                        return PatchTimbres[ptn];
+                    break;
+            }
+            return BaseTimbres[btn];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual TimbreBase[] GetBaseTimbres(int channel)
+        {
+            List<TimbreBase> ts = new List<TimbreBase>();
+
+            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
+
+            int btn = pn;
+            if (btn >= BaseTimbres.Length)
+                btn = BaseTimbres.Length - 1;
+
+            int pan = pn;
+            if (pan >= ProgrameAssignmentTypes.Length)
+                pan = ProgrameAssignmentTypes.Length - 1;
+            switch (ProgrameAssignmentTypes[pan])
+            {
+                case ProgramAssignmentType.PatchTimbre:
+                    int ptn = pn;
+                    if (ptn >= PatchTimbres.Length)
+                        ptn = PatchTimbres.Length - 1;
+                    var pts = PatchTimbres[ptn];
+                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
+                    {
+                        foreach (int tn in pts.BindTimbreNums)
+                            ts.Add(BaseTimbres[tn]);
+                        return ts.ToArray();
+                    }
+                    break;
+            }
+
+            ts.Add(BaseTimbres[btn]);
+            return ts.ToArray();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual int[] GetBaseTimbreIndexes(int channel)
+        {
+            List<int> ts = new List<int>();
+
+            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
+
+            int btn = pn;
+            if (btn >= BaseTimbres.Length)
+                btn = BaseTimbres.Length - 1;
+
+            int pan = pn;
+            if (pan >= ProgrameAssignmentTypes.Length)
+                pan = ProgrameAssignmentTypes.Length - 1;
+            switch (ProgrameAssignmentTypes[pan])
+            {
+                case ProgramAssignmentType.PatchTimbre:
+                    int ptn = pn;
+                    if (ptn >= PatchTimbres.Length)
+                        ptn = PatchTimbres.Length - 1;
+                    var pts = PatchTimbres[ptn];
+                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
+                    {
+                        foreach (int tn in pts.BindTimbreNums)
+                            ts.Add(tn);
+                        return ts.ToArray();
+                    }
+                    break;
+            }
+
+            ts.Add(btn);
+            return ts.ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("Chip")]
+        [Description("Patch Timbres (0-127)\r\n" +
+            "Override PatchTimbres to Timbres when you set binding patch numbers.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual PatchTimbre[] PatchTimbres
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Assign timbre type to program number")]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual ProgramAssignmentType[] ProgrameAssignmentTypes
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeProgrameAssignmentTypes()
+        {
+            foreach (var dt in ProgrameAssignmentTypes)
+            {
+                if (dt != ProgramAssignmentType.Timbre)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void ResetProgrameAssignmentTypes()
+        {
+            for (int i = 0; i < ProgrameAssignmentTypes.Length; i++)
+                ProgrameAssignmentTypes[i] = ProgramAssignmentType.Timbre;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Assign a timbre number to program number(0-127).")]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual ProgramAssignmentNumber[] ProgrameAssignments
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeProgrameAssignments()
+        {
+            for (int i = 0; i < ProgrameAssignments.Length; i++)
+            {
+                if ((int)ProgrameAssignments[i] != i)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void ResetProgrameAssignments()
+        {
+            for (int i = 0; i < ProgrameAssignments.Length; i++)
+                ProgrameAssignments[i] = (ProgramAssignmentNumber)i;
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -447,13 +625,6 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < ProgramNumbers.Length; i++)
                 Pitchs[i] = 0;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public abstract TimbreBase GetTimbre(int channel);
-
 
         [DataMember]
         [Category("MIDI")]
@@ -1165,6 +1336,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 set_vst_fx_callback = Marshal.GetDelegateForFunctionPointer<delegate_set_vst_fx_callback>(funcPtr);
         }
 
+        public const int MAX_TIMBRES = 256;
+
         /// <summary>
         /// 
         /// </summary>
@@ -1183,6 +1356,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
             f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
             SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+
+            PatchTimbres = new PatchTimbre[MAX_TIMBRES];
+            for (int i = 0; i < MAX_TIMBRES; i++)
+                PatchTimbres[i] = new PatchTimbre();
+
+            ProgrameAssignments = new ProgramAssignmentNumber[128];
+            ProgrameAssignmentTypes = new ProgramAssignmentType[128];
+            for (int i = 0; i < ProgrameAssignments.Length; i++)
+                ProgrameAssignments[i] = (ProgramAssignmentNumber)i;
 
             Channels = new bool[] {
                     true, true, true,

@@ -215,7 +215,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         private void processSCCS(ControlChangeEvent midiEvent)
         {
-            var tim = parentModule.BaseTimbres[midiEvent.Channel];
+            var tim = parentModule.GetFinalTimbre(midiEvent.Channel);
             bool process = false;
             foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, midiEvent.ControlNumber - 70 + 1))
             {
@@ -365,7 +365,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 return -1;
 
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetTimbre(ch);
+            var timbre = parentModule.GetFinalTimbre(ch);
             var sds = timbre.SDS.ARP;
 
             //end arp
@@ -421,7 +421,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (arp.ArpAction == null)
                 return -1;
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetTimbre(ch);
+            var timbre = parentModule.GetFinalTimbre(ch);
             var sds = timbre.SDS.ARP;
             //end arp
             if (!sds.Enable ||
@@ -438,7 +438,7 @@ namespace zanac.MAmidiMEmo.Instruments
             setupArp(sds, arp);
 
             //Gate Time
-            var snd = arp.FirstSoundForPitch;
+            var snds = arp.FirstSoundForPitch;
             if (arp.GateCounter != -1)
             {
                 arp.GateCounter += 1;
@@ -446,7 +446,10 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     arp.GateCounter = -1;
                     if (sds.GateTime != 127)
-                        snd.ArpeggiateLevel = 0d;
+                    {
+                        foreach (var snd in snds)
+                            snd.ArpeggiateLevel = 0d;
+                    }
                 }
             }
             arp.StepCounter += 1;
@@ -456,8 +459,11 @@ namespace zanac.MAmidiMEmo.Instruments
                 arp.StepCounter = 0;
                 arp.GateCounter = 0;
                 var note = arp.NextNote();
-                snd.ArpeggiateDeltaNoteNumber = note.NoteNumber - arp.FirstAddedNote.NoteNumber;
-                snd.ArpeggiateLevel = 1d;
+                foreach (var snd in snds)
+                {
+                    snd.ArpeggiateDeltaNoteNumber = note.NoteNumber - arp.FirstAddedNote.NoteNumber;
+                    snd.ArpeggiateLevel = 1d;
+                }
             }
 
             return arp.Step;
@@ -477,12 +483,12 @@ namespace zanac.MAmidiMEmo.Instruments
             postProcessArrpegioForKeyOn(note, snd);
         }
 
-        private SoundBase keyOnCore(NoteOnEvent note)
+        private SoundBase[] keyOnCore(NoteOnEvent note)
         {
             var snd = SoundOn(note);
-            if (snd != null)
+            if (snd != null && snd.Length != 0)
             {
-                AllSounds.Add(snd);
+                AllSounds.AddRange(snd);
                 LastNoteNumbers[note.Channel] = note.NoteNumber;
                 return snd;
             }
@@ -493,7 +499,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="note"></param>
-        public virtual SoundBase SoundOn(NoteOnEvent note)
+        public virtual SoundBase[] SoundOn(NoteOnEvent note)
         {
             return null;
         }
@@ -524,13 +530,11 @@ namespace zanac.MAmidiMEmo.Instruments
                 keyOffCore(new NoteOffEvent(onote.NoteNumber, (SevenBitNumber)0) { Channel = onote.Channel });
         }
 
-        private SoundBase keyOffCore(NoteOffEvent note)
+        private void keyOffCore(NoteOffEvent note)
         {
-            SoundBase offsnd = null;
-
             for (int i = 0; i < AllSounds.Count; i++)
             {
-                offsnd = AllSounds[i];
+                SoundBase offsnd = AllSounds[i];
                 if (offsnd.IsKeyOff)
                     continue;
 
@@ -540,21 +544,23 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         if (!offsnd.Timbre.IgnoreKeyOff)
                             offsnd.KeyOff();
-                        break;
+                        //break;
                     }
                 }
             }
-
-            return offsnd;
         }
 
         #region アルペジオ関係
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="note"></param>
+        /// <returns></returns>
         private bool preProcessArrpegioForKeyOn(NoteOnEvent note)
         {
             FourBitNumber ch = note.Channel;
-            ArpSettings sds = parentModule.GetTimbre(ch).SDS.ARP;
+            ArpSettings sds = parentModule.GetFinalTimbre(ch).SDS.ARP;
             if (sds.Enable)
             {
                 switch (sds.ArpMethod)
@@ -619,10 +625,10 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
 
-        private void postProcessArrpegioForKeyOn(NoteOnEvent note, SoundBase snd)
+        private void postProcessArrpegioForKeyOn(NoteOnEvent note, SoundBase[] snd)
         {
             FourBitNumber ch = note.Channel;
-            ArpSettings sds = parentModule.GetTimbre(ch).SDS.ARP;
+            ArpSettings sds = parentModule.GetFinalTimbre(ch).SDS.ARP;
             if (snd != null && sds.Enable)
             {
                 if (sds.ArpMethod == ArpMethod.PitchChange)
@@ -650,7 +656,7 @@ namespace zanac.MAmidiMEmo.Instruments
             int ch = note.Channel;
             if (ArpeggiatorsForKeyOn.ContainsKey(ch))
             {
-                var timbre = parentModule.GetTimbre(ch);
+                var timbre = parentModule.GetFinalTimbre(ch);
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForKeyOn[ch];
 
@@ -682,7 +688,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             else if (ArpeggiatorsForPitch.ContainsKey(ch))
             {
-                var timbre = parentModule.GetTimbre(ch);
+                var timbre = parentModule.GetFinalTimbre(ch);
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForPitch[ch];
 

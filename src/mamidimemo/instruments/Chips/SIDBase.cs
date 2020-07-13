@@ -220,16 +220,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -335,8 +325,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new SIDTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new SIDTimbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new SIDTimbre();
             setPresetInstruments();
 
@@ -422,32 +412,34 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                SIDSound snd = new SIDSound(parentModule, this, timbre, note, emptySlot);
-                psgOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (SIDTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                {
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    SIDSound snd = new SIDSound(parentModule, this, timbre, note, emptySlot);
+                    psgOnSounds.Add(snd);
+                    FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, SIDTimbre timbre)
             {
                 int emptySlot = -1;
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (timbre.PhysicalChannel)
                 {
                     case PhysicalChannel.Indeterminatene:
@@ -487,8 +479,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SIDBase parentModule;
 
-            private SevenBitNumber programNumber;
-
             private SIDTimbre timbre;
 
             private Waveforms lastWaveform;
@@ -503,8 +493,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public SIDSound(SIDBase parentModule, SIDSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (SIDTimbre)timbre;
 
                 lastWaveform = this.timbre.Waveform;
             }

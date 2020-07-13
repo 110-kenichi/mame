@@ -94,16 +94,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -203,8 +193,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public NAMCO_CUS30(uint unitNumber) : base(unitNumber)
         {
-            Timbres = new NAMCO_CUS30Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new NAMCO_CUS30Timbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new NAMCO_CUS30Timbre();
             setPresetInstruments();
 
@@ -304,20 +294,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(parentModule, this, timbre, note, emptySlot);
-                wsgOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn WSG ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (NAMCO_CUS30Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                {
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(parentModule, this, timbre, note, emptySlot);
+                    wsgOnSounds.Add(snd);
+                    FormMain.OutputDebugLog("KeyOn WSG ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -352,8 +346,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private NAMCO_CUS30 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private NAMCO_CUS30Timbre timbre;
 
             /// <summary>
@@ -366,8 +358,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public NAMCO_CUS30Sound(NAMCO_CUS30 parentModule, NAMCO_CUS30SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (NAMCO_CUS30Timbre)timbre;
             }
 
             /// <summary>
@@ -389,9 +380,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                var timbre = parentModule.Timbres[pn];
-
                 byte[] wdata = timbre.WsgData;
                 for (int i = 0; i < 16; i++)
                     NamcoCus30WriteData(parentModule.UnitNumber, (uint)((Slot * 16) + i), (byte)(((wdata[i * 2 + 1] & 0xf) << 4) | (wdata[i * 2] & 0xf)));

@@ -200,7 +200,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             f_DeltaNoteNumber += dnote;
                             break;
                         case ArpStepType.Fixed:
-                            f_DeltaNoteNumber += -sound.NoteOnEvent.NoteNumber + dnote;
+                            f_DeltaNoteNumber = -sound.NoteOnEvent.NoteNumber + dnote;
                             break;
                     }
                     lastArpNoteNumber = dnote;

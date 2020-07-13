@@ -510,17 +510,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-
         private const float DEFAULT_GAIN = 1.0f;
 
         public override bool ShouldSerializeGainLeft()
@@ -542,7 +531,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             GainRight = DEFAULT_GAIN;
         }
-
 
         /// <summary>
         /// 
@@ -906,34 +894,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                SPC700Sound snd = new SPC700Sound(parentModule, this, timbre, note, emptySlot);
-                instOnSounds.Add(snd);
-
-                //HACK: store pcm data to local buffer to avoid "thread lock"
-                if (timbre.SoundType == SoundType.INST)
+                var bts = parentModule.GetBaseTimbres(note.Channel);
+                var ids = parentModule.GetBaseTimbreIndexes(note.Channel);
+                for (int i = 0; i < bts.Length; i++)
                 {
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[programNumber] = timbre.AdpcmData;
-                }
-                else if (timbre.SoundType == SoundType.DRUM)
-                {
-                    var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
+                    SPC700Timbre timbre = (SPC700Timbre)bts[i];
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
+
+                    SPC700Sound snd = new SPC700Sound(parentModule, this, timbre, note, emptySlot, (byte)ids[i]);
+                    instOnSounds.Add(snd);
+
+                    //HACK: store pcm data to local buffer to avoid "thread lock"
+                    if (timbre.SoundType == SoundType.INST)
+                    {
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[ids[i]] = timbre.AdpcmData;
+                    }
+                    else if (timbre.SoundType == SoundType.DRUM)
+                    {
+                        var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
+                    }
+
+                    FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
                 }
 
-                FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
-
-                return snd;
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -943,9 +938,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private int searchEmptySlot(NoteOnEvent note)
             {
                 int emptySlot = -1;
-
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
                 return emptySlot;
             }
@@ -977,7 +969,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SPC700 parentModule;
 
-            private SevenBitNumber programNumber;
+            private byte timbreIndex;
 
             private SPC700Timbre timbre;
 
@@ -992,10 +984,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
+                this.timbreIndex = timbreIndex;
                 this.timbre = (SPC700Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
@@ -1066,7 +1058,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastSoundType == SoundType.INST)
                 {
                     //prognum no
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), programNumber);
+                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), timbreIndex);
                 }
                 else if (lastSoundType == SoundType.DRUM)
                 {
@@ -1076,8 +1068,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 //loop
                 ushort lpos = timbre.LoopPoint;
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (programNumber * 4) + 2), (byte)(lpos & 0xff));
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (programNumber * 4) + 3), (byte)(lpos >> 8));
+                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff));
+                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8));
 
                 //ADSR
                 if (timbre.AdsrEnable)

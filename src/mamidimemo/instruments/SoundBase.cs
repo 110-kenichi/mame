@@ -234,7 +234,7 @@ namespace zanac.MAmidiMEmo.Instruments
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
 
             double d1 = ((double)pitch / 8192d) * range;
-            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.BaseFreqOffset;
+            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;

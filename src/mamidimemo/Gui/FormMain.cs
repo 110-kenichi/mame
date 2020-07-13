@@ -652,8 +652,27 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void resetToDefaultThisPropertyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            propertyGrid.ResetSelectedProperty();
-            propertyGrid.Refresh();
+            var item = propertyGrid.SelectedGridItem;
+            ITypeDescriptorContext context = item as ITypeDescriptorContext;
+            bool enabled = false;
+            try
+            {
+                enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            if (enabled)
+            {
+                propertyGrid.ResetSelectedProperty();
+                propertyGrid.Refresh();
+            }
         }
 
         private void toolStripButton19_Click(object sender, EventArgs e)

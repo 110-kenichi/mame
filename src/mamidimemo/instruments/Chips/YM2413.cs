@@ -65,16 +65,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
         private byte f_RHY;
 
         /// <summary>
@@ -280,8 +270,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YM2413Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new YM2413Timbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new YM2413Timbre();
             setPresetInstruments();
 
@@ -382,35 +372,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
-                YM2413Sound snd = new YM2413Sound(parentModule, this, timbre, note, emptySlot);
-                if (parentModule.RHY == 0)
+                foreach (YM2413Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    fmOnSounds.Add(snd);
-                }
-                else
-                {
-                    if (timbre.ToneType != ToneType.DrumSet)
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
+
+                    YM2413Sound snd = new YM2413Sound(parentModule, this, timbre, note, emptySlot);
+                    if (parentModule.RHY == 0)
+                    {
                         fmOnSounds.Add(snd);
+                    }
+                    else
+                    {
+                        if (timbre.ToneType != ToneType.DrumSet)
+                            fmOnSounds.Add(snd);
+                    }
+                    FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
                 }
-                FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
 
-                return snd;
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, YM2413Timbre timbre)
             {
                 int emptySlot = -1;
                 if (parentModule.RHY == 0)
@@ -419,8 +413,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 else
                 {
-                    var pn = parentModule.ProgramNumbers[note.Channel];
-                    var timbre = parentModule.Timbres[pn];
                     if (timbre.ToneType != ToneType.DrumSet)
                         emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                     else
@@ -450,8 +442,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             private YM2413 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private YM2413Timbre timbre;
 
             private byte lastFreqData;
@@ -468,9 +458,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public YM2413Sound(YM2413 parentModule, YM2413SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (YM2413Timbre)timbre;
                 lastToneType = this.timbre.ToneType;
             }
 

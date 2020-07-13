@@ -154,16 +154,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -441,34 +431,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                C140Sound snd = new C140Sound(parentModule, this, timbre, note, emptySlot);
-                instOnSounds.Add(snd);
-
-                //HACK: store pcm data to local buffer to avoid "thread lock"
-                if (timbre.SoundType == SoundType.INST)
+                var bts = parentModule.GetBaseTimbres(note.Channel);
+                var ids = parentModule.GetBaseTimbreIndexes(note.Channel);
+                for (int i = 0; i < bts.Length; i++)
                 {
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[programNumber] = timbre.PcmData;
-                }
-                else if (timbre.SoundType == SoundType.DRUM)
-                {
-                    var pct = (C140PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.C140PcmData;
+                    C140Timbre timbre = (C140Timbre)bts[i];
+                    int emptySlot = searchEmptySlot(note);
+                    if (emptySlot < 0)
+                        continue;
+
+                    C140Sound snd = new C140Sound(parentModule, this, timbre, note, emptySlot, (byte)ids[i]);
+                    instOnSounds.Add(snd);
+
+                    //HACK: store pcm data to local buffer to avoid "thread lock"
+                    if (timbre.SoundType == SoundType.INST)
+                    {
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
+                    }
+                    else if (timbre.SoundType == SoundType.DRUM)
+                    {
+                        var pct = (C140PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.C140PcmData;
+                    }
+
+                    FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    snd.KeyOn();
+                    rv.Add(snd);
                 }
 
-                FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
-
-                return snd;
+                return rv.ToArray();
             }
 
             /// <summary>
@@ -479,8 +476,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int emptySlot = -1;
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 24));
                 return emptySlot;
             }
@@ -509,7 +504,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private C140 parentModule;
 
-            private SevenBitNumber programNumber;
+            private byte timbreIndex;
 
             private C140Timbre timbre;
 
@@ -524,10 +519,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public C140Sound(C140 parentModule, C140SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public C140Sound(C140 parentModule, C140SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
+                this.timbreIndex = timbreIndex;
                 this.timbre = (C140Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
@@ -558,7 +553,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastSoundType == SoundType.INST)
                 {
                     //bankno = prognum
-                    C140WriteData(parentModule.UnitNumber, (reg + 4), programNumber);
+                    C140WriteData(parentModule.UnitNumber, (reg + 4), timbreIndex);
                     //pcm start
                     C140WriteData(parentModule.UnitNumber, (reg + 6), 0);
                     C140WriteData(parentModule.UnitNumber, (reg + 7), 0);

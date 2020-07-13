@@ -64,16 +64,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
         [DataMember]
         [Category("Chip(ADPCM)")]
         [Description("YM2610 ADPCM-A DATA. 18.5 kHz sampling rate at 12-bit from 4-bit data.")]
@@ -875,58 +865,63 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
-                YM2610BSound snd = new YM2610BSound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.ToneType)
+                var bts = parentModule.GetBaseTimbres(note.Channel);
+                var ids = parentModule.GetBaseTimbreIndexes(note.Channel);
+                for (int i=0;i<bts.Length;i++)
                 {
-                    case ToneType.FM:
-                        fmOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.ADPCM_A:
-                        pcmaOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn PCM-A ch" + emptySlot + " " + note.ToString());
+                    YM2610BTimbre timbre = (YM2610BTimbre)bts[i];
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                        //HACK: store pcm data to local buffer to avoid "thread lock"
-                        var pct = (AdpcmTimbre)parentModule.AdpcmASoundTable.PcmTimbres[note.NoteNumber];
-                        lock (parentModule.tmpPcmDataTable)
-                            parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
-                        break;
-                    case ToneType.ADPCM_B:
-                        pcmbOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
+                    YM2610BSound snd = new YM2610BSound(parentModule, this, timbre, note, emptySlot, ids[i]);
+                    switch (timbre.ToneType)
+                    {
+                        case ToneType.FM:
+                            fmOnSounds.Add(snd);
+                            FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.ADPCM_A:
+                            pcmaOnSounds.Add(snd);
+                            FormMain.OutputDebugLog("KeyOn PCM-A ch" + emptySlot + " " + note.ToString());
 
-                        //HACK: store pcm data to local buffer to avoid "thread lock"
-                        lock (parentModule.tmpPcmDataTable)
-                            parentModule.tmpPcmDataTable[pn] = timbre.PcmData;
-                        break;
-                    case ToneType.SSG:
-                        ssgOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn SSG ch" + emptySlot + " " + note.ToString());
-                        break;
+                            //HACK: store pcm data to local buffer to avoid "thread lock"
+                            var pct = (AdpcmTimbre)parentModule.AdpcmASoundTable.PcmTimbres[note.NoteNumber];
+                            lock (parentModule.tmpPcmDataTable)
+                                parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
+                            break;
+                        case ToneType.ADPCM_B:
+                            pcmbOnSounds.Add(snd);
+                            FormMain.OutputDebugLog("KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
+
+                            //HACK: store pcm data to local buffer to avoid "thread lock"
+                            lock (parentModule.tmpPcmDataTable)
+                                parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
+                            break;
+                        case ToneType.SSG:
+                            ssgOnSounds.Add(snd);
+                            FormMain.OutputDebugLog("KeyOn SSG ch" + emptySlot + " " + note.ToString());
+                            break;
+                    }
+                    snd.KeyOn();
+                    rv.Add(snd);
                 }
-                snd.KeyOn();
 
-                return snd;
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, YM2610BTimbre timbre)
             {
                 int emptySlot = -1;
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (timbre.ToneType)
                 {
                     case ToneType.FM:
@@ -979,7 +974,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private YM2610B parentModule;
 
-            private SevenBitNumber programNumber;
+            private int timbreIndex;
 
             private YM2610BTimbre timbre;
 
@@ -996,11 +991,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot, int timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbreIndex = timbreIndex;
+                this.timbre = (YM2610BTimbre)timbre;
 
                 lastToneType = this.timbre.ToneType;
                 lastSoundType = this.timbre.SsgSoundType;
@@ -1084,8 +1079,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             //Volume
                             OnVolumeUpdated();
                             //prognum
-                            int nn = NoteOnEvent.NoteNumber;
-                            YM2610BWriteData(parentModule.UnitNumber, (byte)(0x02 + Slot), 0, 0, (byte)(nn + 128));
+                            YM2610BWriteData(parentModule.UnitNumber, (byte)(0x02 + Slot), 0, 0, (byte)(timbreIndex + 128));
                             //pcm start
                             YM2610BWriteData(parentModule.UnitNumber, (byte)(0x12), 0, 0, (byte)(0));
                             YM2610BWriteData(parentModule.UnitNumber, (byte)(0x13), 0, 0, (byte)(0));

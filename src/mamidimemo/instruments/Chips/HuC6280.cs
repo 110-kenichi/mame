@@ -90,16 +90,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
@@ -201,8 +191,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new HuC6280Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new HuC6280Timbre[InstrumentBase.MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
                 Timbres[i] = new HuC6280Timbre();
             setPresetInstruments();
 
@@ -318,42 +308,44 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(NoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                Hu6280Sound snd = new Hu6280Sound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.SoundType)
+                foreach (HuC6280Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    case SoundType.WSGLFO:
-                        lfoOnSounds.Add(snd);
-                        break;
-                    case SoundType.WSG:
-                        wsgOnSounds.Add(snd);
-                        break;
-                    case SoundType.NOISE:
-                        noiseOnSounds.Add(snd);
-                        break;
-                }
-                snd.KeyOn();
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    Hu6280Sound snd = new Hu6280Sound(parentModule, this, timbre, note, emptySlot);
+                    switch (timbre.SoundType)
+                    {
+                        case SoundType.WSGLFO:
+                            lfoOnSounds.Add(snd);
+                            break;
+                        case SoundType.WSG:
+                            wsgOnSounds.Add(snd);
+                            break;
+                        case SoundType.NOISE:
+                            noiseOnSounds.Add(snd);
+                            break;
+                    }
+                    snd.KeyOn();
+                    rv.Add(snd);
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(NoteOnEvent note, HuC6280Timbre timbre)
             {
                 int emptySlot = -1;
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 switch (timbre.SoundType)
                 {
                     case SoundType.WSGLFO:
@@ -407,8 +399,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private HuC6280 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private HuC6280Timbre timbre;
 
             private SoundType lastSoundType;
@@ -425,8 +415,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public Hu6280Sound(HuC6280 parentModule, Hu6280SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (HuC6280Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
                 if (lastSoundType == SoundType.WSG && this.timbre.PartialReserveWSGLFO)

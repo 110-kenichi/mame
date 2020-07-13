@@ -167,7 +167,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <summary>
         /// 
         /// </summary>
-        public SoundBase FirstSoundForPitch
+        public SoundBase[] FirstSoundForPitch
         {
             get;
             internal set;
@@ -649,7 +649,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 {
                     for (int i = 0; i < arpNotes.Count; i++)
                     {
-                        if (arpNotes[i].NoteNumber == FirstSoundForPitch.NoteOnEvent.NoteNumber)
+                        if (arpNotes[i].NoteNumber == FirstSoundForPitch[0].NoteOnEvent.NoteNumber)
                         {
                             arpStep = i + 1;
                             break;
