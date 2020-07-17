@@ -403,7 +403,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class AY8910SoundManager : SoundManagerBase
         {
-            private SoundList<AY8910Sound> psgOnSounds = new SoundList<AY8910Sound>(3);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<AY8910Sound> psgOnSounds = new SoundList<AY8910Sound>(3);
 
             private AY8910 parentModule;
 
@@ -426,11 +439,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (AY8910Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    AY8910Sound snd = new AY8910Sound(parentModule, this, timbre, note, emptySlot);
+                    AY8910Sound snd = new AY8910Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (((AY8910Timbre)timbre).SoundType)
                     {
                         case SoundType.PSG:
@@ -451,9 +464,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, AY8910Timbre timbre)
+            private (AY8910 inst, int slot) searchEmptySlot(NoteOnEvent note, AY8910Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.SoundType)
                 {
@@ -461,7 +474,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.NOISE:
                     case SoundType.ENVELOPE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
                             break;
                         }
                 }

@@ -179,7 +179,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [Browsable(false)]
-        public override PatchTimbre[] PatchTimbres
+        public override CombinedTimbre[] CombinedTimbres
         {
             get;
             set;
@@ -200,6 +200,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [Browsable(false)]
         public override ProgramAssignmentNumber[] ProgrameAssignments
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public override FollowerUnit FollowerMode
         {
             get;
             set;

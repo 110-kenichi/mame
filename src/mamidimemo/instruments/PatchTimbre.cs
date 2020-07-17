@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
     [DataContract]
     [MidiHook]
-    public class PatchTimbre : TimbreBase
+    public class CombinedTimbre : TimbreBase
     {
         [IgnoreDataMember]
         [Browsable(false)]
@@ -49,70 +49,31 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        private string f_BindTimbres;
-
+        [Editor(typeof(DummyEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DataMember]
-        [Description("Set the timbre numbers to bind this patch by text. Input the timbre numbers(0-127) and split it with space.")]
-        public string BindTimbres
-        {
-            get
-            {
-                return f_BindTimbres;
-            }
-            set
-            {
-                if (f_BindTimbres != value)
-                {
-                    if (value == null)
-                    {
-                        BindTimbreNums = new int[] { };
-                        f_BindTimbres = string.Empty;
-                        return;
-                    }
-                    f_BindTimbres = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<int> vs = new List<int>();
-                    for (int i = 0; i < vals.Length; i++)
-                    {
-                        string val = vals[i];
-                        int v;
-                        if (int.TryParse(val, out v))
-                        {
-                            if (v < 0)
-                                v = 0;
-                            else if (v >= InstrumentBase.MAX_TIMBRES)   // 0 - 127
-                                v = 7;
-                            vs.Add(v);
-                        }
-                    }
-                    BindTimbreNums = vs.ToArray();
-
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < BindTimbreNums.Length; i++)
-                    {
-                        if (sb.Length != 0)
-                            sb.Append(' ');
-                        sb.Append(BindTimbreNums[i].ToString((IFormatProvider)null));
-                    }
-                    f_BindTimbres = sb.ToString();
-                }
-            }
-        }
+        [Description("Set the timbre numbers to bind this Combibed Timbre.")]
+        public ProgramAssignmentNumber?[] BindTimbres { get; set; } = new ProgramAssignmentNumber?[4] {
+            null,
+            null,
+            null,
+            null
+        };
 
         public bool ShouldSerializeBindTimbres()
         {
-            return !string.IsNullOrEmpty(BindTimbres);
+            for (int i = 0; i < BindTimbres.Length; i++)
+            {
+                if (BindTimbres[i] != null)
+                    return true;
+            }
+            return false;
         }
 
         public void ResetBindTimbres()
         {
-            BindTimbres = null;
+            for (int i = 0; i < BindTimbres.Length; i++)
+                BindTimbres[i] = null;
         }
-
-        [Browsable(false)]
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public int[] BindTimbreNums { get; set; } = new int[] { };
 
         [Browsable(false)]
         [JsonIgnore]
@@ -121,7 +82,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return SDS2;
+                return CSDS;
             }
             set
             {
@@ -131,7 +92,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Sound Driver Settings")]
         [DisplayName("Sound Driver Settings(SDS)")]
-        public PatchSoundDriverSettings SDS2
+        public CombinedSoundDriverSettings CSDS
         {
             get;
             set;
@@ -140,16 +101,16 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        public PatchTimbre()
+        public CombinedTimbre()
         {
-            SDS2 = new PatchSoundDriverSettings();
+            CSDS = new CombinedSoundDriverSettings();
         }
 
         public override void RestoreFrom(string serializeData)
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<PatchTimbre>(serializeData);
+                var obj = JsonConvert.DeserializeObject<CombinedTimbre>(serializeData);
                 this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
@@ -169,7 +130,7 @@ namespace zanac.MAmidiMEmo.Instruments
     /// <summary>
     /// 
     /// </summary>
-    public class PatchSoundDriverSettings : SoundDriverSettings
+    public class CombinedSoundDriverSettings : SoundDriverSettings
     {
 
         [Browsable(false)]

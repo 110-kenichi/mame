@@ -326,7 +326,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SCC1SoundManager : SoundManagerBase
         {
-            private SoundList<SCC1Sound> sccOnSounds = new SoundList<SCC1Sound>(5);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SCC1Sound> sccOnSounds = new SoundList<SCC1Sound>(5);
 
             private SCC1 parentModule;
 
@@ -349,11 +362,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (SCC1Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    SCC1Sound snd = new SCC1Sound(parentModule, this, timbre, note, emptySlot);
+                    SCC1Sound snd = new SCC1Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     sccOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn SCC ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -367,9 +380,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (SCC1 inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                return SearchEmptySlotAndOff(sccOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 5));
+                return SearchEmptySlotAndOffForLeader(parentModule, sccOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 5));
             }
 
             internal override void AllSoundOff()

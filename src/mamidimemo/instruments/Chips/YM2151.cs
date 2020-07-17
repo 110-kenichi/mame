@@ -514,8 +514,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM2151SoundManager : SoundManagerBase
         {
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<YM2151Sound> fmOnSounds = new SoundList<YM2151Sound>(8);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<YM2151Sound> fmOnSounds = new SoundList<YM2151Sound>(8);
 
             private YM2151 parentModule;
 
@@ -538,11 +550,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (YM2151Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    YM2151Sound snd = new YM2151Sound(parentModule, this, timbre, note, emptySlot);
+                    YM2151Sound snd = new YM2151Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     fmOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -556,9 +568,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (YM2151 inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                return SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
+                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
             }
 
             internal override void AllSoundOff()

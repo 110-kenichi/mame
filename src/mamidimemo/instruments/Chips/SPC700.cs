@@ -877,7 +877,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SPC700SoundManager : SoundManagerBase
         {
-            private SoundList<SPC700Sound> instOnSounds = new SoundList<SPC700Sound>(8);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SPC700Sound> instOnSounds = new SoundList<SPC700Sound>(8);
 
             private SPC700 parentModule;
 
@@ -903,11 +916,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < bts.Length; i++)
                 {
                     SPC700Timbre timbre = (SPC700Timbre)bts[i];
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    SPC700Sound snd = new SPC700Sound(parentModule, this, timbre, note, emptySlot, (byte)ids[i]);
+                    SPC700Sound snd = new SPC700Sound(emptySlot.inst, this, timbre, note, emptySlot.slot, (byte)ids[i]);
                     instOnSounds.Add(snd);
 
                     //HACK: store pcm data to local buffer to avoid "thread lock"
@@ -935,11 +948,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (SPC700 inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                int emptySlot = -1;
-                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
-                return emptySlot;
+                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
             }
 
             internal override void AllSoundOff()

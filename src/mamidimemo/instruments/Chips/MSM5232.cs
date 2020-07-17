@@ -405,8 +405,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class MSM5232SoundManager : SoundManagerBase
         {
-            private SoundList<MSM5232Sound> chAOnSounds = new SoundList<MSM5232Sound>(4);
-            private SoundList<MSM5232Sound> chBOnSounds = new SoundList<MSM5232Sound>(4);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<MSM5232Sound> chAOnSounds = new SoundList<MSM5232Sound>(4);
+            private static SoundList<MSM5232Sound> chBOnSounds = new SoundList<MSM5232Sound>(4);
 
             private MSM5232 parentModule;
 
@@ -429,11 +442,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (MSM5232Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    MSM5232Sound snd = new MSM5232Sound(parentModule, this, timbre, note, emptySlot);
+                    MSM5232Sound snd = new MSM5232Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (timbre.SoundGroup)
                     {
                         case SoundGroup.Group1:
@@ -456,23 +469,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, MSM5232Timbre timbre)
+            private (MSM5232 inst, int slot) searchEmptySlot(NoteOnEvent note,MSM5232Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.SoundGroup)
                 {
                     case SoundGroup.Group1:
                         {
-                            emptySlot = SearchEmptySlotAndOff(chAOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, chAOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
                             break;
                         }
                     case SoundGroup.Group2:
                         {
-                            emptySlot = SearchEmptySlotAndOff(chBOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, chBOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 

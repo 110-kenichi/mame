@@ -130,6 +130,20 @@ namespace zanac.MAmidiMEmo.Instruments
             GainRight = 1.0f;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [DefaultValue(false)]
+        [Description("Enable Follower mode. Share free voice channels with specified leader unit and does not accept any Note On MIDI event.\r\n" +
+            "Be sure to set same settings with the leader unit.")]
+        public virtual FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
         private FilterMode f_FilterMode = FilterMode.LowPass;
 
         [DataMember]
@@ -340,25 +354,25 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
 
-            int btn = pn;
-            if (btn >= BaseTimbres.Length)
-                btn = BaseTimbres.Length - 1;
-
-            int pan = pn;
-            if (pan >= ProgrameAssignmentTypes.Length)
-                pan = ProgrameAssignmentTypes.Length - 1;
-            switch (ProgrameAssignmentTypes[pan])
+            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
             {
-                case ProgramAssignmentType.PatchTimbre:
-                    int ptn = pn;
-                    if (ptn >= PatchTimbres.Length)
-                        ptn = PatchTimbres.Length - 1;
-                    var pts = PatchTimbres[ptn];
-                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
-                        return PatchTimbres[ptn];
+                case ProgramAssignmentType.CombinedTimbre:
+                    int ptidx = pn;
+                    if (ptidx >= CombinedTimbres.Length)
+                        ptidx = CombinedTimbres.Length - 1;
+                    var pts = CombinedTimbres[ptidx];
+                    for (int i = 0; i < pts.BindTimbres.Length; i++)
+                    {
+                        if (pts.BindTimbres[i] != null) //if Timbre assigned
+                            return CombinedTimbres[ptidx];
+                    }
                     break;
             }
-            return BaseTimbres[btn];
+
+            int btidx = pn;
+            if (btidx >= BaseTimbres.Length)
+                btidx = BaseTimbres.Length - 1;
+            return BaseTimbres[btidx];
         }
 
         /// <summary>
@@ -371,30 +385,26 @@ namespace zanac.MAmidiMEmo.Instruments
 
             int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
 
-            int btn = pn;
-            if (btn >= BaseTimbres.Length)
-                btn = BaseTimbres.Length - 1;
-
-            int pan = pn;
-            if (pan >= ProgrameAssignmentTypes.Length)
-                pan = ProgrameAssignmentTypes.Length - 1;
-            switch (ProgrameAssignmentTypes[pan])
+            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
             {
-                case ProgramAssignmentType.PatchTimbre:
-                    int ptn = pn;
-                    if (ptn >= PatchTimbres.Length)
-                        ptn = PatchTimbres.Length - 1;
-                    var pts = PatchTimbres[ptn];
-                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
+                case ProgramAssignmentType.CombinedTimbre:
+                    int ptidx = pn;
+                    if (ptidx >= CombinedTimbres.Length)
+                        ptidx = CombinedTimbres.Length - 1;
+                    foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
                     {
-                        foreach (int tn in pts.BindTimbreNums)
-                            ts.Add(BaseTimbres[tn]);
-                        return ts.ToArray();
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add(BaseTimbres[tn.Value]);
                     }
+                    if (ts.Count != 0)
+                        return ts.ToArray();
                     break;
             }
 
-            ts.Add(BaseTimbres[btn]);
+            int btidx = pn;
+            if (btidx >= BaseTimbres.Length)
+                btidx = BaseTimbres.Length - 1;
+            ts.Add(BaseTimbres[btidx]);
             return ts.ToArray();
         }
 
@@ -409,30 +419,26 @@ namespace zanac.MAmidiMEmo.Instruments
 
             int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
 
-            int btn = pn;
-            if (btn >= BaseTimbres.Length)
-                btn = BaseTimbres.Length - 1;
-
-            int pan = pn;
-            if (pan >= ProgrameAssignmentTypes.Length)
-                pan = ProgrameAssignmentTypes.Length - 1;
-            switch (ProgrameAssignmentTypes[pan])
+            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
             {
-                case ProgramAssignmentType.PatchTimbre:
-                    int ptn = pn;
-                    if (ptn >= PatchTimbres.Length)
-                        ptn = PatchTimbres.Length - 1;
-                    var pts = PatchTimbres[ptn];
-                    if (pts.BindTimbreNums != null && pts.BindTimbreNums.Length != 0)
+                case ProgramAssignmentType.CombinedTimbre:
+                    int ptidx = pn;
+                    if (ptidx >= CombinedTimbres.Length)
+                        ptidx = CombinedTimbres.Length - 1;
+                    foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
                     {
-                        foreach (int tn in pts.BindTimbreNums)
-                            ts.Add(tn);
-                        return ts.ToArray();
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add((int)tn);
                     }
+                    if (ts.Count != 0)
+                        return ts.ToArray();
                     break;
             }
 
-            ts.Add(btn);
+            int btidx = pn;
+            if (btidx >= BaseTimbres.Length)
+                btidx = BaseTimbres.Length - 1;
+            ts.Add(btidx);
             return ts.ToArray();
         }
 
@@ -441,11 +447,11 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("Chip")]
-        [Description("Patch Timbres (0-127)\r\n" +
+        [Description("Combine multiple Timbres (0-255)\r\n" +
             "Override PatchTimbres to Timbres when you set binding patch numbers.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public virtual PatchTimbre[] PatchTimbres
+        public virtual CombinedTimbre[] CombinedTimbres
         {
             get;
             set;
@@ -508,7 +514,7 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < ProgrameAssignments.Length; i++)
                 ProgrameAssignments[i] = (ProgramAssignmentNumber)i;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -1357,9 +1363,9 @@ namespace zanac.MAmidiMEmo.Instruments
             f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
             SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
 
-            PatchTimbres = new PatchTimbre[MAX_TIMBRES];
+            CombinedTimbres = new CombinedTimbre[MAX_TIMBRES];
             for (int i = 0; i < MAX_TIMBRES; i++)
-                PatchTimbres[i] = new PatchTimbre();
+                CombinedTimbres[i] = new CombinedTimbre();
 
             ProgrameAssignments = new ProgramAssignmentNumber[128];
             ProgrameAssignmentTypes = new ProgramAssignmentType[128];
@@ -1635,7 +1641,11 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (non.Velocity == 0)
                                 OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                             else
+                            {
+                                if (FollowerMode != FollowerUnit.None)
+                                    break;
                                 OnNoteOnEvent(non);
+                            }
                             break;
                         }
                     case NoteOffEvent noff:

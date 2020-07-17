@@ -364,13 +364,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class GBSoundManager : SoundManagerBase
         {
-            private SoundList<GbSound> spsgOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<GbSound> psgOnSounds = new SoundList<GbSound>(2);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<GbSound> wavOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<GbSound> spsgOnSounds = new SoundList<GbSound>(1);
 
-            private SoundList<GbSound> noiseOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<GbSound> psgOnSounds = new SoundList<GbSound>(2);
+
+            private static SoundList<GbSound> wavOnSounds = new SoundList<GbSound>(1);
+
+            private static SoundList<GbSound> noiseOnSounds = new SoundList<GbSound>(1);
 
 
             private GB_APU parentModule;
@@ -398,11 +411,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    GbSound snd = new GbSound(parentModule, this, timbre, note, emptySlot);
+                    GbSound snd = new GbSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (timbre.SoundType)
                     {
                         case SoundType.SPSG:
@@ -429,36 +442,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, GBAPUTimbre timbre)
+            private (GB_APU inst, int slot) searchEmptySlot(NoteOnEvent note, GBAPUTimbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.SoundType)
                 {
                     case SoundType.SPSG:
                         {
-                            emptySlot = SearchEmptySlotAndOff(spsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, spsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case SoundType.PSG:
                         {
                             if (timbre.PartialReserveSPSG)
-                                emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             else
-                                emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
                             break;
                         }
                     case SoundType.WAV:
                         {
-                            emptySlot = SearchEmptySlotAndOff(wavOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wavOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 

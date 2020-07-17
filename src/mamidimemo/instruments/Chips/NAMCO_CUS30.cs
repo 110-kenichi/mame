@@ -277,7 +277,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class NAMCO_CUS30SoundManager : SoundManagerBase
         {
-            private SoundList<NAMCO_CUS30Sound> wsgOnSounds = new SoundList<NAMCO_CUS30Sound>(8);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<NAMCO_CUS30Sound> wsgOnSounds = new SoundList<NAMCO_CUS30Sound>(8);
 
             private NAMCO_CUS30 parentModule;
 
@@ -300,11 +313,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (NAMCO_CUS30Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(parentModule, this, timbre, note, emptySlot);
+                    NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     wsgOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn WSG ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -318,9 +331,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (NAMCO_CUS30 inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                return SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
+                return SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
             }
 
             internal override void AllSoundOff()

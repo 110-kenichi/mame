@@ -842,13 +842,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM2610BSoundManager : SoundManagerBase
         {
-            private SoundList<YM2610BSound> fmOnSounds = new SoundList<YM2610BSound>(6);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<YM2610BSound> ssgOnSounds = new SoundList<YM2610BSound>(3);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<YM2610BSound> pcmaOnSounds = new SoundList<YM2610BSound>(6);
+            private static SoundList<YM2610BSound> fmOnSounds = new SoundList<YM2610BSound>(6);
 
-            private SoundList<YM2610BSound> pcmbOnSounds = new SoundList<YM2610BSound>(1);
+            private static SoundList<YM2610BSound> ssgOnSounds = new SoundList<YM2610BSound>(3);
+
+            private static SoundList<YM2610BSound> pcmaOnSounds = new SoundList<YM2610BSound>(6);
+
+            private static SoundList<YM2610BSound> pcmbOnSounds = new SoundList<YM2610BSound>(1);
 
             private YM2610B parentModule;
 
@@ -874,11 +887,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i=0;i<bts.Length;i++)
                 {
                     YM2610BTimbre timbre = (YM2610BTimbre)bts[i];
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    YM2610BSound snd = new YM2610BSound(parentModule, this, timbre, note, emptySlot, ids[i]);
+                    YM2610BSound snd = new YM2610BSound(emptySlot.inst, this, timbre, note, emptySlot.slot, ids[i]);
                     switch (timbre.ToneType)
                     {
                         case ToneType.FM:
@@ -918,33 +931,34 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, YM2610BTimbre timbre)
+            private (YM2610B inst, int slot) searchEmptySlot(NoteOnEvent note, YM2610BTimbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.ToneType)
                 {
                     case ToneType.FM:
                         {
-                            emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                             break;
                         }
                     case ToneType.ADPCM_A:
                         {
-                            emptySlot = SearchEmptySlotAndOff(pcmaOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmaOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                             break;
                         }
                     case ToneType.ADPCM_B:
                         {
-                            emptySlot = SearchEmptySlotAndOff(pcmbOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmbOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case ToneType.SSG:
                         {
-                            emptySlot = SearchEmptySlotAndOff(ssgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, ssgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 

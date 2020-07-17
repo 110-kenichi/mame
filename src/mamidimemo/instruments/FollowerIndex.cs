@@ -10,9 +10,16 @@ namespace zanac.MAmidiMEmo.Instruments
     /// <summary>
     /// 
     /// </summary>
-    public enum ProgramAssignmentType
+    public enum FollowerUnit
     {
-        Timbre,
-        CombinedTimbre,
+        None,
+        Unit0,
+        Unit1,
+        Unit2,
+        Unit3,
+        Unit4,
+        Unit5,
+        Unit6,
+        Unit7,
     }
 }

@@ -359,7 +359,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM3812SoundManager : SoundManagerBase
         {
-            private SoundList<YM3812Sound> fmOnSounds = new SoundList<YM3812Sound>(9);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<YM3812Sound> fmOnSounds = new SoundList<YM3812Sound>(9);
 
             private YM3812 parentModule;
 
@@ -382,11 +395,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (YM3812Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    YM3812Sound snd = new YM3812Sound(parentModule, this, timbre, note, emptySlot);
+                    YM3812Sound snd = new YM3812Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     fmOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -400,11 +413,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (YM3812 inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                int emptySlot = -1;
-                emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
-                return emptySlot;
+                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
             }
 
             internal override void AllSoundOff()

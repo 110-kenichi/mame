@@ -95,6 +95,18 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
+        public static IEnumerable<InstrumentBase> GetInstruments(uint deviceId)
+        {
+            lock (InstrumentManager.ExclusiveLockObject)
+            {
+                return instruments[(int)deviceId - 1];
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static IEnumerable<InstrumentBase> ClearAllInstruments()
         {
             List<InstrumentBase> insts = new List<InstrumentBase>();

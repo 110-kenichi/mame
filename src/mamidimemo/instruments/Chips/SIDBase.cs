@@ -395,7 +395,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SIDSoundManager : SoundManagerBase
         {
-            private SoundList<SIDSound> psgOnSounds = new SoundList<SIDSound>(3);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SIDSound> psgOnSounds = new SoundList<SIDSound>(3);
 
             private SIDBase parentModule;
 
@@ -418,11 +431,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (SIDTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    SIDSound snd = new SIDSound(parentModule, this, timbre, note, emptySlot);
+                    SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -436,22 +449,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, SIDTimbre timbre)
+            private (SIDBase inst, int slot) searchEmptySlot(NoteOnEvent note, SIDTimbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.PhysicalChannel)
                 {
                     case PhysicalChannel.Indeterminatene:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
                             break;
                         }
                     case PhysicalChannel.Ch1:
                     case PhysicalChannel.Ch2:
                     case PhysicalChannel.Ch3:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1);
                             break;
                         }
                 }

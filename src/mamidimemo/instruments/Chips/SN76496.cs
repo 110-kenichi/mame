@@ -268,9 +268,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SN76496SoundManager : SoundManagerBase
         {
-            private SoundList<SN76496Sound> psgOnSounds = new SoundList<SN76496Sound>(3);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<SN76496Sound> noiseOnSounds = new SoundList<SN76496Sound>(1);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SN76496Sound> psgOnSounds = new SoundList<SN76496Sound>(3);
+
+            private static SoundList<SN76496Sound> noiseOnSounds = new SoundList<SN76496Sound>(1);
 
             private SN76496 parentModule;
 
@@ -293,11 +306,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (SN76496Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    SN76496Sound snd = new SN76496Sound(parentModule, this, timbre, note, emptySlot);
+                    SN76496Sound snd = new SN76496Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (((SN76496Timbre)timbre).SoundType)
                     {
                         case SoundType.PSG:
@@ -320,23 +333,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, SN76496Timbre timbre)
+            private (SN76496 inst, int slot) searchEmptySlot(NoteOnEvent note, SN76496Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.SoundType)
                 {
                     case SoundType.PSG:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 

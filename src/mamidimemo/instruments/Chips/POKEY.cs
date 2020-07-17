@@ -419,6 +419,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainRight = DEFAULT_GAIN;
         }
 
+        [Browsable(false)]
+        public override FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>

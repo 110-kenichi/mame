@@ -21,7 +21,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        protected SoundList<SoundBase> AllSounds
+        protected virtual SoundList<SoundBase> AllSounds
         {
             get;
             private set;
@@ -96,10 +96,12 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = AllSounds.Count - 1; i >= 0; i--)
             {
                 var removed = AllSounds[i];
+                if (removed.ParentModule.UnitNumber != parentModule.UnitNumber)
+                    continue;
+
                 AllSounds.RemoveAt(i);
                 removed.Dispose();
             }
-
         }
 
         /// <summary>
@@ -110,6 +112,9 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             foreach (var t in AllSounds)
             {
+                if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                    continue;
+
                 if (t.NoteOnEvent.Channel == midiEvent.Channel)
                     t.OnPitchUpdated();
             }
@@ -127,6 +132,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 1:    //Modulation
                     foreach (var t in AllSounds)
                     {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
                         if (t.NoteOnEvent.Channel == midiEvent.Channel)
                             t.ModulationEnabled = midiEvent.ControlValue != 0;
                     }
@@ -137,6 +145,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 7:    //Volume
                     foreach (var t in AllSounds)
                     {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
                         if (t.NoteOnEvent.Channel == midiEvent.Channel)
                             t.OnVolumeUpdated();
                     }
@@ -144,6 +155,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 10:    //Panpot
                     foreach (var t in AllSounds)
                     {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
                         if (t.NoteOnEvent.Channel == midiEvent.Channel)
                             t.OnPanpotUpdated();
                     }
@@ -151,6 +165,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 11:    //Expression
                     foreach (var t in AllSounds)
                     {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
                         if (t.NoteOnEvent.Channel == midiEvent.Channel)
                             t.OnVolumeUpdated();
                     }
@@ -197,7 +214,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         stopAllArpForKeyOn();
                         stopAllArpForPitch();
                         foreach (var snd in AllSounds)
+                        {
+                            if (snd.ParentModule.UnitNumber != parentModule.UnitNumber)
+                                continue;
+
                             KeyOff(new NoteOffEvent(snd.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = snd.NoteOnEvent.Channel });
+                        }
                         break;
                     }
             }
@@ -272,6 +294,9 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 foreach (var t in AllSounds)
                 {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
                     if (t.NoteOnEvent.Channel == midiEvent.Channel && t.Timbre == tim)
                         t.OnSoundParamsUpdated();
                 }
@@ -336,6 +361,9 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 foreach (var t in AllSounds)
                 {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
                     if (t.NoteOnEvent.Channel == midiEvent.Channel)
                         t.OnSoundParamsUpdated();
                 }
@@ -535,6 +563,9 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < AllSounds.Count; i++)
             {
                 SoundBase offsnd = AllSounds[i];
+                if (offsnd.ParentModule.UnitNumber != parentModule.UnitNumber)
+                    continue;
+
                 if (offsnd.IsKeyOff)
                     continue;
 
@@ -781,7 +812,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="onSounds"></param>
         /// <param name="maxSlot"></param>
         /// <returns></returns>
-        protected virtual int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase
         {
             return SearchEmptySlotAndOff(onSounds, newNote, maxSlot, -1);
         }
@@ -794,7 +825,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected virtual int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
         {
             if (slot < 0)
             {
@@ -854,5 +885,118 @@ namespace zanac.MAmidiMEmo.Instruments
             return -1;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="I"></typeparam>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="inst"></param>
+        /// <param name="onSounds"></param>
+        /// <param name="newNote"></param>
+        /// <param name="maxSlot"></param>
+        /// <returns></returns>
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, List<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
+        {
+            return SearchEmptySlotAndOffForLeader(inst, onSounds, newNote, maxSlot, -1);
+        }
+
+        /// <summary>
+        /// 未使用のスロットを検索する
+        /// 空が無い場合は最初に鳴った音を消す
+        /// </summary>
+        /// <param name="onSounds"></param>
+        /// <param name="maxSlot"></param>
+        /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
+        /// <returns></returns>
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, List<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
+        {
+            //gather leader and followers
+            Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
+            foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
+                instskey.Add(i.UnitNumber, i);
+
+            Dictionary<uint, Dictionary<int, bool>> insts = new Dictionary<uint, Dictionary<int, bool>>();
+            foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
+            {
+                if (i.UnitNumber == inst.UnitNumber)
+                    insts.Add(i.UnitNumber, new Dictionary<int, bool>());
+                else if (inst.UnitNumber == (int)i.FollowerMode - 1)
+                    insts.Add(i.UnitNumber, new Dictionary<int, bool>());
+            }
+
+
+            if (slot < 0)
+            {
+                //search empty slot
+                foreach (var onSnd in onSounds)
+                {
+                    if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
+                        insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                }
+
+                //使っていないスロットがあればそれを返す
+                for (int i = 0; i < maxSlot; i++)
+                {
+                    foreach (var ist in insts.Keys)
+                    {
+                        if (!insts[ist].ContainsKey(i))
+                            return ((I)instskey[ist], i);
+                    }
+                }
+
+                //一番古いキーオフされたスロットを探す
+                for (int i = 0; i < onSounds.Count; i++)
+                {
+                    var snd = onSounds[i];
+                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                        continue;
+
+                    if (snd.Slot < maxSlot && snd.IsKeyOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.RemoveAt(i);
+                        snd.Dispose();
+                        return ((I)snd.ParentModule, snd.Slot);
+                    }
+                }
+
+                //一番古いキーオンされたスロットを探す
+                for (int i = 0; i < onSounds.Count; i++)
+                {
+                    var snd = onSounds[i];
+                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                        continue;
+
+                    if (snd.Slot < maxSlot)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.RemoveAt(i);
+                        snd.Dispose();
+                        return ((I)snd.ParentModule, snd.Slot);
+                    }
+                }
+            }
+            else
+            {
+                //既存の音を消す
+                for (int i = 0; i < onSounds.Count; i++)
+                {
+                    var snd = onSounds[i];
+                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                        continue;
+
+                    if (snd.Slot == slot)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.RemoveAt(i);
+                        snd.Dispose();
+                        break;
+                    }
+                }
+                return (inst, slot);
+            }
+
+            return (inst, -1);
+        }
     }
 }

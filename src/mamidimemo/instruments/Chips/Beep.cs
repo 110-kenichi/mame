@@ -268,7 +268,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class BeepSoundManager : SoundManagerBase
         {
-            private SoundList<BeepSound> psgOnSounds = new SoundList<BeepSound>(1);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<BeepSound> psgOnSounds = new SoundList<BeepSound>(1);
 
             private Beep parentModule;
 
@@ -291,11 +304,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (BeepTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    BeepSound snd = new BeepSound(parentModule, this, timbre, note, emptySlot);
+                    BeepSound snd = new BeepSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
                     FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -309,10 +322,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (Beep inst, int slot) searchEmptySlot(NoteOnEvent note)
             {
-                int emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
-                return emptySlot;
+                return SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
             }
 
             internal override void AllSoundOff()

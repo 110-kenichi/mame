@@ -353,9 +353,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM2413SoundManager : SoundManagerBase
         {
-            private List<YM2413Sound> fmOnSounds = new List<YM2413Sound>(9);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private List<YM2413Sound> drumOnSounds = new List<YM2413Sound>(9);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static List<YM2413Sound> fmOnSounds = new List<YM2413Sound>(9);
+
+            private static List<YM2413Sound> drumOnSounds = new List<YM2413Sound>(6);
 
             private YM2413 parentModule;
 
@@ -378,11 +391,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (YM2413Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    YM2413Sound snd = new YM2413Sound(parentModule, this, timbre, note, emptySlot);
+                    YM2413Sound snd = new YM2413Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     if (parentModule.RHY == 0)
                     {
                         fmOnSounds.Add(snd);
@@ -404,20 +417,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, YM2413Timbre timbre)
+            private (YM2413 inst, int slot) searchEmptySlot(NoteOnEvent note, YM2413Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
+
                 if (parentModule.RHY == 0)
                 {
-                    emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
+                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
                 }
                 else
                 {
                     if (timbre.ToneType != ToneType.DrumSet)
-                        emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                     else
-                        emptySlot = SearchEmptySlotAndOff(drumOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                 }
+
                 return emptySlot;
             }
 

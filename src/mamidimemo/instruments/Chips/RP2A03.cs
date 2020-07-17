@@ -382,19 +382,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class RP2A03SoundManager : SoundManagerBase
         {
-            private SoundList<RP2A03Sound> sqOnSounds = new SoundList<RP2A03Sound>(2);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<RP2A03Sound> triOnSounds = new SoundList<RP2A03Sound>(1);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<RP2A03Sound> noiseOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> sqOnSounds = new SoundList<RP2A03Sound>(2);
 
-            private SoundList<RP2A03Sound> dpcmOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> triOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> fdsOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> noiseOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> vrc6SqOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> dpcmOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> fdsOnSounds = new SoundList<RP2A03Sound>(1);
+
+            private static SoundList<RP2A03Sound> vrc6SqOnSounds = new SoundList<RP2A03Sound>(2);
+
+            private static SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
 
             private RP2A03 parentModule;
 
@@ -417,11 +430,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (RP2A03Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    RP2A03Sound snd = new RP2A03Sound(parentModule, this, timbre, note, emptySlot);
+                    RP2A03Sound snd = new RP2A03Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (timbre.ToneType)
                     {
                         case ToneType.SQUARE:
@@ -464,48 +477,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, RP2A03Timbre timbre)
+            private (RP2A03 inst, int slot) searchEmptySlot(NoteOnEvent note, RP2A03Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.ToneType)
                 {
                     case ToneType.SQUARE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(sqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, sqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
                             break;
                         }
                     case ToneType.TRIANGLE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(triOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, triOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case ToneType.DPCM:
                         {
-                            emptySlot = SearchEmptySlotAndOff(dpcmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, dpcmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case ToneType.FDS:
                         {
-                            emptySlot = SearchEmptySlotAndOff(fdsOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fdsOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case ToneType.VRC6_SQ:
                         {
-                            emptySlot = SearchEmptySlotAndOff(vrc6SqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, vrc6SqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
                             break;
                         }
                     case ToneType.VRC6_SAW:
                         {
-                            emptySlot = SearchEmptySlotAndOff(vrc6SawOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, vrc6SawOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 

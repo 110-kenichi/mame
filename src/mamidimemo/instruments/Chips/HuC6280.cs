@@ -284,11 +284,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class Hu6280SoundManager : SoundManagerBase
         {
-            private SoundList<Hu6280Sound> lfoOnSounds = new SoundList<Hu6280Sound>(1);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<Hu6280Sound> wsgOnSounds = new SoundList<Hu6280Sound>(2);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<Hu6280Sound> noiseOnSounds = new SoundList<Hu6280Sound>(1);
+            private static SoundList<Hu6280Sound> lfoOnSounds = new SoundList<Hu6280Sound>(1);
+
+            private static SoundList<Hu6280Sound> wsgOnSounds = new SoundList<Hu6280Sound>(2);
+
+            private static SoundList<Hu6280Sound> noiseOnSounds = new SoundList<Hu6280Sound>(1);
 
 
             private HuC6280 parentModule;
@@ -314,11 +327,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 foreach (HuC6280Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
                 {
-                    int emptySlot = searchEmptySlot(note, timbre);
-                    if (emptySlot < 0)
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
                         continue;
 
-                    Hu6280Sound snd = new Hu6280Sound(parentModule, this, timbre, note, emptySlot);
+                    Hu6280Sound snd = new Hu6280Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     switch (timbre.SoundType)
                     {
                         case SoundType.WSGLFO:
@@ -342,15 +355,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note, HuC6280Timbre timbre)
+            private (HuC6280 inst, int slot) searchEmptySlot(NoteOnEvent note, HuC6280Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
                 switch (timbre.SoundType)
                 {
                     case SoundType.WSGLFO:
                         {
-                            emptySlot = SearchEmptySlotAndOff(lfoOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, lfoOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
                             break;
                         }
                     case SoundType.WSG:
@@ -358,25 +371,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (timbre.PartialReserveWSGLFO)
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
                                 else
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
                             }
                             else
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
                                 else
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
                             }
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 
