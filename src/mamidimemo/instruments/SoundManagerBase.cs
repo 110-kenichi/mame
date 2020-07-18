@@ -560,9 +560,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private void keyOffCore(NoteOffEvent note)
         {
-            for (int i = 0; i < AllSounds.Count; i++)
+            foreach (SoundBase offsnd in AllSounds)
             {
-                SoundBase offsnd = AllSounds[i];
                 if (offsnd.ParentModule.UnitNumber != parentModule.UnitNumber)
                     continue;
 
@@ -812,7 +811,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="onSounds"></param>
         /// <param name="maxSlot"></param>
         /// <returns></returns>
-        protected int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase
         {
             return SearchEmptySlotAndOff(onSounds, newNote, maxSlot, -1);
         }
@@ -825,7 +824,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected int SearchEmptySlotAndOff<T>(List<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
         {
             if (slot < 0)
             {
@@ -895,7 +894,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="newNote"></param>
         /// <param name="maxSlot"></param>
         /// <returns></returns>
-        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, List<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
         {
             return SearchEmptySlotAndOffForLeader(inst, onSounds, newNote, maxSlot, -1);
         }
@@ -908,22 +907,17 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, List<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
         {
             //gather leader and followers
             Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
-            foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
-                instskey.Add(i.UnitNumber, i);
-
             Dictionary<uint, Dictionary<int, bool>> insts = new Dictionary<uint, Dictionary<int, bool>>();
             foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
             {
-                if (i.UnitNumber == inst.UnitNumber)
-                    insts.Add(i.UnitNumber, new Dictionary<int, bool>());
-                else if (inst.UnitNumber == (int)i.FollowerMode - 1)
+                instskey.Add(i.UnitNumber, i);
+                if (i.UnitNumber == inst.UnitNumber || inst.UnitNumber == (int)i.FollowerMode - 1)
                     insts.Add(i.UnitNumber, new Dictionary<int, bool>());
             }
-
 
             if (slot < 0)
             {

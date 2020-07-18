@@ -366,9 +366,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private static List<YM2413Sound> fmOnSounds = new List<YM2413Sound>(9);
+            private static SoundList<YM2413Sound> fmOnSounds = new SoundList<YM2413Sound>(9);
 
-            private static List<YM2413Sound> drumOnSounds = new List<YM2413Sound>(6);
+            private static SoundList<YM2413Sound> drumOnSounds = new SoundList<YM2413Sound>(6);
 
             private YM2413 parentModule;
 
