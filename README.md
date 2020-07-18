@@ -1,4 +1,4 @@
-MAmidiMEmo V1.3.1.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V1.3.2.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -224,14 +224,23 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+1.4.0.0 Fixed some minor bugs.
+			Panic button sometimes does not work.
+			SerializeData does not work and cause crash.
+			FxS Arp does not work properly on Fixed mode.
+			Property Reset menu does not work properly.
+		Added KeyShift, PitchShift, IgnoreKeyOff Prop to Timbre Prop.
+		Added Combined Timbre feature to Timbre Prop. Treat pachted Timbre as one Timbre.
+		Added Follower mode feature to Timbre Prop. Share voice ch with another units.
+		Added Drum part to Timbre Prop.
 1.3.1.0 Added VGM supported chips.
 			GB APU, HuC6280
 1.3.0.0 Synced sound engine to MAME 0221 (May improved some sound accuracy).
         Added wave file output feature. Please re-open option dialog and press [OK] to commit new settings.
         Added VGM file separetedly output feature. Only supported the following chips.
 			YM2151, YM2612, YM3812, YM2413, POKEY, SN76496, NES APU, AY-3-8910
-1.2.1.0 Added CM-32P SN-U110-10 simulation 
-1.2.0.0 Added CM-32P (This is an incomplete simulator)
+1.2.1.0 Added CM-32P SN-U110-10 simulation .
+1.2.0.0 Added CM-32P (This is an incomplete simulator).
             Using FluidLite https://github.com/divideconcept/FluidLite , 
 			Using GeneralUser GS http://schristiancollins.com/generaluser.php
 		Fixed RPN/NRPN MIDI massages can not be handled properly. OMG.
