@@ -882,8 +882,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                var bts = parentModule.GetBaseTimbres(note.Channel);
-                var ids = parentModule.GetBaseTimbreIndexes(note.Channel);
+                var bts = parentModule.GetBaseTimbres(note);
+                var ids = parentModule.GetBaseTimbreIndexes(note);
                 for (int i=0;i<bts.Length;i++)
                 {
                     YM2610BTimbre timbre = (YM2610BTimbre)bts[i];
@@ -1317,7 +1317,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            int noteNum = NoteOnEvent.NoteNumber + (int)d;
+                            int nn = NoteOnEvent.NoteNumber;
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                                nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                            int noteNum = nn + (int)d;
                             if (noteNum > 127)
                                 noteNum = 127;
                             else if (noteNum < 0)
@@ -1400,7 +1403,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             private void updateNoisePitch()
             {
-                int v = NoteOnEvent.NoteNumber % 15;
+                int nn = NoteOnEvent.NoteNumber;
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                    nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+
+                int v = nn % 15;
 
                 YM2610BWriteData(parentModule.UnitNumber, (byte)(6), 0, 0, (byte)v);
             }

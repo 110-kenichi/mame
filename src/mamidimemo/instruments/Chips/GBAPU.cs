@@ -409,7 +409,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)

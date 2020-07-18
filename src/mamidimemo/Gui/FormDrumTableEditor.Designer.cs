@@ -2,7 +2,7 @@
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    partial class FormPcmTableEditor
+    partial class FormDrumTableEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -30,15 +30,13 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPcmTableEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDrumTableEditor));
             this.listViewPcmSounds = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOk = new System.Windows.Forms.Button();
-            this.buttonDelete = new System.Windows.Forms.Button();
-            this.buttonAdd = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -59,8 +57,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.listViewPcmSounds.UseCompatibleStateImageBehavior = false;
             this.listViewPcmSounds.View = System.Windows.Forms.View.Details;
             this.listViewPcmSounds.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewPcmSounds_ItemSelectionChanged);
-            this.listViewPcmSounds.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewPcmSounds_DragDrop);
-            this.listViewPcmSounds.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewPcmSounds_DragEnter);
             // 
             // columnHeader1
             // 
@@ -90,20 +86,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.UseVisualStyleBackColor = true;
             // 
-            // buttonDelete
-            // 
-            resources.ApplyResources(this.buttonDelete, "buttonDelete");
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.UseVisualStyleBackColor = true;
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
-            // buttonAdd
-            // 
-            resources.ApplyResources(this.buttonAdd, "buttonAdd");
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-            // 
             // openFileDialog1
             // 
             this.openFileDialog1.SupportMultiDottedExtensions = true;
@@ -119,7 +101,7 @@ namespace zanac.MAmidiMEmo.Gui
             resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
             // 
-            // FormPcmTableEditor
+            // FormDrumTableEditor
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
@@ -127,8 +109,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.CancelButton = this.buttonCancel;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.buttonAdd);
-            this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.propertyGrid1);
@@ -136,7 +116,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FormPcmTableEditor";
+            this.Name = "FormDrumTableEditor";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
@@ -153,8 +133,6 @@ namespace zanac.MAmidiMEmo.Gui
         private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOk;
-        private System.Windows.Forms.Button buttonDelete;
-        private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

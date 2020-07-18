@@ -12,6 +12,7 @@ namespace zanac.MAmidiMEmo.Gui
 {
     public partial class FormTextEditor : Form
     {
+
         /// <summary>
         /// 
         /// </summary>

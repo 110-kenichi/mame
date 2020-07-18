@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
@@ -219,7 +220,11 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             double d = CalcCurrentPitch();
 
-            double noteNum = Math.Pow(2.0, ((double)NoteOnEvent.NoteNumber + d - 69.0) / 12.0);
+            int nn = NoteOnEvent.NoteNumber;
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+
+            double noteNum = Math.Pow(2.0, ((double)nn + d - 69.0) / 12.0);
             double freq = 440.0 * noteNum;
             return freq;
         }

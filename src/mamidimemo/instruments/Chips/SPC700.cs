@@ -911,8 +911,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                var bts = parentModule.GetBaseTimbres(note.Channel);
-                var ids = parentModule.GetBaseTimbreIndexes(note.Channel);
+                var bts = parentModule.GetBaseTimbres(note);
+                var ids = parentModule.GetBaseTimbreIndexes(note);
                 for (int i = 0; i < bts.Length; i++)
                 {
                     SPC700Timbre timbre = (SPC700Timbre)bts[i];

@@ -107,7 +107,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
             }
 
             /// <summary>
-            /// Retrieves the enumerations field痴 default value.
+            /// Retrieves the enumerations field default value.
             /// </summary>
             private bool GetDefaultValue()
             {

@@ -135,7 +135,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("General")]
-        [DefaultValue(false)]
+        [DefaultValue(FollowerUnit.None)]
         [Description("Enable Follower mode. Share free voice channels with specified leader unit and does not accept any Note On MIDI event.\r\n" +
             "Be sure to set same settings with the leader unit.")]
         public virtual FollowerUnit FollowerMode
@@ -352,24 +352,22 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         public TimbreBase GetFinalTimbre(int channel)
         {
-            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
+            int pn = (int)ProgramAssignments[ProgramNumbers[channel]];
 
-            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
+            if ((pn & 0xffff0000) != 0)
             {
-                case ProgramAssignmentType.CombinedTimbre:
-                    int ptidx = pn;
-                    if (ptidx >= CombinedTimbres.Length)
-                        ptidx = CombinedTimbres.Length - 1;
-                    var pts = CombinedTimbres[ptidx];
-                    for (int i = 0; i < pts.BindTimbres.Length; i++)
-                    {
-                        if (pts.BindTimbres[i] != null) //if Timbre assigned
-                            return CombinedTimbres[ptidx];
-                    }
-                    break;
+                int ptidx = pn & 0xffff;
+                if (ptidx >= CombinedTimbres.Length)
+                    ptidx = CombinedTimbres.Length - 1;
+                var pts = CombinedTimbres[ptidx];
+                for (int i = 0; i < pts.BindTimbres.Length; i++)
+                {
+                    if (pts.BindTimbres[i] != null) //if Timbre assigned
+                        return CombinedTimbres[ptidx];
+                }
             }
 
-            int btidx = pn;
+            int btidx = pn & 0xffff;
             if (btidx >= BaseTimbres.Length)
                 btidx = BaseTimbres.Length - 1;
             return BaseTimbres[btidx];
@@ -379,32 +377,60 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual TimbreBase[] GetBaseTimbres(int channel)
+        public virtual TimbreBase[] GetBaseTimbres(NoteOnEvent ev)
         {
             List<TimbreBase> ts = new List<TimbreBase>();
 
-            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
-
-            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
+            switch (ChannelTypes[ev.Channel])
             {
-                case ProgramAssignmentType.CombinedTimbre:
-                    int ptidx = pn;
-                    if (ptidx >= CombinedTimbres.Length)
-                        ptidx = CombinedTimbres.Length - 1;
-                    foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                case ChannelType.Normal:
                     {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add(BaseTimbres[tn.Value]);
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add(BaseTimbres[tn.Value]);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(BaseTimbres[btidx]);
+                        break;
                     }
-                    if (ts.Count != 0)
-                        return ts.ToArray();
-                    break;
+                case ChannelType.Drum:
+                    {
+                        int pn = (int)DrumTimbreTable.DrumTimbres[ev.NoteNumber].TimbreNumber;
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add(BaseTimbres[tn.Value]);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(BaseTimbres[btidx]);
+                        break;
+                    }
             }
 
-            int btidx = pn;
-            if (btidx >= BaseTimbres.Length)
-                btidx = BaseTimbres.Length - 1;
-            ts.Add(BaseTimbres[btidx]);
             return ts.ToArray();
         }
 
@@ -413,32 +439,62 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual int[] GetBaseTimbreIndexes(int channel)
+        public virtual int[] GetBaseTimbreIndexes(NoteOnEvent ev)
         {
             List<int> ts = new List<int>();
 
-            int pn = (int)ProgrameAssignments[ProgramNumbers[channel]];
 
-            switch (ProgrameAssignmentTypes[ProgramNumbers[channel]])
+            switch (ChannelTypes[ev.Channel])
             {
-                case ProgramAssignmentType.CombinedTimbre:
-                    int ptidx = pn;
-                    if (ptidx >= CombinedTimbres.Length)
-                        ptidx = CombinedTimbres.Length - 1;
-                    foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                case ChannelType.Normal:
                     {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add((int)tn);
-                    }
-                    if (ts.Count != 0)
-                        return ts.ToArray();
-                    break;
-            }
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
 
-            int btidx = pn;
-            if (btidx >= BaseTimbres.Length)
-                btidx = BaseTimbres.Length - 1;
-            ts.Add(btidx);
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add((int)tn);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(btidx);
+                        break;
+                    }
+                case ChannelType.Drum:
+                    {
+                        int pn = (int)DrumTimbreTable.DrumTimbres[ev.NoteNumber].TimbreNumber;
+
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add((int)tn);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(btidx);
+                        break;
+                    }
+            }
             return ts.ToArray();
         }
 
@@ -457,63 +513,49 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
         [DataMember]
-        [Category("MIDI")]
-        [Description("Assign timbre type to program number")]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public virtual ProgramAssignmentType[] ProgrameAssignmentTypes
+        [Category("Chip")]
+        [Description("Drum Timbres table")]
+        [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(CustomObjectTypeConverter))]
+        public virtual DrumTimbreTable DrumTimbreTable
         {
             get;
             set;
         }
 
-        public virtual bool ShouldSerializeProgrameAssignmentTypes()
-        {
-            foreach (var dt in ProgrameAssignmentTypes)
-            {
-                if (dt != ProgramAssignmentType.Timbre)
-                    return true;
-            }
-            return false;
-        }
-
-        public virtual void ResetProgrameAssignmentTypes()
-        {
-            for (int i = 0; i < ProgrameAssignmentTypes.Length; i++)
-                ProgrameAssignmentTypes[i] = ProgramAssignmentType.Timbre;
-        }
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         [Category("MIDI")]
-        [Description("Assign a timbre number to program number(0-127).")]
+        [Description("Channel type <MIDI 16ch>")]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public virtual ProgramAssignmentNumber[] ProgrameAssignments
+        [CollectionDefaultValue(true)]
+        public virtual ChannelType[] ChannelTypes
         {
             get;
             set;
         }
 
-        public virtual bool ShouldSerializeProgrameAssignments()
+        public bool ShouldSerializeChannelTypes()
         {
-            for (int i = 0; i < ProgrameAssignments.Length; i++)
+            foreach (var dt in ChannelTypes)
             {
-                if ((int)ProgrameAssignments[i] != i)
+                if (dt != ChannelType.Normal)
                     return true;
             }
             return false;
         }
 
-        public virtual void ResetProgrameAssignments()
+        public void ResetChannelTypes()
         {
-            for (int i = 0; i < ProgrameAssignments.Length; i++)
-                ProgrameAssignments[i] = (ProgramAssignmentNumber)i;
+            for (int i = 0; i < ChannelTypes.Length; i++)
+                ChannelTypes[i] = ChannelType.Normal;
         }
+
 
         /// <summary>
         /// 
@@ -603,6 +645,37 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < PitchBendRanges.Length; i++)
                 Pitchs[i] = 2;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Assign the Timbre/CombinedTimbre to program number0-127.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual ProgramAssignmentNumber[] ProgramAssignments
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+            {
+                if ((int)ProgramAssignments[i] != i)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void ResetProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+        }
+
 
         [DataMember]
         [Category("MIDI")]
@@ -1367,10 +1440,19 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < MAX_TIMBRES; i++)
                 CombinedTimbres[i] = new CombinedTimbre();
 
-            ProgrameAssignments = new ProgramAssignmentNumber[128];
-            ProgrameAssignmentTypes = new ProgramAssignmentType[128];
-            for (int i = 0; i < ProgrameAssignments.Length; i++)
-                ProgrameAssignments[i] = (ProgramAssignmentNumber)i;
+            DrumTimbreTable = new DrumTimbreTable();
+
+            ProgramAssignments = new ProgramAssignmentNumber[128];
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+
+            ChannelTypes = new ChannelType[] {
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal };
 
             Channels = new bool[] {
                     true, true, true,

@@ -12,22 +12,11 @@ namespace zanac.MAmidiMEmo.ComponentModel
     /// </summary>
     public class ExpandableCollectionConverter : CollectionConverter
     {
-        private int bitMask;
-
         /// <summary>
         /// 
         /// </summary>
         public ExpandableCollectionConverter()
         {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="bitMask"></param>
-        public ExpandableCollectionConverter(int bitMask)
-        {
-            this.bitMask = bitMask;
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)

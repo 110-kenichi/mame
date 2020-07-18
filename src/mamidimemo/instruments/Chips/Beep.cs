@@ -302,7 +302,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (BeepTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (BeepTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)

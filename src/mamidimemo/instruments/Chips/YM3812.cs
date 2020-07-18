@@ -393,7 +393,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (YM3812Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (YM3812Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
@@ -531,7 +531,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double d = CalcCurrentPitch();
 
-                int noteNum = NoteOnEvent.NoteNumber + (int)d;
+                int nn = NoteOnEvent.NoteNumber;
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                    nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+
+                int noteNum = nn + (int)d;
                 if (noteNum > 127)
                     noteNum = 127;
                 else if (noteNum < 0)

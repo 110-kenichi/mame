@@ -169,12 +169,19 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
+    <Compile Include="Gui\FormDrumTableEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormDrumTableEditor.Designer.cs">
+      <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormSplash.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\FormSplash.Designer.cs">
       <DependentUpon>FormSplash.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\DrumTableUITypeEditor.cs" />
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -254,6 +261,7 @@
     <Compile Include="Instruments\Chips\YM2610B.cs" />
     <Compile Include="Instruments\Chips\YM2612.cs" />
     <Compile Include="Instruments\Chips\YM3812.cs" />
+    <Compile Include="Instruments\DrumTimbreTable.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxEngine.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxSettingsBase.cs" />
     <Compile Include="Instruments\Envelopes\AdsrEngine.cs" />
@@ -265,6 +273,8 @@
     <Compile Include="Instruments\GeneralPurposeControlSettings.cs" />
     <Compile Include="Instruments\HighPrecisionTimer.cs" />
     <Compile Include="Instruments\FollowerIndex.cs" />
+    <Compile Include="Instruments\ChannelType.cs" />
+    <Compile Include="Instruments\DrumTimbre.cs" />
     <Compile Include="Instruments\ProgramAssignmentNumber.cs" />
     <Compile Include="Instruments\ProgramAssignmentType.cs" />
     <Compile Include="Instruments\CombinedTimbre.cs" />
@@ -334,6 +344,9 @@
     <Compile Include="Midi\MidiManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Gui\FormDrumTableEditor.resx">
+      <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
     </EmbeddedResource>

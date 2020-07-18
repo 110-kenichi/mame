@@ -94,11 +94,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [Browsable(false)]
-        public override ProgramAssignmentType[] ProgrameAssignmentTypes
+        public override DrumTimbreTable DrumTimbreTable
         {
             get;
             set;
@@ -108,7 +105,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [Browsable(false)]
-        public override ProgramAssignmentNumber[] ProgrameAssignments
+        public override ProgramAssignmentNumber[] ProgramAssignments
         {
             get;
             set;
@@ -116,6 +113,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [Browsable(false)]
         public override FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public override ChannelType[] ChannelTypes
         {
             get;
             set;
@@ -566,7 +570,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (MT32Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (MT32Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     int emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot < 0)

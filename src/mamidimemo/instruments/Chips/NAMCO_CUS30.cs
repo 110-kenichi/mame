@@ -311,7 +311,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (NAMCO_CUS30Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (NAMCO_CUS30Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
@@ -437,7 +437,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPitchUpdated()
             {
                 double d = CalcCurrentPitch();
-                double noteNum = Math.Pow(2.0, ((double)NoteOnEvent.NoteNumber + d - 69.0) / 12.0);
+                int nn = NoteOnEvent.NoteNumber;
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                    nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                double noteNum = Math.Pow(2.0, ((double)nn + d - 69.0) / 12.0);
                 double freq = 440.0 * noteNum;
 
                 //max 1048575(20bit)

@@ -360,7 +360,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (SCC1Timbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (SCC1Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)

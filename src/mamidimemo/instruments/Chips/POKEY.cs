@@ -541,7 +541,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (PokeyTimbre timbre in parentModule.GetBaseTimbres(note.Channel))
+                foreach (PokeyTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
                     int emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot < 0)

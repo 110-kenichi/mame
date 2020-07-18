@@ -150,7 +150,7 @@ namespace zanac.MAmidiMEmo.Gui
                 Graphics g = e.Graphics;
                 Size sz = this.ClientSize;
                 Size dotSz = Size.Empty;
-                dotSz = new Size(sz.Width / wsgLen, sz.Height / (f_WsgMaxValue + 1));
+                dotSz = new Size(sz.Width / (wsgLen == 0 ? 1 : wsgLen) , sz.Height / (f_WsgMaxValue + 1));
 
                 //fill bg
                 using (SolidBrush sb = new SolidBrush(Color.Black))
