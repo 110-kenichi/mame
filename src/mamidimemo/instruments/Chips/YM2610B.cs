@@ -1319,7 +1319,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             int nn = NoteOnEvent.NoteNumber;
                             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                                nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                                nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                             int noteNum = nn + (int)d;
                             if (noteNum > 127)
                                 noteNum = 127;
@@ -1405,7 +1405,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int nn = NoteOnEvent.NoteNumber;
                 if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                    nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
 
                 int v = nn % 15;
 

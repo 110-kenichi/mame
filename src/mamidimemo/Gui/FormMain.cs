@@ -436,6 +436,23 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        private void cloneSelectedChipToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = listViewIntruments.FocusedItem;
+            if (item != null)
+            {
+                var tp = ((InstrumentBase)item.Tag).InstrumentType;
+                var inst = InstrumentManager.AddInstrument(tp);
+                if (inst != null)
+                    inst.SerializeData = ((InstrumentBase)item.Tag).SerializeData;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripMenuItemExit_Click(object sender, EventArgs e)
         {
             Close();
@@ -847,6 +864,5 @@ namespace zanac.MAmidiMEmo.Gui
                 Process.Start(InstrumentManager.LastVgmOutputDir);
             }
         }
-
     }
 }

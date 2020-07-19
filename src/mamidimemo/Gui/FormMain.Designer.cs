@@ -131,6 +131,7 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
+            this.cloneSelectedChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -202,7 +203,8 @@
             // 
             this.contextMenuStripInst.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStripInst.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.decreaseThisKindOfChipToolStripMenuItem});
+            this.decreaseThisKindOfChipToolStripMenuItem,
+            this.cloneSelectedChipToolStripMenuItem});
             this.contextMenuStripInst.Name = "contextMenuStrip1";
             resources.ApplyResources(this.contextMenuStripInst, "contextMenuStripInst");
             // 
@@ -1067,6 +1069,12 @@
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
             // 
+            // cloneSelectedChipToolStripMenuItem
+            // 
+            this.cloneSelectedChipToolStripMenuItem.Name = "cloneSelectedChipToolStripMenuItem";
+            resources.ApplyResources(this.cloneSelectedChipToolStripMenuItem, "cloneSelectedChipToolStripMenuItem");
+            this.cloneSelectedChipToolStripMenuItem.Click += new System.EventHandler(this.cloneSelectedChipToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1200,6 +1208,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButton20;
         private System.Windows.Forms.ToolStripButton toolStripButton21;
+        private System.Windows.Forms.ToolStripMenuItem cloneSelectedChipToolStripMenuItem;
     }
 }
 

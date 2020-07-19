@@ -64,8 +64,8 @@ namespace zanac.MAmidiMEmo.Instruments
         public PcmTimbreBase(int noteNumber)
         {
             NoteNumber = noteNumber;
-            var no = new NoteOnEvent((SevenBitNumber)NoteNumber, (SevenBitNumber)0);
-            KeyName = no.GetNoteName() + no.GetNoteOctave().ToString();
+
+            KeyName = Midi.MidiManager.GetNoteName((SevenBitNumber)noteNumber);
         }
     }
 }

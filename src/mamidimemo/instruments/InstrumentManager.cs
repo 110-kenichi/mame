@@ -197,7 +197,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="instrumentType"></param>
-        public static void AddInstrument(InstrumentType instrumentType)
+        public static InstrumentBase AddInstrument(InstrumentType instrumentType)
         {
             lock (InstrumentManager.ExclusiveLockObject)
             {
@@ -213,8 +213,11 @@ namespace zanac.MAmidiMEmo.Instruments
                     InstrumentAdded?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
                     if (VgmRecodring)
                         inst.StartVgmRecordingTo(LastVgmOutputDir);
+
+                    return inst;
                 }
             }
+            return null;
         }
 
         /// <summary>

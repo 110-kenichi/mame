@@ -660,7 +660,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int nn = NoteOnEvent.NoteNumber;
                 if(ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                    nn = ParentModule.DrumTimbreTable.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                 int v = nn % 15;
 
                 Ay8910WriteData(parentModule.UnitNumber, 0, (byte)(6));

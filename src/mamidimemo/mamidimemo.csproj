@@ -166,7 +166,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModel\CacheMemory.cs" />
+    <Compile Include="ComponentModel\EnumTypeEditor.cs" />
+    <Compile Include="ComponentModel\EnumConverter.cs" />
+    <Compile Include="ComponentModel\ExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
+    <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
     <Compile Include="Gui\FormDrumTableEditor.cs">
@@ -261,7 +266,6 @@
     <Compile Include="Instruments\Chips\YM2610B.cs" />
     <Compile Include="Instruments\Chips\YM2612.cs" />
     <Compile Include="Instruments\Chips\YM3812.cs" />
-    <Compile Include="Instruments\DrumTimbreTable.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxEngine.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxSettingsBase.cs" />
     <Compile Include="Instruments\Envelopes\AdsrEngine.cs" />
@@ -342,6 +346,7 @@
     <Compile Include="Instruments\Vst\VstSettings.cs" />
     <Compile Include="Mame\MameIf.cs" />
     <Compile Include="Midi\MidiManager.cs" />
+    <Compile Include="Midi\NoteNames.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Gui\FormDrumTableEditor.resx">

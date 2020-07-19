@@ -408,25 +408,29 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 case ChannelType.Drum:
                     {
-                        int pn = (int)DrumTimbreTable.DrumTimbres[ev.NoteNumber].TimbreNumber;
-                        if ((pn & 0xffff0000) != 0)
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
                         {
-                            int ptidx = pn & 0xffff;
-                            if (ptidx >= CombinedTimbres.Length)
-                                ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
                             {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add(BaseTimbres[tn.Value]);
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                {
+                                    if (tn != null && tn.Value < BaseTimbres.Length)
+                                        ts.Add(BaseTimbres[tn.Value]);
+                                }
+                                if (ts.Count != 0)
+                                    return ts.ToArray();
                             }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
-                        }
 
-                        int btidx = pn & 0xffff;
-                        if (btidx >= BaseTimbres.Length)
-                            btidx = BaseTimbres.Length - 1;
-                        ts.Add(BaseTimbres[btidx]);
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            ts.Add(BaseTimbres[btidx]);
+                        }
                         break;
                     }
             }
@@ -449,7 +453,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 case ChannelType.Normal:
                     {
                         int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
-
                         if ((pn & 0xffff0000) != 0)
                         {
                             int ptidx = pn & 0xffff;
@@ -472,26 +475,29 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 case ChannelType.Drum:
                     {
-                        int pn = (int)DrumTimbreTable.DrumTimbres[ev.NoteNumber].TimbreNumber;
-
-                        if ((pn & 0xffff0000) != 0)
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
                         {
-                            int ptidx = pn & 0xffff;
-                            if (ptidx >= CombinedTimbres.Length)
-                                ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
                             {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add((int)tn);
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                {
+                                    if (tn != null && tn.Value < BaseTimbres.Length)
+                                        ts.Add((int)tn);
+                                }
+                                if (ts.Count != 0)
+                                    return ts.ToArray();
                             }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
-                        }
 
-                        int btidx = pn & 0xffff;
-                        if (btidx >= BaseTimbres.Length)
-                            btidx = BaseTimbres.Length - 1;
-                        ts.Add(btidx);
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            ts.Add(btidx);
+                        }
                         break;
                     }
             }
@@ -513,18 +519,22 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-
         [DataMember]
         [Category("Chip")]
         [Description("Drum Timbres table")]
         [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(CustomObjectTypeConverter))]
-        public virtual DrumTimbreTable DrumTimbreTable
+        [TypeConverter(typeof(ExpandableNoteCollectionConverter))]
+        public virtual DrumTimbre[] DrumTimbres
         {
             get;
             set;
         }
 
+        public void ResetDrumTimbres()
+        {
+            for (int i = 0; i < DrumTimbres.Length; i++)
+                DrumTimbres[i] = new DrumTimbre(i, null);
+        }
 
         /// <summary>
         /// 
@@ -532,7 +542,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Channel type <MIDI 16ch>")]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         [CollectionDefaultValue(true)]
         public virtual ChannelType[] ChannelTypes
         {
@@ -563,7 +573,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Receving MIDI ch <MIDI 16ch>")]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         [CollectionDefaultValue(true)]
         public virtual bool[] Channels
         {
@@ -593,7 +603,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Pitch (0 - 8192 - 16383) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(16383)]
         [CollectionDefaultValue((ushort)8192)]
         public virtual ushort[] Pitchs
@@ -621,7 +631,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Pitch bend sensitivity [half note] <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)2)]
         public virtual byte[] PitchBendRanges
@@ -653,7 +663,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category("MIDI")]
         [Description("Assign the Timbre/CombinedTimbre to program number0-127.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         public virtual ProgramAssignmentNumber[] ProgramAssignments
         {
             get;
@@ -680,7 +690,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Program number (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] ProgramNumbers
@@ -702,13 +712,13 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetProgramNumbers()
         {
             for (int i = 0; i < ProgramNumbers.Length; i++)
-                Pitchs[i] = 0;
+                ProgramNumbers[i] = 0;
         }
 
         [DataMember]
         [Category("MIDI")]
         [Description("Volume (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)127)]
         public virtual byte[] Volumes
@@ -736,7 +746,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Volume (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)127)]
         public virtual byte[] Expressions
@@ -765,7 +775,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Volume ((L)0-63(C)64-127(R)) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] Panpots
@@ -793,7 +803,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] Modulations
@@ -822,7 +832,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Rate (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationRates
@@ -865,7 +875,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDepthes
@@ -893,7 +903,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Delay (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDelays
@@ -938,7 +948,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth Range[Half Note] (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] ModulationDepthRangesNote
@@ -967,7 +977,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth Range[Cent] (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDepthRangesCent
@@ -997,7 +1007,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Portamento (0:Off 64:On) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] Portamentos
@@ -1027,7 +1037,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Portamento Time (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] PortamentoTimes
@@ -1056,7 +1066,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Mono mode (0-127) 0:Disable mono mode <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] MonoMode
@@ -1090,6 +1100,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
             "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16-19,80-83 message.")]
         [DisplayName("General Purpose Control Settings(GPCS)")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         public GeneralPurposeControlSettings[] GPCS
         {
             get;
@@ -1440,7 +1451,9 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < MAX_TIMBRES; i++)
                 CombinedTimbres[i] = new CombinedTimbre();
 
-            DrumTimbreTable = new DrumTimbreTable();
+            DrumTimbres = new DrumTimbre[128];
+            for (int i = 0; i < DrumTimbres.Length; i++)
+                DrumTimbres[i] = new DrumTimbre(i, null);
 
             ProgramAssignments = new ProgramAssignmentNumber[128];
             for (int i = 0; i < ProgramAssignments.Length; i++)

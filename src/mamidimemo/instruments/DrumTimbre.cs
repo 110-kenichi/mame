@@ -6,12 +6,15 @@ using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
     /// <summary>
     /// 
     /// </summary>
+    [TypeConverter(typeof(CustomExpandableObjectConverter))]
+    [JsonConverter(typeof(NoTypeConverterJsonConverter<DrumTimbre>))]
     [DataContract]
     [MidiHook]
     public class DrumTimbre : ContextBoundObject
@@ -40,19 +43,19 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        public ProgramAssignmentNumber TimbreNumber
+        public ProgramAssignmentNumber? TimbreNumber
         {
             get;
             set;
         }
 
-        private byte f_BaseNote;
+        private NoteNames f_BaseNote;
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
-        public byte BaseNote
+        public NoteNames BaseNote
         {
             get
             {
@@ -61,34 +64,40 @@ namespace zanac.MAmidiMEmo.Instruments
             set
             {
                 f_BaseNote = value;
-                if (f_BaseNote > 127)
-                    f_BaseNote = 127;
             }
         }
 
         public bool ShouldSerializeBaseNote()
         {
-            return BaseNote != 60;
+            return BaseNote != NoteNames.C4;
         }
 
         public void ResetBaseNote()
         {
-            BaseNote = 60;
+            BaseNote = NoteNames.C4;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        public String TimbreName
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="noteNumber"></param>
-        public DrumTimbre(int noteNumber, ProgramAssignmentNumber timbreNumber)
+        public DrumTimbre(int noteNumber, ProgramAssignmentNumber? timbreNumber)
         {
             NoteNumber = noteNumber;
-            var no = new NoteOnEvent((SevenBitNumber)NoteNumber, (SevenBitNumber)0);
-            KeyName = no.GetNoteName() + no.GetNoteOctave().ToString();
+            KeyName = Midi.MidiManager.GetNoteName((SevenBitNumber)noteNumber);
 
             TimbreNumber = timbreNumber;
-            BaseNote = 60;
+            BaseNote = NoteNames.C4;
         }
     }
 }

@@ -59,14 +59,14 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 if (value != null)
                 {
-                    var s = JsonConvert.SerializeObject(((DrumTimbreTable)value).DrumTimbres, Program.JsonAutoSettings);
+                    var s = JsonConvert.SerializeObject((DrumTimbre[])value, Program.JsonAutoSettings);
                     frm.DrumData = JsonConvert.DeserializeObject<DrumTimbre[]>(s, Program.JsonAutoSettings);
                 }
                 else
                 {
                     var drumTimbres = new DrumTimbre[128];
                     for (int i = 0; i < drumTimbres.Length; i++)
-                        drumTimbres[i] = new DrumTimbre(i, (ProgramAssignmentNumber)((int)ProgramAssignmentNumber.CombinedTimbre0 + 128 + i));
+                        drumTimbres[i] = new DrumTimbre(i, null);
 
                     frm.DrumData = drumTimbres;
                 }
@@ -74,7 +74,7 @@ namespace zanac.MAmidiMEmo.Gui
                 if (dr == DialogResult.OK)
                 {
                     for (int i = 0; i < frm.DrumData.Length; i++)
-                        ((DrumTimbreTable)value).DrumTimbres[i] = frm.DrumData[i];
+                        ((DrumTimbre[])value)[i] = frm.DrumData[i];
                     return value;
                 }
                 else

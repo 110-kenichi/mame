@@ -168,7 +168,8 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
 
         void ICollection.CopyTo(Array array, int index)
         {
-            CopyTo((VstPlugin[])array, index);
+            if(array is VstPlugin[])
+                CopyTo((VstPlugin[])array, index);
         }
 
         bool ICollection.IsSynchronized
