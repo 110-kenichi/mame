@@ -307,7 +307,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.KeyOn(midiEvent);
         }
@@ -385,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase[] SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
@@ -417,7 +417,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (YM2413 inst, int slot) searchEmptySlot(NoteOnEvent note, YM2413Timbre timbre)
+            private (YM2413 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, YM2413Timbre timbre)
             {
                 var emptySlot = (parentModule, -1);
 
@@ -470,7 +470,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2413Sound(YM2413 parentModule, YM2413SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2413Sound(YM2413 parentModule, YM2413SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (YM2413Timbre)timbre;
@@ -560,7 +560,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         noteNum = 127;
                     else if (noteNum < 0)
                         noteNum = 0;
-                    var nnOn = new NoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
+                    var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
                     ushort freq = convertFmFrequency(nnOn);
                     var oct = nnOn.GetNoteOctave();
                     if (oct < 0)
@@ -718,7 +718,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note)
             {
                 if (parentModule.FrequencyAccuracyMode)
                     return freqTable1[(int)note.GetNoteName() + 1];
@@ -732,7 +732,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note, bool plus)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
             {
                 if (plus)
                 {

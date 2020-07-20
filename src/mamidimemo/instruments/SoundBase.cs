@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -69,7 +70,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// MIDIイベント
         /// </summary>
-        public NoteOnEvent NoteOnEvent
+        public TaggedNoteOnEvent NoteOnEvent
         {
             get;
             private set;
@@ -79,7 +80,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="slot">チップ上の物理的なチャンネル(MIDI chと区別するためスロットとする)</param>
-        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot)
+        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot)
         {
             NoteOnEvent = noteOnEvent;
             Slot = slot;

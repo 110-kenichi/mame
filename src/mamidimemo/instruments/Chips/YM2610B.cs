@@ -796,7 +796,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.KeyOn(midiEvent);
         }
@@ -878,7 +878,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase[] SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
@@ -887,6 +887,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i=0;i<bts.Length;i++)
                 {
                     YM2610BTimbre timbre = (YM2610BTimbre)bts[i];
+
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
@@ -931,7 +932,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (YM2610B inst, int slot) searchEmptySlot(NoteOnEvent note, YM2610BTimbre timbre)
+            private (YM2610B inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, YM2610BTimbre timbre)
             {
                 var emptySlot = (parentModule, -1);
 
@@ -1005,7 +1006,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot, int timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, int timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbreIndex = timbreIndex;
@@ -1325,7 +1326,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 noteNum = 127;
                             else if (noteNum < 0)
                                 noteNum = 0;
-                            var nnOn = new NoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
+                            var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
                             ushort freq = convertFmFrequency(nnOn);
                             var octave = nnOn.GetNoteOctave();
                             if (octave < 0)
@@ -1537,7 +1538,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note)
             {
                 return freqTable[(int)note.GetNoteName() + 1];
             }
@@ -1548,7 +1549,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note, bool plus)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
             {
                 if (plus)
                     return freqTable[(int)note.GetNoteName() + 2];

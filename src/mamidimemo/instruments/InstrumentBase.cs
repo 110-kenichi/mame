@@ -24,6 +24,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
+using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -345,13 +346,17 @@ namespace zanac.MAmidiMEmo.Instruments
             get;
         }
 
+        private TimbreBase[] lastNoteOnTimbres = new TimbreBase[16];
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public TimbreBase GetFinalTimbre(int channel)
+        public TimbreBase GetLastTimbre(int channel)
         {
+            if (lastNoteOnTimbres[channel] != null)
+                return lastNoteOnTimbres[channel];
+
             int pn = (int)ProgramAssignments[ProgramNumbers[channel]];
 
             if ((pn & 0xffff0000) != 0)
@@ -377,9 +382,28 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual TimbreBase[] GetBaseTimbres(NoteOnEvent ev)
+        public virtual TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
         {
             List<TimbreBase> ts = new List<TimbreBase>();
+
+            var tb = ev.Tag as NoteOnTimbreInfo;
+            if (tb != null)
+            {
+                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
+                if (ctb != null)
+                {
+                    foreach (int? tn in ctb.BindTimbres)
+                    {
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add(BaseTimbres[tn.Value]);
+                    }
+                }
+                else
+                {
+                    ts.Add(tb.Timbre);
+                }
+                return ts.ToArray();
+            }
 
             switch (ChannelTypes[ev.Channel])
             {
@@ -443,10 +467,28 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual int[] GetBaseTimbreIndexes(NoteOnEvent ev)
+        public virtual int[] GetBaseTimbreIndexes(TaggedNoteOnEvent ev)
         {
             List<int> ts = new List<int>();
 
+            NoteOnTimbreInfo tb = ev.Tag as NoteOnTimbreInfo;
+            if (tb != null)
+            {
+                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
+                if (ctb != null)
+                {
+                    foreach (int? tn in ctb.BindTimbres)
+                    {
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add((int)tn);
+                    }
+                }
+                else
+                {
+                    ts.Add(tb.TimbreNo);
+                }
+                return ts.ToArray();
+            }
 
             switch (ChannelTypes[ev.Channel])
             {
@@ -1739,7 +1781,23 @@ namespace zanac.MAmidiMEmo.Instruments
                             {
                                 if (FollowerMode != FollowerUnit.None)
                                     break;
-                                OnNoteOnEvent(non);
+                                lastNoteOnTimbres[ce.Channel] = null;
+                                OnNoteOnEvent(new TaggedNoteOnEvent(non));
+                            }
+                            break;
+                        }
+                    case TaggedNoteOnEvent tnon:
+                        {
+                            if (tnon.Velocity == 0)
+                                OnNoteOffEvent(new NoteOffEvent(tnon.NoteNumber, (SevenBitNumber)0) { Channel = tnon.Channel, DeltaTime = tnon.DeltaTime });
+                            else
+                            {
+                                if (FollowerMode != FollowerUnit.None)
+                                    break;
+                                var ni = tnon.Tag as NoteOnTimbreInfo;
+                                if(ni != null)
+                                    lastNoteOnTimbres[ce.Channel] = ni.Timbre;
+                                OnNoteOnEvent(tnon);
                             }
                             break;
                         }
@@ -1780,7 +1838,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected virtual void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected virtual void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
 
         }

@@ -139,7 +139,7 @@ namespace zanac.MAmidiMEmo.Gui
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 
-        private void PianoControl1_NoteOn(object sender, NoteOnEvent e)
+        private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
         {
             if (toolStripComboBox2.SelectedIndex != 0)
             {

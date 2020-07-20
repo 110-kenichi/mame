@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments.Envelopes
 {
@@ -19,12 +20,12 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <summary>
         /// added note
         /// </summary>
-        private List<NoteOnEvent> orderedNotes = new List<NoteOnEvent>();
+        private List<TaggedNoteOnEvent> orderedNotes = new List<TaggedNoteOnEvent>();
 
         /// <summary>
         /// playing note
         /// </summary>
-        private List<NoteOnEvent> arpNotes;
+        private List<TaggedNoteOnEvent> arpNotes;
 
         private int arpOctaveCount;
 
@@ -149,7 +150,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <summary>
         /// 
         /// </summary>
-        public NoteOnEvent LastPassedNote
+        public TaggedNoteOnEvent LastPassedNote
         {
             get;
             set;
@@ -158,7 +159,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <summary>
         /// 
         /// </summary>
-        public NoteOnEvent FirstAddedNote
+        public TaggedNoteOnEvent FirstAddedNote
         {
             get;
             private set;
@@ -212,7 +213,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// 
         /// </summary>
         /// <param name="noteOn"></param>
-        public void AddNote(NoteOnEvent noteOn)
+        public void AddNote(TaggedNoteOnEvent noteOn)
         {
             for (int i = 0; i < orderedNotes.Count; i++)
             {
@@ -262,7 +263,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// 
         /// </summary>
         /// <returns></returns>
-        public NoteOnEvent NextNote()
+        public TaggedNoteOnEvent NextNote()
         {
             if (SkipNextNote)
             {
@@ -280,13 +281,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
 
             //次のノートを取得
-            NoteOnEvent an = null;
+            TaggedNoteOnEvent an = null;
             if (StepStyle != ArpStepStyle.Random)
                 an = arpNotes[arpStep];
             else
                 an = arpNotes[random.Next(arpNotes.Count)];
             arpStep++;
-            var nan = new NoteOnEvent(an.NoteNumber, an.Velocity) { Channel = an.Channel };
+            var nan = new TaggedNoteOnEvent(an.NoteNumber, an.Velocity) { Channel = an.Channel };
 
             //オクターブを上げる処理
             if (arpOctaveCount > 0)
@@ -307,7 +308,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// 
         /// </summary>
         /// <returns></returns>
-        public NoteOnEvent PeekNextNote()
+        public TaggedNoteOnEvent PeekNextNote()
         {
             var tmpSrpStep = arpStep;
             if (SkipNextNote)
@@ -324,13 +325,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
 
             //次のノートを取得
-            NoteOnEvent an = null;
+            TaggedNoteOnEvent an = null;
             if (StepStyle != ArpStepStyle.Random)
                 an = arpNotes[tmpSrpStep];
             else
                 an = arpNotes[random.Next(arpNotes.Count)];
             tmpSrpStep++;
-            var nan = new NoteOnEvent(an.NoteNumber, an.Velocity) { Channel = an.Channel };
+            var nan = new TaggedNoteOnEvent(an.NoteNumber, an.Velocity) { Channel = an.Channel };
 
             //オクターブを上げる処理
             if (tmpArpOctaveCount > 0)
@@ -365,16 +366,16 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             {
                 case ArpStepStyle.Up:
                     sortUp();
-                    arpNotes = new List<NoteOnEvent>(orderedNotes);
+                    arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                     break;
 
                 case ArpStepStyle.Down:
                     sortDown();
-                    arpNotes = new List<NoteOnEvent>(orderedNotes);
+                    arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                     break;
 
                 case ArpStepStyle.Order:
-                    arpNotes = new List<NoteOnEvent>(orderedNotes);
+                    arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                     break;
 
                 case ArpStepStyle.UpDown:
@@ -383,13 +384,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         if (num > 1)
                         {
                             sortUp();
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                             for (int i = 0; i < num - 2; i++)
                                 arpNotes.Add(orderedNotes[num - 2 - i]);
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -400,13 +401,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         if (num > 1)
                         {
                             sortDown();
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                             for (int i = 0; i < num - 2; i++)
                                 arpNotes.Add(orderedNotes[num - 2 - i]);
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -417,14 +418,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         if (num > 1)
                         {
                             sortUp();
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                             for (int i = 0; i < num; i++)
                                 arpNotes.Add(orderedNotes[num - 1 - i]);
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -435,13 +436,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         if (num > 1)
                         {
                             sortDown();
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                             for (int i = 0; i < num; i++)
                                 arpNotes.Add(orderedNotes[num - 1 - i]);
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -465,7 +466,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -488,7 +489,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -516,7 +517,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -535,7 +536,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -559,7 +560,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -578,7 +579,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
@@ -602,20 +603,20 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         }
                         else
                         {
-                            arpNotes = new List<NoteOnEvent>(orderedNotes);
+                            arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         }
                     }
                     break;
 
                 case ArpStepStyle.Random:
-                    arpNotes = new List<NoteOnEvent>(orderedNotes);
+                    arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                     sorted = false;
                     break;
 
                 case ArpStepStyle.RandomOnce:
                     {
                         var num = orderedNotes.Count;
-                        arpNotes = new List<NoteOnEvent>(orderedNotes);
+                        arpNotes = new List<TaggedNoteOnEvent>(orderedNotes);
                         for (int i = 0; i < num; i++)
                         {
                             byte rand = (byte)(random.Next() % num);

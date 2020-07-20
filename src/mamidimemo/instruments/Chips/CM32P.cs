@@ -757,6 +757,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         param2 = noff.Velocity;
                         break;
                     }
+                case TaggedNoteOnEvent non:
+                    {
+                        if (non.Velocity == 0)
+                            type = 0x80;
+                        else
+                            type = 0x90;
+                        ch = non.Channel;
+                        param1 = non.NoteNumber;
+                        param2 = non.Velocity;
+                        break;
+                    }
                 case NoteOnEvent non:
                     {
                         if (non.Velocity == 0)
@@ -837,7 +848,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (non.Velocity == 0)
                             OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                         else
-                            OnNoteOnEvent(non);
+                            OnNoteOnEvent(new TaggedNoteOnEvent(non));
                         break;
                     }
             }
@@ -847,7 +858,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.KeyOn(midiEvent);
         }
@@ -888,7 +899,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase[] SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
@@ -913,7 +924,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(TaggedNoteOnEvent note)
             {
                 int emptySlot = -1;
 
@@ -947,7 +958,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public CM32PSound(CM32P parentModule, CM32PSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public CM32PSound(CM32P parentModule, CM32PSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];

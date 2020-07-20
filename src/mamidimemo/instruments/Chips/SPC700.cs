@@ -831,7 +831,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.KeyOn(midiEvent);
         }
@@ -907,7 +907,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase[] SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
@@ -916,6 +916,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < bts.Length; i++)
                 {
                     SPC700Timbre timbre = (SPC700Timbre)bts[i];
+
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
@@ -948,7 +949,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (SPC700 inst, int slot) searchEmptySlot(NoteOnEvent note)
+            private (SPC700 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
                 return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
             }
@@ -995,7 +996,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbreIndex = timbreIndex;

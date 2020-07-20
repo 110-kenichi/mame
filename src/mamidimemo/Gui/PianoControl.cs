@@ -398,13 +398,13 @@ namespace zanac.MAmidiMEmo.Gui
                 if (r.IsVisible(e.Location))
                 {
                     lastKeyOn = keyNum;
-                    NoteOnEvent noe = new NoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                    var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
                     NoteOn?.Invoke(this, noe);
                 }
             }
         }
 
-        public event EventHandler<NoteOnEvent> NoteOn;
+        public event EventHandler<TaggedNoteOnEvent> NoteOn;
 
         public event EventHandler<NoteOffEvent> NoteOff;
 
@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Gui
                             lastKeyOff();
 
                             lastKeyOn = keyNum;
-                            NoteOnEvent noe = new NoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                            var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
                             NoteOn?.Invoke(this, noe);
                         }
                     }

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -237,7 +238,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         private void processSCCS(ControlChangeEvent midiEvent)
         {
-            var tim = parentModule.GetFinalTimbre(midiEvent.Channel);
+            var tim = parentModule.GetLastTimbre(midiEvent.Channel);
             bool process = false;
             foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, midiEvent.ControlNumber - 70 + 1))
             {
@@ -393,7 +394,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 return -1;
 
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetFinalTimbre(ch);
+            var timbre = parentModule.GetLastTimbre(ch);
             var sds = timbre.SDS.ARP;
 
             //end arp
@@ -449,7 +450,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (arp.ArpAction == null)
                 return -1;
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetFinalTimbre(ch);
+            var timbre = parentModule.GetLastTimbre(ch);
             var sds = timbre.SDS.ARP;
             //end arp
             if (!sds.Enable ||
@@ -501,7 +502,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="note"></param>
-        public virtual void KeyOn(NoteOnEvent note)
+        public virtual void KeyOn(TaggedNoteOnEvent note)
         {
             if (preProcessArrpegioForKeyOn(note))
                 return;
@@ -511,7 +512,7 @@ namespace zanac.MAmidiMEmo.Instruments
             postProcessArrpegioForKeyOn(note, snd);
         }
 
-        private SoundBase[] keyOnCore(NoteOnEvent note)
+        private SoundBase[] keyOnCore(TaggedNoteOnEvent note)
         {
             var snd = SoundOn(note);
             if (snd != null && snd.Length != 0)
@@ -527,7 +528,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="note"></param>
-        public virtual SoundBase[] SoundOn(NoteOnEvent note)
+        public virtual SoundBase[] SoundOn(TaggedNoteOnEvent note)
         {
             return null;
         }
@@ -552,7 +553,7 @@ namespace zanac.MAmidiMEmo.Instruments
             arp.LastPassedNote = null;
         }
 
-        private void keyOffCore(NoteOnEvent onote)
+        private void keyOffCore(TaggedNoteOnEvent onote)
         {
             if (onote != null)
                 keyOffCore(new NoteOffEvent(onote.NoteNumber, (SevenBitNumber)0) { Channel = onote.Channel });
@@ -587,10 +588,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="note"></param>
         /// <returns></returns>
-        private bool preProcessArrpegioForKeyOn(NoteOnEvent note)
+        private bool preProcessArrpegioForKeyOn(TaggedNoteOnEvent note)
         {
             FourBitNumber ch = note.Channel;
-            ArpSettings sds = parentModule.GetFinalTimbre(ch).SDS.ARP;
+            ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
             if (sds.Enable)
             {
                 switch (sds.ArpMethod)
@@ -655,10 +656,10 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
 
-        private void postProcessArrpegioForKeyOn(NoteOnEvent note, SoundBase[] snd)
+        private void postProcessArrpegioForKeyOn(TaggedNoteOnEvent note, SoundBase[] snd)
         {
             FourBitNumber ch = note.Channel;
-            ArpSettings sds = parentModule.GetFinalTimbre(ch).SDS.ARP;
+            ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
             if (snd != null && sds.Enable)
             {
                 if (sds.ArpMethod == ArpMethod.PitchChange)
@@ -686,7 +687,7 @@ namespace zanac.MAmidiMEmo.Instruments
             int ch = note.Channel;
             if (ArpeggiatorsForKeyOn.ContainsKey(ch))
             {
-                var timbre = parentModule.GetFinalTimbre(ch);
+                var timbre = parentModule.GetLastTimbre(ch);
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForKeyOn[ch];
 
@@ -718,7 +719,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             else if (ArpeggiatorsForPitch.ContainsKey(ch))
             {
-                var timbre = parentModule.GetFinalTimbre(ch);
+                var timbre = parentModule.GetLastTimbre(ch);
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForPitch[ch];
 
@@ -811,7 +812,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="onSounds"></param>
         /// <param name="maxSlot"></param>
         /// <returns></returns>
-        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot) where T : SoundBase
         {
             return SearchEmptySlotAndOff(onSounds, newNote, maxSlot, -1);
         }
@@ -824,7 +825,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
+        protected int SearchEmptySlotAndOff<T>(SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase
         {
             if (slot < 0)
             {
@@ -894,7 +895,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="newNote"></param>
         /// <param name="maxSlot"></param>
         /// <returns></returns>
-        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
         {
             return SearchEmptySlotAndOffForLeader(inst, onSounds, newNote, maxSlot, -1);
         }
@@ -907,7 +908,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, NoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
         {
             //gather leader and followers
             Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
