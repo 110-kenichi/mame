@@ -333,7 +333,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <returns></returns>
             private (NAMCO_CUS30 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
+                return SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 8);
             }
 
             internal override void AllSoundOff()

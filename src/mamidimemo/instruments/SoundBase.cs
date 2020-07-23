@@ -76,6 +76,8 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        private uint gateTime;
+
         /// <summary>
         /// 
         /// </summary>
@@ -146,6 +148,26 @@ namespace zanac.MAmidiMEmo.Instruments
                 EnableFx = efs.Enable;
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+            {
+                gateTime = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
+                HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processGateTime), null);
+            }
+        }
+
+        private double processGateTime(object state)
+        {
+            if (!IsDisposed && !IsSoundOff)
+            {
+                if (gateTime > 0)
+                    gateTime -= HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                if (gateTime > 0)
+                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+
+                KeyOff();
+            }
+            return -1;
         }
 
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOn;

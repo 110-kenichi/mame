@@ -209,6 +209,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override ArpSettings GlobalARP
+        {
+            get;
+            set;
+        }
+
+
         [Browsable(false)]
         public override ChannelType[] ChannelTypes
         {
@@ -928,7 +939,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int emptySlot = -1;
 
-                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 24));
+                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, 31);
                 return emptySlot;
             }
 

@@ -450,25 +450,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundType.SPSG:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, spsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, spsgOnSounds, note, 1);
                             break;
                         }
                     case SoundType.PSG:
                         {
                             if (timbre.PartialReserveSPSG)
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1);
                             else
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2);
                             break;
                         }
                     case SoundType.WAV:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wavOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wavOnSounds, note, 1);
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, 1);
                             break;
                         }
                 }

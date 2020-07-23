@@ -555,8 +555,9 @@ namespace zanac.MAmidiMEmo.Gui
             me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
             MidiManager.SendMidiEvent(me);
 
-            foreach (var inst in InstrumentManager.GetAllInstruments())
-                inst.AllSoundOff();
+            lock (InstrumentManager.ExclusiveLockObject)
+                foreach (var inst in InstrumentManager.GetAllInstruments())
+                    inst.AllSoundOff();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -862,6 +863,17 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 InstrumentManager.StopVgmRecording();
                 Process.Start(InstrumentManager.LastVgmOutputDir);
+            }
+        }
+
+        private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (toolStripComboBox2.SelectedIndex != 0)
+            {
+                //Program change
+                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
+                pe.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+                MidiManager.SendMidiEvent(pe);
             }
         }
     }

@@ -423,14 +423,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (parentModule.RHY == 0)
                 {
-                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
+                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
                 }
                 else
                 {
                     if (timbre.ToneType != ToneType.DrumSet)
-                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                     else
-                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumOnSounds, note, 6);
                 }
 
                 return emptySlot;

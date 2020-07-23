@@ -20,7 +20,7 @@ namespace zanac.MAmidiMEmo.Instruments
     /// 
     /// </summary>
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
-    [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
+    [JsonConverter(typeof(NoTypeConverterJsonConverter<CombinedTimbre>))]
     [DataContract]
     [MidiHook]
     public class CombinedTimbre : TimbreBase

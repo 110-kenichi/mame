@@ -940,22 +940,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                             break;
                         }
                     case ToneType.ADPCM_A:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmaOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmaOnSounds, note, 6);
                             break;
                         }
                     case ToneType.ADPCM_B:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmbOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmbOnSounds, note, 1);
                             break;
                         }
                     case ToneType.SSG:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, ssgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, ssgOnSounds, note, 3);
                             break;
                         }
                 }

@@ -563,7 +563,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <returns></returns>
             private (YM2612 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
             }
 
             internal override void AllSoundOff()

@@ -395,7 +395,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
             int ch = (int)arp.Channel;
             var timbre = parentModule.GetLastTimbre(ch);
-            var sds = timbre.SDS.ARP;
+
+            ArpSettings sds = parentModule.GlobalARP;
+            if (timbre.SDS.ARP.Enable)
+                sds = timbre.SDS.ARP;
 
             //end arp
             if (!sds.Enable ||
@@ -449,9 +452,14 @@ namespace zanac.MAmidiMEmo.Instruments
             var arp = (ArpEngine)state;
             if (arp.ArpAction == null)
                 return -1;
+
             int ch = (int)arp.Channel;
             var timbre = parentModule.GetLastTimbre(ch);
-            var sds = timbre.SDS.ARP;
+
+            ArpSettings sds = parentModule.GlobalARP;
+            if (timbre.SDS.ARP.Enable)
+                sds = timbre.SDS.ARP;
+
             //end arp
             if (!sds.Enable ||
                 sds.ArpMethod != ArpMethod.PitchChange ||
@@ -591,7 +599,12 @@ namespace zanac.MAmidiMEmo.Instruments
         private bool preProcessArrpegioForKeyOn(TaggedNoteOnEvent note)
         {
             FourBitNumber ch = note.Channel;
+            if (parentModule.ChannelTypes[ch] != ChannelType.Normal)
+                return false;
+
             ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
+            if (!sds.Enable)
+                sds = parentModule.GlobalARP;
             if (sds.Enable)
             {
                 switch (sds.ArpMethod)
@@ -655,11 +668,15 @@ namespace zanac.MAmidiMEmo.Instruments
             return false;
         }
 
-
         private void postProcessArrpegioForKeyOn(TaggedNoteOnEvent note, SoundBase[] snd)
         {
             FourBitNumber ch = note.Channel;
+            if (parentModule.ChannelTypes[ch] != ChannelType.Normal)
+                return;
+
             ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
+            if (!sds.Enable)
+                sds = parentModule.GlobalARP;
             if (snd != null && sds.Enable)
             {
                 if (sds.ArpMethod == ArpMethod.PitchChange)
@@ -922,12 +939,56 @@ namespace zanac.MAmidiMEmo.Instruments
 
             if (slot < 0)
             {
-                //search empty slot
-                foreach (var onSnd in onSounds)
+                List<T> onSnds = new List<T>();
+                List<T> onSndsCh = new List<T>();
+                int mono = inst.MonoMode[newNote.Channel];
+                for (int i = 0; i < onSounds.Count; i++)
                 {
+                    var onSnd = onSounds[i];
                     if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
-                        insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                    {
+                        onSnds.Add(onSnd);
+                        if (newNote.Channel == onSnd.NoteOnEvent.Channel)
+                            onSndsCh.Add(onSnd);
+                    }
                 }
+
+                //Mono Mode
+                if (mono != 0)
+                {
+                    for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
+                    {
+                        var onSnd = onSndsCh[i];
+                        AllSounds.Remove(onSnd);
+                        onSounds.Remove(onSnd);
+                        onSnds.Remove(onSnd);
+                        onSndsCh.RemoveAt(i);
+                        onSnd.Dispose();
+                        i--;
+                    }
+                }
+
+                //Delete same drum sound
+                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
+                {
+                    for (int i = 0; i < onSndsCh.Count; i++)
+                    {
+                        var onSnd = onSndsCh[i];
+                        if (onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                        {
+                            AllSounds.Remove(onSnd);
+                            onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
+                            onSndsCh.RemoveAt(i);
+                            onSnd.Dispose();
+                            i--;
+                        }
+                    }
+                }
+
+                //search empty slot
+                foreach (var onSnd in onSnds)
+                    insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
 
                 //使っていないスロットがあればそれを返す
                 for (int i = 0; i < maxSlot; i++)
@@ -940,35 +1001,26 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //一番古いキーオフされたスロットを探す
-                for (int i = 0; i < onSounds.Count; i++)
+                for (int i = 0; i < onSnds.Count; i++)
                 {
-                    var snd = onSounds[i];
-                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
-                        continue;
-
-                    if (snd.Slot < maxSlot && snd.IsKeyOff)
+                    var onSnd = onSnds[i];
+                    if (onSnd.IsKeyOff)
                     {
-                        AllSounds.Remove(snd);
-                        onSounds.RemoveAt(i);
-                        snd.Dispose();
-                        return ((I)snd.ParentModule, snd.Slot);
+                        AllSounds.Remove(onSnd);
+                        onSounds.Remove(onSnd);
+                        onSnd.Dispose();
+                        return ((I)onSnd.ParentModule, onSnd.Slot);
                     }
                 }
 
                 //一番古いキーオンされたスロットを探す
-                for (int i = 0; i < onSounds.Count; i++)
+                if (onSnds.Count > 0)
                 {
-                    var snd = onSounds[i];
-                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
-                        continue;
-
-                    if (snd.Slot < maxSlot)
-                    {
-                        AllSounds.Remove(snd);
-                        onSounds.RemoveAt(i);
-                        snd.Dispose();
-                        return ((I)snd.ParentModule, snd.Slot);
-                    }
+                    var onSnd = onSnds[0];
+                    AllSounds.Remove(onSnd);
+                    onSounds.Remove(onSnd);
+                    onSnd.Dispose();
+                    return ((I)onSnd.ParentModule, onSnd.Slot);
                 }
             }
             else
@@ -976,15 +1028,15 @@ namespace zanac.MAmidiMEmo.Instruments
                 //既存の音を消す
                 for (int i = 0; i < onSounds.Count; i++)
                 {
-                    var snd = onSounds[i];
-                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                    var onSnd = onSounds[i];
+                    if (!insts.ContainsKey(onSnd.ParentModule.UnitNumber))
                         continue;
 
-                    if (snd.Slot == slot)
+                    if (onSnd.Slot == slot)
                     {
-                        AllSounds.Remove(snd);
+                        AllSounds.Remove(onSnd);
                         onSounds.RemoveAt(i);
-                        snd.Dispose();
+                        onSnd.Dispose();
                         break;
                     }
                 }

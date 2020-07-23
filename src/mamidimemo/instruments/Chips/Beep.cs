@@ -324,7 +324,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <returns></returns>
             private (Beep inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                return SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1);
             }
 
             internal override void AllSoundOff()

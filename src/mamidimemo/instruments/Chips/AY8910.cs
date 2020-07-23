@@ -474,7 +474,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.NOISE:
                     case SoundType.ENVELOPE:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3);
                             break;
                         }
                 }

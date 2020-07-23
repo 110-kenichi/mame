@@ -363,7 +363,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundType.WSGLFO:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, lfoOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, lfoOnSounds, note, 1);
                             break;
                         }
                     case SoundType.WSG:
@@ -371,22 +371,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (timbre.PartialReserveWSGLFO)
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2);
                                 else
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
                             }
                             else
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
                                 else
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6);
                             }
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, 2);
                             break;
                         }
                 }

@@ -77,6 +77,30 @@ namespace zanac.MAmidiMEmo.Instruments
             BaseNote = NoteNames.C4;
         }
 
+        private uint f_GateTime = 500;
+
+        [DataMember]
+        [Description("Gate Time[ms]")]
+        [DefaultValue(typeof(uint), "500")]
+        [SlideParametersAttribute((int)HighPrecisionTimer.TIMER_BASIC_INTERVAL, 10000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public uint GateTime
+        {
+            get
+            {
+                return f_GateTime;
+            }
+            set
+            {
+                if (value > 10000)
+                    value = 10000;
+                if (f_GateTime != value && value >= HighPrecisionTimer.TIMER_BASIC_INTERVAL)
+                {
+                    f_GateTime = value;
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

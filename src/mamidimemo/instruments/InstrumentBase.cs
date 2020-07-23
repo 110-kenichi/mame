@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -140,6 +141,18 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Enable Follower mode. Share free voice channels with specified leader unit and does not accept any Note On MIDI event.\r\n" +
             "Be sure to set same settings with the leader unit.")]
         public virtual FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [Description("Global Dynamic Arpeggio Settings. This can be overrided by a Timbre settins.")]
+        public virtual ArpSettings GlobalARP
         {
             get;
             set;
@@ -594,10 +607,18 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public bool ShouldSerializeChannelTypes()
         {
-            foreach (var dt in ChannelTypes)
+            for (int i = 0; i < ChannelTypes.Length; i++)
             {
-                if (dt != ChannelType.Normal)
-                    return true;
+                if (i == 9)
+                {
+                    if (ChannelTypes[i] != ChannelType.Drum)
+                        return true;
+                }
+                else
+                {
+                    if (ChannelTypes[i] != ChannelType.Normal)
+                        return true;
+                }
             }
             return false;
         }
@@ -695,7 +716,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetPitchBendRanges()
         {
             for (int i = 0; i < PitchBendRanges.Length; i++)
-                Pitchs[i] = 2;
+                PitchBendRanges[i] = 2;
         }
 
         /// <summary>
@@ -1182,23 +1203,6 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="maxVoice"></param>
-        /// <returns></returns>
-        protected int CalcMaxVoiceNumber(int channel, byte maxVoice)
-        {
-            if (MonoMode[channel] == 0 || MonoMode[channel] > maxVoice)
-                return maxVoice;
-            else
-                return MonoMode[channel];
-        }
-
-
-
         [Browsable(false)]
         public byte[] DataLsb
         {
@@ -1482,6 +1486,8 @@ namespace zanac.MAmidiMEmo.Instruments
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
 
+            GlobalARP = new ArpSettings();
+
             set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
             vstHandle = GCHandle.Alloc(this);
@@ -1505,7 +1511,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
-                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Drum, ChannelType.Normal, ChannelType.Normal,
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
                     ChannelType.Normal };
 
@@ -1776,7 +1782,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     case NoteOnEvent non:
                         {
                             if (non.Velocity == 0)
-                                OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            {
+                                if(ChannelTypes[non.Channel] != ChannelType.Drum)
+                                    OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            }
                             else
                             {
                                 if (FollowerMode != FollowerUnit.None)
@@ -1789,13 +1798,16 @@ namespace zanac.MAmidiMEmo.Instruments
                     case TaggedNoteOnEvent tnon:
                         {
                             if (tnon.Velocity == 0)
-                                OnNoteOffEvent(new NoteOffEvent(tnon.NoteNumber, (SevenBitNumber)0) { Channel = tnon.Channel, DeltaTime = tnon.DeltaTime });
+                            {
+                                if (ChannelTypes[tnon.Channel] != ChannelType.Drum)
+                                    OnNoteOffEvent(new NoteOffEvent(tnon.NoteNumber, (SevenBitNumber)0) { Channel = tnon.Channel, DeltaTime = tnon.DeltaTime });
+                            }
                             else
                             {
                                 if (FollowerMode != FollowerUnit.None)
                                     break;
                                 var ni = tnon.Tag as NoteOnTimbreInfo;
-                                if(ni != null)
+                                if (ni != null)
                                     lastNoteOnTimbres[ce.Channel] = ni.Timbre;
                                 OnNoteOnEvent(tnon);
                             }
@@ -1803,7 +1815,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                     case NoteOffEvent noff:
                         {
-                            OnNoteOffEvent(noff);
+                            if (ChannelTypes[noff.Channel] != ChannelType.Drum)
+                                OnNoteOffEvent(noff);
                             break;
                         }
                     case ControlChangeEvent cont:
@@ -1974,6 +1987,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         ModulationDepthRangesCent[i] = 0x40;
                         Portamentos[i] = 0;
                         PortamentoTimes[i] = 0;
+
+                        MonoMode[i] = 0;
                     }
                     break;
                 case 126:    //MONO Mode
