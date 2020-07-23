@@ -1184,7 +1184,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_LengthDisable = 1;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound(SQ/Tri)")]
             [Description("Square/Tri Length Counter Clock Disable (0:Enable 1:Disable)")]
@@ -1277,7 +1277,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_PlayLength;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound")]
             [Description("Square/Tri Play Length (0-31)")]
@@ -1299,7 +1299,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_TriCounterLength = 127;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound(Tri)")]
             [Description("Tri Linear Counter Length (0-127)")]
