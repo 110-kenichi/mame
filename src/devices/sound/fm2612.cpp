@@ -775,6 +775,9 @@ static inline void FM_KEYON(fm2612_FM_OPN *OPN, fm2612_FM_CH *CH , int s )
 
 			/* directly switch to Decay (or Sustain) */
 			SLOT->state = (SLOT->sl == MIN_ATT_INDEX) ? EG_SUS : EG_DEC;
+
+			//HACK: mamidimemo Force Damp
+			SLOT->state = EG_ATT;
 		}
 
 		/* recalculate EG output */

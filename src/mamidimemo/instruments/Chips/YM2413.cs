@@ -632,8 +632,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
                 YM2413WriteData(parentModule.UnitNumber, 0x05, 0, (byte)((c.AR << 4 | c.DR)));
                 //$06+:
-                YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SR << 4 | m.RR)));
-                YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SR << 4 | c.RR)));
+                if (m.SR.HasValue && m.EG == 0)
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.SR.Value)));
+                else
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.RR)));
+
+                if (c.SR.HasValue && c.EG == 0)
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.SR.Value)));
+                else
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.RR)));
                 Program.SoundUpdated();
             }
 
@@ -646,6 +653,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (lastToneType != ToneType.DrumSet)
                 {
+                    YM2413Modulator m = timbre.Modulator;
+                    YM2413Career c = timbre.Career;
+                    if (m.SR.HasValue && m.EG == 0)
+                    {
+                        YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | 1 << 5 | m.KSR << 4 | m.MUL)));
+                        YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.RR)));
+                    }
+                    if (c.SR.HasValue && c.EG == 0)
+                    {
+                        YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | 1 << 5 | c.KSR << 4 | c.MUL)));
+                        YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.RR)));
+                    }
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, (byte)(timbre.SUS << 5 | lastFreqData & 0x0f));
                 }
                 else if (parentModule.RHY == 1)
@@ -1123,7 +1142,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_SR;
+            private byte f_SL;
 
             /// <summary>
             /// Sustain Rate (0-15)
@@ -1134,15 +1153,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte SR
+            public byte SL
             {
                 get
                 {
-                    return f_SR;
+                    return f_SL;
                 }
                 set
                 {
-                    f_SR = (byte)(value & 15);
+                    f_SL = (byte)(value & 15);
                 }
             }
 
@@ -1153,7 +1172,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Release Rate (0-15)")]
+            [Description("Release Rate (0-15)\r\n" +
+                "When EG = 0, Used both Sustain Rate & Release Rate")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1166,6 +1186,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_RR = (byte)(value & 15);
+                }
+            }
+
+            private byte? f_SR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? SR
+            {
+                get
+                {
+                    return f_SR;
+                }
+                set
+                {
+                    if (value.HasValue)
+                        f_SR = (byte)(value & 15);
+                    else
+                        f_SR = value;
                 }
             }
 

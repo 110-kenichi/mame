@@ -251,6 +251,9 @@ struct OPL_SLOT
 			Cnt = 0;
 			/* phase -> Attack */
 			state = EG_ATT;
+
+			//HACK: mamidimemo Force Damp
+			volume = MAX_ATT_INDEX;
 		}
 		key |= key_set;
 	}

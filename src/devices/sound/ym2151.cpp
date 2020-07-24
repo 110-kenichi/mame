@@ -430,12 +430,17 @@ void ym2151_device::YM2151Operator::key_on(uint32_t key_set, uint32_t eg_cnt)
 	{
 		phase = 0;            /* clear phase */
 		state = EG_ATT;       /* KEY ON = attack */
+		
 		volume += (~volume * (eg_inc[eg_sel_ar + ((eg_cnt >> eg_sh_ar)&7)])) >> 4;
 		if (volume <= MIN_ATT_INDEX)
 		{
 			volume = MIN_ATT_INDEX;
 			state = EG_DEC;
 		}
+
+		// HACK: mamidimemo Force Damp
+		volume = MAX_ATT_INDEX;
+		state = EG_ATT;
 	}
 	key |= key_set;
 }

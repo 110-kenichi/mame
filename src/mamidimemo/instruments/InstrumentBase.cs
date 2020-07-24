@@ -1732,10 +1732,14 @@ namespace zanac.MAmidiMEmo.Instruments
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public virtual void Dispose()
         {
+            Program.SoundUpdating();
+
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
             GC.SuppressFinalize(this);
+
+            Program.SoundUpdated();
         }
 
         #endregion

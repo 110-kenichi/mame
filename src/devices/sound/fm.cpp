@@ -885,6 +885,9 @@ static inline void FM_KEYON(uint8_t type, FM_CH *CH , int s )
 		SLOT->phase = 0;        /* restart Phase Generator */
 		SLOT->ssgn = (SLOT->ssg & 0x04) >> 1;
 		SLOT->state = EG_ATT;
+
+		//HACK: mamidimemo Force Damp
+		SLOT->volume = MAX_ATT_INDEX;
 	}
 }
 
