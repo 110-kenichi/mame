@@ -47,7 +47,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="action"></param>
         /// <param name="periodMs"></param>
         /// <param name="state"></param>    
-        public static void SetPeriodicCallback(Func<object, double> action, double periodMs, object state)
+        public static void SetPeriodicCallbackAsReader(Func<object, double> action, double periodMs, object state)
         {
             long lpSystemTimeAsFileTime;
             periodMs = action(state);
@@ -65,8 +65,15 @@ namespace zanac.MAmidiMEmo.Instruments
                         long dueTime = (long)Math.Round(nextTime);
                         SetWaitableTimer(handle, ref dueTime, 0, IntPtr.Zero, IntPtr.Zero, false);
                         WaitForSingleObject(handle, WAIT_TIMEOUT);
-                        lock (InstrumentManager.ExclusiveLockObject)
+                        try
+                        {
+                            InstrumentManager.ExclusiveLockObject.EnterReadLock();
                             periodMs = action(obj);
+                        }
+                        finally
+                        {
+                            InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                        }
                         if (periodMs < 0 || shutDown)
                             break;
                         periodMs *= 1000 * 10;
@@ -95,7 +102,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="instance"></param>
-        public static void SetFixedPeriodicCallback(Func<object, double> action, object state)
+        public static void SetFixedPeriodicCallbackAsReader(Func<object, double> action, object state)
         {
             action(state);
             lock (fixedTimerSounds)
@@ -115,8 +122,16 @@ namespace zanac.MAmidiMEmo.Instruments
             foreach (var snd in list)
             {
                 double ret = -1;
-                lock (InstrumentManager.ExclusiveLockObject)
+                try
+                {
+                    InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                     ret = snd.Key(snd.Value);
+                }
+                finally
+                {
+                    InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                }
                 if (ret >= 0)
                     continue;
                 lock (fixedTimerSounds)

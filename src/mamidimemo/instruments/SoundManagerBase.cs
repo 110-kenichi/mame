@@ -634,7 +634,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (arp.ArpAction == null)
                             {
                                 arp.ArpAction = new Func<object, double>(processArpeggiatorsForKeyOn);
-                                HighPrecisionTimer.SetPeriodicCallback(arp.ArpAction, arp.Step, arp);
+                                HighPrecisionTimer.SetPeriodicCallbackAsReader(arp.ArpAction, arp.Step, arp);
                             }
                             return true;
                         }
@@ -693,7 +693,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (arp.ArpAction == null)
                     {
                         arp.ArpAction = new Func<object, double>(processArpeggiatorsForPitch);
-                        HighPrecisionTimer.SetPeriodicCallback(arp.ArpAction, arp.Step, arp);
+                        HighPrecisionTimer.SetPeriodicCallbackAsReader(arp.ArpAction, arp.Step, arp);
                     }
                 }
             }

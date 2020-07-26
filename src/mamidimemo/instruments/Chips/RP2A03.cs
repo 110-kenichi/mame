@@ -814,7 +814,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x00), (byte)(dc << 6 | ld << 5 | dd << 4 | fv));
             }
-            
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void updateTriVolume()
+            {
+                var fv = Math.Round(timbre.Volume * CalcCurrentVolume());
+
+                if (fv < 0.01)
+                {
+                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
+                    RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
+                }
+                else
+                {
+                    byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                    RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
+
+                    RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
+                        (byte)(timbre.LengthCounterDisable << 7 | timbre.TriCounterLength));
+                }
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -943,31 +965,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7));
                 Program.SoundUpdated();
             }
-
-
-            /// <summary>
-            /// 
-            /// </summary>
-            private void updateTriVolume()
-            {
-                var fv = Math.Round(timbre.Volume * CalcCurrentVolume());
-
-                if (fv < 0.01)
-                {
-                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
-                    RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
-                }
-                else
-                {
-                    byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
-                    RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
-
-                    RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
-                        (byte)(timbre.LengthCounterDisable << 7 | timbre.TriCounterLength));
-                }
-            }
-
-
+            
             private void updateTriPitch()
             {
                 if (IsSoundOff)
@@ -1091,14 +1089,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.TRIANGLE:
                         {
+                            RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
+
                             byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
-
                             byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~8);
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;

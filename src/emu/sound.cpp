@@ -1150,8 +1150,6 @@ void SoundUpdated();
 
 void sound_manager::update(void *ptr, int param)
 {
-	SoundUpdating();
-
 	VPRINTF(("sound_update\n"));
 
 	g_profiler.start(PROFILER_SOUND);
@@ -1161,6 +1159,9 @@ void sound_manager::update(void *ptr, int param)
 	std::vector<std::vector<device_sound_interface *>> sis;
 	std::vector<std::vector<stream_sample_t *>> outs;
 	int idx = 0;
+
+	SoundUpdating();
+
 	for (speaker_device &speaker : speaker_device_iterator(machine().root_device()))
 	{
 		sis.emplace_back();
@@ -1235,6 +1236,8 @@ void sound_manager::update(void *ptr, int param)
 	for (auto &stream : m_stream_list)
 		stream->apply_sample_rate_changes();
 
+	SoundUpdated();
+
 	// notify that new samples have been generated
 	emulator_info::sound_hook();
 
@@ -1245,8 +1248,6 @@ void sound_manager::update(void *ptr, int param)
 	//  :::
 	//finalmix[N+0] left ch
 	//finalmix[N+1] right ch (N = finalmix_offset / 2)
-
-	SoundUpdated();
 }
 
 

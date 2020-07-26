@@ -555,9 +555,17 @@ namespace zanac.MAmidiMEmo.Gui
             me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
             MidiManager.SendMidiEvent(me);
 
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 foreach (var inst in InstrumentManager.GetAllInstruments())
                     inst.AllSoundOff();
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)

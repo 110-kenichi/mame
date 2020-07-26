@@ -432,23 +432,27 @@ void pokey_device::device_timer(emu_timer &timer, device_timer_id id, int param,
 	default:
 		throw emu_fatalerror("Unknown id in pokey_device::device_timer");
 	}
+
 	SoundUpdated();
 }
 
 void pokey_device::execute_run()
 {
-	int en = m_enable;
-	if (en != 0)
-		SoundUpdating();
-	do
+	if (m_enable != 0)
 	{
-		if (en != 0)
+		SoundUpdating();
+		do
+		{
 			step_one_clock();
-		m_icount--;
+			m_icount--;
 
-	} while (m_icount > 0);
-	if (en != 0)
+		} while (m_icount > 0);
 		SoundUpdated();
+	}
+	else
+	{
+		m_icount = 0;
+	}
 }
 
 

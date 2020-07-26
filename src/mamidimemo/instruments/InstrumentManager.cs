@@ -14,15 +14,18 @@ using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using zanac.MAmidiMEmo.Mame;
 using Melanchall.DryWetMidi.Core;
+using System.Runtime.Remoting.Proxies;
+using System.Runtime.Remoting;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
     public static class InstrumentManager
     {
+
         /// <summary>
         /// Exclusive control between GUI/MIDI Event/Other managed threads for Instrument objects;
         /// </summary>
-        public static object ExclusiveLockObject = new object();
+        public static ReaderWriterLockSlim ExclusiveLockObject = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         private static List<List<InstrumentBase>> instruments = new List<List<InstrumentBase>>();
 
@@ -83,10 +86,16 @@ namespace zanac.MAmidiMEmo.Instruments
         public static IEnumerable<InstrumentBase> GetAllInstruments()
         {
             List<InstrumentBase> insts = new List<InstrumentBase>();
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 foreach (List<InstrumentBase> i in instruments)
                     insts.AddRange(i);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
             return insts.AsEnumerable();
         }
@@ -97,9 +106,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         public static IEnumerable<InstrumentBase> GetInstruments(uint deviceId)
         {
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 return instruments[(int)deviceId - 1];
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
         }
 
@@ -110,8 +125,11 @@ namespace zanac.MAmidiMEmo.Instruments
         public static IEnumerable<InstrumentBase> ClearAllInstruments()
         {
             List<InstrumentBase> insts = new List<InstrumentBase>();
-            lock (InstrumentManager.ExclusiveLockObject)
+
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
                 for (int i = instruments.Count - 1; i >= 0; i--)
                 {
                     for (int j = instruments[i].Count - 1; j >= 0; j--)
@@ -121,6 +139,11 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
             }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+            }
+
             return insts.AsEnumerable();
         }
 
@@ -129,8 +152,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public static void RestoreSettings(EnvironmentSettings settings)
         {
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
                 if (settings.Instruments != null)
                 {
                     foreach (int v in Enum.GetValues(typeof(InstrumentType)))
@@ -167,6 +192,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 InstrumentChanged?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
             }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+            }
         }
 
         /// <summary>
@@ -199,8 +228,10 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="instrumentType"></param>
         public static InstrumentBase AddInstrument(InstrumentType instrumentType)
         {
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
                 if (instruments[(int)instrumentType].Count < 8)
                 {
                     Assembly asm = Assembly.GetAssembly(typeof(InstrumentType));
@@ -216,6 +247,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
                     return inst;
                 }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
             }
             return null;
         }
@@ -295,12 +330,18 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="instrumentType"></param>
         public static void RemoveInstrument(InstrumentType instrumentType)
         {
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
                 var list = instruments[(int)instrumentType];
                 list[list.Count - 1].Dispose();
                 list.RemoveAt(list.Count - 1);
                 InstrumentRemoved?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
             }
         }
 
@@ -356,12 +397,18 @@ namespace zanac.MAmidiMEmo.Instruments
             if (e is ActiveSensingEvent)
                 return;
 
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 processCC(e);
 
                 foreach (var i in instruments)
                     i.ForEach((dev) => { dev.NotifyMidiEvent(e); });
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
         }
 
@@ -506,8 +553,16 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int[][] retbuf = new int[2][];
             int cnt = 0;
-            lock (InstrumentManager.ExclusiveLockObject)
+
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
                 cnt = instruments.Count;
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
             uint did = inst == null ? uint.MaxValue : inst.DeviceID;
             uint un = inst == null ? uint.MaxValue : inst.UnitNumber;
             try
@@ -536,5 +591,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
             }
         }
+
     }
 }

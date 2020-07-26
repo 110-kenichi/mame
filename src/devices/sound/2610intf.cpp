@@ -75,6 +75,9 @@ void ym2610_device::stream_generate(sound_stream &stream, stream_sample_t **inpu
 
 void ym2610b_device::stream_generate(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
+	if (!m_enable)
+		return;
+
 	//mamidimemo
 	psg_sound_stream_update(stream , inputs, outputs, samples);
 
