@@ -128,6 +128,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                 new System.Resources.ResourceManager("System", typeof(UriFormat).Assembly);
             string dummy = rm.GetString("Arg_EmptyOrNullString");
 
+            ThreadPool.SetMaxThreads(250, 1000);
+
             MameIF.Initialize(parentModule);
             var threadStart = new ManualResetEvent(false);
             mainThread = new Thread(new ThreadStart(() =>
