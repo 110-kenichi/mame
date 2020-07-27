@@ -39,7 +39,7 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
 
         public static ISerializationBinder SerializationBinder = new KnownTypesBinder();
 
-        public static readonly JsonSerializerSettings JsonAutoSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, SerializationBinder = SerializationBinder };
+        public static readonly JsonSerializerSettings JsonAutoSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = SerializationBinder };
 
         private static Thread mainThread;
 

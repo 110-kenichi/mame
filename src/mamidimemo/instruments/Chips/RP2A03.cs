@@ -1502,7 +1502,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("FDS LFO Frequency(0 - 4095)")]
             [SlideParametersAttribute(0, 4095)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
             public uint LfoFreq
             {
                 get
@@ -1515,8 +1514,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            public bool ShouldSerializeLfoFreq()
+            {
+                return f_LfoFreq != 0;
+            }
 
-            private uint f_LfoGain;
+            public void ResetLfoFreq()
+            {
+                f_LfoFreq = 0;
+            }
+
+
+            private byte f_LfoGain;
 
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1524,7 +1533,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [SlideParametersAttribute(0, 63)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue((byte)0)]
-            public uint LfoGain
+            public byte LfoGain
             {
                 get
                 {
@@ -1532,7 +1541,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_LfoGain = (uint)(value & 63);
+                    f_LfoGain = (byte)(value & 63);
                 }
             }
 

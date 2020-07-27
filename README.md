@@ -231,6 +231,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 			Property Reset menu does not work properly.
 			Mono mode does not work properly.
 			RP2A03 Tri channel is stopped by Noise channel.
+			Specific property value does not save.
 		Added KeyShift, PitchShift, IgnoreKeyOff prop to Timbre prop.
 		Added Combined Timbre feature to Timbre prop. Treat patched Timbre as one Timbre.
 		Added Follower mode feature to Timbre prop. Share voice ch with another units.
