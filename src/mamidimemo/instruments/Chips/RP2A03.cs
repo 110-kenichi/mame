@@ -207,6 +207,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void RP2A03WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(RP2A03_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -215,17 +217,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="unitNumber"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         private static byte RP2A03ReadData(uint unitNumber, uint address)
         {
             try
             {
                 Program.SoundUpdating();
+
+                FlushDeferredWriteData();
+
                 return RP2A03_read(unitNumber, address);
             }
             finally
@@ -235,10 +243,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
+        /// <summary>
         /// 
         /// </summary>
+        /// <param name="unitNumber"></param>
+        /// <param name="data"></param>
         private static void RP2A03SetDpcm(uint unitNumber, byte[] data)
         {
+            DeferredWriteData(RP2A03_SetDPCM, unitNumber, data, (uint)data.Length);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -248,6 +261,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdated();
             }
+            */
         }
 
         /// <summary>
@@ -960,12 +974,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x02), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
-            
+
             private void updateTriPitch()
             {
                 if (IsSoundOff)
@@ -976,10 +989,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x02), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateNoisePitch()
@@ -1018,14 +1030,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (FxEngine != null && FxEngine.Active)
                 {
                     var eng = (NesFxEngine)FxEngine;
-                    if(eng.DutyValue != null)
+                    if (eng.DutyValue != null)
                         nt = (byte)(eng.DutyValue.Value & 1);
                 }
 
-                Program.SoundUpdating();
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x02), (byte)((nt << 7) | (n & 0xf)));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x03), (byte)(timbre.PlayLength << 3));
-                Program.SoundUpdated();
             }
 
             private void updateFdsPitch()
@@ -1038,10 +1048,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, 0x82, (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, 0x83, (byte)((n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateVrc6SQPitch()
@@ -1053,10 +1062,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9001 + (Slot << 12)), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (Slot << 12)), (byte)(0x80 | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateVrc6SawPitch()
@@ -1069,10 +1077,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB001), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             public override void SoundOff()

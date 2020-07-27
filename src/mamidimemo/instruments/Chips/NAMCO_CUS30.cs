@@ -126,6 +126,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void NamcoCus30WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(namco_cus30_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -134,7 +136,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -165,6 +167,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return namco_cus30_r(unitNumber, address);
             }
             finally
@@ -423,11 +427,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (timbre.SoundType == SoundType.NOISE)
                     noise |= 0x80;
 
-                Program.SoundUpdating();
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x00, fv_l);
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x04, fv_r);
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)(((Slot - 1) * 8) & 0x3f) + 0x04, noise);
-                Program.SoundUpdated();
             }
 
             /// <summary>
@@ -453,11 +455,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0xfffff)
                     freq = 0xfffff;
                 uint n = (uint)freq;
-                Program.SoundUpdating();
+
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x01, (byte)((byte)((Slot & 0xf) << 4) | ((n >> 16) & 0xf)));
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x02, (byte)((n >> 8) & 0xff));
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x03, (byte)(n & 0xff));
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }

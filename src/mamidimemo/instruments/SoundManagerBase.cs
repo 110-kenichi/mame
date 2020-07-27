@@ -262,7 +262,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                         finally
                         {
-                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                         }
                         process = true;
                     }
@@ -284,7 +284,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             finally
                             {
-                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                             }
                             process = true;
                         }
@@ -301,7 +301,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -319,7 +319,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -365,7 +365,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                         finally
                         {
-                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                         }
                         process = true;
                     }
@@ -387,7 +387,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             finally
                             {
-                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                             }
                             process = true;
                         }
@@ -404,7 +404,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -422,7 +422,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }

@@ -369,6 +369,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlayMsg(uint unitNumber, uint msg)
         {
+            DeferredWriteData(mt32_play_msg, unitNumber, msg);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -377,7 +379,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -386,6 +388,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlaySysEx(uint unitNumber, byte[] sysex)
         {
+            DeferredWriteData(mt32_play_sysex, unitNumber, sysex, sysex.Length);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -394,7 +398,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private static FieldInfo channelEventParameters;

@@ -84,12 +84,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_EnvelopeFrequencyCoarse != value)
                 {
                     f_EnvelopeFrequencyCoarse = value;
-                    Program.SoundUpdating();
                     Ay8910WriteData(UnitNumber, 0, (byte)(12));
                     Ay8910WriteData(UnitNumber, 1, value);
                     Ay8910WriteData(UnitNumber, 0, (byte)(11));
                     Ay8910WriteData(UnitNumber, 1, EnvelopeFrequencyFine);
-                    Program.SoundUpdated();
                 }
             }
         }
@@ -113,12 +111,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_EnvelopeFrequencyFine != value)
                 {
                     f_EnvelopeFrequencyFine = value;
-                    Program.SoundUpdating();
                     Ay8910WriteData(UnitNumber, 0, (byte)(12));
                     Ay8910WriteData(UnitNumber, 1, EnvelopeFrequencyCoarse);
                     Ay8910WriteData(UnitNumber, 0, (byte)(11));
                     Ay8910WriteData(UnitNumber, 1, value);
-                    Program.SoundUpdated();
                 }
             }
         }
@@ -245,6 +241,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Ay8910WriteData(uint unitNumber, int offset, byte data)
         {
+            DeferredWriteData(ay8910_address_data_w, unitNumber, offset, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -253,7 +251,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -285,6 +283,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return ay8910_read_ym(unitNumber);
             }
             finally
@@ -530,14 +530,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if(gs.EnvelopeType.HasValue)
                         parentModule.EnvelopeType = gs.EnvelopeType.Value;
                     if (gs.EnvelopeFrequencyFine.HasValue)
                         parentModule.EnvelopeFrequencyFine = gs.EnvelopeFrequencyFine.Value;
                     if (gs.EnvelopeFrequencyCoarse.HasValue)
                         parentModule.EnvelopeFrequencyCoarse = gs.EnvelopeFrequencyCoarse.Value;
-                    Program.SoundUpdated();
                 }
 
                 OnPitchUpdated();
@@ -599,14 +597,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (lastSoundType)
                 {
                     case SoundType.ENVELOPE:
-                        Program.SoundUpdating();
                         Ay8910WriteData(parentModule.UnitNumber, 0, (byte)(12));
                         Ay8910WriteData(parentModule.UnitNumber, 1, parentModule.EnvelopeFrequencyCoarse);
                         Ay8910WriteData(parentModule.UnitNumber, 0, (byte)(11));
                         Ay8910WriteData(parentModule.UnitNumber, 1, parentModule.EnvelopeFrequencyFine);
                         Ay8910WriteData(parentModule.UnitNumber, 0, (byte)(13));
                         Ay8910WriteData(parentModule.UnitNumber, 1, parentModule.EnvelopeType);
-                        Program.SoundUpdated();
                         break;
                 }
             }

@@ -207,6 +207,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(MSM5232_write, unitNumber, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -215,7 +217,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -224,6 +226,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetVolume(uint unitNumber, int ch, byte data)
         {
+            DeferredWriteData(MSM5232_set_volume, unitNumber, ch, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -232,7 +236,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -241,6 +245,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetCapasitors(uint unitNumber, double cap1, double cap2, double cap3, double cap4, double cap5, double cap6, double cap7, double cap8)
         {
+            DeferredWriteData(MSM5232_set_capacitors, unitNumber, cap1, cap2, cap3, cap4, cap5, cap6, cap7, cap8);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -249,7 +255,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -257,6 +263,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetCapacitors(uint unitNumber, int ch, byte data)
         {
+            DeferredWriteData(MSM5232_set_volume, unitNumber, ch, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -265,7 +273,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>

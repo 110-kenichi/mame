@@ -80,10 +80,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_FC != v)
                 {
                     f_FC = v;
-                    Program.SoundUpdating();
+
                     SidWriteData(UnitNumber, 21, (byte)(f_FC & 0x7));
                     SidWriteData(UnitNumber, 22, (byte)(f_FC >> 3));
-                    Program.SoundUpdated();
                 }
             }
         }
@@ -269,6 +268,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void SidWriteData(uint unitNumber, int address, byte data)
         {
+            DeferredWriteData(Sid_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -277,7 +278,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private const float DEFAULT_GAIN = 0.5f;
@@ -521,7 +522,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.FC.HasValue)
                         parentModule.FC = gs.FC.Value;
                     if (gs.RES.HasValue)
@@ -532,7 +532,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.FILT = gs.FILT.Value;
                     if (gs.FilterType.HasValue)
                         parentModule.FilterType = gs.FilterType.Value;
-                    Program.SoundUpdated();
                 }
 
                 SetTimbre();
@@ -548,7 +547,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.FC.HasValue)
                         parentModule.FC = gs.FC.Value;
                     if (gs.RES.HasValue)
@@ -559,7 +557,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.FILT = gs.FILT.Value;
                     if (gs.FilterType.HasValue)
                         parentModule.FilterType = gs.FilterType.Value;
-                    Program.SoundUpdated();
                 }
 
                 SetTimbre();
@@ -628,7 +625,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
                 var un = parentModule.UnitNumber;
-                Program.SoundUpdating();
+
                 parentModule.RES = res;
                 parentModule.FC = fc;
                 parentModule.SidWriteData(un, Slot * 7 + 2, (byte)(pw & 0xff));
@@ -638,7 +635,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 parentModule.SidWriteData(un, Slot * 7 + 1, (byte)(f >> 8));
                 parentModule.SidWriteData(un, Slot * 7 + 0, (byte)(f & 0xff));
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }

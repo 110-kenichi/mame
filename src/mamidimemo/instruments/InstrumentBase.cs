@@ -77,9 +77,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_GainLeft != value)
                 {
                     f_GainLeft = value;
-                    Program.SoundUpdating();
-                    SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, value);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 0, value);
                 }
             }
         }
@@ -115,9 +114,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_GainRight != value)
                 {
                     f_GainRight = value;
-                    Program.SoundUpdating();
-                    SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, value);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 1, value);
                 }
             }
         }
@@ -171,9 +169,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterMode != value)
                 {
                     f_FilterMode = value;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, f_FilterMode, FilterCutoff, FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, f_FilterMode, FilterCutoff, FilterResonance);
                 }
             }
         }
@@ -215,9 +212,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterCutOff != v)
                 {
                     f_FilterCutOff = v;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, f_FilterCutOff, FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, f_FilterCutOff, FilterResonance);
                 }
             }
         }
@@ -250,9 +246,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterResonance != v)
                 {
                     f_FilterResonance = v;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, f_FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, f_FilterResonance);
                 }
             }
         }
@@ -1347,6 +1342,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         private static void SetVstFxCallback(uint unitNumber, string name, delg_vst_fx_callback callback)
         {
+            DeferredWriteData(set_vst_fx_callback, unitNumber, name, callback);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -1355,7 +1352,7 @@ namespace zanac.MAmidiMEmo.Instruments
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -1371,6 +1368,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private GCHandle vstHandle;
 
+        #region VGM
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void delg_start_vgm_recording_to(uint unitNumber, string tagName, string vgmPath);
@@ -1442,6 +1440,10 @@ namespace zanac.MAmidiMEmo.Instruments
             StopVgmRecordingInternal(UnitNumber, SoundInterfaceTagNamePrefix);
         }
 
+        #endregion
+
+        #region ctor
+
         /// <summary>
         /// 
         /// </summary>
@@ -1470,6 +1472,8 @@ namespace zanac.MAmidiMEmo.Instruments
             funcPtr = MameIF.GetProcAddress("set_vst_fx_callback");
             if (funcPtr != IntPtr.Zero)
                 set_vst_fx_callback = Marshal.GetDelegateForFunctionPointer<delegate_set_vst_fx_callback>(funcPtr);
+
+            deferredWriteData = new List<(Delegate, object[])>();
         }
 
         public const int MAX_TIMBRES = 256;
@@ -1687,6 +1691,8 @@ namespace zanac.MAmidiMEmo.Instruments
             };
         }
 
+        #endregion
+
         #region IDisposable Support
 
         private bool disposedValue = false; // 重複する呼び出しを検出するには
@@ -1744,6 +1750,62 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
+        #region deferredWriteData
+
+        private static List<(Delegate, object[])> deferredWriteData;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="delg"></param>
+        /// <param name="args"></param>
+        protected static void DeferredWriteData(Delegate delg, params object[] args)
+        {
+            lock (deferredWriteData)
+                deferredWriteData.Add((delg, args));
+
+            void act()
+            {
+                try
+                {
+                    Program.SoundUpdating();
+                    lock (deferredWriteData)
+                    {
+                        foreach (var (d, a) in deferredWriteData)
+                            d.DynamicInvoke(a);
+                        deferredWriteData.Clear();
+                    }
+                }
+                finally
+                {
+                    Program.SoundUpdated();
+                }
+            }
+            Task.Factory.StartNew(act);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected static void FlushDeferredWriteData()
+        {
+            try
+            {
+                Program.SoundUpdating();
+                lock (deferredWriteData)
+                {
+                    foreach (var (d, a) in deferredWriteData)
+                        d.DynamicInvoke(a);
+                }
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
@@ -1751,6 +1813,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
         }
+
+        #region MIDI
 
         /// <summary>
         /// 
@@ -1787,7 +1851,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             if (non.Velocity == 0)
                             {
-                                if(ChannelTypes[non.Channel] != ChannelType.Drum)
+                                if (ChannelTypes[non.Channel] != ChannelType.Drum)
                                     OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                             }
                             else
@@ -2098,6 +2162,10 @@ namespace zanac.MAmidiMEmo.Instruments
             Pitchs[midiEvent.Channel] = midiEvent.PitchValue;
         }
 
+        #endregion
+
+        #region VST
+
         /// <summary>
         /// 
         /// </summary>
@@ -2177,6 +2245,8 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
         }
+
+        #endregion
 
     }
 

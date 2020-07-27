@@ -146,6 +146,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void GbApuWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(GbApu_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -154,7 +156,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -172,6 +174,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void GbApuWaveWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(GbApu_wave_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -180,7 +184,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -200,6 +204,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return GbApu_read(unitNumber, address);
             }
             finally
@@ -699,11 +705,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             uint reg = (uint)((Slot + partialReserveSpsg) * 5);
                             ushort gfreq = convertPsgFrequency(freq);
 
-                            Program.SoundUpdating();
                             GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(gfreq & 0xff));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6) | ((gfreq >> 8) & 0x07)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                     case SoundType.WAV:
@@ -711,11 +714,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             uint reg = (uint)((Slot + 2) * 5);
                             ushort gfreq = convertWavFrequency(freq);
 
-                            Program.SoundUpdating();
                             GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(gfreq & 0xff));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6) | ((gfreq >> 8) & 0x07)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                     case SoundType.NOISE:
@@ -731,11 +731,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 dt = (byte)(eng.DutyValue & 1);
                             }
 
-                            Program.SoundUpdating();
                             GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(d << 4 | dt << 3 | timbre.NoiseDivRatio));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                 }

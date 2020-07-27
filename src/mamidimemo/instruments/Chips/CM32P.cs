@@ -522,6 +522,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void CM32PPlayMsgNow(uint unitNumber, byte type, byte channel, byte param1, byte param2)
         {
+            DeferredWriteData(CM32P_play_msg, unitNumber, type, channel, param1, param2);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -530,7 +532,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -539,6 +541,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void CM32PPlaySysExNow(uint unitNumber, byte[] sysex)
         {
+            DeferredWriteData(CM32P_play_sysex, unitNumber, sysex, sysex.Length);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -547,7 +551,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -558,6 +562,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return CM32P_load_sf(unitNumber, cardId, fileName);
             }
             finally
@@ -574,6 +580,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return CM32P_add_sf(unitNumber, cardId, sf);
             }
             finally
@@ -588,6 +596,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void CM32PSetTone(uint unitNumber, byte card_id, byte tone_no, ushort sf_preset_no)
         {
+            DeferredWriteData(CM32P_set_tone, unitNumber, card_id, tone_no, sf_preset_no);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -596,7 +606,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -605,6 +615,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void CM32PInitlaizeMemory(uint unitNumber)
         {
+            DeferredWriteData(CM32P_initlaize_memory, unitNumber);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -613,7 +625,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -621,6 +633,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void CM32PSetCard(uint unitNumber, byte cardId)
         {
+            DeferredWriteData(CM32P_set_card, unitNumber, cardId);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -629,7 +643,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private static Dictionary<string, IntPtr> soundFontTable = new Dictionary<string, IntPtr>();

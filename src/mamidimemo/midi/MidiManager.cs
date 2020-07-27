@@ -64,10 +64,22 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         public static void SetInputMidiDevice(string deviceName)
         {
+            if (inputDevice != null && inputDevice.Name.Equals(deviceName))
+                return;
+
             if (inputDevice != null)
             {
-                inputDevice.StopEventsListening();
-                inputDevice.Dispose();
+                try
+                {
+                    inputDevice.StopEventsListening();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    inputDevice.Dispose();
+                }
             }
             Settings.Default.MidiIF = deviceName;
             inputDevice = InputDevice.GetByName(deviceName);

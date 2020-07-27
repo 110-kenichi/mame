@@ -66,7 +66,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
         }

@@ -138,6 +138,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Sn76496WriteData(uint unitNumber, byte data)
         {
+            DeferredWriteData(Sn76496_write, unitNumber, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -146,7 +148,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>

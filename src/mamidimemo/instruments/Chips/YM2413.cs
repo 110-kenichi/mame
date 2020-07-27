@@ -234,6 +234,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void YM2413WriteData(uint unitNumber, byte address, int slot, byte data)
         {
+            DeferredWriteData(YM2413_write, unitNumber, 0, (byte)(address + slot));
+            DeferredWriteData(YM2413_write, unitNumber, 1, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -243,7 +246,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -574,10 +577,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte kon = IsKeyOff ? (byte)0 : (byte)0x10;
                     lastFreqData = (byte)(timbre.SUS << 5 | kon | octave | ((freq >> 8) & 1));
 
-                    Program.SoundUpdating();
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq));
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData);
-                    Program.SoundUpdated();
                 }
                 else if (parentModule.RHY == 1 && !IsKeyOff)
                 {
@@ -621,7 +622,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413Modulator m = timbre.Modulator;
                 YM2413Career c = timbre.Career;
 
-                Program.SoundUpdating();
                 //$00+:
                 YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
                 YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
@@ -641,7 +641,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.SR.Value)));
                 else
                     YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.RR)));
-                Program.SoundUpdated();
             }
 
             /// <summary>

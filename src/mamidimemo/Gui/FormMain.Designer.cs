@@ -845,6 +845,7 @@
             // 
             // toolStripComboBoxMidiIf
             // 
+            this.toolStripComboBoxMidiIf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxMidiIf.Name = "toolStripComboBoxMidiIf";
             resources.ApplyResources(this.toolStripComboBoxMidiIf, "toolStripComboBoxMidiIf");
             this.toolStripComboBoxMidiIf.DropDown += new System.EventHandler(this.toolStripComboBox1_DropDown);

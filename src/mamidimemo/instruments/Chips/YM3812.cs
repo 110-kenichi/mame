@@ -191,11 +191,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
+            //Channel        1   2   3   4   5   6   7   8   9
+            //Operator 1    00  01  02  08  09  0A  10  11  12
+            //Operator 2    03  04  05  0B  0C  0D  13  14  15
+
+            DeferredWriteData(YM3812_write, unitNumber, 0, (byte)(address + (op * 3) + addressTable[slot]));
+            DeferredWriteData(YM3812_write, unitNumber, 1, data);
+            /*
             try
             {
-                //Channel        1   2   3   4   5   6   7   8   9
-                //Operator 1    00  01  02  08  09  0A  10  11  12
-                //Operator 2    03  04  05  0B  0C  0D  13  14  15
 
                 Program.SoundUpdating();
                 YM3812_write(unitNumber, 0, (byte)(address + (op * 3) + addressTable[slot]));
@@ -204,7 +208,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -466,12 +470,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.AMD.HasValue)
                         parentModule.AMD = gs.AMD.Value;
                     if (gs.VIB.HasValue)
                         parentModule.VIB = gs.VIB.Value;
-                    Program.SoundUpdated();
                 }
 
                 //
@@ -489,12 +491,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.AMD.HasValue)
                         parentModule.AMD = gs.AMD.Value;
                     if (gs.VIB.HasValue)
                         parentModule.VIB = gs.VIB.Value;
-                    Program.SoundUpdated();
                 }
 
                 //
@@ -560,10 +560,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //keyon
                 lastFreqData = (byte)(0x20 | octave | ((freq >> 8) & 3));
-                Program.SoundUpdating();
+
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xa0 + Slot), 0, 0, (byte)(0xff & freq));
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xb0 + Slot), 0, 0, lastFreqData);
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }
@@ -573,7 +572,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                Program.SoundUpdating();
                 for (int op = 0; op < 2; op++)
                 {
                     YM3812Operator o = timbre.Ops[op];
@@ -589,7 +587,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //$C0+: algorithm and feedback
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xc0 + Slot), 0, 0, (byte)(timbre.FB << 1 | timbre.ALG));
-                Program.SoundUpdated();
             }
 
             /// <summary>

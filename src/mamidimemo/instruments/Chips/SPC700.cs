@@ -573,6 +573,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700RamWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(spc_ram_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -581,7 +583,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -589,6 +591,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700RegWriteData(uint unitNumber, byte reg, byte data)
         {
+            DeferredWriteData(spc_ram_w, unitNumber, 0xf2, reg);
+            DeferredWriteData(spc_ram_w, unitNumber, 0xf3, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -598,7 +603,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -610,6 +615,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 spc_ram_w(unitNumber, 0xf2, reg);
                 return spc_ram_r(unitNumber, 0xf3);
             }
@@ -627,6 +634,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return spc_ram_r(unitNumber, address);
             }
             finally
@@ -677,6 +686,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700SetCallback(uint unitNumber, delg_callback callback)
         {
+            DeferredWriteData(set_callback, unitNumber, callback);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -685,7 +696,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -1024,8 +1035,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 uint reg = (uint)(Slot * 16);
                 byte bitPos = (byte)(1 << Slot);
 
-                Program.SoundUpdating();
-
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
@@ -1115,8 +1124,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) | bitPos);
                 SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
-
-                Program.SoundUpdated();
             }
 
 
@@ -1126,8 +1133,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 uint reg = (uint)(Slot * 16);
                 byte bitPos = (byte)(1 << Slot);
-
-                Program.SoundUpdating();
 
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
@@ -1196,8 +1201,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
                 SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
-
-                Program.SoundUpdated();
             }
 
             /// <summary>

@@ -313,6 +313,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void PokeyWriteData(uint unitNumber, int address, byte data)
         {
+            DeferredWriteData(Pokey_write, unitNumber, address, data);
+            writeData[address] = data;
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -322,7 +325,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -333,6 +336,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 //Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 if (writeData.ContainsKey(address))
                     return writeData[address];
                 else
@@ -370,6 +375,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void PokeySetOutputType(uint unitNumber, PokeyOutputType type, double r, double c, double v)
         {
+            DeferredWriteData(Pokey_set_output_type, unitNumber, type, r, c, v);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -378,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -649,14 +656,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.Clock.HasValue)
                         parentModule.Clock = gs.Clock.Value;
                     if (gs.AC_15kHz.HasValue)
                         parentModule.AC_15kHz = gs.AC_15kHz.Value;
                     if (gs.AC_POLY9.HasValue)
                         parentModule.AC_POLY9 = gs.AC_POLY9.Value;
-                    Program.SoundUpdated();
                 }
 
                 OnVolumeUpdated();
@@ -671,7 +676,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.OutputType.HasValue)
                         parentModule.OutputType = gs.OutputType.Value;
                     if (gs.RegisterR.HasValue)
@@ -687,7 +691,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.AC_15kHz = gs.AC_15kHz.Value;
                     if (gs.AC_POLY9.HasValue)
                         parentModule.AC_POLY9 = gs.AC_POLY9.Value;
-                    Program.SoundUpdated();
                 }
 
                 OnVolumeUpdated();

@@ -403,8 +403,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 processCC(e);
 
-                foreach (var i in instruments)
+                Parallel.ForEach(instruments, (i) =>
+                {
                     i.ForEach((dev) => { dev.NotifyMidiEvent(e); });
+                });
             }
             finally
             {

@@ -245,11 +245,17 @@ namespace zanac.MAmidiMEmo.Gui
             toolStripComboBoxMidiIf.Items.Clear();
             try
             {
+                int si = -1;
                 foreach (var dev in MidiManager.GetInputMidiDevices())
                 {
-                    toolStripComboBoxMidiIf.Items.Add(dev.Name);
+                    int i = toolStripComboBoxMidiIf.Items.Add(dev.Name);
+                    if (dev.Name.Equals(Settings.Default.MidiIF))
+                        si = i;
                     dev.Dispose();
                 }
+                if(si >= 0)
+                    toolStripComboBoxMidiIf.SelectedIndex = si;
+                
             }
             catch (Exception ex)
             {

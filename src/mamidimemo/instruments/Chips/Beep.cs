@@ -161,6 +161,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void BeepSetClock(uint unitNumber, int state, uint frequency)
         {
+            DeferredWriteData(Beep_set_clock, unitNumber, state, frequency);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -169,7 +171,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>

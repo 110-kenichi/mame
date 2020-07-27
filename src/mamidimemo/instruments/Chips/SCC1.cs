@@ -103,10 +103,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void delegate_SCC1_w(uint unitNumber, uint address, byte data);
 
+        private delegate void delegate_SCC1_w_array(uint unitNumber, uint address, byte[] data, int length);
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate byte delegate_SCC1_r(uint unitNumber, uint address);
 
-        private static delegate_SCC1_w SCC1_waveform_w;
+        private static delegate_SCC1_w_array SCC1_waveform_w;
 
         private static delegate_SCC1_w SCC1_volume_w;
 
@@ -121,6 +123,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Scc1VolumeWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(SCC1_volume_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -129,7 +133,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -137,6 +141,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Scc1FrequencyWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(SCC1_frequency_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -145,7 +151,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -153,6 +159,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Scc1KeyOnOffWriteData(uint unitNumber, byte data)
         {
+            DeferredWriteData(SCC1_keyonoff_w, unitNumber, 0, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -161,7 +169,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -172,6 +180,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return SCC1_keyonoff_r(unitNumber, 0);
             }
             finally
@@ -185,6 +195,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Scc1WriteWaveData(uint unitNumber, uint address, sbyte[] data)
         {
+            DeferredWriteData(SCC1_waveform_w, unitNumber, address, data, data.Length);
+
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -194,7 +207,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -204,7 +217,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             IntPtr funcPtr = MameIF.GetProcAddress("SCC1_waveform_w");
             if (funcPtr != IntPtr.Zero)
-                SCC1_waveform_w = (delegate_SCC1_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_SCC1_w));
+                SCC1_waveform_w = (delegate_SCC1_w_array)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_SCC1_w_array));
             funcPtr = MameIF.GetProcAddress("SCC1_volume_w");
             if (funcPtr != IntPtr.Zero)
                 SCC1_volume_w = (delegate_SCC1_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_SCC1_w));

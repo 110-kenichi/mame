@@ -200,6 +200,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private static void Ym2612WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
             uint reg = (uint)(slot / 3) * 2;
+
+            DeferredWriteData(Ym2612_write, unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
+            DeferredWriteData(Ym2612_write, unitNumber, reg + 1, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -209,7 +213,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private const float DEFAULT_GAIN = 1.5f;
@@ -614,12 +618,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.LFOEN.HasValue)
                         parentModule.LFOEN = gs.LFOEN.Value;
                     if (gs.LFRQ.HasValue)
                         parentModule.LFRQ = gs.LFRQ.Value;
-                    Program.SoundUpdated();
                 }
 
                 //
@@ -638,8 +640,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnSoundParamsUpdated()
             {
                 base.OnSoundParamsUpdated();
-
-                Program.SoundUpdating();
 
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
@@ -674,8 +674,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 OnPanpotUpdated();
                 //Volume
                 OnVolumeUpdated();
-
-                Program.SoundUpdated();
             }
 
             /// <summary>
@@ -764,10 +762,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (d != 0)
                     freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
 
-                Program.SoundUpdating();
                 Ym2612WriteData(parentModule.UnitNumber, 0xa4, 0, Slot, (byte)(octave | ((freq >> 8) & 7)));
                 Ym2612WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, (byte)(0xff & freq));
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }
@@ -793,7 +789,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetFmTimbre()
             {
-                Program.SoundUpdating();
                 for (int op = 0; op < 4; op++)
                 {
                     //$30+: multiply and detune
@@ -814,7 +809,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //$B0+: algorithm and feedback
                 Ym2612WriteData(parentModule.UnitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
-                Program.SoundUpdated();
 
                 OnPanpotUpdated();
             }

@@ -189,6 +189,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void C140WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(c140_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -197,7 +199,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -233,6 +235,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void C140SetCallback(uint unitNumber, delg_callback callback)
         {
+            DeferredWriteData(set_callback, unitNumber, callback);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -241,7 +245,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>

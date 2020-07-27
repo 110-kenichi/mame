@@ -52,7 +52,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Editor(typeof(DummyEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DataMember]
         [Description("Set the timbre numbers to bind this Combibed Timbre.")]
-        public ProgramAssignmentNumber?[] BindTimbres { get; set; } = new ProgramAssignmentNumber?[4] {
+        public ProgramAssignmentTimbreNumber?[] BindTimbres { get; set; } = new ProgramAssignmentTimbreNumber?[4] {
             null,
             null,
             null,

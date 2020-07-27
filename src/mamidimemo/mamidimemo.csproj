@@ -279,6 +279,7 @@
     <Compile Include="Instruments\FollowerIndex.cs" />
     <Compile Include="Instruments\ChannelType.cs" />
     <Compile Include="Instruments\DrumTimbre.cs" />
+    <Compile Include="Instruments\ProgramAssignmentTimbreNumber.cs" />
     <Compile Include="Instruments\ProgramAssignmentNumber.cs" />
     <Compile Include="Instruments\ProgramAssignmentType.cs" />
     <Compile Include="Instruments\CombinedTimbre.cs" />
