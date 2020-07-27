@@ -520,22 +520,28 @@ namespace zanac.MAmidiMEmo.Gui
             DialogResult dr = openFileDialog1.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                try
-                {
-                    string text = StringCompressionUtility.Decompress(File.ReadAllText(openFileDialog1.FileName));
-                    InstrumentManager.ClearAllInstruments();
-                    var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
-                    InstrumentManager.RestoreSettings(settings);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.GetType() == typeof(Exception))
-                        throw;
-                    else if (ex.GetType() == typeof(SystemException))
-                        throw;
+                string file = openFileDialog1.FileName;
+                loadMAmi(file);
+            }
+        }
 
-                    MessageBox.Show(ex.ToString());
-                }
+        private static void loadMAmi(string file)
+        {
+            try
+            {
+                string text = StringCompressionUtility.Decompress(File.ReadAllText(file));
+                InstrumentManager.ClearAllInstruments();
+                var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
+                InstrumentManager.RestoreSettings(settings);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -884,5 +890,37 @@ namespace zanac.MAmidiMEmo.Gui
                 MidiManager.SendMidiEvent(pe);
             }
         }
+
+        private void listViewIntruments_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (File.Exists(drags[0]) && Path.GetExtension(drags[0]).Equals(".MAmi", StringComparison.OrdinalIgnoreCase))
+                    {
+                        loadMAmi(drags[0]);
+                    }
+                }
+            }
+        }
+
+        private void listViewIntruments_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (File.Exists(drags[0]) && Path.GetExtension(drags[0]).Equals(".MAmi", StringComparison.OrdinalIgnoreCase))
+                    {
+                        e.Effect = DragDropEffects.All;
+                    }
+                }
+            }
+        }
+
     }
 }

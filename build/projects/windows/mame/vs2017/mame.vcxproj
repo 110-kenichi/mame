@@ -1995,6 +1995,7 @@
     <None Include="..\..\..\..\..\plugins\portname\plugin.json" />
     <None Include="..\..\..\..\..\plugins\timer\init.lua" />
     <None Include="..\..\..\..\..\plugins\timer\plugin.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\..\..\src\mame\mame.lst">

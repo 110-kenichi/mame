@@ -399,7 +399,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 processCC(e);
 
@@ -408,7 +408,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 

@@ -1,4 +1,4 @@
-MAmidiMEmo V1.3.2.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.0.0.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -224,15 +224,24 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-1.4.0.0 Fixed some minor bugs.
+2.0.0.0 Fixed some minor bugs.
 			Panic button sometimes does not work.
 			SerializeData does not work and cause crash.
 			FxS Arp does not work properly on Fixed mode.
 			Property Reset menu does not work properly.
-		Added KeyShift, PitchShift, IgnoreKeyOff Prop to Timbre Prop.
-		Added Combined Timbre feature to Timbre Prop. Treat pachted Timbre as one Timbre.
-		Added Follower mode feature to Timbre Prop. Share voice ch with another units.
-		Added Drum part to Timbre Prop.
+			Mono mode does not work properly.
+			RP2A03 Tri channel is stopped by Noise channel.
+		Added KeyShift, PitchShift, IgnoreKeyOff prop to Timbre prop.
+		Added Combined Timbre feature to Timbre prop. Treat patched Timbre as one Timbre.
+		Added Follower mode feature to Timbre prop. Share voice ch with another units.
+		Added Drum part to Timbre prop.
+		Added Global Arpeggio Settins to Instrument prop.
+		Added Instrument cloning menu in the instrument pane on the Main window.
+		Exposed RP2A03 Liner Counter Length.
+		Applied "Force Dump mode" always to FM Synthesis unit to prevent incomplete attack rate.
+		Added virtual SR parameter to YM2413.
+		Added sample of MAmi files.
+		Added drag & drop feature that MAmi file can be dropped into instrument list pnae.
 1.3.1.0 Added VGM supported chips.
 			GB APU, HuC6280
 1.3.0.0 Synced sound engine to MAME 0221 (May improved some sound accuracy).

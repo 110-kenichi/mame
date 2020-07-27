@@ -254,7 +254,16 @@ namespace zanac.MAmidiMEmo.Instruments
                         int val = len * midiEvent.ControlValue / 128;
 
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                        pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                        try
+                        {
+                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                            pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                        }
+                        finally
+                        {
+                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                        }
                         process = true;
                     }
                     else
@@ -267,7 +276,16 @@ namespace zanac.MAmidiMEmo.Instruments
                             double val = len * (double)midiEvent.ControlValue / (double)128;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                            pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                            try
+                            {
+                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                            }
+                            finally
+                            {
+                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            }
                             process = true;
                         }
                         else
@@ -275,7 +293,16 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (ipi.Property.PropertyType == typeof(bool))
                             {
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                                pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                try
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                    pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                }
+                                finally
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                }
                                 process = true;
                             }
                             else if (ipi.Property.PropertyType.IsEnum)
@@ -284,7 +311,16 @@ namespace zanac.MAmidiMEmo.Instruments
                                 int val = vals.Length * midiEvent.ControlValue / 128;
 
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                                pd.SetValue(ipi.Owner, vals.GetValue(val));
+                                try
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                    pd.SetValue(ipi.Owner, vals.GetValue(val));
+                                }
+                                finally
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                }
                                 process = true;
                             }
                         }
@@ -321,7 +357,16 @@ namespace zanac.MAmidiMEmo.Instruments
                         int val = len * midiEvent.ControlValue / 128;
 
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                        pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                        try
+                        {
+                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                            pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                        }
+                        finally
+                        {
+                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                        }
                         process = true;
                     }
                     else
@@ -334,7 +379,16 @@ namespace zanac.MAmidiMEmo.Instruments
                             double val = len * (double)midiEvent.ControlValue / (double)128;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                            pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                            try
+                            {
+                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
+                            }
+                            finally
+                            {
+                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            }
                             process = true;
                         }
                         else
@@ -342,7 +396,16 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (ipi.Property.PropertyType == typeof(bool))
                             {
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                                pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                try
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                    pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                }
+                                finally
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                }
                                 process = true;
                             }
                             else if (ipi.Property.PropertyType.IsEnum)
@@ -351,7 +414,16 @@ namespace zanac.MAmidiMEmo.Instruments
                                 int val = vals.Length * midiEvent.ControlValue / 128;
 
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
-                                pd.SetValue(ipi.Owner, vals.GetValue(val));
+                                try
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                                    pd.SetValue(ipi.Owner, vals.GetValue(val));
+                                }
+                                finally
+                                {
+                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                }
                                 process = true;
                             }
                         }
@@ -942,9 +1014,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 List<T> onSnds = new List<T>();
                 List<T> onSndsCh = new List<T>();
                 int mono = inst.MonoMode[newNote.Channel];
-                for (int i = 0; i < onSounds.Count; i++)
+                foreach (var onSnd in onSounds)
                 {
-                    var onSnd = onSounds[i];
                     if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
                     {
                         onSnds.Add(onSnd);
@@ -953,7 +1024,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Mono Mode
+                //Mono Mode. Remove same ch sounds.
                 if (mono != 0)
                 {
                     for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
@@ -968,7 +1039,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Delete same drum sound
+                //Delete same drum sound from same ch
                 if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
                 {
                     for (int i = 0; i < onSndsCh.Count; i++)
@@ -986,11 +1057,9 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //search empty slot
+                //使っていないスロットがあればそれを返す
                 foreach (var onSnd in onSnds)
                     insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
-
-                //使っていないスロットがあればそれを返す
                 for (int i = 0; i < maxSlot; i++)
                 {
                     foreach (var ist in insts.Keys)
@@ -1001,10 +1070,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //一番古いキーオフされたスロットを探す
-                for (int i = 0; i < onSnds.Count; i++)
+                foreach (var onSnd in onSnds)
                 {
-                    var onSnd = onSnds[i];
-                    if (onSnd.IsKeyOff)
+                    if (onSnd.Slot < maxSlot && onSnd.IsKeyOff)
                     {
                         AllSounds.Remove(onSnd);
                         onSounds.Remove(onSnd);
@@ -1014,13 +1082,15 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //一番古いキーオンされたスロットを探す
-                if (onSnds.Count > 0)
+                foreach (var onSnd in onSnds)
                 {
-                    var onSnd = onSnds[0];
-                    AllSounds.Remove(onSnd);
-                    onSounds.Remove(onSnd);
-                    onSnd.Dispose();
-                    return ((I)onSnd.ParentModule, onSnd.Slot);
+                    if (onSnd.Slot < maxSlot)
+                    {
+                        AllSounds.Remove(onSnd);
+                        onSounds.Remove(onSnd);
+                        onSnd.Dispose();
+                        return ((I)onSnd.ParentModule, onSnd.Slot);
+                    }
                 }
             }
             else

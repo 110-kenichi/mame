@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -57,7 +58,16 @@ namespace zanac.MAmidiMEmo.ComponentModel
             if (ctx != null)
             {
                 var val = ctx.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
-                ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
+                try
+                {
+                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                    ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
+                }
+                finally
+                {
+                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                }
             }
         }
 

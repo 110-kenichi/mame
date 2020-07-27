@@ -376,7 +376,8 @@ namespace zanac.MAmidiMEmo.Gui
                     }
                     break;
             }
-            r.AddPolygon(pts.ToArray());
+            if(pts.Count != 0)
+                r.AddPolygon(pts.ToArray());
 
             keyPathBlackTable[keyNum] = black;
             keyPathTable[keyNum] = r;

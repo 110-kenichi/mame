@@ -119,7 +119,7 @@ namespace zanac.MAmidiMEmo.Instruments
             List<KeyValuePair<Func<object, double>, object>> list = null;
             lock (fixedTimerSounds)
                 list = fixedTimerSounds.ToList();
-            foreach (var snd in list)
+            Parallel.ForEach(list, (snd) =>
             {
                 double ret = -1;
                 try
@@ -133,10 +133,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     InstrumentManager.ExclusiveLockObject.ExitReadLock();
                 }
                 if (ret >= 0)
-                    continue;
+                    return;
                 lock (fixedTimerSounds)
                     fixedTimerSounds.Remove(snd.Key);
-            }
+            });
         }
 
 

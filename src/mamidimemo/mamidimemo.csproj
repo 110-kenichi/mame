@@ -427,6 +427,9 @@
     <None Include="Data\GeneralUser GS v1.471.sf2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Samples\NES GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Panic.pdn" />
     <None Include="Data\Popup.pdn" />
     <None Include="Data\SCC.pdn" />

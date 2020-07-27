@@ -183,6 +183,7 @@
             // 
             // listViewIntruments
             // 
+            this.listViewIntruments.AllowDrop = true;
             this.listViewIntruments.ContextMenuStrip = this.contextMenuStripInst;
             resources.ApplyResources(this.listViewIntruments, "listViewIntruments");
             this.listViewIntruments.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
@@ -198,6 +199,8 @@
             this.listViewIntruments.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewIntruments.UseCompatibleStateImageBehavior = false;
             this.listViewIntruments.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewIntruments_ItemSelectionChanged);
+            this.listViewIntruments.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
+            this.listViewIntruments.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
             // 
             // contextMenuStripInst
             // 
