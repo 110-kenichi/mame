@@ -100,6 +100,30 @@ namespace zanac.MAmidiMEmo.Midi
             MidiEventReceived?.Invoke(typeof(MidiManager), e);
         }
 
+        private static BytesToMidiEventConverter midiConverter = new Melanchall.DryWetMidi.Core.BytesToMidiEventConverter();
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SendMidiEvent(byte data1, byte data2, byte data3)
+        {
+            var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
+            Midi.MidiManager.SendMidiEvent(me);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        unsafe public static void SendMidiSysEvent(byte *data, int length)
+        {
+            List<byte> buf = new List<byte>();
+            for (int i = 0; i < length; i++)
+                buf.Add(data[i]);
+            var me = midiConverter.Convert(buf.ToArray());
+            Midi.MidiManager.SendMidiEvent(me);
+        }
+
         /// <summary>
         /// 
         /// </summary>

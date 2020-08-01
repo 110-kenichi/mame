@@ -36,6 +36,18 @@ extern "C"
 {
 	//memodimemo
 
+	DllExport int sample_rate()
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return 0;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return 0;
+
+		return rm->sample_rate();
+	}
+
 	DllExport void start_recording_to(char* name)
 	{
 		mame_machine_manager *mmm = mame_machine_manager::instance();
@@ -242,6 +254,28 @@ extern "C"
 			speakerSoundInterface[key] = sd;
 		}
 		return speakerSoundInterface[key]->lastOutBufferSamples;
+	}
+
+	DllExport void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback)
+	{
+		std::string key = std::string(name).c_str();
+		auto itr = speakerSoundInterface.find(key);
+		if (itr == speakerSoundInterface.end())
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name)).c_str()));
+			if (sd == nullptr)
+				return;
+
+			speakerSoundInterface[key] = sd;
+		}
+		speakerSoundInterface[key]->set_stream_update_callback(callback);
 	}
 
 	DllExport void set_vst_fx_callback(unsigned int unitNumber, char* name, VST_FX_CALLBACK callback)
@@ -585,7 +619,7 @@ extern "C"
 
 			k051649_devices[unitNumber] = scc1;
 		}
-		for(int i=0;i<length;i++)
+		for (int i = 0; i < length; i++)
 			k051649_devices[unitNumber]->k052539_waveform_w(address + i, data[i]);
 	}
 

@@ -912,10 +912,11 @@ sound_manager::sound_manager(running_machine &machine)
 	const char *wavfile = machine.options().wav_write();
 	const char *avifile = machine.options().avi_write();
 
+	/* memidimemo
 	// handle -nosound and lower sample rate if not recording WAV or AVI
 	if (m_nosound_mode && wavfile[0] == 0 && avifile[0] == 0)
 		machine.m_sample_rate = 11025;
-
+	*/
 	// count the mixers
 #if VERBOSE
 	mixer_interface_iterator iter(machine.root_device());
@@ -1236,10 +1237,10 @@ void sound_manager::update(void *ptr, int param)
 	for (auto &stream : m_stream_list)
 		stream->apply_sample_rate_changes();
 
-	SoundUpdated();
-
 	// notify that new samples have been generated
 	emulator_info::sound_hook();
+
+	SoundUpdated();
 
 	g_profiler.stop();
 

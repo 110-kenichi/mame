@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using Accessibility;
+using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -45,27 +46,21 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
 
         internal static string RestartRequiredApplication;
 
-        public static void RestartApplication()
-        {
-            if (RestartRequiredApplication != null)
-                Process.Start(RestartRequiredApplication);
-        }
-
         public static event EventHandler ShuttingDown;
 
 #pragma warning disable CS0414
         /// <summary>
         /// ダミー(遅延Assemblyロード回避)
         /// </summary>
-        private static MultilineStringEditor dummyEditor = new MultilineStringEditor();
+        private static readonly MultilineStringEditor dummyEditor = new MultilineStringEditor();
 
         /// <summary>
         /// ダミー(遅延Assemblyロード回避)
         /// </summary>
-        private static AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
+        private static readonly AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
 #pragma warning restore  CS0414
 
-        private static Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        private static readonly Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         private static Dictionary<string, Type> assemblieTypes;
 
@@ -115,6 +110,17 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
             set
             {
                 f_CurrentSamplingRate = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string MAmiDir
+        {
+            get
+            {
+                return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             }
         }
 
@@ -219,6 +225,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
             var es = new EnvironmentSettings();
             try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 InstrumentManager.SaveSettings(es);
             }
             catch (Exception ex)
@@ -230,7 +238,97 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
 
                 MessageBox.Show(ex.ToString());
             }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
             return es;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void RestartApplication()
+        {
+            if (RestartRequiredApplication != null)
+                Process.Start(RestartRequiredApplication);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void CloseApplication()
+        {
+            Application.Exit();
+
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
+                Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
+                Settings.Default.Save();
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+        }
+
+        private static IntPtr saveDataPtr;
+
+        unsafe public static int SaveData(void** saveBuf)
+        {
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                var es = Program.SaveEnvironmentSettings();
+                string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
+                byte[] buf = Encoding.Unicode.GetBytes(StringCompressionUtility.Compress(data));
+
+                if (saveDataPtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(saveDataPtr);
+                saveDataPtr = Marshal.AllocHGlobal(buf.Length);
+                Marshal.Copy(buf, 0, saveDataPtr, buf.Length);
+
+                *saveBuf = saveDataPtr.ToPointer();
+                return buf.Length;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+            return 0;
+        }
+
+        unsafe public static void LoadData(byte* data, int length)
+        {
+            try
+            {
+                string text = StringCompressionUtility.Decompress(Encoding.Unicode.GetString(data, length));
+                InstrumentManager.ClearAllInstruments();
+                var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
+                InstrumentManager.RestoreSettings(settings);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         /// <summary>
@@ -261,6 +359,25 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         public static void SoundUpdated()
         {
             lockSlim.ExitWriteLock();
+        }
+
+
+        private static bool vstiMode;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SetVSTiMode()
+        {
+            vstiMode = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool IsVSTiMode()
+        {
+            return vstiMode;
         }
 
         /// <summary>

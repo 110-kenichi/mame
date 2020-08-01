@@ -110,17 +110,30 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("MT32", Resources.MT32);
             imageList1.Images.Add("CM32P", Resources.CM32P);
 
-            //Set MIDI I/F
-            foreach (var dev in InputDevice.GetAll())
+            if (Program.IsVSTiMode())
             {
-                int idx = toolStripComboBoxMidiIf.Items.Add(dev.Name);
-                if (string.Equals(dev.Name, Settings.Default.MidiIF))
-                    toolStripComboBoxMidiIf.SelectedIndex = idx;
-                dev.Dispose();
+                toolStripComboBoxMidiIf.Enabled = false;
+                toolStripComboBoxMidiIf.Items.Add("VSTi");
+                toolStripComboBoxMidiIf.SelectedIndex = 0;
             }
-            if (toolStripComboBoxMidiIf.Items.Count < 1)
+            else
             {
-                MessageBox.Show("There are no MIDI IN devices.\r\nPlease install at least one MIDI IN device to use the MAmidiMEmo.\r\nOr, install the loopMIDI to the PC.");
+                //Set MIDI I/F
+                foreach (var dev in InputDevice.GetAll())
+                {
+                    int idx = toolStripComboBoxMidiIf.Items.Add(dev.Name);
+                    if (string.Equals(dev.Name, Settings.Default.MidiIF))
+                        toolStripComboBoxMidiIf.SelectedIndex = idx;
+                    dev.Dispose();
+                }
+
+                if (toolStripComboBoxMidiIf.Items.Count < 1)
+                {
+                    MessageBox.Show(
+                        "There are no MIDI IN devices.\r\n" +
+                        "Please install at least one MIDI IN device to use the MAmidiMEmo.\r\n" +
+                        "Or, install the loopMIDI to the PC.");
+                }
             }
             outputListView = listView1;
 
@@ -275,6 +288,9 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (Program.IsVSTiMode())
+                return;
+
             try
             {
                 MidiManager.SetInputMidiDevice(toolStripComboBoxMidiIf.Text);

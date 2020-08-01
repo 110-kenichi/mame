@@ -74,13 +74,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     List<string> cn = new List<string>();
                     {
-                        string tblp = Path.Combine(Environment.CurrentDirectory, "Data", "cm32p_internal_tone.tbl");
+                        string tblp = Path.Combine(Program.MAmiDir, "Data", "cm32p_internal_tone.tbl");
                         cn.Add(tblp);
                     }
                     for (byte ci = 1; ci <= 15; ci++)
                     {
                         string tn = "cm32p_card" + ci.ToString("00") + "_tone.tbl";
-                        string tblp = Path.Combine(Environment.CurrentDirectory, "Data", tn);
+                        string tblp = Path.Combine(Program.MAmiDir, "Data", tn);
                         cn.Add(tblp);
                     }
                     cardToneTableFileNames = cn.ToArray();
@@ -740,7 +740,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         else
                         {
-                            IntPtr sf = CM32PLoadSf(UnitNumber, cid, Path.Combine(Environment.CurrentDirectory, "Data", fn));
+                            IntPtr sf = CM32PLoadSf(UnitNumber, cid, Path.Combine(Program.MAmiDir, "Data", fn));
                             soundFontTable.Add(fn, sf);
                         }
                         while (!s.EndOfStream)

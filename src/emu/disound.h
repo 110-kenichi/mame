@@ -35,6 +35,7 @@ constexpr int AUTO_ALLOC_INPUT  = 65535;
 //**************************************************************************
 
 typedef void(*VST_FX_CALLBACK)(stream_sample_t **buffer, int samples);
+typedef void(*STREAM_UPDATE_CALLBACK)(int32_t *buffer, int32_t size);
 
 // ======================> device_sound_interface
 
@@ -75,6 +76,8 @@ public:
 
 	// sound stream update overrides
 	void sound_stream_update_callback(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples);
+
+	void set_stream_update_callback(STREAM_UPDATE_CALLBACK callback) { m_stream_update_callback = callback; };
 
 	void set_vst_fx_callback(VST_FX_CALLBACK callback) { m_vst_fx_callback = callback; };
 	void apply_filter(stream_sample_t **inputs, int samples);
@@ -143,6 +146,8 @@ protected:
 	std::vector<sound_route> m_route_list;      // list of sound routes
 	int             m_outputs;                  // number of outputs from this instance
 	int             m_auto_allocated_inputs;    // number of auto-allocated inputs targeting us
+
+	STREAM_UPDATE_CALLBACK m_stream_update_callback;
 
 private:
 	double cutoff;

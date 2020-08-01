@@ -42,7 +42,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate IntPtr delegate_getLastOutputBuffer(string tagName, int insts, uint deviceID, uint unitNumber);
 
-        private static delegate_getLastOutputBuffer getLastOutputBuffer;
+        private static readonly delegate_getLastOutputBuffer getLastOutputBuffer;
 
         /// <summary>
         /// 
@@ -51,7 +51,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int delegate_getLastOutputBufferSamples(string tagName);
 
-        private static delegate_getLastOutputBufferSamples getLastOutputBufferSamples;
+        private static readonly delegate_getLastOutputBufferSamples getLastOutputBufferSamples;
 
         /// <summary>
         /// 
@@ -401,7 +401,7 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
-                processCC(e);
+                ProcessCC(e);
 
                 Parallel.ForEach(instruments, (i) =>
                 {
@@ -414,7 +414,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        private static void processCC(MidiEvent e)
+        private static void ProcessCC(MidiEvent e)
         {
             ControlChangeEvent midiEvent = e as ControlChangeEvent;
             if (midiEvent != null)
@@ -427,7 +427,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         switch (lastDateEntryType)
                         {
                             case DataEntryType.Nrpn:
-                                processNrpn(midiEvent, null);
+                                ProcessNrpn(midiEvent, null);
                                 break;
                             case DataEntryType.Rpn:
                                 break;
@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         switch (lastDateEntryType)
                         {
                             case DataEntryType.Nrpn:
-                                processNrpn(null, midiEvent);
+                                ProcessNrpn(null, midiEvent);
                                 break;
                             case DataEntryType.Rpn:
                                 break;
@@ -474,7 +474,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        private static void processNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        private static void ProcessNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {
@@ -566,12 +566,12 @@ namespace zanac.MAmidiMEmo.Instruments
                 InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
             uint did = inst == null ? uint.MaxValue : inst.DeviceID;
-            uint un = inst == null ? uint.MaxValue : inst.UnitNumber;
+            uint un = inst == null ? uint.MaxValue : inst.UnitNumber; 
             try
             {
                 Program.SoundUpdating();
-                copyData(retbuf, "lspeaker", 0, inst, cnt, did, un);
-                copyData(retbuf, "rspeaker", 1, inst, cnt, did, un);
+                CopyData(retbuf, "lspeaker", 0, inst, cnt, did, un);
+                CopyData(retbuf, "rspeaker", 1, inst, cnt, did, un);
             }
             finally
             {
@@ -580,7 +580,7 @@ namespace zanac.MAmidiMEmo.Instruments
             return retbuf;
         }
 
-        private static void copyData(int[][] retbuf, string name, int ch, InstrumentBase inst, int cnt, uint did, uint un)
+        private static void CopyData(int[][] retbuf, string name, int ch, InstrumentBase inst, int cnt, uint did, uint un)
         {
             int num = getLastOutputBufferSamples(name);
             if (num != 0)

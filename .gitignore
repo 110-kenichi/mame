@@ -76,3 +76,8 @@ Release(but Debug .NET)
 /src/mt32emu/*.user
 /src/mt32emu/*.filters
 /src/mt32emu/soxr/.gitignore
+/src/vst/Win32/Debug
+/src/vst/*.user
+/src/vst/Win32/Release
+/src/vst/x64/Release
+/src/vst/.vs
