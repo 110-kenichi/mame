@@ -79,6 +79,21 @@ void mt32_device::device_start()
 //  sound_stream_update - handle a stream update
 //-------------------------------------------------
 
+/** Enqueues a single short MIDI message to be processed ASAP. The message must contain a status byte. */
+void mt32_device::play_msg(mt32emu_bit32u msg)
+{
+	mtxBuffer.lock();
+	mt32emu_play_msg_now(context, msg);
+	mtxBuffer.unlock();
+}
+/** Enqueues a single well formed System Exclusive MIDI message to be processed ASAP. */
+void mt32_device::play_sysex(const mt32emu_bit8u *sysex, mt32emu_bit32u len)
+{
+	mtxBuffer.lock();
+	mt32emu_play_sysex_now(context, sysex, len);
+	mtxBuffer.unlock();
+}
+
 void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
 	stream_sample_t *buffer1 = outputs[0];
@@ -91,15 +106,28 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 		return;
 	}
 
-	float *ptr = (float*)malloc(sizeof(float) * samples * 2);
-	float *buf1 = ptr;
+	float *orgptr = (float*)malloc(sizeof(float) * samples * 2);
+	float *renderBuf = orgptr;
+	float *streamBuf = orgptr;
 
-	mt32emu_render_float(context, ptr, samples);
+	//mt32emu_render_float(context, renderBuf, samples);
+
+	int inc = samples / 10;
+	int idx = 0;
+	for (idx = 0; idx < samples - inc; idx += inc, renderBuf += inc * 2)
+	{
+		mtxBuffer.lock();
+		mt32emu_render_float(context, renderBuf, inc);
+		mtxBuffer.unlock();
+	}
+	mtxBuffer.lock();
+	mt32emu_render_float(context, renderBuf, samples - idx);
+	mtxBuffer.unlock();
 
 	while (samples-- > 0)
 	{
-		float outl = *buf1++;
-		float outr = *buf1++;
+		float outl = *streamBuf++;
+		float outr = *streamBuf++;
 		/*
 		outl += clipping_overflow_l;
 		clipping_overflow_l = 0;
@@ -125,6 +153,6 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 		*buffer2++ = ((stream_sample_t)(outr * 32767));
 	}
 
-	free(ptr);
+	free(orgptr);
 }
 

@@ -17,15 +17,10 @@ public:
 	mt32_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock);
 
 	/** Enqueues a single short MIDI message to be processed ASAP. The message must contain a status byte. */
-	void play_msg(mt32emu_bit32u msg)
-	{
-		mt32emu_play_msg(context, msg);
-	}
+	void play_msg(mt32emu_bit32u msg);
+
 	/** Enqueues a single well formed System Exclusive MIDI message to be processed ASAP. */
-	void play_sysex(const mt32emu_bit8u *sysex, mt32emu_bit32u len)
-	{
-		mt32emu_play_sysex(context, sysex, len);
-	}
+	void play_sysex(const mt32emu_bit8u *sysex, mt32emu_bit32u len);
 
 	void set_enable(int enable);
 
@@ -45,6 +40,8 @@ private:
 
 	float clipping_overflow_l;
 	float clipping_overflow_r;
+
+	std::mutex mtxBuffer;
 };
 
 DECLARE_DEVICE_TYPE(MT32, mt32_device)

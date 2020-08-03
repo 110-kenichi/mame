@@ -87,7 +87,7 @@ void MAmiVSTi::setSampleRate(float sampleRate)
 	soxr_datatype_t itype = SOXR_INT32_I;
 	soxr_datatype_t otype = SOXR_INT32_I;
 	soxr_io_spec_t iospec = soxr_io_spec(itype, otype);
-	soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_LSR0Q, SOXR_STEEP_FILTER);
+	soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_20_BITQ, 0);
 
 	if(soxl != NULL)
 		soxr_delete(soxl);
