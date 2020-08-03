@@ -10,20 +10,7 @@ AudioEffect* createEffectInstance(audioMasterCallback audioMaster)
 	return new MAmiVSTi(audioMaster);
 }
 
-int  main(int argc, char *argv[]);
-
-int HasExited();
-void SetVSTiMode();
-int IsStartMAmidiMEmoMainStarted();
-void CloseApplication();
-void  LoadData(byte* data, int length);
-int SaveData(void** saveBuf);
-
 char modulePath[MAX_PATH];
-
-typedef void(*STREAM_UPDATE_CALLBACK)(int32_t *buffer, int32_t size);
-extern "C" void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback);
-extern "C" int sample_rate();
 
 DWORD WINAPI StartMAmiVSTMainThread(LPVOID lpParam)
 {
@@ -33,26 +20,21 @@ DWORD WINAPI StartMAmiVSTMainThread(LPVOID lpParam)
 	return 0;
 }
 
-std::mutex MAmiVSTi::mtxBuffer;
-std::vector<int32_t> MAmiVSTi::streamBufferL;
-std::vector<int32_t> MAmiVSTi::streamBufferR;
-bool MAmiVSTi::isFirstRead;
-bool MAmiVSTi::isClosed;
-bool MAmiVSTi::isSuspend;
-int MAmiVSTi::machine_sample_rate;
 bool MAmiVSTi::initialized;
+MAmiVSTi* MAmiVSTi::instance;
 
 // ============================================================================================
 // このVSTの初期化
 // ============================================================================================
 MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	: AudioEffectX(audioMaster, MY_VST_PRESET_NUM, MY_VST_PARAMETER_NUM)
+	, initToFirstRead(false)
+	, isClosed(false)
+	, isSuspend(false)
+	, soxl(NULL)
+	, soxr(NULL)
+	, mami_sample_rate(0)
 {
-	//VSTの初期化を行う。
-	if (initialized)
-		return;
-	initialized = true;
-
 	//以下の関数を呼び出して入力数、出力数等の情報を設定する。
 	//必ず呼び出さなければならない。
 	setNumInputs(MY_VST_INPUT_NUM);    //入力数の設定
@@ -69,6 +51,14 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 
 	//上記の関数を呼び出した後に初期化を行う
 
+	initToFirstRead = true;
+
+	instance = this;
+
+	//VSTの初期化を行う。
+	if (initialized)
+		return;
+	initialized = true;
 
 	//Set VSTi Mode to MAmi
 	SetVSTiMode();
@@ -84,17 +74,28 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	while (IsStartMAmidiMEmoMainStarted() == 0)
 		Sleep(100);
 
-	set_stream_update_callback(const_cast<char*>("lspeaker"), leftStreamUpdated);
-	set_stream_update_callback(const_cast<char*>("rspeaker"), rightStreamUpdated);
+	set_stream_update_callback(const_cast<char*>("lspeaker"), MAmiVSTi::StreamUpdatedL);
+	set_stream_update_callback(const_cast<char*>("rspeaker"), MAmiVSTi::StreamUpdatedR);
 
-	machine_sample_rate = sample_rate();
-
-	isFirstRead = true;
+	mami_sample_rate = sample_rate();
 }
 
 void MAmiVSTi::setSampleRate(float sampleRate)
 {
 	this->sampleRate = sampleRate;
+
+	soxr_datatype_t itype = SOXR_INT32_I;
+	soxr_datatype_t otype = SOXR_INT32_I;
+	soxr_io_spec_t iospec = soxr_io_spec(itype, otype);
+	soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_LSR0Q, SOXR_STEEP_FILTER);
+
+	if(soxl != NULL)
+		soxr_delete(soxl);
+	if (soxr != NULL)
+		soxr_delete(soxr);
+
+	soxl = soxr_create(mami_sample_rate, sampleRate, 1, NULL, &iospec, &qSpec, NULL);
+	soxr = soxr_create(mami_sample_rate, sampleRate, 1, NULL, &iospec, &qSpec, NULL);
 }
 
 ///< Host stores plug-in state. Returns the size in bytes of the chunk (plug-in allocates the data array)
@@ -121,6 +122,15 @@ void MAmiVSTi::open()
 void MAmiVSTi::close()
 {
 	isClosed = true;
+
+	set_stream_update_callback(const_cast<char*>("lspeaker"), NULL);
+	set_stream_update_callback(const_cast<char*>("rspeaker"), NULL);
+
+	if (soxl != NULL)
+		soxr_delete(soxl);
+	if (soxr != NULL)
+		soxr_delete(soxr);
+
 	CloseApplication();
 }
 
@@ -138,7 +148,7 @@ void MAmiVSTi::suspend()
 void MAmiVSTi::resume()
 {
 	isSuspend = false;
-	isFirstRead = true;
+	initToFirstRead = true;
 }
 
 // ============================================================================================
@@ -182,28 +192,83 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 	processReplacing2(inL, inR, outL, outR, sampleFrames - processedFrames);
 }
 
-void MAmiVSTi::leftStreamUpdated(int32_t *buffer, int32_t size)
+void MAmiVSTi::StreamUpdatedL(int32_t *buffer, int32_t size)
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	MAmiVSTi::instance->streamUpdatedL(buffer, size);
+}
 
+void MAmiVSTi::streamUpdatedL(int32_t *buffer, int32_t size)
+{
 	if (isSuspend || isClosed || HasExited())
 		return;
 
-	for (int i = 0; i < size; i++)
-		streamBufferL.push_back(buffer[i]);
+	//std::lock_guard<std::mutex> lock(mtxBuffer);
+
+	mtxBuffer.lock();
+
+	int cnvSize = (int)ceil((double)size * ((double)sampleRate / (double)mami_sample_rate));
+	int32_t* cnvBuffer = new int32_t[cnvSize];
+
+	//idone - To return actual # samples used (<= ilen).
+	size_t idone = 0;
+	//odone - To return actual # samples out (<= olen).
+	size_t odone = 0;
+
+	soxr_process(soxl, buffer, size, &idone, cnvBuffer, cnvSize, &odone);
+
+	//int32_t* cb = cnvBuffer;
+	//int silent = 1;
+	//for (size_t i = 0; i < odone; i++)
+	//{
+	//	if (*cb++ != 0) {
+	//		silent = 0;
+	//		break;
+	//	}
+	//}
+	//if (!silent)
+	{
+		for (size_t i = 0; i < odone; i++)
+			streamBufferL.push_back(*cnvBuffer++);
+	}
 }
 
-void MAmiVSTi::rightStreamUpdated(int32_t *buffer, int32_t size)
+void MAmiVSTi::StreamUpdatedR(int32_t *buffer, int32_t size)
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
-
-	if (isSuspend || isClosed || HasExited())
-		return;
-
-	for (int i = 0; i < size; i++)
-		streamBufferR.push_back(buffer[i]);
+	MAmiVSTi::instance->streamUpdatedR(buffer, size);
 }
 
+void MAmiVSTi::streamUpdatedR(int32_t *buffer, int32_t size)
+{
+	//if (isSuspend || isClosed || HasExited())
+	//	return;
+
+	//std::lock_guard<std::mutex> lock(mtxBuffer);
+
+	int cnvSize = (int)ceil((double)size * ((double)sampleRate / (double)mami_sample_rate));
+	int32_t* cnvBuffer = new int32_t[cnvSize];
+
+	size_t idone = 0;
+	size_t odone = 0;
+
+	soxr_process(soxr, buffer, size, &idone, cnvBuffer, cnvSize, &odone);
+
+	//int32_t* cb = cnvBuffer;
+	//int silent = 1;
+	//for (size_t i = 0; i < odone; i++)
+	//{
+	//	if (*cb++ != 0) {
+	//		silent = 0;
+	//		break;
+	//	}
+	//}
+	//if (!silent)
+	{
+		for (size_t i = 0; i < odone; i++)
+			streamBufferR.push_back(*cnvBuffer++);
+	}
+
+	mtxBuffer.unlock();
+}
 
 void MAmiVSTi::processReplacing2(float* inL, float* inR, float* outL, float* outR, VstInt32 sampleFrames)
 {
@@ -214,9 +279,9 @@ void MAmiVSTi::processReplacing2(float* inL, float* inR, float* outL, float* out
 	if (streamBufferR.size() < (size_t)sampleFrames)
 		return;
 
-	if (isFirstRead)
+	if (initToFirstRead)
 	{
-		isFirstRead = false;
+		initToFirstRead = false;
 		streamBufferL.erase(streamBufferL.begin(), streamBufferL.end() - sampleFrames);
 		streamBufferR.erase(streamBufferR.begin(), streamBufferR.end() - sampleFrames);
 	}

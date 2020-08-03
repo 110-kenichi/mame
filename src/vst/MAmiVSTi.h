@@ -25,6 +25,19 @@
 #define MY_VST_PRESET_NUM    0 //プリセットプログラムの数
 #define MY_VST_PARAMETER_NUM 0 //パラメータの数
 
+typedef void(*STREAM_UPDATE_CALLBACK)(int32_t *buffer, int32_t size);
+extern "C" void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback);
+extern "C" int sample_rate();
+
+int  main(int argc, char *argv[]);
+
+int HasExited();
+void SetVSTiMode();
+int IsStartMAmidiMEmoMainStarted();
+void CloseApplication();
+void  LoadData(byte* data, int length);
+int SaveData(void** saveBuf);
+
 // ============================================================================================
 // VSTの基本となるクラス
 // ============================================================================================
@@ -32,18 +45,25 @@ class MAmiVSTi : public AudioEffectX, public CMidiMsg
 {
 private:
 	static bool initialized;
-	static std::mutex mtxBuffer;
+	static MAmiVSTi* instance;
 
-	static std::vector<int32_t> streamBufferL;
-	static std::vector<int32_t> streamBufferR;
-	static void leftStreamUpdated(int32_t *buffer, int32_t size);
-	static void rightStreamUpdated(int32_t *buffer, int32_t size);
+	std::mutex mtxBuffer;
 
-	static bool isFirstRead;
+	std::vector<int32_t> streamBufferL;
+	std::vector<int32_t> streamBufferR;
+	void streamUpdatedL(int32_t *buffer, int32_t size);
+	void streamUpdatedR(int32_t *buffer, int32_t size);
+
+	static void StreamUpdatedL(int32_t *buffer, int32_t size);
+	static void StreamUpdatedR(int32_t *buffer, int32_t size);
+
+	bool initToFirstRead;
 protected:
-	static bool isClosed;
-	static bool isSuspend;
-	static int machine_sample_rate;
+	bool isClosed;
+	bool isSuspend;
+	int mami_sample_rate;
+	soxr_t soxr;
+	soxr_t soxl;
 public:
 	MAmiVSTi(audioMasterCallback audioMaster);
 

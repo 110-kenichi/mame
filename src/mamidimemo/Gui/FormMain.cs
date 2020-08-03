@@ -115,6 +115,9 @@ namespace zanac.MAmidiMEmo.Gui
                 toolStripComboBoxMidiIf.Enabled = false;
                 toolStripComboBoxMidiIf.Items.Add("VSTi");
                 toolStripComboBoxMidiIf.SelectedIndex = 0;
+
+                toolStripMenuItemExit.Enabled = false;
+                this.ControlBox = false;
             }
             else
             {
@@ -621,11 +624,18 @@ namespace zanac.MAmidiMEmo.Gui
             if (dr == DialogResult.OK)
             {
                 Settings.Default.Save();
-                var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
-                if (rdr == DialogResult.Yes)
+                if (Program.IsVSTiMode())
                 {
-                    Close();
-                    Program.RestartRequiredApplication = Application.ExecutablePath;
+                    MessageBox.Show(this, "Please restart host DAW application.", "Information", MessageBoxButtons.OK);
+                }
+                else
+                {
+                    var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
+                    if (rdr == DialogResult.Yes)
+                    {
+                        Close();
+                        Program.RestartRequiredApplication = Application.ExecutablePath;
+                    }
                 }
             }
             else

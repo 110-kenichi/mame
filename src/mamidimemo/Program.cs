@@ -71,9 +71,10 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                 if (assemblieTypes == null)
                 {
                     assemblieTypes = new Dictionary<string, Type>();
-                    var ts = AppDomain.CurrentDomain.GetAssemblies()
-                                .Where(a => a.FullName.StartsWith("MAmidiMEmoUI,"))
-                                .SelectMany(a => a.GetTypes()).ToArray();
+                    Type[] ts = Assembly.GetExecutingAssembly().GetTypes();
+                    //ts = AppDomain.CurrentDomain.GetAssemblies()
+                    //            .Where(a => a.FullName.StartsWith("MAmidiMEmoUI,"))
+                    //            .SelectMany(a => a.GetTypes()).ToArray();
                     foreach (var t in ts)
                     {
                         var attr = t.GetCustomAttributes(typeof(DataContractAttribute), true).FirstOrDefault() as DataContractAttribute;

@@ -252,14 +252,25 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private VSTPluginCollection f_VSTPlugins;
+
         [DataMember]
         [Category("Filter")]
         [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST")]
         public VSTPluginCollection VSTPlugins
         {
-            get;
-            set;
-        } = new VSTPluginCollection();
+            get
+            {
+                if (Program.IsVSTiMode())
+                    return null;
+                return f_VSTPlugins;
+            }
+            set
+            {
+                if (!Program.IsVSTiMode())
+                    f_VSTPlugins = value;
+            }
+        }
 
         /// <summary>
         /// 
@@ -290,9 +301,15 @@ namespace zanac.MAmidiMEmo.Instruments
                 jo["UnitNumber"] = UnitNumber;
 
                 RestoreFrom(jo.ToString());
-                SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+                if(!Program.IsVSTiMode())
+                    serializeVstFx();
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
             }
+        }
+
+        private void serializeVstFx()
+        {
+            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
         }
 
         public abstract void RestoreFrom(string serializeData);
@@ -1496,8 +1513,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
             vstHandle = GCHandle.Alloc(this);
 
-            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
-            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+            if(!Program.IsVSTiMode())
+                initVstPlugins();
 
             CombinedTimbres = new CombinedTimbre[MAX_TIMBRES];
             for (int i = 0; i < MAX_TIMBRES; i++)
@@ -1691,6 +1708,14 @@ namespace zanac.MAmidiMEmo.Instruments
             };
         }
 
+        private void initVstPlugins()
+        {
+            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
+            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+
+            VSTPlugins = new VSTPluginCollection();
+        }
+
         #endregion
 
         #region IDisposable Support
@@ -1713,12 +1738,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 // TODO: 大きなフィールドを null に設定します。
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 0);
 
-                SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
-
-                lock (InstrumentBase.VstPluginContextLockObject)
+                if (VSTPlugins != null)
                 {
-                    foreach (var vp in VSTPlugins)
-                        vp.Dispose();
+                    SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
+
+                    lock (InstrumentBase.VstPluginContextLockObject)
+                    {
+                        VSTPlugins.Dispose();
+                    }
                 }
 
                 if (vstHandle != null && vstHandle.IsAllocated)
@@ -2003,14 +2030,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 94:
                 case 95:
                     {
-                        foreach (var vp in VSTPlugins)
-                        {
-                            foreach (var pn in vp.VECCSS[midiEvent.Channel].GetProperties(vp, midiEvent.ControlNumber - 90))
-                            {
-                                float val = (float)midiEvent.ControlValue / (float)128;
-                                vp.Settings.SetPropertyValue(pn, val);
-                            }
-                        }
+                        if (VSTPlugins != null)
+                            VSTPlugins.ProcessSoundControl(midiEvent);
                     }
                     break;
 
@@ -2173,77 +2194,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="pos"></param>
         private void vst_fx_callback(IntPtr buffer, int samples)
         {
-            if (samples == 0)
-                return;
-
-            int[][] buf = new int[2][] { new int[samples], new int[samples] };
-            IntPtr[] pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
-            Marshal.Copy(pt[0], buf[0], 0, samples);
-            Marshal.Copy(pt[1], buf[1], 0, samples);
-
-            using (VstAudioBufferManager bufA = new VstAudioBufferManager(2, samples))
-            using (VstAudioBufferManager bufB = new VstAudioBufferManager(2, samples))
-            {
-                lock (InstrumentBase.VstPluginContextLockObject)
-                {
-                    bool processed = false;
-                    foreach (var vp in VSTPlugins)
-                    {
-                        var ctx = vp.PluginContext;
-                        if (ctx != null)
-                        {
-                            int idx = 0;
-                            foreach (VstAudioBuffer vab in bufA)
-                            {
-                                Parallel.ForEach(Partitioner.Create(0, samples), range =>
-                                {
-                                    for (var i = range.Item1; i < range.Item2; i++)
-                                        vab[i] = (float)buf[idx][i] / 32767.0f;
-                                });
-                                //for (int i = 0; i < samples; i++)
-                                //    vab[i] = (float)buf[idx][i] / (float)int.MaxValue;
-                                idx++;
-                            }
-                            break;
-                        }
-                    }
-
-                    VstAudioBufferManager bufa = bufA;
-                    VstAudioBufferManager bufb = bufA;
-                    foreach (var vp in VSTPlugins)
-                    {
-                        var ctx = vp.PluginContext;
-                        if (ctx != null)
-                        {
-                            ctx.Context.PluginCommandStub.SetBlockSize(samples);
-                            ctx.Context.PluginCommandStub.ProcessReplacing(bufa.ToArray<VstAudioBuffer>(), bufb.ToArray<VstAudioBuffer>());
-                            processed = true;
-                        }
-                        var tmp = bufa;
-                        bufa = bufb;
-                        bufb = tmp;
-                    }
-
-                    if (processed)
-                    {
-                        int idx = 0;
-                        foreach (VstAudioBuffer vab in bufb)
-                        {
-                            Parallel.ForEach(Partitioner.Create(0, samples), range =>
-                            {
-                                for (var i = range.Item1; i < range.Item2; i++)
-                                    buf[idx][i] = (int)(vab[i] * 32767.0f);
-                            });
-                            //for (int i = 0; i < samples; i++)
-                            //    buf[idx][i] = (int)(vab[i] * int.MaxValue);
-                            idx++;
-                        }
-                        Marshal.Copy(buf[0], 0, pt[0], samples);
-                        Marshal.Copy(buf[1], 0, pt[1], samples);
-                    }
-                }
-            }
-
+            if (VSTPlugins != null)
+                VSTPlugins.ProcessCallback(buffer, samples);
         }
 
         #endregion

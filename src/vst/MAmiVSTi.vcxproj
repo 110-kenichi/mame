@@ -76,6 +76,8 @@
     </ProjectReference>
     <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\mame_lib.vcxproj">
       <Project>{c4e46169-3ddf-4080-b3aa-f08d7f98682a}</Project>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
     </ProjectReference>
     <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\netlist.vcxproj">
       <Project>{665ef8ac-2a4c-4c3e-a05f-fd1e5db11de9}</Project>
