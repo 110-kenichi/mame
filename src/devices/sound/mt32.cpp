@@ -82,16 +82,26 @@ void mt32_device::device_start()
 /** Enqueues a single short MIDI message to be processed ASAP. The message must contain a status byte. */
 void mt32_device::play_msg(mt32emu_bit32u msg)
 {
+	//*
+	mt32emu_play_msg(context, msg);
+	//*/
+	/*
 	mtxBuffer.lock();
 	mt32emu_play_msg_now(context, msg);
 	mtxBuffer.unlock();
+	//*/
 }
 /** Enqueues a single well formed System Exclusive MIDI message to be processed ASAP. */
 void mt32_device::play_sysex(const mt32emu_bit8u *sysex, mt32emu_bit32u len)
 {
+	//*
+	mt32emu_play_sysex(context, sysex, len);
+	//*/
+	/*
 	mtxBuffer.lock();
 	mt32emu_play_sysex_now(context, sysex, len);
 	mtxBuffer.unlock();
+	//*/
 }
 
 void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
@@ -101,17 +111,18 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 
 	if (!m_enable)
 	{
-		memset(buffer1, 0, samples * sizeof(*buffer1));
-		memset(buffer2, 0, samples * sizeof(*buffer2));
+		//memset(buffer1, 0, samples * sizeof(*buffer1));
+		//memset(buffer2, 0, samples * sizeof(*buffer2));
 		return;
 	}
 
 	float *orgptr = (float*)malloc(sizeof(float) * samples * 2);
 	float *renderBuf = orgptr;
 	float *streamBuf = orgptr;
-
-	//mt32emu_render_float(context, renderBuf, samples);
-
+	//*
+	mt32emu_render_float(context, renderBuf, samples);
+	/*/
+	/*
 	int inc = samples / 10;
 	int idx = 0;
 	for (idx = 0; idx < samples - inc; idx += inc, renderBuf += inc * 2)
@@ -123,6 +134,7 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 	mtxBuffer.lock();
 	mt32emu_render_float(context, renderBuf, samples - idx);
 	mtxBuffer.unlock();
+	//*/
 
 	while (samples-- > 0)
 	{

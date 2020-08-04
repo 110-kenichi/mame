@@ -234,8 +234,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void YM2413WriteData(uint unitNumber, byte address, int slot, byte data)
         {
-            DeferredWriteData(YM2413_write, unitNumber, 0, (byte)(address + slot));
-            DeferredWriteData(YM2413_write, unitNumber, 1, data);
+            DeferredWriteData(YM2413_write, unitNumber, (uint)0, (byte)(address + slot));
+            DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
             /*
             try
             {

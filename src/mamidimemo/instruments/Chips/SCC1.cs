@@ -103,7 +103,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void delegate_SCC1_w(uint unitNumber, uint address, byte data);
 
-        private delegate void delegate_SCC1_w_array(uint unitNumber, uint address, byte[] data, int length);
+        private delegate void delegate_SCC1_w_array(uint unitNumber, uint address, sbyte[] data, int length);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate byte delegate_SCC1_r(uint unitNumber, uint address);

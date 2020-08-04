@@ -343,8 +343,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     op = 3;
                     break;
             }
-            DeferredWriteData(Ym2151_write, unitNumber, 0, (byte)(address + (op * 8) + slot));
-            DeferredWriteData(Ym2151_write, unitNumber, 1, data);
+            DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
+            DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
 
             /*
             try

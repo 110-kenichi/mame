@@ -126,7 +126,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private static void C6280WriteData(uint unitNumber, uint address, int? slot, byte data)
         {
             if (slot != null)
-                DeferredWriteData(C6280_w, unitNumber, 0x800, (byte)slot.Value);
+                DeferredWriteData(C6280_w, unitNumber, (uint)0x800, (byte)slot.Value);
             DeferredWriteData(C6280_w, unitNumber, address, data);
             /*
             try

@@ -591,8 +591,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700RegWriteData(uint unitNumber, byte reg, byte data)
         {
-            DeferredWriteData(spc_ram_w, unitNumber, 0xf2, reg);
-            DeferredWriteData(spc_ram_w, unitNumber, 0xf3, data);
+            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf2, reg);
+            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf3, data);
             /*
             try
             {

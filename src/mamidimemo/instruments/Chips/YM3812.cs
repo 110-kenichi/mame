@@ -195,8 +195,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //Operator 1    00  01  02  08  09  0A  10  11  12
             //Operator 2    03  04  05  0B  0C  0D  13  14  15
 
-            DeferredWriteData(YM3812_write, unitNumber, 0, (byte)(address + (op * 3) + addressTable[slot]));
-            DeferredWriteData(YM3812_write, unitNumber, 1, data);
+            DeferredWriteData(YM3812_write, unitNumber, (uint)0, (byte)(address + (op * 3) + addressTable[slot]));
+            DeferredWriteData(YM3812_write, unitNumber, (uint)1, data);
             /*
             try
             {
