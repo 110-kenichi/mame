@@ -227,7 +227,7 @@ void cm32p_device::sound_stream_update(sound_stream &stream, stream_sample_t **i
 	stream_sample_t *buffer1 = outputs[0];
 	stream_sample_t *buffer2 = outputs[1];
 
-	if (!m_enable || memory_initialized == 0)
+	if (memory_initialized == 0)
 	{
 		memset(buffer1, 0, samples * sizeof(*buffer1));
 		memset(buffer2, 0, samples * sizeof(*buffer2));

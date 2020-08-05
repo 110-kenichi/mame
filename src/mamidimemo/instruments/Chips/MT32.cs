@@ -369,7 +369,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlayMsg(uint unitNumber, uint msg)
         {
-            DeferredWriteData(mt32_play_msg, unitNumber, msg);
+            mt32_play_msg(unitNumber, msg);
+            //DeferredWriteData(mt32_play_msg, unitNumber, msg);
             /*
             try
             {
@@ -388,7 +389,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlaySysEx(uint unitNumber, byte[] sysex)
         {
-            DeferredWriteData(mt32_play_sysex, unitNumber, sysex, sysex.Length);
+            mt32_play_sysex(unitNumber, sysex, sysex.Length);
+            //DeferredWriteData(mt32_play_sysex, unitNumber, sysex, sysex.Length);
             /*
             try
             {
@@ -448,6 +450,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Timbres[i] = new MT32Timbre();
         }
 
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
+        }
+
         protected override void OnMidiEvent(MidiEvent midiEvent)
         {
             uint msg = 0;
@@ -468,10 +478,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 case NoteOnEvent non:
                     {
-                        if (non.Velocity == 0)
-                            msg = (uint)((0x80 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
-                        else
-                            msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
+                        msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
                         break;
                     }
                 case NoteAftertouchEvent na:

@@ -37,6 +37,8 @@ private:
 	sound_stream *m_stream;   /* stream number */
 	int m_frequency;          /* set frequency - this can be changed using the appropriate function */
 	mt32emu_context context;
+	attotime lastUpdateTime;
+	attotime mt32_tick = attotime::from_hz(32000);
 
 	float clipping_overflow_l;
 	float clipping_overflow_r;

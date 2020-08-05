@@ -722,6 +722,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             loadSfTable();
             CM32PInitlaizeMemory(UnitNumber);
+
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
         }
 
         private void loadSfTable()
