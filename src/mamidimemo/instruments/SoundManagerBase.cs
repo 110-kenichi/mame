@@ -184,6 +184,16 @@ namespace zanac.MAmidiMEmo.Instruments
                         ProcessGPCS(midiEvent, no);
                     }
                     break;
+                case 64:    //Holds
+                    if (parentModule.Holds[midiEvent.Channel] < 64 && parentModule.LastHolds[midiEvent.Channel] >= 64)
+                    {
+                        foreach (var snd in AllSounds)
+                        {
+                            if (snd.NoteOnEvent.Channel == midiEvent.Channel)
+                                KeyOff(new NoteOffEvent(snd.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = snd.NoteOnEvent.Channel });
+                        }
+                    }
+                    break;
                 //GPCS
                 case 80:
                 case 81:
@@ -706,7 +716,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (arp.ArpAction == null)
                             {
                                 arp.ArpAction = new Func<object, double>(processArpeggiatorsForKeyOn);
-                                HighPrecisionTimer.SetPeriodicCallbackAsReader(arp.ArpAction, arp.Step, arp);
+                                HighPrecisionTimer.SetPeriodicCallback(arp.ArpAction, arp.Step, arp);
                             }
                             return true;
                         }
@@ -765,7 +775,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (arp.ArpAction == null)
                     {
                         arp.ArpAction = new Func<object, double>(processArpeggiatorsForPitch);
-                        HighPrecisionTimer.SetPeriodicCallbackAsReader(arp.ArpAction, arp.Step, arp);
+                        HighPrecisionTimer.SetPeriodicCallback(arp.ArpAction, arp.Step, arp);
                     }
                 }
             }

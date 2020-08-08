@@ -185,6 +185,7 @@ std::string running_machine::describe_context() const
 //-------------------------------------------------
 //  start - initialize the emulated machine
 //-------------------------------------------------
+void StartMAmidiMEmoMain();
 
 void running_machine::start()
 {
@@ -197,6 +198,11 @@ void running_machine::start()
 
 	// allocate a soft_reset timer
 	m_soft_reset_timer = m_scheduler.timer_alloc(timer_expired_delegate(FUNC(running_machine::soft_reset), this));
+
+	StartMAmidiMEmoMain();
+
+	emu_timer* mami_timer = m_scheduler.timer_alloc(timer_expired_delegate(FUNC(running_machine::mami_timer_callback), this));
+	mami_timer->adjust(attotime::from_msec(1), 0, attotime::from_msec(1));
 
 	// initialize UI input
 	m_ui_input = make_unique_clear<ui_input_manager>(*this);
@@ -298,9 +304,14 @@ void running_machine::start()
 
 //mamidimemo
 
-void StartMAmidiMEmoMain();
-
 int HasExited();
+
+void SoundTimerCallback();
+
+void running_machine::mami_timer_callback(void *ptr, s32 param)
+{
+	SoundTimerCallback();
+}
 
 int running_machine::run(bool quiet)
 {
@@ -367,9 +378,6 @@ int running_machine::run(bool quiet)
 		// break out to our async javascript loop and halt
 		emscripten_set_running_machine(this);
 #endif
-
-		StartMAmidiMEmoMain();
-
 		// run the CPUs until a reset or exit
 		while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != saveload_schedule::NONE)
 		{

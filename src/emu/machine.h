@@ -295,6 +295,7 @@ private:
 	void set_saveload_filename(std::string &&filename);
 	void handle_saveload();
 	void soft_reset(void *ptr = nullptr, s32 param = 0);
+	void mami_timer_callback(void *ptr = nullptr, s32 param = 0);
 	std::string nvram_filename(device_t &device) const;
 	void nvram_load();
 	void nvram_save();

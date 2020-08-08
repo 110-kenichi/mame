@@ -29,6 +29,8 @@ namespace zanac.MAmidiMEmo.Gui
 
         private static ListView outputListView;
 
+        private static ToolStripStatusLabel statusLabel;
+
         private static StreamWriter logStream;
 
         /// <summary>
@@ -61,6 +63,8 @@ namespace zanac.MAmidiMEmo.Gui
 
                 var item = outputListView.Items.Add(log);
                 outputListView.EnsureVisible(item.Index);
+                if (outputListView.Items.Count > 10000)
+                    outputListView.Items.RemoveAt(0);
             }), null);
         }
 
@@ -75,8 +79,31 @@ namespace zanac.MAmidiMEmo.Gui
 
             outputListView?.BeginInvoke(new MethodInvoker(() =>
             {
+                if (outputListView.IsDisposed)
+                    return;
+
                 var item = outputListView.Items.Add(log);
                 outputListView.EnsureVisible(item.Index);
+                if (outputListView.Items.Count > 10000)
+                    outputListView.Items.RemoveAt(0);
+            }), null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="log"></param>
+        public static void SetStatusText(String text)
+        {
+            if (statusLabel.IsDisposed)
+                return;
+
+            statusLabel.GetCurrentParent()?.BeginInvoke(new MethodInvoker(() =>
+            {
+                if (statusLabel.IsDisposed)
+                    return;
+
+                statusLabel.Text = text;
             }), null);
         }
 
@@ -139,6 +166,8 @@ namespace zanac.MAmidiMEmo.Gui
                 }
             }
             outputListView = listView1;
+
+            statusLabel = toolStripStatusLabel1;
 
             //MIDI Event
             InstrumentManager_InstrumentChanged(null, null);
@@ -588,14 +617,14 @@ namespace zanac.MAmidiMEmo.Gui
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                 foreach (var inst in InstrumentManager.GetAllInstruments())
                     inst.AllSoundOff();
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
             }
         }
 

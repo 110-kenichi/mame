@@ -18,6 +18,7 @@ typedef void(CALLBACK* SendMidiSysEventProc)(unsigned char *data, int length);
 typedef int(CALLBACK* CloseApplicationProc)();
 typedef void(CALLBACK*  LoadDataProc)(byte* data, int length);
 typedef int(CALLBACK* SaveDataProc)(void** saveBuf);
+typedef void(CALLBACK* SoundTimerCallbackProc)();
 
 InitializeDotNetProc initializeDotNet = 0;
 HasExitedProc hasExited = 0;
@@ -31,6 +32,7 @@ SendMidiSysEventProc sendMidiSysEvent = 0;
 CloseApplicationProc closeApplication = 0;
 LoadDataProc loadData;
 SaveDataProc saveData;
+SoundTimerCallbackProc soundTimerCallback;
 
 DWORD WINAPI StartMAmidiMEmoMainThread(LPVOID lpParam)
 {
@@ -101,6 +103,9 @@ void StartMAmidiMEmoMain()
 	proc = GetProcAddress(hModule, "SaveData");
 	if (proc != NULL)
 		saveData = reinterpret_cast<SaveDataProc>(proc);
+	proc = GetProcAddress(hModule, "SoundTimerCallback");
+	if (proc != NULL)
+		soundTimerCallback = reinterpret_cast<SoundTimerCallbackProc>(proc);
 
 	// Launch MAmi
 	proc = GetProcAddress(hModule, "MainWarpper");
@@ -196,4 +201,9 @@ void  LoadData(byte * data, int length)
 int SaveData(void** saveBuf)
 {
 	return saveData(saveBuf);
+}
+
+void SoundTimerCallback()
+{
+	return soundTimerCallback();
 }

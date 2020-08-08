@@ -1,4 +1,4 @@
-MAmidiMEmo V2.0.2.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.0.3.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -224,6 +224,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.0.3.0 Improved sounds output timing accuracy.
+        Supported HOLD1 control change message.
 2.0.2.0 Improved MT-32 sounds output timing & latency.
 2.0.1.0 Fixed crashing on some chip...
 2.0.0.0 Fixed some minor bugs.

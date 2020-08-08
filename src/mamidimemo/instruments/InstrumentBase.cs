@@ -301,7 +301,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 jo["UnitNumber"] = UnitNumber;
 
                 RestoreFrom(jo.ToString());
-                if(!Program.IsVSTiMode())
+                if (!Program.IsVSTiMode())
                     serializeVstFx();
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
             }
@@ -1078,6 +1078,44 @@ namespace zanac.MAmidiMEmo.Instruments
                 ModulationDepthRangesCent[i] = 64;
         }
 
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Holds (0:Off 64:On) <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [Mask(127)]
+        [CollectionDefaultValue((byte)0)]
+        public virtual byte[] Holds
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public virtual byte[] LastHolds
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeHolds()
+        {
+            foreach (var dt in Holds)
+            {
+                if (dt != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetHolds()
+        {
+            for (int i = 0; i < Holds.Length; i++)
+                Holds[i] = 0;
+        }
+
 
         [DataMember]
         [Category("MIDI")]
@@ -1513,7 +1551,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             vstHandle = GCHandle.Alloc(this);
 
-            if(!Program.IsVSTiMode())
+            if (!Program.IsVSTiMode())
                 initVstPlugins();
 
             CombinedTimbres = new CombinedTimbre[MAX_TIMBRES];
@@ -1669,6 +1707,18 @@ namespace zanac.MAmidiMEmo.Instruments
                     0, 0, 0,
                     0, 0, 0,
                     0, 0, 0, 0};
+            Holds = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
+            LastHolds = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
             GPCS = new GeneralPurposeControlSettings[]{
                 new GeneralPurposeControlSettings(),
                 new GeneralPurposeControlSettings(),
@@ -1789,8 +1839,11 @@ namespace zanac.MAmidiMEmo.Instruments
         protected static void DeferredWriteData(Delegate delg, params object[] args)
         {
             lock (deferredWriteData)
+            {
                 deferredWriteData.Add((delg, args));
-
+                if (deferredWriteData.Count != 1)
+                    return;
+            }
             void act()
             {
                 try
@@ -1814,8 +1867,14 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        protected static void FlushDeferredWriteData()
+        public static void FlushDeferredWriteData()
         {
+            lock (deferredWriteData)
+            {
+                if (deferredWriteData.Count == 0)
+                    return;
+            }
+
             try
             {
                 Program.SoundUpdating();
@@ -1823,6 +1882,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     foreach (var (d, a) in deferredWriteData)
                         d.DynamicInvoke(a);
+                    deferredWriteData.Clear();
                 }
             }
             finally
@@ -1878,7 +1938,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             if (non.Velocity == 0)
                             {
-                                if (ChannelTypes[non.Channel] != ChannelType.Drum)
+                                if (ChannelTypes[non.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
                                     OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                             }
                             else
@@ -1894,7 +1954,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             if (tnon.Velocity == 0)
                             {
-                                if (ChannelTypes[tnon.Channel] != ChannelType.Drum)
+                                if (ChannelTypes[tnon.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
                                     OnNoteOffEvent(new NoteOffEvent(tnon.NoteNumber, (SevenBitNumber)0) { Channel = tnon.Channel, DeltaTime = tnon.DeltaTime });
                             }
                             else
@@ -1910,7 +1970,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                     case NoteOffEvent noff:
                         {
-                            if (ChannelTypes[noff.Channel] != ChannelType.Drum)
+                            if (ChannelTypes[noff.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
                                 OnNoteOffEvent(noff);
                             break;
                         }
@@ -2010,6 +2070,10 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 11:    //Expression
                     Expressions[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
+                case 64:    //Holds
+                    LastHolds[midiEvent.Channel] = Holds[midiEvent.Channel];
+                    Holds[midiEvent.Channel] = midiEvent.ControlValue;
+                    break;
                 case 65:    //Portamento
                     Portamentos[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
@@ -2068,6 +2132,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         Expressions[i] = 127;
                         PitchBendRanges[i] = 2;
                         Pitchs[i] = 8192;
+                        Holds[i] = 0;
+                        LastHolds[i] = 0;
                         Modulations[i] = 0;
                         ModulationRates[i] = 64;
                         ModulationDepthes[i] = 64;

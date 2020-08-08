@@ -349,6 +349,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [Browsable(false)]
+        public override byte[] Holds
+        {
+            get
+            {
+                return base.Holds;
+            }
+        }
+
+        [Browsable(false)]
         public override byte[] Portamentos
         {
             get

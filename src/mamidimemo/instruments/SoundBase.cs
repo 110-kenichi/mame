@@ -152,7 +152,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
             {
                 gateTime = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
-                HighPrecisionTimer.SetFixedPeriodicCallbackAsReader(new Func<object, double>(processGateTime), null);
+                HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processGateTime), null);
             }
         }
 
@@ -520,7 +520,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         f_modulationEnabled = value;
                     }
                     if (f_modulationEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallbackAsReader(new Func<object, double>(processModulation), null);
+                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processModulation), null);
                     //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
                 }
             }
@@ -556,7 +556,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_portamentoEnabled = value;
 
                     if (f_portamentoEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallbackAsReader(new Func<object, double>(processPortamento), null);
+                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processPortamento), null);
                     //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
                 }
             }
@@ -582,7 +582,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_AdsrEnabled = value;
 
                     if (f_AdsrEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallbackAsReader(new Func<object, double>(processAdsr), null);
+                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processAdsr), null);
                     //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processAdsr), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
                 }
             }
@@ -611,7 +611,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (efs != null)
                         {
                             FxEngine = efs.CreateEngine();
-                            HighPrecisionTimer.SetPeriodicCallbackAsReader(new Func<object, double>(processFx), efs.EnvelopeInterval, null);
+                            HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processFx), efs.EnvelopeInterval, null);
                         }
                     }
                 }

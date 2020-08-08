@@ -11,4 +11,5 @@ EXPORTS
 	SendMidiEvent
 	LoadData
 	SaveData
+	SoundTimerCallback
 	MainWarpper			@4

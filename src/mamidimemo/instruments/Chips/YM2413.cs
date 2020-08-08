@@ -778,7 +778,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             #region FM Symth
 
-
             private ToneType f_ToneType;
 
             [DataMember]
@@ -932,6 +931,194 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public class YM2413Operator : ContextBoundObject
         {
 
+            private byte f_AR;
+
+            /// <summary>
+            /// Attack Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Attack Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte AR
+            {
+                get
+                {
+                    return f_AR;
+                }
+                set
+                {
+                    f_AR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_DR;
+
+            /// <summary>
+            /// Decay Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Decay Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte DR
+            {
+                get
+                {
+                    return f_DR;
+                }
+                set
+                {
+                    f_DR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_RR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Release Rate (0-15)\r\n" +
+                "When EG = 0, Used both Sustain Rate & Release Rate")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte RR
+            {
+                get
+                {
+                    return f_RR;
+                }
+                set
+                {
+                    f_RR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_SL;
+
+            /// <summary>
+            /// Sustain Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Sustain Level (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte SL
+            {
+                get
+                {
+                    return f_SL;
+                }
+                set
+                {
+                    f_SL = (byte)(value & 15);
+                }
+            }
+
+            private byte? f_SR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? SR
+            {
+                get
+                {
+                    return f_SR;
+                }
+                set
+                {
+                    if (value.HasValue)
+                        f_SR = (byte)(value & 15);
+                    else
+                        f_SR = value;
+                }
+            }
+
+            private byte f_KSL;
+
+            /// <summary>
+            /// Key Scaling Level(0-3)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSL
+            {
+                get
+                {
+                    return f_KSL;
+                }
+                set
+                {
+                    f_KSL = (byte)(value & 3);
+                }
+            }
+
+            private byte f_KSR;
+
+            /// <summary>
+            /// Keyboard scaling rate (0-1)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSR
+            {
+                get
+                {
+                    return f_KSR;
+                }
+                set
+                {
+                    f_KSR = (byte)(value & 1);
+                }
+            }
+
+            private byte f_MUL;
+
+            /// <summary>
+            /// Multiply (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Multiply (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte MUL
+            {
+                get
+                {
+                    return f_MUL;
+                }
+                set
+                {
+                    f_MUL = (byte)(value & 15);
+                }
+            }
+
             private byte f_AM;
 
             /// <summary>
@@ -1001,77 +1188,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_KSR;
-
-            /// <summary>
-            /// Keyboard scaling rate (0-1)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSR
-            {
-                get
-                {
-                    return f_KSR;
-                }
-                set
-                {
-                    f_KSR = (byte)(value & 1);
-                }
-            }
-
-
-            private byte f_MUL;
-
-            /// <summary>
-            /// Multiply (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Multiply (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte MUL
-            {
-                get
-                {
-                    return f_MUL;
-                }
-                set
-                {
-                    f_MUL = (byte)(value & 15);
-                }
-            }
-
-            private byte f_KSL;
-
-            /// <summary>
-            /// Key Scaling Level(0-3)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSL
-            {
-                get
-                {
-                    return f_KSL;
-                }
-                set
-                {
-                    f_KSL = (byte)(value & 3);
-                }
-            }
-
-
             private byte f_DIST;
 
             /// <summary>
@@ -1092,125 +1208,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_DIST = (byte)(value & 1);
-                }
-            }
-
-            private byte f_AR;
-
-            /// <summary>
-            /// Attack Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Attack Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AR
-            {
-                get
-                {
-                    return f_AR;
-                }
-                set
-                {
-                    f_AR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_DR;
-
-            /// <summary>
-            /// Decay Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte DR
-            {
-                get
-                {
-                    return f_DR;
-                }
-                set
-                {
-                    f_DR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_SL;
-
-            /// <summary>
-            /// Sustain Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Sustain Level (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte SL
-            {
-                get
-                {
-                    return f_SL;
-                }
-                set
-                {
-                    f_SL = (byte)(value & 15);
-                }
-            }
-
-            private byte f_RR;
-
-            /// <summary>
-            /// release rate(0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Release Rate (0-15)\r\n" +
-                "When EG = 0, Used both Sustain Rate & Release Rate")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RR
-            {
-                get
-                {
-                    return f_RR;
-                }
-                set
-                {
-                    f_RR = (byte)(value & 15);
-                }
-            }
-
-            private byte? f_SR;
-
-            /// <summary>
-            /// release rate(0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte? SR
-            {
-                get
-                {
-                    return f_SR;
-                }
-                set
-                {
-                    if (value.HasValue)
-                        f_SR = (byte)(value & 15);
-                    else
-                        f_SR = value;
                 }
             }
 

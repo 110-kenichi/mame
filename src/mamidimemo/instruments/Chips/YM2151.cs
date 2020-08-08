@@ -1075,98 +1075,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_DT1 = 4;
-
-            /// <summary>
-            /// Detune1(0-7)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("DeTune 1 (1-4-7)")]
-            [DefaultValue((byte)4)]
-            [SlideParametersAttribute(1, 7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte DT1
-            {
-                get
-                {
-                    return f_DT1;
-                }
-                set
-                {
-                    f_DT1 = (byte)(value & 7);
-                }
-            }
-
-            private byte f_MUL;
-
-            /// <summary>
-            /// Multiply(0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Multiply (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte MUL
-            {
-                get
-                {
-                    return f_MUL;
-                }
-                set
-                {
-                    f_MUL = (byte)(value & 15);
-                }
-            }
-
-            private byte f_TL;
-
-            /// <summary>
-            /// Total Level(0-127)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Total Level (0-127)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 127)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte TL
-            {
-                get
-                {
-                    return f_TL;
-                }
-                set
-                {
-                    f_TL = (byte)(value & 127);
-                }
-            }
-
-            private byte f_RS;
-
-            /// <summary>
-            /// Rate Scaling(0-3)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Rate Scaling (0-3)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RS
-            {
-                get
-                {
-                    return f_RS;
-                }
-                set
-                {
-                    f_RS = (byte)(value & 3);
-                }
-            }
-
             private byte f_AR;
 
             /// <summary>
@@ -1187,29 +1095,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_AR = (byte)(value & 31);
-                }
-            }
-
-            private byte f_AM;
-
-            /// <summary>
-            /// AMS Enable (0:Disable 1:Enable)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Amplitude Modulation Sensivity (0-1)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AM
-            {
-                get
-                {
-                    return f_AM;
-                }
-                set
-                {
-                    f_AM = (byte)(value & 1);
                 }
             }
 
@@ -1259,6 +1144,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte f_RR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Release Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte RR
+            {
+                get
+                {
+                    return f_RR;
+                }
+                set
+                {
+                    f_RR = (byte)(value & 15);
+                }
+            }
+
             private byte f_SL;
 
             /// <summary>
@@ -1282,28 +1190,121 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_RR;
+            private byte f_TL;
 
             /// <summary>
-            /// release rate(0-15)
+            /// Total Level(0-127)
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Release Rate (0-15)")]
+            [Description("Total Level (0-127)")]
             [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
+            [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RR
+            public byte TL
             {
                 get
                 {
-                    return f_RR;
+                    return f_TL;
                 }
                 set
                 {
-                    f_RR = (byte)(value & 15);
+                    f_TL = (byte)(value & 127);
                 }
             }
+
+            private byte f_RS;
+
+            /// <summary>
+            /// Rate Scaling(0-3)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Rate Scaling (0-3)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte RS
+            {
+                get
+                {
+                    return f_RS;
+                }
+                set
+                {
+                    f_RS = (byte)(value & 3);
+                }
+            }
+
+            private byte f_MUL;
+
+            /// <summary>
+            /// Multiply(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Multiply (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte MUL
+            {
+                get
+                {
+                    return f_MUL;
+                }
+                set
+                {
+                    f_MUL = (byte)(value & 15);
+                }
+            }
+
+            private byte f_DT1 = 4;
+
+            /// <summary>
+            /// Detune1(0-7)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("DeTune 1 (1-4-7)")]
+            [DefaultValue((byte)4)]
+            [SlideParametersAttribute(1, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte DT1
+            {
+                get
+                {
+                    return f_DT1;
+                }
+                set
+                {
+                    f_DT1 = (byte)(value & 7);
+                }
+            }
+
+            private byte f_AM;
+
+            /// <summary>
+            /// AMS Enable (0:Disable 1:Enable)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Amplitude Modulation Sensivity (0-1)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte AM
+            {
+                get
+                {
+                    return f_AM;
+                }
+                set
+                {
+                    f_AM = (byte)(value & 1);
+                }
+            }
+
 
             private byte f_DT2;
 
