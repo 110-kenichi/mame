@@ -510,7 +510,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
             arp.StepCounter += 1;
-            if (arp.StepCounter == arp.StepNum)
+            if (arp.StepCounter >= arp.StepNum)
             {
                 // on sound
                 arp.StepCounter = 0;
@@ -572,7 +572,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
             }
             arp.StepCounter += 1;
-            if (arp.StepCounter == arp.StepNum)
+            if (arp.StepCounter >= arp.StepNum)
             {
                 // on sound
                 arp.StepCounter = 0;
@@ -856,18 +856,18 @@ namespace zanac.MAmidiMEmo.Instruments
             var steps = (60d * 1000d / sds.Beat) / (double)sds.ArpResolution;
             if (steps < 20)
             {
-                arp.Step = steps / 2;
-                arp.StepNum = 2;
+                arp.Step = steps / 10;
+                arp.StepNum = 10;
             }
             else if (arp.StepNum < 50)
             {
-                arp.Step = steps / 5;
-                arp.StepNum = 5;
+                arp.Step = steps / 25;
+                arp.StepNum = 25;
             }
             else
             {
-                arp.Step = steps / 10;
-                arp.StepNum = 10;
+                arp.Step = steps / 100;
+                arp.StepNum = 100;
             }
         }
 

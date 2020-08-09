@@ -152,7 +152,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
             {
                 gateTime = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
-                HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processGateTime), null);
+                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processGateTime), gateTime, null);
             }
         }
 
@@ -161,9 +161,9 @@ namespace zanac.MAmidiMEmo.Instruments
             if (!IsDisposed && !IsSoundOff)
             {
                 if (gateTime > 0)
-                    gateTime -= HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    gateTime -= 1 / HighPrecisionTimer.TIMER_BASIC_1MS_COUNT;
                 if (gateTime > 0)
-                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    return gateTime;
 
                 KeyOff();
             }
@@ -365,7 +365,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnVolumeUpdated();
 
                 if (AdsrEngine.AdsrState != AdsrState.SoundOff)
-                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    return 1;
 
                 EnableADSR = false;
                 SoundOff();
@@ -392,7 +392,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (!IsDisposed && !IsSoundOff && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
                 //double delta = -portStartNoteDeltSign * 12d / Math.Pow(((double)ParentModule.PortamentoTimes[NoteOnEvent.Channel] / 2d) + 1d, 1.25);
-                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] * HighPrecisionTimer.TIMER_BASIC_INTERVAL / 100d;
+                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] * HighPrecisionTimer.TIMER_BASIC_1MS_COUNT / 100d;
                 PortamentoDeltaNoteNumber += delta;
 
                 if (portStartNoteDeltSign < 0 && PortamentoDeltaNoteNumber >= 0)
@@ -403,7 +403,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnPitchUpdated();
 
                 if (PortamentoDeltaNoteNumber != 0)
-                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    return 1;
 
                 PortamentoEnabled = false;
             }
@@ -414,15 +414,15 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed && !IsSoundOff && ModulationEnabled)
             {
-                double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_HZ);
+                double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_1KHZ);
 
                 double mdepth = 0;
                 if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64)
                 {
-                    if (modulationStartCounter < 10d * HighPrecisionTimer.TIMER_BASIC_HZ)
+                    if (modulationStartCounter < 10d * HighPrecisionTimer.TIMER_BASIC_1KHZ)
                         modulationStartCounter += 1.0;
 
-                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * HighPrecisionTimer.TIMER_BASIC_HZ)
+                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * HighPrecisionTimer.TIMER_BASIC_1KHZ)
                         mdepth = (double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] / 127d;
                 }
                 //急激な変化を抑制
@@ -441,7 +441,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 OnPitchUpdated();
 
-                return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                return 1;
             }
             return -1;
         }
@@ -520,8 +520,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         f_modulationEnabled = value;
                     }
                     if (f_modulationEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processModulation), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), 1, null);
                 }
             }
         }
@@ -556,8 +555,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_portamentoEnabled = value;
 
                     if (f_portamentoEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processPortamento), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), 1, null);
                 }
             }
         }
@@ -582,8 +580,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_AdsrEnabled = value;
 
                     if (f_AdsrEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processAdsr), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processAdsr), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processAdsr), 1, null);
                 }
             }
         }

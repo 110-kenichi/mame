@@ -12,26 +12,39 @@ using zanac.MAmidiMEmo.Gui;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
+    /// <summary>
+    /// 高精度タイマー
+    /// </summary>
     public static class HighPrecisionTimer
     {
 
-        private const int WAIT_TIMEOUT = 120 * 1000;
+        /// <summary>
+        /// Periodic Action Timer Interval[1 ms]
+        /// </summary>
+        public const uint TIMER_BASIC_1MS_COUNT = 100;
 
         /// <summary>
-        /// Periodic Action Timer Interval[ms]
+        /// Periodic Action Timer Hz()
         /// </summary>
-        public const uint TIMER_BASIC_INTERVAL = 1;
-
-        /// <summary>
-        /// Periodic Action Timer Hz
-        /// </summary>
-        public const double TIMER_BASIC_HZ = 1000d / TIMER_BASIC_INTERVAL;
+        public const double TIMER_BASIC_1KHZ = 1000d;
 
         private static List<PeriodicAction> periodicTimerSounds = new List<PeriodicAction>();
 
         static HighPrecisionTimer()
         {
             Program.ShuttingDown += Program_ShuttingDown;
+        }
+
+        private static bool shutDown;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Program_ShuttingDown(object sender, EventArgs e)
+        {
+            shutDown = true;
         }
 
         /// <summary>
@@ -47,27 +60,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 periodicTimerSounds.Add(new PeriodicAction(action, periodMs, state));
         }
 
-        private static bool shutDown;
-
-        private static void Program_ShuttingDown(object sender, EventArgs e)
-        {
-            shutDown = true;
-        }
-
-
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="instance"></param>
-        public static void SetFixedPeriodicCallback(Func<object, double> action, object state)
-        {
-            action(state);
-            lock (periodicTimerSounds)
-                periodicTimerSounds.Add(new PeriodicAction(action, TIMER_BASIC_INTERVAL, state));
-        }
-
-        /// <summary>
-        /// 
+        /// MAMEから呼ばれる
         /// </summary>
         public static void SoundTimerCallback()
         {
@@ -79,7 +73,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 plist = new List<PeriodicAction>(periodicTimerSounds);
             foreach (var snd in plist)
             {
-                snd.CurrentPeriodMs -= TIMER_BASIC_INTERVAL;
+                snd.CurrentPeriodMs -= (double)1 / (double)TIMER_BASIC_1MS_COUNT;
                 if (snd.CurrentPeriodMs > 0)
                     continue;
 

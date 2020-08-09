@@ -82,7 +82,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Gate Time[ms]")]
         [DefaultValue(typeof(uint), "500")]
-        [SlideParametersAttribute((int)HighPrecisionTimer.TIMER_BASIC_INTERVAL, 10000)]
+        [SlideParametersAttribute(1, 10000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public uint GateTime
         {
@@ -94,7 +94,7 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 if (value > 10000)
                     value = 10000;
-                if (f_GateTime != value && value >= HighPrecisionTimer.TIMER_BASIC_INTERVAL)
+                if (f_GateTime != value && value >= 1)
                 {
                     f_GateTime = value;
                 }

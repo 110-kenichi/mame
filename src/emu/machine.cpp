@@ -202,7 +202,7 @@ void running_machine::start()
 	StartMAmidiMEmoMain();
 
 	emu_timer* mami_timer = m_scheduler.timer_alloc(timer_expired_delegate(FUNC(running_machine::mami_timer_callback), this));
-	mami_timer->adjust(attotime::from_msec(1), 0, attotime::from_msec(1));
+	mami_timer->adjust(attotime::from_usec(10), 0, attotime::from_usec(10));
 
 	// initialize UI input
 	m_ui_input = make_unique_clear<ui_input_manager>(*this);
