@@ -736,7 +736,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("MIDI")]
-        [Description("Assign the Timbre/CombinedTimbre to program number0-127.")]
+        [Description("Assign the Timbre/CombinedTimbre to program number.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         public virtual ProgramAssignmentNumber[] ProgramAssignments
@@ -1178,7 +1178,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("MIDI")]
-        [Description("Mono mode (0-127) 0:Disable mono mode <MIDI 16ch>")]
+        [Description("Mono mode (0-127) 0:Disable mono mode N:Number of max voices <MIDI 16ch>")]
         [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
@@ -1187,7 +1187,6 @@ namespace zanac.MAmidiMEmo.Instruments
             get;
             set;
         }
-
 
         public bool ShouldSerializeMonoMode()
         {
@@ -1205,6 +1204,34 @@ namespace zanac.MAmidiMEmo.Instruments
                 MonoMode[i] = 0;
         }
 
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Poly mode (0-127) 0:Disable Poly mode N:Number of reserved voices <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [Mask(127)]
+        [CollectionDefaultValue((byte)0)]
+        public virtual byte[] PolyMode
+        {
+            get;
+            set;
+        }
+
+
+        public bool ShouldSerializePolyMode()
+        {
+            foreach (var dt in PolyMode)
+            {
+                if (dt != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetPolyMode()
+        {
+            for (int i = 0; i < PolyMode.Length; i++)
+                PolyMode[i] = 0;
+        }
 
         [DataMember]
         [Category("MIDI")]
@@ -1707,6 +1734,12 @@ namespace zanac.MAmidiMEmo.Instruments
                     0, 0, 0,
                     0, 0, 0,
                     0, 0, 0, 0};
+            PolyMode = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
             Holds = new byte[] {
                     0, 0, 0,
                     0, 0, 0,
@@ -2144,6 +2177,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         PortamentoTimes[i] = 0;
 
                         MonoMode[i] = 0;
+                        PolyMode[i] = 0;
                     }
                     break;
                 case 126:    //MONO Mode
@@ -2151,6 +2185,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     break;
                 case 127:    //POLY Mode
                     MonoMode[midiEvent.Channel] = 0;
+                    PolyMode[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
             }
         }

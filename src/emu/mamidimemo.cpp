@@ -30,9 +30,9 @@ IsVSTiModeProc isVSTiMode = 0;
 SendMidiEventProc sendMidiEvent = 0;
 SendMidiSysEventProc sendMidiSysEvent = 0;
 CloseApplicationProc closeApplication = 0;
-LoadDataProc loadData;
-SaveDataProc saveData;
-SoundTimerCallbackProc soundTimerCallback;
+LoadDataProc loadData = 0;
+SaveDataProc saveData = 0;
+SoundTimerCallbackProc soundTimerCallback = 0;
 
 DWORD WINAPI StartMAmidiMEmoMainThread(LPVOID lpParam)
 {
@@ -205,5 +205,6 @@ int SaveData(void** saveBuf)
 
 void SoundTimerCallback()
 {
-	return soundTimerCallback();
+	if(soundTimerCallback != 0)
+		soundTimerCallback();
 }

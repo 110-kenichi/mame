@@ -52,7 +52,7 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        public bool IsSoundOff
+        public virtual bool IsSoundOff
         {
             get;
             private set;

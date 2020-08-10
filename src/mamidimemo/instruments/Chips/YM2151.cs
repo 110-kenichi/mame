@@ -619,7 +619,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void KeyOn()
             {
                 base.KeyOn();
-
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {

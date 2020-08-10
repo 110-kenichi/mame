@@ -199,8 +199,6 @@ void running_machine::start()
 	// allocate a soft_reset timer
 	m_soft_reset_timer = m_scheduler.timer_alloc(timer_expired_delegate(FUNC(running_machine::soft_reset), this));
 
-	StartMAmidiMEmoMain();
-
 	emu_timer* mami_timer = m_scheduler.timer_alloc(timer_expired_delegate(FUNC(running_machine::mami_timer_callback), this));
 	mami_timer->adjust(attotime::from_usec(10), 0, attotime::from_usec(10));
 
@@ -378,6 +376,8 @@ int running_machine::run(bool quiet)
 		// break out to our async javascript loop and halt
 		emscripten_set_running_machine(this);
 #endif
+		StartMAmidiMEmoMain();
+
 		// run the CPUs until a reset or exit
 		while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != saveload_schedule::NONE)
 		{

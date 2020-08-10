@@ -589,16 +589,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (((PokeyTimbre)timbre).Channel)
                 {
                     case ChannelType.CH1:
-                        emptySlot = SearchEmptySlotAndOff(ch1OnSounds, note, 1);
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch1OnSounds, note, 1);
                         break;
                     case ChannelType.CH2:
-                        emptySlot = SearchEmptySlotAndOff(ch2OnSounds, note, 1);
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch2OnSounds, note, 1);
                         break;
                     case ChannelType.CH3:
-                        emptySlot = SearchEmptySlotAndOff(ch3OnSounds, note, 1);
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch3OnSounds, note, 1);
                         break;
                     case ChannelType.CH4:
-                        emptySlot = SearchEmptySlotAndOff(ch4OnSounds, note, 1);
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch4OnSounds, note, 1);
                         break;
                 }
 

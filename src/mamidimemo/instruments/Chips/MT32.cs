@@ -292,6 +292,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [Browsable(false)]
+        public override byte[] PolyMode
+        {
+            get
+            {
+                return base.PolyMode;
+            }
+        }
 
         private const float DEFAULT_GAIN = 1.0f;
 
@@ -625,7 +633,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int emptySlot = -1;
 
-                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, 32);
+                emptySlot = SearchEmptySlotAndOff(parentModule, instOnSounds, note, 32);
                 return emptySlot;
             }
 
