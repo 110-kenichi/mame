@@ -11,6 +11,7 @@
 #include "sound/2612intf.h"
 #include "sound/ym2151.h"
 #include "sound/ym2413.h"
+#include "sound/emu2413.h"
 #include "sound/gb.h"
 #include "sound/sn76496.h"
 #include "sound/namco.h"
@@ -97,7 +98,7 @@ public:
 			didx++;
 			//YM2413
 			strcpy(device_names[didx][i], (std::string("ym2413_") + num).c_str());
-			m_ym2413[i] = new optional_device<ym2413_device>(*this, device_names[didx][i]);
+			m_ym2413[i] = new optional_device<emu2413_device>(*this, device_names[didx][i]);
 			didx++;
 			//sn76496(PSG)
 			strcpy(device_names[didx][i], (std::string("sn76496_") + num).c_str());
@@ -179,7 +180,7 @@ public:
 	optional_device<nesapu_device> *m_nesapu[8];	//6
 	optional_device<k051649_device> *m_scc1[8];	//7
 	optional_device<ym3812_device> *m_ym3812[8];	//8
-	optional_device<ym2413_device> *m_ym2413[8];	//9
+	optional_device<emu2413_device> *m_ym2413[8];	//9
 	optional_device<msm5232_device> *m_msm5232[8];	//10
 	optional_device<ay8910_device> *m_ay8910[8];	//11
 	optional_device<mos8580_device> *m_sid8580[8];	//12

@@ -25,7 +25,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
         [DataMember]
         [Description("Set volume envelop by text. Input volume value and split it with space like the Famitracker.\r\n" +
-                    "0(0%)-128(100%) \"|\" is repeat point. \"/\" is release point.")]
+                    "0(0%)-127(100%) \"|\" is repeat point. \"/\" is release point.")]
         public string VolumeEnvelopes
         {
             get

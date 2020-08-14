@@ -965,9 +965,6 @@ void ym2413_device::key_on(OPLL_SLOT *SLOT, uint32_t key_set)
 		/* do NOT restart Phase Generator (verified on real YM2413)*/
 		/* phase -> Dump */
 		SLOT->state = EG_DMP;
-
-		//HACK: mamidimemo Force Damp
-		SLOT->volume = MAX_ATT_INDEX;
 	}
 	SLOT->key |= key_set;
 }

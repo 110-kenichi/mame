@@ -516,7 +516,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte tl = (byte)(15 - (byte)Math.Round(15 * CalcCurrentVolume()));
                 if (lastToneType != ToneType.DrumSet)
                 {
-                    YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)lastToneType << 4 | tl));
+                    var tt = timbre.ToneType;
+                    if (FxEngine != null && FxEngine.Active)
+                    {
+                        var eng = FxEngine as YM2413FxEngine;
+                        if (eng?.ToneValue != null)
+                            tt = (ToneType)(eng.ToneValue.Value & 15);
+                    }
+                    YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)tt << 4 | tl));
                 }
                 else if (parentModule.RHY == 1)
                 {
@@ -874,7 +881,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Modulator = new YM2413Modulator();
                 Career = new YM2413Career();
-                this.SDS.FxS = new BasicFxSettings();
+                this.SDS.FxS = new YM2413FxSettings();
             }
 
             public override void RestoreFrom(string serializeData)
@@ -1352,6 +1359,183 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             #endregion
 
         }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413FxSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class YM2413FxSettings : BasicFxSettings
+        {
+
+            private string f_ToneEnvelopes;
+
+            [DataMember]
+            [Description("Set ToneType envelop by text. Input ToneType value and split it with space like the Famitracker.\r\n" +
+                       "0-15 \"|\" is repeat point. \"/\" is release point.")]
+            public string ToneEnvelopes
+            {
+                get
+                {
+                    return f_ToneEnvelopes;
+                }
+                set
+                {
+                    if (f_ToneEnvelopes != value)
+                    {
+                        ToneEnvelopesRepeatPoint = -1;
+                        ToneEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            ToneEnvelopesNums = new int[] { };
+                            f_ToneEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_ToneEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                ToneEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                ToneEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 15)
+                                        v = 15;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        ToneEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < ToneEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (ToneEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (ToneEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(ToneEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_ToneEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeDutyEnvelopes()
+            {
+                return !string.IsNullOrEmpty(ToneEnvelopes);
+            }
+
+            public void ResetDutyEnvelopes()
+            {
+                ToneEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] ToneEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int ToneEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int ToneEnvelopesReleasePoint { get; set; } = -1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override AbstractFxEngine CreateEngine()
+            {
+                return new YM2413FxEngine(this);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class YM2413FxEngine : BasicFxEngine
+        {
+            private YM2413FxSettings settings;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public YM2413FxEngine(YM2413FxSettings settings) : base(settings)
+            {
+                this.settings = settings;
+            }
+
+            private uint f_toneCounter;
+
+            public byte? ToneValue
+            {
+                get;
+                private set;
+            }
+
+            protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
+            {
+                bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
+
+                ToneValue = null;
+                if (settings.ToneEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.ToneEnvelopesNums.Length;
+                        if (settings.ToneEnvelopesReleasePoint >= 0)
+                            vm = settings.ToneEnvelopesReleasePoint;
+                        if (f_toneCounter >= vm)
+                        {
+                            if (settings.ToneEnvelopesRepeatPoint >= 0)
+                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                            else
+                                f_toneCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.ToneEnvelopesRepeatPoint < 0)
+                            f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+
+                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        {
+                            if (settings.ToneEnvelopesRepeatPoint >= 0)
+                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                        }
+                    }
+                    if (f_toneCounter < settings.ToneEnvelopesNums.Length)
+                    {
+                        int vol = settings.ToneEnvelopesNums[f_toneCounter++];
+
+                        ToneValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                return process;
+            }
+        }
+
     }
 
 
