@@ -13,6 +13,8 @@ namespace zanac.MAmidiMEmo.Gui
     public partial class FormWsgEditor : Form
     {
 
+        public event EventHandler ValueChanged;
+
         public int WsgBitWide
         {
             get
@@ -233,6 +235,8 @@ namespace zanac.MAmidiMEmo.Gui
                             dotSz.Width - 1, dotSz.Height - 1));
 
                         updateText();
+
+                        ((FormWsgEditor)Parent).ValueChanged?.Invoke(Parent, EventArgs.Empty);
                     }
                 }
             }

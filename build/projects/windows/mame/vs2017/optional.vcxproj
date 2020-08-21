@@ -262,6 +262,7 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\c140.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\c6280.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\cm32p.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\emu2413.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\fm.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\fmopl.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\gb.h" />
@@ -331,6 +332,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\c140.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\c6280.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\cm32p.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\emu2413.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fm.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fm2612.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fmopl.cpp" />

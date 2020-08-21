@@ -1312,7 +1312,7 @@ extern "C"
 		return cm32p_devices[unitNumber]->add_sf(card_id, sf);
 	}
 
-	DllExport void cm32p_set_tone(unsigned int unitNumber, unsigned char card_id, unsigned char tone_no, unsigned short sf_preset_no)
+	DllExport void cm32p_set_tone(unsigned int unitNumber, unsigned char card_id, unsigned short tone_no, unsigned short sf_preset_no)
 	{
 		if (cm32p_devices[unitNumber] == NULL)
 		{
@@ -1379,6 +1379,53 @@ extern "C"
 
 		cm32p_devices[unitNumber]->initialize_memory();
 	}
+
+
+	DllExport void cm32p_set_chanAssign(unsigned int unitNumber, u8 *assign)
+	{
+		if (cm32p_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			cm32p_device *cm32p = dynamic_cast<cm32p_device   *>(rm->device((std::string("cm32p_") + num).c_str()));
+			if (cm32p == nullptr)
+				return;
+
+			cm32p_devices[unitNumber] = cm32p;
+		}
+
+		cm32p_devices[unitNumber]->set_chanAssign(assign);
+	}
+
+
+	DllExport void cm32p_get_chanAssign(unsigned int unitNumber, u8 *assign)
+	{
+		if (cm32p_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			cm32p_device *cm32p = dynamic_cast<cm32p_device   *>(rm->device((std::string("cm32p_") + num).c_str()));
+			if (cm32p == nullptr)
+				return;
+
+			cm32p_devices[unitNumber] = cm32p;
+		}
+
+		cm32p_devices[unitNumber]->get_chanAssign(assign);
+	}
+
 }
 
 

@@ -59,11 +59,18 @@ namespace zanac.MAmidiMEmo.Gui
             using (FormWsgEditor frm = new FormWsgEditor())
             {
                 frm.WsgBitWide = watt.BitWide;
+                frm.Tag = context;
 
-                if(value.GetType() == typeof(byte[]))
+                if (value.GetType() == typeof(byte[]))
+                {
                     frm.ByteWsgData = (byte[])value;
+                    frm.ValueChanged += Frm_ValueChangedByte;
+                }
                 else if (value.GetType() == typeof(sbyte[]))
+                {
                     frm.SbyteWsgData = (sbyte[])value;
+                    frm.ValueChanged += Frm_ValueChangedSbyte;
+                }
 
                 DialogResult dr = frm.ShowDialog();
                 if (dr == DialogResult.OK)
@@ -73,8 +80,59 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (value.GetType() == typeof(sbyte[]))
                         value = frm.SbyteWsgData;
                 }
+                else
+                {
+                    if (value.GetType() == typeof(byte[]))
+                        value = ((byte[])value).Clone();
+                    else if (value.GetType() == typeof(sbyte[]))
+                        value = ((sbyte[])value).Clone();
+                }
             }
             return value;
         }
+
+
+        private void Frm_ValueChangedByte(object sender, EventArgs e)
+        {
+            FormWsgEditor editor = (FormWsgEditor)sender;
+            ITypeDescriptorContext ctx = (ITypeDescriptorContext)editor.Tag;
+            if (ctx != null)
+            {
+                var value = editor.ByteWsgData;
+                try
+                {
+                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                    ctx.PropertyDescriptor.SetValue(ctx.Instance, value);
+                }
+                finally
+                {
+                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                }
+            }
+
+        }
+
+        private void Frm_ValueChangedSbyte(object sender, EventArgs e)
+        {
+            FormWsgEditor editor = (FormWsgEditor)sender;
+            ITypeDescriptorContext ctx = (ITypeDescriptorContext)editor.Tag;
+            if (ctx != null)
+            {
+                var value = editor.SbyteWsgData;
+                try
+                {
+                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                    ctx.PropertyDescriptor.SetValue(ctx.Instance, value);
+                }
+                finally
+                {
+                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                }
+            }
+
+        }
+
     }
 }
