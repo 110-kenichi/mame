@@ -1,4 +1,4 @@
-MAmidiMEmo V2.1.0.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.1.1.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -224,9 +224,12 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.1.1.0 Fixed Piano GUI for CM32-P and MT-32.
 2.1.0.0 Changed YM2413 engine to emu2413 engine to get more sounds accuracy.
         Added Tone Envelope property for YM2413 FxS settings. 
 		Added CM32-P Card #16.
+		Added MML like serialize property to the FM Synthesis chip.
+		Fixed FM Synthesis sounds.
 2.0.4.0 Extended POLY mode control change message. You can specify the number of reserved voices.
         Fixed crashing on boot.
 2.0.3.0 Improved sounds output timing accuracy.

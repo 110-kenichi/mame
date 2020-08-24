@@ -493,6 +493,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         msg = (uint)((0x80 | noff.Channel) | noff.NoteNumber << 8 | noff.Velocity << 16);
                         break;
                     }
+                case TaggedNoteOnEvent non:
+                    {
+                        msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
+                        break;
+                    }
                 case NoteOnEvent non:
                     {
                         msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
@@ -554,6 +559,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                         else
                             OnNoteOnEvent(new TaggedNoteOnEvent(non));
+                        break;
+                    }
+                case TaggedNoteOnEvent non:
+                    {
+                        if (non.Velocity == 0)
+                            OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                        else
+                            OnNoteOnEvent(non);
                         break;
                     }
             }

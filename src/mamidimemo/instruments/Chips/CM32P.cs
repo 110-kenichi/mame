@@ -1029,6 +1029,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             OnNoteOnEvent(new TaggedNoteOnEvent(non));
                         break;
                     }
+                case TaggedNoteOnEvent non:
+                    {
+                        if (non.Velocity == 0)
+                            OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                        else
+                            OnNoteOnEvent(non);
+                        break;
+                    }
             }
         }
 
