@@ -76,8 +76,6 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        private uint gateTime;
-
         /// <summary>
         /// 
         /// </summary>
@@ -151,22 +149,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
             {
-                gateTime = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
-                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processGateTime), gateTime, null);
+                var gt = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
+                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processGateTime), gt, null, true);
             }
         }
 
         private double processGateTime(object state)
         {
             if (!IsDisposed && !IsSoundOff)
-            {
-                if (gateTime > 0)
-                    gateTime -= 1 / HighPrecisionTimer.TIMER_BASIC_1MS_COUNT;
-                if (gateTime > 0)
-                    return gateTime;
-
                 KeyOff();
-            }
             return -1;
         }
 

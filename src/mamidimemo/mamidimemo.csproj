@@ -289,6 +289,7 @@
     <Compile Include="Instruments\ProgramAssignmentNumber.cs" />
     <Compile Include="Instruments\ProgramAssignmentType.cs" />
     <Compile Include="Instruments\CombinedTimbre.cs" />
+    <Compile Include="Instruments\SimpleSerializer.cs" />
     <Compile Include="Instruments\VstEffectControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundList.cs" />
@@ -467,6 +468,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Samples\YM2151_GM%28from OPNA%29.MAmi" />
+    <None Include="Samples\YM2612_GM%28from OPNA%29.MAmi" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

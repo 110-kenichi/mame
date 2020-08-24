@@ -60,6 +60,21 @@ namespace zanac.MAmidiMEmo.Instruments
                 periodicTimerSounds.Add(new PeriodicAction(action, periodMs, state));
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="periodMs"></param>
+        /// <param name="state"></param>    
+        public static void SetPeriodicCallback(Func<object, double> action, double periodMs, object state, bool skipFirstAction)
+        {
+            if(!skipFirstAction)
+                action(state);
+            lock (periodicTimerSounds)
+                periodicTimerSounds.Add(new PeriodicAction(action, periodMs, state));
+        }
+
         /// <summary>
         /// MAMEから呼ばれる
         /// </summary>

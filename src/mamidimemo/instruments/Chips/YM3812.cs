@@ -476,7 +476,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.VIB = gs.VIB.Value;
                 }
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -497,7 +496,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.VIB = gs.VIB.Value;
                 }
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -517,7 +515,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM3812Operator o = timbre.Ops[op];
                     //$40+: Scaling level/ total level
                     if (timbre.ALG == 1 || op == 1)
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | (63 - (byte)Math.Round((63 - o.TL) * v))));
+                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                     else
                         YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
                 }
@@ -651,26 +649,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             #region FM Symth
 
-            private byte f_FB;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Feedback (0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte FB
-            {
-                get
-                {
-                    return f_FB;
-                }
-                set
-                {
-                    f_FB = (byte)(value & 7);
-                }
-            }
-
             private byte f_ALG;
 
             [DataMember]
@@ -693,6 +671,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte f_FB;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Feedback (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FB
+            {
+                get
+                {
+                    return f_FB;
+                }
+                set
+                {
+                    f_FB = (byte)(value & 7);
+                }
+            }
+
             #endregion
 
             /// <summary>
@@ -707,6 +705,82 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "ALG, FB, AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS, ...\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
             }
 
             [DataMember]
@@ -1012,7 +1086,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_EG = (byte)(value & 1);
                 }
             }
-            
+
             private byte f_WS;
 
             /// <summary>
@@ -1044,6 +1118,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MFM),
+                        nameof(AM),
+                        nameof(VR),
+                        nameof(EG),
+                        nameof(WS));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MFM),
+                        nameof(AM),
+                        nameof(VR),
+                        nameof(EG),
+                        nameof(WS));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",

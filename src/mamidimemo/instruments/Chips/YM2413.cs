@@ -487,7 +487,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -499,7 +498,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.OnSoundParamsUpdated();
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -633,7 +631,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
                 YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
                 //$02+:
-                YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
+                //YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
                 YM2413WriteData(parentModule.UnitNumber, 0x03, 0, (byte)((c.KSL << 6 | c.DIST << 4 | m.DIST << 3 | timbre.FB)));
                 //$04+:
                 YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
@@ -874,6 +872,84 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "FB, AR, DR, RR, SL, SR, TL, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, AR, DR, RR, SL, SR, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, SUS")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(FB),
+
+                        nameof(Modulator.AR),
+                        nameof(Modulator.DR),
+                        nameof(Modulator.RR),
+                        nameof(Modulator.SL),
+                        nameof(Modulator.SR),
+                        nameof(Modulator.TL),
+                        nameof(Modulator.KSL),
+                        nameof(Modulator.KSR),
+                        nameof(Modulator.MUL),
+                        nameof(Modulator.AM),
+                        nameof(Modulator.VIB),
+                        nameof(Modulator.EG),
+                        nameof(Modulator.DIST),
+
+                        nameof(Career.AR),
+                        nameof(Career.DR),
+                        nameof(Career.RR),
+                        nameof(Career.SL),
+                        nameof(Career.SR),
+                        nameof(Career.KSL),
+                        nameof(Career.KSR),
+                        nameof(Career.MUL),
+                        nameof(Career.AM),
+                        nameof(Career.VIB),
+                        nameof(Career.EG),
+                        nameof(Career.DIST),
+
+                        nameof(SUS));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(FB),
+
+                        nameof(Modulator.AR),
+                        nameof(Modulator.DR),
+                        nameof(Modulator.RR),
+                        nameof(Modulator.SL),
+                        nameof(Modulator.SR),
+                        nameof(Modulator.TL),
+                        nameof(Modulator.KSL),
+                        nameof(Modulator.KSR),
+                        nameof(Modulator.MUL),
+                        nameof(Modulator.AM),
+                        nameof(Modulator.VIB),
+                        nameof(Modulator.EG),
+                        nameof(Modulator.DIST),
+
+                        nameof(Career.AR),
+                        nameof(Career.DR),
+                        nameof(Career.RR),
+                        nameof(Career.SL),
+                        nameof(Career.SR),
+                        nameof(Career.KSL),
+                        nameof(Career.KSR),
+                        nameof(Career.MUL),
+                        nameof(Career.AM),
+                        nameof(Career.VIB),
+                        nameof(Career.EG),
+                        nameof(Career.DIST),
+
+                        nameof(SUS));
+                }
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1011,7 +1087,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_SL;
 
             /// <summary>
-            /// Sustain Rate (0-15)
+            /// Sustain Level (0-15)
             /// </summary>
             [DataMember]
             [Category("Sound")]
@@ -1034,7 +1110,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte? f_SR;
 
             /// <summary>
-            /// release rate(0-15)
+            /// Sustain rate(0-15)
             /// </summary>
             [DataMember]
             [Category("Sound")]
@@ -1087,7 +1163,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
+            [Description("Keyboard Scaling Rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1266,6 +1342,51 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR, RR, SL, SR, TL, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
             [Description("You can copy and paste this text data to other same type timber.\r\nNote: Open dropdown editor then copy all text and paste to dropdown editor. Do not copy and paste one liner text.")]
             public string SerializeData
             {
@@ -1318,6 +1439,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR), RR, SL, SR, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",

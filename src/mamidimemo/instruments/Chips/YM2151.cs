@@ -643,9 +643,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //Volume
                 OnVolumeUpdated();
                 //On
-                byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x2);
-                Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x0);
+                byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(op | Slot));
             }
 
@@ -675,11 +674,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int op = 0; op < 4; op++)
                 {
                     Ym2151WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                    //Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                            if (op != 3)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 1:
+                            if (op != 3)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 2:
+                            if (op != 3)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 3:
+                            if (op != 3)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 4:
+                            if (op != 1 && op != 3)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 5:
+                            if (op == 4)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 6:
+                            if (op == 4)
+                                Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 7:
+                            break;
+                    }
                     Ym2151WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     Ym2151WriteData(parentModule.UnitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     Ym2151WriteData(parentModule.UnitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
-                    Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 7 | timbre.Ops[op].RR)));
+                    Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
                 OnPanpotUpdated();
@@ -736,7 +767,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 foreach (int op in ops)
                 {
                     //$60+: total level
-                    Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(127 - Math.Round((127 - timbre.Ops[op].TL) * v)));
+                    Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
                 }
             }
 
@@ -866,7 +897,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     Ym2151WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     Ym2151WriteData(parentModule.UnitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     Ym2151WriteData(parentModule.UnitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
-                    Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 7 | timbre.Ops[op].RR)));
+                    Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
                 OnPanpotUpdated();
@@ -894,26 +925,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             #region FM Symth
 
-            private byte f_FB;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Feedback (0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte FB
-            {
-                get
-                {
-                    return f_FB;
-                }
-                set
-                {
-                    f_FB = (byte)(value & 7);
-                }
-            }
-
             private byte f_ALG;
 
             [DataMember]
@@ -939,6 +950,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_ALG = (byte)(value & 7);
+                }
+            }
+
+            private byte f_FB;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Feedback (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FB
+            {
+                get
+                {
+                    return f_FB;
+                }
+                set
+                {
+                    f_FB = (byte)(value & 7);
                 }
             }
 
@@ -995,6 +1026,132 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+    typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "ALG, FB, AR, D1R(DR), D2R(SR), RR, SL, TL, RS(KS), MUL, DT1, AM(AMS), DT2, ... , AMS, PMS\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].D1R",
+                        "Ops[0].D2R",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].RS",
+                        "Ops[0].MUL",
+                        "Ops[0].DT1",
+                        "Ops[0].AM",
+                        "Ops[0].DT2",
+
+                        "Ops[1].AR",
+                        "Ops[1].D1R",
+                        "Ops[1].D2R",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].RS",
+                        "Ops[1].MUL",
+                        "Ops[1].DT1",
+                        "Ops[1].AM",
+                        "Ops[1].DT2",
+
+                        "Ops[2].AR",
+                        "Ops[2].D1R",
+                        "Ops[2].D2R",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].TL",
+                        "Ops[2].RS",
+                        "Ops[2].MUL",
+                        "Ops[2].DT1",
+                        "Ops[2].AM",
+                        "Ops[2].DT2",
+
+                        "Ops[3].AR",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].TL",
+                        "Ops[3].RS",
+                        "Ops[3].MUL",
+                        "Ops[3].DT1",
+                        "Ops[3].AM",
+                        "Ops[3].DT2",
+
+                        nameof(AMS),
+                        nameof(PMS));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].D1R",
+                        "Ops[0].D2R",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].RS",
+                        "Ops[0].MUL",
+                        "Ops[0].DT1",
+                        "Ops[0].AM",
+                        "Ops[0].DT2",
+
+                        "Ops[1].AR",
+                        "Ops[1].D1R",
+                        "Ops[1].D2R",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].RS",
+                        "Ops[1].MUL",
+                        "Ops[1].DT1",
+                        "Ops[1].AM",
+                        "Ops[1].DT2",
+
+                        "Ops[2].AR",
+                        "Ops[2].D1R",
+                        "Ops[2].D2R",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].TL",
+                        "Ops[2].RS",
+                        "Ops[2].MUL",
+                        "Ops[2].DT1",
+                        "Ops[2].AM",
+                        "Ops[2].DT2",
+
+                        "Ops[3].AR",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].TL",
+                        "Ops[3].RS",
+                        "Ops[3].MUL",
+                        "Ops[3].DT1",
+                        "Ops[3].AM",
+                        "Ops[3].DT2",
+
+                        nameof(AMS),
+                        nameof(PMS));
+                }
+            }
+
 
             [DataMember]
             [Category("Chip")]
@@ -1100,11 +1257,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_D1R;
 
             /// <summary>
-            /// 1st decay rate(0-31)
+            /// Decay rate(0-31)
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("1st Decay Rate (0-31)")]
+            [Description("Decay Rate (0-31)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1123,11 +1280,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_D2R;
 
             /// <summary>
-            /// 2nd decay rate(0-31)
+            /// Sustain Rate(2nd Decay Rate)(0-31)
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("2nd Decay Rate (0-31)")]
+            [Description("Sustain Rate(2nd Decay Rate) (0-31)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1265,7 +1422,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("DeTune 1 (1-4-7)")]
+            [Description("DeTune 1 (7(-3),6(-2),5(-1),4(+0),0(+0),1(+1),2(+2),3(+3))")]
             [DefaultValue((byte)4)]
             [SlideParametersAttribute(1, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1336,6 +1493,48 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, D1R(DR), D2R(SR), RR, SL, TL, RS(KS), MUL, DT1, AM(AMS), DT2\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(D1R),
+                        nameof(D2R),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(RS),
+                        nameof(MUL),
+                        nameof(DT1),
+                        nameof(AM),
+                        nameof(DT2));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(D1R),
+                        nameof(D2R),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(RS),
+                        nameof(MUL),
+                        nameof(DT1),
+                        nameof(AM),
+                        nameof(DT2));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
