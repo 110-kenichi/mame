@@ -78,6 +78,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             private byte[] f_ResultOfWsgData;
 
+            [Browsable(false)]
             public byte[] ResultOfWsgData
             {
                 get

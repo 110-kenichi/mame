@@ -43,6 +43,7 @@
             this.graphControl.Name = "graphControl";
             this.graphControl.Size = new System.Drawing.Size(766, 489);
             this.graphControl.TabIndex = 0;
+            this.graphControl.WsgBitWide = 4;
             // 
             // buttonCancel
             // 
@@ -87,12 +88,13 @@
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.graphControl);
-            this.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormWsgEditor";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WSG Editor";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -76,17 +76,24 @@ namespace zanac.MAmidiMEmo.Gui
         '\"',
         '\'',
         '\''};
+            this.textBoxWsgDataText.AutoIndentCharsPatterns = "\r\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\r\n";
             this.textBoxWsgDataText.AutoScrollMinSize = new System.Drawing.Size(27, 14);
             this.textBoxWsgDataText.BackBrush = null;
+            this.textBoxWsgDataText.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
             this.textBoxWsgDataText.CharHeight = 14;
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.textBoxWsgDataText.IsReplaceMode = false;
             this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
+            this.textBoxWsgDataText.LeftBracket = '(';
+            this.textBoxWsgDataText.LeftBracket2 = '{';
             this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 12);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
+            this.textBoxWsgDataText.RightBracket = ')';
+            this.textBoxWsgDataText.RightBracket2 = '}';
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
             this.textBoxWsgDataText.ShowFoldingLines = true;
@@ -110,6 +117,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Text Editor";
             ((System.ComponentModel.ISupportInitialize)(this.textBoxWsgDataText)).EndInit();
             this.ResumeLayout(false);

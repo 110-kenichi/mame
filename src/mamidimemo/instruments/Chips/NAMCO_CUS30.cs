@@ -237,6 +237,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
+            //var its = (HuC6280)InstrumentManager.GetInstruments(16).ElementAt(0);
+            //for (int i = 0; i < its.Timbres.Length; i++)
+            //{
+            //    for (int j = 0; j < 32; j++)
+            //        Timbres[i].WsgData[j] = (byte)(its.Timbres[i].WsgData[j] / 2);
+            //    if((int)its.Timbres[i].SoundType == 2)
+            //        Timbres[i].SoundType = SoundType.NOISE;
+            //    else
+            //        Timbres[i].SoundType = SoundType.WSG;
+            //    Timbres[i].SDS.SerializeData = its.Timbres[i].SDS.SerializeData;
+            //}
+            //for (int i = 0; i < its.DrumTimbres.Length; i++)
+            //{
+            //    DrumTimbres[i].BaseNote = its.DrumTimbres[i].BaseNote;
+            //    DrumTimbres[i].GateTime = its.DrumTimbres[i].GateTime;
+            //    DrumTimbres[i].TimbreNumber = its.DrumTimbres[i].TimbreNumber;
+            //}
+
             soundManager.KeyOn(midiEvent);
         }
 
@@ -515,6 +533,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [Category("Sound")]
             [Description("Sound Type")]
+            [DataMember]
+            [DefaultValue(SoundType.WSG)]
             public SoundType SoundType
             {
                 get
