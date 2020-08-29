@@ -28,7 +28,9 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (sb.Length != 0)
                         sb.Append(",");
                     var f = getPropertyInfo(obj, m);
-                    sb.Append(f.Property.GetValue(f.Owner).ToString());
+                    var val = f.Property.GetValue(f.Owner);
+                    if(val != null)
+                        sb.Append(val.ToString());
                 }
             }
             catch (Exception ex)
@@ -55,36 +57,63 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                var vals = serializeData.Split(new char[] { ',', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).GetEnumerator();
+                var vals = serializeData.Split(new char[] { ',', ' ', '\t' }).GetEnumerator();
                 foreach (string m in props)
                 {
                     if (!vals.MoveNext())
                         break;
                     var v = (string)vals.Current;
+                    v = v.Trim();
 
                     var f = getPropertyInfo(obj, m);
                     try
                     {
-                        switch (f.Property.GetValue(f.Owner))
+                        if (string.IsNullOrEmpty(v))
                         {
-                            case int i:
-                                f.Property.SetValue(f.Owner, int.Parse(v));
-                                break;
-                            case uint i:
-                                f.Property.SetValue(f.Owner, uint.Parse(v));
-                                break;
-                            case short i:
-                                f.Property.SetValue(f.Owner, short.Parse(v));
-                                break;
-                            case ushort i:
-                                f.Property.SetValue(f.Owner, ushort.Parse(v));
-                                break;
-                            case byte i:
-                                f.Property.SetValue(f.Owner, byte.Parse(v));
-                                break;
-                            case sbyte i:
-                                f.Property.SetValue(f.Owner, sbyte.Parse(v));
-                                break;
+                            f.Property.SetValue(f.Owner, null);
+                        }
+                        else
+                        {
+                            switch (f.Property.PropertyType)
+                            {
+                                case Type t when t == typeof(int):
+                                    f.Property.SetValue(f.Owner, int.Parse(v));
+                                    break;
+                                case Type t when t == typeof(uint):
+                                    f.Property.SetValue(f.Owner, uint.Parse(v));
+                                    break;
+                                case Type t when t == typeof(short):
+                                    f.Property.SetValue(f.Owner, short.Parse(v));
+                                    break;
+                                case Type t when t == typeof(ushort):
+                                    f.Property.SetValue(f.Owner, ushort.Parse(v));
+                                    break;
+                                case Type t when t == typeof(byte):
+                                    f.Property.SetValue(f.Owner, byte.Parse(v));
+                                    break;
+                                case Type t when t == typeof(sbyte):
+                                    f.Property.SetValue(f.Owner, sbyte.Parse(v));
+                                    break;
+
+                                case Type t when t == typeof(int?):
+                                    f.Property.SetValue(f.Owner, int.Parse(v));
+                                    break;
+                                case Type t when t == typeof(uint?):
+                                    f.Property.SetValue(f.Owner, uint.Parse(v));
+                                    break;
+                                case Type t when t == typeof(short?):
+                                    f.Property.SetValue(f.Owner, short.Parse(v));
+                                    break;
+                                case Type t when t == typeof(ushort?):
+                                    f.Property.SetValue(f.Owner, ushort.Parse(v));
+                                    break;
+                                case Type t when t == typeof(byte?):
+                                    f.Property.SetValue(f.Owner, byte.Parse(v));
+                                    break;
+                                case Type t when t == typeof(sbyte?):
+                                    f.Property.SetValue(f.Owner, sbyte.Parse(v));
+                                    break;
+                            }
                         }
                     }
                     catch (Exception ex)
