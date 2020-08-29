@@ -151,6 +151,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        private static double[] volumeTable = new double[32];
+
         /// <summary>
         /// 
         /// </summary>
@@ -159,12 +161,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             IntPtr funcPtr = MameIF.GetProcAddress("c6280_w");
             if (funcPtr != IntPtr.Zero)
                 C6280_w = (delegate_c6280_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_c6280_w));
+
+            double level = 1;
+            double step = 48.0 / 32.0;
+            for (int i = 0; i < 30; i++)
+            {
+                volumeTable[i] = level;
+                level /= Math.Pow(10.0, step / 20.0);
+            }
+            volumeTable[30] = volumeTable[31] = 0;
         }
 
         private Hu6280SoundManager soundManager;
 
 
-        private const float DEFAULT_GAIN = 6.0f;
+        private const float DEFAULT_GAIN = 2.5f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -453,7 +464,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             //ch0 WSG
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)Slot);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -471,6 +483,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.WSG:
                         {
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -480,6 +494,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.NOISE:
                         {
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 4));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
                             for (int i = 0; i < 32; i++)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, 0);
 
@@ -515,7 +531,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return;
 
                 var vol = CalcCurrentVolume();
-                byte wvol = (byte)Math.Round(31d * vol);
+                byte wvol = 0;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (vol < volumeTable[i])
+                    {
+                        wvol = (byte)(31 - i);
+                        break;
+                    }
+                }
+                //byte wvol = (byte)Math.Round(31d * vol);
 
                 switch (lastSoundType)
                 {
@@ -580,20 +605,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (pan < 0)
                     pan = 0;
 
-                byte left = (byte)Math.Round(15d * Math.Cos(Math.PI / 2 * (pan / 126d)));
-                byte right = (byte)Math.Round(15d * Math.Sin(Math.PI / 2 * (pan / 126d)));
+                double left = 0.5d;
+                double right = 0.5d;
+                if (pan > 64)
+                    left = Math.Cos(Math.PI / 2 * (pan / 126d)) / 2;
+                if (pan < 64)
+                    right = Math.Sin(Math.PI / 2 * (pan / 126d)) / 2;
+
+                byte wlvol = 0;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (left < volumeTable[i])
+                    {
+                        wlvol = (byte)(31 - i);
+                        break;
+                    }
+                }
+                byte wrvol = 0;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (right < volumeTable[i])
+                    {
+                        wrvol = (byte)(31 - i);
+                        break;
+                    }
+                }
 
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, (Slot + partialReserveLfo), (byte)(left << 4 | right));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, (Slot + partialReserveLfo), (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot + 4, (byte)(left << 4 | right));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot + 4, (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                 }

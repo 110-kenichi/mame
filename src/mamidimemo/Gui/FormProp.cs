@@ -241,37 +241,55 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
         {
-            if (toolStripComboBox2.SelectedIndex != 0)
+            try
             {
-                //Program change
-                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
-                foreach (var i in instruments)
-                    i.NotifyMidiEvent(pe);
-                foreach (var i in instruments)
-                    i.NotifyMidiEvent(e);
-            }
-            else
-            {
-                if (timbres != null)
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                if (toolStripComboBox2.SelectedIndex != 0)
                 {
-                    for (int i = 0; i < instruments.Count; i++)
-                    {
-                        e.Tag = new NoteOnTimbreInfo(timbres[i], TimbreNo);
-                        instruments[i].NotifyMidiEvent(e);
-                    }
-                }
-                else
-                {
+                    //Program change
+                    var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
+                    foreach (var i in instruments)
+                        i.NotifyMidiEvent(pe);
                     foreach (var i in instruments)
                         i.NotifyMidiEvent(e);
                 }
+                else
+                {
+                    if (timbres != null)
+                    {
+                        for (int i = 0; i < instruments.Count; i++)
+                        {
+                            e.Tag = new NoteOnTimbreInfo(timbres[i], TimbreNo);
+                            instruments[i].NotifyMidiEvent(e);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var i in instruments)
+                            i.NotifyMidiEvent(e);
+                    }
+                }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 
         private void PianoControl1_NoteOff(object sender, NoteOffEvent e)
         {
-            foreach (var i in instruments)
-                i.NotifyMidiEvent(e);
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                foreach (var i in instruments)
+                    i.NotifyMidiEvent(e);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+            }
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
