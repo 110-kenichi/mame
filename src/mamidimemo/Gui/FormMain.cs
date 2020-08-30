@@ -298,9 +298,9 @@ namespace zanac.MAmidiMEmo.Gui
                         si = i;
                     dev.Dispose();
                 }
-                if(si >= 0)
+                if (si >= 0)
                     toolStripComboBoxMidiIf.SelectedIndex = si;
-                
+
             }
             catch (Exception ex)
             {
@@ -975,5 +975,38 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void contextMenuStripInst_Opening(object sender, CancelEventArgs e)
+        {
+            ListViewItem item = listViewIntruments.FocusedItem;
+            if (item != null)
+            {
+                var tp = (InstrumentBase)item.Tag;
+                var mns = tp.GetInstrumentMenus();
+                if (mns != null)
+                {
+                    foreach (var mi in mns)
+                        contextMenuStripInst.Items.Add(mi);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void contextMenuStripInst_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        {
+            for (int i = contextMenuStripInst.Items.IndexOf(toolStripMenuItemSep) + 1; i < contextMenuStripInst.Items.Count; i++)
+            {
+                contextMenuStripInst.Items.RemoveAt(i);
+                i--;
+            }
+        }
     }
 }

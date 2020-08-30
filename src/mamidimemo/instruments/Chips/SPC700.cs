@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -767,8 +769,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             LMVOL = 127;
             RMVOL = 127;
             COEF1 = 127;
-        }
 
+            readSoundFontForTimbre = new ToolStripMenuItem("Import PCM from SF2 for &Timbre...");
+            readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
+
+            readSoundFontForDrumTimbre = new ToolStripMenuItem("Import PCM from SF2 for &DrumTimbre...");
+            readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
+        }
 
         #region IDisposable Support
 
@@ -782,6 +789,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     //マネージ状態を破棄します (マネージ オブジェクト)。
                     soundManager?.Dispose();
+                    soundManager = null;
+
+                    readSoundFontForTimbre?.Dispose();
+                    readSoundFontForTimbre = null;
+
+                    readSoundFontForDrumTimbre?.Dispose();
+                    readSoundFontForDrumTimbre = null;
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
@@ -1000,6 +1014,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private double baseFreq;
 
+            private ushort loopPoint;
+
             /// <summary>
             /// 
             /// </summary>
@@ -1014,7 +1030,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.timbre = (SPC700Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
-                baseFreq = this.timbre.BaseFreqency;
+                if (lastSoundType == SoundType.INST)
+                {
+                    baseFreq = this.timbre.BaseFreqency;
+                    loopPoint = this.timbre.LoopPoint;
+                }
+                else if (lastSoundType == SoundType.DRUM)
+                {
+                    var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[noteOnEvent.NoteNumber];
+                    baseFreq = pct.BaseFreqency;
+                    loopPoint = pct.LoopPoint;
+                }
             }
 
             /// <summary>
@@ -1088,7 +1114,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), (byte)(nn + 128));
                 }
                 //loop
-                ushort lpos = timbre.LoopPoint;
+                ushort lpos = (ushort)(loopPoint * 9);
                 SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff));
                 SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8));
 
@@ -1232,12 +1258,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 uint reg = (uint)(Slot * 16);
 
-                uint freq = 0;
-                if (lastSoundType == SoundType.INST)
-                    freq = (uint)Math.Round(0x1000 * CalcCurrentFrequency() / baseFreq);
-                else if (lastSoundType == SoundType.DRUM)
-                    freq = (uint)Math.Round(0x1000 * (1d + CalcCurrentPitch()));
-
+                uint freq = (uint)Math.Round(0x1000 * CalcCurrentFrequency() / baseFreq);
                 if (freq > 0x3fff)
                     freq = 0x3fff;
 
@@ -1289,23 +1310,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Set ADPCM base frequency [Hz]")]
             [DefaultValue(typeof(double), "500")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public double BaseFreqency
             {
                 get;
                 set;
             } = 500;
 
+            private ushort f_LoopPoint;
+
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65535) (Need to set loop flag in BRR PCM data)")]
+            [Description("Set data block number of loop point (0 - 7281) (Need to set the loop flag in BRR PCM data)")]
             [DefaultValue(typeof(ushort), "0")]
-            [SlideParametersAttribute(0, 65535)]
+            [SlideParametersAttribute(0, 7281)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public ushort LoopPoint
             {
-                get;
-                set;
+                get => f_LoopPoint;
+                set
+                {
+                    f_LoopPoint = value;
+                    if (f_LoopPoint > 7281)
+                        f_LoopPoint = 7281;
+                }
             }
 
             private byte[] f_AdcmData = new byte[0];
@@ -1590,6 +1618,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         f_PcmData = value;
                     }
+                }
+            }
+
+            [DataMember]
+            [Description("Set ADPCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "500")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 500;
+
+            private ushort f_LoopPoint;
+
+            [DataMember]
+            [Description("Set data block number of loop point (0 - 7281) (Need to set the loop flag in BRR PCM data)")]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 7281)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ushort LoopPoint
+            {
+                get => f_LoopPoint;
+                set
+                {
+                    f_LoopPoint = value;
+                    if (f_LoopPoint > 7281)
+                        f_LoopPoint = 7281;
                 }
             }
 
@@ -1952,6 +2009,196 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         }
 
+        #region MENU
+
+        private ToolStripMenuItem readSoundFontForTimbre;
+
+        private ToolStripMenuItem readSoundFontForDrumTimbre;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
+        {
+            return new ToolStripMenuItem[] { readSoundFontForTimbre, readSoundFontForDrumTimbre };
+        }
+
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    var sf2 = new SF2(openFileDialog.FileName);
+
+                    var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
+                    int tn = 0;
+                    bool warning = false;
+                    foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
+                    {
+                        if (s.SampleType == SF2SampleLink.MonoSample ||
+                            s.SampleType == SF2SampleLink.LeftSample)
+                        {
+                            var tim = Timbres[tn];
+
+                            double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                            tim.BaseFreqency = baseFreq;
+
+                            uint start = s.Start;
+                            uint end = s.End;
+                            if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
+                                end = s.LoopEnd;
+
+                            if (end - start % 16 != 0)
+                                warning = true;
+                            uint len = (end - start) & 0xfffffff0;
+                            if (len == 0)
+                                len = 16;
+
+                            if (s.LoopStart - start % 16 != 0)
+                                warning = true;
+                            uint loopStart = (s.LoopStart - start) & 0xfffffff0;
+
+                            short[] samples = new short[len];
+                            for (uint i = 0; i < len; i++)
+                                samples[i] = spl[start + i];
+
+                            uint brrLoopStart;
+                            var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
+
+                            tim.AdpcmData = result;
+                            tim.LoopPoint = (ushort)(brrLoopStart / 9);
+                            var nidx = s.SampleName.IndexOf('\0');
+                            if (nidx >= 0)
+                                tim.Memo = s.SampleName.Substring(0, nidx);
+                            else
+                                tim.Memo = s.SampleName;
+
+                            tn++;
+
+                            if (tn == 128)
+                                break;
+                        }
+                    }
+                    if (warning)
+                    {
+                        MessageBox.Show("Some sample length or loop point is not a multiple of 16.\r\n" +
+                            "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForDrumTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    var sf2 = new SF2(openFileDialog.FileName);
+
+                    var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
+                    int tn = 0;
+                    bool warning = false;
+                    foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
+                    {
+                        if (s.SampleType == SF2SampleLink.MonoSample ||
+                            s.SampleType == SF2SampleLink.LeftSample)
+                        {
+                            var tim = (SPC700PcmTimbre)DrumSoundTable.PcmTimbres[tn];
+
+                            double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                            tim.BaseFreqency = baseFreq;
+
+                            uint start = s.Start;
+                            uint end = s.End;
+                            if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
+                                end = s.LoopEnd;
+
+                            if (end - start % 16 != 0)
+                                warning = true;
+                            uint len = (end - start) & 0xfffffff0;
+                            if (len == 0)
+                                len = 16;
+
+                            if (s.LoopStart - start % 16 != 0)
+                                warning = true;
+                            uint loopStart = (s.LoopStart - start) & 0xfffffff0;
+
+                            short[] samples = new short[len];
+                            for (uint i = 0; i < len; i++)
+                                samples[i] = spl[start + i];
+
+                            uint brrLoopStart;
+                            var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
+
+                            tim.PcmData = result;
+                            tim.LoopPoint = (ushort)(brrLoopStart / 9);
+                            var nidx = s.SampleName.IndexOf('\0');
+                            if (nidx >= 0)
+                                tim.TimbreName = s.SampleName.Substring(0, nidx);
+                            else
+                                tim.TimbreName = s.SampleName;
+
+                            tn++;
+
+                            if (tn == 128)
+                                break;
+                        }
+                    }
+                    if (warning)
+                    {
+                        MessageBox.Show("Some sample length or loop point is not a multiple of 16.\r\n" +
+                            "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        #endregion
     }
 
 }

@@ -171,6 +171,7 @@
     <!-- any additional x64 specific references -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\CacheMemory.cs" />
     <Compile Include="ComponentModel\EnumTypeEditor.cs" />
     <Compile Include="ComponentModel\EnumConverter.cs" />
@@ -359,6 +360,10 @@
     <Compile Include="Midi\TaggedNoteOnEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Types.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Utils.cs" />
     <EmbeddedResource Include="Gui\FormDrumTableEditor.resx">
       <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
     </EmbeddedResource>

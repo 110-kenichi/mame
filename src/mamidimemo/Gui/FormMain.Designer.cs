@@ -83,6 +83,7 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -132,7 +133,7 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripMenuItemSep = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -208,9 +209,12 @@
             this.contextMenuStripInst.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStripInst.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.decreaseThisKindOfChipToolStripMenuItem,
-            this.cloneSelectedChipToolStripMenuItem});
+            this.cloneSelectedChipToolStripMenuItem,
+            this.toolStripMenuItemSep});
             this.contextMenuStripInst.Name = "contextMenuStrip1";
             resources.ApplyResources(this.contextMenuStripInst, "contextMenuStripInst");
+            this.contextMenuStripInst.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.contextMenuStripInst_Closed);
+            this.contextMenuStripInst.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripInst_Opening);
             // 
             // decreaseThisKindOfChipToolStripMenuItem
             // 
@@ -735,6 +739,11 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             resources.ApplyResources(this.toolStripStatusLabel1, "toolStripStatusLabel1");
             // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            resources.ApplyResources(this.toolStripStatusLabel2, "toolStripStatusLabel2");
+            // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
@@ -1082,10 +1091,10 @@
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
             // 
-            // toolStripStatusLabel2
+            // toolStripMenuItemSep
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            resources.ApplyResources(this.toolStripStatusLabel2, "toolStripStatusLabel2");
+            this.toolStripMenuItemSep.Name = "toolStripMenuItemSep";
+            resources.ApplyResources(this.toolStripMenuItemSep, "toolStripMenuItemSep");
             // 
             // FormMain
             // 
@@ -1222,6 +1231,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton21;
         private System.Windows.Forms.ToolStripMenuItem cloneSelectedChipToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItemSep;
     }
 }
 

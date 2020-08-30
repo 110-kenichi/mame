@@ -2301,6 +2301,18 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
+        #region MENU
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal virtual IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
+        {
+            return null;
+        }
+
+        #endregion
     }
 
     public enum FilterMode
