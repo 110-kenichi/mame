@@ -35,7 +35,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
-        [Description("Base frequency offset[Semitone]")]
+        [Description("Base frequency offset [Semitone]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -45,15 +45,44 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        private int f_PitchShift;
+
         [DataMember]
-        [Description("Base frequency offset[Cent]")]
+        [Description("Base frequency offset [Cent]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-1200, 1200)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public int PitchShift
         {
-            get;
-            set;
+            get => f_PitchShift;
+            set
+            {
+                f_PitchShift = value;
+                if (f_PitchShift < -1200)
+                    f_PitchShift = -1200;
+                else if (f_PitchShift > 1200)
+                    f_PitchShift = 1200;
+            }
+        }
+
+        private int f_PanShift;
+
+        [DataMember]
+        [Description("Base pan pot offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int PanShift
+        {
+            get => f_PanShift;
+            set
+            {
+                f_PanShift = value;
+                if (f_PanShift < -127)
+                    f_PanShift = -127;
+                else if (f_PanShift > 127)
+                    f_PanShift = 127;
+            }
         }
 
         /// <summary>

@@ -1240,12 +1240,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 uint reg = (uint)(Slot * 16);
                 var vol = CalcCurrentVolume();
 
-                int pan = parentModule.Panpots[NoteOnEvent.Channel] - 1;
-                if (pan < 0)
-                    pan = 0;
+                int pan = CalcCurrentPanpot();
+                if (lastSoundType == SoundType.DRUM)
+                {
+                    var pct = parentModule.DrumSoundTable.PcmTimbres[NoteOnEvent.NoteNumber];
+                    pan += pct.PanShift;
+                    if (pan < 0)
+                        pan = 0;
+                    else if (pan > 127)
+                        pan = 127;
+                }
 
-                byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 126d)));
-                byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 126d)));
+                byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 127d)));
+                byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 127d)));
                 SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 0), left);
                 SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 1), right);
             }

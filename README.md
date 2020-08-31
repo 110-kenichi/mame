@@ -1,4 +1,4 @@
-MAmidiMEmo V2.1.1.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.2.0.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -224,10 +224,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-2.1.1.0 Fixed Piano GUI for CM32-P and MT-32.
+2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
         Fixed HuC6820 volume calculation algorithm.
         Fixed not saving WSG Type of NAMCO CUS30 Timbre.
 		Fixed error when openning a YM2413 Timbre property.
+		Added sf2 loading feature to context menu of SPC700 instrument.
 2.1.0.0 Changed YM2413 engine to emu2413 engine to get more sounds accuracy.
         Added Tone Envelope property for YM2413 FxS settings. 
 		Added CM32-P Card #16.

@@ -766,7 +766,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte mask = (byte)(0x11 << rslot);
                     byte ccpan = (byte)(cpan.Value & (byte)~mask);
 
-                    byte pan = parentModule.Panpots[NoteOnEvent.Channel];
+                    byte pan = CalcCurrentPanpot();
                     if (pan < 32)
                         pan = 0x10;
                     else if (pan > 96)

@@ -287,6 +287,27 @@ namespace zanac.MAmidiMEmo.Instruments
             return v;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected byte CalcCurrentPanpot()
+        {
+            int pan = ParentModule.Panpots[NoteOnEvent.Channel] - 1;
+
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
+            else
+                pan += Timbre.PanShift;
+
+            if (pan < 0)
+                pan = 0;
+            else if (pan > 127)
+                pan = 127;
+
+            return (byte)pan;
+        }
+
         private double f_ArpeggiateDeltaNoteNumber;
 
         /// <summary>

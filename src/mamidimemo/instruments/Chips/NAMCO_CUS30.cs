@@ -431,12 +431,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte fv_l = (byte)((int)Math.Round(15 * CalcCurrentVolume()) & 0xf);
                 byte fv_r = fv_l;
 
-                var pan = parentModule.Panpots[NoteOnEvent.Channel];
+                byte pan = CalcCurrentPanpot();
 
-                if (pan < 63)   //left
-                    fv_r = (byte)((byte)(fv_r * pan / 63) & 0xf);
-                else if (pan > 64)  //right
-                    fv_l = (byte)((byte)(fv_l * (127 - pan) / 63) & 0xf);
+                //if (pan < 63)   //left
+                //    fv_r = (byte)((byte)(fv_r * pan / 63) & 0xf);
+                //else if (pan > 64)  //right
+                //    fv_l = (byte)((byte)(fv_l * (127 - pan) / 63) & 0xf);
+                fv_l = (byte)Math.Round(15d * fv_l * Math.Cos(Math.PI / 2 * (pan / 127d)));
+                fv_r = (byte)Math.Round(15d * fv_r * Math.Sin(Math.PI / 2 * (pan / 127d)));
 
                 fv_r |= (byte)(NamcoCus30ReadData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x04) & 0x80);
 

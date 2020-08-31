@@ -601,23 +601,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPanpotUpdated()
             {
                 //Pan
-                int pan = parentModule.Panpots[NoteOnEvent.Channel] - 1;
-                if (pan < 0)
-                    pan = 0;
+                int pan = CalcCurrentPanpot();
 
-                double left = 0.5d;
-                double right = 0.5d;
+                double left = 0;
+                double right = 0;
                 if (pan > 64)
-                    left = Math.Cos(Math.PI / 2 * (pan / 126d)) / 2;
+                    left = Math.Cos(Math.PI / 2 * (pan / 127d));
+                else
+                    left = Math.Cos(Math.PI / 2 * (64 / 127d));
                 if (pan < 64)
-                    right = Math.Sin(Math.PI / 2 * (pan / 126d)) / 2;
+                    right = Math.Sin(Math.PI / 2 * (pan / 127d));
+                else
+                    right = Math.Sin(Math.PI / 2 * (64 / 127d));
 
                 byte wlvol = 0;
                 for (int i = volumeTable.Length - 1; i >= 0; i--)
                 {
                     if (left < volumeTable[i])
                     {
-                        wlvol = (byte)(31 - i);
+                        wlvol = (byte)((31 - i) / 2);
                         break;
                     }
                 }
@@ -626,10 +628,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (right < volumeTable[i])
                     {
-                        wrvol = (byte)(31 - i);
+                        wrvol = (byte)((31 - i) / 2);
                         break;
                     }
                 }
+
+                FormMain.OutputLog(wlvol + " " + wrvol);
 
                 switch (lastSoundType)
                 {

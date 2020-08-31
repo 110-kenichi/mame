@@ -1292,7 +1292,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_A:
                         byte fv = (byte)(((byte)Math.Round(31 * CalcCurrentVolume()) & 0x1f));
-                        byte pan = parentModule.Panpots[NoteOnEvent.Channel];
+                        byte pan = CalcCurrentPanpot();
                         if (pan < 32)
                             pan = 0x2;
                         else if (pan > 96)
@@ -1457,7 +1457,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnPanpotUpdated()
             {
-                byte pan = parentModule.Panpots[NoteOnEvent.Channel];
+                int pan = CalcCurrentPanpot();
+                if (lastToneType == ToneType.ADPCM_A)
+                {
+                    var pct = parentModule.AdpcmASoundTable.PcmTimbres[NoteOnEvent.NoteNumber];
+                    pan += pct.PanShift;
+                    if (pan < 0)
+                        pan = 0;
+                    else if (pan > 127)
+                        pan = 127;
+                }
+
                 if (pan < 32)
                     pan = 0x2;
                 else if (pan > 96)

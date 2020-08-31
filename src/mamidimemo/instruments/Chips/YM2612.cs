@@ -821,7 +821,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPanpotUpdated()
             {
                 //$B4+: panning, FMS, AMS
-                byte pan = parentModule.Panpots[NoteOnEvent.Channel];
+                byte pan = CalcCurrentPanpot();
                 if (pan < 32)
                     pan = 0x2;
                 else if (pan > 96)

@@ -43,6 +43,7 @@
             this.contextMenuStripInst = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.decreaseThisKindOfChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloneSelectedChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemSep = new System.Windows.Forms.ToolStripSeparator();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.contextMenuStripProp = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -133,7 +134,6 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
-            this.toolStripMenuItemSep = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -227,6 +227,11 @@
             this.cloneSelectedChipToolStripMenuItem.Name = "cloneSelectedChipToolStripMenuItem";
             resources.ApplyResources(this.cloneSelectedChipToolStripMenuItem, "cloneSelectedChipToolStripMenuItem");
             this.cloneSelectedChipToolStripMenuItem.Click += new System.EventHandler(this.cloneSelectedChipToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItemSep
+            // 
+            this.toolStripMenuItemSep.Name = "toolStripMenuItemSep";
+            resources.ApplyResources(this.toolStripMenuItemSep, "toolStripMenuItemSep");
             // 
             // imageList1
             // 
@@ -824,7 +829,7 @@
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "*.MAmi";
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileName = "MyEnvironment.MAmi";
             resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
             this.openFileDialog1.SupportMultiDottedExtensions = true;
             // 
@@ -1090,11 +1095,6 @@
             this.multiMediaTimerComponent1.Enabled = false;
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
-            // 
-            // toolStripMenuItemSep
-            // 
-            this.toolStripMenuItemSep.Name = "toolStripMenuItemSep";
-            resources.ApplyResources(this.toolStripMenuItemSep, "toolStripMenuItemSep");
             // 
             // FormMain
             // 
