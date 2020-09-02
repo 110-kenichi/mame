@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private bool f_Enable;
 
         [DataMember]
-        [Description("Whether enable Sound Driver Level Arpeggio")]
+        [Description("Whether enable sound driver level Arpeggio.")]
         [DefaultValue(false)]
         public bool Enable
         {
@@ -43,7 +43,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private bool f_Hold;
 
         [DataMember]
-        [Description("Select whether Arpeggio key hold or no")]
+        [Description("Select whether Arpeggio key hold or no.")]
         [DefaultValue(false)]
         public bool Hold
         {

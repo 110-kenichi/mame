@@ -175,7 +175,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private Hu6280SoundManager soundManager;
 
 
-        private const float DEFAULT_GAIN = 2.5f;
+        private const float DEFAULT_GAIN = 1.5f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -531,7 +531,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return;
 
                 var vol = CalcCurrentVolume();
-                byte wvol = 0;
+                byte wvol = 31;
                 for (int i = volumeTable.Length - 1; i >= 0; i--)
                 {
                     if (vol < volumeTable[i])
@@ -540,7 +540,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     }
                 }
-                //byte wvol = (byte)Math.Round(31d * vol);
 
                 switch (lastSoundType)
                 {
@@ -632,8 +631,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     }
                 }
-
-                FormMain.OutputLog(wlvol + " " + wrvol);
 
                 switch (lastSoundType)
                 {
