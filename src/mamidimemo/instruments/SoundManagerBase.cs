@@ -1061,7 +1061,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot) where T : SoundBase where I : InstrumentBase
         {
-            return SearchEmptySlotAndOffForLeader(inst, onSounds, newNote, maxSlot, -1);
+            return SearchEmptySlotAndOffForLeader(inst, onSounds, newNote, maxSlot, -1, 0);
         }
 
         /// <summary>
@@ -1072,7 +1072,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="maxSlot"></param>
         /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
         /// <returns></returns>
-        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot) where T : SoundBase where I : InstrumentBase
+        protected (I, int) SearchEmptySlotAndOffForLeader<I, T>(I inst, SoundList<T> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot, int offset) where T : SoundBase where I : InstrumentBase
         {
             //gather leader and followers
             Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
@@ -1144,7 +1144,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //使っていないスロットがあればそれを返す
                 foreach (var onSnd in onSnds)
                     insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
-                for (int i = 0; i < maxSlot; i++)
+                for (int i = offset; i < maxSlot; i++)
                 {
                     foreach (var ist in insts.Keys)
                     {
@@ -1169,7 +1169,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //一番古いキーオフされたスロットを探す
                 foreach (var snd in onSndsRm)
                 {
-                    if (snd.Slot < maxSlot && snd.IsSoundOff)
+                    if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff)
                     {
                         AllSounds.Remove(snd);
                         onSounds.Remove(snd);
@@ -1181,7 +1181,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //一番古いキーオフされたスロットを探す
                 foreach (var snd in onSndsRm)
                 {
-                    if (snd.Slot < maxSlot && snd.IsKeyOff)
+                    if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
                     {
                         AllSounds.Remove(snd);
                         onSounds.Remove(snd);
@@ -1193,7 +1193,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //一番古いキーオンされたスロットを探す
                 foreach (var snd in onSndsRm)
                 {
-                    if (snd.Slot < maxSlot)
+                    if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
                         AllSounds.Remove(snd);
                         onSounds.Remove(snd);
@@ -1203,7 +1203,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
                 foreach (var snd in onSnds)
                 {
-                    if (snd.Slot < maxSlot)
+                    if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
                         AllSounds.Remove(snd);
                         onSounds.Remove(snd);

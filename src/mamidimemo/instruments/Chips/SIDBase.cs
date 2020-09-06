@@ -465,7 +465,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case PhysicalChannel.Ch2:
                     case PhysicalChannel.Ch3:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1, 0);
                             break;
                         }
                 }

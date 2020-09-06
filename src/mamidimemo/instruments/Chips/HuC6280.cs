@@ -316,9 +316,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private static SoundList<Hu6280Sound> wsgOnSounds = new SoundList<Hu6280Sound>(2);
 
-            private static SoundList<Hu6280Sound> noiseOnSounds = new SoundList<Hu6280Sound>(1);
-
-
             private HuC6280 parentModule;
 
             /// <summary>
@@ -356,7 +353,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             wsgOnSounds.Add(snd);
                             break;
                         case SoundType.NOISE:
-                            noiseOnSounds.Add(snd);
+                            wsgOnSounds.Add(snd);
                             break;
                     }
                     snd.KeyOn();
@@ -401,7 +398,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, 2);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6, -1, 4);
                             break;
                         }
                 }
@@ -464,13 +461,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             //ch0 WSG
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
                             C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
+
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
                             //ch1 LFO
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 1));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
                             foreach (var d in timbre.LfoData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -483,8 +481,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.WSG:
                         {
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
                             C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
+
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -493,11 +491,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 4));
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x40);
+                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot));
                             C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
-                            for (int i = 0; i < 32; i++)
-                                C6280WriteData(parentModule.UnitNumber, 0x806, null, 0);
 
                             FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
@@ -551,7 +546,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot + 4, (byte)(0x80 | wvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)(0x80 | wvol));
                             break;
                         }
                 }
@@ -585,7 +580,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             ushort noisefreq = convertNoiseFrequency(freq);
 
-                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot + 4, (byte)(0x80 | noisefreq));
+                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot, (byte)(0x80 | noisefreq));
 
                             break;
                         }
@@ -642,7 +637,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot + 4, (byte)(wlvol << 4 | wrvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot, (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                 }
@@ -666,8 +661,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot + 4, (byte)0);
-                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot + 4, (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot, (byte)0);
                             break;
                         }
                 }
