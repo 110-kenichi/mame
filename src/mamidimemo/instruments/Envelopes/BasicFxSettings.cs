@@ -45,7 +45,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_VolumeEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {
@@ -136,7 +136,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_PitchEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {
@@ -245,7 +245,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_ArpEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {

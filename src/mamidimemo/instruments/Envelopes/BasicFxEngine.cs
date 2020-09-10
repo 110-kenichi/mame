@@ -58,7 +58,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
             protected set
             {
-                f_Active = value;
+                if (f_Active != value)
+                    f_Active = value;
             }
         }
 
@@ -99,12 +100,12 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         if (settings.VolumeEnvelopesRepeatPoint >= 0)
                             volumeCounter = (uint)settings.VolumeEnvelopesRepeatPoint;
                         else
-                            volumeCounter = (uint)vm;
+                            volumeCounter = (uint)vm - 1;
                     }
                 }
                 else
                 {
-                    if (settings.VolumeEnvelopesRepeatPoint < 0)
+                    if (settings.VolumeEnvelopesReleasePoint < 0)
                         volumeCounter = (uint)settings.VolumeEnvelopesNums.Length;
 
                     if (volumeCounter >= settings.VolumeEnvelopesNums.Length)
@@ -141,7 +142,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.PitchEnvelopesRepeatPoint < 0)
+                    if (settings.PitchEnvelopesReleasePoint < 0)
                         pitchCounter = (uint)settings.PitchEnvelopesNums.Length;
 
                     if (pitchCounter >= settings.PitchEnvelopesNums.Length)
@@ -178,7 +179,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.ArpEnvelopesRepeatPoint < 0)
+                    if (settings.ArpEnvelopesReleasePoint < 0)
                         arpCounter = (uint)settings.ArpEnvelopesNums.Length;
 
                     if (arpCounter >= settings.ArpEnvelopesNums.Length)
@@ -216,15 +217,16 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// </summary>
         public override bool Process(SoundBase sound, bool isKeyOff, bool isSoundOff)
         {
-            f_Active = true;
+            Active = true;
 
             if (!settings.Enable || isSoundOff)
             {
-                f_Active = false;
+                Active = false;
                 return false;
             }
 
-            return ProcessCore(sound, isKeyOff, isSoundOff);
+            Active = ProcessCore(sound, isKeyOff, isSoundOff);
+            return Active;
         }
     }
 }

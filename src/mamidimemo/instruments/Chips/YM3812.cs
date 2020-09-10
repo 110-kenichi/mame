@@ -24,6 +24,7 @@ using zanac.MAmidiMEmo.Midi;
 
 //http://www.oplx.com/opl2/docs/adlib_sb.txt
 //ftp://ftp.oldskool.org/pub/drivers/Yamaha/yamaha_ym3812.pdf
+//http://www.shikadi.net/moddingwiki/OPL_chip
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {

@@ -130,8 +130,8 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
             var adsrs = Timbre.SDS.ADSR;
-            EnableADSR = adsrs.Enable;
-            if (EnableADSR)
+            ActiveADSR = adsrs.Enable;
+            if (ActiveADSR)
             {
                 AdsrEngine = new AdsrEngine();
                 AdsrEngine.SetAttackRate(Math.Pow(10d * (127d - adsrs.AR) / 127d, 2));
@@ -143,7 +143,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             var efs = Timbre.SDS.FxS;
             if (efs != null)
-                EnableFx = efs.Enable;
+                ActiveFx = efs.Enable;
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
 
@@ -174,7 +174,8 @@ namespace zanac.MAmidiMEmo.Instruments
             IsKeyOff = true;
             AdsrEngine?.Gate(false);
 
-            if (CurrentAdsrState == AdsrState.SoundOff)
+            var fxe = FxEngine;
+            if (CurrentAdsrState == AdsrState.SoundOff && (fxe == null || !fxe.Active))
                 SoundOff();
 
             SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
@@ -187,6 +188,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void SoundOff()
         {
+            if (ActiveADSR || ActiveFx)
+                return;
+
             IsSoundOff = true;
 
             SoundSoundOff?.Invoke(this, EventArgs.Empty);
@@ -352,7 +356,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processFx(object state)
         {
-            if (!IsDisposed && !IsSoundOff && EnableFx && FxEngine != null)
+            if (!IsDisposed && !IsSoundOff && ActiveFx && FxEngine != null)
             {
                 if (FxEngine.Process(this, IsKeyOff, IsSoundOff))
                 {
@@ -360,17 +364,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     OnVolumeUpdated();
                 }
 
-                EnableFx = FxEngine.Active;
+                ActiveFx = FxEngine.Active;
 
-                if (EnableFx)
+                if (ActiveFx)
                     return FxEngine.Settings.EnvelopeInterval;
+                else
+                    SoundOff();
             }
             return -1;
         }
 
         private double processAdsr(object state)
         {
-            if (!IsDisposed && !IsSoundOff && EnableADSR && AdsrEngine != null)
+            if (!IsDisposed && !IsSoundOff && ActiveADSR && AdsrEngine != null)
             {
                 AdsrEngine.Process();
 
@@ -379,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (AdsrEngine.AdsrState != AdsrState.SoundOff)
                     return 1;
 
-                EnableADSR = false;
+                ActiveADSR = false;
                 SoundOff();
             }
             return -1;
@@ -579,7 +585,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// ADSRの有効無効
         /// </summary>
-        public bool EnableADSR
+        public bool ActiveADSR
         {
             get
             {
@@ -602,7 +608,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// Fxの有効無効
         /// </summary>
-        public bool EnableFx
+        public bool ActiveFx
         {
             get
             {

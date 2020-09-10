@@ -81,3 +81,7 @@ Release(but Debug .NET)
 /src/vst/Win32/Release
 /src/vst/x64/Release
 /src/vst/.vs
+/src/mamidimemo/SoundFont2/SoundFont2/SoundFont2.csproj
+/src/mamidimemo/SoundFont2/.gitattributes
+/src/mamidimemo/SoundFont2/.gitignore
+/src/mamidimemo/SoundFont2/SoundFont2.sln

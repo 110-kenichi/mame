@@ -1098,7 +1098,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_ToneEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1221,7 +1221,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.ToneEnvelopesRepeatPoint < 0)
+                        if (settings.ToneEnvelopesReleasePoint < 0)
                             f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
                         if (f_toneCounter >= settings.ToneEnvelopesNums.Length)

@@ -838,7 +838,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_HarmonicsEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -961,7 +961,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.HarmonicsEnvelopesRepeatPoint < 0)
+                        if (settings.HarmonicsEnvelopesReleasePoint < 0)
                             f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesNums.Length;
 
                         if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)

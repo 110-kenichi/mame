@@ -250,7 +250,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (suspendWsgDataTextChange)
                 return;
 
-            string[] vals = textBoxWsgDataText.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] vals = textBoxWsgDataText.Text.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             List<byte> vs = new List<byte>();
             foreach (var val in vals)
             {

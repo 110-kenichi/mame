@@ -1117,7 +1117,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesRepeatPoint < 0)
+                        if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
                         if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
@@ -1281,7 +1281,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_DutyEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1373,7 +1373,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_ResonanceEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1465,7 +1465,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_CutOffEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1556,7 +1556,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_WaveFormEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
