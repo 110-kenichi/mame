@@ -1280,9 +1280,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void SoundOff()
             {
-                if (IsSoundOff)
-                    return;
-
                 base.SoundOff();
 
                 byte bitPos = (byte)(1 << Slot);

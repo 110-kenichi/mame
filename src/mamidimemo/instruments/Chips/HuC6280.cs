@@ -383,9 +383,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (timbre.PartialReserveWSGLFO)
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2);
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2, -1, 2);
                                 else
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4, -1, 2);
                             }
                             else
                             {
@@ -429,8 +429,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SoundType lastSoundType;
 
-            private int partialReserveLfo;
-
             /// <summary>
             /// 
             /// </summary>
@@ -444,8 +442,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.timbre = (HuC6280Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
-                if (lastSoundType == SoundType.WSG && this.timbre.PartialReserveWSGLFO)
-                    partialReserveLfo = 2;
             }
 
             /// <summary>
@@ -455,20 +451,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
+                C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
+                C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0);
+
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                         {
                             //ch0 WSG
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
 
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
                             //ch1 LFO
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 1));
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
                             foreach (var d in timbre.LfoData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -480,20 +476,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
-
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
-                            FormMain.OutputDebugLog("KeyOn PSG ch" + (Slot + partialReserveLfo) + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog("KeyOn PSG ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot));
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0x00);
-
                             FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
@@ -535,13 +525,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     }
                 }
+                if ((wvol & 1) == 1)
+                    wvol &= 0xfe;
+                else
+                    wvol |= 1;
 
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, (Slot + partialReserveLfo), (byte)(0x80 | wvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)(0x80 | wvol));
                             break;
                         }
                     case SoundType.NOISE:
@@ -571,9 +565,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             ushort wsgfreq = convertWsgFrequency(freq);
 
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
-                            C6280WriteData(parentModule.UnitNumber, 0x802, null, (byte)(wsgfreq & 0xff));
-                            C6280WriteData(parentModule.UnitNumber, 0x803, null, (byte)((wsgfreq >> 8) & 0x0f));
+                            C6280WriteData(parentModule.UnitNumber, 0x802, Slot, (byte)(wsgfreq & 0xff));
+                            C6280WriteData(parentModule.UnitNumber, 0x803, Slot, (byte)((wsgfreq >> 8) & 0x0f));
                             break;
                         }
                     case SoundType.NOISE:
@@ -632,7 +625,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, (Slot + partialReserveLfo), (byte)(wlvol << 4 | wrvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot, (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                     case SoundType.NOISE:
@@ -649,14 +642,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void SoundOff()
             {
-                base.SoundOff();
-
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, (Slot + partialReserveLfo), (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)0);
                             break;
                         }
                     case SoundType.NOISE:

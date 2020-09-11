@@ -174,9 +174,7 @@ namespace zanac.MAmidiMEmo.Instruments
             IsKeyOff = true;
             AdsrEngine?.Gate(false);
 
-            var fxe = FxEngine;
-            if (CurrentAdsrState == AdsrState.SoundOff && (fxe == null || !fxe.Active))
-                SoundOff();
+            TrySoundOff();
 
             SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
         }
@@ -184,13 +182,23 @@ namespace zanac.MAmidiMEmo.Instruments
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOff;
 
         /// <summary>
-        ///キーオフ
+        /// サウンドオフ
+        /// </summary>
+        public virtual bool TrySoundOff()
+        {
+            if (ActiveADSR || ActiveFx)
+                return false;
+
+            SoundOff();
+
+            return true;
+        }
+
+        /// <summary>
+        /// サウンドオフ
         /// </summary>
         public virtual void SoundOff()
         {
-            if (ActiveADSR || ActiveFx)
-                return;
-
             IsSoundOff = true;
 
             SoundSoundOff?.Invoke(this, EventArgs.Empty);
@@ -369,7 +377,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (ActiveFx)
                     return FxEngine.Settings.EnvelopeInterval;
                 else
-                    SoundOff();
+                    TrySoundOff();
             }
             return -1;
         }
@@ -386,7 +394,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     return 1;
 
                 ActiveADSR = false;
-                SoundOff();
+                TrySoundOff();
             }
             return -1;
         }

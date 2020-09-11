@@ -664,9 +664,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void SoundOff()
             {
-                if (IsSoundOff)
-                    return;
-
                 base.SoundOff();
 
                 uint reg = (uint)(Slot * 16);
