@@ -210,6 +210,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Known issues and limitations *** 
 
    1. MT-32 & CM32-P can not store/restore last settings.
+   2. HuC6820 suddenly stop sounding. Please restart MAmi.
    
 *** How to create build environment ***
 
@@ -225,6 +226,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 2.2.2.0 Fixed not applying Relese Point for Envelope.
+        Fixed sound off timing while envelope processing.
 2.2.1.0 Fixed HuC6820 WSG sound can't delete last noise sound.
 2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
         Fixed HuC6820 volume calculation algorithm.
