@@ -108,11 +108,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     if (settings.VolumeEnvelopesReleasePoint < 0)
                         volumeCounter = (uint)settings.VolumeEnvelopesNums.Length;
 
-                    if (volumeCounter >= settings.VolumeEnvelopesNums.Length)
-                    {
-                        if (settings.VolumeEnvelopesRepeatPoint >= 0)
-                            volumeCounter = (uint)settings.VolumeEnvelopesRepeatPoint;
-                    }
+                    //if (volumeCounter >= settings.VolumeEnvelopesNums.Length)
+                    //{
+                    //    if (settings.VolumeEnvelopesRepeatPoint >= 0)
+                    //        volumeCounter = (uint)settings.VolumeEnvelopesRepeatPoint;
+                    //}
                 }
 
                 if (volumeCounter < settings.VolumeEnvelopesNums.Length)
@@ -145,11 +145,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     if (settings.PitchEnvelopesReleasePoint < 0)
                         pitchCounter = (uint)settings.PitchEnvelopesNums.Length;
 
-                    if (pitchCounter >= settings.PitchEnvelopesNums.Length)
-                    {
-                        if (settings.PitchEnvelopesRepeatPoint >= 0)
-                            pitchCounter = (uint)settings.PitchEnvelopesRepeatPoint;
-                    }
+                    //if (pitchCounter >= settings.PitchEnvelopesNums.Length)
+                    //{
+                    //    if (settings.PitchEnvelopesRepeatPoint >= 0)
+                    //        pitchCounter = (uint)settings.PitchEnvelopesRepeatPoint;
+                    //}
                 }
                 if (pitchCounter < settings.PitchEnvelopesNums.Length)
                 {
@@ -182,11 +182,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     if (settings.ArpEnvelopesReleasePoint < 0)
                         arpCounter = (uint)settings.ArpEnvelopesNums.Length;
 
-                    if (arpCounter >= settings.ArpEnvelopesNums.Length)
-                    {
-                        if (settings.ArpEnvelopesRepeatPoint >= 0)
-                            arpCounter = (uint)settings.ArpEnvelopesRepeatPoint;
-                    }
+                    //if (arpCounter >= settings.ArpEnvelopesNums.Length)
+                    //{
+                    //    if (settings.ArpEnvelopesRepeatPoint >= 0)
+                    //        arpCounter = (uint)settings.ArpEnvelopesRepeatPoint;
+                    //}
                 }
                 if (arpCounter < settings.ArpEnvelopesNums.Length)
                 {

@@ -508,9 +508,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte tl = (byte)(15 - (byte)Math.Round(15 * CalcCurrentVolume()));
                 if (lastToneType != ToneType.DrumSet)
                 {
@@ -1682,11 +1679,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.ToneEnvelopesReleasePoint < 0)
                             f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
-                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
-                        {
-                            if (settings.ToneEnvelopesRepeatPoint >= 0)
-                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
-                        }
+                        //if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ToneEnvelopesRepeatPoint >= 0)
+                        //        f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                     {

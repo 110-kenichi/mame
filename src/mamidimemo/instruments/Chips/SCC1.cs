@@ -463,9 +463,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte fv = (byte)((int)Math.Round(15 * CalcCurrentVolume()) & 0xf);
 
                 Scc1VolumeWriteData(parentModule.UnitNumber, (uint)Slot, fv);

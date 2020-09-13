@@ -576,9 +576,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 double v = 1;
                 v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
                 v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
@@ -600,9 +597,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 if (!timbre.NoiseTone)
                 {
                     int nn = NoteOnEvent.NoteNumber;
@@ -964,11 +958,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.HarmonicsEnvelopesReleasePoint < 0)
                             f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesNums.Length;
 
-                        if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)
-                        {
-                            if (settings.HarmonicsEnvelopesRepeatPoint >= 0)
-                                f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesRepeatPoint;
-                        }
+                        //if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)
+                        //{
+                        //    if (settings.HarmonicsEnvelopesRepeatPoint >= 0)
+                        //        f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_HarmonicsCounter < settings.HarmonicsEnvelopesNums.Length)
                     {

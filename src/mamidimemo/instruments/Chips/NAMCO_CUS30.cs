@@ -425,9 +425,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte fv_l = (byte)((int)Math.Round(15 * CalcCurrentVolume()) & 0xf);
                 byte fv_r = fv_l;
 

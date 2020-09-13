@@ -113,6 +113,9 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             foreach (var t in AllSounds)
             {
+                if (t.IsSoundOff)
+                    continue;
+
                 if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                     continue;
 
@@ -133,6 +136,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 1:    //Modulation
                     foreach (var t in AllSounds)
                     {
+                        if (t.IsSoundOff)
+                            continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -146,6 +151,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 7:    //Volume
                     foreach (var t in AllSounds)
                     {
+                        if (t.IsSoundOff)
+                            continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -156,6 +163,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 10:    //Panpot
                     foreach (var t in AllSounds)
                     {
+                        if (t.IsSoundOff)
+                            continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -166,6 +175,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 11:    //Expression
                     foreach (var t in AllSounds)
                     {
+                        if (t.IsSoundOff)
+                            continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -187,10 +198,12 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 64:    //Holds
                     if (parentModule.Holds[midiEvent.Channel] < 64 && parentModule.LastHolds[midiEvent.Channel] >= 64)
                     {
-                        foreach (var snd in AllSounds)
+                        foreach (var t in AllSounds)
                         {
-                            if (snd.NoteOnEvent.Channel == midiEvent.Channel)
-                                KeyOff(new NoteOffEvent(snd.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = snd.NoteOnEvent.Channel });
+                            if (t.IsSoundOff)
+                                continue;
+                            if (t.NoteOnEvent.Channel == midiEvent.Channel)
+                                KeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                     }
                     break;
@@ -224,12 +237,14 @@ namespace zanac.MAmidiMEmo.Instruments
                         //clear all arps
                         stopAllArpForKeyOn();
                         stopAllArpForPitch();
-                        foreach (var snd in AllSounds)
+                        foreach (var t in AllSounds)
                         {
-                            if (snd.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            if (t.IsSoundOff)
+                                continue;
+                            if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                                 continue;
 
-                            KeyOff(new NoteOffEvent(snd.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = snd.NoteOnEvent.Channel });
+                            KeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                         break;
                     }

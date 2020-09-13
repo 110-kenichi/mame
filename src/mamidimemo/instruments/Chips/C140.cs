@@ -612,9 +612,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 uint reg = (uint)(Slot * 16);
                 var vol = CalcCurrentVolume();
 

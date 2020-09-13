@@ -612,9 +612,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 switch (lastSoundType)
                 {
                     case SoundType.SPSG:
@@ -691,9 +688,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public void UpdatePitch(byte keyOn)
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
 
                 //Freq
@@ -1403,11 +1397,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {

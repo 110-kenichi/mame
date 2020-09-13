@@ -423,9 +423,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 switch (lastSoundType)
                 {
                     case SoundType.PSG:
@@ -442,8 +439,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updatePsgVolume()
             {
-                if (IsSoundOff)
-                    return;
                 byte fv = (byte)((14 - (int)Math.Round(14 * CalcCurrentVolume())) & 0xf);
 
                 Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x10 | fv));
@@ -454,9 +449,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateNoiseVolume()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte fv = (byte)((14 - (int)Math.Round(14 * CalcCurrentVolume())) & 0xf);
 
                 //var exp = parentModule.Expressions[NoteOnEvent.Channel] / 127d;

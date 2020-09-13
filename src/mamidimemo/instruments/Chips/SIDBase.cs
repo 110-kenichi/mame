@@ -582,9 +582,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 double v = 1;
                 v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
                 v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
@@ -1120,11 +1117,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {
@@ -1156,11 +1153,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.ResonanceEnvelopesRepeatPoint < 0)
                             f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
 
-                        if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
-                        {
-                            if (settings.ResonanceEnvelopesRepeatPoint >= 0)
-                                f_resCounter = (uint)settings.ResonanceEnvelopesRepeatPoint;
-                        }
+                        //if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ResonanceEnvelopesRepeatPoint >= 0)
+                        //        f_resCounter = (uint)settings.ResonanceEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_resCounter < settings.ResonanceEnvelopesNums.Length)
                     {
@@ -1192,11 +1189,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.CutOffEnvelopesRepeatPoint < 0)
                             f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
 
-                        if (f_cutCounter >= settings.CutOffEnvelopesNums.Length)
-                        {
-                            if (settings.CutOffEnvelopesRepeatPoint >= 0)
-                                f_cutCounter = (uint)settings.CutOffEnvelopesRepeatPoint;
-                        }
+                        //if (f_cutCounter >= settings.CutOffEnvelopesNums.Length)
+                        //{
+                        //    if (settings.CutOffEnvelopesRepeatPoint >= 0)
+                        //        f_cutCounter = (uint)settings.CutOffEnvelopesRepeatPoint;
+                        //}
                     }
 
                     if (f_cutCounter < settings.CutOffEnvelopesNums.Length)
@@ -1229,11 +1226,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.WaveFormEnvelopesRepeatPoint < 0)
                             f_wavCounter = (uint)settings.WaveFormEnvelopesNums.Length;
 
-                        if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length)
-                        {
-                            if (settings.WaveFormEnvelopesRepeatPoint >= 0)
-                                f_wavCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
-                        }
+                        //if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length)
+                        //{
+                        //    if (settings.WaveFormEnvelopesRepeatPoint >= 0)
+                        //        f_wavCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
+                        //}
                     }
 
                     if (f_wavCounter < settings.WaveFormEnvelopesNums.Length)

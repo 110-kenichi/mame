@@ -711,9 +711,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateVolume()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte fv = (byte)Math.Round(15 * CalcCurrentVolume());
 
                 var tt = timbre.ToneType;
@@ -1224,11 +1221,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.ToneEnvelopesReleasePoint < 0)
                             f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
-                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
-                        {
-                            if (settings.ToneEnvelopesRepeatPoint >= 0)
-                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
-                        }
+                        //if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ToneEnvelopesRepeatPoint >= 0)
+                        //        f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                     {

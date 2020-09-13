@@ -779,9 +779,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 switch (lastToneType)
                 {
                     case ToneType.SQUARE:
@@ -966,9 +963,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateSqPitch()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 16)) - 1;
                 if (freq > 0x7ff)
@@ -981,9 +975,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateTriPitch()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 32)) - 1;
                 if (freq > 0x7ff)
@@ -996,9 +987,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateNoisePitch()
             {
-                if (IsSoundOff)
-                    return;
-
                 double d = CalcCurrentPitch() * 63d;
 
                 int kf = 0;
@@ -1040,8 +1028,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateFdsPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 // p = 65536 * f / 1789773d
                 freq = Math.Round(64 * 65536 * freq / (21477272d / 12d));
@@ -1055,8 +1041,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SQPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (16 * freq)) - 1;
                 if (freq > 0x7ff)
@@ -1069,8 +1053,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SawPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 //t = (CPU / (14 * f)) - 1
                 freq = Math.Round(((21477272d / 12d) / (14 * freq)) - 1);
@@ -1819,11 +1801,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {

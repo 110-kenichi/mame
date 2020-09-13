@@ -512,9 +512,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 var vol = CalcCurrentVolume();
                 byte wvol = 31;
                 for (int i = volumeTable.Length - 1; i >= 0; i--)
@@ -552,9 +549,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
 
                 //Freq
@@ -642,6 +636,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void SoundOff()
             {
+                base.SoundOff();
+
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
