@@ -1008,5 +1008,14 @@ namespace zanac.MAmidiMEmo.Gui
                 i--;
             }
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var rdr = MessageBox.Show(this, "Do you cleat all instruments?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (rdr == DialogResult.Yes)
+            {
+                InstrumentManager.ClearAllInstruments();
+            }
+        }
     }
 }

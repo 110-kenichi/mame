@@ -2050,7 +2050,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
                     int tn = 0;
-                    bool warning = false;
+                    bool warningAlign = false;
+                    bool warningSize = false;
                     foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
                     {
                         if (s.SampleType == SF2SampleLink.MonoSample ||
@@ -2067,13 +2068,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 end = s.LoopEnd;
 
                             if (end - start % 16 != 0)
-                                warning = true;
+                                warningAlign = true;
                             uint len = (end - start) & 0xfffffff0;
                             if (len == 0)
                                 len = 16;
 
                             if (s.LoopStart - start % 16 != 0)
-                                warning = true;
+                                warningAlign = true;
                             uint loopStart = (s.LoopStart - start) & 0xfffffff0;
 
                             short[] samples = new short[len];
@@ -2097,7 +2098,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                     }
-                    if (warning)
+                    if (warningAlign)
                     {
                         MessageBox.Show("Some sample length or loop point is not a multiple of 16.\r\n" +
                             "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);

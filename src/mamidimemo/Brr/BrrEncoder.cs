@@ -379,6 +379,8 @@ namespace zanac.MAmidiMEmo.Brr
                 BRR[0] |= (loop_flag ? (byte)0x02 : (byte)0x00);
 
                 returnData.AddRange(BRR);
+                if (returnData.Count >= 64 * 1024 - 9)
+                    break;
             }
 
             return returnData.ToArray();
