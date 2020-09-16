@@ -74,7 +74,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip")]
-        [Description("Delta PCM Data (Max 4081 bytes)")]
+        [Description("Assign PCM data to DPCM soundtype instrument.\r\n" +
+            "Delta PCM Data (Max 4081 bytes)")]
         [Editor(typeof(PcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [PcmTableEditor("DMC File(*.dmc)|*.dmc")]
         [TypeConverter(typeof(CustomObjectTypeConverter))]
@@ -987,7 +988,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateNoisePitch()
             {
-                double d = CalcCurrentPitch() * 63d;
+                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
 
                 int kf = 0;
                 if (d > 0)

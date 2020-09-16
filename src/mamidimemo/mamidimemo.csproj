@@ -443,10 +443,16 @@
     <None Include="Data\GeneralUser GS v1.471.sf2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\msgs.sf2">
+    <None Include="Data\msgs.sf2" />
+    <None Include="Samples\HuC6280_GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Samples\HuC6280_GM.MAmi">
+    <None Include="Samples\msgs_min_drum_11025.sf2" />
+    <None Include="Samples\msgs_min_drum_22050.sf2" />
+    <None Include="Samples\msgs_min_inst_11025.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\msgs_min_inst_22050.sf2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\NAMCO_CUS30_GM.MAmi">
@@ -529,9 +535,6 @@
     <None Include="..\..\build\generated\version.cpp">
       <Link>version.cpp</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Rec.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Rec.png" />

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+//https://vstcpp.wpblog.jp/?page_id=2076
+
 namespace Kermalis.SoundFont2
 {
     public class SF2Chunk

@@ -178,6 +178,27 @@ namespace zanac.MAmidiMEmo.Midi
 
             return nn.Replace("Sharp", "#");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static double CalcCurrentFrequency(double noteNum)
+        {
+            double nn = Math.Pow(2.0, (noteNum - 69.0) / 12.0);
+            double freq = 440.0 * nn;
+            return freq;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="frequency_as_hz"></param>
+        /// <returns></returns>
+        public static double CalcNoteNumberFromFrequency(double frequency)
+        {
+            return 12.0 * Math.Log(frequency / 440.0, 2) + 69.0;
+        }
     }
 
 

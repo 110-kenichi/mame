@@ -982,7 +982,9 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void contextMenuStripInst_Opening(object sender, CancelEventArgs e)
         {
-            ListViewItem item = listViewIntruments.FocusedItem;
+            ListViewItem item = null;
+            foreach (ListViewItem li in listViewIntruments.SelectedItems)
+                item = li;
             if (item != null)
             {
                 var tp = (InstrumentBase)item.Tag;
@@ -993,6 +995,8 @@ namespace zanac.MAmidiMEmo.Gui
                         contextMenuStripInst.Items.Add(mi);
                 }
             }
+            for (int i = 0; i < contextMenuStripInst.Items.IndexOf(toolStripSepInst) + 1; i++)
+                contextMenuStripInst.Items[i].Enabled = item != null;
         }
 
         /// <summary>
@@ -1011,7 +1015,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var rdr = MessageBox.Show(this, "Do you cleat all instruments?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            var rdr = MessageBox.Show(this, "Do you clear all instruments?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (rdr == DialogResult.Yes)
             {
                 InstrumentManager.ClearAllInstruments();

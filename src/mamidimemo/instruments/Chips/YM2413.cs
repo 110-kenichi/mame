@@ -555,7 +555,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (lastToneType != ToneType.DrumSet)
                 {
-                    double d = CalcCurrentPitch();
+                    double d = CalcCurrentPitchDeltaNoteNumber();
 
                     int nn = NoteOnEvent.NoteNumber;
                     if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)

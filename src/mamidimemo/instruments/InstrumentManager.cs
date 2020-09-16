@@ -138,6 +138,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         instruments[i].RemoveAt(j);
                     }
                 }
+                InstrumentRemoved?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
             }
             finally
             {

@@ -85,9 +85,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /*
+
         [DataMember]
         [Category("Chip")]
-        [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64KB, 1ch)")]
+        [Description("Assign PCM data to DRUM soundtype instrument.\r\n" +
+            "Signed 8bit PCM Raw Data or WAV Data. (MAX 64KB, 1ch)")]
         [Editor(typeof(PcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [PcmTableEditor("Audio File(*.raw, *.wav)|*.raw;*.wav")]
         [TypeConverter(typeof(CustomObjectTypeConverter))]
@@ -96,6 +99,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get;
             set;
         }
+        */
 
         /// <summary>
         /// 
@@ -284,11 +288,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public C140(uint unitNumber) : base(unitNumber)
         {
-            Timbres = new C140Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new C140Timbre[256];
+            for (int i = 0; i < 256; i++)
                 Timbres[i] = new C140Timbre();
 
-            DrumSoundTable = new C140PcmSoundTable();
+            //DrumSoundTable = new C140PcmSoundTable();
 
             setPresetInstruments();
 
@@ -484,12 +488,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         lock (parentModule.tmpPcmDataTable)
                             parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
                     }
+                    /*
                     else if (timbre.SoundType == SoundType.DRUM)
                     {
                         var pct = (C140PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
                         lock (parentModule.tmpPcmDataTable)
                             parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.C140PcmData;
                     }
+                    */
 
                     FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
                     snd.KeyOn();
@@ -540,6 +546,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private double baseFreq;
 
+            private uint sampleRate;
+
             private ushort loopPoint;
 
             private bool loopEn;
@@ -561,17 +569,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastSoundType == SoundType.INST)
                 {
                     baseFreq = this.timbre.BaseFreqency;
+                    sampleRate = this.timbre.SampleRate;
                     loopPoint = this.timbre.LoopPoint;
                     loopEn = this.timbre.LoopEnable;
                 }
+                /*
                 else if (lastSoundType == SoundType.DRUM)
                 {
                     var pct = (C140PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[noteOnEvent.NoteNumber];
                     baseFreq = pct.BaseFreqency;
+                    sampleRate = pct.SampleRate;
                     loopPoint = pct.LoopPoint;
                     loopEn = pct.LoopEnable;
-                }
-                baseFreq = this.timbre.BaseFreqency;
+                }*/
             }
 
             /// <summary>
@@ -617,6 +627,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //mode keyon(0x80)
                     C140WriteData(parentModule.UnitNumber, (reg + 5), (byte)(0x80 + (timbre.LoopEnable ? 0x10 : 0)));
                 }
+                /*
                 else if (lastSoundType == SoundType.DRUM)
                 {
                     //bankno = prognum
@@ -639,8 +650,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     C140WriteData(parentModule.UnitNumber, (reg + 10), (byte)(lpos >> 8));
                     C140WriteData(parentModule.UnitNumber, (reg + 11), (byte)(lpos & 0xff));
                     //mode keyon(0x80)
-                    C140WriteData(parentModule.UnitNumber, (reg + 5), (byte)(0x80));
-                }
+                    C140WriteData(parentModule.UnitNumber, (reg + 5), (byte)(0x80 + (timbre.LoopEnable ? 0x10 : 0)));
+                }*/
             }
 
             /// <summary>
@@ -652,6 +663,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var vol = CalcCurrentVolume();
 
                 int pan = CalcCurrentPanpot();
+                /*
                 if (lastSoundType == SoundType.DRUM)
                 {
                     var pct = parentModule.DrumSoundTable.PcmTimbres[NoteOnEvent.NoteNumber];
@@ -660,7 +672,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         pan = 0;
                     else if (pan > 127)
                         pan = 127;
-                }
+                }*/
 
                 byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 127d)));
                 byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 127d)));
@@ -678,9 +690,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 uint freq = 0;
                 if (lastSoundType == SoundType.INST)
-                    freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 32768);
+                {
+                    freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 32768 * sampleRate / (double)parentModule.Clock);
+                }
+                /*
                 else if (lastSoundType == SoundType.DRUM)
-                    freq = (uint)Math.Round((1d + CalcCurrentPitch()) * 32768);
+                {
+                    double f = MidiManager.CalcCurrentFrequency
+                        (MidiManager.CalcNoteNumberFromFrequency(baseFreq) + CalcCurrentPitchDeltaNoteNumber());
+
+                    freq = (uint)Math.Round((f / baseFreq) * 32768 * sampleRate / (double)parentModule.Clock);
+                }
+                */
 
                 if (freq > 0xffffff)
                     freq = 0xffffff;
@@ -717,6 +738,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Sound Type")]
             [DefaultValue(SoundType.INST)]
+            [Browsable(false)]
             public SoundType SoundType
             {
                 get;
@@ -735,6 +757,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             } = 440;
 
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "22050")]
+            [SlideParametersAttribute(4000, 96000)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 22050;
 
             private bool f_LoopEnable;
 
@@ -882,6 +915,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "22050")]
+            [SlideParametersAttribute(4000, 96000)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 22050;
+
+            [DataMember]
+            [Category("Sound")]
             [Description("Set loop point (0 - 65535")]
             [DefaultValue(typeof(ushort), "0")]
             [SlideParametersAttribute(0, 65535)]
@@ -1009,6 +1054,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
+                int offset = 0;
                 using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
                 {
                     openFileDialog.SupportMultiDottedExtensions = true;
@@ -1019,52 +1065,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (fr != DialogResult.OK)
                         return;
 
-                    var sf2 = new SF2(openFileDialog.FileName);
-
-                    var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
-                    int tn = 0;
-                    foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
-                    {
-                        if (s.SampleType == SF2SampleLink.MonoSample ||
-                            s.SampleType == SF2SampleLink.LeftSample)
-                        {
-                            var tim = Timbres[tn];
-
-                            double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
-                            tim.BaseFreqency = baseFreq;
-
-                            uint start = s.Start;
-                            uint end = s.End;
-                            if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
-                                end = s.LoopEnd;
-
-                            uint len = end - start;
-                            if (len > 65535)
-                                len = 65535;
-                            uint loopP = s.LoopStart - s.Start;
-                            if (loopP > 65535)
-                                loopP = 65535;
-
-                            sbyte[] samples = new sbyte[len];
-                            for (uint i = 0; i < len; i++)
-                                samples[i] = (sbyte)(spl[start + i] >> 8);
-
-                            tim.PcmData = samples;
-                            tim.LoopPoint = (ushort)loopP;
-                            if (s.LoopStart < s.LoopEnd)
-                                tim.LoopEnable = true;
-                            var nidx = s.SampleName.IndexOf('\0');
-                            if (nidx >= 0)
-                                tim.Memo = s.SampleName.Substring(0, nidx);
-                            else
-                                tim.Memo = s.SampleName;
-
-                            tn++;
-
-                            if (tn == 128)
-                                break;
-                        }
-                    }
+                    loadPcm(offset, false);
                 }
             }
             catch (Exception ex)
@@ -1083,6 +1084,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="e"></param>
         private void ReadSoundFontForDrumTimbre_Click(object sender, EventArgs e)
         {
+            try
+            {
+                int offset = 128;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadPcm(offset, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+
+            /*
             try
             {
                 using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
@@ -1108,13 +1134,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
                             tim.BaseFreqency = baseFreq;
+                            tim.SampleRate = s.SampleRate;
 
                             uint start = s.Start;
                             uint end = s.End;
                             if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
                                 end = s.LoopEnd;
 
-                            uint len = end - start;
+                            uint len = end - start + 1;
                             if (len > 65535)
                                 len = 65535;
                             uint loopP = s.LoopStart - s.Start;
@@ -1127,8 +1154,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             tim.PcmData = samples;
                             tim.LoopPoint = (ushort)loopP;
-                            if (s.LoopStart < s.LoopEnd)
-                                tim.LoopEnable = true;
+                            tim.LoopEnable = s.LoopStart < s.LoopEnd;
                             var nidx = s.SampleName.IndexOf('\0');
                             if (nidx >= 0)
                                 tim.TimbreName = s.SampleName.Substring(0, nidx);
@@ -1149,6 +1175,74 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     throw;
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
+            }*/
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        private void loadPcm(int offset, bool drum)
+        {
+            var sf2 = new SF2(openFileDialog.FileName);
+
+            var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
+            int tn = 0;
+            foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
+            {
+                if (s.SampleType == SF2SampleLink.MonoSample ||
+                    s.SampleType == SF2SampleLink.LeftSample)
+                {
+                    var tim = Timbres[tn + offset];
+
+                    double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                    tim.BaseFreqency = baseFreq;
+                    tim.SampleRate = s.SampleRate;
+
+                    uint start = s.Start;
+                    uint end = s.End;
+                    if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
+                        end = s.LoopEnd;
+
+                    uint len = end - start + 1;
+                    if (len > 65535)
+                        len = 65535;
+                    uint loopP = s.LoopStart - s.Start;
+                    if (loopP > 65535)
+                        loopP = 65535;
+
+                    sbyte[] samples = new sbyte[len];
+                    for (uint i = 0; i < len; i++)
+                        samples[i] = (sbyte)(spl[start + i] >> 8);
+
+                    tim.PcmData = samples;
+                    tim.LoopPoint = (ushort)loopP;
+                    tim.LoopEnable = s.LoopStart < s.LoopEnd;
+                    if (drum)
+                    {
+                        if (s.LoopStart < s.LoopEnd)
+                        {
+                            tim.SDS.ADSR.Enable = true;
+                            tim.SDS.ADSR.DR = 80;
+                            tim.SDS.ADSR.SL = 127;
+                        }
+
+                        DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
+                        DrumTimbres[tn].BaseNote =
+                            (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
+                    }
+
+                    var nidx = s.SampleName.IndexOf('\0');
+                    if (nidx >= 0)
+                        tim.Memo = s.SampleName.Substring(0, nidx);
+                    else
+                        tim.Memo = s.SampleName;
+
+                    tn++;
+
+                    if (tn == 128)
+                        break;
+                }
             }
         }
 

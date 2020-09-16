@@ -43,6 +43,8 @@
             this.contextMenuStripInst = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.decreaseThisKindOfChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloneSelectedChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSepInst = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemSep = new System.Windows.Forms.ToolStripSeparator();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
@@ -134,7 +136,6 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -209,9 +210,10 @@
             // 
             this.contextMenuStripInst.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStripInst.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
             this.decreaseThisKindOfChipToolStripMenuItem,
             this.cloneSelectedChipToolStripMenuItem,
+            this.toolStripSepInst,
+            this.toolStripMenuItem1,
             this.toolStripMenuItemSep});
             this.contextMenuStripInst.Name = "contextMenuStrip1";
             resources.ApplyResources(this.contextMenuStripInst, "contextMenuStripInst");
@@ -229,6 +231,17 @@
             this.cloneSelectedChipToolStripMenuItem.Name = "cloneSelectedChipToolStripMenuItem";
             resources.ApplyResources(this.cloneSelectedChipToolStripMenuItem, "cloneSelectedChipToolStripMenuItem");
             this.cloneSelectedChipToolStripMenuItem.Click += new System.EventHandler(this.cloneSelectedChipToolStripMenuItem_Click);
+            // 
+            // toolStripSepInst
+            // 
+            this.toolStripSepInst.Name = "toolStripSepInst";
+            resources.ApplyResources(this.toolStripSepInst, "toolStripSepInst");
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // toolStripMenuItemSep
             // 
@@ -698,7 +711,8 @@
             resources.GetString("toolStripComboBox1.Items11"),
             resources.GetString("toolStripComboBox1.Items12"),
             resources.GetString("toolStripComboBox1.Items13"),
-            resources.GetString("toolStripComboBox1.Items14")});
+            resources.GetString("toolStripComboBox1.Items14"),
+            resources.GetString("toolStripComboBox1.Items15")});
             this.toolStripComboBox1.Name = "toolStripComboBox1";
             resources.ApplyResources(this.toolStripComboBox1, "toolStripComboBox1");
             this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged_1);
@@ -1098,12 +1112,6 @@
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
-            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1241,6 +1249,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItemSep;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSepInst;
     }
 }
 

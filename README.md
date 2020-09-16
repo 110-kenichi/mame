@@ -228,6 +228,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.2.2.0 Fixed not applying Relese Point for Envelope.
         Fixed sound off timing while envelope processing.
 		Added sf2 loading feature to context menu of C140 instrument.
+		Remove DrumTimbreTable prop from C140 and SPC700 insts (Not suitable for PCM insts). Please use DrumTimbres prop.
 2.2.1.0 Fixed HuC6820 WSG sound can't delete last noise sound.
 2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
         Fixed HuC6820 volume calculation algorithm.

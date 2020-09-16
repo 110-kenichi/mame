@@ -42,7 +42,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 foreach (object o in list)
                 {
                     string name = string.Format(CultureInfo.InvariantCulture,
-                        "[{0}ch]", (i + 1).ToString("d" + list.Count.ToString
+                        "[{0}]({1}ch)", i, (i + 1).ToString("d" + list.Count.ToString
                         (NumberFormatInfo.InvariantInfo).Length, null));
                     CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);
                     array[i] = cpd;

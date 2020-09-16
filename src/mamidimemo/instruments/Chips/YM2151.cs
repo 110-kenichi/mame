@@ -774,7 +774,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                double d = CalcCurrentPitch() * 63d;
+                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
 
                 int kf = 0;
                 if (d > 0)

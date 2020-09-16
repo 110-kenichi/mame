@@ -588,7 +588,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("Chip")]
-        [Description("Drum Timbres table")]
+        [Description("Drum ch(usually 10ch) Timbres table")]
         [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableNoteCollectionConverter))]
         public virtual DrumTimbre[] DrumTimbres

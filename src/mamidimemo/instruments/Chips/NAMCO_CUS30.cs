@@ -455,7 +455,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                double d = CalcCurrentPitch();
+                double d = CalcCurrentPitchDeltaNoteNumber();
                 int nn = NoteOnEvent.NoteNumber;
                 if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                     nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;

@@ -135,7 +135,7 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 AdsrEngine = new AdsrEngine();
                 AdsrEngine.SetAttackRate(Math.Pow(10d * (127d - adsrs.AR) / 127d, 2));
-                AdsrEngine.SetDecayRate(Math.Pow(10d * (adsrs.DR / 127d), 2));
+                AdsrEngine.SetDecayRate(Math.Pow(100d * (adsrs.DR / 127d), 2));
                 AdsrEngine.SetReleaseRate(Math.Pow(60d * (adsrs.RR / 127d), 2));
                 AdsrEngine.SetSustainLevel((127d - adsrs.SL) / 127d);
                 AdsrEngine.Gate(true);
@@ -244,7 +244,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected double CalcCurrentFrequency()
         {
-            double d = CalcCurrentPitch();
+            double d = CalcCurrentPitchDeltaNoteNumber();
 
             int nn = NoteOnEvent.NoteNumber;
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
@@ -255,11 +255,12 @@ namespace zanac.MAmidiMEmo.Instruments
             return freq;
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        protected double CalcCurrentPitch()
+        protected double CalcCurrentPitchDeltaNoteNumber()
         {
             var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
