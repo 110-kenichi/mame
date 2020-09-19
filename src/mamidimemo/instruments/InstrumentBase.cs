@@ -607,7 +607,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        [Category("MIDI")]
+        [Category("MIDI(Dedicated)")]
         [Description("Channel type <MIDI 16ch>")]
         [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         [CollectionDefaultValue(true)]
@@ -646,7 +646,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        [Category("MIDI")]
+        [Category("MIDI(Dedicated)")]
         [Description("Receving MIDI ch <MIDI 16ch>")]
         [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         [CollectionDefaultValue(true)]
@@ -735,7 +735,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        [Category("MIDI")]
+        [Category("MIDI(Dedicated)")]
         [Description("Assign the Timbre/CombinedTimbre to program number.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
@@ -1234,7 +1234,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
-        [Category("MIDI")]
+        [Category("MIDI(Dedicated)")]
         [Description("General Purpose Control Settings <MIDI 16ch>\r\n" +
             "Link Data Entry message value with the Instrument property value (Only the property that has a slider editor)\r\n" +
             "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
@@ -1871,6 +1871,20 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="args"></param>
         protected static void DeferredWriteData(Delegate delg, params object[] args)
         {
+#if DEBUG
+
+            try
+            {
+                Program.SoundUpdating();
+                delg.DynamicInvoke(args);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+
+#else
+
             lock (deferredWriteData)
             {
                 deferredWriteData.Add((delg, args));
@@ -1895,6 +1909,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
             }
             Task.Factory.StartNew(act);
+#endif
         }
 
         /// <summary>
