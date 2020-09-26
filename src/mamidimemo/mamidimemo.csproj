@@ -444,6 +444,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\msgs.sf2" />
+    <None Include="Samples\2608_rhythm\bd.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\2608_rhythm\hh.pcma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
