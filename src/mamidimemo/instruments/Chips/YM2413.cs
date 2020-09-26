@@ -1491,7 +1491,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             Custom,
             Violin,
-            Guitor,
+            Guiter,
             Piano,
             Flute,
             Clarinet,

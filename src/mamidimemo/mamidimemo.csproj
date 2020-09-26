@@ -444,6 +444,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\msgs.sf2" />
+    <None Include="Samples\2608_rhythm\hh.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\rim.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\sd.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\tom.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\top.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\HuC6280_GM x8.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
