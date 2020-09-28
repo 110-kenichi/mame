@@ -529,9 +529,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.OFF3.HasValue)
                         parentModule.OFF3 = gs.OFF3.Value;
                     if (gs.FILT.HasValue)
-                        parentModule.FILT = gs.FILT.Value;
+                        parentModule.FILT = (FilterChannel)gs.FILT.Value;
                     if (gs.FilterType.HasValue)
-                        parentModule.FilterType = gs.FilterType.Value;
+                        parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
 
                 SetTimbre();
@@ -554,9 +554,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.OFF3.HasValue)
                         parentModule.OFF3 = gs.OFF3.Value;
                     if (gs.FILT.HasValue)
-                        parentModule.FILT = gs.FILT.Value;
+                        parentModule.FILT = (FilterChannel)gs.FILT.Value;
                     if (gs.FilterType.HasValue)
-                        parentModule.FilterType = gs.FilterType.Value;
+                        parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
 
                 SetTimbre();
@@ -582,12 +582,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                double v = 1;
-                v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
-                v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-
-                if (FxEngine != null)
-                    v *= FxEngine.OutputLevel;
+                var v = CalcCurrentVolume();
 
                 parentModule.Volume = (byte)Math.Round(15 * v);
             }
@@ -659,6 +654,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Physical Channel")]
+            [DefaultValue(PhysicalChannel.Indeterminatene)]
             public PhysicalChannel PhysicalChannel
             {
                 get;
@@ -779,7 +775,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [DefaultValue((ushort)2047)]
             [Description("Pulse Width (0-4095)(0% - 100%)")]
             [SlideParametersAttribute(0, 4095)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -793,6 +788,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_PW = (ushort)(value & 4095);
                 }
+            }
+
+            public bool ShouldSerializePW()
+            {
+                return PW != 2047;
+            }
+
+            public void ResetPW()
+            {
+                PW = 2047;
             }
 
             private byte f_RING;
@@ -883,6 +888,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip")]
             [Description("Override global settings")]
+            [DefaultValue(false)]
             public bool Enable
             {
                 get;
@@ -957,7 +963,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private FilterChannel? f_FILT;
+            private FilterChannel2? f_FILT;
 
             /// <summary>
             /// 
@@ -966,7 +972,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip")]
             [DefaultValue(null)]
             [Description("Apply Filter Ch")]
-            public FilterChannel? FILT
+            public FilterChannel2? FILT
             {
                 get => f_FILT;
                 set
@@ -975,7 +981,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private FilterTypes? f_FilterType;
+            private FilterTypes2? f_FilterType;
 
             /// <summary>
             /// 
@@ -984,8 +990,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip")]
             [DefaultValue(null)]
             [Description("Filter Type")]
-            [TypeConverter(typeof(FlagsEnumConverter))]
-            public FilterTypes? FilterType
+            public FilterTypes2? FilterType
             {
                 get => f_FilterType;
                 set
@@ -1020,6 +1025,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             HighPass = 4,
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Flags]
+        public enum FilterTypes2
+        {
+            None = 0,
+            LowPass = 1,
+            BandPass = 2,
+            LowBandPass = 3,
+            HighPass = 4,
+            LowHighPass = 5,
+            BandHighPass = 6,
+            LowBandHighPass = 7,
+        }
+
 
         /// <summary>
         /// 
@@ -1031,6 +1052,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ch1 = 1,
             Ch2 = 2,
             Ch3 = 4,
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Flags]
+        public enum FilterChannel2
+        {
+            None = 0,
+            Ch1 = 1,
+            Ch2 = 2,
+            Ch12 = 3,
+            Ch3 = 4,
+            Ch13 = 5,
+            Ch23 = 6,
+            Ch123 = 7,
         }
 
         /// <summary>
