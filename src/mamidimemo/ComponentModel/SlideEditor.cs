@@ -41,7 +41,6 @@ namespace zanac.MAmidiMEmo.ComponentModel
             SlideParametersAttribute att = (SlideParametersAttribute)context.PropertyDescriptor.Attributes[typeof(SlideParametersAttribute)];
 
             TrackBar track = new TrackBar();
-            track.ValueChanged += Track_ValueChanged;
             if (att != null)
             {
                 track.Maximum = att.SliderMax;
@@ -65,13 +64,21 @@ namespace zanac.MAmidiMEmo.ComponentModel
             if(att != null && att.SliderDynamicSetValue)
                 track.Tag = context;
 
+            track.ValueChanged += Track_ValueChanged;
             service.DropDownControl(track);
 
-            return context.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
+            if (valueChanged)
+                return context.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
+            else
+                return value;
         }
+
+        bool valueChanged;
 
         private void Track_ValueChanged(object sender, EventArgs e)
         {
+            valueChanged = true;
+
             TrackBar track = (TrackBar)sender;
             toolTip.SetToolTip(track, track.Value.ToString());
             ITypeDescriptorContext ctx = (ITypeDescriptorContext)track.Tag;

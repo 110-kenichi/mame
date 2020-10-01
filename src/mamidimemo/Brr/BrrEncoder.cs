@@ -197,6 +197,7 @@ namespace zanac.MAmidiMEmo.Brr
 
             if (is_loop_point)
             {
+                kmin = 1;   //HACK: MAmidiMEmo //https://twitter.com/osoumen/status/1311267206672429056
                 filter_at_loop = (byte)kmin;
                 p1_at_loop = p1;
                 p2_at_loop = p2;

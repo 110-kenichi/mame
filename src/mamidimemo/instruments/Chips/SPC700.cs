@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -573,6 +574,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate byte delegate_spc_ram_r(uint unitNumber, uint address);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_spc_resample(double org_rate, double target_rate, short[] org_buffer, int org_len, short[] target_buffer, int target_len);
+
         /// <summary>
         /// 
         /// </summary>
@@ -671,6 +675,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        private static delegate_spc_resample spc_resample
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -731,6 +744,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             funcPtr = MameIF.GetProcAddress("spc700_set_callback");
             if (funcPtr != IntPtr.Zero)
                 set_callback = (delegate_set_callback)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_set_callback));
+
+            funcPtr = MameIF.GetProcAddress("spc700_resample");
+            if (funcPtr != IntPtr.Zero)
+                spc_resample = (delegate_spc_resample)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_spc_resample));
         }
 
         private SPC700SoundManager soundManager;
@@ -2250,40 +2267,82 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
                         end = s.LoopEnd;
 
-                    if ((end - start + 1) % 16 != 0)
-                        warningAlign = true;
-                    uint len = (end - start + 1) & 0xfffffff0;
-                    if (len == 0)
-                        len = 16;
+                    uint olen = end - start;
+                    uint len = (olen | 0xf) + 1;
+                    uint loopStart = s.LoopStart - start;
 
-                    if ((s.LoopStart - start + 1) % 16 != 0)
-                        warningAlign = true;
-                    uint loopStart = (s.LoopStart - start) & 0xfffffff0;
+                    //For calc ADPCM data on loop point to avoid glitch/noise sounsing
+                    //if (s.LoopStart < s.LoopEnd)
+                    //    len += 16;
 
                     short[] samples = new short[len];
-                    for (uint i = 0; i < len; i++)
-                        samples[i] = spl[start + i];
+                    Buffer.BlockCopy(spl, (int)start * 2, samples, 0, ((int)(olen + 1) * 2));
+
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        tim.AdsrEnable = true;
+
+                        //For calc ADPCM data on loop point to avoid glitch/noise sounsing
+                        for (uint i = olen + 1; i < len; i++)
+                            samples[i] = spl[loopStart + i - (olen + 1)];
+                    }
+
+                    if (loopStart % 16 != 0)
+                    {
+                        warningAlign = true;
+                        loopStart |= 0xf;
+                        loopStart += 1;
+                        if (loopStart >= len)
+                            loopStart -= 16;
+                    }
+
+                    //For calc avarage PCM data on loop point to avoid glitch/noise sounsing
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        short[] avgData = new short[16];
+                        for (int i = 0; i < 16; i++)
+                            avgData[i] = (short)((samples[loopStart + i] + samples[samples.Length - 16 + i]) / 2);
+                        for (int i = 0; i < 16; i++)
+                        {
+                            samples[loopStart + i] = avgData[i];
+                            samples[samples.Length - 16 + i] = avgData[i];
+                        }
+                    }
+
+                    //byte[] sample_dat = new byte[len * 2];
+                    //for (int i = 0; i < samples.Length; i++)
+                    //{
+                    //    sample_dat[i * 2] = (byte)(samples[i] & 0xff);
+                    //    sample_dat[i * 2 + 1] = (byte)((samples[i] & 0xff00) >> 8);
+                    //}
+                    //File.WriteAllBytes(@"C:\Users\zanac2\Desktop\bbb.pcm", sample_dat);
 
                     uint brrLoopStart;
+
                     var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
+                    brrLoopStart /= 9;
 
                     tim.AdpcmData = result;
-                    tim.LoopPoint = (ushort)(brrLoopStart / 9);
+                    tim.LoopPoint = (ushort)brrLoopStart;
+
                     var nidx = s.SampleName.IndexOf('\0');
                     if (nidx >= 0)
                         tim.Memo = s.SampleName.Substring(0, nidx);
                     else
                         tim.Memo = s.SampleName;
 
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        tim.SDS.ADSR.Enable = true;
+                        tim.SDS.ADSR.DR = 80;
+                        tim.SDS.ADSR.SL = 127;
+                    }
+                    else
+                    {
+                        tim.SDS.ADSR.Enable = false;
+                    }
                     if (drum)
                     {
-                        if (s.LoopStart < s.LoopEnd)
-                        {
-                            tim.SDS.ADSR.Enable = true;
-                            tim.SDS.ADSR.DR = 80;
-                            tim.SDS.ADSR.SL = 127;
-                        }
-
                         DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
                         DrumTimbres[tn].BaseNote =
                             (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));

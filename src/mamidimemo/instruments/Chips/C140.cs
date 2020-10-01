@@ -1218,15 +1218,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     tim.PcmData = samples;
                     tim.LoopPoint = (ushort)loopP;
                     tim.LoopEnable = s.LoopStart < s.LoopEnd;
+
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        tim.SDS.ADSR.Enable = true;
+                        tim.SDS.ADSR.DR = 80;
+                        tim.SDS.ADSR.SL = 127;
+                    }
                     if (drum)
                     {
-                        if (s.LoopStart < s.LoopEnd)
-                        {
-                            tim.SDS.ADSR.Enable = true;
-                            tim.SDS.ADSR.DR = 80;
-                            tim.SDS.ADSR.SL = 127;
-                        }
-
                         DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
                         DrumTimbres[tn].BaseNote =
                             (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
