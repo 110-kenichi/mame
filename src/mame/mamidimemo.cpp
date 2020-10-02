@@ -27,6 +27,7 @@
 #include "..\devices\sound\2610intf.h"
 #include "..\devices\sound\mt32.h"
 #include "..\munt\mt32emu\src\c_interface\c_interface.h"
+#include "..\munt\mt32emu\soxr\src\soxr.h"
 #include "..\devices\sound\cm32p.h"
 
 #define DllExport extern "C" __declspec (dllexport)
@@ -1038,7 +1039,18 @@ extern "C"
 		spc700_devices[unitNumber]->set_callback(callback);
 	}
 
+	DllExport void spc700_resample(double org_rate, double target_rate, short* org_buffer, size_t org_len, short* target_buffer, size_t target_len)
+	{
+		soxr_datatype_t itype = SOXR_INT16_I;
+		soxr_datatype_t otype = SOXR_INT16_I;
+		soxr_io_spec_t iospec = soxr_io_spec(itype, otype);
+		soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_20_BITQ, 0);
 
+		size_t idone = 0;
+		size_t odone = 0;
+
+		soxr_oneshot(org_rate, target_rate, 1, org_buffer, org_len, &idone, target_buffer, target_len, &odone, &iospec, &qSpec, NULL);
+	}
 
 	pokey_device *pokey_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 

@@ -2226,6 +2226,9 @@ C:\msys64\mingw64\bin\python.exe ../../../../../scripts/build/makelist.py  ../..
     <ProjectReference Include="..\..\..\..\..\src\munt\mt32emu\mt32emu.vcxproj">
       <Project>{613aba51-3d44-4fe5-a7e8-5803688fc56f}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\src\munt\mt32emu\soxr\msvc\libsoxr.vcxproj">
+      <Project>{af9ad75c-4785-4432-bac3-adab1e7f1192}</Project>
+    </ProjectReference>
     <ProjectReference Include="frontend.vcxproj">
       <Project>{e98e14c4-82a4-4988-ba29-01c90c817ab8}</Project>
     </ProjectReference>

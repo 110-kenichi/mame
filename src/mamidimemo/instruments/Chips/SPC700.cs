@@ -575,7 +575,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private delegate byte delegate_spc_ram_r(uint unitNumber, uint address);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_spc_resample(double org_rate, double target_rate, short[] org_buffer, int org_len, short[] target_buffer, int target_len);
+        private delegate void delegate_spc_resample(double org_rate, double target_rate, IntPtr org_buffer, uint org_len, IntPtr target_buffer, uint target_len);
 
         /// <summary>
         /// 
@@ -2239,6 +2239,83 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private short[] resampleLoop16(SF2SampleHeader s, short[] osample, double obaseFreq, ref double tbaseFreq, ref uint tend, ref uint tloopStart, ref uint tloopLen)
+        {
+            //uint ostart = 0;
+            uint oend = s.End - s.Start;
+            if (s.LoopEnd < s.End && s.LoopStart < s.LoopEnd)
+                oend = s.LoopEnd - s.Start;
+
+            uint olen = oend + 1;
+            uint oloopStart = s.LoopStart - s.Start;
+            uint oloopLen = olen - oloopStart;
+
+            uint tlen = olen;
+            tloopStart = oloopStart;
+            tloopLen = oloopLen;
+            tend = oend;
+            tbaseFreq = obaseFreq;
+            double trate = 1;
+            if (oloopLen % 16 != 0)
+            {
+                tloopLen = ((oloopLen / 16) + 1) * 16;
+                trate = (double)oloopLen / (double)tloopLen;
+                tbaseFreq = obaseFreq / trate;
+
+                tloopLen = (uint)Math.Ceiling(oloopLen / trate);
+                tend = (uint)Math.Ceiling(oend / trate);
+                tlen = tend + 1;
+                tloopStart = tend - tloopLen + 1;
+            }
+
+            if (obaseFreq != tbaseFreq)
+            {
+                //resample
+
+                IntPtr op = Marshal.AllocHGlobal((int)(olen * sizeof(short)));
+                IntPtr tp = Marshal.AllocHGlobal((int)(tlen * sizeof(short)));
+                MarshalCopy(osample, op, 0, olen);
+
+                spc_resample(obaseFreq, tbaseFreq, op, olen, tp, tlen);
+
+                short[] tsamples = new short[tlen];
+                MarshalCopy(tp, tsamples, 0, tlen);
+
+                Marshal.FreeHGlobal(op);
+                Marshal.FreeHGlobal(tp);
+                return tsamples;
+            }
+            else
+            {
+                return osample;
+            }
+        }
+
+        public static void MarshalCopy(IntPtr source, short[] destination, uint startIndex, uint length)
+        {
+            unsafe
+            {
+                var sourcePtr = (short*)source;
+                for (var i = startIndex; i < startIndex + length; i++)
+                {
+                    destination[i] = *sourcePtr;
+                    sourcePtr++;
+                }
+            }
+        }
+
+        public static void MarshalCopy(short[] source, IntPtr destination, uint startIndex, uint length)
+        {
+            unsafe
+            {
+                var destPtr = (short*)destination;
+                for (var i = startIndex; i < startIndex + length; i++)
+                {
+                    *destPtr = source[i];
+                    destPtr++;
+                }
+            }
+        }
 
         /// <summary>
         /// 
@@ -2257,67 +2334,99 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     s.SampleType == SF2SampleLink.LeftSample)
                 {
                     var tim = Timbres[tn + offset];
+                    uint brrLoopStart;
 
                     double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
-                    tim.BaseFreqency = baseFreq;
                     tim.SampleRate = s.SampleRate;
 
-                    uint start = s.Start;
-                    uint end = s.End;
+                    uint start = 0;
+                    uint end = s.End - s.Start;
                     if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
                         end = s.LoopEnd;
 
-                    uint olen = end - start;
-                    uint len = (olen | 0xf) + 1;
-                    uint loopStart = s.LoopStart - start;
+                    uint olen = end - start + 1;
+                    short[] samples = new short[olen];
+                    Array.Copy(spl, s.Start, samples, 0, olen);
+                    uint loopStart = 0;
+                    uint loopLen = 0;
 
-                    //For calc ADPCM data on loop point to avoid glitch/noise sounsing
-                    //if (s.LoopStart < s.LoopEnd)
-                    //    len += 16;
-
-                    short[] samples = new short[len];
-                    Buffer.BlockCopy(spl, (int)start * 2, samples, 0, ((int)(olen + 1) * 2));
+                    //var tim2 = Timbres[tn + 1 + offset];
+                    //short[] samples2 = new short[(olen | 0xf) + 1];
+                    //Array.Copy(spl, s.Start, samples2, 0, olen);
+                    //var result2 = Brr.BrrEncoder.ConvertRawWave(samples2, false, s.LoopStart < s.LoopEnd, s.LoopStart - s.Start, out brrLoopStart);
+                    //tim2.SampleRate = s.SampleRate;
+                    //tim2.BaseFreqency = baseFreq;
+                    //brrLoopStart /= 9;
+                    //tim2.AdpcmData = result2;
+                    //tim.LoopPoint = (ushort)brrLoopStart;
 
                     if (s.LoopStart < s.LoopEnd)
                     {
-                        tim.AdsrEnable = true;
+                        loopStart = s.LoopStart - s.Start;
+                        loopLen = olen - loopStart;
 
-                        //For calc ADPCM data on loop point to avoid glitch/noise sounsing
-                        for (uint i = olen + 1; i < len; i++)
-                            samples[i] = spl[loopStart + i - (olen + 1)];
+                        if (loopLen % 16 != 0)
+                            warningAlign = true;
+
+                        //if (tn == 0)
+                        //{
+                        //    byte[] sample_dat = new byte[samples.Length * 2];
+                        //    for (int i = 0; i < samples.Length; i++)
+                        //    {
+                        //        short data = samples[i];
+                        //        if (i == loopStart || i == samples.Length - 16)
+                        //            data = short.MaxValue;
+                        //        sample_dat[i * 2] = (byte)(data & 0xff);
+                        //        sample_dat[i * 2 + 1] = (byte)((data & 0xff00) >> 8);
+                        //    }
+                        //    File.WriteAllBytes(@"C:\Users\zanac2\Desktop\aaa.pcm", sample_dat);
+                        //}
+
+                        samples = resampleLoop16(s, samples, baseFreq, ref baseFreq, ref end, ref loopStart, ref loopLen);
                     }
 
-                    if (loopStart % 16 != 0)
+                    tim.BaseFreqency = baseFreq;
+
+                    //offset to 16
+                    if (samples.Length % 16 != 0)
                     {
-                        warningAlign = true;
-                        loopStart |= 0xf;
-                        loopStart += 1;
-                        if (loopStart >= len)
-                            loopStart -= 16;
+                        int sl = samples.Length;
+                        List<short> tsmpl = new List<short>();
+                        tsmpl.AddRange(samples);
+                        tsmpl.InsertRange(0, new short[16 - (sl % 16)]);
+                        samples = tsmpl.ToArray();
+                        loopStart += 16 - (uint)(sl % 16);
                     }
 
                     //For calc avarage PCM data on loop point to avoid glitch/noise sounsing
                     if (s.LoopStart < s.LoopEnd)
                     {
                         short[] avgData = new short[16];
-                        for (int i = 0; i < 16; i++)
-                            avgData[i] = (short)((samples[loopStart + i] + samples[samples.Length - 16 + i]) / 2);
-                        for (int i = 0; i < 16; i++)
+                        if (loopStart >= 16)
                         {
-                            samples[loopStart + i] = avgData[i];
-                            samples[samples.Length - 16 + i] = avgData[i];
+                            for (int i = 0; i < 16; i++)
+                                avgData[i] = (short)(((int)samples[loopStart - 16 + i] + (int)samples[samples.Length - 16 + i]) / 2);
+                            for (int i = 0; i < 16; i++)
+                            {
+                                samples[loopStart - 16 + i] = avgData[i];
+                                samples[samples.Length - 16 + i] = avgData[i];
+                            }
                         }
+
+                        //if (tn == 0)
+                        //{
+                        //    byte[] sample_dat = new byte[samples.Length * 2];
+                        //    for (int i = 0; i < samples.Length; i++)
+                        //    {
+                        //        short data = samples[i];
+                        //        if (i == loopStart || i == samples.Length - 16)
+                        //            data = short.MaxValue;
+                        //        sample_dat[i * 2] = (byte)(data & 0xff);
+                        //        sample_dat[i * 2 + 1] = (byte)((data & 0xff00) >> 8);
+                        //    }
+                        //    File.WriteAllBytes(@"C:\Users\zanac2\Desktop\bbb.pcm", sample_dat);
+                        //}
                     }
-
-                    //byte[] sample_dat = new byte[len * 2];
-                    //for (int i = 0; i < samples.Length; i++)
-                    //{
-                    //    sample_dat[i * 2] = (byte)(samples[i] & 0xff);
-                    //    sample_dat[i * 2 + 1] = (byte)((samples[i] & 0xff00) >> 8);
-                    //}
-                    //File.WriteAllBytes(@"C:\Users\zanac2\Desktop\bbb.pcm", sample_dat);
-
-                    uint brrLoopStart;
 
                     var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
                     brrLoopStart /= 9;
@@ -2352,11 +2461,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     if (tn == 128)
                         break;
+
+                    break;
                 }
             }
             if (warningAlign)
             {
-                MessageBox.Show("Some sample length or loop point is not a multiple of 16.\r\n" +
+                MessageBox.Show("Some sample loop length is not a multiple of 16.\r\n" +
                     "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);
             }
         }

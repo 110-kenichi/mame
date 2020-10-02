@@ -27,17 +27,23 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 		OS: Windows 7 SP1 or lator
 		Runtime: .NET Framework 4.7 or lator
+		         VC++ 2012 Runtime https://www.microsoft.com/en-au/download/details.aspx?id=30679
 
-1. Launch MAmidiMEmo.exe
+1. Extract downloaded zip file.
+   Execute "DelZoneID.ps1" on PowerShell to remove "Zone.Identifier" flag.
+
+2. Install VC++ runtime 2012 and .NET Framework 4.7 or lator.
+
+3. Launch MAmidiMEmo.exe
 
    Note: You can change the value of audio latency, sampling rate and audio output interface by [Tool] menu.
          PortAudio is a low latency sound engine. See http://www.portaudio.com/
 
-2. Select MIDI I/F from toolbar. MAmidiMEmo will recevie MIDI message from the selected MIDI I/F.
+4. Select MIDI I/F from toolbar. MAmidiMEmo will recevie MIDI message from the selected MIDI I/F.
 
    Note: You can use the loopMIDI (See http://www.tobias-erichsen.de/software/loopmidi.html) to send MIDI message from this PC to MAmidiMEmo.
 
-3. Add your favorite chips from the [Instruments] menu on the toolbar.
+5. Add your favorite chips from the [Instruments] menu on the toolbar.
 
    Note: Currently supported chips are the following.
 
@@ -52,7 +58,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
    Note: You can add the chip up to 8 per same chip type and MAmidiMEmo eats more CPU power.
 
-4. Select the chip from the left pane and configure the chip on the right pane.
+6. Select the chip from the left pane and configure the chip on the right pane.
 
    *[Timbres]
     You can edit sound character from this property. It's selected by "Program Change" MIDI message.
@@ -135,7 +141,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    *[Channels]
     Select which MIDI ch messages the chip receives.
 
-5. Play MIDI file by your favorite sequencer or player.
+7. Play MIDI file by your favorite sequencer or player.
    Of course, you can connect your favrite keyboard to MAmidiMEmo for live performance.
 
    MAmidiMEmo currently supports the following MIDI messages.
@@ -155,17 +161,17 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Effect Depth (for modifying a VST properties dynamically)
 		General Purpose Control (for modifying an instrument properties dynamically)
 
-6. Also, you can set the following sound driver settings from Timbre settings.
+8. Also, you can set the following sound driver settings from Timbre settings.
 
    Arpeggio
    ADSR
    Effect (Pitch/Volue/Duty macro)
 
-7. You can modify current timbre parameters via Sound control MIDI Message (70-75,79) dynamically.
+9. You can modify current timbre parameters via Sound control MIDI Message (70-75,79) dynamically.
    You can modify VST parameters via Effect Depth control MIDI Message (91-95) dynamically.
    You can modify other parameters via General Purpose control MIDI Message (16-19,80-83) dynamically.
 
-8. You can modify receving MIDI ch for the specific instrument via NRPN MIDI Message.
+10. You can modify receving MIDI ch for the specific instrument via NRPN MIDI Message.
 
    NRPN format is the following.
 
@@ -194,7 +200,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
           ch xx xx xx xx xx 16 15
 
 
-9. (TBD)
+11. (TBD)
    You can modify current environment and all timbre parameters via System Exclusive MIDI Message.
 
    SysEx format:
@@ -226,6 +232,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 2.2.3.0 Fixed issues related with SID property.
+		Improved sf loader for SPC700 and C140.
+		Added ZoneIDE remover script.
 2.2.2.0 Fixed not applying Relese Point for Envelope.
         Fixed sound off timing while envelope processing.
 		Added sf2 loading feature to context menu of C140 instrument.
