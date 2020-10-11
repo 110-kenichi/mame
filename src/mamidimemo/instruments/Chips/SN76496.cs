@@ -500,11 +500,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             private void updateNoisePitch()
             {
+                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
+
+                int kf = 0;
+                if (d > 0)
+                    kf = (int)d % 63;
+                else if (d < 0)
+                    kf = 63 + ((int)d % 63);
+
+                int noted = (int)d / 63;
+                if (d < 0)
+                    noted -= 1;
+
                 int nn = NoteOnEvent.NoteNumber;
                 if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                     nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                int noteNum = nn + noted;
+                if (noteNum > 127)
+                    noteNum = 127;
+                else if (noteNum < 0)
+                    noteNum = 0;
 
-                int v = nn % 3;
+                int v = noteNum % 4;
 
                 Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
             }

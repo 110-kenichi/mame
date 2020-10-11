@@ -231,9 +231,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.2.4.0 Fixed issue of modulation CC.
+		Fixed an error on MSM5232.
+		Improved NOISE ch freqeucncy on SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
+		Improved NOISE ch function on AY8910.
 2.2.3.0 Fixed issues related with SID property.
 		Improved sf loader for SPC700 and C140.
-		Added ZoneIDE remover script.
+		Added ZoneID remover script.
 2.2.2.0 Fixed not applying Relese Point for Envelope.
         Fixed sound off timing while envelope processing.
 		Added sf2 loading feature to context menu of C140 instrument.

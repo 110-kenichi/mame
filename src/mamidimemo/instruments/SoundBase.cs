@@ -365,7 +365,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processFx(object state)
         {
-            if (!IsDisposed && !IsSoundOff && ActiveFx && FxEngine != null)
+            if (!IsDisposed && ActiveFx && FxEngine != null)
             {
                 if (FxEngine.Process(this, IsKeyOff, IsSoundOff))
                 {
@@ -385,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processAdsr(object state)
         {
-            if (!IsDisposed && !IsSoundOff && ActiveADSR && AdsrEngine != null)
+            if (!IsDisposed && ActiveADSR && AdsrEngine != null)
             {
                 AdsrEngine.Process();
 
@@ -416,7 +416,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processPortamento(object state)
         {
-            if (!IsDisposed && !IsSoundOff && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
+            if (!IsDisposed && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
                 //double delta = -portStartNoteDeltSign * 12d / Math.Pow(((double)ParentModule.PortamentoTimes[NoteOnEvent.Channel] / 2d) + 1d, 1.25);
                 double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] * HighPrecisionTimer.TIMER_BASIC_1MS_COUNT / 100d;
@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processModulation(object state)
         {
-            if (!IsDisposed && !IsSoundOff && ModulationEnabled)
+            if (!IsDisposed && ModulationEnabled)
             {
                 double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_1KHZ);
 

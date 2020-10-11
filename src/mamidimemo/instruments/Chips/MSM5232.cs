@@ -207,7 +207,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232WriteData(uint unitNumber, uint address, byte data)
         {
-            DeferredWriteData(MSM5232_write, unitNumber, data);
+            DeferredWriteData(MSM5232_write, unitNumber, address, data);
             /*
             try
             {

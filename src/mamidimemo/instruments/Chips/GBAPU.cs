@@ -716,7 +716,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             uint reg = (uint)((Slot + 3) * 5);
 
-                            int d = 15 - ((69 + (int)Math.Round(12 * Math.Log(freq / 440d, 2))) % 16);
+                            double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
+
+                            int kf = 0;
+                            if (d > 0)
+                                kf = (int)d % 63;
+                            else if (d < 0)
+                                kf = 63 + ((int)d % 63);
+
+                            int noted = (int)d / 63;
+                            if (d < 0)
+                                noted -= 1;
+
+                            int nn = NoteOnEvent.NoteNumber;
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                                nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                            int noteNum = nn + noted;
+                            if (noteNum > 127)
+                                noteNum = 127;
+                            else if (noteNum < 0)
+                                noteNum = 0;
+
+                            int v = 15 - (noteNum % 16);
 
                             byte dt = timbre.NoiseCounter;
                             if (FxEngine != null && FxEngine.Active)
@@ -725,7 +746,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 dt = (byte)(eng.DutyValue & 1);
                             }
 
-                            GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(d << 4 | dt << 3 | timbre.NoiseDivRatio));
+                            GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(v << 4 | dt << 3 | timbre.NoiseDivRatio));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6)));
                             break;
                         }
