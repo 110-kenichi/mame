@@ -315,6 +315,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -750,7 +754,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Set PCM base frequency [Hz]")]
             [DefaultValue(typeof(double), "440")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public double BaseFreqency
             {
                 get;
@@ -906,7 +910,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Set PCM base frequency [Hz]")]
             [DefaultValue(typeof(double), "440")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public double BaseFreqency
             {
                 get;

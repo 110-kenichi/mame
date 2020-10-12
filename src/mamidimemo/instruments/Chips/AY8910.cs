@@ -990,7 +990,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip")]
             [Description("Set Env frequency divider for SyncWithNoteFrequency prop.")]
             [DoubleSlideParametersAttribute(0d, 5d, 1d)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(null)]
             public double? SyncWithNoteFrequencyDivider
             {

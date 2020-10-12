@@ -7,6 +7,8 @@
 
 #include "vgmwrite.h"
 
+typedef int8_t(*C6280_PCM_CALLBACK)();
+
 class c6280_device : public device_t, public device_sound_interface
 {
 public:
@@ -19,6 +21,8 @@ public:
 
 	void vgm_start(char *name);
 	void vgm_stop(void);
+
+	void set_pcm_callback(C6280_PCM_CALLBACK callback) { m_callback = callback; };
 
 protected:
 	// device-level overrides
@@ -54,6 +58,11 @@ private:
 	s16 m_volume_table[32];
 
 	vgm_writer *m_vgm_writer;
+
+	emu_timer *m_timer;
+	TIMER_CALLBACK_MEMBER(timer_callback);
+
+	C6280_PCM_CALLBACK m_callback;
 };
 
 DECLARE_DEVICE_TYPE(C6280, c6280_device)

@@ -350,6 +350,9 @@ void c6280_device::device_start()
 	save_item(STRUCT_MEMBER(m_channel, tick));
 
 	m_vgm_writer = new vgm_writer(machine());
+
+	m_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(c6280_device::timer_callback), this));
+	m_timer->adjust(attotime::from_hz(7.159090 * 1000. * 1000. / 1024.), 0, attotime::from_hz(7.159090 * 1000. * 1000. / 1024.));
 }
 
 void c6280_device::vgm_start(char *name)
@@ -374,4 +377,13 @@ void c6280_device::device_reset()
 		if (ch >= 4)
 			chan->noise_seed = 1;
 	}
+}
+
+TIMER_CALLBACK_MEMBER(c6280_device::timer_callback)
+{
+	if (m_enable == 0)
+		return;
+
+	if (m_callback != NULL)
+		m_callback();
 }

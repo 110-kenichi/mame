@@ -820,7 +820,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
                 // TODO: 大きなフィールドを null に設定します。
-                //SPC700SetCallback(UnitNumber, null);
+                SPC700SetCallback(UnitNumber, null);
 
                 disposedValue = true;
             }
