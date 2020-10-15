@@ -19,6 +19,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public override string SerializeData
+        {
+            get
+            {
+                return SerializeProps(this,
+                    nameof(tim.ALG),
+                    nameof(tim.FB));
+            }
+            set
+            {
+                DeserializeProps(this, value,
+                    nameof(tim.ALG),
+                    nameof(tim.FB));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public YM3812GeneralContainer(YM3812.YM3812Timbre tim, string name) : base(tim, name)
         {
             InitializeComponent();

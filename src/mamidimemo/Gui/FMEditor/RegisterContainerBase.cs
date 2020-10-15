@@ -28,6 +28,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             set;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual string SerializeData
+        {
+            get
+            {
+                return string.Empty;
+            }
+            set
+            {
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -69,6 +84,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     rc.ValueChanged += (s, e) => { OnValueChanged(s, e); };
                     break;
             }
+
+            textBoxSR.Text = SerializeData;
         }
 
         /// <summary>
@@ -115,6 +132,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
 
             ValueChanged?.Invoke(this, e);
+
+            ignoreTextChange = true;
+            textBoxSR.Text = SerializeData;
+            ignoreTextChange = false;
         }
 
         /// <summary>
@@ -166,8 +187,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
 
             return sb.ToString();
@@ -232,8 +251,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         else if (ex.GetType() == typeof(SystemException))
                             throw;
 
-
-                        System.Windows.Forms.MessageBox.Show(ex.ToString());
                     }
                 }
             }
@@ -244,8 +261,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
 
@@ -272,5 +287,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             return null;
         }
 
+        private bool ignoreTextChange;
+
+        private void textBoxSR_TextChanged(object sender, EventArgs e)
+        {
+            if (ignoreTextChange)
+                return;
+
+            try
+            {
+                SerializeData = textBoxSR.Text;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+            }
+        }
     }
 }

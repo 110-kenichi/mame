@@ -37,7 +37,7 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Name = "RegisterAlg4OpImg";
-            this.Size = new System.Drawing.Size(331, 175);
+            this.Size = new System.Drawing.Size(255, 127);
             this.ResumeLayout(false);
 
         }

@@ -19,6 +19,45 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public override string SerializeData
+        {
+            get
+            {
+                return SerializeProps(this,
+                    nameof(op.EN),
+                    nameof(op.AR),
+                    nameof(op.D1R),
+                    nameof(op.D2R),
+                    nameof(op.RR),
+                    nameof(op.SL),
+                    nameof(op.TL),
+                    nameof(op.RS),
+                    nameof(op.MUL),
+                    nameof(op.DT1),
+                    nameof(op.AM),
+                    nameof(op.SSG));
+            }
+            set
+            {
+                DeserializeProps(this, value,
+                    nameof(op.EN),
+                    nameof(op.AR),
+                    nameof(op.D1R),
+                    nameof(op.D2R),
+                    nameof(op.RR),
+                    nameof(op.SL),
+                    nameof(op.TL),
+                    nameof(op.RS),
+                    nameof(op.MUL),
+                    nameof(op.DT1),
+                    nameof(op.AM),
+                    nameof(op.SSG));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public YM2610BOperatorContainer(YM2610B.YM2610BOperator op, string name) : base(op, name)
         {
             InitializeComponent();

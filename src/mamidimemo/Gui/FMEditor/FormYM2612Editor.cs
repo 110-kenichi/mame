@@ -28,19 +28,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get
             {
-                return RegisterContainerBase.SerializeProps(GetControl("General"),
-                    nameof(timbre.ALG),
-                    nameof(timbre.FB),
-                    nameof(timbre.AMS),
-                    nameof(timbre.FMS));
+                return GetControl("General").SerializeData;
             }
             set
             {
-                RegisterContainerBase.DeserializeProps(GetControl("General"), value,
-                    nameof(timbre.ALG),
-                    nameof(timbre.FB),
-                    nameof(timbre.AMS),
-                    nameof(timbre.FMS));
+                GetControl("General").SerializeData = value;
             }
         }
 
@@ -55,19 +47,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 for (int i = 0; i < timbre.Ops.Length; i++)
                 {
                     var op = timbre.Ops[i];
-                    string opt = RegisterContainerBase.SerializeProps(GetControl("Operator " + (i + 1)),
-                        nameof(op.EN),
-                        nameof(op.AR),
-                        nameof(op.D1R),
-                        nameof(op.D2R),
-                        nameof(op.RR),
-                        nameof(op.SL),
-                        nameof(op.TL),
-                        nameof(op.RS),
-                        nameof(op.MUL),
-                        nameof(op.DT1),
-                        nameof(op.AM),
-                        nameof(op.SSG));
+                    string opt = GetControl("Operator " + (i + 1)).SerializeData;
                     list.Add(opt);
                 }
                 return list.ToArray();
@@ -77,19 +57,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 for (int i = 0; i < timbre.Ops.Length; i++)
                 {
                     var op = timbre.Ops[i];
-                    RegisterContainerBase.DeserializeProps(GetControl("Operator " + (i + 1)), value[i],
-                        nameof(op.EN),
-                        nameof(op.AR),
-                        nameof(op.D1R),
-                        nameof(op.D2R),
-                        nameof(op.RR),
-                        nameof(op.SL),
-                        nameof(op.TL),
-                        nameof(op.RS),
-                        nameof(op.MUL),
-                        nameof(op.DT1),
-                        nameof(op.AM),
-                        nameof(op.SSG));
+                    GetControl("Operator " + (i + 1)).SerializeData = value[i];
                 }
             }
         }

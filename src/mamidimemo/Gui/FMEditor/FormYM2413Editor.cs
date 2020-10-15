@@ -28,15 +28,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get
             {
-                return RegisterContainerBase.SerializeProps(GetControl("General"),
-                    nameof(timbre.FB),
-                    nameof(timbre.SUS));
+                return GetControl("General").SerializeData;
             }
             set
             {
-                RegisterContainerBase.DeserializeProps(GetControl("General"), value,
-                    nameof(timbre.FB),
-                    nameof(timbre.SUS));
+                GetControl("General").SerializeData = value;
             }
         }
 
@@ -50,36 +46,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 List<string> list = new List<string>();
 
                 var mod = timbre.Modulator;
-                string modt = RegisterContainerBase.SerializeProps(GetControl("Modulator"),
-                    nameof(mod.AR),
-                    nameof(mod.DR),
-                    nameof(mod.RR),
-                    nameof(mod.SL),
-                    nameof(mod.SR),
-                    nameof(mod.TL),
-                    nameof(mod.KSL),
-                    nameof(mod.KSR),
-                    nameof(mod.MUL),
-                    nameof(mod.AM),
-                    nameof(mod.VIB),
-                    nameof(mod.EG),
-                    nameof(mod.DIST));
+                string modt = GetControl("Modulator").SerializeData;
                 list.Add(modt);
 
                 var ca = timbre.Career;
-                string cat = RegisterContainerBase.SerializeProps(GetControl("Career"),
-                    nameof(ca.AR),
-                    nameof(ca.DR),
-                    nameof(ca.RR),
-                    nameof(ca.SL),
-                    nameof(ca.SR),
-                    nameof(ca.KSL),
-                    nameof(ca.KSR),
-                    nameof(ca.MUL),
-                    nameof(ca.AM),
-                    nameof(ca.VIB),
-                    nameof(ca.EG),
-                    nameof(ca.DIST));
+                string cat = GetControl("Career").SerializeData;
                 list.Add(cat);
 
                 return list.ToArray();
@@ -87,35 +58,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             set
             {
                 var mod = timbre.Modulator;
-                RegisterContainerBase.DeserializeProps(GetControl("Modulator"), value[0],
-                    nameof(mod.AR),
-                    nameof(mod.DR),
-                    nameof(mod.RR),
-                    nameof(mod.SL),
-                    nameof(mod.SR),
-                    nameof(mod.TL),
-                    nameof(mod.KSL),
-                    nameof(mod.KSR),
-                    nameof(mod.MUL),
-                    nameof(mod.AM),
-                    nameof(mod.VIB),
-                    nameof(mod.EG),
-                    nameof(mod.DIST));
+                GetControl("Modulator").SerializeData = value[0];
 
                 var ca = timbre.Career;
-                RegisterContainerBase.DeserializeProps(GetControl("Career"), value[1],
-                    nameof(ca.AR),
-                    nameof(ca.DR),
-                    nameof(ca.RR),
-                    nameof(ca.SL),
-                    nameof(ca.SR),
-                    nameof(ca.KSL),
-                    nameof(ca.KSR),
-                    nameof(ca.MUL),
-                    nameof(ca.AM),
-                    nameof(ca.VIB),
-                    nameof(ca.EG),
-                    nameof(ca.DIST));
+                GetControl("Career").SerializeData = value[1];
             }
         }
 

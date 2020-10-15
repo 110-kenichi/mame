@@ -21,6 +21,86 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public override string SerializeData
+        {
+            get
+            {
+                if (mod != null)
+                {
+                    return SerializeProps(this,
+                        nameof(mod.AR),
+                        nameof(mod.DR),
+                        nameof(mod.RR),
+                        nameof(mod.SL),
+                        nameof(mod.SR),
+                        nameof(mod.TL),
+                        nameof(mod.KSL),
+                        nameof(mod.KSR),
+                        nameof(mod.MUL),
+                        nameof(mod.AM),
+                        nameof(mod.VIB),
+                        nameof(mod.EG),
+                        nameof(mod.DIST));
+                }
+                else
+                {
+                    return SerializeProps(this,
+                        nameof(ca.AR),
+                        nameof(ca.DR),
+                        nameof(ca.RR),
+                        nameof(ca.SL),
+                        nameof(ca.SR),
+                        nameof(ca.KSL),
+                        nameof(ca.KSR),
+                        nameof(ca.MUL),
+                        nameof(ca.AM),
+                        nameof(ca.VIB),
+                        nameof(ca.EG),
+                        nameof(ca.DIST));
+                }
+            }
+            set
+            {
+                if (mod != null)
+                {
+                    DeserializeProps(this, value,
+                        nameof(mod.AR),
+                        nameof(mod.DR),
+                        nameof(mod.RR),
+                        nameof(mod.SL),
+                        nameof(mod.SR),
+                        nameof(mod.TL),
+                        nameof(mod.KSL),
+                        nameof(mod.KSR),
+                        nameof(mod.MUL),
+                        nameof(mod.AM),
+                        nameof(mod.VIB),
+                        nameof(mod.EG),
+                        nameof(mod.DIST));
+                }
+                else
+                {
+                    DeserializeProps(this, value,
+                        nameof(ca.AR),
+                        nameof(ca.DR),
+                        nameof(ca.RR),
+                        nameof(ca.SL),
+                        nameof(ca.SR),
+                        nameof(ca.KSL),
+                        nameof(ca.KSR),
+                        nameof(ca.MUL),
+                        nameof(ca.AM),
+                        nameof(ca.VIB),
+                        nameof(ca.EG),
+                        nameof(ca.DIST));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         public YM2413OperatorContainer(YM2413.YM2413Modulator mod, string name) : base(mod, name)
         {
             InitializeComponent();
