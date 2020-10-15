@@ -18,6 +18,7 @@ using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -576,7 +577,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //$60+: Attack Rate / Decay Rate
                     YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
-                    YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                    if (o.SR.HasValue && o.EG == 0)
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.SR.Value));
+                    else
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+
                     //$e0+: Waveform Select
                     YM3812WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)(o.WS));
                 }
@@ -591,6 +596,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void SoundOff()
             {
                 base.SoundOff();
+
+                for (int op = 0; op < 2; op++)
+                {
+                    YM3812Operator o = timbre.Ops[op];
+                    if (o.SR.HasValue && o.EG == 0)
+                    {
+                        YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | 1 << 6 | o.KSR | o.MFM)));
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                    }
+                }
 
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + Slot), 0, 0, (byte)(lastFreqData & 0x1f));
             }
@@ -645,7 +660,85 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class YM3812Timbre : TimbreBase
         {
-            #region FM Symth
+            #region FM Synth
+
+            [Editor(typeof(YM3812UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Detailed)")]
+            [Description("Open FM register editor.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string Detailed
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
+            }
 
             private byte f_ALG;
 
@@ -699,6 +792,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Operators")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [DisplayName("Operators(Ops)")]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             public YM3812Operator[] Ops
             {
                 get;
@@ -710,6 +804,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
+            [Category("Sound")]
             [Description("You can copy and paste this text data to other same type timber.\r\n" +
                 "ALG, FB, AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS, ...\r\n" +
                 "You can use comma or space chars as delimiter.")]
@@ -725,6 +820,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DR",
                         "Ops[0].RR",
                         "Ops[0].SL",
+                        "Ops[0].SR",
                         "Ops[0].TL",
                         "Ops[0].KSL",
                         "Ops[0].KSR",
@@ -738,6 +834,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DR",
                         "Ops[1].RR",
                         "Ops[1].SL",
+                        "Ops[1].SR",
                         "Ops[1].TL",
                         "Ops[1].KSL",
                         "Ops[1].KSR",
@@ -757,6 +854,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DR",
                         "Ops[0].RR",
                         "Ops[0].SL",
+                        "Ops[0].SR",
                         "Ops[0].TL",
                         "Ops[0].KSL",
                         "Ops[0].KSR",
@@ -770,6 +868,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DR",
                         "Ops[1].RR",
                         "Ops[1].SL",
+                        "Ops[1].SR",
                         "Ops[1].TL",
                         "Ops[1].KSL",
                         "Ops[1].KSR",
@@ -921,6 +1020,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_SL = (byte)(value & 15);
+                }
+            }
+
+            private byte? f_SR;
+
+            /// <summary>
+            /// Sustain rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? SR
+            {
+                get
+                {
+                    return f_SR;
+                }
+                set
+                {
+                    if (value.HasValue)
+                        f_SR = (byte)(value & 15);
+                    else
+                        f_SR = value;
                 }
             }
 

@@ -57,6 +57,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
+                serializeData = serializeData.Replace("\r", "").Replace("\n", "");
                 var vals = serializeData.Split(new char[] { ',', ' ', '\t' }).GetEnumerator();
                 foreach (string m in props)
                 {

@@ -173,6 +173,7 @@
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\CacheMemory.cs" />
+    <Compile Include="ComponentModel\EmptyTypeConverter.cs" />
     <Compile Include="ComponentModel\EnumTypeEditor.cs" />
     <Compile Include="ComponentModel\EnumConverter.cs" />
     <Compile Include="ComponentModel\ExpandableMidiChCollectionConverter.cs" />
@@ -181,11 +182,159 @@
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
+    <Compile Include="Gui\FMEditor\FormYM2413Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2413Editor.Designer.cs">
+      <DependentUpon>FormYM2413Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3812Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3812Editor.Designer.cs">
+      <DependentUpon>FormYM3812Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2610BEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2610BEditor.Designer.cs">
+      <DependentUpon>FormYM2610BEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2612Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2612Editor.Designer.cs">
+      <DependentUpon>FormYM2612Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2151Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2151Editor.Designer.cs">
+      <DependentUpon>FormYM2151Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.Designer.cs">
+      <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOplWaveForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOplWaveForm.Designer.cs">
+      <DependentUpon>RegisterOplWaveForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterEnvForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterEnvForm.Designer.cs">
+      <DependentUpon>RegisterEnvForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterBase.Designer.cs">
+      <DependentUpon>RegisterBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg4OpImg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg4OpImg.Designer.cs">
+      <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BGeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BGeneralContainer.Designer.cs">
+      <DependentUpon>YM2610BGeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BOperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BOperatorContainer.Designer.cs">
+      <DependentUpon>YM2610BOperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413GeneralContainer.Designer.cs">
+      <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812GeneralContainer.Designer.cs">
+      <DependentUpon>YM3812GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413OperatorContainer.Designer.cs">
+      <DependentUpon>YM2413OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812OperatorContainer.Designer.cs">
+      <DependentUpon>YM3812OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612OperatorContainer.Designer.cs">
+      <DependentUpon>YM2612OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612GeneralContainer.Designer.cs">
+      <DependentUpon>YM2612GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151GeneralContainer.Designer.cs">
+      <DependentUpon>YM2151GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151OperatorContainer.Designer.cs">
+      <DependentUpon>YM2151OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterFlag.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterFlag.Designer.cs">
+      <DependentUpon>RegisterFlag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterValue.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterValue.Designer.cs">
+      <DependentUpon>RegisterValue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterContainerBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterContainerBase.Designer.cs">
+      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BUITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2413UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2612UITypeEditor.cs" />
     <Compile Include="Gui\FormDrumTableEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\FormDrumTableEditor.Designer.cs">
       <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormFmEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormFmEditor.Designer.cs">
+      <DependentUpon>FormFmEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FormSplash.cs">
       <SubType>Form</SubType>
@@ -194,6 +343,7 @@
       <DependentUpon>FormSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\DrumTableUITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2151UITypeEditor.cs" />
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -364,8 +514,80 @@
     <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Types.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Utils.cs" />
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">
+      <DependentUpon>FormYM2413Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM3812Editor.resx">
+      <DependentUpon>FormYM3812Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2610BEditor.resx">
+      <DependentUpon>FormYM2610BEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2612Editor.resx">
+      <DependentUpon>FormYM2612Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
+      <DependentUpon>FormYM2151Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterAlg2OpImg.resx">
+      <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOplWaveForm.resx">
+      <DependentUpon>RegisterOplWaveForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterEnvForm.resx">
+      <DependentUpon>RegisterEnvForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterBase.resx">
+      <DependentUpon>RegisterBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterAlg4OpImg.resx">
+      <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2610BGeneralContainer.resx">
+      <DependentUpon>YM2610BGeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2610BOperatorContainer.resx">
+      <DependentUpon>YM2610BOperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2413GeneralContainer.resx">
+      <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3812GeneralContainer.resx">
+      <DependentUpon>YM3812GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2413OperatorContainer.resx">
+      <DependentUpon>YM2413OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3812OperatorContainer.resx">
+      <DependentUpon>YM3812OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2612OperatorContainer.resx">
+      <DependentUpon>YM2612OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2612GeneralContainer.resx">
+      <DependentUpon>YM2612GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2151GeneralContainer.resx">
+      <DependentUpon>YM2151GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2151OperatorContainer.resx">
+      <DependentUpon>YM2151OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterFlag.resx">
+      <DependentUpon>RegisterFlag.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterValue.resx">
+      <DependentUpon>RegisterValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
+      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormDrumTableEditor.resx">
       <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.resx">
+      <DependentUpon>FormFmEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
@@ -447,6 +669,7 @@
     <None Include="DelZoneID.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Properties\DataSources\zanac.MAmidiMEmo.Gui.Data.datasource" />
     <None Include="Samples\2608_rhythm\bd.pcma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -572,6 +795,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Rec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ALG1.PNG" />
+    <Content Include="Resources\ALG10.PNG" />
+    <Content Include="Resources\ALG2.PNG" />
+    <Content Include="Resources\ALG3.PNG" />
+    <Content Include="Resources\ALG4.PNG" />
+    <Content Include="Resources\ALG5.PNG" />
+    <Content Include="Resources\ALG6.PNG" />
+    <Content Include="Resources\ALG7.PNG" />
+    <Content Include="Resources\ALG8.PNG" />
+    <Content Include="Resources\ALG9.PNG" />
+    <None Include="Resources\WS1.png" />
+    <None Include="Resources\WS0.png" />
+    <None Include="Resources\WS3.png" />
+    <None Include="Resources\WS2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

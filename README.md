@@ -1,4 +1,4 @@
-MAmidiMEmo V2.2.4.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.2.5.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -231,6 +231,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.2.5.0 
+		Added PCM playback feature to HuC6280.
+		Fixed an error when opening the floating point value slider on some props.
+		Added a FM Synthesis GUI Editor.
 2.2.4.0 Fixed issue of modulation CC.
 		Fixed an error on MSM5232.
 		Improved NOISE ch freqeucncy on SN76496, GBAPU, AY8910. You can change freq by pitch change CC.

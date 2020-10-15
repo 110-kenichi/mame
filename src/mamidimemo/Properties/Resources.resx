@@ -208,4 +208,46 @@
   <data name="Rec" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Rec.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ALG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -18,6 +18,7 @@ using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -1634,7 +1635,137 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             #endregion
 
-            #region FM Symth
+            #region FM Synth
+            
+            [Editor(typeof(YM2610BUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Detailed)")]
+            [Description("Open FM register editor.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string Detailed
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+                        nameof(AMS),
+                        nameof(FMS),
+
+                        "Ops[0].EN",
+                        "Ops[0].AR",
+                        "Ops[0].D1R",
+                        "Ops[0].D2R",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].RS",
+                        "Ops[0].MUL",
+                        "Ops[0].DT1",
+                        "Ops[0].AM",
+                        "Ops[0].SSG_EG",
+
+                        "Ops[1].EN",
+                        "Ops[1].AR",
+                        "Ops[1].D1R",
+                        "Ops[1].D2R",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].RS",
+                        "Ops[1].MUL",
+                        "Ops[1].DT1",
+                        "Ops[1].AM",
+                        "Ops[1].SSG_EG",
+
+                        "Ops[2].EN",
+                        "Ops[2].AR",
+                        "Ops[2].D1R",
+                        "Ops[2].D2R",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].TL",
+                        "Ops[2].RS",
+                        "Ops[2].MUL",
+                        "Ops[2].DT1",
+                        "Ops[2].AM",
+                        "Ops[2].SSG_EG",
+
+                        "Ops[3].EN",
+                        "Ops[3].AR",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].TL",
+                        "Ops[3].RS",
+                        "Ops[3].MUL",
+                        "Ops[3].DT1",
+                        "Ops[3].AM",
+                        "Ops[3].SSG_EG");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+                        nameof(AMS),
+                        nameof(FMS),
+
+                        "Ops[0].EN",
+                        "Ops[0].AR",
+                        "Ops[0].D1R",
+                        "Ops[0].D2R",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].TL",
+                        "Ops[0].RS",
+                        "Ops[0].MUL",
+                        "Ops[0].DT1",
+                        "Ops[0].AM",
+                        "Ops[0].SSG_EG",
+
+                        "Ops[1].EN",
+                        "Ops[1].AR",
+                        "Ops[1].D1R",
+                        "Ops[1].D2R",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].TL",
+                        "Ops[1].RS",
+                        "Ops[1].MUL",
+                        "Ops[1].DT1",
+                        "Ops[1].AM",
+                        "Ops[1].SSG_EG",
+
+                        "Ops[2].EN",
+                        "Ops[2].AR",
+                        "Ops[2].D1R",
+                        "Ops[2].D2R",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].TL",
+                        "Ops[2].RS",
+                        "Ops[2].MUL",
+                        "Ops[2].DT1",
+                        "Ops[2].AM",
+                        "Ops[2].SSG_EG",
+
+                        "Ops[3].EN",
+                        "Ops[3].AR",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].TL",
+                        "Ops[3].RS",
+                        "Ops[3].MUL",
+                        "Ops[3].DT1",
+                        "Ops[3].AM",
+                        "Ops[3].SSG_EG");
+                }
+            }
 
             private byte f_ALG;
 
@@ -1732,6 +1863,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Operators")]
             [DefaultValue((byte)0)]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             [DisplayName("Operators(Ops)")]
             public YM2610BOperator[] Ops
             {
@@ -1743,6 +1875,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
+            [Category("Sound(FM)")]
             [Description("You can copy and paste this text data to other same type timber.\r\n" +
     "ALG, FB, AR, D1R(DR), D2R(SR), RR, SL, TL, RS(KS), MUL, DT1, AM(AMS), SSG_EG, ...\r\n" +
                 "You can use comma or space chars as delimiter.")]
@@ -1988,6 +2121,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_Enable = (byte)(value & 1);
+                }
+            }
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte EN
+            {
+                get
+                {
+                    return Enable;
+                }
+                set
+                {
+                    Enable = value;
                 }
             }
 
@@ -2242,6 +2390,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_SSG_EG = (byte)(value & 15);
+                }
+            }
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte SSG
+            {
+                get
+                {
+                    return SSG_EG;
+                }
+                set
+                {
+                    SSG_EG = value;
                 }
             }
 

@@ -18,6 +18,7 @@ using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -1093,14 +1094,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413WriteData(parentModule.UnitNumber, 0x05, 0, (byte)((c.AR << 4 | c.DR)));
                 //$06+:
                 if (m.SR.HasValue && m.EG == 0)
-                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.SR.Value)));
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.SR.Value));
                 else
-                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.RR)));
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
 
                 if (c.SR.HasValue && c.EG == 0)
-                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.SR.Value)));
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.SR.Value));
                 else
-                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.RR)));
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
             }
 
             /// <summary>
@@ -1113,16 +1114,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastToneType != ToneType.DrumSet)
                 {
                     YM2413Modulator m = timbre.Modulator;
-                    YM2413Career c = timbre.Career;
                     if (m.SR.HasValue && m.EG == 0)
                     {
                         YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | 1 << 5 | m.KSR << 4 | m.MUL)));
-                        YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SL << 4 | m.RR)));
+                        YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
                     }
+                    YM2413Career c = timbre.Career;
                     if (c.SR.HasValue && c.EG == 0)
                     {
+                        YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
                         YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | 1 << 5 | c.KSR << 4 | c.MUL)));
-                        YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SL << 4 | c.RR)));
                     }
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, (byte)(timbre.SUS << 5 | lastFreqData & 0x0f));
                 }
@@ -1285,7 +1286,85 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class YM2413Timbre : TimbreBase
         {
-            #region FM Symth
+            #region FM Synth
+
+
+            [Editor(typeof(YM2413UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Detailed)")]
+            [Description("Open FM register editor for Custom Tone.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string Detailed
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                         nameof(FB),
+                         nameof(SUS),
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                         nameof(FB),
+                         nameof(SUS),
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST");
+                }
+            }
+
 
             private ToneType f_ToneType;
 
@@ -1380,6 +1459,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
+            [Category("Sound")]
             [Description("You can copy and paste this text data to other same type timber.\r\n" +
                 "FB, AR, DR, RR, SL, SR, TL, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, AR, DR, RR, SL, SR, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, SUS")]
             public string MmlSerializeData
