@@ -35,9 +35,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Name = "RegisterAlg4OpImg";
-            this.Size = new System.Drawing.Size(255, 127);
+            this.Size = new System.Drawing.Size(259, 131);
             this.ResumeLayout(false);
 
         }

@@ -43,16 +43,6 @@
             this.tableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel.ColumnCount = 1;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel.Controls.Add(this.labelName, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.trackBar, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.numericUpDown, 0, 2);
@@ -60,10 +50,10 @@
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 3;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(46, 127);
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.Size = new System.Drawing.Size(46, 109);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // labelName
@@ -72,7 +62,7 @@
             this.labelName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelName.Location = new System.Drawing.Point(3, 0);
             this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(40, 26);
+            this.labelName.Size = new System.Drawing.Size(40, 12);
             this.labelName.TabIndex = 10;
             this.labelName.Text = "{0}";
             this.labelName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -81,7 +71,7 @@
             // 
             this.trackBar.AutoSize = false;
             this.trackBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar.Location = new System.Drawing.Point(3, 29);
+            this.trackBar.Location = new System.Drawing.Point(3, 15);
             this.trackBar.Maximum = 31;
             this.trackBar.Name = "trackBar";
             this.trackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -91,7 +81,7 @@
             // 
             // numericUpDown
             // 
-            this.numericUpDown.Location = new System.Drawing.Point(3, 101);
+            this.numericUpDown.Location = new System.Drawing.Point(3, 87);
             this.numericUpDown.Maximum = new decimal(new int[] {
             31,
             0,
@@ -108,7 +98,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "RegisterValue";
-            this.Size = new System.Drawing.Size(46, 127);
+            this.Size = new System.Drawing.Size(46, 109);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).EndInit();

@@ -130,5 +130,125 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["OutputDir"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinProgNo {
+            get {
+                return ((int)(this["MWinProgNo"]));
+            }
+            set {
+                this["MWinProgNo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinKeyCh {
+            get {
+                return ((int)(this["MWinKeyCh"]));
+            }
+            set {
+                this["MWinKeyCh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FmPlayOnEdit {
+            get {
+                return ((bool)(this["FmPlayOnEdit"]));
+            }
+            set {
+                this["FmPlayOnEdit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127")]
+        public int FmVelocity {
+            get {
+                return ((int)(this["FmVelocity"]));
+            }
+            set {
+                this["FmVelocity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int FmGateTime {
+            get {
+                return ((int)(this["FmGateTime"]));
+            }
+            set {
+                this["FmGateTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int FmNote {
+            get {
+                return ((int)(this["FmNote"]));
+            }
+            set {
+                this["FmNote"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size MWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MWinSize"]));
+            }
+            set {
+                this["MWinSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("320")]
+        public int MWinSp1Pos {
+            get {
+                return ((int)(this["MWinSp1Pos"]));
+            }
+            set {
+                this["MWinSp1Pos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("420")]
+        public int MWinSp2Pos {
+            get {
+                return ((int)(this["MWinSp2Pos"]));
+            }
+            set {
+                this["MWinSp2Pos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinTab {
+            get {
+                return ((int)(this["MWinTab"]));
+            }
+            set {
+                this["MWinTab"] = value;
+            }
+        }
     }
 }

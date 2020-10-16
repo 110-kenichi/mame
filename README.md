@@ -231,9 +231,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-2.2.5.0 
-		Added PCM playback feature to HuC6280.
+2.2.5.0 Added PCM playback feature to HuC6280.
 		Fixed an error when opening the floating point value slider on some props.
+		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
 		Added a FM Synthesis GUI Editor.
 2.2.4.0 Fixed issue of modulation CC.
 		Fixed an error on MSM5232.

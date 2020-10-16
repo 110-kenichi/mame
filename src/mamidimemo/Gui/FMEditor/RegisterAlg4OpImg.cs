@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             DoubleBuffered = true;
 
             InitializeComponent();
-            Dock = DockStyle.Right;
+            Dock = DockStyle.Left;
 
             this.alg = alg;
             this.BackgroundImage = Resources.ALG1;

@@ -114,6 +114,15 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InitializeComponent();
 
+            tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
+
+            Size = Settings.Default.MWinSize;
+            splitContainer1.SplitterDistance = Settings.Default.MWinSp1Pos;
+            splitContainer2.SplitterDistance = Settings.Default.MWinSp2Pos;
+
+            toolStripComboBoxKeyCh.SelectedIndex = Settings.Default.MWinKeyCh;
+            toolStripComboBoxProgNo.SelectedIndex = Settings.Default.MWinProgNo;
+
             //Images
             imageList1.Images.Add("YM2612", Resources.YM2612);
             imageList1.Images.Add("YM2151", Resources.YM2151);
@@ -175,38 +184,53 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.InstrumentAdded += InstrumentManager_InstrumentAdded;
             InstrumentManager.InstrumentRemoved += InstrumentManager_InstrumentRemoved;
 
-            toolStripComboBox1.SelectedIndex = 0;
-            toolStripComboBox2.SelectedIndex = 0;
-
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
 
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Settings.Default.MWinProgNo = toolStripComboBoxProgNo.SelectedIndex;
+            Settings.Default.MWinKeyCh = toolStripComboBoxKeyCh.SelectedIndex;
+            Settings.Default.MWinSize = Size;
+
+            Settings.Default.MWinSp1Pos = splitContainer1.SplitterDistance;
+            Settings.Default.MWinSp2Pos = splitContainer2.SplitterDistance;
+
+            Settings.Default.MWinTab = tabControlBottom.SelectedIndex;
+
+            base.OnClosing(e);
+        }
+
         private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
         {
-            if (toolStripComboBox2.SelectedIndex != 0)
+            if (toolStripComboBoxProgNo.SelectedIndex != 0)
             {
                 //Program change
-                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
                 MidiManager.SendMidiEvent(pe);
             }
-            e.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
             MidiManager.SendMidiEvent(e);
         }
 
         private void PianoControl1_NoteOff(object sender, NoteOffEvent e)
         {
-            if (toolStripComboBox2.SelectedIndex != 0)
+            if (toolStripComboBoxProgNo.SelectedIndex != 0)
             {
                 //Program change
-                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
                 MidiManager.SendMidiEvent(pe);
             }
-            e.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
             MidiManager.SendMidiEvent(e);
         }
 
@@ -674,64 +698,18 @@ namespace zanac.MAmidiMEmo.Gui
         private void tabPage1_Paint(object sender, PaintEventArgs e)
         {
             var fis = listViewIntruments.SelectedItems;
-            int[][] data;
             InstrumentBase inst = null;
             if (fis != null && fis.Count != 0)
                 inst = (InstrumentBase)fis[0].Tag;
-            data = InstrumentManager.GetLastOutputBuffer(inst);
+            Control target = tabPage1;
 
-            e.Graphics.Clear(tabPage1.BackColor);
-
-            int w = tabPage1.ClientSize.Width;
-            int h = tabPage1.ClientSize.Height;
-            if (data != null)
-            {
-                using (Pen p = new Pen(Color.DarkGreen))
-                {
-                    int max = h * 4;
-                    for (int ch = 0; ch < 2; ch++)
-                    {
-                        if (data[ch] != null)
-                        {
-                            for (int i = 0; i < data[ch].Length; i++)
-                            {
-                                int dt = data[ch][i];
-                                max = Math.Max(Math.Abs(dt), max);
-                            }
-                        }
-                    }
-                    max += max / 10;
-
-                    if (data[0] != null)
-                        draw(e, p, data[0], w / 2 - 1, h / 2, 0, max);
-                    if (data[1] != null)
-                        draw(e, p, data[1], w / 2 - 1, h / 2, w / 2 + 1, max);
-                }
-            }
-            e.Graphics.DrawLine(SystemPens.Control, w / 2 - 1, 0, w / 2 - 1, h);
-            e.Graphics.DrawLine(SystemPens.Control, w / 2, 0, w / 2, h);
+            OscUtility.DrawOsc(e, inst, target);
         }
 
-        private static void draw(PaintEventArgs e, Pen p, int[] data, int w, int h, int ox, int max)
-        {
-            int len = data.Length;
-            List<Point> pts = new List<Point>();
-            for (int i = 0; i < w; i++)
-            {
-                int y = data[(int)(((double)i / w) * len)];
-                y = -(int)((y / (double)max) * h);
-                y += h;
-                int lx = i - 1;
-                if (lx < 0)
-                    lx = 0;
-                pts.Add(new Point(ox + i, y));
-            }
-            e.Graphics.DrawLines(p, pts.ToArray());
-        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedTab == tabPage1)
+            if (tabControlBottom.SelectedTab == tabPage1)
                 tabPage1.Invalidate();
         }
 
@@ -797,7 +775,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripComboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            pianoControl1.SetMouseChannel(toolStripComboBox1.SelectedIndex);
+            pianoControl1.SetMouseChannel(toolStripComboBoxKeyCh.SelectedIndex);
         }
 
         private void toolStripButtonCat_Click(object sender, EventArgs e)
@@ -935,11 +913,11 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (toolStripComboBox2.SelectedIndex != 0)
+            if (toolStripComboBoxProgNo.SelectedIndex != 0)
             {
                 //Program change
-                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBox1.SelectedIndex);
+                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
                 MidiManager.SendMidiEvent(pe);
             }
         }

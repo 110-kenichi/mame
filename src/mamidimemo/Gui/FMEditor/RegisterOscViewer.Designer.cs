@@ -1,6 +1,6 @@
 ﻿namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
-    partial class RegisterOplWaveForm
+    partial class RegisterOscViewer
     {
         /// <summary> 
         /// 必要なデザイナー変数です。
@@ -28,19 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // RegisterOplWaveForm
+            // timer1
+            // 
+            this.timer1.Interval = 50;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // RegisterOscViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Name = "RegisterOplWaveForm";
-            this.Size = new System.Drawing.Size(191, 179);
+            this.Name = "RegisterOscViewer";
+            this.Size = new System.Drawing.Size(259, 131);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Timer timer1;
     }
 }

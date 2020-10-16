@@ -46,9 +46,9 @@
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 3;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.Size = new System.Drawing.Size(36, 127);
             this.tableLayoutPanel.TabIndex = 0;
             // 
@@ -58,7 +58,7 @@
             this.labelName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelName.Location = new System.Drawing.Point(3, 0);
             this.labelName.Name = "labelName";
-            this.labelName.Size = new System.Drawing.Size(30, 26);
+            this.labelName.Size = new System.Drawing.Size(30, 12);
             this.labelName.TabIndex = 10;
             this.labelName.Text = "{0}";
             this.labelName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -67,9 +67,9 @@
             // 
             this.checkBox.AutoSize = true;
             this.checkBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox.Location = new System.Drawing.Point(3, 29);
+            this.checkBox.Location = new System.Drawing.Point(3, 15);
             this.checkBox.Name = "checkBox";
-            this.checkBox.Size = new System.Drawing.Size(30, 66);
+            this.checkBox.Size = new System.Drawing.Size(30, 109);
             this.checkBox.TabIndex = 11;
             this.checkBox.UseVisualStyleBackColor = true;
             // 

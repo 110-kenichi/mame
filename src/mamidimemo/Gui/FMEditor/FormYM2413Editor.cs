@@ -80,7 +80,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.timbre = timbre;
             InitializeComponent();
 
-            AddControl(new YM2413GeneralContainer(timbre, "General"));
+            AddControl(new YM2413GeneralContainer(inst, timbre, "General"));
 
             AddControl(new YM2413OperatorContainer(timbre.Modulator, "Modulator"));
             AddControl(new YM2413OperatorContainer(timbre.Career, "Career"));

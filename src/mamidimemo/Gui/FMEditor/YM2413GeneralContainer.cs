@@ -38,7 +38,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public YM2413GeneralContainer(YM2413.YM2413Timbre tim, string name) : base(tim, name)
+        public YM2413GeneralContainer(InstrumentBase inst, YM2413.YM2413Timbre tim, string name) : base(tim, name)
         {
             InitializeComponent();
 
@@ -46,6 +46,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
             AddControl(new RegisterValue("SUS", tim.SUS, 0, 1));
+            AddControl(new RegisterOscViewer(inst));
         }
 
     }

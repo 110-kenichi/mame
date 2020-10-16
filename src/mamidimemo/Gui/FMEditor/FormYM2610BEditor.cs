@@ -77,7 +77,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.timbre = timbre;
             InitializeComponent();
 
-            AddControl(new YM2610BGeneralContainer(timbre, "General"));
+            AddControl(new YM2610BGeneralContainer(inst, timbre, "General"));
 
             AddControl(new YM2610BOperatorContainer(timbre.Ops[0], "Operator 1"));
             AddControl(new YM2610BOperatorContainer(timbre.Ops[1], "Operator 2"));

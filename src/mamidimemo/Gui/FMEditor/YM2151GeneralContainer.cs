@@ -42,7 +42,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public YM2151GeneralContainer(YM2151.YM2151Timbre tim, string name) : base(tim, name)
+        public YM2151GeneralContainer(InstrumentBase inst, YM2151.YM2151Timbre tim, string name) : base(tim, name)
         {
             InitializeComponent();
 
@@ -53,6 +53,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("AMS", tim.AMS, 0, 3));
             AddControl(new RegisterValue("PMS", tim.PMS, 0, 7));
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));
+            AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
+            AddControl(new RegisterOscViewer(inst));
         }
 
     }

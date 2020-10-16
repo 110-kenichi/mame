@@ -1,6 +1,6 @@
 ﻿namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
-    partial class RegisterOplWaveForm
+    partial class RegisterSpace
     {
         /// <summary> 
         /// 必要なデザイナー変数です。
@@ -30,13 +30,11 @@
         {
             this.SuspendLayout();
             // 
-            // RegisterOplWaveForm
+            // RegisterSpace
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.BackColor = System.Drawing.Color.White;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Name = "RegisterOplWaveForm";
-            this.Size = new System.Drawing.Size(191, 179);
+            this.Name = "RegisterSpace";
+            this.Size = new System.Drawing.Size(1, 131);
             this.ResumeLayout(false);
 
         }

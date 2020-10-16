@@ -94,7 +94,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 664);
             this.Name = "FormYM3812Editor";
-            this.Text = "YM2151 Editor";
+            this.Text = "YM3812 Editor";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);

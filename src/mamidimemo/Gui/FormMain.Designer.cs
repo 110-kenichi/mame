@@ -54,7 +54,7 @@
             this.toolStripButtonCat = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonA2Z = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPopup = new System.Windows.Forms.ToolStripButton();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControlBottom = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
@@ -77,9 +77,9 @@
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripComboBoxProgNo = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripComboBoxKeyCh = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
@@ -147,7 +147,7 @@
             this.contextMenuStripInst.SuspendLayout();
             this.contextMenuStripProp.SuspendLayout();
             this.toolStrip3.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tabControlBottom.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -168,7 +168,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.tabControlBottom);
             resources.ApplyResources(this.splitContainer1.Panel2, "splitContainer1.Panel2");
             // 
             // splitContainer2
@@ -313,14 +313,16 @@
             this.toolStripButtonPopup.Name = "toolStripButtonPopup";
             this.toolStripButtonPopup.Click += new System.EventHandler(this.toolStripButtonPopup_Click);
             // 
-            // tabControl1
+            // tabControlBottom
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            resources.ApplyResources(this.tabControl1, "tabControl1");
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
+            this.tabControlBottom.Controls.Add(this.tabPage1);
+            this.tabControlBottom.Controls.Add(this.tabPage3);
+            this.tabControlBottom.Controls.Add(this.tabPage2);
+            this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
+            this.tabControlBottom.Name = "tabControlBottom";
+            this.tabControlBottom.SelectedIndex = 0;
+            this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             // 
             // tabPage1
             // 
@@ -366,9 +368,9 @@
             this.toolStripButton5,
             this.toolStripButton4,
             this.toolStripButton3,
-            this.toolStripComboBox2,
+            this.toolStripComboBoxProgNo,
             this.toolStripLabel4,
-            this.toolStripComboBox1,
+            this.toolStripComboBoxKeyCh,
             this.toolStripLabel2});
             this.toolStrip2.Name = "toolStrip2";
             // 
@@ -546,144 +548,144 @@
             this.toolStripButton3.CheckedChanged += new System.EventHandler(this.toolStripButton18_CheckedChanged);
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton18_Click);
             // 
-            // toolStripComboBox2
+            // toolStripComboBoxProgNo
             // 
-            this.toolStripComboBox2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox2.DropDownWidth = 32;
-            this.toolStripComboBox2.Items.AddRange(new object[] {
-            resources.GetString("toolStripComboBox2.Items"),
-            resources.GetString("toolStripComboBox2.Items1"),
-            resources.GetString("toolStripComboBox2.Items2"),
-            resources.GetString("toolStripComboBox2.Items3"),
-            resources.GetString("toolStripComboBox2.Items4"),
-            resources.GetString("toolStripComboBox2.Items5"),
-            resources.GetString("toolStripComboBox2.Items6"),
-            resources.GetString("toolStripComboBox2.Items7"),
-            resources.GetString("toolStripComboBox2.Items8"),
-            resources.GetString("toolStripComboBox2.Items9"),
-            resources.GetString("toolStripComboBox2.Items10"),
-            resources.GetString("toolStripComboBox2.Items11"),
-            resources.GetString("toolStripComboBox2.Items12"),
-            resources.GetString("toolStripComboBox2.Items13"),
-            resources.GetString("toolStripComboBox2.Items14"),
-            resources.GetString("toolStripComboBox2.Items15"),
-            resources.GetString("toolStripComboBox2.Items16"),
-            resources.GetString("toolStripComboBox2.Items17"),
-            resources.GetString("toolStripComboBox2.Items18"),
-            resources.GetString("toolStripComboBox2.Items19"),
-            resources.GetString("toolStripComboBox2.Items20"),
-            resources.GetString("toolStripComboBox2.Items21"),
-            resources.GetString("toolStripComboBox2.Items22"),
-            resources.GetString("toolStripComboBox2.Items23"),
-            resources.GetString("toolStripComboBox2.Items24"),
-            resources.GetString("toolStripComboBox2.Items25"),
-            resources.GetString("toolStripComboBox2.Items26"),
-            resources.GetString("toolStripComboBox2.Items27"),
-            resources.GetString("toolStripComboBox2.Items28"),
-            resources.GetString("toolStripComboBox2.Items29"),
-            resources.GetString("toolStripComboBox2.Items30"),
-            resources.GetString("toolStripComboBox2.Items31"),
-            resources.GetString("toolStripComboBox2.Items32"),
-            resources.GetString("toolStripComboBox2.Items33"),
-            resources.GetString("toolStripComboBox2.Items34"),
-            resources.GetString("toolStripComboBox2.Items35"),
-            resources.GetString("toolStripComboBox2.Items36"),
-            resources.GetString("toolStripComboBox2.Items37"),
-            resources.GetString("toolStripComboBox2.Items38"),
-            resources.GetString("toolStripComboBox2.Items39"),
-            resources.GetString("toolStripComboBox2.Items40"),
-            resources.GetString("toolStripComboBox2.Items41"),
-            resources.GetString("toolStripComboBox2.Items42"),
-            resources.GetString("toolStripComboBox2.Items43"),
-            resources.GetString("toolStripComboBox2.Items44"),
-            resources.GetString("toolStripComboBox2.Items45"),
-            resources.GetString("toolStripComboBox2.Items46"),
-            resources.GetString("toolStripComboBox2.Items47"),
-            resources.GetString("toolStripComboBox2.Items48"),
-            resources.GetString("toolStripComboBox2.Items49"),
-            resources.GetString("toolStripComboBox2.Items50"),
-            resources.GetString("toolStripComboBox2.Items51"),
-            resources.GetString("toolStripComboBox2.Items52"),
-            resources.GetString("toolStripComboBox2.Items53"),
-            resources.GetString("toolStripComboBox2.Items54"),
-            resources.GetString("toolStripComboBox2.Items55"),
-            resources.GetString("toolStripComboBox2.Items56"),
-            resources.GetString("toolStripComboBox2.Items57"),
-            resources.GetString("toolStripComboBox2.Items58"),
-            resources.GetString("toolStripComboBox2.Items59"),
-            resources.GetString("toolStripComboBox2.Items60"),
-            resources.GetString("toolStripComboBox2.Items61"),
-            resources.GetString("toolStripComboBox2.Items62"),
-            resources.GetString("toolStripComboBox2.Items63"),
-            resources.GetString("toolStripComboBox2.Items64"),
-            resources.GetString("toolStripComboBox2.Items65"),
-            resources.GetString("toolStripComboBox2.Items66"),
-            resources.GetString("toolStripComboBox2.Items67"),
-            resources.GetString("toolStripComboBox2.Items68"),
-            resources.GetString("toolStripComboBox2.Items69"),
-            resources.GetString("toolStripComboBox2.Items70"),
-            resources.GetString("toolStripComboBox2.Items71"),
-            resources.GetString("toolStripComboBox2.Items72"),
-            resources.GetString("toolStripComboBox2.Items73"),
-            resources.GetString("toolStripComboBox2.Items74"),
-            resources.GetString("toolStripComboBox2.Items75"),
-            resources.GetString("toolStripComboBox2.Items76"),
-            resources.GetString("toolStripComboBox2.Items77"),
-            resources.GetString("toolStripComboBox2.Items78"),
-            resources.GetString("toolStripComboBox2.Items79"),
-            resources.GetString("toolStripComboBox2.Items80"),
-            resources.GetString("toolStripComboBox2.Items81"),
-            resources.GetString("toolStripComboBox2.Items82"),
-            resources.GetString("toolStripComboBox2.Items83"),
-            resources.GetString("toolStripComboBox2.Items84"),
-            resources.GetString("toolStripComboBox2.Items85"),
-            resources.GetString("toolStripComboBox2.Items86"),
-            resources.GetString("toolStripComboBox2.Items87"),
-            resources.GetString("toolStripComboBox2.Items88"),
-            resources.GetString("toolStripComboBox2.Items89"),
-            resources.GetString("toolStripComboBox2.Items90"),
-            resources.GetString("toolStripComboBox2.Items91"),
-            resources.GetString("toolStripComboBox2.Items92"),
-            resources.GetString("toolStripComboBox2.Items93"),
-            resources.GetString("toolStripComboBox2.Items94"),
-            resources.GetString("toolStripComboBox2.Items95"),
-            resources.GetString("toolStripComboBox2.Items96"),
-            resources.GetString("toolStripComboBox2.Items97"),
-            resources.GetString("toolStripComboBox2.Items98"),
-            resources.GetString("toolStripComboBox2.Items99"),
-            resources.GetString("toolStripComboBox2.Items100"),
-            resources.GetString("toolStripComboBox2.Items101"),
-            resources.GetString("toolStripComboBox2.Items102"),
-            resources.GetString("toolStripComboBox2.Items103"),
-            resources.GetString("toolStripComboBox2.Items104"),
-            resources.GetString("toolStripComboBox2.Items105"),
-            resources.GetString("toolStripComboBox2.Items106"),
-            resources.GetString("toolStripComboBox2.Items107"),
-            resources.GetString("toolStripComboBox2.Items108"),
-            resources.GetString("toolStripComboBox2.Items109"),
-            resources.GetString("toolStripComboBox2.Items110"),
-            resources.GetString("toolStripComboBox2.Items111"),
-            resources.GetString("toolStripComboBox2.Items112"),
-            resources.GetString("toolStripComboBox2.Items113"),
-            resources.GetString("toolStripComboBox2.Items114"),
-            resources.GetString("toolStripComboBox2.Items115"),
-            resources.GetString("toolStripComboBox2.Items116"),
-            resources.GetString("toolStripComboBox2.Items117"),
-            resources.GetString("toolStripComboBox2.Items118"),
-            resources.GetString("toolStripComboBox2.Items119"),
-            resources.GetString("toolStripComboBox2.Items120"),
-            resources.GetString("toolStripComboBox2.Items121"),
-            resources.GetString("toolStripComboBox2.Items122"),
-            resources.GetString("toolStripComboBox2.Items123"),
-            resources.GetString("toolStripComboBox2.Items124"),
-            resources.GetString("toolStripComboBox2.Items125"),
-            resources.GetString("toolStripComboBox2.Items126"),
-            resources.GetString("toolStripComboBox2.Items127"),
-            resources.GetString("toolStripComboBox2.Items128")});
-            this.toolStripComboBox2.Name = "toolStripComboBox2";
-            resources.ApplyResources(this.toolStripComboBox2, "toolStripComboBox2");
-            this.toolStripComboBox2.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
+            this.toolStripComboBoxProgNo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripComboBoxProgNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBoxProgNo.DropDownWidth = 32;
+            this.toolStripComboBoxProgNo.Items.AddRange(new object[] {
+            resources.GetString("toolStripComboBoxProgNo.Items"),
+            resources.GetString("toolStripComboBoxProgNo.Items1"),
+            resources.GetString("toolStripComboBoxProgNo.Items2"),
+            resources.GetString("toolStripComboBoxProgNo.Items3"),
+            resources.GetString("toolStripComboBoxProgNo.Items4"),
+            resources.GetString("toolStripComboBoxProgNo.Items5"),
+            resources.GetString("toolStripComboBoxProgNo.Items6"),
+            resources.GetString("toolStripComboBoxProgNo.Items7"),
+            resources.GetString("toolStripComboBoxProgNo.Items8"),
+            resources.GetString("toolStripComboBoxProgNo.Items9"),
+            resources.GetString("toolStripComboBoxProgNo.Items10"),
+            resources.GetString("toolStripComboBoxProgNo.Items11"),
+            resources.GetString("toolStripComboBoxProgNo.Items12"),
+            resources.GetString("toolStripComboBoxProgNo.Items13"),
+            resources.GetString("toolStripComboBoxProgNo.Items14"),
+            resources.GetString("toolStripComboBoxProgNo.Items15"),
+            resources.GetString("toolStripComboBoxProgNo.Items16"),
+            resources.GetString("toolStripComboBoxProgNo.Items17"),
+            resources.GetString("toolStripComboBoxProgNo.Items18"),
+            resources.GetString("toolStripComboBoxProgNo.Items19"),
+            resources.GetString("toolStripComboBoxProgNo.Items20"),
+            resources.GetString("toolStripComboBoxProgNo.Items21"),
+            resources.GetString("toolStripComboBoxProgNo.Items22"),
+            resources.GetString("toolStripComboBoxProgNo.Items23"),
+            resources.GetString("toolStripComboBoxProgNo.Items24"),
+            resources.GetString("toolStripComboBoxProgNo.Items25"),
+            resources.GetString("toolStripComboBoxProgNo.Items26"),
+            resources.GetString("toolStripComboBoxProgNo.Items27"),
+            resources.GetString("toolStripComboBoxProgNo.Items28"),
+            resources.GetString("toolStripComboBoxProgNo.Items29"),
+            resources.GetString("toolStripComboBoxProgNo.Items30"),
+            resources.GetString("toolStripComboBoxProgNo.Items31"),
+            resources.GetString("toolStripComboBoxProgNo.Items32"),
+            resources.GetString("toolStripComboBoxProgNo.Items33"),
+            resources.GetString("toolStripComboBoxProgNo.Items34"),
+            resources.GetString("toolStripComboBoxProgNo.Items35"),
+            resources.GetString("toolStripComboBoxProgNo.Items36"),
+            resources.GetString("toolStripComboBoxProgNo.Items37"),
+            resources.GetString("toolStripComboBoxProgNo.Items38"),
+            resources.GetString("toolStripComboBoxProgNo.Items39"),
+            resources.GetString("toolStripComboBoxProgNo.Items40"),
+            resources.GetString("toolStripComboBoxProgNo.Items41"),
+            resources.GetString("toolStripComboBoxProgNo.Items42"),
+            resources.GetString("toolStripComboBoxProgNo.Items43"),
+            resources.GetString("toolStripComboBoxProgNo.Items44"),
+            resources.GetString("toolStripComboBoxProgNo.Items45"),
+            resources.GetString("toolStripComboBoxProgNo.Items46"),
+            resources.GetString("toolStripComboBoxProgNo.Items47"),
+            resources.GetString("toolStripComboBoxProgNo.Items48"),
+            resources.GetString("toolStripComboBoxProgNo.Items49"),
+            resources.GetString("toolStripComboBoxProgNo.Items50"),
+            resources.GetString("toolStripComboBoxProgNo.Items51"),
+            resources.GetString("toolStripComboBoxProgNo.Items52"),
+            resources.GetString("toolStripComboBoxProgNo.Items53"),
+            resources.GetString("toolStripComboBoxProgNo.Items54"),
+            resources.GetString("toolStripComboBoxProgNo.Items55"),
+            resources.GetString("toolStripComboBoxProgNo.Items56"),
+            resources.GetString("toolStripComboBoxProgNo.Items57"),
+            resources.GetString("toolStripComboBoxProgNo.Items58"),
+            resources.GetString("toolStripComboBoxProgNo.Items59"),
+            resources.GetString("toolStripComboBoxProgNo.Items60"),
+            resources.GetString("toolStripComboBoxProgNo.Items61"),
+            resources.GetString("toolStripComboBoxProgNo.Items62"),
+            resources.GetString("toolStripComboBoxProgNo.Items63"),
+            resources.GetString("toolStripComboBoxProgNo.Items64"),
+            resources.GetString("toolStripComboBoxProgNo.Items65"),
+            resources.GetString("toolStripComboBoxProgNo.Items66"),
+            resources.GetString("toolStripComboBoxProgNo.Items67"),
+            resources.GetString("toolStripComboBoxProgNo.Items68"),
+            resources.GetString("toolStripComboBoxProgNo.Items69"),
+            resources.GetString("toolStripComboBoxProgNo.Items70"),
+            resources.GetString("toolStripComboBoxProgNo.Items71"),
+            resources.GetString("toolStripComboBoxProgNo.Items72"),
+            resources.GetString("toolStripComboBoxProgNo.Items73"),
+            resources.GetString("toolStripComboBoxProgNo.Items74"),
+            resources.GetString("toolStripComboBoxProgNo.Items75"),
+            resources.GetString("toolStripComboBoxProgNo.Items76"),
+            resources.GetString("toolStripComboBoxProgNo.Items77"),
+            resources.GetString("toolStripComboBoxProgNo.Items78"),
+            resources.GetString("toolStripComboBoxProgNo.Items79"),
+            resources.GetString("toolStripComboBoxProgNo.Items80"),
+            resources.GetString("toolStripComboBoxProgNo.Items81"),
+            resources.GetString("toolStripComboBoxProgNo.Items82"),
+            resources.GetString("toolStripComboBoxProgNo.Items83"),
+            resources.GetString("toolStripComboBoxProgNo.Items84"),
+            resources.GetString("toolStripComboBoxProgNo.Items85"),
+            resources.GetString("toolStripComboBoxProgNo.Items86"),
+            resources.GetString("toolStripComboBoxProgNo.Items87"),
+            resources.GetString("toolStripComboBoxProgNo.Items88"),
+            resources.GetString("toolStripComboBoxProgNo.Items89"),
+            resources.GetString("toolStripComboBoxProgNo.Items90"),
+            resources.GetString("toolStripComboBoxProgNo.Items91"),
+            resources.GetString("toolStripComboBoxProgNo.Items92"),
+            resources.GetString("toolStripComboBoxProgNo.Items93"),
+            resources.GetString("toolStripComboBoxProgNo.Items94"),
+            resources.GetString("toolStripComboBoxProgNo.Items95"),
+            resources.GetString("toolStripComboBoxProgNo.Items96"),
+            resources.GetString("toolStripComboBoxProgNo.Items97"),
+            resources.GetString("toolStripComboBoxProgNo.Items98"),
+            resources.GetString("toolStripComboBoxProgNo.Items99"),
+            resources.GetString("toolStripComboBoxProgNo.Items100"),
+            resources.GetString("toolStripComboBoxProgNo.Items101"),
+            resources.GetString("toolStripComboBoxProgNo.Items102"),
+            resources.GetString("toolStripComboBoxProgNo.Items103"),
+            resources.GetString("toolStripComboBoxProgNo.Items104"),
+            resources.GetString("toolStripComboBoxProgNo.Items105"),
+            resources.GetString("toolStripComboBoxProgNo.Items106"),
+            resources.GetString("toolStripComboBoxProgNo.Items107"),
+            resources.GetString("toolStripComboBoxProgNo.Items108"),
+            resources.GetString("toolStripComboBoxProgNo.Items109"),
+            resources.GetString("toolStripComboBoxProgNo.Items110"),
+            resources.GetString("toolStripComboBoxProgNo.Items111"),
+            resources.GetString("toolStripComboBoxProgNo.Items112"),
+            resources.GetString("toolStripComboBoxProgNo.Items113"),
+            resources.GetString("toolStripComboBoxProgNo.Items114"),
+            resources.GetString("toolStripComboBoxProgNo.Items115"),
+            resources.GetString("toolStripComboBoxProgNo.Items116"),
+            resources.GetString("toolStripComboBoxProgNo.Items117"),
+            resources.GetString("toolStripComboBoxProgNo.Items118"),
+            resources.GetString("toolStripComboBoxProgNo.Items119"),
+            resources.GetString("toolStripComboBoxProgNo.Items120"),
+            resources.GetString("toolStripComboBoxProgNo.Items121"),
+            resources.GetString("toolStripComboBoxProgNo.Items122"),
+            resources.GetString("toolStripComboBoxProgNo.Items123"),
+            resources.GetString("toolStripComboBoxProgNo.Items124"),
+            resources.GetString("toolStripComboBoxProgNo.Items125"),
+            resources.GetString("toolStripComboBoxProgNo.Items126"),
+            resources.GetString("toolStripComboBoxProgNo.Items127"),
+            resources.GetString("toolStripComboBoxProgNo.Items128")});
+            this.toolStripComboBoxProgNo.Name = "toolStripComboBoxProgNo";
+            resources.ApplyResources(this.toolStripComboBoxProgNo, "toolStripComboBoxProgNo");
+            this.toolStripComboBoxProgNo.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox2_SelectedIndexChanged);
             // 
             // toolStripLabel4
             // 
@@ -691,31 +693,31 @@
             this.toolStripLabel4.Name = "toolStripLabel4";
             resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             // 
-            // toolStripComboBox1
+            // toolStripComboBoxKeyCh
             // 
-            this.toolStripComboBox1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox1.DropDownWidth = 32;
-            this.toolStripComboBox1.Items.AddRange(new object[] {
-            resources.GetString("toolStripComboBox1.Items"),
-            resources.GetString("toolStripComboBox1.Items1"),
-            resources.GetString("toolStripComboBox1.Items2"),
-            resources.GetString("toolStripComboBox1.Items3"),
-            resources.GetString("toolStripComboBox1.Items4"),
-            resources.GetString("toolStripComboBox1.Items5"),
-            resources.GetString("toolStripComboBox1.Items6"),
-            resources.GetString("toolStripComboBox1.Items7"),
-            resources.GetString("toolStripComboBox1.Items8"),
-            resources.GetString("toolStripComboBox1.Items9"),
-            resources.GetString("toolStripComboBox1.Items10"),
-            resources.GetString("toolStripComboBox1.Items11"),
-            resources.GetString("toolStripComboBox1.Items12"),
-            resources.GetString("toolStripComboBox1.Items13"),
-            resources.GetString("toolStripComboBox1.Items14"),
-            resources.GetString("toolStripComboBox1.Items15")});
-            this.toolStripComboBox1.Name = "toolStripComboBox1";
-            resources.ApplyResources(this.toolStripComboBox1, "toolStripComboBox1");
-            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged_1);
+            this.toolStripComboBoxKeyCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripComboBoxKeyCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBoxKeyCh.DropDownWidth = 32;
+            this.toolStripComboBoxKeyCh.Items.AddRange(new object[] {
+            resources.GetString("toolStripComboBoxKeyCh.Items"),
+            resources.GetString("toolStripComboBoxKeyCh.Items1"),
+            resources.GetString("toolStripComboBoxKeyCh.Items2"),
+            resources.GetString("toolStripComboBoxKeyCh.Items3"),
+            resources.GetString("toolStripComboBoxKeyCh.Items4"),
+            resources.GetString("toolStripComboBoxKeyCh.Items5"),
+            resources.GetString("toolStripComboBoxKeyCh.Items6"),
+            resources.GetString("toolStripComboBoxKeyCh.Items7"),
+            resources.GetString("toolStripComboBoxKeyCh.Items8"),
+            resources.GetString("toolStripComboBoxKeyCh.Items9"),
+            resources.GetString("toolStripComboBoxKeyCh.Items10"),
+            resources.GetString("toolStripComboBoxKeyCh.Items11"),
+            resources.GetString("toolStripComboBoxKeyCh.Items12"),
+            resources.GetString("toolStripComboBoxKeyCh.Items13"),
+            resources.GetString("toolStripComboBoxKeyCh.Items14"),
+            resources.GetString("toolStripComboBoxKeyCh.Items15")});
+            this.toolStripComboBoxKeyCh.Name = "toolStripComboBoxKeyCh";
+            resources.ApplyResources(this.toolStripComboBoxKeyCh, "toolStripComboBoxKeyCh");
+            this.toolStripComboBoxKeyCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged_1);
             // 
             // toolStripLabel2
             // 
@@ -1134,7 +1136,7 @@
             this.contextMenuStripProp.ResumeLayout(false);
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.tabControlBottom.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
@@ -1180,7 +1182,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControlBottom;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Timer timer1;
@@ -1225,7 +1227,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton5;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBoxKeyCh;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private ComponentModel.MultiMediaTimerComponent multiMediaTimerComponent1;
@@ -1233,7 +1235,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonCat;
         private System.Windows.Forms.ToolStripButton toolStripButtonA2Z;
         private System.Windows.Forms.ToolStripButton toolStripButtonPopup;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBoxProgNo;
         private System.Windows.Forms.ToolStripLabel toolStripLabel4;
         private System.Windows.Forms.ToolStripMenuItem extendHuC6230ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extendSPC700ToolStripMenuItem;

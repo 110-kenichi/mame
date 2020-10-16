@@ -29,5 +29,35 @@
     <Setting Name="OutputDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MWinProgNo" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="MWinKeyCh" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="FmPlayOnEdit" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="FmVelocity" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">127</Value>
+    </Setting>
+    <Setting Name="FmGateTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="FmNote" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="MWinSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">800, 600</Value>
+    </Setting>
+    <Setting Name="MWinSp1Pos" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">320</Value>
+    </Setting>
+    <Setting Name="MWinSp2Pos" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">420</Value>
+    </Setting>
+    <Setting Name="MWinTab" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

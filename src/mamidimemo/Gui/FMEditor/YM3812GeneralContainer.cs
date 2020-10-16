@@ -38,7 +38,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public YM3812GeneralContainer(YM3812.YM3812Timbre tim, string name) : base(tim, name)
+        public YM3812GeneralContainer(InstrumentBase inst, YM3812.YM3812Timbre tim, string name) : base(tim, name)
         {
             InitializeComponent();
 
@@ -47,6 +47,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("ALG", tim.ALG, 0, 1));
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
             AddControl(new RegisterAlg2OpImg((RegisterValue)GetControl("ALG")));
+            AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
+            AddControl(new RegisterOscViewer(inst));
         }
 
     }

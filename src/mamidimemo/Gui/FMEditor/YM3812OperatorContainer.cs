@@ -83,6 +83,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 (RegisterValue)GetControl("WS")
                 ));
 
+            AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterEnvForm(
                 (RegisterValue)GetControl("AR"),
                 (RegisterValue)GetControl("TL"),

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
@@ -61,10 +62,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             toolStripComboBoxNote.SelectedIndex = 60;
             toolStripComboBoxVelo.SelectedIndex = 127;
-
             toolStripComboBoxGate.SelectedIndex = 0;
-
             toolStripComboBoxCh.SelectedIndex = 0;
+
+            Settings.Default.SettingsLoaded += Default_SettingsLoaded;
+            toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
+            toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
+            toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
+            toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
 
             this.Timbre = timbre;
             this.Instrument = inst;
@@ -85,6 +90,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
+            Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;
+            Settings.Default.FmGateTime = toolStripComboBoxGate.SelectedIndex;
+            Settings.Default.FmNote = toolStripComboBoxNote.SelectedIndex;
+            base.OnClosing(e);
+        }
+
+
+        private void Default_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
+        {
+            toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
+            toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
+            toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
+            toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
         }
 
         private void setTitle()

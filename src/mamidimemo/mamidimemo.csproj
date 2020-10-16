@@ -212,11 +212,26 @@
     <Compile Include="Gui\FMEditor\FormYM2151Editor.Designer.cs">
       <DependentUpon>FormYM2151Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FMEditor\RegisterSpace.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterSpace.Designer.cs">
+      <DependentUpon>RegisterSpace.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.Designer.cs">
       <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOscViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOscViewer.Designer.cs">
+      <DependentUpon>RegisterOscViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterContainerBase.Designer.cs">
+      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FMEditor\RegisterOplWaveForm.cs">
       <SubType>UserControl</SubType>
@@ -317,9 +332,6 @@
     <Compile Include="Gui\FMEditor\RegisterContainerBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\FMEditor\RegisterContainerBase.Designer.cs">
-      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\FMEditor\YM2610BUITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2413UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
@@ -344,6 +356,7 @@
     </Compile>
     <Compile Include="Gui\DrumTableUITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2151UITypeEditor.cs" />
+    <Compile Include="Gui\OscUtility.cs" />
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -358,6 +371,9 @@
     </Compile>
     <Compile Include="Gui\DropDownTextUITypeEditor.cs" />
     <Compile Include="Gui\FormTextUITypeEditor.cs" />
+    <Compile Include="Gui\VerticalLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\WsgBitWideAttribute.cs" />
     <Compile Include="ComponentModel\InstancePropertyInfo.cs" />
     <Compile Include="ComponentModel\MaskAttribute.cs" />
@@ -529,8 +545,14 @@
     <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
       <DependentUpon>FormYM2151Editor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterSpace.resx">
+      <DependentUpon>RegisterSpace.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterAlg2OpImg.resx">
       <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOscViewer.resx">
+      <DependentUpon>RegisterOscViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterOplWaveForm.resx">
       <DependentUpon>RegisterOplWaveForm.cs</DependentUpon>
@@ -637,6 +659,7 @@
       <Link>README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Data\cm32p_card05_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -751,9 +774,6 @@
     <None Include="Samples\YM3812_GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\NAMCO_CUS30.png" />

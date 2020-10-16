@@ -60,7 +60,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             RegisterName = registerName;
             this.target = target;
-            groupBoxOp.Text = string.Format(groupBoxOp.Text, registerName);
+            labelName.Text = registerName;
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             controls.Add(control.ItemName, control);
 
-            groupBoxOp.Controls.Add(control);
+            panelCenter.Controls.Add(control);
             if(control.Dock == DockStyle.Left)
-                groupBoxOp.Controls.SetChildIndex(control, 0);
+                panelCenter.Controls.SetChildIndex(control, 0);
 
             switch (control)
             {
@@ -266,7 +266,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private static Control getRegisterControl(RegisterContainerBase cnt, string propertyName)
         {
-            foreach (Control c in cnt.groupBoxOp.Controls)
+            foreach (Control c in cnt.panelCenter.Controls)
             {
                 switch (c)
                 {
