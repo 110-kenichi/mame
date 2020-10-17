@@ -250,5 +250,65 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["MWinTab"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2151EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2151EdSize"]));
+            }
+            set {
+                this["YM2151EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2610BEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2610BEdSize"]));
+            }
+            set {
+                this["YM2610BEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2612EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2612EdSize"]));
+            }
+            set {
+                this["YM2612EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM3812EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM3812EdSize"]));
+            }
+            set {
+                this["YM3812EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2413EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2413EdSize"]));
+            }
+            set {
+                this["YM2413EdSize"] = value;
+            }
+        }
     }
 }

@@ -30,7 +30,7 @@
         {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelName = new System.Windows.Forms.Label();
-            this.trackBar = new System.Windows.Forms.TrackBar();
+            this.trackBar = new TrackBarWheel();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
@@ -111,7 +111,7 @@
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Label labelName;
-        private System.Windows.Forms.TrackBar trackBar;
+        private TrackBarWheel trackBar;
         private System.Windows.Forms.NumericUpDown numericUpDown;
     }
 }

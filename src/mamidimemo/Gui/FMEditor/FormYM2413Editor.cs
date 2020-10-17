@@ -1,4 +1,5 @@
-﻿using Melanchall.DryWetMidi.Common;
+﻿// copyright-holders:K.Ito
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -70,6 +72,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         public FormYM2413Editor()
         {
+            InitializeComponent();
         }
 
         /// <summary>
@@ -80,11 +83,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.timbre = timbre;
             InitializeComponent();
 
+            Size = Settings.Default.YM2413EdSize;
+
             AddControl(new YM2413GeneralContainer(inst, timbre, "General"));
 
             AddControl(new YM2413OperatorContainer(timbre.Modulator, "Modulator"));
             AddControl(new YM2413OperatorContainer(timbre.Career, "Career"));
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.YM2413EdSize = Size;
+        }
+
 
     }
 

@@ -31,6 +31,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         public RegisterBase() : this(null)
         {
+            InitializeComponent();
         }
 
         /// <summary>

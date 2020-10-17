@@ -1,3 +1,4 @@
+// copyright-holders:K.Ito
 using System;
 using System.ComponentModel;
 using System.Drawing;

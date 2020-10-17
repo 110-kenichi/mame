@@ -92,8 +92,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 664);
+            this.ClientSize = new System.Drawing.Size(624, 441);
             this.Name = "FormYM3812Editor";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "YM3812 Editor";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();

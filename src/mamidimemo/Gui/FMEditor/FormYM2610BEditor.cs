@@ -1,4 +1,5 @@
-﻿using Melanchall.DryWetMidi.Common;
+﻿// copyright-holders:K.Ito
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2610B;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -67,6 +69,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         public FormYM2610BEditor()
         {
+            InitializeComponent();
         }
 
         /// <summary>
@@ -77,12 +80,26 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.timbre = timbre;
             InitializeComponent();
 
+            Size = Settings.Default.YM2610BEdSize;
+
             AddControl(new YM2610BGeneralContainer(inst, timbre, "General"));
 
             AddControl(new YM2610BOperatorContainer(timbre.Ops[0], "Operator 1"));
             AddControl(new YM2610BOperatorContainer(timbre.Ops[1], "Operator 2"));
             AddControl(new YM2610BOperatorContainer(timbre.Ops[2], "Operator 3"));
             AddControl(new YM2610BOperatorContainer(timbre.Ops[3], "Operator 4"));
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.YM2610BEdSize = Size;
         }
 
     }

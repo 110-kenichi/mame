@@ -1,4 +1,5 @@
-﻿using Melanchall.DryWetMidi.Common;
+﻿// copyright-holders:K.Ito
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM3812;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -67,6 +69,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         public FormYM3812Editor()
         {
+            InitializeComponent();
         }
 
         /// <summary>
@@ -77,12 +80,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.timbre = timbre;
             InitializeComponent();
 
+            Size = Settings.Default.YM3812EdSize;
+
             AddControl(new YM3812GeneralContainer(inst, timbre, "General"));
 
             AddControl(new YM3812OperatorContainer(timbre.Ops[0], "Operator 1"));
             AddControl(new YM3812OperatorContainer(timbre.Ops[1], "Operator 2"));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.YM3812EdSize = Size;
+        }
     }
 
 }

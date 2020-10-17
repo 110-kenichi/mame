@@ -371,6 +371,9 @@
     </Compile>
     <Compile Include="Gui\DropDownTextUITypeEditor.cs" />
     <Compile Include="Gui\FormTextUITypeEditor.cs" />
+    <Compile Include="Gui\TrackBarWheel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\VerticalLabel.cs">
       <SubType>Component</SubType>
     </Compile>
