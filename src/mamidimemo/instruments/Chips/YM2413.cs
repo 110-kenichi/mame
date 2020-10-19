@@ -714,7 +714,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 var emptySlot = (parentModule, -1);
 
-                if (parentModule.RHY == 0)
+                byte RHY = parentModule.RHY;
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.RHY.HasValue)
+                        RHY = gs.RHY.Value;
+                }
+
+                if (RHY == 0)
                 {
                     emptySlot = SearchCustomEmptySlotAndOffForLeader(timbre, parentModule, fmOnSounds, note, 9, -1, 0);
                 }
@@ -846,6 +854,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.RHY.HasValue)
+                        parentModule.RHY = gs.RHY.Value;
+                }
+
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -856,6 +871,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnSoundParamsUpdated()
             {
                 base.OnSoundParamsUpdated();
+
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.RHY.HasValue)
+                        parentModule.RHY = gs.RHY.Value;
+                }
 
                 SetTimbre();
                 //Volume
@@ -1534,6 +1556,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            [DataMember]
+            [Category("Chip")]
+            [Description("Global Settings")]
+            public YM2413GlobalSettings GlobalSettings
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1541,6 +1572,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Modulator = new YM2413Modulator();
                 Career = new YM2413Career();
+
+                GlobalSettings = new YM2413GlobalSettings();
+
                 this.SDS.FxS = new YM2413FxSettings();
             }
 
@@ -1560,6 +1594,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
 
                     System.Windows.Forms.MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413GlobalSettings>))]
+        [DataContract]
+        [MidiHook]
+        public class YM2413GlobalSettings : ContextBoundObject
+        {
+            [DataMember]
+            [Category("Chip")]
+            [Description("Override global settings")]
+            public bool Enable
+            {
+                get;
+                set;
+            }
+
+            private byte? f_RHY;
+
+            /// <summary>
+            /// Vibrato depth (0:7 cent 1:14 cent)
+            /// </summary>
+            [DataMember]
+            [Category("Chip")]
+            [Description("Rhythm mode (0:Off(9ch) 1:On(6ch))\r\n" +
+            "Set DrumSet to ToneType in Timbre to output drum sound")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? RHY
+            {
+                get
+                {
+                    return f_RHY;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 1);
+                    f_RHY = v;
                 }
             }
         }

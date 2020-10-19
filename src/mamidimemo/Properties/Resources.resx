@@ -250,4 +250,25 @@
   <data name="WS3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\WS3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="YMF262" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YMF262.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

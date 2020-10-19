@@ -42,6 +42,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 case 1:
                     this.BackgroundImage = Resources.ALG10;
                     break;
+                case 2:
+                    this.BackgroundImage = Resources.ALG1;
+                    break;
+                case 3:
+                    this.BackgroundImage = Resources.ALG5;
+                    break;
+                case 4:
+                    this.BackgroundImage = Resources.ALG11;
+                    break;
+                case 5:
+                    this.BackgroundImage = Resources.ALG12;
+                    break;
             }
         }
     }

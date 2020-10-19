@@ -136,6 +136,7 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
+            this.extendYMF262ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -943,7 +944,8 @@
             this.addYM2151ToolStripMenuItem,
             this.addYM2612ToolStripMenuItem,
             this.extendYM3812ToolStripMenuItem,
-            this.extendYM2413ToolStripMenuItem});
+            this.extendYM2413ToolStripMenuItem,
+            this.extendYMF262ToolStripMenuItem});
             this.fMSynthesisToolStripMenuItem.Name = "fMSynthesisToolStripMenuItem";
             resources.ApplyResources(this.fMSynthesisToolStripMenuItem, "fMSynthesisToolStripMenuItem");
             // 
@@ -1114,6 +1116,12 @@
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
             // 
+            // extendYMF262ToolStripMenuItem
+            // 
+            this.extendYMF262ToolStripMenuItem.Name = "extendYMF262ToolStripMenuItem";
+            resources.ApplyResources(this.extendYMF262ToolStripMenuItem, "extendYMF262ToolStripMenuItem");
+            this.extendYMF262ToolStripMenuItem.Click += new System.EventHandler(this.extendYMF262ToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1252,6 +1260,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItemSep;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSepInst;
+        private System.Windows.Forms.ToolStripMenuItem extendYMF262ToolStripMenuItem;
     }
 }
 

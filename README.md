@@ -1,4 +1,4 @@
-MAmidiMEmo V2.2.5.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.3.0.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -47,7 +47,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
    Note: Currently supported chips are the following.
 
-        YM2151, YM2612, YM3812, YM2413, YM2610B
+        YM2151, YM2612, YM3812, YM2413, YM2610B, YMF262
         SID, POKEY, GB APU, SN76496, NES APU, MSM5232(+TA7630), AY-3-8910
         NAMCO CUS30, SCC, HuC6280
         C140, SPC700
@@ -137,6 +137,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
     CM-64:
 	 http://lib.roland.co.jp/support/jp/manuals/res/1809003/CM-64_j.pdf
+
+	YMF262:
+	 http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 
    *[Channels]
     Select which MIDI ch messages the chip receives.
@@ -231,6 +234,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.3.0.0 Added YMF262(OPL3) chip.
+2.2.5.1 Improved FM Synthesis Editor UI.
 2.2.5.0 Added PCM playback feature to HuC6280.
 		Fixed an error when opening the floating point value slider on some props.
 		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.

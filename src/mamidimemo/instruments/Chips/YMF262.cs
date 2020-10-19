@@ -23,9 +23,8 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 
-//http://www.oplx.com/opl2/docs/adlib_sb.txt
-//ftp://ftp.oldskool.org/pub/drivers/Yamaha/yamaha_ym3812.pdf
-//http://www.shikadi.net/moddingwiki/OPL_chip
+//http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
+//http://guu.fmp.jp/archives/93#gallery-6
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -33,23 +32,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
-    public class YM3812 : InstrumentBase
+    public class YMF262 : InstrumentBase
     {
 
-        public override string Name => "YM3812";
+        public override string Name => "YMF262";
 
         public override string Group => "FM";
 
-        public override InstrumentType InstrumentType => InstrumentType.YM3812;
+        public override InstrumentType InstrumentType => InstrumentType.YMF262;
 
         [Browsable(false)]
-        public override string ImageKey => "YM3812";
+        public override string ImageKey => "YMF262";
 
         /// <summary>
         /// 
         /// </summary>
         [Browsable(false)]
-        protected override string SoundInterfaceTagNamePrefix => "ym3812_";
+        protected override string SoundInterfaceTagNamePrefix => "ymf262_";
 
         /// <summary>
         /// 
@@ -62,7 +61,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             get
             {
-                return 8;
+                return 22;
+            }
+        }
+
+        private byte f_CONSEL;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip")]
+        [Description("Max number of 4 op mode sound")]
+        [SlideParametersAttribute(0, 6)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        public byte CONSEL
+        {
+            get
+            {
+                return f_CONSEL;
+            }
+            set
+            {
+                if (value <= 6 && f_CONSEL != value)
+                {
+                    f_CONSEL = value;
+                    var v = 0;
+                    for (int i = 0; i < f_CONSEL; i++)
+                        v |= 1 << i;
+                    YMF262WriteData(UnitNumber, 0x104, 0, 0, 0, 0, (byte)v);
+                }
             }
         }
 
@@ -89,7 +117,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_AMD != v)
                 {
                     f_AMD = v;
-                    YM3812WriteData(UnitNumber, 0xBD, 0, 0, (byte)(AMD << 7 | VIB << 6));
+                    YMF262WriteData(UnitNumber, 0xBD, 0, 0, 0, 0, (byte)(AMD << 7 | VIB << 6));
                 }
             }
         }
@@ -117,7 +145,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_VIB != v)
                 {
                     f_VIB = v;
-                    YM3812WriteData(UnitNumber, 0xBD, 0, 0, (byte)(AMD << 7 | VIB << 6));
+                    YMF262WriteData(UnitNumber, 0xBD, 0, 0, 0, 0, (byte)(AMD << 7 | VIB << 6));
                 }
             }
         }
@@ -139,7 +167,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Timbres (0-127)")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public YM3812Timbre[] Timbres
+        public YMF262Timbre[] Timbres
         {
             get;
             set;
@@ -153,7 +181,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                using (var obj = JsonConvert.DeserializeObject<YM3812>(serializeData))
+                using (var obj = JsonConvert.DeserializeObject<YMF262>(serializeData))
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
@@ -175,42 +203,105 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="data"></param>
         /// <returns></returns>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_YM3812_write(uint unitNumber, uint address, byte data);
+        private delegate void delegate_YMF262_write(uint unitNumber, uint address, byte data);
 
         /// <summary>
         /// 
         /// </summary>
-        private static delegate_YM3812_write YM3812_write
+        private static delegate_YMF262_write YMF262_write
         {
             get;
             set;
         }
 
-        private static byte[] addressTable = new byte[] { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 };
+        private static byte[] chAddressOffset = new byte[] { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 };
+
+        private static byte[,] op2chConselTable = new byte[,] {
+            { 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 },
+            { 01, 02, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00 ,00 },
+            { 02, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00, 00, 00, 00 },
+            { 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 10, 11, 13, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 11, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+        };
 
         /// <summary>
         /// 
         /// </summary>
-        private static void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        private static void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data)
         {
-            //Channel        1   2   3   4   5   6   7   8   9
-            //Operator 1    00  01  02  08  09  0A  10  11  12
-            //Operator 2    03  04  05  0B  0C  0D  13  14  15
-
-            DeferredWriteData(YM3812_write, unitNumber, (uint)0, (byte)(address + (op * 3) + addressTable[slot]));
-            DeferredWriteData(YM3812_write, unitNumber, (uint)1, data);
-            /*
+            var adrL = address & 0xff;
+            var adrH = (address & 0x100) >> 7;  // 0 or 2
+            switch (opmode)
+            {
+                //Channel        0   1   2   3   4   5   6   7   8
+                //Operator 1    00  01  02  06  07  09  0C  0D  0E
+                //Operator 2    03  04  05  09  0A  0B  0F  10  11
+                case 0:
+                case 1:
+                    slot = op2chConselTable[consel, slot];
+                    if (slot >= 9)
+                    {
+                        adrH = 2;
+                        slot = slot - 9;
+                    }
+                    break;
+                //Channel        0   1   2    
+                //Operator 1    00  01  02  
+                //Operator 2    03  04  05  
+                //Operator 3    07  08  09  
+                //Operator 4    0A  0B  0C  
+                default:
+                    if (slot >= 3)
+                    {
+                        adrH = 2;
+                        slot -= 4;
+                    }
+                    if (op >= 2)
+                    {
+                        op -= 2;
+                        slot += 3;
+                    }
+                    break;
+            }
+#if DEBUG
             try
             {
-
                 Program.SoundUpdating();
-                YM3812_write(unitNumber, 0, (byte)(address + (op * 3) + addressTable[slot]));
-                YM3812_write(unitNumber, 1, data);
+#endif
+                byte chofst = 0;
+                switch (adrL)
+                {
+                    case 0x20:
+                    case 0x40:
+                    case 0x60:
+                    case 0x80:
+                    case 0xe0:
+                        chofst = chAddressOffset[slot];
+                        break;
+                    case 0xa0:
+                    case 0xb0:
+                    case 0xc0:
+                        chofst = (byte)slot;
+                        break;
+                }
+
+#if DEBUG
+                YMF262_write(unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+                YMF262_write(unitNumber, (uint)1, data);
+#else
+                DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+                DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
+#endif
+
+#if DEBUG
             }
             finally
             {
                 Program.SoundUpdated();
-            }*/
+            }
+#endif
         }
 
 
@@ -239,29 +330,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        static YM3812()
+        static YMF262()
         {
-            IntPtr funcPtr = MameIF.GetProcAddress("ym3812_write");
+            IntPtr funcPtr = MameIF.GetProcAddress("ymf262_write");
             if (funcPtr != IntPtr.Zero)
-                YM3812_write = (delegate_YM3812_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_YM3812_write));
+                YMF262_write = (delegate_YMF262_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_YMF262_write));
         }
 
-        private YM3812SoundManager soundManager;
+        private YMF262SoundManager soundManager;
 
         /// <summary>
         /// 
         /// </summary>
-        public YM3812(uint unitNumber) : base(unitNumber)
+        public YMF262(uint unitNumber) : base(unitNumber)
         {
+            YMF262WriteData(UnitNumber, 0x105, 0, 0, 0, 0, (byte)0x1);    //OPL3 mode
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YM3812Timbre[InstrumentBase.MAX_TIMBRES];
+            Timbres = new YMF262Timbre[InstrumentBase.MAX_TIMBRES];
             for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
-                Timbres[i] = new YM3812Timbre();
+                Timbres[i] = new YMF262Timbre();
             setPresetInstruments();
 
-            this.soundManager = new YM3812SoundManager(this);
+            this.soundManager = new YMF262SoundManager(this);
         }
 
         /// <summary>
@@ -282,7 +375,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].ALG = 1;
 
             Timbres[0].Ops[0].AM = 0;
-            Timbres[0].Ops[0].VR = 0;
+            Timbres[0].Ops[0].VIB = 0;
             Timbres[0].Ops[0].EG = 0;
             Timbres[0].Ops[0].KSR = 0;
             Timbres[0].Ops[0].MFM = 1;
@@ -295,7 +388,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[0].WS = 1;
 
             Timbres[0].Ops[1].AM = 0;
-            Timbres[0].Ops[1].VR = 0;
+            Timbres[0].Ops[1].VIB = 0;
             Timbres[0].Ops[1].EG = 0;
             Timbres[0].Ops[1].KSR = 0;
             Timbres[0].Ops[1].MFM = 1;
@@ -306,14 +399,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[1].SL = 7;
             Timbres[0].Ops[1].RR = 7;
             Timbres[0].Ops[1].WS = 1;
-        }
 
-        internal override void PrepareSound()
-        {
-            base.PrepareSound();
+            Timbres[0].Ops[2].AM = 0;
+            Timbres[0].Ops[2].VIB = 0;
+            Timbres[0].Ops[2].EG = 0;
+            Timbres[0].Ops[2].KSR = 0;
+            Timbres[0].Ops[2].MFM = 1;
+            Timbres[0].Ops[2].KSL = 0;
+            Timbres[0].Ops[2].TL = 0;
+            Timbres[0].Ops[2].AR = 15;
+            Timbres[0].Ops[2].DR = 0;
+            Timbres[0].Ops[2].SL = 0;
+            Timbres[0].Ops[2].RR = 7;
+            Timbres[0].Ops[2].WS = 1;
 
-            //WS Enable
-            YM3812WriteData(UnitNumber, (byte)0x01, 0, 0, (byte)0x20);
+            Timbres[0].Ops[3].AM = 0;
+            Timbres[0].Ops[3].VIB = 0;
+            Timbres[0].Ops[3].EG = 0;
+            Timbres[0].Ops[3].KSR = 0;
+            Timbres[0].Ops[3].MFM = 1;
+            Timbres[0].Ops[3].KSL = 0;
+            Timbres[0].Ops[3].TL = 0;
+            Timbres[0].Ops[3].AR = 15;
+            Timbres[0].Ops[3].DR = 0;
+            Timbres[0].Ops[3].SL = 7;
+            Timbres[0].Ops[3].RR = 7;
+            Timbres[0].Ops[3].WS = 1;
         }
 
         /// <summary>
@@ -364,7 +475,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private class YM3812SoundManager : SoundManagerBase
+        private class YMF262SoundManager : SoundManagerBase
         {
             private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
@@ -379,15 +490,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private static SoundList<YM3812Sound> fmOnSounds = new SoundList<YM3812Sound>(9);
+            private static SoundList<YMF262Sound> fm2OpOnSounds = new SoundList<YMF262Sound>(18);
 
-            private YM3812 parentModule;
+            private static SoundList<YMF262Sound> fm4OpOnSounds = new SoundList<YMF262Sound>(6);
+
+            private YMF262 parentModule;
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="parent"></param>
-            public YM3812SoundManager(YM3812 parent) : base(parent)
+            public YMF262SoundManager(YMF262 parent) : base(parent)
             {
                 this.parentModule = parent;
             }
@@ -400,15 +513,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
-                foreach (YM3812Timbre timbre in parentModule.GetBaseTimbres(note))
+                foreach (YMF262Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    var emptySlot = searchEmptySlot(note);
+                    var emptySlot = searchEmptySlot(timbre, note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    YM3812Sound snd = new YM3812Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
-                    fmOnSounds.Add(snd);
-                    FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    YMF262Sound snd = new YMF262Sound(emptySlot.inst, this, timbre, note, emptySlot.slot, parentModule.CONSEL);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                        case 1:
+                            fm2OpOnSounds.Add(snd);
+                            break;
+                        default:
+                            fm4OpOnSounds.Add(snd);
+                            break;
+                    }
+
+                    //FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+
                     snd.KeyOn();
                     rv.Add(snd);
                 }
@@ -420,9 +544,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (YM3812 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
+            private (YMF262 inst, int slot) searchEmptySlot(YMF262Timbre timbre, TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
+                byte CONSEL = parentModule.CONSEL;
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.CONSEL.HasValue)
+                        CONSEL = gs.CONSEL.Value;
+                }
+                switch (timbre.ALG)
+                {
+                    case 0:
+                    case 1:
+                        int max = 18 - (CONSEL * 2);
+                        return SearchEmptySlotAndOffForLeader(parentModule, fm2OpOnSounds, note, max);
+                    default:
+                        return SearchEmptySlotAndOffForLeader(parentModule, fm4OpOnSounds, note, CONSEL);
+                }
             }
 
             internal override void AllSoundOff()
@@ -431,9 +570,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ControlChange(me);
 
                 for (int i = 0; i < 9; i++)
-                {
-                    YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
-                }
+                    YMF262WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
+                for (int i = 0; i < 9; i++)
+                    YMF262WriteData(parentModule.UnitNumber, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
             }
         }
 
@@ -441,14 +580,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private class YM3812Sound : SoundBase
+        private class YMF262Sound : SoundBase
         {
 
-            private YM3812 parentModule;
+            private YMF262 parentModule;
 
-            private YM3812Timbre timbre;
+            private YMF262Timbre timbre;
 
             private byte lastFreqData;
+
+            private byte lastALG;
+
+            private byte lastConsel;
 
             /// <summary>
             /// 
@@ -457,10 +600,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM3812Sound(YM3812 parentModule, YM3812SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YMF262Sound(YMF262 parentModule, YMF262SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, byte consel) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.timbre = (YM3812Timbre)timbre;
+                this.timbre = (YMF262Timbre)timbre;
+                lastALG = this.timbre.ALG;
+                lastConsel = consel;
             }
 
             /// <summary>
@@ -473,15 +618,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.AMD.HasValue)
-                        parentModule.AMD = gs.AMD.Value;
-                    if (gs.VIB.HasValue)
-                        parentModule.VIB = gs.VIB.Value;
+                    if (gs.CONSEL.HasValue)
+                        parentModule.CONSEL = gs.CONSEL.Value;
+                    if (gs.DAM.HasValue)
+                        parentModule.AMD = gs.DAM.Value;
+                    if (gs.DVB.HasValue)
+                        parentModule.VIB = gs.DVB.Value;
                 }
 
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
+
                 //Freq
                 OnPitchUpdated();
             }
@@ -493,13 +641,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.AMD.HasValue)
-                        parentModule.AMD = gs.AMD.Value;
-                    if (gs.VIB.HasValue)
-                        parentModule.VIB = gs.VIB.Value;
+                    if (gs.CONSEL.HasValue)
+                        parentModule.CONSEL = gs.CONSEL.Value;
+                    if (gs.DAM.HasValue)
+                        parentModule.AMD = gs.DAM.Value;
+                    if (gs.DVB.HasValue)
+                        parentModule.VIB = gs.DVB.Value;
                 }
 
                 SetTimbre();
+
+                //Panpot
+                OnPanpotUpdated();
+
                 //Volume
                 OnVolumeUpdated();
             }
@@ -510,14 +664,69 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnVolumeUpdated()
             {
                 var v = CalcCurrentVolume();
-                for (int op = 0; op < 2; op++)
+                for (int op = 0; op < (lastALG <= 1 ? 2 : 4); op++)
                 {
-                    YM3812Operator o = timbre.Ops[op];
+                    YMF262Operator o = timbre.Ops[op];
                     //$40+: Scaling level/ total level
-                    if (timbre.ALG == 1 || op == 1)
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                    if (lastALG <= 1)
+                    {
+                        if (timbre.ALG == 1 || op == 1)
+                            YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                        else
+                            YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                    }
                     else
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                    {
+                        switch (lastALG)
+                        {
+                            case 2:
+                                if (op == 1)
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                else
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 3:
+                                if (op == 1 || op == 3)
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                else
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 4:
+                                if (op == 0 || op == 3)
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                else
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 5:
+                                if (op == 0 || op == 2 || op == 3)
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                else
+                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void OnPanpotUpdated()
+            {
+                byte pan = CalcCurrentPanpot();
+                if (pan < 32)
+                    pan = 0x1;
+                else if (pan > 96)
+                    pan = 0x2;
+                else
+                    pan = 0x3;
+
+                if (lastALG <= 1)
+                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | lastALG));
+                else
+                {
+                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | ((lastALG - 2) & 1)));
+                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 1, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | (((lastALG - 2) >> 1) & 1)));
                 }
             }
 
@@ -559,8 +768,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //keyon
                 lastFreqData = (byte)(0x20 | octave | ((freq >> 8) & 3));
 
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xa0 + Slot), 0, 0, (byte)(0xff & freq));
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xb0 + Slot), 0, 0, lastFreqData);
+                YMF262WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, lastALG, lastConsel, (byte)(0xff & freq));
+                YMF262WriteData(parentModule.UnitNumber, 0xb0, 0, Slot, lastALG, lastConsel, lastFreqData);
 
                 base.OnPitchUpdated();
             }
@@ -570,25 +779,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                for (int op = 0; op < 2; op++)
+                for (int op = 0; op < (lastALG <= 1 ? 2 : 4); op++)
                 {
-                    YM3812Operator o = timbre.Ops[op];
-                    //$20+: Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-                    YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
+                    YMF262Operator o = timbre.Ops[op];
+                    YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
                     //$60+: Attack Rate / Decay Rate
-                    YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
+                    YMF262WriteData(parentModule.UnitNumber, 0x60, op, Slot, lastALG, lastConsel, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
                     if (o.SR.HasValue && o.EG == 0)
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.SR.Value));
+                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.SR.Value));
                     else
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
 
                     //$e0+: Waveform Select
-                    YM3812WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)(o.WS));
+                    YMF262WriteData(parentModule.UnitNumber, 0xe0, op, Slot, lastALG, lastConsel, (byte)(o.WS));
                 }
 
-                //$C0+: algorithm and feedback
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xc0 + Slot), 0, 0, (byte)(timbre.FB << 1 | timbre.ALG));
+                //$C0+: algorithm and feedback & PAN
+                OnPanpotUpdated();
             }
 
             /// <summary>
@@ -598,17 +806,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.SoundOff();
 
-                for (int op = 0; op < 2; op++)
+                for (int op = 0; op < (lastALG <= 1 ? 2 : 4); op++)
                 {
-                    YM3812Operator o = timbre.Ops[op];
+                    YMF262Operator o = timbre.Ops[op];
                     if (o.SR.HasValue && o.EG == 0)
                     {
-                        YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                        YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
+                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
                     }
                 }
 
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + Slot), 0, 0, (byte)(lastFreqData & 0x1f));
+                YMF262WriteData(parentModule.UnitNumber, 0xB0, 0, Slot, lastALG, lastConsel, (byte)(lastFreqData & 0x1f));
             }
 
             private ushort[] freqTable = new ushort[] {
@@ -657,13 +865,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM3812Timbre>))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Timbre>))]
         [DataContract]
-        public class YM3812Timbre : TimbreBase
+        public class YMF262Timbre : TimbreBase
         {
             #region FM Synth
 
-            [Editor(typeof(YM3812UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(YMF262UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
             [DisplayName("(Detailed)")]
@@ -687,7 +895,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].KSR",
                         "Ops[0].MFM",
                         "Ops[0].AM",
-                        "Ops[0].VR",
+                        "Ops[0].VIB",
                         "Ops[0].EG",
                         "Ops[0].WS",
 
@@ -701,9 +909,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].KSR",
                         "Ops[1].MFM",
                         "Ops[1].AM",
-                        "Ops[1].VR",
+                        "Ops[1].VIB",
                         "Ops[1].EG",
-                        "Ops[1].WS");
+                        "Ops[1].WS",
+
+                        "Ops[2].AR",
+                        "Ops[2].DR",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].SR",
+                        "Ops[2].TL",
+                        "Ops[2].KSL",
+                        "Ops[2].KSR",
+                        "Ops[2].MFM",
+                        "Ops[2].AM",
+                        "Ops[2].VIB",
+                        "Ops[2].EG",
+                        "Ops[2].WS",
+
+                        "Ops[3].AR",
+                        "Ops[3].DR",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].SR",
+                        "Ops[3].TL",
+                        "Ops[3].KSL",
+                        "Ops[3].KSR",
+                        "Ops[3].MFM",
+                        "Ops[3].AM",
+                        "Ops[3].VIB",
+                        "Ops[3].EG",
+                        "Ops[3].WS"
+                        );
                 }
                 set
                 {
@@ -721,7 +958,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].KSR",
                         "Ops[0].MFM",
                         "Ops[0].AM",
-                        "Ops[0].VR",
+                        "Ops[0].VIB",
                         "Ops[0].EG",
                         "Ops[0].WS",
 
@@ -735,9 +972,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].KSR",
                         "Ops[1].MFM",
                         "Ops[1].AM",
-                        "Ops[1].VR",
+                        "Ops[1].VIB",
                         "Ops[1].EG",
-                        "Ops[1].WS");
+                        "Ops[1].WS",
+
+                        "Ops[2].AR",
+                        "Ops[2].DR",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].SR",
+                        "Ops[2].TL",
+                        "Ops[2].KSL",
+                        "Ops[2].KSR",
+                        "Ops[2].MFM",
+                        "Ops[2].AM",
+                        "Ops[2].VIB",
+                        "Ops[2].EG",
+                        "Ops[2].WS",
+
+                        "Ops[3].AR",
+                        "Ops[3].DR",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].SR",
+                        "Ops[3].TL",
+                        "Ops[3].KSL",
+                        "Ops[3].KSR",
+                        "Ops[3].MFM",
+                        "Ops[3].AM",
+                        "Ops[3].VIB",
+                        "Ops[3].EG",
+                        "Ops[3].WS");
                 }
             }
 
@@ -745,11 +1010,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Algorithm (0-1)\r\n" +
-                "0: 1->2 (for Distortion guitar sound)\r\n" +
-                "1: 1+2 (for Pipe organ sound)")]
+            [Description("Algorithm (0-1 in 2 Op Mode, 2-5 in 4 Op Mode) \r\n" +
+                "2 Op Mode:\r\n" +
+                " 0: 1->2 (for Distortion guitar sound)\r\n" +
+                " 1: 1+2 (for Pipe organ sound)\r\n" +
+                "4 Op Mode:\r\n" +
+                " 2: 1->2->3->4\r\n" +
+                " 3: (1+2)+(3+4)\r\n" +
+                " 4: 1+(2+3+4)\r\n" +
+                " 5: 1+(2+3)+4")]
             [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
+            [SlideParametersAttribute(0, 5)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte ALG
             {
@@ -759,7 +1030,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_ALG = (byte)(value & 1);
+                    if(value < 6)
+                        f_ALG = value;
                 }
             }
 
@@ -790,11 +1062,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Operators")]
+            [Description("Operators. Uses only first 2 opperators in 2 op mode.")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [DisplayName("Operators(Ops)")]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-            public YM3812Operator[] Ops
+            public YMF262Operator[] Ops
             {
                 get;
                 set;
@@ -807,7 +1079,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [JsonIgnore]
             [Category("Sound")]
             [Description("You can copy and paste this text data to other same type timber.\r\n" +
-                "ALG, FB, AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS, ...\r\n" +
+                "ALG, FB, AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VIB, EG(EGT), WS, ...\r\n" +
                 "You can use comma or space chars as delimiter.")]
             public string MmlSerializeData
             {
@@ -827,7 +1099,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].KSR",
                         "Ops[0].MFM",
                         "Ops[0].AM",
-                        "Ops[0].VR",
+                        "Ops[0].VIB",
                         "Ops[0].EG",
                         "Ops[0].WS",
 
@@ -841,9 +1113,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].KSR",
                         "Ops[1].MFM",
                         "Ops[1].AM",
-                        "Ops[1].VR",
+                        "Ops[1].VIB",
                         "Ops[1].EG",
-                        "Ops[1].WS");
+                        "Ops[1].WS",
+
+                        "Ops[2].AR",
+                        "Ops[2].DR",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].SR",
+                        "Ops[2].TL",
+                        "Ops[2].KSL",
+                        "Ops[2].KSR",
+                        "Ops[2].MFM",
+                        "Ops[2].AM",
+                        "Ops[2].VIB",
+                        "Ops[2].EG",
+                        "Ops[2].WS",
+
+                        "Ops[3].AR",
+                        "Ops[3].DR",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].SR",
+                        "Ops[3].TL",
+                        "Ops[3].KSL",
+                        "Ops[3].KSR",
+                        "Ops[3].MFM",
+                        "Ops[3].AM",
+                        "Ops[3].VIB",
+                        "Ops[3].EG",
+                        "Ops[3].WS");
                 }
                 set
                 {
@@ -861,7 +1161,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].KSR",
                         "Ops[0].MFM",
                         "Ops[0].AM",
-                        "Ops[0].VR",
+                        "Ops[0].VIB",
                         "Ops[0].EG",
                         "Ops[0].WS",
 
@@ -875,16 +1175,44 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].KSR",
                         "Ops[1].MFM",
                         "Ops[1].AM",
-                        "Ops[1].VR",
+                        "Ops[1].VIB",
                         "Ops[1].EG",
-                        "Ops[1].WS");
+                        "Ops[1].WS",
+
+                        "Ops[2].AR",
+                        "Ops[2].DR",
+                        "Ops[2].RR",
+                        "Ops[2].SL",
+                        "Ops[2].SR",
+                        "Ops[2].TL",
+                        "Ops[2].KSL",
+                        "Ops[2].KSR",
+                        "Ops[2].MFM",
+                        "Ops[2].AM",
+                        "Ops[2].VIB",
+                        "Ops[2].EG",
+                        "Ops[2].WS",
+
+                        "Ops[3].AR",
+                        "Ops[3].DR",
+                        "Ops[3].RR",
+                        "Ops[3].SL",
+                        "Ops[3].SR",
+                        "Ops[3].TL",
+                        "Ops[3].KSL",
+                        "Ops[3].KSR",
+                        "Ops[3].MFM",
+                        "Ops[3].AM",
+                        "Ops[3].VIB",
+                        "Ops[3].EG",
+                        "Ops[3].WS");
                 }
             }
 
             [DataMember]
             [Category("Chip")]
             [Description("Global Settings")]
-            public YM3812GlobalSettings GlobalSettings
+            public YMF262GlobalSettings GlobalSettings
             {
                 get;
                 set;
@@ -893,12 +1221,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// 
             /// </summary>
-            public YM3812Timbre()
+            public YMF262Timbre()
             {
-                Ops = new YM3812Operator[] {
-                    new YM3812Operator(),
-                    new YM3812Operator() };
-                GlobalSettings = new YM3812GlobalSettings();
+                Ops = new YMF262Operator[] {
+                    new YMF262Operator(),
+                    new YMF262Operator(),
+                    new YMF262Operator(),
+                    new YMF262Operator() };
+                GlobalSettings = new YMF262GlobalSettings();
                 this.SDS.FxS = new BasicFxSettings();
             }
 
@@ -906,7 +1236,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 try
                 {
-                    var obj = JsonConvert.DeserializeObject<YM3812Timbre>(serializeData);
+                    var obj = JsonConvert.DeserializeObject<YMF262Timbre>(serializeData);
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
                 }
                 catch (Exception ex)
@@ -926,10 +1256,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
-        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM3812Operator>))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Operator>))]
         [DataContract]
         [MidiHook]
-        public class YM3812Operator : ContextBoundObject
+        public class YMF262Operator : ContextBoundObject
         {
 
             private byte f_AR;
@@ -1176,7 +1506,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte VR
+            public byte VIB
             {
                 get
                 {
@@ -1214,13 +1544,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_WS;
 
             /// <summary>
-            /// Waveform Select (0-3)
+            /// Waveform Select (0-7)
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Waveform Select (0-3)")]
+            [Description("Waveform Select (0-7)")]
             [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
+            [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte WS
             {
@@ -1230,7 +1560,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_WS = (byte)(value & 3);
+                    f_WS = (byte)(value & 7);
                 }
             }
 
@@ -1266,7 +1596,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(KSR),
                         nameof(MFM),
                         nameof(AM),
-                        nameof(VR),
+                        nameof(VIB),
                         nameof(EG),
                         nameof(WS));
                 }
@@ -1282,7 +1612,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(KSR),
                         nameof(MFM),
                         nameof(AM),
-                        nameof(VR),
+                        nameof(VIB),
                         nameof(EG),
                         nameof(WS));
                 }
@@ -1309,7 +1639,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 try
                 {
-                    var obj = JsonConvert.DeserializeObject<YM3812Operator>(serializeData);
+                    var obj = JsonConvert.DeserializeObject<YMF262Operator>(serializeData);
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
                 }
                 catch (Exception ex)
@@ -1329,10 +1659,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
-        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM3812GlobalSettings>))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262GlobalSettings>))]
         [DataContract]
         [MidiHook]
-        public class YM3812GlobalSettings : ContextBoundObject
+        public class YMF262GlobalSettings : ContextBoundObject
         {
             [DataMember]
             [Category("Chip")]
@@ -1341,6 +1671,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            private byte? f_CONSEL;
+
+            /// <summary>
+            /// </summary>
+            [DataMember]
+            [Category("Chip")]
+            [Description("Max number of 4 op mode sound")]
+            [SlideParametersAttribute(0, 6)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            public byte? CONSEL
+            {
+                get
+                {
+                    return f_CONSEL;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (!value.HasValue || value <= 6)
+                        f_CONSEL = value;
+                }
             }
 
             private byte? f_AMD;
@@ -1354,7 +1708,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte? AMD
+            public byte? DAM
             {
                 get
                 {
@@ -1380,7 +1734,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte? VIB
+            public byte? DVB
             {
                 get
                 {
@@ -1397,4 +1751,5 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
     }
+
 }

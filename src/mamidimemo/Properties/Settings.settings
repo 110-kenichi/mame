@@ -74,5 +74,8 @@
     <Setting Name="YM2413EdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
+    <Setting Name="YMF262EdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

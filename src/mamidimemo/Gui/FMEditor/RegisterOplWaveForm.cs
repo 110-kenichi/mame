@@ -48,6 +48,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 case 3:
                     this.BackgroundImage = Resources.WS3;
                     break;
+                case 4:
+                    this.BackgroundImage = Resources.WS4;
+                    break;
+                case 5:
+                    this.BackgroundImage = Resources.WS5;
+                    break;
+                case 6:
+                    this.BackgroundImage = Resources.WS6;
+                    break;
+                case 7:
+                    this.BackgroundImage = Resources.WS7;
+                    break;
             }
         }
     }

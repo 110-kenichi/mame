@@ -83,6 +83,26 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap ALG11 {
+            get {
+                object obj = ResourceManager.GetObject("ALG11", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ALG12 {
+            get {
+                object obj = ResourceManager.GetObject("ALG12", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap ALG2 {
             get {
                 object obj = ResourceManager.GetObject("ALG2", resourceCulture);
@@ -453,6 +473,46 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap WS4 {
+            get {
+                object obj = ResourceManager.GetObject("WS4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap WS5 {
+            get {
+                object obj = ResourceManager.GetObject("WS5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap WS6 {
+            get {
+                object obj = ResourceManager.GetObject("WS6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap WS7 {
+            get {
+                object obj = ResourceManager.GetObject("WS7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap YM2151 {
             get {
                 object obj = ResourceManager.GetObject("YM2151", resourceCulture);
@@ -496,6 +556,16 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static System.Drawing.Bitmap YM3812 {
             get {
                 object obj = ResourceManager.GetObject("YM3812", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap YMF262 {
+            get {
+                object obj = ResourceManager.GetObject("YMF262", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

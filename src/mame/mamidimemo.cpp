@@ -29,6 +29,8 @@
 #include "..\munt\mt32emu\src\c_interface\c_interface.h"
 #include "..\munt\mt32emu\soxr\src\soxr.h"
 #include "..\devices\sound\cm32p.h"
+#include "..\devices\sound\cm32p.h"
+#include "..\devices\sound\262intf.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -368,6 +370,29 @@ extern "C"
 			ym3812_devices[unitNumber] = ym3812;
 		}
 		ym3812_devices[unitNumber]->write(address, data);
+	}
+
+	ymf262_device *ymf262_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ymf262_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ymf262_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymf262_device *ymf262 = dynamic_cast<ymf262_device *>(rm->device((std::string("ymf262_") + num).c_str()));
+			if (ymf262 == nullptr)
+				return;
+
+			ymf262_devices[unitNumber] = ymf262;
+		}
+		ymf262_devices[unitNumber]->write(address, data);
 	}
 
 	emu2413_device *ym2413_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };

@@ -137,30 +137,6 @@
   <metadata name="contextMenuStripInst.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>463, 17</value>
   </metadata>
-  <data name="decreaseThisKindOfChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
-  </data>
-  <data name="decreaseThisKindOfChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Reduce selected chip type(s)</value>
-  </data>
-  <data name="cloneSelectedChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
-  </data>
-  <data name="cloneSelectedChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Clone selected chip</value>
-  </data>
-  <data name="toolStripSepInst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
-  </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
-  </data>
-  <data name="toolStripMenuItem1.Text" xml:space="preserve">
-    <value>Clear &amp;all</value>
-  </data>
-  <data name="toolStripMenuItemSep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
-  </data>
   <data name="contextMenuStripInst.Size" type="System.Drawing.Size, System.Drawing">
     <value>225, 82</value>
   </data>
@@ -256,12 +232,6 @@
   <metadata name="contextMenuStripProp.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>981, 17</value>
   </metadata>
-  <data name="resetToDefaultThisPropertyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 22</value>
-  </data>
-  <data name="resetToDefaultThisPropertyToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Reset to default this property</value>
-  </data>
   <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
     <value>227, 26</value>
   </data>
@@ -300,42 +270,6 @@
   </metadata>
   <data name="toolStrip3.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="toolStripButtonCat.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="toolStripButtonCat.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonCat.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 17</value>
-  </data>
-  <data name="toolStripButtonCat.Text" xml:space="preserve">
-    <value>Categorized sort</value>
-  </data>
-  <data name="toolStripButtonA2Z.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="toolStripButtonA2Z.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonA2Z.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 17</value>
-  </data>
-  <data name="toolStripButtonA2Z.Text" xml:space="preserve">
-    <value>Alphabetical sort</value>
-  </data>
-  <data name="toolStripButtonPopup.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="toolStripButtonPopup.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonPopup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 17</value>
-  </data>
-  <data name="toolStripButtonPopup.Text" xml:space="preserve">
-    <value>Popup the selected instruments property</value>
   </data>
   <data name="toolStrip3.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -409,6 +343,165 @@
   <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+    <value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Name" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Parent" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Name" xml:space="preserve">
+    <value>tabPage2</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.Parent" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tabControlBottom.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tabControlBottom.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="tabControlBottom.Size" type="System.Drawing.Size, System.Drawing">
+    <value>778, 160</value>
+  </data>
+  <data name="&gt;&gt;tabControlBottom.Name" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabControlBottom.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabControlBottom.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;tabControlBottom.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="splitContainer1.Panel2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Name" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.Parent" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 490</value>
+  </data>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>320</value>
+  </data>
+  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Name" xml:space="preserve">
+    <value>splitContainer1</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="decreaseThisKindOfChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 22</value>
+  </data>
+  <data name="decreaseThisKindOfChipToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Reduce selected chip type(s)</value>
+  </data>
+  <data name="cloneSelectedChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 22</value>
+  </data>
+  <data name="cloneSelectedChipToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Clone selected chip</value>
+  </data>
+  <data name="toolStripSepInst.Size" type="System.Drawing.Size, System.Drawing">
+    <value>221, 6</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 22</value>
+  </data>
+  <data name="toolStripMenuItem1.Text" xml:space="preserve">
+    <value>Clear &amp;all</value>
+  </data>
+  <data name="toolStripMenuItemSep.Size" type="System.Drawing.Size, System.Drawing">
+    <value>221, 6</value>
+  </data>
+  <data name="resetToDefaultThisPropertyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 22</value>
+  </data>
+  <data name="resetToDefaultThisPropertyToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Reset to default this property</value>
+  </data>
+  <data name="toolStripButtonCat.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripButtonCat.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonCat.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 17</value>
+  </data>
+  <data name="toolStripButtonCat.Text" xml:space="preserve">
+    <value>Categorized sort</value>
+  </data>
+  <data name="toolStripButtonA2Z.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripButtonA2Z.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonA2Z.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 17</value>
+  </data>
+  <data name="toolStripButtonA2Z.Text" xml:space="preserve">
+    <value>Alphabetical sort</value>
+  </data>
+  <data name="toolStripButtonPopup.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="toolStripButtonPopup.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonPopup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 17</value>
+  </data>
+  <data name="toolStripButtonPopup.Text" xml:space="preserve">
+    <value>Popup the selected instruments property</value>
+  </data>
   <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
   </data>
@@ -435,6 +528,57 @@
   </data>
   <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <metadata name="toolStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1156, 17</value>
+  </metadata>
+  <data name="&gt;&gt;pianoControl1.Name" xml:space="preserve">
+    <value>pianoControl1</value>
+  </data>
+  <data name="&gt;&gt;pianoControl1.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.Gui.PianoControl, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;pianoControl1.Parent" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;pianoControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Name" xml:space="preserve">
+    <value>toolStrip2</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.ComponentModel.ToolStripBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Parent" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>776, 140</value>
+  </data>
+  <data name="tabPage3.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tabPage3.Text" xml:space="preserve">
+    <value>Piano</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Name" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.Parent" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabPage3.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="pianoControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -468,6 +612,30 @@
   </metadata>
   <data name="toolStrip2.AutoSize" type="System.Boolean, mscorlib">
     <value>False</value>
+  </data>
+  <data name="toolStrip2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>776, 25</value>
+  </data>
+  <data name="toolStrip2.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="toolStrip2.Text" xml:space="preserve">
+    <value>toolStrip2</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Name" xml:space="preserve">
+    <value>toolStrip2</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.ComponentModel.ToolStripBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.Parent" xml:space="preserve">
+    <value>tabPage3</value>
+  </data>
+  <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>43, 22</value>
@@ -1336,72 +1504,6 @@
   <data name="toolStripLabel2.Text" xml:space="preserve">
     <value>Key Ch</value>
   </data>
-  <data name="toolStrip2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 25</value>
-  </data>
-  <data name="toolStrip2.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="toolStrip2.Text" xml:space="preserve">
-    <value>toolStrip2</value>
-  </data>
-  <data name="&gt;&gt;toolStrip2.Name" xml:space="preserve">
-    <value>toolStrip2</value>
-  </data>
-  <data name="&gt;&gt;toolStrip2.Type" xml:space="preserve">
-    <value>zanac.MAmidiMEmo.ComponentModel.ToolStripBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;toolStrip2.Parent" xml:space="preserve">
-    <value>tabPage3</value>
-  </data>
-  <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 140</value>
-  </data>
-  <data name="tabPage3.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="tabPage3.Text" xml:space="preserve">
-    <value>Piano</value>
-  </data>
-  <data name="&gt;&gt;tabPage3.Name" xml:space="preserve">
-    <value>tabPage3</value>
-  </data>
-  <data name="&gt;&gt;tabPage3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage3.Parent" xml:space="preserve">
-    <value>tabControlBottom</value>
-  </data>
-  <data name="&gt;&gt;tabPage3.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="columnHeader1.Text" xml:space="preserve">
-    <value>Log</value>
-  </data>
-  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
-    <value>522</value>
-  </data>
-  <data name="listView1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="listView1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="listView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>770, 134</value>
-  </data>
-  <data name="listView1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
   <data name="&gt;&gt;listView1.Name" xml:space="preserve">
     <value>listView1</value>
   </data>
@@ -1441,72 +1543,39 @@
   <data name="&gt;&gt;tabPage2.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="tabControlBottom.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="listView1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="tabControlBottom.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="listView1.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
-  <data name="tabControlBottom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>778, 160</value>
+  <data name="listView1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>770, 134</value>
   </data>
-  <data name="&gt;&gt;tabControlBottom.Name" xml:space="preserve">
-    <value>tabControlBottom</value>
-  </data>
-  <data name="&gt;&gt;tabControlBottom.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabControlBottom.Parent" xml:space="preserve">
-    <value>splitContainer1.Panel2</value>
-  </data>
-  <data name="&gt;&gt;tabControlBottom.ZOrder" xml:space="preserve">
+  <data name="listView1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="splitContainer1.Panel2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
+  <data name="&gt;&gt;listView1.Name" xml:space="preserve">
+    <value>listView1</value>
   </data>
-  <data name="&gt;&gt;splitContainer1.Panel2.Name" xml:space="preserve">
-    <value>splitContainer1.Panel2</value>
+  <data name="&gt;&gt;listView1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;listView1.Parent" xml:space="preserve">
+    <value>tabPage2</value>
   </data>
-  <data name="&gt;&gt;splitContainer1.Panel2.Parent" xml:space="preserve">
-    <value>splitContainer1</value>
+  <data name="&gt;&gt;listView1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="&gt;&gt;splitContainer1.Panel2.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="columnHeader1.Text" xml:space="preserve">
+    <value>Log</value>
   </data>
-  <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 490</value>
-  </data>
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>320</value>
-  </data>
-  <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.Name" xml:space="preserve">
-    <value>splitContainer1</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="columnHeader1.Width" type="System.Int32, mscorlib">
+    <value>522</value>
   </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
-  </data>
-  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
-  </data>
   <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 539</value>
   </data>
@@ -1531,9 +1600,45 @@
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>133, 17</value>
   </metadata>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>784, 24</value>
+  </data>
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 20</value>
+  </data>
+  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;File</value>
+  </data>
   <data name="loadToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+L</value>
   </data>
@@ -1570,11 +1675,11 @@
   <data name="toolStripMenuItemExit.Text" xml:space="preserve">
     <value>E&amp;xit</value>
   </data>
-  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>37, 20</value>
+  <data name="toolToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>41, 20</value>
   </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;File</value>
+  <data name="toolToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tool</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>125, 22</value>
@@ -1582,47 +1687,17 @@
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Settings...</value>
   </data>
-  <data name="toolToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 20</value>
-  </data>
-  <data name="toolToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tool</value>
-  </data>
-  <data name="toolStripMenuItemAbout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>107, 22</value>
-  </data>
-  <data name="toolStripMenuItemAbout.Text" xml:space="preserve">
-    <value>&amp;About</value>
-  </data>
   <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>44, 20</value>
   </data>
   <data name="helpToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Help</value>
   </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="toolStripMenuItemAbout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>107, 22</value>
   </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>784, 24</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>5</value>
+  <data name="toolStripMenuItemAbout.Text" xml:space="preserve">
+    <value>&amp;About</value>
   </data>
   <metadata name="saveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>618, 17</value>
@@ -1657,161 +1732,68 @@
   <data name="toolStripComboBoxMidiIf.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 25</value>
   </data>
-  <data name="mT32ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 22</value>
-  </data>
-  <data name="mT32ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend MT-&amp;32</value>
-  </data>
-  <data name="extendCM32PToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 22</value>
-  </data>
-  <data name="extendCM32PToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend CM-32&amp;P(Simulation)</value>
-  </data>
   <data name="lAToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="lAToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MIDI</value>
   </data>
-  <data name="extendC140ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>151, 22</value>
-  </data>
-  <data name="extendC140ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;C140</value>
-  </data>
-  <data name="extendSPC700ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>151, 22</value>
-  </data>
-  <data name="extendSPC700ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;SPC700</value>
-  </data>
   <data name="pCMToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="pCMToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;PCM</value>
   </data>
   <data name="extendYM2610BToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="extendYM2610BToolStripMenuItem.Text" xml:space="preserve">
     <value>Extend YM2610&amp;B</value>
   </data>
   <data name="addYM2151ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="addYM2151ToolStripMenuItem.Text" xml:space="preserve">
     <value>Extend YM&amp;2151</value>
   </data>
   <data name="addYM2612ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="addYM2612ToolStripMenuItem.Text" xml:space="preserve">
     <value>Extend YM2&amp;612</value>
   </data>
   <data name="extendYM3812ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="extendYM3812ToolStripMenuItem.Text" xml:space="preserve">
     <value>Extend YM&amp;3812</value>
   </data>
   <data name="extendYM2413ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="extendYM2413ToolStripMenuItem.Text" xml:space="preserve">
     <value>Extend YM2&amp;413</value>
   </data>
+  <data name="extendYMF262ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="extendYMF262ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend YM&amp;F262</value>
+  </data>
   <data name="fMSynthesisToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;FM Synthesis</value>
   </data>
-  <data name="extendSCC1kToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 22</value>
-  </data>
-  <data name="extendSCC1kToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend S&amp;CC1(k052539)</value>
-  </data>
-  <data name="addNAMCOCUS30ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 22</value>
-  </data>
-  <data name="addNAMCOCUS30ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;NAMCO CUS30(WSG)</value>
-  </data>
-  <data name="extendHuC6230ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 22</value>
-  </data>
-  <data name="extendHuC6230ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;HuC6280</value>
-  </data>
   <data name="wSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="wSGToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;WSG</value>
   </data>
-  <data name="extendMOS8580ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendMOS8580ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend MOS&amp;8580</value>
-  </data>
-  <data name="extendMOS6581ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendMOS6581ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend MOS&amp;6581</value>
-  </data>
-  <data name="extendNESAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendNESAPUToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;RP2A03(NES APU)</value>
-  </data>
-  <data name="extendGBAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendGBAPUToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;GB(DMG-01) APU</value>
-  </data>
-  <data name="extendPOKEYToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendPOKEYToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;POKEY</value>
-  </data>
-  <data name="addSN76496ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="addSN76496ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;SN76496</value>
-  </data>
-  <data name="extendAY38910ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendAY38910ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend A&amp;Y-3-8910</value>
-  </data>
-  <data name="extendMSM5232ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendMSM5232ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;MSM5232+TA7630</value>
-  </data>
-  <data name="extendBeepToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 22</value>
-  </data>
-  <data name="extendBeepToolStripMenuItem.Text" xml:space="preserve">
-    <value>Extend &amp;Beep</value>
-  </data>
-  <data name="extendBeepToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="pSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="pSGToolStripMenuItem.Text" xml:space="preserve">
     <value>PS&amp;G</value>
@@ -1931,6 +1913,105 @@
   </data>
   <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="mT32ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 22</value>
+  </data>
+  <data name="mT32ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend MT-&amp;32</value>
+  </data>
+  <data name="extendCM32PToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 22</value>
+  </data>
+  <data name="extendCM32PToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend CM-32&amp;P(Simulation)</value>
+  </data>
+  <data name="extendC140ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>151, 22</value>
+  </data>
+  <data name="extendC140ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;C140</value>
+  </data>
+  <data name="extendSPC700ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>151, 22</value>
+  </data>
+  <data name="extendSPC700ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;SPC700</value>
+  </data>
+  <data name="extendSCC1kToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 22</value>
+  </data>
+  <data name="extendSCC1kToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend S&amp;CC1(k052539)</value>
+  </data>
+  <data name="addNAMCOCUS30ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 22</value>
+  </data>
+  <data name="addNAMCOCUS30ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;NAMCO CUS30(WSG)</value>
+  </data>
+  <data name="extendHuC6230ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 22</value>
+  </data>
+  <data name="extendHuC6230ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;HuC6280</value>
+  </data>
+  <data name="extendMOS8580ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendMOS8580ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend MOS&amp;8580</value>
+  </data>
+  <data name="extendMOS6581ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendMOS6581ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend MOS&amp;6581</value>
+  </data>
+  <data name="extendNESAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendNESAPUToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;RP2A03(NES APU)</value>
+  </data>
+  <data name="extendGBAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendGBAPUToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;GB(DMG-01) APU</value>
+  </data>
+  <data name="extendPOKEYToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendPOKEYToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;POKEY</value>
+  </data>
+  <data name="addSN76496ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="addSN76496ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;SN76496</value>
+  </data>
+  <data name="extendAY38910ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendAY38910ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend A&amp;Y-3-8910</value>
+  </data>
+  <data name="extendMSM5232ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendMSM5232ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;MSM5232+TA7630</value>
+  </data>
+  <data name="extendBeepToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>211, 22</value>
+  </data>
+  <data name="extendBeepToolStripMenuItem.Text" xml:space="preserve">
+    <value>Extend &amp;Beep</value>
+  </data>
+  <data name="extendBeepToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <metadata name="multiMediaTimerComponent1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 56</value>
@@ -4316,6 +4397,12 @@
   </data>
   <data name="&gt;&gt;multiMediaTimerComponent1.Type" xml:space="preserve">
     <value>zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;extendYMF262ToolStripMenuItem.Name" xml:space="preserve">
+    <value>extendYMF262ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;extendYMF262ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FormMain</value>

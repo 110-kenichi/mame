@@ -1168,7 +1168,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Proces Poly mode
+                //Process Poly mode
                 List<T> onSndsRm = new List<T>(onSnds);
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
                 for (int i = onSndsRm.Count - 1; i >= 0; i--)

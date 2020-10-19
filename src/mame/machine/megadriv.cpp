@@ -1063,6 +1063,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		CM32P(config, *m_cm32p[i], 22050 * 3);
 		(*m_cm32p[i])->add_route(0, "lspeaker", 1.00);
 		(*m_cm32p[i])->add_route(1, "rspeaker", 1.00);
+
+		YMF262(config, *m_ymf262[i], XTAL(14'318'181));
+		(*m_ymf262[i])->add_route(0, "lspeaker", 1.00);
+		(*m_ymf262[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

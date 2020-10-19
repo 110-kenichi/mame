@@ -188,6 +188,12 @@
     <Compile Include="Gui\FMEditor\FormYM2413Editor.Designer.cs">
       <DependentUpon>FormYM2413Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FMEditor\FormYMF262.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYMF262.Designer.cs">
+      <DependentUpon>FormYMF262.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FMEditor\FormYM3812Editor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -275,6 +281,18 @@
     <Compile Include="Gui\FMEditor\YM2413GeneralContainer.Designer.cs">
       <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FMEditor\YMF262OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262OperatorContainer.Designer.cs">
+      <DependentUpon>YMF262OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262GeneralContainer.Designer.cs">
+      <DependentUpon>YMF262GeneralContainer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FMEditor\YM3812GeneralContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -334,6 +352,7 @@
     </Compile>
     <Compile Include="Gui\FMEditor\YM2610BUITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2413UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YMF262UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2612UITypeEditor.cs" />
     <Compile Include="Gui\FormDrumTableEditor.cs">
@@ -441,6 +460,7 @@
     <Compile Include="Instruments\Chips\YM2413.cs" />
     <Compile Include="Instruments\Chips\YM2610B.cs" />
     <Compile Include="Instruments\Chips\YM2612.cs" />
+    <Compile Include="Instruments\Chips\YMF262.cs" />
     <Compile Include="Instruments\Chips\YM3812.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxEngine.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxSettingsBase.cs" />
@@ -536,6 +556,9 @@
     <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">
       <DependentUpon>FormYM2413Editor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYMF262.resx">
+      <DependentUpon>FormYMF262.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM3812Editor.resx">
       <DependentUpon>FormYM3812Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -577,6 +600,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\YM2413GeneralContainer.resx">
       <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YMF262OperatorContainer.resx">
+      <DependentUpon>YMF262OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YMF262GeneralContainer.resx">
+      <DependentUpon>YMF262GeneralContainer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\YM3812GeneralContainer.resx">
       <DependentUpon>YM3812GeneralContainer.cs</DependentUpon>
@@ -822,6 +851,8 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\ALG11.png" />
+    <None Include="Resources\ALG12.png" />
     <Content Include="Resources\ALG2.PNG" />
     <Content Include="Resources\ALG3.PNG" />
     <Content Include="Resources\ALG4.PNG" />
@@ -830,6 +861,11 @@
     <Content Include="Resources\ALG7.PNG" />
     <Content Include="Resources\ALG8.PNG" />
     <Content Include="Resources\ALG9.PNG" />
+    <None Include="Resources\WS6.png" />
+    <None Include="Resources\WS5.png" />
+    <None Include="Resources\WS4.png" />
+    <None Include="Resources\WS7.png" />
+    <None Include="Resources\YMF262.png" />
     <None Include="Resources\WS1.png" />
     <None Include="Resources\WS0.png" />
     <None Include="Resources\WS3.png" />
