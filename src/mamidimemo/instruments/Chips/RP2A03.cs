@@ -124,7 +124,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public void ResetTimbres()
         {
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new RP2A03Timbre();
         }
 
@@ -320,8 +320,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new RP2A03Timbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new RP2A03Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new RP2A03Timbre();
             DeltaPcmSoundTable = new DPcmSoundTable();
 
@@ -481,9 +481,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             FormMain.OutputDebugLog("KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
                             break;
                     }
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

@@ -26,15 +26,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 return SerializeProps(this,
                     nameof(tim.ALG),
-                    nameof(tim.FB));
+                    nameof(tim.FB),
+                    nameof(tim.FB2)
+                    );
             }
             set
             {
                 DeserializeProps(this, value,
                     nameof(tim.ALG),
-                    nameof(tim.FB));
+                    nameof(tim.FB),
+                    nameof(tim.FB2)
+                    );
             }
         }
+        private RegisterValue fb2;
 
         /// <summary>
         /// 
@@ -47,10 +52,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterValue("ALG", tim.ALG, 0, 5));
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
+            fb2 = new RegisterValue("FB2", tim.FB2, 0, 7);
+            AddControl(fb2);
             AddControl(new RegisterAlg2OpImg((RegisterValue)GetControl("ALG")));
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterOscViewer(inst));
+
+            fb2.Enabled = (tim.ALG >= 2);
         }
 
+        protected override void OnValueChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "ALG":
+                    fb2.Enabled = (tim.ALG >= 2);
+                    break;
+            }
+
+            base.OnValueChanged(sender, e);
+        }
     }
 }

@@ -850,8 +850,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             this.soundManager = new CM32PSoundManager(this);
 
-            Timbres = new CM32PTimbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new CM32PTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new CM32PTimbre();
 
             CM32PInitlaizeMemory(UnitNumber);
@@ -1099,9 +1099,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     instOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

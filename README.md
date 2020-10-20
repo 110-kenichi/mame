@@ -235,6 +235,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 2.3.0.0 Added YMF262(OPL3) chip.
+		Fixed Combined Drum does not sounding properly.
 2.2.5.1 Improved FM Synthesis Editor UI.
 2.2.5.0 Added PCM playback feature to HuC6280.
 		Fixed an error when opening the floating point value slider on some props.

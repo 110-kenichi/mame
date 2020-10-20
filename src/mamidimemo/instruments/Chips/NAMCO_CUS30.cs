@@ -197,8 +197,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public NAMCO_CUS30(uint unitNumber) : base(unitNumber)
         {
-            Timbres = new NAMCO_CUS30Timbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new NAMCO_CUS30Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new NAMCO_CUS30Timbre();
             setPresetInstruments();
 
@@ -341,10 +341,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     wsgOnSounds.Add(snd);
+
                     FormMain.OutputDebugLog("KeyOn WSG ch" + emptySlot + " " + note.ToString());
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

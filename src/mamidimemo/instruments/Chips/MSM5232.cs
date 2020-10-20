@@ -340,8 +340,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new MSM5232Timbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new MSM5232Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new MSM5232Timbre();
             setPresetInstruments();
 
@@ -466,9 +466,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             FormMain.OutputDebugLog("KeyOn B ch" + emptySlot + " " + note.ToString());
                             break;
                     }
-                    snd.KeyOn();
+
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

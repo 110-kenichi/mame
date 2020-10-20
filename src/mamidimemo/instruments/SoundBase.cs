@@ -40,6 +40,15 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public DrumTimbre DrumTimbre
+        {
+            get;
+            private set;
+        }
+
         public bool IsDisposed
         {
             get;
@@ -47,6 +56,12 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         public bool IsKeyOff
+        {
+            get;
+            private set;
+        }
+
+        public virtual bool IsSoundOn
         {
             get;
             private set;
@@ -87,6 +102,8 @@ namespace zanac.MAmidiMEmo.Instruments
             ParentModule = parentModule;
             ParentManager = manager;
             Timbre = timbre;
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                DrumTimbre = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber];
         }
 
         public event EventHandler Disposed;
@@ -112,6 +129,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void KeyOn()
         {
+            IsSoundOn = true;
+
             if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
                 ParentModule.Modulations[NoteOnEvent.Channel] > 0)
                 ModulationEnabled = true;
@@ -147,10 +166,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
 
-            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+            if (DrumTimbre != null)
             {
-                var gt = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].GateTime;
-                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processGateTime), gt, null, true);
+                HighPrecisionTimer.SetPeriodicCallback
+                    (new Func<object, double>(processGateTime), DrumTimbre.GateTime, this, true);
             }
         }
 

@@ -942,9 +942,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             FormMain.OutputDebugLog("KeyOn SSG ch" + emptySlot + " " + note.ToString());
                             break;
                     }
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

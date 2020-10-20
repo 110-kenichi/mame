@@ -264,8 +264,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new SCC1Timbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new SCC1Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new SCC1Timbre();
             setPresetInstruments();
 
@@ -381,10 +381,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     SCC1Sound snd = new SCC1Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     sccOnSounds.Add(snd);
+
                     FormMain.OutputDebugLog("KeyOn SCC ch" + emptySlot + " " + note.ToString());
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

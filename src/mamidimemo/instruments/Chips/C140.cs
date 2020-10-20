@@ -502,9 +502,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     */
 
                     FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

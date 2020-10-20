@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -349,9 +350,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YMF262Timbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new YMF262Timbre[512];
+            for (int i = 0; i < 512; i++)
                 Timbres[i] = new YMF262Timbre();
+
+            CombinedTimbres = new CombinedTimbre[512];
+            for (int i = 0; i < 512; i++)
+                CombinedTimbres[i] = new CombinedTimbre();
+
             setPresetInstruments();
 
             this.soundManager = new YMF262SoundManager(this);
@@ -366,11 +372,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.Dispose();
         }
 
+        private short ReadInt16Big(BinaryReader reader)
+        {
+            ushort valH = reader.ReadByte();
+            ushort valL = reader.ReadByte();
+
+            return (short)(valH << 8 | valL);
+        }
+
         /// <summary>
         /// 
         /// </summary>
         private void setPresetInstruments()
         {
+            /*
             Timbres[0].FB = 0;
             Timbres[0].ALG = 1;
 
@@ -424,7 +439,195 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[3].DR = 0;
             Timbres[0].Ops[3].SL = 7;
             Timbres[0].Ops[3].RR = 7;
-            Timbres[0].Ops[3].WS = 1;
+            Timbres[0].Ops[3].WS = 1;*/
+
+            var fileName = @"E:\mame_src\data\OPL2\GENMIDI.wopl";
+
+            using (var file = new System.IO.BinaryReader(new System.IO.FileStream(fileName, System.IO.FileMode.Open)))
+            {
+                file.BaseStream.Seek(0x11, System.IO.SeekOrigin.Begin);
+                {
+                    var val = file.ReadByte();
+                    if ((val & 1) != 0)
+                        this.AMD = 1;
+                    if ((val & 2) != 0)
+                        this.VIB = 1;
+                }
+
+                file.BaseStream.Seek(0x57, System.IO.SeekOrigin.Begin);
+                for (int i = 0; i < 128; i++)
+                {
+                    var tim1 = Timbres[i];
+                    var tim2 = Timbres[i + 128];
+                    CombinedTimbres[i].BindTimbres[0] = ProgramAssignmentTimbreNumber.Timbre0 + i;
+                    ProgramAssignments[i] = ProgramAssignmentNumber.CombinedTimbre0 + i;
+
+                    //32
+                    var name = Encoding.ASCII.GetString(file.ReadBytes(32));
+                    var nidx = name.IndexOf('\0');
+                    if (nidx >= 0)
+                        name = name.Substring(0, nidx);
+                    if (name != null && name.Length != 0)
+                    {
+                        tim1.Memo = name;
+                        tim2.Memo = name + "(2nd)";
+                    }
+                    //2
+                    tim1.KeyShift = ReadInt16Big(file);
+                    //2
+                    tim2.KeyShift = ReadInt16Big(file);
+
+                    //1
+                    file.ReadByte();    //MIDI Velocity offset
+                    //1
+                    tim2.PitchShift = file.ReadSByte();
+
+                    //1
+                    //DrumTimbres[i].BaseNote = (NoteNames)file.ReadByte();
+                    file.ReadByte();
+                    //1
+                    var opmode = file.ReadByte();
+                    if (opmode == 0)
+                    {
+                        //2 op
+                    }
+                    else if (opmode == 1)
+                    {
+                        System.Windows.Forms.MessageBox.Show("4 op not supported");
+                    }
+                    else if (opmode == 3)
+                    {
+                        CombinedTimbres[i].BindTimbres[1] = ProgramAssignmentTimbreNumber.Timbre128 + i;
+                    }
+                    else if ((opmode & 4) == 4)
+                    {
+                        //empty
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Unsupported op mode " + opmode);
+                    }
+
+                    setRegisters(file, tim1, tim2);
+                }
+
+                for (int i = 0; i < 128; i++)
+                {
+                    var tim1 = Timbres[i + 256];
+                    var tim2 = Timbres[i + 256 + 128];
+                    CombinedTimbres[i + 128].BindTimbres[0] = ProgramAssignmentTimbreNumber.Timbre256 + i;
+                    DrumTimbres[i].TimbreNumber = ProgramAssignmentNumber.CombinedTimbre128 + i;
+
+                    //32
+                    var name = Encoding.ASCII.GetString(file.ReadBytes(32));
+                    var nidx = name.IndexOf('\0');
+                    if (nidx >= 0)
+                        name = name.Substring(0, nidx);
+                    if (name != null && name.Length != 0)
+                    {
+                        tim1.Memo = name;
+                        tim2.Memo = name + "(2nd)";
+                    }
+                    DrumTimbres[i].TimbreName = name;
+
+                    //2
+                    tim1.KeyShift = ReadInt16Big(file);
+                    //2
+                    tim2.KeyShift = ReadInt16Big(file);
+
+                    //1
+                    file.ReadByte();    //MIDI Velocity offset
+                    //1
+                    tim2.PitchShift = file.ReadSByte();
+
+                    //1
+                    DrumTimbres[i].BaseNote = (NoteNames)file.ReadByte();
+                    //1
+                    var opmode = file.ReadByte();
+                    if (opmode == 0)
+                    {
+                        //2 op
+                    }
+                    else if (opmode == 1)
+                    {
+                        System.Windows.Forms.MessageBox.Show("4 op not supported");
+                    }
+                    else if (opmode == 3)
+                    {
+                        CombinedTimbres[i + 128].BindTimbres[1] = ProgramAssignmentTimbreNumber.Timbre256 + 128 + i;
+                    }
+                    else if ((opmode & 4) == 4)
+                    {
+                        //empty
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Unsupported op mode " + opmode);
+                    }
+
+                    setRegisters(file, tim1, tim2);
+                }
+
+            }
+        }
+
+        private void setRegisters(BinaryReader file, YMF262Timbre tim1, YMF262Timbre tim2)
+        {
+            //1
+            var reg = file.ReadByte();
+            tim1.ALG = (byte)(reg & 1);
+            tim1.FB = (byte)((reg >> 1) & 7);
+            //1
+            reg = file.ReadByte();
+            tim2.ALG = (byte)(reg & 1);
+            tim2.FB = (byte)((reg >> 1) & 7);
+
+            for (int opi = 0; opi < 4; opi++)
+            {
+                YMF262Operator op = null;
+                switch (opi)
+                {
+                    case 0:
+                        op = tim1.Ops[1];
+                        break;
+                    case 1:
+                        op = tim1.Ops[0];
+                        break;
+                    case 2:
+                        op = tim1.Ops[3];
+                        break;
+                    case 3:
+                        op = tim1.Ops[2];
+                        break;
+                }
+
+                //1
+                reg = file.ReadByte();
+                op.AM = (byte)((reg >> 7) & 0x01);
+                op.VIB = (byte)((reg >> 6) & 0x01);
+                op.EG = (byte)((reg >> 5) & 0x01);
+                op.KSR = (byte)((reg >> 4) & 0x01);
+                op.MFM = (byte)((reg >> 0) & 0x0f);
+                //1
+                reg = file.ReadByte();
+                op.KSL = (byte)((reg >> 6) & 0x03);
+                op.TL = (byte)((reg >> 0) & 0x3f);
+                //1
+                reg = file.ReadByte();
+                op.AR = (byte)((reg >> 4) & 0x0f);
+                op.DR = (byte)((reg >> 0) & 0x0f);
+                //1
+                reg = file.ReadByte();
+                op.SL = (byte)((reg >> 4) & 0x0f);
+                op.RR = (byte)((reg >> 0) & 0x0f);
+                //1
+                reg = file.ReadByte();
+                op.WS = (byte)((reg >> 0) & 0x07);
+            }
+            //2
+            ReadInt16Big(file);
+            //2
+            ReadInt16Big(file);
         }
 
         /// <summary>
@@ -531,11 +734,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                     }
 
-                    //FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-
-                    snd.KeyOn();
+                    FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }
@@ -726,7 +929,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 else
                 {
                     YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | ((lastALG - 2) & 1)));
-                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 1, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | (((lastALG - 2) >> 1) & 1)));
+                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 1, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB2 << 1 | (((lastALG - 2) >> 1) & 1)));
                 }
             }
 
@@ -1030,7 +1233,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    if(value < 6)
+                    if (value < 6)
                         f_ALG = value;
                 }
             }
@@ -1054,6 +1257,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_FB = (byte)(value & 7);
                 }
             }
+
+            private byte f_FB2;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Alt Feedback for 4Op (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FB2
+            {
+                get
+                {
+                    return f_FB2;
+                }
+                set
+                {
+                    f_FB2 = (byte)(value & 7);
+                }
+            }
+
 
             #endregion
 
@@ -1088,6 +1312,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return SimpleSerializer.SerializeProps(this,
                         nameof(ALG),
                         nameof(FB),
+                        nameof(FB2),
 
                         "Ops[0].AR",
                         "Ops[0].DR",
@@ -1150,6 +1375,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SimpleSerializer.DeserializeProps(this, value,
                         nameof(ALG),
                         nameof(FB),
+                        nameof(FB2),
 
                         "Ops[0].AR",
                         "Ops[0].DR",

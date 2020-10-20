@@ -1129,12 +1129,15 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
                     {
                         var onSnd = onSndsCh[i];
-                        AllSounds.Remove(onSnd);
-                        onSounds.Remove(onSnd);
-                        onSnds.Remove(onSnd);
-                        onSndsCh.RemoveAt(i);
-                        onSnd.Dispose();
-                        i--;
+                        if (onSnd.IsSoundOn)
+                        {
+                            AllSounds.Remove(onSnd);
+                            onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
+                            onSndsCh.RemoveAt(i);
+                            onSnd.Dispose();
+                            i--;
+                        }
                     }
                 }
 
@@ -1144,7 +1147,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < onSndsCh.Count; i++)
                     {
                         var onSnd = onSndsCh[i];
-                        if (onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                        if (onSnd.IsSoundOn && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);

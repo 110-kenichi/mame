@@ -273,8 +273,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new GBAPUTimbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new GBAPUTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new GBAPUTimbre();
             setPresetInstruments();
 
@@ -437,9 +437,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             noiseOnSounds.Add(snd);
                             break;
                     }
-                    snd.KeyOn();
+
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }

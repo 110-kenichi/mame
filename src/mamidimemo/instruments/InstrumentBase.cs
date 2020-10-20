@@ -738,7 +738,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category("MIDI(Dedicated)")]
         [Description("Assign the Timbre/CombinedTimbre to program number.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
         public virtual ProgramAssignmentNumber[] ProgramAssignments
         {
             get;
@@ -1558,7 +1558,7 @@ namespace zanac.MAmidiMEmo.Instruments
             deferredWriteData = new List<(Delegate, object[])>();
         }
 
-        public const int MAX_TIMBRES = 256;
+        public const int DEFAULT_MAX_TIMBRES = 256;
 
         /// <summary>
         /// 
@@ -1581,8 +1581,8 @@ namespace zanac.MAmidiMEmo.Instruments
             if (!Program.IsVSTiMode())
                 initVstPlugins();
 
-            CombinedTimbres = new CombinedTimbre[MAX_TIMBRES];
-            for (int i = 0; i < MAX_TIMBRES; i++)
+            CombinedTimbres = new CombinedTimbre[DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < DEFAULT_MAX_TIMBRES; i++)
                 CombinedTimbres[i] = new CombinedTimbre();
 
             DrumTimbres = new DrumTimbre[128];

@@ -326,8 +326,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new SIDTimbre[InstrumentBase.MAX_TIMBRES];
-            for (int i = 0; i < InstrumentBase.MAX_TIMBRES; i++)
+            Timbres = new SIDTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new SIDTimbre();
             setPresetInstruments();
 
@@ -438,10 +438,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
+
                     FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
-                    snd.KeyOn();
                     rv.Add(snd);
                 }
+                foreach (var snd in rv)
+                    snd.KeyOn();
 
                 return rv.ToArray();
             }
