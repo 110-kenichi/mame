@@ -327,9 +327,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     rv.Add(snd);
                 }
-                foreach (var snd in rv)
-                    snd.KeyOn();
-
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
                 return rv.ToArray();
             }
 
