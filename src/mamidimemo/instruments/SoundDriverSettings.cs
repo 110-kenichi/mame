@@ -86,6 +86,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
         public string Memo
         {
             get;

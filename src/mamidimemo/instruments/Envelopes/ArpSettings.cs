@@ -230,6 +230,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
         public string Memo
         {
             get;

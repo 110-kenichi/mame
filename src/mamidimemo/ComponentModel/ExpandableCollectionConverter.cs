@@ -63,6 +63,16 @@ namespace zanac.MAmidiMEmo.ComponentModel
                         case DrumTimbre dtim:
                             name += " " + dtim.TimbreName;
                             break;
+                        case Object obj:
+                            dynamic dobj = obj;
+                            try
+                            {
+                                name += " " + dobj.Memo;
+                            }
+                            catch
+                            {
+                            }
+                            break;
                     }
                     CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);
                     array[i] = cpd;

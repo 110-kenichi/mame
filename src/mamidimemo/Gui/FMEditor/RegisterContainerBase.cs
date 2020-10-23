@@ -308,5 +308,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             }
         }
+
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+
+            if (((Control.ModifierKeys & Keys.Alt) != Keys.Alt) && ((Control.ModifierKeys & Keys.Shift) != Keys.Shift))
+            {
+                ((HandledMouseEventArgs)e).Handled = true;
+            }
+            else
+            {
+                // do other staff
+            }
+        }
     }
 }

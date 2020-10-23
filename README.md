@@ -236,6 +236,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
 		Fixed to turn off modulation after key off.
+		Applied Metro Style GUI and improved UI.
 2.3.0.1 Fixed YMF262 sample file and some minor bugs.
 2.3.0.0 Added YMF262(OPL3) chip.
 		Fixed Combined Drum does not sounding properly.

@@ -31,8 +31,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new MetroFramework.Controls.MetroLabel();
             this.textBoxSR = new MetroFramework.Controls.MetroTextBox();
-            this.panelCenter = new System.Windows.Forms.Panel();
-            this.labelName = new zanac.MAmidiMEmo.Gui.AngleLabel();
+            this.panelCenter = new zanac.MAmidiMEmo.Gui.FMEditor.ScrollPanel();
+            this.labelName = new zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,7 +90,7 @@
             this.labelName.Size = new System.Drawing.Size(15, 174);
             this.labelName.TabIndex = 0;
             this.labelName.Text = null;
-            this.labelName.TextDrawMode = zanac.MAmidiMEmo.Gui.DrawMode.TopBottom;
+            this.labelName.TextDrawMode = zanac.MAmidiMEmo.Gui.FMEditor.DrawMode.TopBottom;
             this.labelName.TransparentBackground = false;
             // 
             // RegisterContainerBase
@@ -116,7 +116,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private MetroFramework.Controls.MetroLabel label1;
         private MetroFramework.Controls.MetroTextBox textBoxSR;
-        private System.Windows.Forms.Panel panelCenter;
-        private AngleLabel labelName;
+        private zanac.MAmidiMEmo.Gui.FMEditor.ScrollPanel panelCenter;
+        private zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel labelName;
     }
 }

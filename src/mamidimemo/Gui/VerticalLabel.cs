@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace zanac.MAmidiMEmo.Gui
+namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     /// <summary>
     /// A custom windows control to display text vertically
     /// </summary>
-    public class AngleLabel : System.Windows.Forms.Control
+    public class VerticalLabel : System.Windows.Forms.Control
     {
         private string labelText;
         private DrawMode _dm = DrawMode.BottomUp;
@@ -21,7 +21,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <summary>
         /// VerticalLabel constructor
         /// </summary>
-        public AngleLabel()
+        public VerticalLabel()
         {
             base.CreateControl();
             InitializeComponent();
@@ -119,6 +119,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             Invalidate();
         }
+
         /// <summary>
         /// Graphics rendering mode. Supprot for antialiasing.
         /// </summary>
@@ -128,6 +129,7 @@ namespace zanac.MAmidiMEmo.Gui
             get { return _renderMode; }
             set { _renderMode = value; }
         }
+        
         /// <summary>
         /// The text to be displayed in the control
         /// </summary>
@@ -144,6 +146,7 @@ namespace zanac.MAmidiMEmo.Gui
                 Invalidate();
             }
         }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -153,6 +156,8 @@ namespace zanac.MAmidiMEmo.Gui
             get { return _dm; }
             set { _dm = value; }
         }
+
+
         [Category("Properties"), Description("Whether the text will be drawn with transparent background or not.")]
         public bool TransparentBackground
         {
@@ -160,6 +165,7 @@ namespace zanac.MAmidiMEmo.Gui
             set { _transparentBG = value; }
         }
     }
+
     /// <summary>
     /// Text Drawing Mode
     /// </summary>
