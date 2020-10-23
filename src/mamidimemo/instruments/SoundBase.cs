@@ -481,11 +481,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 ModultionDeltaNoteNumber *= ((double)ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] +
                     ((double)ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] / 127d));
 
+                OnPitchUpdated();
+
+                if(modulationStep == 0 && IsSoundOff)
+                    return -1;
+
                 modulationStep += 1.0;
                 if (modHz > 2 * Math.PI)
                     modulationStep = 0;
-
-                OnPitchUpdated();
 
                 return 1;
             }

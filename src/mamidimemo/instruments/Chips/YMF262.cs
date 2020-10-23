@@ -792,7 +792,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
 
                 //keyon
-                lastFreqData = (byte)(0x20 | octave | ((freq >> 8) & 3));
+                byte kon = IsKeyOff ? (byte)0 : (byte)0x20;
+                lastFreqData = (byte)(kon | octave | ((freq >> 8) & 3));
 
                 YMF262WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, lastALG, lastConsel, (byte)(0xff & freq));
                 YMF262WriteData(parentModule.UnitNumber, 0xb0, 0, Slot, lastALG, lastConsel, lastFreqData);

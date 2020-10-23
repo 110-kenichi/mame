@@ -113,8 +113,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             foreach (var t in AllSounds)
             {
-                if (t.IsSoundOff)
-                    continue;
+                //if (t.IsSoundOff)
+                //    continue;
 
                 if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                     continue;
@@ -151,8 +151,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 7:    //Volume
                     foreach (var t in AllSounds)
                     {
-                        if (t.IsSoundOff)
-                            continue;
+                        //if (t.IsSoundOff)
+                        //    continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -163,8 +163,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 10:    //Panpot
                     foreach (var t in AllSounds)
                     {
-                        if (t.IsSoundOff)
-                            continue;
+                        //if (t.IsSoundOff)
+                        //    continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
@@ -175,8 +175,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 11:    //Expression
                     foreach (var t in AllSounds)
                     {
-                        if (t.IsSoundOff)
-                            continue;
+                        //if (t.IsSoundOff)
+                        //    continue;
                         if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                             continue;
 
