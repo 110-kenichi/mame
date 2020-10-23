@@ -7,6 +7,7 @@ using System.Collections;
 using System.Globalization;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Common;
+using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -47,6 +48,15 @@ namespace zanac.MAmidiMEmo.ComponentModel
                         "[{0}]", i.ToString("d" + list.Count.ToString
                         (NumberFormatInfo.InvariantInfo).Length, null) +
                         ":" + Midi.MidiManager.GetNoteName((SevenBitNumber)i));
+                    switch (o)
+                    {
+                        case TimbreBase tim:
+                            name += " " + tim.Memo;
+                            break;
+                        case DrumTimbre dtim:
+                            name += " " + dtim.TimbreName;
+                            break;
+                    }
                     CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);
                     array[i] = cpd;
                     i++;

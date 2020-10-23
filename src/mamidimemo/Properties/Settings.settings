@@ -9,13 +9,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SoundType" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="SampleRate" Type="System.String" Scope="User">
       <Value Profile="(Default)">48000</Value>
     </Setting>
     <Setting Name="AudioLatency" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="PaApi" Type="System.String" Scope="User">
       <Value Profile="(Default)">"Windows WASAPI"</Value>
@@ -75,6 +75,9 @@
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
     <Setting Name="YMF262EdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
+    <Setting Name="PWinSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
   </Settings>

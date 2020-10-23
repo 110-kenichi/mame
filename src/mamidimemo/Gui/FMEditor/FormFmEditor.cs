@@ -1,6 +1,7 @@
 ﻿// copyright-holders:K.Ito
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
-    public partial class FormFmEditor : Form
+    public partial class FormFmEditor : FormBase
     {
         private Dictionary<String, RegisterContainerBase> controls = new Dictionary<string, RegisterContainerBase>();
 
@@ -276,7 +277,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                 ni = (SevenBitNumber)toolStripComboBoxNote.SelectedIndex;
                 vi = (SevenBitNumber)toolStripComboBoxVelo.SelectedIndex;
-                PianoControl1_NoteOn(null,new TaggedNoteOnEvent(new NoteOnEvent(ni,vi)));
+                PianoControl1_NoteOn(null, new TaggedNoteOnEvent(new NoteOnEvent(ni, vi)) { MonitorEvent = true });
                 playing = new object();
                 object _playing = playing;
 

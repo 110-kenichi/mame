@@ -2007,7 +2007,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             else
                             {
-                                if (FollowerMode != FollowerUnit.None)
+                                if (FollowerMode != FollowerUnit.None && !tnon.MonitorEvent)
                                     break;
                                 var ni = tnon.Tag as NoteOnTimbreInfo;
                                 if (ni != null)

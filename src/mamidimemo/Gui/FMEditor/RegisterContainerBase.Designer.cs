@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBoxSR = new System.Windows.Forms.TextBox();
+            this.label1 = new MetroFramework.Controls.MetroLabel();
+            this.textBoxSR = new MetroFramework.Controls.MetroTextBox();
             this.panelCenter = new System.Windows.Forms.Panel();
             this.labelName = new zanac.MAmidiMEmo.Gui.AngleLabel();
             this.tableLayoutPanel1.SuspendLayout();
@@ -114,8 +114,8 @@
 
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxSR;
+        private MetroFramework.Controls.MetroLabel label1;
+        private MetroFramework.Controls.MetroTextBox textBoxSR;
         private System.Windows.Forms.Panel panelCenter;
         private AngleLabel labelName;
     }

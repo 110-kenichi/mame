@@ -21,12 +21,13 @@ using Melanchall.DryWetMidi.Common;
 using System.Reflection;
 using Melanchall.DryWetMidi.Core;
 using System.Runtime.InteropServices;
+using System.Drawing.Text;
+using MetroFramework.Forms;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormMain : Form
+    public partial class FormMain : FormBase
     {
-
         private static ListView outputListView;
 
         private static ToolStripStatusLabel statusLabel;
@@ -113,6 +114,7 @@ namespace zanac.MAmidiMEmo.Gui
         public FormMain()
         {
             InitializeComponent();
+            //this.Font = new Font(PrivateFonts.Families[0], 13f);
 
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 
@@ -177,7 +179,7 @@ namespace zanac.MAmidiMEmo.Gui
             }
             outputListView = listView1;
 
-            statusLabel = toolStripStatusLabel1;
+            //statusLabel = toolStripStatusLabel1;
 
             //MIDI Event
             InstrumentManager_InstrumentChanged(null, null);
@@ -664,41 +666,31 @@ namespace zanac.MAmidiMEmo.Gui
             MidiManager.SendMidiEvent(me);
         }
 
-        private static FormSettings f_formSetting;
-
-        private static FormSettings FormSetting
-        {
-            get
-            {
-                if (f_formSetting == null)
-                    f_formSetting = new FormSettings();
-
-                return f_formSetting;
-            }
-        }
-
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dr = FormSetting.ShowDialog(this);
-            if (dr == DialogResult.OK)
+            using (var f_formSetting = new FormSettings())
             {
-                Settings.Default.Save();
-                if (Program.IsVSTiMode())
+                DialogResult dr = f_formSetting.ShowDialog(this);
+                if (dr == DialogResult.OK)
                 {
-                    MessageBox.Show(this, "Please restart host DAW application.", "Information", MessageBoxButtons.OK);
-                }
-                else
-                {
-                    var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
-                    if (rdr == DialogResult.Yes)
+                    Settings.Default.Save();
+                    if (Program.IsVSTiMode())
                     {
-                        Close();
-                        Program.RestartRequiredApplication = Application.ExecutablePath;
+                        MessageBox.Show(this, "Please restart host DAW application.", "Information", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
+                        if (rdr == DialogResult.Yes)
+                        {
+                            Close();
+                            Program.RestartRequiredApplication = Application.ExecutablePath;
+                        }
                     }
                 }
+                else
+                    Settings.Default.Reload();
             }
-            else
-                Settings.Default.Reload();
         }
 
         private void tabPage1_Paint(object sender, PaintEventArgs e)

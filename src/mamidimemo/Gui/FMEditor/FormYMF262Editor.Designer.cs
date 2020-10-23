@@ -88,12 +88,12 @@
             this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
             this.toolStripLabel2.Text = "Key Ch";
             // 
-            // FormYM3812Editor
+            // FormYMF262Editor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
-            this.Name = "FormYM3812Editor";
+            this.Name = "FormYMF262Editor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "YM3812 Editor";
             this.toolStrip2.ResumeLayout(false);

@@ -49,8 +49,8 @@
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxGate = new System.Windows.Forms.ToolStripComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOK = new System.Windows.Forms.Button();
+            this.buttonCancel = new MetroFramework.Controls.MetroButton();
+            this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelPiano.SuspendLayout();
@@ -74,7 +74,7 @@
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pianoControl1.Location = new System.Drawing.Point(0, 25);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(797, 86);
+            this.pianoControl1.Size = new System.Drawing.Size(797, 82);
             this.pianoControl1.TabIndex = 0;
             // 
             // toolStrip2
@@ -193,41 +193,42 @@
             this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonOK, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 111);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 107);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(797, 32);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(797, 36);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(719, 3);
+            this.buttonCancel.Location = new System.Drawing.Point(717, 5);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(638, 3);
+            this.buttonOK.Location = new System.Drawing.Point(636, 5);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 0;
             this.buttonOK.Text = "OK";
-            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.UseSelectable = true;
             // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Location = new System.Drawing.Point(3, 60);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.panel1.Size = new System.Drawing.Size(797, 515);
+            this.panel1.Size = new System.Drawing.Size(797, 458);
             this.panel1.TabIndex = 5;
             // 
             // FormFmEditor
@@ -239,15 +240,12 @@
             this.ClientSize = new System.Drawing.Size(803, 664);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelPiano);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormFmEditor";
-            this.Padding = new System.Windows.Forms.Padding(3);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "FM Synthesis Editor";
             this.panelPiano.ResumeLayout(false);
             this.panelPiano.PerformLayout();
@@ -267,8 +265,8 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonOK;
+        private MetroFramework.Controls.MetroButton buttonCancel;
+        private MetroFramework.Controls.MetroButton buttonOK;
         private System.Windows.Forms.ToolStripButton toolStripButtonPlay;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxNote;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

@@ -32,8 +32,8 @@ namespace zanac.MAmidiMEmo.Gui
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTextEditor));
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOk = new System.Windows.Forms.Button();
+            this.buttonCancel = new MetroFramework.Controls.MetroButton();
+            this.buttonOk = new MetroFramework.Controls.MetroButton();
             this.textBoxWsgDataText = new FastColoredTextBoxNS.FastColoredTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxWsgDataText)).BeginInit();
             this.SuspendLayout();
@@ -47,7 +47,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOk
             // 
@@ -58,7 +58,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 2;
             this.buttonOk.Text = "&OK";
-            this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.UseSelectable = true;
             // 
             // textBoxWsgDataText
             // 
@@ -84,12 +84,11 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.textBoxWsgDataText.IsReplaceMode = false;
             this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
             this.textBoxWsgDataText.LeftBracket = '(';
             this.textBoxWsgDataText.LeftBracket2 = '{';
-            this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 12);
+            this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 63);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
             this.textBoxWsgDataText.RightBracket = ')';
@@ -97,7 +96,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
             this.textBoxWsgDataText.ShowFoldingLines = true;
-            this.textBoxWsgDataText.Size = new System.Drawing.Size(707, 470);
+            this.textBoxWsgDataText.Size = new System.Drawing.Size(707, 419);
             this.textBoxWsgDataText.TabIndex = 0;
             this.textBoxWsgDataText.Zoom = 100;
             // 
@@ -126,8 +125,8 @@ namespace zanac.MAmidiMEmo.Gui
 
         #endregion
 
-        private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonOk;
+        private MetroFramework.Controls.MetroButton buttonCancel;
+        private MetroFramework.Controls.MetroButton buttonOk;
         private FastColoredTextBoxNS.FastColoredTextBox textBoxWsgDataText;
     }
 }

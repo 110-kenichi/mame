@@ -49,7 +49,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int SoundType {
             get {
                 return ((int)(this["SoundType"]));
@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int AudioLatency {
             get {
                 return ((int)(this["AudioLatency"]));
@@ -320,6 +320,18 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["YMF262EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size PWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["PWinSize"]));
+            }
+            set {
+                this["PWinSize"] = value;
             }
         }
     }

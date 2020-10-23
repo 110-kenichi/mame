@@ -20,6 +20,12 @@ namespace zanac.MAmidiMEmo.Midi
             private set;
         }
 
+        public bool MonitorEvent
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>

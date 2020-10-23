@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
+using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -44,6 +45,25 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     string name = string.Format(CultureInfo.InvariantCulture,
                         "[{0}]", i.ToString("d" + list.Count.ToString
                         (NumberFormatInfo.InvariantInfo).Length, null));
+                    switch (o)
+                    {
+                        case CombinedTimbre ctim:
+                            if(ctim.BindTimbres[0] != null)
+                                name += " " + ctim.BindTimbres[0].Value;
+                            if (ctim.BindTimbres[1] != null)
+                                name += " " + ctim.BindTimbres[1].Value;
+                            if (ctim.BindTimbres[2] != null)
+                                name += " " + ctim.BindTimbres[2].Value;
+                            if (ctim.BindTimbres[3] != null)
+                                name += " " + ctim.BindTimbres[3].Value;
+                            break;
+                        case TimbreBase tim:
+                            name += " " + tim.Memo;
+                            break;
+                        case DrumTimbre dtim:
+                            name += " " + dtim.TimbreName;
+                            break;
+                    }
                     CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);
                     array[i] = cpd;
                     i++;
@@ -107,7 +127,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 this.index = index;
 
                 CollectionDefaultValueAttribute datt = (CollectionDefaultValueAttribute)context.PropertyDescriptor.Attributes[typeof(CollectionDefaultValueAttribute)];
-                if(datt != null)
+                if (datt != null)
                     defaultValue = datt.DefaultValue;
             }
 

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout));
-            this.button1 = new System.Windows.Forms.Button();
-            this.labelVer = new System.Windows.Forms.Label();
+            this.button1 = new MetroFramework.Controls.MetroButton();
+            this.labelVer = new MetroFramework.Controls.MetroLabel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -41,7 +41,7 @@
             resources.ApplyResources(this.button1, "button1");
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseSelectable = true;
             // 
             // labelVer
             // 
@@ -69,6 +69,7 @@
             // 
             this.AcceptButton = this.button1;
             resources.ApplyResources(this, "$this");
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button1;
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelVer);
@@ -78,10 +79,9 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormAbout";
+            this.Resizable = false;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -90,8 +90,8 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label labelVer;
+        private MetroFramework.Controls.MetroButton button1;
+        private MetroFramework.Controls.MetroLabel labelVer;
         private System.Windows.Forms.Label label1;
     }
 }

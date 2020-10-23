@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.graphControl = new zanac.MAmidiMEmo.Gui.FormWsgEditor.GraphControl();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOk = new System.Windows.Forms.Button();
-            this.textBoxWsgDataText = new System.Windows.Forms.TextBox();
+            this.buttonCancel = new MetroFramework.Controls.MetroButton();
+            this.buttonOk = new MetroFramework.Controls.MetroButton();
+            this.textBoxWsgDataText = new MetroFramework.Controls.MetroTextBox();
             this.SuspendLayout();
             // 
             // graphControl
@@ -39,9 +39,10 @@
             this.graphControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.graphControl.Location = new System.Drawing.Point(9, 9);
+            this.graphControl.Location = new System.Drawing.Point(8, 63);
             this.graphControl.Name = "graphControl";
-            this.graphControl.Size = new System.Drawing.Size(766, 489);
+            this.graphControl.ResultOfWsgData = null;
+            this.graphControl.Size = new System.Drawing.Size(767, 435);
             this.graphControl.TabIndex = 0;
             this.graphControl.WsgBitWide = 4;
             // 
@@ -54,7 +55,7 @@
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOk
             // 
@@ -65,16 +66,39 @@
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "OK";
-            this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.UseSelectable = true;
             // 
             // textBoxWsgDataText
             // 
             this.textBoxWsgDataText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            // 
+            // 
+            // 
+            this.textBoxWsgDataText.CustomButton.Image = null;
+            this.textBoxWsgDataText.CustomButton.Location = new System.Drawing.Point(748, 2);
+            this.textBoxWsgDataText.CustomButton.Name = "";
+            this.textBoxWsgDataText.CustomButton.Size = new System.Drawing.Size(15, 15);
+            this.textBoxWsgDataText.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.textBoxWsgDataText.CustomButton.TabIndex = 1;
+            this.textBoxWsgDataText.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.textBoxWsgDataText.CustomButton.UseSelectable = true;
+            this.textBoxWsgDataText.CustomButton.Visible = false;
+            this.textBoxWsgDataText.Lines = new string[0];
             this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 504);
+            this.textBoxWsgDataText.MaxLength = 32767;
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
-            this.textBoxWsgDataText.Size = new System.Drawing.Size(766, 19);
+            this.textBoxWsgDataText.PasswordChar = '\0';
+            this.textBoxWsgDataText.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.textBoxWsgDataText.SelectedText = "";
+            this.textBoxWsgDataText.SelectionLength = 0;
+            this.textBoxWsgDataText.SelectionStart = 0;
+            this.textBoxWsgDataText.ShortcutsEnabled = true;
+            this.textBoxWsgDataText.Size = new System.Drawing.Size(766, 20);
             this.textBoxWsgDataText.TabIndex = 2;
+            this.textBoxWsgDataText.UseSelectable = true;
+            this.textBoxWsgDataText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.textBoxWsgDataText.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxWsgDataText.TextChanged += new System.EventHandler(this.textBoxWsgDataText_TextChanged);
             // 
             // FormWsgEditor
@@ -97,15 +121,14 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "WSG Editor";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private GraphControl graphControl;
-        private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonOk;
-        private System.Windows.Forms.TextBox textBoxWsgDataText;
+        private MetroFramework.Controls.MetroButton buttonCancel;
+        private MetroFramework.Controls.MetroButton buttonOk;
+        private MetroFramework.Controls.MetroTextBox textBoxWsgDataText;
     }
 }

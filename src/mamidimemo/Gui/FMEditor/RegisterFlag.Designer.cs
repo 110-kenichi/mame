@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.labelName = new System.Windows.Forms.Label();
-            this.checkBox = new System.Windows.Forms.CheckBox();
+            this.labelName = new MetroFramework.Controls.MetroLabel();
+            this.checkBox = new MetroFramework.Controls.MetroCheckBox();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,7 +71,6 @@
             this.checkBox.Name = "checkBox";
             this.checkBox.Size = new System.Drawing.Size(30, 109);
             this.checkBox.TabIndex = 11;
-            this.checkBox.UseVisualStyleBackColor = true;
             // 
             // RegisterFlag
             // 
@@ -89,7 +88,7 @@
 
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
-        private System.Windows.Forms.Label labelName;
-        private System.Windows.Forms.CheckBox checkBox;
+        private MetroFramework.Controls.MetroLabel labelName;
+        private MetroFramework.Controls.MetroCheckBox checkBox;
     }
 }

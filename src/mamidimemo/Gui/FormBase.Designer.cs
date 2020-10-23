@@ -1,6 +1,6 @@
 ﻿namespace zanac.MAmidiMEmo.Gui
 {
-    partial class FormVstEditorFrame
+    partial class FormBase
     {
         /// <summary>
         /// Required designer variable.
@@ -30,18 +30,16 @@
         {
             this.SuspendLayout();
             // 
-            // FormVstEditorFrame
+            // FormBase
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 246);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "FormVstEditorFrame";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "EditorFrame";
+            this.ClientSize = new System.Drawing.Size(585, 503);
+            this.Name = "FormBase";
+            this.Padding = new System.Windows.Forms.Padding(5, 60, 5, 10);
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.DropShadow;
+            this.Text = "FormBase";
+            this.Theme = MetroFramework.MetroThemeStyle.Default;
             this.ResumeLayout(false);
 
         }

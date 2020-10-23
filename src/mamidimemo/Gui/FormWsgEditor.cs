@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MetroFramework.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,7 +11,7 @@ using System.Windows.Forms;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormWsgEditor : Form
+    public partial class FormWsgEditor : FormBase
     {
 
         public event EventHandler ValueChanged;
@@ -87,6 +88,9 @@ namespace zanac.MAmidiMEmo.Gui
                 }
                 set
                 {
+                    if (value == null)
+                        return;
+
                     f_ResultOfWsgData = new byte[value.Length];
                     Array.Copy(value, f_ResultOfWsgData, value.Length);
                     wsgLen = f_ResultOfWsgData.Length;

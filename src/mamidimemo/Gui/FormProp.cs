@@ -1,5 +1,6 @@
 ﻿using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormProp : Form
+    public partial class FormProp : FormBase
     {
         private List<InstrumentBase> instruments;
 

@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormDrumTableEditor : Form
+    public partial class FormDrumTableEditor : FormBase
     {
         public DrumTimbre[] f_DrumData;
 
