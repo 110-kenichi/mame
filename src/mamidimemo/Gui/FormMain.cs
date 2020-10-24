@@ -30,7 +30,7 @@ namespace zanac.MAmidiMEmo.Gui
     {
         private static ListView outputListView;
 
-        private static ToolStripStatusLabel statusLabel;
+        private static ToolStripStatusLabel statusLabel = new ToolStripStatusLabel();
 
         private static StreamWriter logStream;
 

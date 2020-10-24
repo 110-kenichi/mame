@@ -1309,6 +1309,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set duty envelop by text. Input duty value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 4095 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 4095)]
             public string DutyEnvelopes
             {
                 get
@@ -1401,6 +1403,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 15 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 15)]
             public string ResonanceEnvelopes
             {
                 get
@@ -1493,6 +1497,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 2047 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 2047)]
             public string CutOffEnvelopes
             {
                 get
@@ -1584,6 +1590,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "1 ～ 8(Tri:1 Saw:2 Pulse:4 Noise:8) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(1, 8)]
             public string WaveFormEnvelopes
             {
                 get

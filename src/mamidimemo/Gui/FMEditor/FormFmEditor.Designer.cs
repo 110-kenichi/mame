@@ -19,6 +19,7 @@
             }
             if (disposing)
             {
+                Properties.Settings.Default.SettingsLoaded -= Default_SettingsLoaded;
                 MAmidiMEmo.Instruments.InstrumentManager.InstrumentChanged -= InstrumentManager_InstrumentChanged;
                 MAmidiMEmo.Instruments.InstrumentManager.InstrumentRemoved -= InstrumentManager_InstrumentRemoved;
             }

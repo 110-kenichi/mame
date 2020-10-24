@@ -278,6 +278,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Memo")]
         [DefaultValue(null)]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string Memo
         {
             get;

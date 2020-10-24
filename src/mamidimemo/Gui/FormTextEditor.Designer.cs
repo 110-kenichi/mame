@@ -42,10 +42,10 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(560, 488);
+            this.buttonCancel.Location = new System.Drawing.Point(641, 488);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseSelectable = true;
             // 
@@ -53,10 +53,10 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(641, 488);
+            this.buttonOk.Location = new System.Drawing.Point(560, 488);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 2;
+            this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "&OK";
             this.buttonOk.UseSelectable = true;
             // 
@@ -84,6 +84,7 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.textBoxWsgDataText.IsReplaceMode = false;
             this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
             this.textBoxWsgDataText.LeftBracket = '(';

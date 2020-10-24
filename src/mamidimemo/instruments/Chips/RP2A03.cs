@@ -1424,7 +1424,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_WsgData = new byte[64];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(6)]
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1543,7 +1543,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte[] f_LfoData = new sbyte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(3)]
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1669,6 +1669,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set duty/noise envelop by text. Input duty/noise value and split it with space like the Famitracker.\r\n" +
                        "0-3(0-7:VRC6) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 7)]
             public string DutyEnvelopes
             {
                 get

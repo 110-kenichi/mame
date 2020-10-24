@@ -929,7 +929,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_wsgdata = new byte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(5)]
             [DataMember]
             [Category("Sound")]
@@ -1087,7 +1087,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_lfodata = new byte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(5)]
             [DataMember]
             [Category("Sound")]

@@ -2212,6 +2212,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set ToneType envelop by text. Input ToneType value and split it with space like the Famitracker.\r\n" +
                        "0-15 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 15)]
             public string ToneEnvelopes
             {
                 get

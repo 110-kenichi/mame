@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
 
 namespace zanac.MAmidiMEmo.Instruments.Envelopes
 {
@@ -26,6 +27,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DataMember]
         [Description("Set volume envelop by text. Input volume value and split it with space like the Famitracker.\r\n" +
                     "0(0%)-127(100%) \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(0,127)]
         public string VolumeEnvelopes
         {
             get
@@ -117,6 +120,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DataMember]
         [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the Famitracker.\r\n" +
                    "-8193 ～ 0 ～ 8192 \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(-8193, 8192)]
         public string PitchEnvelopes
         {
             get
@@ -226,6 +231,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DataMember]
         [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the Famitracker.\r\n" +
                    "-128 ～ 0 ～ 127 \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(-128, 127)]
         public string ArpEnvelopes
         {
             get

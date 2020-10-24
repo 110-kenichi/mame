@@ -17,13 +17,13 @@ namespace zanac.MAmidiMEmo.Gui
     /// <summary>
     /// 
     /// </summary>
-    public class WsgITypeEditor : ArrayEditor
+    public class WsgUITypeEditor : ArrayEditor
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
-        public WsgITypeEditor(Type type) : base(type)
+        public WsgUITypeEditor(Type type) : base(type)
         {
         }
 

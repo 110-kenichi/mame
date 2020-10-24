@@ -796,6 +796,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set dutysound type envelop by text. Input sound type value and split it with space like the Famitracker.\r\n" +
                        "1:PSG 2:NOISE 4:ENVELOPE \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 7)]
             public string SoundTypeEnvelopes
             {
                 get

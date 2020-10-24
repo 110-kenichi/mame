@@ -528,7 +528,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte[] f_wavedata = new sbyte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(8)]
             [DataMember]
             [Category("Sound")]
