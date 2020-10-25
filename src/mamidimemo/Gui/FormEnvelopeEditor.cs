@@ -38,11 +38,11 @@ namespace zanac.MAmidiMEmo.Gui
             InitializeComponent();
 
             //Loop
-            chart1.Series["SeriesLoop"].Points.Add(new DataPoint(0, max));
+            chart1.Series["SeriesLoop"].Points.Add(new DataPoint(0, new double[] { min, max }));
             chart1.Series["SeriesLoop"]["PixelPointWidth"] = "10";
 
             //Release
-            chart1.Series["SeriesRelease"].Points.Add(new DataPoint(0, max));
+            chart1.Series["SeriesRelease"].Points.Add(new DataPoint(0, new double[] { min, max }));
             chart1.Series["SeriesRelease"]["PixelPointWidth"] = "10";
 
             chart1.ChartAreas[0].AxisY.Minimum = min;
@@ -163,7 +163,7 @@ namespace zanac.MAmidiMEmo.Gui
                 var rpt = sr.Points[0];
 
                 if (0 <= xv && sv.Points.Count >= 0 && xv <= sv.Points[sv.Points.Count - 1].XValue &&
-                    metroToggleRepeat.Checked ? lpt.XValue < xv : true)
+                    (metroToggleRelease.Checked ? lpt.XValue < xv : true))
                     rpt.XValue = xv;
 
                 chart1.Refresh();
@@ -493,6 +493,8 @@ namespace zanac.MAmidiMEmo.Gui
                 validateReleasePoint(sv, sl, sr);
                 validateRepeatPoint(sv, sl, sr);
             }
+            chart1.Refresh();
+            updateText();
         }
 
     }

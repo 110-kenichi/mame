@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -33,9 +34,14 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         public FormProp(InstrumentBase[] insts) : this(insts, null)
         {
-
+            ClientSize = Settings.Default.PWinSize;
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            Settings.Default.PWinSize = ClientSize;
+            base.OnClosed(e);
+        }
 
         /// <summary>
         /// 

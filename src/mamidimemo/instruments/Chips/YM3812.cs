@@ -677,6 +677,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             #region FM Synth
 
+            [Category("Sound")]
             [Editor(typeof(YM3812UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
