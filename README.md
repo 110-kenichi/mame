@@ -1,4 +1,4 @@
-MAmidiMEmo V2.4.0.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.4.0.1 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -234,6 +234,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.4.0.1 Improved UI.
 2.4.0.0 Added Envelope Editor.
 2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
 		Fixed to turn off modulation after key off.
