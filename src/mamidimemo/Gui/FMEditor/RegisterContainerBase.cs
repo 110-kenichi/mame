@@ -72,9 +72,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             controls.Add(control.ItemName, control);
 
-            panelCenter.Controls.Add(control);
-            if(control.Dock == DockStyle.Left)
-                panelCenter.Controls.SetChildIndex(control, 0);
+            this.Controls.Add(control);
+            if (control.Dock == DockStyle.Left)
+                this.Controls.SetChildIndex(control, 0);
+            else
+                this.Controls.SetChildIndex(control, this.Controls.Count - 3);
 
             switch (control)
             {
@@ -267,7 +269,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private static Control getRegisterControl(RegisterContainerBase cnt, string propertyName)
         {
-            foreach (Control c in cnt.panelCenter.Controls)
+            foreach (Control c in cnt.Controls)
             {
                 switch (c)
                 {

@@ -250,8 +250,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             controls.Add(control.RegisterName, control);
 
             control.Dock = DockStyle.Top;
-            panel1.Controls.Add(control);
-            panel1.Controls.SetChildIndex(control, 0);
+            flowLayoutPanel1.Controls.Add(control);
+            //flowLayoutPanel1.Controls.SetChildIndex(control, 0);
 
             control.ValueChanged += Control_ValueChanged;
         }

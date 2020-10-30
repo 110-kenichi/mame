@@ -54,9 +54,11 @@
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPiano
@@ -65,9 +67,9 @@
             this.panelPiano.Controls.Add(this.toolStrip2);
             this.panelPiano.Controls.Add(this.tableLayoutPanel1);
             this.panelPiano.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelPiano.Location = new System.Drawing.Point(3, 518);
+            this.panelPiano.Location = new System.Drawing.Point(5, 511);
             this.panelPiano.Name = "panelPiano";
-            this.panelPiano.Size = new System.Drawing.Size(797, 143);
+            this.panelPiano.Size = new System.Drawing.Size(793, 143);
             this.panelPiano.TabIndex = 4;
             // 
             // pianoControl1
@@ -75,7 +77,7 @@
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pianoControl1.Location = new System.Drawing.Point(0, 25);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(797, 82);
+            this.pianoControl1.Size = new System.Drawing.Size(793, 82);
             this.pianoControl1.TabIndex = 0;
             // 
             // toolStrip2
@@ -94,7 +96,7 @@
             this.toolStripComboBoxGate});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(797, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(793, 25);
             this.toolStrip2.TabIndex = 2;
             // 
             // toolStripComboBoxCh
@@ -199,13 +201,13 @@
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(797, 36);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(793, 36);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(717, 5);
+            this.buttonCancel.Location = new System.Drawing.Point(713, 5);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
@@ -215,7 +217,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(636, 5);
+            this.buttonOK.Location = new System.Drawing.Point(632, 5);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 0;
@@ -225,12 +227,24 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.flowLayoutPanel1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 60);
+            this.panel1.Location = new System.Drawing.Point(5, 60);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.panel1.Size = new System.Drawing.Size(797, 458);
+            this.panel1.Size = new System.Drawing.Size(793, 451);
             this.panel1.TabIndex = 5;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(6, 6);
+            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(50, 50);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(50, 50);
+            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // FormFmEditor
             // 
@@ -253,6 +267,8 @@
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -276,5 +292,6 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxGate;
         private System.Windows.Forms.ToolStripLabel toolStripLabel4;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxVelo;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
