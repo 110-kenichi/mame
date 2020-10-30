@@ -95,7 +95,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     //DR
                     Point p3 = new Point(
                         p2.X +
-                        (invertDr ?
+                        (!invertDr ?
                         ((rect.Width / 4) * (dr.Maximum - dr.Value) / dr.Maximum) :
                         ((rect.Width / 4) * dr.Value / dr.Maximum)),
                         p2.Y + (rect.Height - p2.Y) * sl.Value / sl.Maximum);

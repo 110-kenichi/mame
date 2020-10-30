@@ -251,7 +251,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             control.Dock = DockStyle.Top;
             flowLayoutPanel1.Controls.Add(control);
-            //flowLayoutPanel1.Controls.SetChildIndex(control, 0);
 
             control.ValueChanged += Control_ValueChanged;
         }

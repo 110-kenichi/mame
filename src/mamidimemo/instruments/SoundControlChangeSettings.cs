@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using MathParserTK;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
@@ -8,6 +9,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -25,7 +27,10 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Sound Control 1(Control Change No.70(0x46))\r\n" +
             "Link Data Entry message value with the Timbre property value\r\n" +
-            "eg) \"DutyCycle,Volume\" ... You can change DutyCycle and Volume property values dynamically via MIDI Control Change No.70 message.")]
+            "eg 1) \"DutyCycle,Volume\"\r\n" +
+            "... You can change DutyCycle and Volume property values dynamically via MIDI Control Change No.70 message.\r\n" +
+            "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
+            "... You can change Operator TL, MUL, D2R values dynamically via MIDI Control Change No.70 message.")]
         [DefaultValue(null)]
         public string SoundControl1
         {
@@ -156,6 +161,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static Dictionary<Type, Dictionary<string, InstancePropertyInfo>> propertyInfoTable = new Dictionary<Type, Dictionary<string, InstancePropertyInfo>>();
 
+        private static Regex removeRegex = new Regex(@"[ ()+\-^*/^]|sin|cos|tg|ctg|sh|ch|th|sqrt|exp|log|ln|abs|pi|e", RegexOptions.Compiled);
+
+        private static Regex nameRegex = new Regex(@"\ [0-9]*", RegexOptions.Compiled);
+
         /// <summary>
         /// 
         /// </summary>
@@ -173,12 +182,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 foreach (var propertyName in propNameParts)
                 {
-                    var pn = propertyName.Trim();
+                    var fm = " " + propertyName.Trim();
+                    var pn = nameRegex.Replace(removeRegex.Replace(fm, " "), "");
+
                     if (propertyInfoTable.ContainsKey(tt))
                     {
                         if (propertyInfoTable[tt].ContainsKey(pn))
                         {
-                            plist.Add(propertyInfoTable[tt][pn]);
+                            var tpi = propertyInfoTable[tt][pn];
+                            plist.Add(new InstancePropertyInfo(tpi.Owner, tpi.Property) { Formula = fm, Symbol = pn });
                             continue;
                         }
                     }
@@ -190,6 +202,9 @@ namespace zanac.MAmidiMEmo.Instruments
                     var pi = getPropertyInfo(timbre, pn);
                     if (pi != null)
                     {
+                        pi.Formula = fm;
+                        pi.Symbol = pn;
+
                         SlideParametersAttribute attribute =
                             Attribute.GetCustomAttribute(pi.Property, typeof(SlideParametersAttribute)) as SlideParametersAttribute;
                         if (attribute != null)

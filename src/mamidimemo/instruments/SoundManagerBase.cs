@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using MathParserTK;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
@@ -283,6 +284,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
+                            val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                            if (val < attribute.SliderMin)
+                                val = attribute.SliderMin;
+                            if (val > attribute.SliderMax)
+                                val = attribute.SliderMax;
+
                             pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
                         }
                         finally
@@ -305,6 +312,12 @@ namespace zanac.MAmidiMEmo.Instruments
                             {
                                 InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
+                                val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                                if (val < dattribute.SliderMin)
+                                    val = dattribute.SliderMin;
+                                if (val > dattribute.SliderMax)
+                                    val = dattribute.SliderMax;
+
                                 pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
                             }
                             finally
@@ -322,7 +335,9 @@ namespace zanac.MAmidiMEmo.Instruments
                                 {
                                     InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                    pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
+
+                                    pd.SetValue(ipi.Owner, val > 63);
                                 }
                                 finally
                                 {
@@ -386,6 +401,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
+                            val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                            if (val < attribute.SliderMin)
+                                val = attribute.SliderMin;
+                            if (val > attribute.SliderMax)
+                                val = attribute.SliderMax;
+
                             pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
                         }
                         finally
@@ -408,6 +429,12 @@ namespace zanac.MAmidiMEmo.Instruments
                             {
                                 InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
+                                val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                                if (val < dattribute.SliderMin)
+                                    val = dattribute.SliderMin;
+                                if (val > dattribute.SliderMax)
+                                    val = dattribute.SliderMax;
+
                                 pd.SetValue(ipi.Owner, pd.Converter.ConvertFromString(val.ToString()));
                             }
                             finally
@@ -425,7 +452,9 @@ namespace zanac.MAmidiMEmo.Instruments
                                 {
                                     InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                    pd.SetValue(ipi.Owner, midiEvent.ControlValue > 63);
+                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
+
+                                    pd.SetValue(ipi.Owner, val > 63);
                                 }
                                 finally
                                 {
