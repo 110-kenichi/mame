@@ -40,6 +40,46 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Dictionary<int, bool> receiveChs = new Dictionary<int, bool>();
 
+        private int entryDataValue;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int EntryDataValue
+        {
+            get
+            {
+                return InternalEntryDataValue / SystemInformation.MouseWheelScrollDelta;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private int InternalEntryDataValue
+        {
+            get
+            {
+                return entryDataValue;
+            }
+            set
+            {
+                if (entryDataValue != value)
+                {
+                    entryDataValue = value;
+                    if (entryDataValue / SystemInformation.MouseWheelScrollDelta < 0)
+                        entryDataValue = 0;
+                    else if (entryDataValue / SystemInformation.MouseWheelScrollDelta > 127)
+                        entryDataValue = 127 * SystemInformation.MouseWheelScrollDelta;
+
+                    EntryDataChanged?.Invoke(this, EventArgs.Empty);
+
+                    Invalidate(new Rectangle(0, 0, wKeyW, Height));
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -86,7 +126,7 @@ namespace zanac.MAmidiMEmo.Gui
             keyPathTable.Clear();
 
             cr = ClientRectangle;
-            wKeyW = cr.Width / 75;
+            wKeyW = cr.Width / 76;
             if (wKeyW < 1)
                 wKeyW = 2;
             wKeyH = cr.Height;
@@ -181,6 +221,21 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (var snd in soundKeyOn.Values)
                 onKeys[snd] = 0;
 
+            g.FillRectangle(SystemBrushes.Control, 0, 0, wKeyW, Height);
+            g.FillPolygon(SystemBrushes.ControlDarkDark, new Point[]{
+            new Point(0, 0),
+            new Point(wKeyW, Height),
+            new Point(wKeyW, 0) });
+
+            g.FillRectangle(SystemBrushes.ControlDarkDark, 0, 0, wKeyW, Height);
+            g.FillRectangle(SystemBrushes.ControlDark, 0, 5, wKeyW, Height - 10);
+            g.FillRectangle(SystemBrushes.Control, 0, 15, wKeyW, Height - 30);
+            int h = (Height - 1) / 127;
+            if (h == 0)
+                h = 1;
+            int wv = entryDataValue / SystemInformation.MouseWheelScrollDelta;
+            g.FillRectangle(SystemBrushes.WindowText, 0, Height - 1 - (wv * (Height - 1) / 127), wKeyW, h);
+
             for (int keyNum = 0; keyNum < 128; keyNum++)
             {
                 bool black;
@@ -207,6 +262,22 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<EventArgs> EntryDataChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            InternalEntryDataValue += e.Delta;
+
+            base.OnMouseWheel(e);
+        }
+
         private Dictionary<int, GraphicsPath> keyPathTable = new Dictionary<int, GraphicsPath>();
         private Dictionary<int, bool> keyPathBlackTable = new Dictionary<int, bool>();
 
@@ -227,7 +298,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 case 0: //C
                     {
-                        var x = (octave * 7 + 0) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 0) * wKeyW;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, wKeyH - 1));
@@ -239,7 +310,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 1: //C#
                     {
-                        var x = (octave * 7 + 1) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 1) * wKeyW - (bKeyW / 2);
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -251,7 +322,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 2: //D
                     {
-                        var x = (octave * 7 + 1) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 1) * wKeyW;
 
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
@@ -265,7 +336,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 3: //D#
                     {
-                        var x = (octave * 7 + 2) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 2) * wKeyW - (bKeyW / 2);
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -277,7 +348,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 4: //E
                     {
-                        var x = (octave * 7 + 2) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 2) * wKeyW;
 
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
@@ -289,7 +360,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 5: //F
                     {
-                        var x = (octave * 7 + 3) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 3) * wKeyW;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, wKeyH - 1));
@@ -301,7 +372,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 6: //F#
                     {
-                        var x = (octave * 7 + 4) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 4) * wKeyW - (bKeyW / 2);
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -313,7 +384,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 7: //G
                     {
-                        var x = (octave * 7 + 4) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 4) * wKeyW;
 
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
@@ -327,7 +398,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 8: //G#
                     {
-                        var x = (octave * 7 + 5) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 5) * wKeyW - (bKeyW / 2);
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -339,7 +410,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 9: //A
                     {
-                        var x = (octave * 7 + 5) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 5) * wKeyW;
 
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
@@ -353,7 +424,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 10: //A#
                     {
-                        var x = (octave * 7 + 6) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 6) * wKeyW - (bKeyW / 2);
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -365,7 +436,7 @@ namespace zanac.MAmidiMEmo.Gui
                     break;
                 case 11: //B
                     {
-                        var x = (octave * 7 + 6) * wKeyW;
+                        var x = wKeyW + (octave * 7 + 6) * wKeyW;
 
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
@@ -376,7 +447,7 @@ namespace zanac.MAmidiMEmo.Gui
                     }
                     break;
             }
-            if(pts.Count != 0)
+            if (pts.Count != 0)
                 r.AddPolygon(pts.ToArray());
 
             keyPathBlackTable[keyNum] = black;

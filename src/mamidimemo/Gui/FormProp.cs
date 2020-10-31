@@ -72,19 +72,21 @@ namespace zanac.MAmidiMEmo.Gui
 
             setTitle();
 
-            toolStripComboBox1.SelectedIndex = 0;
-            toolStripComboBox2.SelectedIndex = 0;
+            toolStripComboBoxCh.SelectedIndex = 0;
+            toolStripComboBoxProg.SelectedIndex = 0;
             if (timbres != null)
             {
-                toolStripComboBox2.Enabled = false;
+                toolStripComboBoxProg.Enabled = false;
                 toolStripButtonPopup.Enabled = false;
             }
+            toolStripComboBoxCC.SelectedIndex = 0;
 
             InstrumentManager.InstrumentChanged += InstrumentManager_InstrumentChanged;
             InstrumentManager.InstrumentRemoved += InstrumentManager_InstrumentRemoved;
 
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
+            pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
         }
 
         private void setTitle()
@@ -240,10 +242,10 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pianoControl1.SetMouseChannel(toolStripComboBox1.SelectedIndex);
+            pianoControl1.SetMouseChannel(toolStripComboBoxCh.SelectedIndex);
             for (int i = 0; i < 16; i++)
                 pianoControl1.SetReceiveChannel(i, false);
-            pianoControl1.SetReceiveChannel(toolStripComboBox1.SelectedIndex, true);
+            pianoControl1.SetReceiveChannel(toolStripComboBoxCh.SelectedIndex, true);
         }
 
         private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
@@ -252,10 +254,10 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
-                if (toolStripComboBox2.SelectedIndex != 0)
+                if (toolStripComboBoxProg.SelectedIndex != 0)
                 {
                     //Program change
-                    var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBox2.SelectedIndex - 1));
+                    var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProg.SelectedIndex - 1));
                     foreach (var i in instruments)
                         i.NotifyMidiEvent(pe);
                     foreach (var i in instruments)
@@ -292,6 +294,32 @@ namespace zanac.MAmidiMEmo.Gui
 
                 foreach (var i in instruments)
                     i.NotifyMidiEvent(e);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PianoControl1_EntryDataChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                var cce = new ControlChangeEvent
+                    ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
+                    (SevenBitNumber)pianoControl1.EntryDataValue);
+                cce.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex);
+
+                foreach (var i in instruments)
+                    i.NotifyMidiEvent(cce);
             }
             finally
             {

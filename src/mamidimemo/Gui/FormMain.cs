@@ -124,6 +124,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             toolStripComboBoxKeyCh.SelectedIndex = Settings.Default.MWinKeyCh;
             toolStripComboBoxProgNo.SelectedIndex = Settings.Default.MWinProgNo;
+            toolStripComboBoxCC.SelectedIndex = Settings.Default.MWinCC;
 
             //Images
             imageList1.Images.Add("YM2612", Resources.YM2612);
@@ -189,6 +190,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
+            pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
@@ -201,6 +203,8 @@ namespace zanac.MAmidiMEmo.Gui
         {
             Settings.Default.MWinProgNo = toolStripComboBoxProgNo.SelectedIndex;
             Settings.Default.MWinKeyCh = toolStripComboBoxKeyCh.SelectedIndex;
+            Settings.Default.MWinCC = toolStripComboBoxCC.SelectedIndex;
+
             Settings.Default.MWinSize = Size;
 
             Settings.Default.MWinSp1Pos = splitContainer1.SplitterDistance;
@@ -235,6 +239,29 @@ namespace zanac.MAmidiMEmo.Gui
             }
             e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
             MidiManager.SendMidiEvent(e);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PianoControl1_EntryDataChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                var cce = new ControlChangeEvent
+                    ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
+                    (SevenBitNumber)pianoControl1.EntryDataValue);
+                cce.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
+                MidiManager.SendMidiEvent(cce);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+            }
         }
 
         protected override void OnLoad(EventArgs e)

@@ -66,6 +66,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             toolStripComboBoxVelo.SelectedIndex = 127;
             toolStripComboBoxGate.SelectedIndex = 0;
             toolStripComboBoxCh.SelectedIndex = 0;
+            toolStripComboBoxCC.SelectedIndex = 0;
 
             Settings.Default.SettingsLoaded += Default_SettingsLoaded;
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
@@ -92,6 +93,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
+            pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
         }
 
         /// <summary>
@@ -234,6 +236,30 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 Instrument.NotifyMidiEvent(e);
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PianoControl1_EntryDataChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                var cce = new ControlChangeEvent
+                    ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
+                    (SevenBitNumber)pianoControl1.EntryDataValue);
+                cce.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex);
+                Instrument.NotifyMidiEvent(cce);
             }
             finally
             {

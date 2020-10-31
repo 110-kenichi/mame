@@ -53,5 +53,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ValueChanged?.Invoke(this, e);
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            e.Graphics.DrawRectangle(SystemPens.Control, 0, 0, Width - 1, Height - 1);
+
+            base.OnPaint(e);
+        }
+
     }
 }

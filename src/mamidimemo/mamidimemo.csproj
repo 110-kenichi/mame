@@ -273,12 +273,6 @@
     <Compile Include="Gui\FMEditor\RegisterAlg4OpImg.Designer.cs">
       <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\FMEditor\ScrollPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\FMEditor\ScrollPanel.Designer.cs">
-      <DependentUpon>ScrollPanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\FMEditor\YM2610BGeneralContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>

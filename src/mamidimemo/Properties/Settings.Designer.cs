@@ -334,5 +334,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["PWinSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinCC {
+            get {
+                return ((int)(this["MWinCC"]));
+            }
+            set {
+                this["MWinCC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int FmCC {
+            get {
+                return ((int)(this["FmCC"]));
+            }
+            set {
+                this["FmCC"] = value;
+            }
+        }
     }
 }
