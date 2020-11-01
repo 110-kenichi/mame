@@ -21,9 +21,10 @@ namespace zanac.MAmidiMEmo.Instruments
 {
     public static class InstrumentManager
     {
+        /// Exclusive control between GUI/MIDI Event/Other managed threads for Instrument objects;
 
         /// <summary>
-        /// Exclusive control between GUI/MIDI Event/Other managed threads for Instrument objects;
+        /// Exclusive control for Instrument objects;
         /// </summary>
         public static ReaderWriterLockSlim ExclusiveLockObject = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
@@ -402,7 +403,8 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
-                ProcessCC(e);
+                lock (ExclusiveLockObject)
+                    ProcessCC(e);
 
                 foreach(var i in instruments)
                     i.ForEach((dev) => { dev.NotifyMidiEvent(e); });

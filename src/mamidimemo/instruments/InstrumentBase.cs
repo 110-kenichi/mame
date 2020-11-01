@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -1954,12 +1955,18 @@ namespace zanac.MAmidiMEmo.Instruments
         #region MIDI
 
         /// <summary>
+        /// Exclusive control for Souding
+        /// </summary>
+        public static object ExclusiveLockObject = new object();
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
         internal void NotifyMidiEvent(MidiEvent midiEvent)
         {
-            OnMidiEvent(midiEvent);
+            lock (ExclusiveLockObject)
+                OnMidiEvent(midiEvent);
         }
 
         /// <summary>

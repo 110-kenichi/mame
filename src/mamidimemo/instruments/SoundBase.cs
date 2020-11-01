@@ -437,8 +437,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
-                //double delta = -portStartNoteDeltSign * 12d / Math.Pow(((double)ParentModule.PortamentoTimes[NoteOnEvent.Channel] / 2d) + 1d, 1.25);
-                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] * HighPrecisionTimer.TIMER_BASIC_1MS_COUNT / 100d;
+                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]];
                 PortamentoDeltaNoteNumber += delta;
 
                 if (portStartNoteDeltSign < 0 && PortamentoDeltaNoteNumber >= 0)
