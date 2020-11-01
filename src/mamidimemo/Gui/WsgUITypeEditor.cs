@@ -101,13 +101,13 @@ namespace zanac.MAmidiMEmo.Gui
                 var value = editor.ByteWsgData;
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                     ctx.PropertyDescriptor.SetValue(ctx.Instance, value);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
 
@@ -122,13 +122,13 @@ namespace zanac.MAmidiMEmo.Gui
                 var value = editor.SbyteWsgData;
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                     ctx.PropertyDescriptor.SetValue(ctx.Instance, value);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
 

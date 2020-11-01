@@ -39,11 +39,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
             IConstructionCallMessage ccm = msg as IConstructionCallMessage;
             if (ccm != null)
             {
-                //以下、コンストラクタを実行する処理
-                RealProxy rp = RemotingServices.GetRealProxy(this.f_Target);
-                rp.InitializeServerObject(ccm);
-                MarshalByRefObject tp = this.GetTransparentProxy() as MarshalByRefObject;
-                return EnterpriseServicesHelper.CreateConstructionReturnMessage(ccm, tp);
+                return this.InitializeServerObject(ccm);
+
             }
 
             IMethodCallMessage mcm = (IMethodCallMessage)msg;

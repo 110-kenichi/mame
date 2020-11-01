@@ -63,7 +63,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             YMF262 inst = null;
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
                 foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YMF262 + 1))
                 {
@@ -78,7 +78,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
 
             if (inst != null)

@@ -282,7 +282,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                         try
                         {
-                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                             val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
                             if (val < attribute.SliderMin)
@@ -294,7 +294,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                         finally
                         {
-                            InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                            //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                         }
                         process = true;
                     }
@@ -310,7 +310,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
                             {
-                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                 val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
                                 if (val < dattribute.SliderMin)
@@ -322,7 +322,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             finally
                             {
-                                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                             }
                             process = true;
                         }
@@ -333,7 +333,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                     var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
 
@@ -341,7 +341,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -353,13 +353,13 @@ namespace zanac.MAmidiMEmo.Instruments
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                     pd.SetValue(ipi.Owner, vals.GetValue(val));
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -399,7 +399,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                         try
                         {
-                            InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                            //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                             val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
                             if (val < attribute.SliderMin)
@@ -411,7 +411,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                         finally
                         {
-                            InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                            //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                         }
                         process = true;
                     }
@@ -427,7 +427,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
                             {
-                                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                 val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
                                 if (val < dattribute.SliderMin)
@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             finally
                             {
-                                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                             }
                             process = true;
                         }
@@ -450,7 +450,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                     var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
 
@@ -458,7 +458,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }
@@ -470,13 +470,13 @@ namespace zanac.MAmidiMEmo.Instruments
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
                                 {
-                                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                                     pd.SetValue(ipi.Owner, vals.GetValue(val));
                                 }
                                 finally
                                 {
-                                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                                 }
                                 process = true;
                             }

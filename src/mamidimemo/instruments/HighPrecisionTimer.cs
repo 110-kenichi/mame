@@ -69,7 +69,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="state"></param>    
         public static void SetPeriodicCallback(Func<object, double> action, double periodMs, object state, bool skipFirstAction)
         {
-            if(!skipFirstAction)
+            if (!skipFirstAction)
                 action(state);
             lock (periodicTimerSounds)
                 periodicTimerSounds.Add(new PeriodicAction(action, periodMs, state));
@@ -95,13 +95,13 @@ namespace zanac.MAmidiMEmo.Instruments
                 double ret = -1;
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
                     //process action
                     ret = snd.Action(snd.State);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
                 if (ret < 0)
                 {

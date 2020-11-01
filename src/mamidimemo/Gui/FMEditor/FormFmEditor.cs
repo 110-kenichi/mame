@@ -218,14 +218,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 e.Tag = new NoteOnTimbreInfo(Timbre, TimbreNo);
                 Instrument.NotifyMidiEvent(e);
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 
@@ -233,13 +233,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 Instrument.NotifyMidiEvent(e);
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 
@@ -253,7 +253,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 var cce = new ControlChangeEvent
                     ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
@@ -263,7 +263,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 

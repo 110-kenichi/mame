@@ -63,7 +63,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             YM2413 inst = null;
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterReadLock();
                 foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YM2413 + 1))
                 {
                     Parallel.ForEach(i.BaseTimbres, t =>
@@ -77,7 +77,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
 
             if (inst != null)

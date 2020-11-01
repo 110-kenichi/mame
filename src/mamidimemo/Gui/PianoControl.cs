@@ -145,6 +145,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             this.BeginInvoke(new MethodInvoker(() =>
             {
+                if (IsDisposed)
+                    return;
+
                 bool fill;
                 SoundBase snd = (SoundBase)sender;
 
@@ -169,6 +172,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             this.BeginInvoke(new MethodInvoker(() =>
             {
+                if (IsDisposed)
+                    return;
+
                 bool fill;
                 SoundBase snd = (SoundBase)sender;
                 if (soundKeyOn.ContainsKey(snd))
@@ -190,6 +196,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             this.BeginInvoke(new MethodInvoker(() =>
             {
+                if (IsDisposed)
+                    return;
+
                 bool fill;
 
                 if (!receiveChs[snd.NoteOnEvent.Channel])

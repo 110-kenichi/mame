@@ -67,13 +67,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 var val = ctx.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                     ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
         }

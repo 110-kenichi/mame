@@ -400,7 +400,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 ProcessCC(e);
 
@@ -409,7 +409,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 
@@ -565,7 +565,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
             uint did = inst == null ? uint.MaxValue : inst.DeviceID;
-            uint un = inst == null ? uint.MaxValue : inst.UnitNumber; 
+            uint un = inst == null ? uint.MaxValue : inst.UnitNumber;
             try
             {
                 Program.SoundUpdating();

@@ -86,13 +86,13 @@ namespace zanac.MAmidiMEmo.Gui
                 var value = editor.EnvelopeValuesText;
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                     ctx.PropertyDescriptor.SetValue(ctx.Instance, value);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
 

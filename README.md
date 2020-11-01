@@ -235,8 +235,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 2.4.0.1 Improved UI.
-		Supported formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
-		Added Data Entry to Piano GUI. Use Mouse Wheel to change the value.
+		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
+		Added Data Entry slider to Piano GUI. Use Mouse Wheel to change the value.
+		Fixed freezing on MT32
 2.4.0.0 Added Envelope Editor.
 2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
 		Fixed to turn off modulation after key off.

@@ -248,20 +248,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void PianoControl1_EntryDataChanged(object sender, EventArgs e)
         {
-            try
-            {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
-
-                var cce = new ControlChangeEvent
-                    ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
-                    (SevenBitNumber)pianoControl1.EntryDataValue);
-                cce.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-                MidiManager.SendMidiEvent(cce);
-            }
-            finally
-            {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
-            }
+            var cce = new ControlChangeEvent
+                ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
+                (SevenBitNumber)pianoControl1.EntryDataValue);
+            cce.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
+            MidiManager.SendMidiEvent(cce);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -674,17 +665,8 @@ namespace zanac.MAmidiMEmo.Gui
             me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
             MidiManager.SendMidiEvent(me);
 
-            try
-            {
-                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
-
-                foreach (var inst in InstrumentManager.GetAllInstruments())
-                    inst.AllSoundOff();
-            }
-            finally
-            {
-                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
-            }
+            foreach (var inst in InstrumentManager.GetAllInstruments())
+                inst.AllSoundOff();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)

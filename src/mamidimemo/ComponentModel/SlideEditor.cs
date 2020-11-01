@@ -46,7 +46,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 track.Maximum = att.SliderMax;
                 track.Minimum = att.SliderMin;
             }
-            if(maxValue.HasValue)
+            if (maxValue.HasValue)
                 track.Maximum = maxValue.Value;
             if (minValue.HasValue)
                 track.Minimum = minValue.Value;
@@ -58,10 +58,10 @@ namespace zanac.MAmidiMEmo.ComponentModel
             track.TickFrequency = freq;
 
             int result;
-            if(int.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value),out result))
+            if (int.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value), out result))
                 track.Value = result;
 
-            if(att != null && att.SliderDynamicSetValue)
+            if (att != null && att.SliderDynamicSetValue)
                 track.Tag = context;
 
             track.ValueChanged += Track_ValueChanged;
@@ -87,13 +87,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 var val = ctx.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
                 try
                 {
-                    InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
                     ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
                 }
                 finally
                 {
-                    InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
 

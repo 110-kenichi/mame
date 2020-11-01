@@ -250,55 +250,37 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
         {
-            try
+            if (toolStripComboBoxProg.SelectedIndex != 0)
             {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
-
-                if (toolStripComboBoxProg.SelectedIndex != 0)
+                //Program change
+                var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProg.SelectedIndex - 1));
+                foreach (var i in instruments)
+                    i.NotifyMidiEvent(pe);
+                foreach (var i in instruments)
+                    i.NotifyMidiEvent(e);
+            }
+            else
+            {
+                if (timbres != null)
                 {
-                    //Program change
-                    var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProg.SelectedIndex - 1));
-                    foreach (var i in instruments)
-                        i.NotifyMidiEvent(pe);
-                    foreach (var i in instruments)
-                        i.NotifyMidiEvent(e);
+                    for (int i = 0; i < instruments.Count; i++)
+                    {
+                        e.Tag = new NoteOnTimbreInfo(timbres[i], TimbreNo);
+                        instruments[i].NotifyMidiEvent(e);
+                    }
                 }
                 else
                 {
-                    if (timbres != null)
-                    {
-                        for (int i = 0; i < instruments.Count; i++)
-                        {
-                            e.Tag = new NoteOnTimbreInfo(timbres[i], TimbreNo);
-                            instruments[i].NotifyMidiEvent(e);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var i in instruments)
-                            i.NotifyMidiEvent(e);
-                    }
+                    foreach (var i in instruments)
+                        i.NotifyMidiEvent(e);
                 }
-            }
-            finally
-            {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
             }
         }
 
         private void PianoControl1_NoteOff(object sender, NoteOffEvent e)
         {
-            try
-            {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
-
-                foreach (var i in instruments)
-                    i.NotifyMidiEvent(e);
-            }
-            finally
-            {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
-            }
+            foreach (var i in instruments)
+                i.NotifyMidiEvent(e);
         }
 
 
@@ -309,22 +291,13 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void PianoControl1_EntryDataChanged(object sender, EventArgs e)
         {
-            try
-            {
-                InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+            var cce = new ControlChangeEvent
+                ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
+                (SevenBitNumber)pianoControl1.EntryDataValue);
+            cce.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex);
 
-                var cce = new ControlChangeEvent
-                    ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
-                    (SevenBitNumber)pianoControl1.EntryDataValue);
-                cce.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex);
-
-                foreach (var i in instruments)
-                    i.NotifyMidiEvent(cce);
-            }
-            finally
-            {
-                InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
-            }
+            foreach (var i in instruments)
+                i.NotifyMidiEvent(cce);
         }
 
         private void propertyGrid_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)

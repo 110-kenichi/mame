@@ -63,7 +63,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             YM2610B inst = null;
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
                 foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YM2610B + 1))
                 {
@@ -78,7 +78,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                //InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
 
             if (inst != null)

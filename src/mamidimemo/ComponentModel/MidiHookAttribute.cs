@@ -21,9 +21,12 @@ namespace zanac.MAmidiMEmo.ComponentModel
         public override MarshalByRefObject CreateInstance(Type serverType)
         {
             MarshalByRefObject target = base.CreateInstance(serverType);
+
+            return target;
+            /*
             RealProxy rp;
             rp = new MidiHookProxy(target, serverType);
-            return rp.GetTransparentProxy() as MarshalByRefObject;
+            return rp.GetTransparentProxy() as MarshalByRefObject;*/
         }
     }
 }
