@@ -112,7 +112,7 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 	float *orgptr = (float*)malloc(sizeof(float) * samples * 2);
 	float *renderBuf = orgptr;
 	float *streamBuf = orgptr;
-#if MAME_DEBUG
+#if true	//MAME_DEBUG
 	mtxBuffer.lock();
 	mt32emu_render_float(context, renderBuf, samples);
 	lastUpdateTime = machine().time();
@@ -120,12 +120,15 @@ void mt32_device::sound_stream_update(sound_stream &stream, stream_sample_t **in
 #else
 	int inc = samples / 10;
 	int idx = 0;
-	for (idx = 0; idx < samples - inc; idx += inc, renderBuf += inc * 2)
+	if (inc != 0)
 	{
-		mtxBuffer.lock();
-		mt32emu_render_float(context, renderBuf, inc);
-		lastUpdateTime = machine().time();
-		mtxBuffer.unlock();
+		for (idx = 0; idx < samples - inc; idx += inc, renderBuf += inc * 2)
+		{
+			mtxBuffer.lock();
+			mt32emu_render_float(context, renderBuf, inc);
+			lastUpdateTime = machine().time();
+			mtxBuffer.unlock();
+		}
 	}
 	mtxBuffer.lock();
 	mt32emu_render_float(context, renderBuf, samples - idx);

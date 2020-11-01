@@ -61,8 +61,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             YM2610BTimbre tim = context.Instance as YM2610BTimbre;
             YM2610B inst = null;
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YM2610B + 1))
                 {
                     Parallel.ForEach(i.BaseTimbres, t =>
@@ -73,6 +75,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             return;
                     });
                 }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
 
             if (inst != null)

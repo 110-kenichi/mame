@@ -61,8 +61,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             YM3812Timbre tim = context.Instance as YM3812Timbre;
             YM3812 inst = null;
-            lock (InstrumentManager.ExclusiveLockObject)
+            try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YM3812 + 1))
                 {
                     Parallel.ForEach(i.BaseTimbres, t =>
@@ -73,6 +75,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             return;
                     });
                 }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
             }
 
             if (inst != null)

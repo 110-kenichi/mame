@@ -38,13 +38,18 @@ namespace zanac.MAmidiMEmo.ComponentModel
         {
             IConstructionCallMessage ccm = msg as IConstructionCallMessage;
             if (ccm != null)
-                return this.InitializeServerObject(ccm);
+            {
+                //以下、コンストラクタを実行する処理
+                RealProxy rp = RemotingServices.GetRealProxy(this.f_Target);
+                rp.InitializeServerObject(ccm);
+                MarshalByRefObject tp = this.GetTransparentProxy() as MarshalByRefObject;
+                return EnterpriseServicesHelper.CreateConstructionReturnMessage(ccm, tp);
+            }
 
             IMethodCallMessage mcm = (IMethodCallMessage)msg;
             object[] args = mcm.Args;
             try
             {
-                object invokeResult;
                 var mb = mcm.MethodBase;
                 if (mb.Name.StartsWith("set_"))
                 {
@@ -52,7 +57,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     {
                         InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                        invokeResult = mb.Invoke(GetUnwrappedServer(), args);
+                        return RemotingServices.ExecuteMessage(this.f_Target, mcm) as ReturnMessage;
                     }
                     finally
                     {
@@ -61,10 +66,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 }
                 else
                 {
-                    invokeResult = mb.Invoke(GetUnwrappedServer(), args);
+                    return RemotingServices.ExecuteMessage(this.f_Target, mcm) as ReturnMessage;
                 }
-
-                return new ReturnMessage(invokeResult, args, args.Length, mcm.LogicalCallContext, mcm);
             }
             catch (TargetInvocationException ex)
             {
