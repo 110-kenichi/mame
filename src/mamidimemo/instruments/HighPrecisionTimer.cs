@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -97,7 +98,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
                     //process action
-                    ret = snd.Action(snd.State);
+                    lock (MidiManager.ExclusiveLockObject)
+                        ret = snd.Action(snd.State);
                 }
                 finally
                 {

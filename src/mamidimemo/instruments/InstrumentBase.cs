@@ -1955,17 +1955,12 @@ namespace zanac.MAmidiMEmo.Instruments
         #region MIDI
 
         /// <summary>
-        /// Exclusive control for Souding
-        /// </summary>
-        public static object ExclusiveLockObject = new object();
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
         internal void NotifyMidiEvent(MidiEvent midiEvent)
         {
-            lock (ExclusiveLockObject)
+            lock (MidiManager.ExclusiveLockObject)
                 OnMidiEvent(midiEvent);
         }
 

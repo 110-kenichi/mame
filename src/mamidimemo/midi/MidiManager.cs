@@ -21,6 +21,11 @@ namespace zanac.MAmidiMEmo.Midi
 {
     public static class MidiManager
     {
+        /// <summary>
+        /// Exclusive control for Souding
+        /// </summary>
+        public static object ExclusiveLockObject = new object();
+
         private static InputDevice inputDevice;
 
         //

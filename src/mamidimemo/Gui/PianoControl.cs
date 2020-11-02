@@ -236,13 +236,14 @@ namespace zanac.MAmidiMEmo.Gui
             new Point(wKeyW, Height),
             new Point(wKeyW, 0) });
 
-            g.FillRectangle(SystemBrushes.ControlDarkDark, 0, 0, wKeyW, Height);
-            g.FillRectangle(SystemBrushes.ControlDark, 0, 5, wKeyW, Height - 10);
-            g.FillRectangle(SystemBrushes.Control, 0, 15, wKeyW, Height - 30);
+            //g.FillRectangle(SystemBrushes.ControlDarkDark, 0, 0, wKeyW, Height);
+            //g.FillRectangle(SystemBrushes.ControlDark, 0, 5, wKeyW, Height - 10);
+            //g.FillRectangle(SystemBrushes.Control, 0, 15, wKeyW, Height - 30);
             int h = (Height - 1) / 127;
             if (h == 0)
                 h = 1;
             int wv = entryDataValue / SystemInformation.MouseWheelScrollDelta;
+            g.FillRectangle(SystemBrushes.ControlDark, 0, Height - 1 - (wv * (Height - 1) / 127) - (h * 5), wKeyW, h + (h * 5 * 2));
             g.FillRectangle(SystemBrushes.WindowText, 0, Height - 1 - (wv * (Height - 1) / 127), wKeyW, h);
 
             for (int keyNum = 0; keyNum < 128; keyNum++)
