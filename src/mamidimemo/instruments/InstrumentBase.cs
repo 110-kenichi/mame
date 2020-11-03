@@ -1960,7 +1960,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         internal void NotifyMidiEvent(MidiEvent midiEvent)
         {
-            lock (MidiManager.ExclusiveLockObject)
+            lock (MidiManager.SoundExclusiveLockObject)
                 OnMidiEvent(midiEvent);
         }
 

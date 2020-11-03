@@ -396,7 +396,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 if (ActiveFx)
                     return FxEngine.Settings.EnvelopeInterval;
-                else
+                else if(IsKeyOff)
                     TrySoundOff();
             }
             return -1;
@@ -482,7 +482,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 OnPitchUpdated();
 
-                if(modulationStep == 0 && IsSoundOff)
+                if (modulationStep == 0 && IsSoundOff)
                     return -1;
 
                 modulationStep += 1.0;

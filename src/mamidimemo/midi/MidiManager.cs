@@ -24,7 +24,7 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// Exclusive control for Souding
         /// </summary>
-        public static object ExclusiveLockObject = new object();
+        public static object SoundExclusiveLockObject = new object();
 
         private static InputDevice inputDevice;
 

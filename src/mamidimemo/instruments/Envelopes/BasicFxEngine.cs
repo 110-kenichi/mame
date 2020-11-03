@@ -37,6 +37,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
         private double f_DeltaNoteNumber;
 
+        private double lastPitchValue;
+
         /// <summary>
         /// 
         /// </summary>
@@ -156,7 +158,17 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     double pitch = settings.PitchEnvelopesNums[pitchCounter++];
                     double range = settings.PitchEnvelopeRange;
 
-                    f_DeltaNoteNumber += ((double)pitch / 8192d) * range;
+                    switch (settings.PitchStepType)
+                    {
+                        case PitchStepType.Absolute:
+                            f_DeltaNoteNumber += ((double)(pitch - lastPitchValue) / 8192d) * range;
+                            break;
+                        case PitchStepType.Relative:
+                            f_DeltaNoteNumber += ((double)pitch / 8192d) * range;
+                            break;
+                    }
+
+                    lastPitchValue = pitch;
                     process = true;
                 }
             }

@@ -114,7 +114,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [IgnoreDataMember]
         [DefaultValue(-1)]
         public int VolumeEnvelopesReleasePoint { get; set; } = -1;
-
+        
         private string f_PitchEnvelopes;
 
         [DataMember]
@@ -208,6 +208,27 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DefaultValue(-1)]
         public int PitchEnvelopesReleasePoint { get; set; } = -1;
 
+        private PitchStepType f_PitchStepType;
+
+
+        [DataMember]
+        [Description("Set pitch step type.")]
+        [DefaultValue(PitchStepType.Relative)]
+        public PitchStepType PitchStepType
+        {
+            get
+            {
+                return f_PitchStepType;
+            }
+            set
+            {
+                if (f_PitchStepType != value)
+                {
+                    f_PitchStepType = value;
+                }
+            }
+        }
+
         private int f_PitchEnvelopeRange = 2;
 
         [DataMember]
@@ -225,7 +246,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     f_PitchEnvelopeRange = value;
             }
         }
-
+        
         private string f_ArpEnvelopes;
 
         [DataMember]
@@ -351,6 +372,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
     }
 
+    public enum PitchStepType
+    {
+        Relative,
+        Absolute,
+    }
 
     public enum ArpStepType
     {
@@ -358,4 +384,6 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         Relative,
         Fixed,
     }
+
+
 }

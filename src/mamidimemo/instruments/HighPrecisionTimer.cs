@@ -98,7 +98,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
                     //process action
-                    lock (MidiManager.ExclusiveLockObject)
+                    lock (MidiManager.SoundExclusiveLockObject)
                         ret = snd.Action(snd.State);
                 }
                 finally
