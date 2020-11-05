@@ -43,7 +43,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            OscUtility.DrawOsc(e, inst, this);
+            OscUtility.DrawOsc(e, inst, this, Color.DarkGreen);
 
             base.OnPaint(e);
         }

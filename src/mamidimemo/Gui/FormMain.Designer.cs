@@ -39,6 +39,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.metroLabelDrop = new MetroFramework.Controls.MetroLabel();
             this.listViewIntruments = new System.Windows.Forms.ListView();
             this.contextMenuStripInst = new MetroFramework.Controls.MetroContextMenu(this.components);
             this.decreaseThisKindOfChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +56,19 @@
             this.toolStripButtonA2Z = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPopup = new System.Windows.Forms.ToolStripButton();
             this.tabControlBottom = new MetroFramework.Controls.MetroTabControl();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelClock = new System.Windows.Forms.Label();
+            this.panelOsc2 = new System.Windows.Forms.Panel();
+            this.labelTitle = new WrapLabel();
+            this.labelStat = new System.Windows.Forms.Label();
+            this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
+            this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
@@ -81,8 +95,9 @@
             this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxKeyCh = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -96,9 +111,9 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.saveFileDialogMami = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialogMami = new System.Windows.Forms.OpenFileDialog();
+            this.timerOsc = new System.Windows.Forms.Timer(this.components);
             this.toolStrip1 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxMidiIf = new System.Windows.Forms.ToolStripComboBox();
@@ -136,7 +151,9 @@
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
             this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.openFileDialogMidi = new System.Windows.Forms.OpenFileDialog();
+            this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
+            this.timerReload = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -149,11 +166,15 @@
             this.contextMenuStripProp.SuspendLayout();
             this.toolStrip3.SuspendLayout();
             this.tabControlBottom.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.toolStrip4.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -180,12 +201,20 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.metroLabelDrop);
             this.splitContainer2.Panel1.Controls.Add(this.listViewIntruments);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.propertyGrid);
             this.splitContainer2.Panel2.Controls.Add(this.toolStrip3);
+            // 
+            // metroLabelDrop
+            // 
+            resources.ApplyResources(this.metroLabelDrop, "metroLabelDrop");
+            this.metroLabelDrop.Name = "metroLabelDrop";
+            this.metroLabelDrop.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
+            this.metroLabelDrop.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
             // 
             // listViewIntruments
             // 
@@ -321,13 +350,113 @@
             // 
             this.tabControlBottom.Controls.Add(this.tabPage1);
             this.tabControlBottom.Controls.Add(this.tabPage3);
+            this.tabControlBottom.Controls.Add(this.tabPage4);
             this.tabControlBottom.Controls.Add(this.tabPage2);
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 1;
+            this.tabControlBottom.SelectedIndex = 0;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             this.tabControlBottom.UseSelectable = true;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.tableLayoutPanel1);
+            this.tabPage4.Controls.Add(this.toolStrip4);
+            resources.ApplyResources(this.tabPage4, "tabPage4");
+            this.tabPage4.Name = "tabPage4";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelClock, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelOsc2, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.labelTitle, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelStat, 0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.label1.Name = "label1";
+            // 
+            // labelClock
+            // 
+            resources.ApplyResources(this.labelClock, "labelClock");
+            this.labelClock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.labelClock.Name = "labelClock";
+            this.labelClock.UseCompatibleTextRendering = true;
+            // 
+            // panelOsc2
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.panelOsc2, 3);
+            resources.ApplyResources(this.panelOsc2, "panelOsc2");
+            this.panelOsc2.Name = "panelOsc2";
+            this.panelOsc2.Paint += new System.Windows.Forms.PaintEventHandler(this.panelOsc2_Paint);
+            // 
+            // labelTitle
+            // 
+            resources.ApplyResources(this.labelTitle, "labelTitle");
+            this.labelTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.labelTitle.Name = "labelTitle";
+            this.labelTitle.UseMnemonic = false;
+            // 
+            // labelStat
+            // 
+            resources.ApplyResources(this.labelStat, "labelStat");
+            this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+            this.labelStat.Name = "labelStat";
+            // 
+            // toolStrip4
+            // 
+            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonPlay,
+            this.toolStripButtonPause,
+            this.toolStripButtonStop,
+            this.toolStripButtonOpen,
+            this.toolStripButtonReload});
+            resources.ApplyResources(this.toolStrip4, "toolStrip4");
+            this.toolStrip4.Name = "toolStrip4";
+            // 
+            // toolStripButtonPlay
+            // 
+            this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
+            this.toolStripButtonPlay.Name = "toolStripButtonPlay";
+            this.toolStripButtonPlay.Click += new System.EventHandler(this.toolStripButtonPlay_Click);
+            // 
+            // toolStripButtonPause
+            // 
+            this.toolStripButtonPause.Image = global::zanac.MAmidiMEmo.Properties.Resources.Pause;
+            resources.ApplyResources(this.toolStripButtonPause, "toolStripButtonPause");
+            this.toolStripButtonPause.Name = "toolStripButtonPause";
+            this.toolStripButtonPause.Click += new System.EventHandler(this.toolStripButtonPause_Click);
+            // 
+            // toolStripButtonStop
+            // 
+            this.toolStripButtonStop.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+            resources.ApplyResources(this.toolStripButtonStop, "toolStripButtonStop");
+            this.toolStripButtonStop.Name = "toolStripButtonStop";
+            this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
+            // 
+            // toolStripButtonOpen
+            // 
+            this.toolStripButtonOpen.Image = global::zanac.MAmidiMEmo.Properties.Resources.Open;
+            resources.ApplyResources(this.toolStripButtonOpen, "toolStripButtonOpen");
+            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+            this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
+            // 
+            // toolStripButtonReload
+            // 
+            this.toolStripButtonReload.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButtonReload.CheckOnClick = true;
+            this.toolStripButtonReload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(this.toolStripButtonReload, "toolStripButtonReload");
+            this.toolStripButtonReload.Name = "toolStripButtonReload";
+            this.toolStripButtonReload.CheckStateChanged += new System.EventHandler(this.toolStripButtonReload_CheckStateChanged);
             // 
             // tabPage1
             // 
@@ -733,6 +862,16 @@
             this.toolStripLabel5.Name = "toolStripLabel5";
             resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
+            // 
             // toolStripComboBoxCC
             // 
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -869,11 +1008,6 @@
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
             resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
-            // toolStripLabel2
-            // 
-            this.toolStripLabel2.Name = "toolStripLabel2";
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.listView1);
@@ -967,24 +1101,24 @@
             resources.ApplyResources(this.toolStripMenuItemAbout, "toolStripMenuItemAbout");
             this.toolStripMenuItemAbout.Click += new System.EventHandler(this.toolStripMenuItemAbout_Click);
             // 
-            // saveFileDialog1
+            // saveFileDialogMami
             // 
-            this.saveFileDialog1.DefaultExt = "MAmi";
-            this.saveFileDialog1.FileName = "MyEnvironment";
-            resources.ApplyResources(this.saveFileDialog1, "saveFileDialog1");
-            this.saveFileDialog1.SupportMultiDottedExtensions = true;
+            this.saveFileDialogMami.DefaultExt = "MAmi";
+            this.saveFileDialogMami.FileName = "MyEnvironment";
+            resources.ApplyResources(this.saveFileDialogMami, "saveFileDialogMami");
+            this.saveFileDialogMami.SupportMultiDottedExtensions = true;
             // 
-            // openFileDialog1
+            // openFileDialogMami
             // 
-            this.openFileDialog1.DefaultExt = "*.MAmi";
-            this.openFileDialog1.FileName = "MyEnvironment.MAmi";
-            resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
-            this.openFileDialog1.SupportMultiDottedExtensions = true;
+            this.openFileDialogMami.DefaultExt = "*.MAmi";
+            this.openFileDialogMami.FileName = "MyEnvironment.MAmi";
+            resources.ApplyResources(this.openFileDialogMami, "openFileDialogMami");
+            this.openFileDialogMami.SupportMultiDottedExtensions = true;
             // 
-            // timer1
+            // timerOsc
             // 
-            this.timer1.Interval = 50;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timerOsc.Interval = 50;
+            this.timerOsc.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // toolStrip1
             // 
@@ -1251,10 +1385,21 @@
             this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
             this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
             // 
-            // toolStripSeparator2
+            // openFileDialogMidi
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.openFileDialogMidi.DefaultExt = "*.mid";
+            resources.ApplyResources(this.openFileDialogMidi, "openFileDialogMidi");
+            this.openFileDialogMidi.SupportMultiDottedExtensions = true;
+            // 
+            // fileSystemWatcherMidi
+            // 
+            this.fileSystemWatcherMidi.EnableRaisingEvents = true;
+            this.fileSystemWatcherMidi.SynchronizingObject = this;
+            this.fileSystemWatcherMidi.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
+            // 
+            // timerReload
+            // 
+            this.timerReload.Tick += new System.EventHandler(this.timerReload_Tick);
             // 
             // FormMain
             // 
@@ -1270,6 +1415,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -1278,6 +1424,12 @@
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
             this.tabControlBottom.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.toolStrip4.ResumeLayout(false);
+            this.toolStrip4.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
@@ -1286,6 +1438,7 @@
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1313,8 +1466,8 @@
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogMami;
+        private System.Windows.Forms.OpenFileDialog openFileDialogMami;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem toolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
@@ -1322,7 +1475,7 @@
         private MetroFramework.Controls.MetroTabControl tabControlBottom;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timerOsc;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripProp;
         private System.Windows.Forms.ToolStripMenuItem resetToDefaultThisPropertyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fMSynthesisToolStripMenuItem;
@@ -1392,6 +1545,23 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel5;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxCC;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.ToolStripButton toolStripButtonPlay;
+        private System.Windows.Forms.ToolStripButton toolStripButtonPause;
+        private System.Windows.Forms.ToolStripButton toolStripButtonStop;
+        private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
+        private System.Windows.Forms.OpenFileDialog openFileDialogMidi;
+        private ClickThroughToolStrip toolStrip4;
+        private MetroFramework.Controls.MetroLabel metroLabelDrop;
+        private System.Windows.Forms.ToolStripButton toolStripButtonReload;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelClock;
+        private System.Windows.Forms.Panel panelOsc2;
+        private WrapLabel labelTitle;
+        private System.Windows.Forms.Label labelStat;
+        private System.IO.FileSystemWatcher fileSystemWatcherMidi;
+        private System.Windows.Forms.Timer timerReload;
     }
 }
 

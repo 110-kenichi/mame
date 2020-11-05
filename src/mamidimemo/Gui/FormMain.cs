@@ -23,6 +23,7 @@ using Melanchall.DryWetMidi.Core;
 using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using MetroFramework.Forms;
+using Melanchall.DryWetMidi.Interaction;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -33,6 +34,8 @@ namespace zanac.MAmidiMEmo.Gui
         private static ToolStripStatusLabel statusLabel = new ToolStripStatusLabel();
 
         private static StreamWriter logStream;
+
+        private static PrivateFontCollection privateFonts = new PrivateFontCollection();
 
         /// <summary>
         /// 
@@ -115,6 +118,21 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InitializeComponent();
             //this.Font = new Font(PrivateFonts.Families[0], 13f);
+
+            unsafe
+            {
+                byte[] fontBuf = Properties.Resources.DSEG7ClassicMini_BoldItalic;
+                fixed (byte* pFontBuf = fontBuf)
+                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+            }
+            unsafe
+            {
+                byte[] fontBuf = Properties.Resources.DSEG14Classic_Regular;
+                fixed (byte* pFontBuf = fontBuf)
+                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+            }
+            labelClock.Font = new Font(privateFonts.Families[1], 18);
+            //labelTitle.Font = new Font(privateFonts.Families[0], 18);
 
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 
@@ -261,7 +279,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             EnableDoubleBuffering(tabPage1);
 
-            timer1.Start();
+            timerOsc.Start();
         }
 
         public static void EnableDoubleBuffering(Control control)
@@ -277,6 +295,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void InstrumentManager_InstrumentRemoved(object sender, EventArgs e)
         {
+            metroLabelDrop.Visible = true;
             listViewIntruments.Clear();
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 addItem(inst);
@@ -292,6 +311,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void InstrumentManager_InstrumentAdded(object sender, EventArgs e)
         {
+            metroLabelDrop.Visible = true;
             listViewIntruments.Clear();
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 addItem(inst);
@@ -305,6 +325,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void InstrumentManager_InstrumentChanged(object sender, EventArgs e)
         {
+            metroLabelDrop.Visible = true;
             listViewIntruments.Clear();
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 addItem(inst);
@@ -319,6 +340,8 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="inst"></param>
         private void addItem(InstrumentBase inst)
         {
+            metroLabelDrop.Visible = false;
+
             var lvi = new ListViewItem(inst.Name, inst.ImageKey);
             lvi.Group = listViewIntruments.Groups[inst.Group];
             var item = listViewIntruments.Items.Add(lvi);
@@ -354,7 +377,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Failed to set MIDI I/F.");
             }
         }
 
@@ -379,8 +402,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Failed to set MIDI I/F.");
             }
         }
 
@@ -582,7 +604,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Failed to save the current env.");
             }
         }
 
@@ -593,14 +615,14 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dr = saveFileDialog1.ShowDialog(this);
+            DialogResult dr = saveFileDialogMami.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 try
                 {
                     var es = Program.SaveEnvironmentSettings();
                     string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
-                    File.WriteAllText(saveFileDialog1.FileName, StringCompressionUtility.Compress(data));
+                    File.WriteAllText(saveFileDialogMami.FileName, StringCompressionUtility.Compress(data));
                 }
                 catch (Exception ex)
                 {
@@ -609,7 +631,7 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-                    MessageBox.Show(ex.ToString());
+                    MessageBox.Show("Failed to save the current env.\r\n" + ex.Message);
                 }
             }
         }
@@ -621,10 +643,10 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dr = openFileDialog1.ShowDialog(this);
+            DialogResult dr = openFileDialogMami.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                string file = openFileDialog1.FileName;
+                string file = openFileDialogMami.FileName;
                 loadMAmi(file);
             }
         }
@@ -645,7 +667,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Failed to load the file.\r\n" + ex.Message);
             }
         }
 
@@ -656,6 +678,11 @@ namespace zanac.MAmidiMEmo.Gui
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            Panic();
+        }
+
+        private static void Panic()
         {
             //All Note Off
             var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
@@ -710,14 +737,45 @@ namespace zanac.MAmidiMEmo.Gui
                 inst = (InstrumentBase)fis[0].Tag;
             Control target = tabPage1;
 
-            OscUtility.DrawOsc(e, inst, target);
+            OscUtility.DrawOsc(e, inst, target, Color.DarkGreen);
         }
 
+        private static Color oscLineColor = Color.FromArgb(115, 63, 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void panelOsc2_Paint(object sender, PaintEventArgs e)
+        {
+            OscUtility.DrawOsc(e, null, panelOsc2, oscLineColor);
+        }
+
+        private int timerCounter;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (tabControlBottom.SelectedTab == tabPage1)
                 tabPage1.Invalidate();
+            else if (tabControlBottom.SelectedTab == tabPage4)
+                panelOsc2.Invalidate();
+
+            timerCounter++;
+            if (timerCounter > 250 / timerOsc.Interval)
+            {
+                timerCounter = 0;
+                MetricTimeSpan playTime = (MetricTimeSpan)midiPlayback?.GetCurrentTime(Melanchall.DryWetMidi.Interaction.TimeSpanType.Metric);
+                if (playTime != null)
+                {
+                    TimeSpan ts = new TimeSpan(0, playTime.Hours, playTime.Minutes, playTime.Seconds, playTime.Milliseconds);
+                    labelClock.Text = ((int)ts.TotalMinutes).ToString("00") + ":" + ts.Seconds.ToString("00");
+                }
+                else
+                {
+                    labelClock.Text = "00:00";
+                }
+            }
         }
 
         private void resetToDefaultThisPropertyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1007,5 +1065,132 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        private Playback midiPlayback;
+
+        private void toolStripButtonPlay_Click(object sender, EventArgs e)
+        {
+            if (midiPlayback == null)
+                return;
+
+            midiPlayback.Stop();
+            Panic();
+            midiPlayback.MoveToStart();
+            midiPlayback.Start();
+            this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
+        }
+
+        private void toolStripButtonPause_Click(object sender, EventArgs e)
+        {
+            if (midiPlayback == null)
+                return;
+
+            if (midiPlayback.IsRunning)
+            {
+                midiPlayback.Stop();
+                this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Pause;
+            }
+            else
+            {
+                midiPlayback.Start();
+                this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
+            }
+        }
+
+        private void toolStripButtonStop_Click(object sender, EventArgs e)
+        {
+            if (midiPlayback == null)
+                return;
+
+            midiPlayback.Stop();
+            Panic();
+            midiPlayback.MoveToStart();
+            this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+        }
+
+        private void toolStripButtonOpen_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = openFileDialogMidi.ShowDialog(this);
+            if (dr == DialogResult.OK)
+            {
+                loadMidiFile();
+            }
+        }
+
+        private void loadMidiFile()
+        {
+            try
+            {
+                toolStripButtonStop_Click(null, EventArgs.Empty);
+
+                var midiFile = MidiFile.Read(openFileDialogMidi.FileName);
+
+                fileSystemWatcherMidi.Path = Path.GetDirectoryName(openFileDialogMidi.FileName);
+                fileSystemWatcherMidi.Filter = Path.GetFileName(openFileDialogMidi.FileName);
+                fileSystemWatcherMidi.EnableRaisingEvents = toolStripButtonReload.Checked;
+
+                labelTitle.SetText(string.Empty);
+
+                midiPlayback?.Dispose();
+                midiPlayback = midiFile.GetPlayback(new InternalMidiPlayerDevice());
+                midiPlayback.EventPlayed += MidiPlayback_EventPlayed;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show("Failed to load the file.\r\n" + ex.Message);
+            }
+        }
+
+        private void MidiPlayback_EventPlayed(object sender, MidiEventPlayedEventArgs e)
+        {
+            if (e.Event.EventType == MidiEventType.SequenceTrackName)
+            {
+                SequenceTrackNameEvent t = (SequenceTrackNameEvent)e.Event;
+                labelTitle.BeginInvoke(new MethodInvoker(() =>
+                {
+                    if (!labelTitle.IsDisposed && labelTitle.Text.Length == 0)
+                        labelTitle.SetText(t.Text.Replace((char)0, (char)' ').Trim());
+                }));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class InternalMidiPlayerDevice : IOutputDevice
+        {
+            public event EventHandler<MidiEventSentEventArgs> EventSent;
+
+            public void PrepareForEventsSending()
+            {
+            }
+
+            public void SendEvent(MidiEvent midiEvent)
+            {
+                MidiManager.SendMidiEvent(midiEvent);
+                EventSent?.Invoke(this, new MidiEventSentEventArgs(midiEvent));
+            }
+        }
+
+        private void toolStripButtonReload_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (midiPlayback != null)
+                fileSystemWatcherMidi.EnableRaisingEvents = toolStripButtonReload.Checked;
+        }
+
+        private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
+        {
+            timerReload.Enabled = true;
+        }
+
+        private void timerReload_Tick(object sender, EventArgs e)
+        {
+            loadMidiFile();
+            timerReload.Enabled = false;
+        }
     }
 }

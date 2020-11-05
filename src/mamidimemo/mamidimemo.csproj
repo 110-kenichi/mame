@@ -192,6 +192,9 @@
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
+    <Compile Include="Gui\ClickThroughToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\FMEditor\FormYM2413Editor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -418,6 +421,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\VerticalLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\WrapLabel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\WsgBitWideAttribute.cs" />
@@ -759,6 +765,8 @@
     </None>
     <None Include="Properties\DataSources\zanac.MAmidiMEmo.Gui.Data.datasource" />
     <None Include="Resources\ArcadeClassic.ttf" />
+    <None Include="Resources\DSEG14Classic-Regular.ttf" />
+    <None Include="Resources\DSEG7ClassicMini-BoldItalic.ttf" />
     <None Include="Resources\VideoPhreak.ttf" />
     <None Include="Samples\2608_rhythm\bd.pcma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -895,6 +903,10 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\Pause.png" />
+    <None Include="Resources\Open.png" />
+    <None Include="Resources\Stop.png" />
+    <None Include="Resources\Play.png" />
     <None Include="Resources\ALG11.png" />
     <None Include="Resources\ALG12.png" />
     <Content Include="Resources\ALG2.PNG" />

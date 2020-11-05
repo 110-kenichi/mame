@@ -1,4 +1,4 @@
-MAmidiMEmo V2.4.0.1 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.0.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -234,6 +234,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.0.0 Added MIDI file Player tab
 2.4.0.1 Improved UI.
 		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
 		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
@@ -335,3 +336,29 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 0.6.0.0 Added sound driver effects and portamento feature
 0.5.0.0 Added several chips
 0.1.0.0 First release
+
+*** Licenses ***
+
+* MAME
+https://www.mamedev.org
+
+* DryWetMidi
+https://github.com/melanchall/drywetmidi
+
+* Newtonsoft.Json
+https://www.nuget.org/packages/Newtonsoft.Json/12.0.3/license
+
+* ValueInjecter
+https://github.com/omuleanu/ValueInjecter/blob/master/LICENSE
+
+* Fast Colored TextBox for Syntax Highlighting
+https://github.com/melanchall/drywetmidi
+
+* MUNT
+https://ja.osdn.net/projects/sfnet_munt/
+
+* FluidLite
+https://github.com/divideconcept/FluidLite
+
+* Font "DSEG" by けしかん
+https://www.keshikan.net/fonts.html

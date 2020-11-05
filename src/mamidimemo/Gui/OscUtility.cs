@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         /// <param name="inst"></param>
         /// <param name="target"></param>
-        public static void DrawOsc(PaintEventArgs e, InstrumentBase inst, Control target)
+        public static void DrawOsc(PaintEventArgs e, InstrumentBase inst, Control target, Color color)
         {
             int[][] data = InstrumentManager.GetLastOutputBuffer(inst);
 
@@ -29,7 +29,7 @@ namespace zanac.MAmidiMEmo.Gui
             int h = target.ClientSize.Height;
             if (data != null)
             {
-                using (Pen p = new Pen(Color.DarkGreen))
+                using (Pen p = new Pen(color))
                 {
                     int max = h * 4;
                     for (int ch = 0; ch < 2; ch++)
@@ -51,8 +51,11 @@ namespace zanac.MAmidiMEmo.Gui
                         drawCore(e, p, data[1], w / 2 - 1, h / 2, w / 2 + 1, max);
                 }
             }
-            e.Graphics.DrawLine(SystemPens.Control, w / 2 - 1, 0, w / 2 - 1, h);
-            e.Graphics.DrawLine(SystemPens.Control, w / 2, 0, w / 2, h);
+            using (Pen p = new Pen(color))
+            {
+                //e.Graphics.DrawLine(p, w / 2 - 1, 0, w / 2 - 1, h);
+                e.Graphics.DrawLine(p, w / 2, 0, w / 2, h);
+            }
         }
 
         private static void drawCore(PaintEventArgs e, Pen p, int[] data, int w, int h, int ox, int max)
