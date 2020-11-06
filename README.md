@@ -234,7 +234,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-2.5.0.0 Added MIDI file Player tab
+2.5.0.0 Added MIDI file Player tab.
+		Supported MAmidi file that is MAmi file and midi file are archived file. To create MAmidi file, load midi file and export MAmidi file.
+		Fixed portamento time (Almost the same as the GS module portamento time).
 2.4.0.1 Improved UI.
 		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
 		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.

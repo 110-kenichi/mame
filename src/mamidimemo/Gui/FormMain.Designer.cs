@@ -112,6 +112,7 @@
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportMAmidiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,6 +161,7 @@
             this.openFileDialogMidi = new System.Windows.Forms.OpenFileDialog();
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
+            this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1108,6 +1110,7 @@
             this.loadToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
+            this.exportMAmidiToolStripMenuItem,
             this.toolStripMenuItemExit});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
@@ -1129,6 +1132,12 @@
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             resources.ApplyResources(this.saveAsToolStripMenuItem, "saveAsToolStripMenuItem");
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // exportMAmidiToolStripMenuItem
+            // 
+            this.exportMAmidiToolStripMenuItem.Name = "exportMAmidiToolStripMenuItem";
+            resources.ApplyResources(this.exportMAmidiToolStripMenuItem, "exportMAmidiToolStripMenuItem");
+            this.exportMAmidiToolStripMenuItem.Click += new System.EventHandler(this.exportMAmidiToolStripMenuItem_Click);
             // 
             // toolStripMenuItemExit
             // 
@@ -1462,6 +1471,13 @@
             // 
             this.timerReload.Tick += new System.EventHandler(this.timerReload_Tick);
             // 
+            // saveFileDialogMAmidi
+            // 
+            this.saveFileDialogMAmidi.DefaultExt = "MAmi";
+            this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
+            resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
+            this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1630,6 +1646,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label labelCpuLoad;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem exportMAmidiToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogMAmidi;
     }
 }
 

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO.Compression;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -654,15 +655,69 @@ namespace zanac.MAmidiMEmo.Gui
             if (dr == DialogResult.OK)
             {
                 string file = openFileDialogMami.FileName;
-                loadMAmi(file);
+                loadMAmidiFile(file);
             }
         }
 
-        private static void loadMAmi(string file)
+        private void loadMAmidiFile(string file)
+        {
+            string ext = Path.GetExtension(file);
+            if (ext.Equals(".MAmi", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    readMAmiCore(File.ReadAllText(file));
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show("Failed to load the MAmi file.\r\n" + ex.Message);
+                }
+            }
+            else if (ext.Equals(".MAmidi", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    using (ZipArchive archive = new ZipArchive(new FileStream(file, FileMode.Open), ZipArchiveMode.Read))
+                    {
+                        var allTextFiles = archive.Entries;
+
+                        ZipArchiveEntry mamiEntry = archive.GetEntry("mami.MAmi");
+                        ZipArchiveEntry midiEntry = archive.GetEntry("midi.midi");
+                        if (mamiEntry == null || midiEntry == null)
+                        {
+                            MessageBox.Show("Failed to load the MAmidi file.");
+                            return;
+                        }
+                        using (var sr = new StreamReader(mamiEntry.Open()))
+                            readMAmiCore(sr.ReadToEnd());
+
+                        string midiFile = Path.GetTempFileName();
+                        midiEntry.ExtractToFile(midiFile, true);
+                        loadMidiFile(midiFile);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show("Failed to load the MAmidi file.");
+                }
+            }
+        }
+
+        private static void readMAmiCore(string data)
         {
             try
             {
-                string text = StringCompressionUtility.Decompress(File.ReadAllText(file));
+                string text = StringCompressionUtility.Decompress(data);
                 InstrumentManager.ClearAllInstruments();
                 var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
                 InstrumentManager.RestoreSettings(settings);
@@ -674,7 +729,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to load the file.\r\n" + ex.Message);
+                MessageBox.Show("Failed to load the MAmi file.\r\n" + ex.Message);
             }
         }
 
@@ -1013,7 +1068,7 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (File.Exists(drags[0]) && Path.GetExtension(drags[0]).Equals(".MAmi", StringComparison.OrdinalIgnoreCase))
                     {
-                        loadMAmi(drags[0]);
+                        loadMAmidiFile(drags[0]);
                     }
                 }
             }
@@ -1129,10 +1184,27 @@ namespace zanac.MAmidiMEmo.Gui
             DialogResult dr = openFileDialogMidi.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                loadMidiFile(openFileDialogMidi.FileName);
+                string ext = Path.GetExtension(openFileDialogMidi.FileName);
+                switch (ext.ToUpperInvariant())
+                {
+                    case ".MIDI":
+                    case ".MID":
+                    case ".SMF":
+                        loadMidiFile(openFileDialogMidi.FileName);
+                        break;
+                    case ".MAMIDI":
+                        loadMAmidiFile(openFileDialogMidi.FileName);
+                        break;
+                }
             }
         }
 
+        private string loadedMidiFile;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fn"></param>
         private void loadMidiFile(string fn)
         {
             try
@@ -1141,9 +1213,21 @@ namespace zanac.MAmidiMEmo.Gui
 
                 var midiFile = MidiFile.Read(fn);
 
-                fileSystemWatcherMidi.Path = Path.GetDirectoryName(fn);
-                fileSystemWatcherMidi.Filter = Path.GetFileName(fn);
-                fileSystemWatcherMidi.EnableRaisingEvents = toolStripButtonReload.Checked;
+                loadedMidiFile = fn;
+
+                try
+                {
+                    fileSystemWatcherMidi.Path = Path.GetDirectoryName(fn);
+                    fileSystemWatcherMidi.Filter = Path.GetFileName(fn);
+                    fileSystemWatcherMidi.EnableRaisingEvents = toolStripButtonReload.Checked;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
 
                 labelTitle.SetText("(Loaded)");
                 labelTitle.Tag = new object();
@@ -1183,24 +1267,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private class InternalMidiPlayerDevice : IOutputDevice
-        {
-            public event EventHandler<MidiEventSentEventArgs> EventSent;
-
-            public void PrepareForEventsSending()
-            {
-            }
-
-            public void SendEvent(MidiEvent midiEvent)
-            {
-                MidiManager.SendMidiEvent(midiEvent);
-                EventSent?.Invoke(this, new MidiEventSentEventArgs(midiEvent));
-            }
-        }
-
         private void toolStripButtonReload_CheckStateChanged(object sender, EventArgs e)
         {
             if (midiPlayback != null)
@@ -1214,7 +1280,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void timerReload_Tick(object sender, EventArgs e)
         {
-            loadMidiFile(openFileDialogMidi.FileName);
+            loadMidiFile(loadedMidiFile);
             timerReload.Enabled = false;
         }
 
@@ -1232,12 +1298,18 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (File.Exists(drags[0]))
                     {
-                        if (Path.GetExtension(drags[0]).Equals(".midi", StringComparison.OrdinalIgnoreCase))
-                            loadMidiFile(drags[0]);
-                        else if (Path.GetExtension(drags[0]).Equals(".mid", StringComparison.OrdinalIgnoreCase))
-                            loadMidiFile(drags[0]);
-                        else if (Path.GetExtension(drags[0]).Equals(".smf", StringComparison.OrdinalIgnoreCase))
-                            loadMidiFile(drags[0]);
+                        string ext = Path.GetExtension(drags[0]);
+                        switch (ext.ToUpperInvariant())
+                        {
+                            case ".MIDI":
+                            case ".MID":
+                            case ".SMF":
+                                loadMidiFile(drags[0]);
+                                break;
+                            case ".MAMIDI":
+                                loadMAmidiFile(drags[0]);
+                                break;
+                        }
                     }
                 }
             }
@@ -1253,13 +1325,75 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (File.Exists(drags[0]))
                     {
-                        if (Path.GetExtension(drags[0]).Equals(".midi", StringComparison.OrdinalIgnoreCase))
-                            e.Effect = DragDropEffects.All;
-                        else if (Path.GetExtension(drags[0]).Equals(".mid", StringComparison.OrdinalIgnoreCase))
-                            e.Effect = DragDropEffects.All;
-                        else if (Path.GetExtension(drags[0]).Equals(".smf", StringComparison.OrdinalIgnoreCase))
-                            e.Effect = DragDropEffects.All;
+                        string ext = Path.GetExtension(drags[0]);
+                        switch (ext.ToUpperInvariant())
+                        {
+                            case ".MIDI":
+                            case ".MID":
+                            case ".SMF":
+                            case ".MAMIDI":
+                                e.Effect = DragDropEffects.All;
+                                break;
+                        }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void exportMAmidiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (loadedMidiFile == null)
+            {
+                MessageBox.Show("Please load a midi file to save the current env and midi file.");
+                return;
+            }
+
+            DialogResult dr = saveFileDialogMAmidi.ShowDialog(this);
+            if (dr == DialogResult.OK)
+            {
+                try
+                {
+                    using (FileStream zipToOpen = new FileStream(saveFileDialogMAmidi.FileName, FileMode.OpenOrCreate))
+                    {
+                        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                        {
+                            {
+                                ZipArchiveEntry mamiEntry = archive.CreateEntry("mami.MAmi");
+
+                                var es = Program.SaveEnvironmentSettings();
+                                string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
+                                string mami = StringCompressionUtility.Compress(data);
+
+                                using (var writer = new StreamWriter(mamiEntry.Open()))
+                                {
+                                    writer.Write(mami);
+                                }
+                            }
+                            {
+                                ZipArchiveEntry midiEntry = archive.CreateEntry("midi.midi");
+
+                                using (var writer = new BinaryWriter(midiEntry.Open()))
+                                {
+                                    foreach (var data in File.ReadAllBytes(loadedMidiFile))
+                                        writer.Write(data);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show("Failed to save the current env and midi.\r\n" + ex.Message);
                 }
             }
         }

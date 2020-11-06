@@ -396,7 +396,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 if (ActiveFx)
                     return FxEngine.Settings.EnvelopeInterval;
-                else if(IsKeyOff)
+                else if (IsKeyOff)
                     TrySoundOff();
             }
             return -1;
@@ -437,7 +437,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
-                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]];
+                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] / 100;
                 PortamentoDeltaNoteNumber += delta;
 
                 if (portStartNoteDeltSign < 0 && PortamentoDeltaNoteNumber >= 0)
