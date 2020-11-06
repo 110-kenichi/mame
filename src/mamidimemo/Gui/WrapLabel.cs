@@ -9,7 +9,7 @@ namespace zanac.MAmidiMEmo.Gui
 {
     public class WrapLabel : Label
     {
-        Timer timer;
+        private Timer timer;
 
         /// <summary>
         /// 
@@ -21,20 +21,6 @@ namespace zanac.MAmidiMEmo.Gui
             timer.Tick += Timer_Tick;
 
             AutoEllipsis = true;
-        }
-
-        public void SetText(String text)
-        {
-            if (Width < TextRenderer.MeasureText(text, Font, Size).Width)
-            {
-                Text = text + " *** ";
-                timer.Enabled = true;
-            }
-            else
-            {
-                Text = text;
-                timer.Enabled = false;
-            }
         }
 
         protected override void Dispose(bool disposing)
@@ -49,12 +35,39 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            ignoreTextChange = true;
             if (Text.Length > 1)
             {
                 string t1 = Text.Substring(1);
                 string t0 = Text.Substring(0, 1);
                 Text = t1 + t0;
+            }
+        }
+
+
+        private string originalText;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        public void SetText(String text)
+        {
+            originalText = text;
+
+            updateWrapStat();
+        }
+
+        private void updateWrapStat()
+        {
+            if (Width < TextRenderer.MeasureText(originalText, Font, Size).Width)
+            {
+                Text = originalText + " *** ";
+                timer.Enabled = true;
+            }
+            else
+            {
+                Text = originalText;
+                timer.Enabled = false;
             }
         }
 

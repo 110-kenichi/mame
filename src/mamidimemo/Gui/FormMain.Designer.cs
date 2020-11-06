@@ -56,20 +56,6 @@
             this.toolStripButtonA2Z = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPopup = new System.Windows.Forms.ToolStripButton();
             this.tabControlBottom = new MetroFramework.Controls.MetroTabControl();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelClock = new System.Windows.Forms.Label();
-            this.panelOsc2 = new System.Windows.Forms.Panel();
-            this.labelTitle = new WrapLabel();
-            this.labelStat = new System.Windows.Forms.Label();
-            this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
-            this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
@@ -98,6 +84,26 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroTrackBarVol = new MetroFramework.Controls.MetroTrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelClock = new System.Windows.Forms.Label();
+            this.panelOsc2 = new System.Windows.Forms.Panel();
+            this.labelTitle = new zanac.MAmidiMEmo.Gui.WrapLabel();
+            this.labelStat = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.labelCpuLoad = new System.Windows.Forms.Label();
+            this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
+            this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -166,11 +172,12 @@
             this.contextMenuStripProp.SuspendLayout();
             this.toolStrip3.SuspendLayout();
             this.tabControlBottom.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.toolStrip4.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.toolStrip2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.toolStrip4.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -348,122 +355,16 @@
             // 
             // tabControlBottom
             // 
-            this.tabControlBottom.Controls.Add(this.tabPage1);
             this.tabControlBottom.Controls.Add(this.tabPage3);
+            this.tabControlBottom.Controls.Add(this.tabPage1);
             this.tabControlBottom.Controls.Add(this.tabPage4);
             this.tabControlBottom.Controls.Add(this.tabPage2);
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 0;
+            this.tabControlBottom.SelectedIndex = 2;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             this.tabControlBottom.UseSelectable = true;
-            // 
-            // tabPage4
-            // 
-            this.tabPage4.Controls.Add(this.tableLayoutPanel1);
-            this.tabPage4.Controls.Add(this.toolStrip4);
-            resources.ApplyResources(this.tabPage4, "tabPage4");
-            this.tabPage4.Name = "tabPage4";
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelClock, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelOsc2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.labelTitle, 3, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelStat, 0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            // 
-            // label1
-            // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
-            this.label1.Name = "label1";
-            // 
-            // labelClock
-            // 
-            resources.ApplyResources(this.labelClock, "labelClock");
-            this.labelClock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
-            this.labelClock.Name = "labelClock";
-            this.labelClock.UseCompatibleTextRendering = true;
-            // 
-            // panelOsc2
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.panelOsc2, 3);
-            resources.ApplyResources(this.panelOsc2, "panelOsc2");
-            this.panelOsc2.Name = "panelOsc2";
-            this.panelOsc2.Paint += new System.Windows.Forms.PaintEventHandler(this.panelOsc2_Paint);
-            // 
-            // labelTitle
-            // 
-            resources.ApplyResources(this.labelTitle, "labelTitle");
-            this.labelTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
-            this.labelTitle.Name = "labelTitle";
-            this.labelTitle.UseMnemonic = false;
-            // 
-            // labelStat
-            // 
-            resources.ApplyResources(this.labelStat, "labelStat");
-            this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
-            this.labelStat.Name = "labelStat";
-            // 
-            // toolStrip4
-            // 
-            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonPlay,
-            this.toolStripButtonPause,
-            this.toolStripButtonStop,
-            this.toolStripButtonOpen,
-            this.toolStripButtonReload});
-            resources.ApplyResources(this.toolStrip4, "toolStrip4");
-            this.toolStrip4.Name = "toolStrip4";
-            // 
-            // toolStripButtonPlay
-            // 
-            this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
-            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
-            this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Click += new System.EventHandler(this.toolStripButtonPlay_Click);
-            // 
-            // toolStripButtonPause
-            // 
-            this.toolStripButtonPause.Image = global::zanac.MAmidiMEmo.Properties.Resources.Pause;
-            resources.ApplyResources(this.toolStripButtonPause, "toolStripButtonPause");
-            this.toolStripButtonPause.Name = "toolStripButtonPause";
-            this.toolStripButtonPause.Click += new System.EventHandler(this.toolStripButtonPause_Click);
-            // 
-            // toolStripButtonStop
-            // 
-            this.toolStripButtonStop.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
-            resources.ApplyResources(this.toolStripButtonStop, "toolStripButtonStop");
-            this.toolStripButtonStop.Name = "toolStripButtonStop";
-            this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
-            // 
-            // toolStripButtonOpen
-            // 
-            this.toolStripButtonOpen.Image = global::zanac.MAmidiMEmo.Properties.Resources.Open;
-            resources.ApplyResources(this.toolStripButtonOpen, "toolStripButtonOpen");
-            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
-            this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
-            // 
-            // toolStripButtonReload
-            // 
-            this.toolStripButtonReload.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButtonReload.CheckOnClick = true;
-            this.toolStripButtonReload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            resources.ApplyResources(this.toolStripButtonReload, "toolStripButtonReload");
-            this.toolStripButtonReload.Name = "toolStripButtonReload";
-            this.toolStripButtonReload.CheckStateChanged += new System.EventHandler(this.toolStripButtonReload_CheckStateChanged);
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.Black;
-            resources.ApplyResources(this.tabPage1, "tabPage1");
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
             // 
             // tabPage3
             // 
@@ -1008,6 +909,166 @@
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
             resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.tabPage1, "tabPage1");
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.panel1);
+            this.tabPage4.Controls.Add(this.toolStrip4);
+            resources.ApplyResources(this.tabPage4, "tabPage4");
+            this.tabPage4.Name = "tabPage4";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.panel1.Controls.Add(this.tableLayoutPanel1);
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Name = "panel1";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.metroTrackBarVol, 4, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelClock, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panelOsc2, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.labelTitle, 4, 0);
+            this.tableLayoutPanel1.Controls.Add(this.labelStat, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 3, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 6, 1);
+            this.tableLayoutPanel1.Controls.Add(this.labelCpuLoad, 7, 1);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // metroTrackBarVol
+            // 
+            this.metroTrackBarVol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            this.metroTrackBarVol.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MasterVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.metroTrackBarVol, "metroTrackBarVol");
+            this.metroTrackBarVol.Name = "metroTrackBarVol";
+            this.metroTrackBarVol.UseCustomBackColor = true;
+            this.metroTrackBarVol.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.MasterVolume;
+            this.metroTrackBarVol.ValueChanged += new System.EventHandler(this.metroTrackBar1_ValueChanged);
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.label1.Name = "label1";
+            // 
+            // labelClock
+            // 
+            resources.ApplyResources(this.labelClock, "labelClock");
+            this.labelClock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.labelClock.Name = "labelClock";
+            this.labelClock.UseCompatibleTextRendering = true;
+            // 
+            // panelOsc2
+            // 
+            this.panelOsc2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(146)))), ((int)(((byte)(0)))));
+            this.tableLayoutPanel1.SetColumnSpan(this.panelOsc2, 3);
+            resources.ApplyResources(this.panelOsc2, "panelOsc2");
+            this.panelOsc2.Name = "panelOsc2";
+            this.panelOsc2.Paint += new System.Windows.Forms.PaintEventHandler(this.panelOsc2_Paint);
+            // 
+            // labelTitle
+            // 
+            this.labelTitle.AllowDrop = true;
+            this.labelTitle.AutoEllipsis = true;
+            this.tableLayoutPanel1.SetColumnSpan(this.labelTitle, 4);
+            resources.ApplyResources(this.labelTitle, "labelTitle");
+            this.labelTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.labelTitle.Name = "labelTitle";
+            this.labelTitle.UseMnemonic = false;
+            this.labelTitle.DragDrop += new System.Windows.Forms.DragEventHandler(this.labelTitle_DragDrop);
+            this.labelTitle.DragEnter += new System.Windows.Forms.DragEventHandler(this.labelTitle_DragEnter);
+            // 
+            // labelStat
+            // 
+            resources.ApplyResources(this.labelStat, "labelStat");
+            this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+            this.labelStat.Name = "labelStat";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.label2.Name = "label2";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.label3.Name = "label3";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.label4.Name = "label4";
+            // 
+            // labelCpuLoad
+            // 
+            resources.ApplyResources(this.labelCpuLoad, "labelCpuLoad");
+            this.labelCpuLoad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.labelCpuLoad.Name = "labelCpuLoad";
+            this.labelCpuLoad.UseCompatibleTextRendering = true;
+            // 
+            // toolStrip4
+            // 
+            this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonPlay,
+            this.toolStripButtonPause,
+            this.toolStripButtonStop,
+            this.toolStripButtonOpen,
+            this.toolStripButtonReload});
+            resources.ApplyResources(this.toolStrip4, "toolStrip4");
+            this.toolStrip4.Name = "toolStrip4";
+            // 
+            // toolStripButtonPlay
+            // 
+            this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
+            this.toolStripButtonPlay.Name = "toolStripButtonPlay";
+            this.toolStripButtonPlay.Click += new System.EventHandler(this.toolStripButtonPlay_Click);
+            // 
+            // toolStripButtonPause
+            // 
+            this.toolStripButtonPause.Image = global::zanac.MAmidiMEmo.Properties.Resources.Pause;
+            resources.ApplyResources(this.toolStripButtonPause, "toolStripButtonPause");
+            this.toolStripButtonPause.Name = "toolStripButtonPause";
+            this.toolStripButtonPause.Click += new System.EventHandler(this.toolStripButtonPause_Click);
+            // 
+            // toolStripButtonStop
+            // 
+            this.toolStripButtonStop.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+            resources.ApplyResources(this.toolStripButtonStop, "toolStripButtonStop");
+            this.toolStripButtonStop.Name = "toolStripButtonStop";
+            this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
+            // 
+            // toolStripButtonOpen
+            // 
+            this.toolStripButtonOpen.Image = global::zanac.MAmidiMEmo.Properties.Resources.Open;
+            resources.ApplyResources(this.toolStripButtonOpen, "toolStripButtonOpen");
+            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+            this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
+            // 
+            // toolStripButtonReload
+            // 
+            this.toolStripButtonReload.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButtonReload.Checked = global::zanac.MAmidiMEmo.Properties.Settings.Default.AutoReload;
+            this.toolStripButtonReload.CheckOnClick = true;
+            this.toolStripButtonReload.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            resources.ApplyResources(this.toolStripButtonReload, "toolStripButtonReload");
+            this.toolStripButtonReload.Name = "toolStripButtonReload";
+            this.toolStripButtonReload.CheckStateChanged += new System.EventHandler(this.toolStripButtonReload_CheckStateChanged);
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.listView1);
@@ -1424,15 +1485,16 @@
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
             this.tabControlBottom.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.toolStrip4.ResumeLayout(false);
             this.toolStrip4.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -1558,10 +1620,16 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelClock;
         private System.Windows.Forms.Panel panelOsc2;
-        private WrapLabel labelTitle;
         private System.Windows.Forms.Label labelStat;
         private System.IO.FileSystemWatcher fileSystemWatcherMidi;
         private System.Windows.Forms.Timer timerReload;
+        private Gui.WrapLabel labelTitle;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private MetroFramework.Controls.MetroTrackBar metroTrackBarVol;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelCpuLoad;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

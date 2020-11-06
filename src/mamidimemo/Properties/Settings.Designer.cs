@@ -358,5 +358,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmCC"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoReload {
+            get {
+                return ((bool)(this["AutoReload"]));
+            }
+            set {
+                this["AutoReload"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MasterVolume {
+            get {
+                return ((int)(this["MasterVolume"]));
+            }
+            set {
+                this["MasterVolume"] = value;
+            }
+        }
     }
 }

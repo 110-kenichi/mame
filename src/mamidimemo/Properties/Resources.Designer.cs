@@ -253,9 +253,9 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
-        internal static byte[] DSEG14Classic_Regular {
+        internal static byte[] DSEG14ClassicMini_BoldItalic {
             get {
-                object obj = ResourceManager.GetObject("DSEG14Classic_Regular", resourceCulture);
+                object obj = ResourceManager.GetObject("DSEG14ClassicMini_BoldItalic", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -377,6 +377,16 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("Pause", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] PixelMplus12_Regular {
+            get {
+                object obj = ResourceManager.GetObject("PixelMplus12_Regular", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         

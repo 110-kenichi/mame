@@ -131,6 +131,32 @@ namespace zanac.MAmidiMEmo.Instruments
             GainRight = 1.0f;
         }
 
+
+        private static float f_MasterGain = 1.0f;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public static float MasterGain
+        {
+            get
+            {
+                return f_MasterGain;
+            }
+            set
+            {
+                if (f_MasterGain != value)
+                {
+                    f_MasterGain = value;
+
+                    DeferredWriteData(SetOutputGain, uint.MaxValue, "lspeaker", 0, f_MasterGain);
+                    DeferredWriteData(SetOutputGain, uint.MaxValue, "rspeaker", 0, f_MasterGain);
+                }
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -1572,7 +1598,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             device_reset(UnitNumber, SoundInterfaceTagNamePrefix);
 
-            SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainLeft);
+            SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
 
             GlobalARP = new ArpSettings();

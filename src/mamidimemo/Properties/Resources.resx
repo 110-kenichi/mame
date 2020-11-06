@@ -286,7 +286,10 @@
   <data name="DSEG7ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DSEG7ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="DSEG14Classic_Regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DSEG14Classic-Regular.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="PixelMplus12_Regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PixelMplus12-Regular.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DSEG14ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DSEG14ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -1,5 +1,6 @@
 // copyright-holders:K.Ito
 #include "emu.h"
+#include "osdepend.h"
 #include "emumem.h"
 #include "machine.h"
 #include "vgmwrite.h"
@@ -197,13 +198,20 @@ extern "C"
 		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
 			return;
 
-		std::string num = std::to_string(unitNumber);
-		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
-		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
-		if (sd == nullptr)
-			return;
+		if (unitNumber != UINT32_MAX)
+		{
+			std::string num = std::to_string(unitNumber);
+			device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+			//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+			if (sd == nullptr)
+				return;
 
-		sd->set_output_gain(channel, gain);
+			sd->set_output_gain(channel, gain);
+		}
+		else
+		{
+			rm->osd().set_mastervolume(-32 * (1.0 - gain));
+		}
 	}
 
 	std::map<std::string, device_sound_interface *> speakerSoundInterface;

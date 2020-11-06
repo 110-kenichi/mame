@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using MetroFramework.Forms;
 using Melanchall.DryWetMidi.Interaction;
+using zanac.MAmidiMEmo.Util;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -117,7 +118,6 @@ namespace zanac.MAmidiMEmo.Gui
         public FormMain()
         {
             InitializeComponent();
-            //this.Font = new Font(PrivateFonts.Families[0], 13f);
 
             unsafe
             {
@@ -127,12 +127,19 @@ namespace zanac.MAmidiMEmo.Gui
             }
             unsafe
             {
-                byte[] fontBuf = Properties.Resources.DSEG14Classic_Regular;
+                byte[] fontBuf = Properties.Resources.DSEG14ClassicMini_BoldItalic;
+                fixed (byte* pFontBuf = fontBuf)
+                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+            }
+            unsafe
+            {
+                byte[] fontBuf = Properties.Resources.PixelMplus12_Regular;
                 fixed (byte* pFontBuf = fontBuf)
                     privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
             }
             labelClock.Font = new Font(privateFonts.Families[1], 18);
-            //labelTitle.Font = new Font(privateFonts.Families[0], 18);
+            labelCpuLoad.Font = new Font(privateFonts.Families[1], 18);
+            labelTitle.Font = new Font(privateFonts.Families[2], 22);
 
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 
@@ -752,7 +759,11 @@ namespace zanac.MAmidiMEmo.Gui
             OscUtility.DrawOsc(e, null, panelOsc2, oscLineColor);
         }
 
-        private int timerCounter;
+        private int clockCounter;
+
+        private int loadCounter;
+
+        private CpuUsage cpuUsage = new CpuUsage();
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -761,10 +772,10 @@ namespace zanac.MAmidiMEmo.Gui
             else if (tabControlBottom.SelectedTab == tabPage4)
                 panelOsc2.Invalidate();
 
-            timerCounter++;
-            if (timerCounter > 250 / timerOsc.Interval)
+            clockCounter++;
+            if (clockCounter > 100 / timerOsc.Interval)
             {
-                timerCounter = 0;
+                clockCounter = 0;
                 MetricTimeSpan playTime = (MetricTimeSpan)midiPlayback?.GetCurrentTime(Melanchall.DryWetMidi.Interaction.TimeSpanType.Metric);
                 if (playTime != null)
                 {
@@ -775,6 +786,12 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     labelClock.Text = "00:00";
                 }
+            }
+            loadCounter++;
+            if (loadCounter > 1000 / timerOsc.Interval)
+            {
+                loadCounter = 0;
+                labelCpuLoad.Text = cpuUsage.GetUsage().ToString("000");
             }
         }
 
@@ -1112,27 +1129,32 @@ namespace zanac.MAmidiMEmo.Gui
             DialogResult dr = openFileDialogMidi.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                loadMidiFile();
+                loadMidiFile(openFileDialogMidi.FileName);
             }
         }
 
-        private void loadMidiFile()
+        private void loadMidiFile(string fn)
         {
             try
             {
                 toolStripButtonStop_Click(null, EventArgs.Empty);
 
-                var midiFile = MidiFile.Read(openFileDialogMidi.FileName);
+                var midiFile = MidiFile.Read(fn);
 
-                fileSystemWatcherMidi.Path = Path.GetDirectoryName(openFileDialogMidi.FileName);
-                fileSystemWatcherMidi.Filter = Path.GetFileName(openFileDialogMidi.FileName);
+                fileSystemWatcherMidi.Path = Path.GetDirectoryName(fn);
+                fileSystemWatcherMidi.Filter = Path.GetFileName(fn);
                 fileSystemWatcherMidi.EnableRaisingEvents = toolStripButtonReload.Checked;
 
-                labelTitle.SetText(string.Empty);
+                labelTitle.SetText("(Loaded)");
+                labelTitle.Tag = new object();
 
                 midiPlayback?.Dispose();
                 midiPlayback = midiFile.GetPlayback(new InternalMidiPlayerDevice());
                 midiPlayback.EventPlayed += MidiPlayback_EventPlayed;
+
+                InstrumentBase.MasterGain = (float)metroTrackBarVol.Value / 100f;
+
+                toolStripButtonPlay_Click(null, null);
             }
             catch (Exception ex)
             {
@@ -1152,8 +1174,11 @@ namespace zanac.MAmidiMEmo.Gui
                 SequenceTrackNameEvent t = (SequenceTrackNameEvent)e.Event;
                 labelTitle.BeginInvoke(new MethodInvoker(() =>
                 {
-                    if (!labelTitle.IsDisposed && labelTitle.Text.Length == 0)
+                    if (!labelTitle.IsDisposed && labelTitle.Tag != null)
+                    {
                         labelTitle.SetText(t.Text.Replace((char)0, (char)' ').Trim());
+                        labelTitle.Tag = null;
+                    }
                 }));
             }
         }
@@ -1189,8 +1214,54 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void timerReload_Tick(object sender, EventArgs e)
         {
-            loadMidiFile();
+            loadMidiFile(openFileDialogMidi.FileName);
             timerReload.Enabled = false;
+        }
+
+        private void metroTrackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            InstrumentBase.MasterGain = (float)metroTrackBarVol.Value / 100f;
+        }
+
+        private void labelTitle_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (File.Exists(drags[0]))
+                    {
+                        if (Path.GetExtension(drags[0]).Equals(".midi", StringComparison.OrdinalIgnoreCase))
+                            loadMidiFile(drags[0]);
+                        else if (Path.GetExtension(drags[0]).Equals(".mid", StringComparison.OrdinalIgnoreCase))
+                            loadMidiFile(drags[0]);
+                        else if (Path.GetExtension(drags[0]).Equals(".smf", StringComparison.OrdinalIgnoreCase))
+                            loadMidiFile(drags[0]);
+                    }
+                }
+            }
+        }
+
+        private void labelTitle_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (File.Exists(drags[0]))
+                    {
+                        if (Path.GetExtension(drags[0]).Equals(".midi", StringComparison.OrdinalIgnoreCase))
+                            e.Effect = DragDropEffects.All;
+                        else if (Path.GetExtension(drags[0]).Equals(".mid", StringComparison.OrdinalIgnoreCase))
+                            e.Effect = DragDropEffects.All;
+                        else if (Path.GetExtension(drags[0]).Equals(".smf", StringComparison.OrdinalIgnoreCase))
+                            e.Effect = DragDropEffects.All;
+                    }
+                }
+            }
         }
     }
 }

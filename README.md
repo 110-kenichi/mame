@@ -362,3 +362,6 @@ https://github.com/divideconcept/FluidLite
 
 * Font "DSEG" by けしかん
 https://www.keshikan.net/fonts.html
+
+* M+ FONT
+http://itouhiro.hatenablog.com/entry/20130602/font
