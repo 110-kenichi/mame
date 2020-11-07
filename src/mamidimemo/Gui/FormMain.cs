@@ -1256,19 +1256,30 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MidiPlayback_EventPlayed(object sender, MidiEventPlayedEventArgs e)
         {
-            if (e.Event.EventType == MidiEventType.SequenceTrackName)
+            switch (e.Event.EventType)
             {
-                SequenceTrackNameEvent t = (SequenceTrackNameEvent)e.Event;
-                labelTitle.BeginInvoke(new MethodInvoker(() =>
-                {
-                    if (!labelTitle.IsDisposed && labelTitle.Tag != null)
+                case MidiEventType.Text:
                     {
-                        labelTitle.SetText(t.Text.Replace((char)0, (char)' ').Trim());
-                        labelTitle.Tag = null;
+                        setTitle(((TextEvent)e.Event).Text);
+                        break;
                     }
-                }));
+                case MidiEventType.CopyrightNotice:
+                    {
+                        setTitle(((CopyrightNoticeEvent)e.Event).Text);
+                        break;
+                    }
+                case MidiEventType.SequenceTrackName:
+                    {
+                        setTitle(((SequenceTrackNameEvent)e.Event).Text);
+                        break;
+                    }
             }
         }
 
@@ -1420,6 +1431,17 @@ namespace zanac.MAmidiMEmo.Gui
                         chNoteOnData[tnoe.Channel] = tnoe.Velocity;
                 }
             }
+        }
+        private void setTitle(string text)
+        {
+            labelTitle.BeginInvoke(new MethodInvoker(() =>
+            {
+                if (!labelTitle.IsDisposed && labelTitle.Tag != null)
+                {
+                    labelTitle.SetText(text.Replace((char)0, (char)' ').Trim());
+                    labelTitle.Tag = null;
+                }
+            }));
         }
 
         private int[] chNoteOnData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
