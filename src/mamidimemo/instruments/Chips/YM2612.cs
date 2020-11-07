@@ -1242,7 +1242,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     SimpleSerializer.DeserializeProps(this, value,
-                           nameof(ALG),
+
+                        nameof(ALG),
                         nameof(FB),
 
                         "Ops[0].AR",

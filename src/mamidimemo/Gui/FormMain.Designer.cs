@@ -98,6 +98,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.labelCpuLoad = new System.Windows.Forms.Label();
+            this.panelChDisp = new System.Windows.Forms.Panel();
             this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
             this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
@@ -162,7 +163,6 @@
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
-            this.panelChDisp = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1027,6 +1027,14 @@
             this.labelCpuLoad.Name = "labelCpuLoad";
             this.labelCpuLoad.UseCompatibleTextRendering = true;
             // 
+            // panelChDisp
+            // 
+            this.panelChDisp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            resources.ApplyResources(this.panelChDisp, "panelChDisp");
+            this.panelChDisp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
+            this.panelChDisp.Name = "panelChDisp";
+            this.panelChDisp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelChDisp_Paint);
+            // 
             // toolStrip4
             // 
             this.toolStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1482,13 +1490,6 @@
             this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
             resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
             this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
-            // 
-            // panelChDisp
-            // 
-            this.panelChDisp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
-            resources.ApplyResources(this.panelChDisp, "panelChDisp");
-            this.panelChDisp.Name = "panelChDisp";
-            this.panelChDisp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelChDisp_Paint);
             // 
             // FormMain
             // 

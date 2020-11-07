@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -29,7 +30,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         sb.Append(",");
                     var f = getPropertyInfo(obj, m);
                     var val = f.Property.GetValue(f.Owner);
-                    if(val != null)
+                    if (val != null)
                         sb.Append(val.ToString());
                 }
             }
@@ -58,7 +59,11 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 serializeData = serializeData.Replace("\r", "").Replace("\n", "");
-                var vals = serializeData.Split(new char[] { ',', ' ', '\t' }).GetEnumerator();
+                IEnumerator vals = null;
+                if (serializeData.Contains(','))
+                    vals = serializeData.Split(new char[] { ',' }).GetEnumerator();
+                else
+                    vals = serializeData.Split(new char[] { ' ', '\t' }).GetEnumerator();
                 foreach (string m in props)
                 {
                     if (!vals.MoveNext())

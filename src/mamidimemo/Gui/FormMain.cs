@@ -1407,11 +1407,17 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (e.EventType == MidiEventType.NoteOn)
             {
-                NoteOnEvent noe = (NoteOnEvent)e;
-                if (noe.Velocity != 0)
+                NoteOnEvent noe = e as NoteOnEvent;
+                if (noe != null && noe.Velocity != 0)
                 {
                     lock (chNoteOnData)
                         chNoteOnData[noe.Channel] = noe.Velocity;
+                }
+                TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
+                if (tnoe != null && tnoe.Velocity != 0)
+                {
+                    lock (chNoteOnData)
+                        chNoteOnData[tnoe.Channel] = tnoe.Velocity;
                 }
             }
         }

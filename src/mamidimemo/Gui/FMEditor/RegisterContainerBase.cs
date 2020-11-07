@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.ComponentModel;
 using System.Reflection;
+using System.Collections;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
@@ -206,7 +207,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             try
             {
                 serializeData = serializeData.Replace("\r", "").Replace("\n", "");
-                var vals = serializeData.Split(new char[] { ',', ' ', '\t' }).GetEnumerator();
+                IEnumerator vals = null;
+                if (serializeData.Contains(','))
+                    vals = serializeData.Split(new char[] { ',' }).GetEnumerator();
+                else
+                    vals = serializeData.Split(new char[] { ' ', '\t' }).GetEnumerator();
                 foreach (string m in props)
                 {
                     if (!vals.MoveNext())
