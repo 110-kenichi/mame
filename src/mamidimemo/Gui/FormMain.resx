@@ -1816,14 +1816,14 @@
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
-  <data name="metroTrackBarVol.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="metroTrackBarVol.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="metroTrackBarVol.Location" type="System.Drawing.Point, System.Drawing">
     <value>245, 45</value>
   </data>
   <data name="metroTrackBarVol.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 41</value>
+    <value>144, 41</value>
   </data>
   <data name="metroTrackBarVol.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1876,11 +1876,11 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="labelClock.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
   <data name="labelClock.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="labelClock.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
   </data>
   <data name="labelClock.Font" type="System.Drawing.Font, System.Drawing">
     <value>MS UI Gothic, 24pt</value>
@@ -1889,10 +1889,10 @@
     <value>NoControl</value>
   </data>
   <data name="labelClock.Location" type="System.Drawing.Point, System.Drawing">
-    <value>69, 3</value>
+    <value>93, 3</value>
   </data>
   <data name="labelClock.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 39</value>
+    <value>84, 39</value>
   </data>
   <data name="labelClock.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -1914,6 +1914,9 @@
   </data>
   <data name="&gt;&gt;labelClock.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="panelOsc2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="panelOsc2.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 45</value>
@@ -2092,6 +2095,9 @@
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
+  <data name="labelCpuLoad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
   <data name="labelCpuLoad.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -2102,7 +2108,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelCpuLoad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>774, 42</value>
+    <value>774, 46</value>
   </data>
   <data name="labelCpuLoad.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 39</value>
@@ -2127,6 +2133,30 @@
   </data>
   <data name="&gt;&gt;labelCpuLoad.ZOrder" xml:space="preserve">
     <value>9</value>
+  </data>
+  <data name="panelChDisp.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="panelChDisp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>395, 45</value>
+  </data>
+  <data name="panelChDisp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>324, 41</value>
+  </data>
+  <data name="panelChDisp.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;panelChDisp.Name" xml:space="preserve">
+    <value>panelChDisp</value>
+  </data>
+  <data name="&gt;&gt;panelChDisp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelChDisp.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;panelChDisp.ZOrder" xml:space="preserve">
+    <value>10</value>
   </data>
   <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -2159,7 +2189,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroTrackBarVol" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="labelClock" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="panelOsc2" Row="1" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="labelTitle" Row="0" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="labelStat" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="1" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="labelCpuLoad" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,50,AutoSize,50,AutoSize,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroTrackBarVol" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="label1" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="labelClock" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="panelOsc2" Row="1" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="labelTitle" Row="0" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="labelStat" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="label4" Row="1" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="labelCpuLoad" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="panelChDisp" Row="1" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Percent,50,AutoSize,50,AutoSize,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -2468,7 +2498,7 @@
     <value>&amp;FILE</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>125, 22</value>
   </data>
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Settings...</value>

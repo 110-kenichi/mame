@@ -162,6 +162,7 @@
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
+            this.panelChDisp = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -934,7 +935,7 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(146)))), ((int)(((byte)(0)))));
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.metroTrackBarVol, 4, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
@@ -946,13 +947,14 @@
             this.tableLayoutPanel1.Controls.Add(this.label3, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.label4, 6, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelCpuLoad, 7, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panelChDisp, 5, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // metroTrackBarVol
             // 
+            resources.ApplyResources(this.metroTrackBarVol, "metroTrackBarVol");
             this.metroTrackBarVol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
             this.metroTrackBarVol.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MasterVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            resources.ApplyResources(this.metroTrackBarVol, "metroTrackBarVol");
             this.metroTrackBarVol.Name = "metroTrackBarVol";
             this.metroTrackBarVol.UseCustomBackColor = true;
             this.metroTrackBarVol.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.MasterVolume;
@@ -967,15 +969,16 @@
             // labelClock
             // 
             resources.ApplyResources(this.labelClock, "labelClock");
+            this.labelClock.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
             this.labelClock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
             this.labelClock.Name = "labelClock";
             this.labelClock.UseCompatibleTextRendering = true;
             // 
             // panelOsc2
             // 
-            this.panelOsc2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(146)))), ((int)(((byte)(0)))));
-            this.tableLayoutPanel1.SetColumnSpan(this.panelOsc2, 3);
             resources.ApplyResources(this.panelOsc2, "panelOsc2");
+            this.panelOsc2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            this.tableLayoutPanel1.SetColumnSpan(this.panelOsc2, 3);
             this.panelOsc2.Name = "panelOsc2";
             this.panelOsc2.Paint += new System.Windows.Forms.PaintEventHandler(this.panelOsc2_Paint);
             // 
@@ -983,6 +986,7 @@
             // 
             this.labelTitle.AllowDrop = true;
             this.labelTitle.AutoEllipsis = true;
+            this.labelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
             this.tableLayoutPanel1.SetColumnSpan(this.labelTitle, 4);
             resources.ApplyResources(this.labelTitle, "labelTitle");
             this.labelTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
@@ -1018,6 +1022,7 @@
             // labelCpuLoad
             // 
             resources.ApplyResources(this.labelCpuLoad, "labelCpuLoad");
+            this.labelCpuLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
             this.labelCpuLoad.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
             this.labelCpuLoad.Name = "labelCpuLoad";
             this.labelCpuLoad.UseCompatibleTextRendering = true;
@@ -1478,6 +1483,13 @@
             resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
             this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
             // 
+            // panelChDisp
+            // 
+            this.panelChDisp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            resources.ApplyResources(this.panelChDisp, "panelChDisp");
+            this.panelChDisp.Name = "panelChDisp";
+            this.panelChDisp.Paint += new System.Windows.Forms.PaintEventHandler(this.panelChDisp_Paint);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1648,6 +1660,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem exportMAmidiToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialogMAmidi;
+        private System.Windows.Forms.Panel panelChDisp;
     }
 }
 

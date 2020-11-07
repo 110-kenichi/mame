@@ -218,6 +218,8 @@ namespace zanac.MAmidiMEmo.Gui
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
+            MidiManager.MidiEventReceived += MidiManager_MidiEventReceived;
+
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 
@@ -825,7 +827,10 @@ namespace zanac.MAmidiMEmo.Gui
             if (tabControlBottom.SelectedTab == tabPage1)
                 tabPage1.Invalidate();
             else if (tabControlBottom.SelectedTab == tabPage4)
+            {
                 panelOsc2.Invalidate();
+                panelChDisp.Invalidate();
+            }
 
             clockCounter++;
             if (clockCounter > 100 / timerOsc.Interval)
@@ -1395,6 +1400,54 @@ namespace zanac.MAmidiMEmo.Gui
 
                     MessageBox.Show("Failed to save the current env and midi.\r\n" + ex.Message);
                 }
+            }
+        }
+
+        private void MidiManager_MidiEventReceived(object sender, MidiEvent e)
+        {
+            if (e.EventType == MidiEventType.NoteOn)
+            {
+                NoteOnEvent noe = (NoteOnEvent)e;
+                if (noe.Velocity != 0)
+                {
+                    lock (chNoteOnData)
+                        chNoteOnData[noe.Channel] = noe.Velocity;
+                }
+            }
+        }
+
+        private int[] chNoteOnData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        private Brush chDispBarBrush = new SolidBrush(Color.FromArgb(115, 63, 0));
+
+        private Brush chDispBackBrush = new SolidBrush(Color.FromArgb(229, 126, 0));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void panelChDisp_Paint(object sender, PaintEventArgs e)
+        {
+            int w = (panelChDisp.Width / 16);
+            int bw = w - (2 * 2);
+            int h = panelChDisp.Height;
+            int bh = h - (2 * 2);
+            var g = e.Graphics;
+
+            for (int i = 0; i < 16; i++)
+            {
+                var vel = chNoteOnData[i];
+
+                int x = i * w + 2;
+                int y = bh * (127 - vel) / 127;
+                g.FillRectangle(chDispBackBrush, x, 2, bw, y);
+                g.FillRectangle(chDispBarBrush, x, 2 + y, bw, bh - y);
+
+                vel -= 8;
+                if (vel < 0)
+                    vel = 0;
+                chNoteOnData[i] = vel;
             }
         }
     }
