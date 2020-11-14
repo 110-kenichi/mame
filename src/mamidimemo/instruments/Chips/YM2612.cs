@@ -732,6 +732,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //$B0+: algorithm and feedback
                 Ym2612WriteData(parentModule.UnitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
 
+                //On
+                if (!IsKeyOff)
+                {
+                    uint reg = (uint)(Slot / 3) * 2;
+                    byte open = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
+                    Ym2612WriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(Slot % 3)));
+                }
+
                 OnPanpotUpdated();
                 //Volume
                 OnVolumeUpdated();

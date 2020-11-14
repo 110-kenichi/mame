@@ -727,6 +727,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
+                if (!IsKeyOff)
+                {
+                    byte open = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
+                    Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(open | Slot));
+                }
+
                 OnPanpotUpdated();
 
                 OnVolumeUpdated();

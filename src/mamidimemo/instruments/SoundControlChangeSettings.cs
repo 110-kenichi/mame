@@ -161,7 +161,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static Dictionary<Type, Dictionary<string, InstancePropertyInfo>> propertyInfoTable = new Dictionary<Type, Dictionary<string, InstancePropertyInfo>>();
 
-        private static Regex removeRegex = new Regex(@"[ ()+\-^*/^]|sin|cos|tg|ctg|sh|ch|th|sqrt|exp|log|ln|abs|pi|e", RegexOptions.Compiled);
+        private static Regex removeRegex = new Regex(@"[ ()+\-^*/^]|\bsin\b|\bcos\b|\btg\b|\bctg\b|\bsh\b|\bch\b|\bth\b|\bsqrt\b|\bexp\b|\blog\b|\bln\b|\babs\b|\bpi\b|\be\b", RegexOptions.Compiled);
 
         private static Regex nameRegex = new Regex(@"\ [0-9]*", RegexOptions.Compiled);
 

@@ -285,6 +285,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private SevenBitNumber ni;
         private SevenBitNumber vi;
 
+        private bool ignorePlayingFlag;
+
         /// <summary>
         /// 
         /// </summary>
@@ -292,7 +294,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         private async void Control_ValueChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (toolStripButtonPlay.Checked)
+            if (toolStripButtonPlay.Checked && !ignorePlayingFlag)
             {
                 if (playing != null)
                 {
@@ -345,6 +347,133 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         public RegisterContainerBase GetControl(string itemName)
         {
             return controls[itemName];
+        }
+
+        private void metroButtonParams_Click(object sender, EventArgs e)
+        {
+            var rns = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < rns.Length; i++)
+                rns[i] = rns[i].Trim();
+            try
+            {
+                ignorePlayingFlag = true;
+
+                var rand = new Random(DateTime.Now.GetHashCode());
+                foreach (var rcb in controls.Values)
+                {
+                    foreach (var rc in rcb.RegisterControls)
+                    {
+                        RegisterValue rv = rc as RegisterValue;
+                        if (rv != null)
+                        {
+                            if (rns.Length != 0)
+                            {
+                                bool match = false;
+                                foreach (var rn in rns)
+                                {
+                                    if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
+                                    {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                                if (!match)
+                                    continue;
+                            }
+
+                            var v = rand.Next(-1, 2);
+
+                            if (rv.IsNullable)
+                            {
+                                var cv = rv.NullableValue;
+                                if (cv.HasValue)
+                                    cv += v;
+                                else
+                                    cv = v;
+                                if (cv < rv.Minimum)
+                                    cv = null;
+                                else if (cv > rv.Maximum)
+                                    cv = rv.Maximum;
+
+                                rv.NullableValue = cv;
+                            }
+                            else
+                            {
+                                var cv = rv.Value;
+
+                                cv += v;
+                                if (cv < rv.Minimum)
+                                    cv = rv.Minimum;
+                                else if (cv > rv.Maximum)
+                                    cv = rv.Maximum;
+
+                                rv.Value = cv;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                ignorePlayingFlag = false;
+            }
+            Control_ValueChanged(this, null);
+        }
+
+        private void metroButtonRandAll_Click(object sender, EventArgs e)
+        {
+            var rns = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < rns.Length; i++)
+                rns[i] = rns[i].Trim();
+
+            try
+            {
+                ignorePlayingFlag = true;
+
+                var rand = new Random(DateTime.Now.GetHashCode());
+                foreach (var rcb in controls.Values)
+                {
+                    foreach (var rc in rcb.RegisterControls)
+                    {
+                        RegisterValue rv = rc as RegisterValue;
+                        if (rv != null)
+                        {
+                            if (rns.Length != 0)
+                            {
+                                bool match = false;
+                                foreach (var rn in rns)
+                                {
+                                    if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
+                                    {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                                if (!match)
+                                    continue;
+                            }
+
+                            if (rv.IsNullable)
+                            {
+                                var v = rand.Next(rv.Minimum - 1, rv.Maximum + 1);
+                                if (v < rv.Minimum)
+                                    rv.NullableValue = null;
+                                else
+                                    rv.NullableValue = v;
+                            }
+                            else
+                            {
+                                rv.Value = rand.Next(rv.Minimum, rv.Maximum + 1);
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                ignorePlayingFlag = false;
+            }
+            Control_ValueChanged(this, null);
         }
     }
 

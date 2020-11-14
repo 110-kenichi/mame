@@ -24,6 +24,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public RegisterBase[] RegisterControls
+        {
+            get
+            {
+                return controls.Values.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string RegisterName
         {
             get;
