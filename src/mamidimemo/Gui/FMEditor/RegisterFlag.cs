@@ -38,14 +38,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public RegisterFlag(string registerName, bool value) : base(registerName)
+        public RegisterFlag(string registerName, bool value) : this(null, registerName, value)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RegisterFlag(string labelName, string registerName, bool value) : base(registerName)
         {
             InitializeComponent();
             Dock = DockStyle.Left;
 
             ItemName = registerName;
 
-            labelName.Text = registerName;
+            this.labelName.Text = labelName != null ? labelName : registerName;
 
             checkBox.Checked = value;
 

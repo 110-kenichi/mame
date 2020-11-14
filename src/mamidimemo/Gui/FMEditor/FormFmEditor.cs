@@ -351,9 +351,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void metroButtonParams_Click(object sender, EventArgs e)
         {
-            var rns = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < rns.Length; i++)
-                rns[i] = rns[i].Trim();
+            var names = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> targetName = new List<string>();
+            List<string> untargetName = new List<string>();
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (!names[i].StartsWith("!"))
+                    targetName.Add(names[i].Trim());
+                else if (names[i].Length > 1)
+                    untargetName.Add(names[i].Substring(1).Trim());
+            }
+
             try
             {
                 ignorePlayingFlag = true;
@@ -366,10 +374,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         RegisterValue rv = rc as RegisterValue;
                         if (rv != null)
                         {
-                            if (rns.Length != 0)
+                            if (targetName.Count != 0)
                             {
                                 bool match = false;
-                                foreach (var rn in rns)
+                                foreach (var rn in targetName)
                                 {
                                     if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
                                     {
@@ -378,6 +386,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     }
                                 }
                                 if (!match)
+                                    continue;
+                            }
+                            if (untargetName.Count != 0)
+                            {
+                                bool match = false;
+                                foreach (var rn in untargetName)
+                                {
+                                    if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
+                                    {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                                if (match)
                                     continue;
                             }
 
@@ -422,9 +444,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void metroButtonRandAll_Click(object sender, EventArgs e)
         {
-            var rns = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < rns.Length; i++)
-                rns[i] = rns[i].Trim();
+            var names = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> targetName = new List<string>();
+            List<string> untargetName = new List<string>();
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (!names[i].StartsWith("!"))
+                    targetName.Add(names[i].Trim());
+                else if (names[i].Length > 1)
+                    untargetName.Add(names[i].Substring(1).Trim());
+            }
 
             try
             {
@@ -438,10 +467,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         RegisterValue rv = rc as RegisterValue;
                         if (rv != null)
                         {
-                            if (rns.Length != 0)
+                            if (targetName.Count != 0)
                             {
                                 bool match = false;
-                                foreach (var rn in rns)
+                                foreach (var rn in targetName)
                                 {
                                     if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
                                     {
@@ -450,6 +479,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     }
                                 }
                                 if (!match)
+                                    continue;
+                            }
+                            if (untargetName.Count != 0)
+                            {
+                                bool match = false;
+                                foreach (var rn in untargetName)
+                                {
+                                    if (rn.Equals(rv.ItemName, StringComparison.Ordinal))
+                                    {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                                if (match)
                                     continue;
                             }
 

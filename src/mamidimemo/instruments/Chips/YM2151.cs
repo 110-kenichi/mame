@@ -658,6 +658,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 OnVolumeUpdated();
                 //On
                 Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x2);
+                Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x0);
+
                 byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(op | Slot));
             }
@@ -959,6 +961,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(AMS),
                         nameof(PMS),
 
+                        "GlobalSettings.EN",
+                        "GlobalSettings.LFRQ",
+                        "GlobalSettings.LFOF",
+                        "GlobalSettings.LFOD",
+                        "GlobalSettings.LFOW",
+
                         "Ops[0].EN",
                         "Ops[0].AR",
                         "Ops[0].D1R",
@@ -1018,6 +1026,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(FB),
                         nameof(AMS),
                         nameof(PMS),
+
+                        "GlobalSettings.EN",
+                        "GlobalSettings.LFRQ",
+                        "GlobalSettings.LFOF",
+                        "GlobalSettings.LFOD",
+                        "GlobalSettings.LFOW",
 
                         "Ops[0].EN",
                         "Ops[0].AR",
@@ -1755,6 +1769,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte EN
+            {
+                get
+                {
+                    return Enable ? (byte)1 : (byte)0;
+                }
+                set
+                {
+                    Enable = value == 0 ? false : true;
+                }
             }
 
             private byte? f_LFRQ;

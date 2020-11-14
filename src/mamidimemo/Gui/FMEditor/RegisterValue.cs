@@ -28,7 +28,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     trackBar.Value = value;
             }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -104,12 +104,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public RegisterValue(string registerName, int value, int min, int max, bool isNullable) : base(registerName)
+        public RegisterValue(string registerName, int value, int min, int max, bool isNullable) : this(null, registerName, value, min, max, isNullable)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public RegisterValue(string labelName, string registerName, int value, int min, int max, bool isNullable) : base(registerName)
         {
             InitializeComponent();
             Dock = DockStyle.Left;
 
-            labelName.Text = registerName;
+            this.labelName.Text = labelName != null ? labelName : registerName;
 
             ItemName = registerName;
             IsNullable = isNullable;

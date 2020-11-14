@@ -28,7 +28,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(tim.ALG),
                     nameof(tim.FB),
                     nameof(tim.AMS),
-                    nameof(tim.FMS));
+                    nameof(tim.FMS),
+                    "GlobalSettings.EN",
+                    "GlobalSettings.LFOEN",
+                    "GlobalSettings.LFRQ");
             }
             set
             {
@@ -36,7 +39,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(tim.ALG),
                     nameof(tim.FB),
                     nameof(tim.AMS),
-                    nameof(tim.FMS));
+                    nameof(tim.FMS),
+                    "GlobalSettings.EN",
+                    "GlobalSettings.LFOEN",
+                    "GlobalSettings.LFRQ");
             }
         }
 
@@ -53,8 +59,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
             AddControl(new RegisterValue("AMS", tim.AMS, 0, 3));
             AddControl(new RegisterValue("FMS", tim.FMS, 0, 7));
+
+            AddControl(new RegisterFlag("LFO", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
+            AddControl(new RegisterValue("LFOEN", "GlobalSettings.LFOEN", tim.GlobalSettings.LFOEN == null ? -1 : tim.GlobalSettings.LFOEN.Value, 0, 255, true));
+            AddControl(new RegisterValue("LFRQ", "GlobalSettings.LFRQ", tim.GlobalSettings.LFRQ == null ? -1 : tim.GlobalSettings.LFRQ.Value, 0, 7, true));
+
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));
-            AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right});
+            AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterOscViewer(inst));
         }
 

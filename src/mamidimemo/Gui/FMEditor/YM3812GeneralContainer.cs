@@ -26,13 +26,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 return SerializeProps(this,
                     nameof(tim.ALG),
-                    nameof(tim.FB));
+                    nameof(tim.FB),
+                    "GlobalSettings.EN",
+                    "GlobalSettings.AMD",
+                    "GlobalSettings.VIB"
+                    );
             }
             set
             {
                 DeserializeProps(this, value,
                     nameof(tim.ALG),
-                    nameof(tim.FB));
+                    nameof(tim.FB),
+                    "GlobalSettings.EN",
+                    "GlobalSettings.AMD",
+                    "GlobalSettings.VIB"
+                    );
             }
         }
 
@@ -47,6 +55,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterValue("ALG", tim.ALG, 0, 1));
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
+
+            AddControl(new RegisterFlag("LFO", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
+            AddControl(new RegisterValue("AMD", "GlobalSettings.AMD", tim.GlobalSettings.AMD == null ? -1 : tim.GlobalSettings.AMD.Value, 0, 1, true));
+            AddControl(new RegisterValue("VIB", "GlobalSettings.VIB", tim.GlobalSettings.VIB == null ? -1 : tim.GlobalSettings.VIB.Value, 0, 1, true));
+
             AddControl(new RegisterAlg2OpImg((RegisterValue)GetControl("ALG")));
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterOscViewer(inst));

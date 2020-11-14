@@ -89,7 +89,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(tim.ALG),
                         nameof(tim.FB),
                         nameof(tim.AMS),
-                        nameof(tim.FMS));
+                        nameof(tim.FMS),
+                        "GlobalSettings.EN",
+                        "GlobalSettings.LFOEN",
+                        "GlobalSettings.LFRQ"
+                        );
                     ed.MmlValueGeneral = mmlValueGeneral;
 
                     List<string> mmlValueOps = new List<string>();

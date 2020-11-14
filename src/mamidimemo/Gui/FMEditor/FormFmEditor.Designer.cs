@@ -57,10 +57,10 @@
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.metroButtonRand1 = new MetroFramework.Controls.MetroButton();
             this.metroButtonParams = new MetroFramework.Controls.MetroButton();
+            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -405,6 +405,44 @@
             this.metroButtonParams.UseSelectable = true;
             this.metroButtonParams.Click += new System.EventHandler(this.metroButtonParams_Click);
             // 
+            // metroTextBoxTarget
+            // 
+            // 
+            // 
+            // 
+            this.metroTextBoxTarget.CustomButton.Image = null;
+            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(435, 2);
+            this.metroTextBoxTarget.CustomButton.Name = "";
+            this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(21, 21);
+            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxTarget.CustomButton.TabIndex = 1;
+            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
+            this.metroTextBoxTarget.CustomButton.Visible = false;
+            this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroTextBoxTarget.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroTextBoxTarget.Lines = new string[] {
+        "!ALG"};
+            this.metroTextBoxTarget.Location = new System.Drawing.Point(167, 5);
+            this.metroTextBoxTarget.MaxLength = 32767;
+            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
+            this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
+            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxTarget.SelectedText = "";
+            this.metroTextBoxTarget.SelectionLength = 0;
+            this.metroTextBoxTarget.SelectionStart = 0;
+            this.metroTextBoxTarget.ShortcutsEnabled = true;
+            this.metroTextBoxTarget.Size = new System.Drawing.Size(459, 26);
+            this.metroTextBoxTarget.TabIndex = 4;
+            this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
+            this.metroTextBoxTarget.UseSelectable = true;
+            this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
+            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
@@ -426,39 +464,6 @@
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(50, 50);
             this.flowLayoutPanel1.TabIndex = 0;
-            // 
-            // metroTextBoxTarget
-            // 
-            // 
-            // 
-            // 
-            this.metroTextBoxTarget.CustomButton.Image = null;
-            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(435, 2);
-            this.metroTextBoxTarget.CustomButton.Name = "";
-            this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(21, 21);
-            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxTarget.CustomButton.TabIndex = 1;
-            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
-            this.metroTextBoxTarget.CustomButton.Visible = false;
-            this.metroTextBoxTarget.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxTarget.Lines = new string[0];
-            this.metroTextBoxTarget.Location = new System.Drawing.Point(167, 5);
-            this.metroTextBoxTarget.MaxLength = 32767;
-            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
-            this.metroTextBoxTarget.PasswordChar = '\0';
-            this.metroTextBoxTarget.PromptText = "(Write randomize target register names here. Separated with comma.)";
-            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxTarget.SelectedText = "";
-            this.metroTextBoxTarget.SelectionLength = 0;
-            this.metroTextBoxTarget.SelectionStart = 0;
-            this.metroTextBoxTarget.ShortcutsEnabled = true;
-            this.metroTextBoxTarget.Size = new System.Drawing.Size(459, 26);
-            this.metroTextBoxTarget.TabIndex = 4;
-            this.metroTextBoxTarget.UseSelectable = true;
-            this.metroTextBoxTarget.WaterMark = "(Write randomize target register names here. Separated with comma.)";
-            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
             // FormFmEditor
             // 

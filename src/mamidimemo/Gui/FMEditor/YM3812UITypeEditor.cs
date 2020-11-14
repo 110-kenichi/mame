@@ -87,7 +87,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
-                        nameof(tim.FB));
+                        nameof(tim.FB),
+                        "GlobalSettings.EN",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.VIB"
+                    );
                     ed.MmlValueGeneral = mmlValueGeneral;
 
                     List<string> mmlValueOps = new List<string>();

@@ -382,5 +382,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["MasterVolume"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("!ALG")]
+        public string FmTarget {
+            get {
+                return ((string)(this["FmTarget"]));
+            }
+            set {
+                this["FmTarget"] = value;
+            }
+        }
     }
 }

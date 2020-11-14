@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.1.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.2.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -234,6 +234,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
+        Added FM Synthesis register value randomizer to FM Synthesis Editor.
+		Added FM Synthesis global register to FM Synthesis Editor.
 2.5.1.0 Improved MIDI file Player UI.
 2.5.0.0 Added MIDI file Player tab.
 		Supported MAmidi file that is MAmi file and midi file are archived file. To create MAmidi file, load midi file and export MAmidi file.

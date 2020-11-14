@@ -691,6 +691,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return SimpleSerializer.SerializeProps(this,
                         nameof(ALG),
                         nameof(FB),
+                        
+                        "GlobalSettings.EN",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.VIB",
 
                         "Ops[0].AR",
                         "Ops[0].DR",
@@ -725,6 +729,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SimpleSerializer.DeserializeProps(this, value,
                         nameof(ALG),
                         nameof(FB),
+
+                        "GlobalSettings.EN",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.VIB",
 
                         "Ops[0].AR",
                         "Ops[0].DR",
@@ -1357,6 +1365,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte EN
+            {
+                get
+                {
+                    return Enable ? (byte)1 : (byte)0;
+                }
+                set
+                {
+                    Enable = value == 0 ? false : true;
+                }
             }
 
             private byte? f_AMD;

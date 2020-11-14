@@ -92,5 +92,8 @@
     <Setting Name="MasterVolume" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="FmTarget" Type="System.String" Scope="User">
+      <Value Profile="(Default)">!ALG</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
