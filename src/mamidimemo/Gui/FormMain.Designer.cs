@@ -56,6 +56,7 @@
             this.toolStripButtonA2Z = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPopup = new System.Windows.Forms.ToolStripButton();
             this.tabControlBottom = new MetroFramework.Controls.MetroTabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
@@ -84,7 +85,6 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -223,6 +223,7 @@
             // 
             resources.ApplyResources(this.metroLabelDrop, "metroLabelDrop");
             this.metroLabelDrop.Name = "metroLabelDrop";
+            this.metroLabelDrop.WrapToLine = true;
             this.metroLabelDrop.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
             this.metroLabelDrop.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
             // 
@@ -358,16 +359,23 @@
             // 
             // tabControlBottom
             // 
-            this.tabControlBottom.Controls.Add(this.tabPage3);
             this.tabControlBottom.Controls.Add(this.tabPage1);
+            this.tabControlBottom.Controls.Add(this.tabPage3);
             this.tabControlBottom.Controls.Add(this.tabPage4);
             this.tabControlBottom.Controls.Add(this.tabPage2);
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 2;
+            this.tabControlBottom.SelectedIndex = 0;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             this.tabControlBottom.UseSelectable = true;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.tabPage1, "tabPage1");
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
             // 
             // tabPage3
             // 
@@ -911,13 +919,6 @@
             resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
             resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.BackColor = System.Drawing.Color.Black;
-            resources.ApplyResources(this.tabPage1, "tabPage1");
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
             // 
             // tabPage4
             // 
@@ -1505,7 +1506,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
