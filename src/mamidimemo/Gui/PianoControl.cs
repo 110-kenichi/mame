@@ -107,19 +107,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             receiveChs[ch] = receive;
         }
-
-        private int mouseCh;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ch"></param>
-        /// <param name="receive"></param>
-        public void SetMouseChannel(int ch)
-        {
-            mouseCh = ch;
-        }
-
+        
         protected override void OnClientSizeChanged(EventArgs e)
         {
             keyPathBlackTable.Clear();

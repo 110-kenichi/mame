@@ -26,12 +26,16 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         public static object SoundExclusiveLockObject = new object();
 
-        private static InputDevice inputDevice;
+        private static InputDevice inputDeviceA;
+
+        private static InputDevice inputDeviceB;
 
         //
         // 概要:
         //     Occurs when a MIDI event is received.
-        public static event EventHandler<MidiEvent> MidiEventReceived;
+        public static event EventHandler<MidiEvent> MidiEventReceivedA;
+
+        public static event EventHandler<MidiEvent> MidiEventReceivedB;
 
         /// <summary>
         /// 
@@ -48,11 +52,13 @@ namespace zanac.MAmidiMEmo.Midi
         /// <param name="e"></param>
         private static void Program_ShuttingDown(object sender, EventArgs e)
         {
-            if (inputDevice != null)
-                inputDevice.EventReceived -= midiEventReceived;
+            if (inputDeviceA != null)
+                inputDeviceA.EventReceived -= midiEventReceivedA;
+            if (inputDeviceB != null)
+                inputDeviceB.EventReceived -= midiEventReceivedB;
 
             //All Sounds Off
-            SendMidiEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
+            SendMidiEvent(MidiPort.PortAB, new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
         }
 
         /// <summary>
@@ -67,31 +73,66 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        public static void SetInputMidiDevice(string deviceName)
+        public static void SetInputMidiDeviceA(string deviceName)
         {
-            if (inputDevice != null && inputDevice.Name.Equals(deviceName))
+            if (inputDeviceA != null && inputDeviceA.Name.Equals(deviceName))
+                return;
+            if (inputDeviceB != null && inputDeviceB.Name.Equals(deviceName))
                 return;
 
-            if (inputDevice != null)
+            if (inputDeviceA != null)
             {
                 try
                 {
-                    inputDevice.StopEventsListening();
+                    inputDeviceA.StopEventsListening();
                 }
                 catch
                 {
                 }
                 finally
                 {
-                    inputDevice.Dispose();
+                    inputDeviceA.Dispose();
                 }
             }
             Settings.Default.MidiIF = deviceName;
-            inputDevice = InputDevice.GetByName(deviceName);
-            if (inputDevice != null)
+            inputDeviceA = InputDevice.GetByName(deviceName);
+            if (inputDeviceA != null)
             {
-                inputDevice.EventReceived += midiEventReceived;
-                inputDevice.StartEventsListening();
+                inputDeviceA.EventReceived += midiEventReceivedA;
+                inputDeviceA.StartEventsListening();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SetInputMidiDeviceB(string deviceName)
+        {
+            if (inputDeviceA != null && inputDeviceA.Name.Equals(deviceName))
+                return;
+            if (inputDeviceB != null && inputDeviceB.Name.Equals(deviceName))
+                return;
+
+            if (inputDeviceB != null)
+            {
+                try
+                {
+                    inputDeviceB.StopEventsListening();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    inputDeviceB.Dispose();
+                }
+            }
+            Settings.Default.MidiIF_B = deviceName;
+            inputDeviceB = InputDevice.GetByName(deviceName);
+            if (inputDeviceB != null)
+            {
+                inputDeviceB.EventReceived += midiEventReceivedB;
+                inputDeviceB.StartEventsListening();
             }
         }
 
@@ -100,9 +141,21 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void SendMidiEvent(MidiEvent e)
+        public static void SendMidiEvent(MidiPort port, MidiEvent e)
         {
-            MidiEventReceived?.Invoke(typeof(MidiManager), e);
+            switch (port)
+            {
+                case MidiPort.PortA:
+                    MidiEventReceivedA?.Invoke(typeof(MidiManager), e);
+                    break;
+                case MidiPort.PortB:
+                    MidiEventReceivedB?.Invoke(typeof(MidiManager), e);
+                    break;
+                default:
+                    MidiEventReceivedA?.Invoke(typeof(MidiManager), e);
+                    MidiEventReceivedB?.Invoke(typeof(MidiManager), e);
+                    break;
+            }
         }
 
         private static BytesToMidiEventConverter midiConverter = new Melanchall.DryWetMidi.Core.BytesToMidiEventConverter();
@@ -111,22 +164,22 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        public static void SendMidiEvent(byte data1, byte data2, byte data3)
+        public static void SendMidiEvent(MidiPort port, byte data1, byte data2, byte data3)
         {
             var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
-            Midi.MidiManager.SendMidiEvent(me);
+            Midi.MidiManager.SendMidiEvent(port, me);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        unsafe public static void SendMidiSysEvent(byte *data, int length)
+        unsafe public static void SendMidiSysEvent(MidiPort port, byte* data, int length)
         {
             List<byte> buf = new List<byte>();
             for (int i = 0; i < length; i++)
                 buf.Add(data[i]);
             var me = midiConverter.Convert(buf.ToArray());
-            Midi.MidiManager.SendMidiEvent(me);
+            Midi.MidiManager.SendMidiEvent(port, me);
         }
 
         /// <summary>
@@ -134,9 +187,20 @@ namespace zanac.MAmidiMEmo.Midi
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void midiEventReceived(object sender, MidiEventReceivedEventArgs e)
+        private static void midiEventReceivedA(object sender, MidiEventReceivedEventArgs e)
         {
-            MidiEventReceived?.Invoke(sender, e.Event);
+            MidiEventReceivedA?.Invoke(sender, e.Event);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void midiEventReceivedB(object sender, MidiEventReceivedEventArgs e)
+        {
+            MidiEventReceivedB?.Invoke(sender, e.Event);
         }
 
         /// <summary>

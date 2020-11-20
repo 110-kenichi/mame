@@ -148,6 +148,7 @@ namespace zanac.MAmidiMEmo.Gui
             splitContainer1.SplitterDistance = Settings.Default.MWinSp1Pos;
             splitContainer2.SplitterDistance = Settings.Default.MWinSp2Pos;
 
+            toolStripComboBoxPort.SelectedIndex = Settings.Default.MWinPort;
             toolStripComboBoxKeyCh.SelectedIndex = Settings.Default.MWinKeyCh;
             toolStripComboBoxProgNo.SelectedIndex = Settings.Default.MWinProgNo;
             toolStripComboBoxCC.SelectedIndex = Settings.Default.MWinCC;
@@ -178,9 +179,11 @@ namespace zanac.MAmidiMEmo.Gui
 
             if (Program.IsVSTiMode())
             {
-                toolStripComboBoxMidiIf.Enabled = false;
-                toolStripComboBoxMidiIf.Items.Add("VSTi");
-                toolStripComboBoxMidiIf.SelectedIndex = 0;
+                toolStripComboBoxMidiIfA.Enabled = false;
+                toolStripComboBoxMidiIfA.Items.Add("VSTi");
+                toolStripComboBoxMidiIfA.SelectedIndex = 0;
+
+                toolStripComboBoxMidiIfB.Enabled = false;
 
                 toolStripMenuItemExit.Enabled = false;
                 this.ControlBox = false;
@@ -190,13 +193,18 @@ namespace zanac.MAmidiMEmo.Gui
                 //Set MIDI I/F
                 foreach (var dev in InputDevice.GetAll())
                 {
-                    int idx = toolStripComboBoxMidiIf.Items.Add(dev.Name);
+                    int idx = toolStripComboBoxMidiIfA.Items.Add(dev.Name);
                     if (string.Equals(dev.Name, Settings.Default.MidiIF))
-                        toolStripComboBoxMidiIf.SelectedIndex = idx;
+                        toolStripComboBoxMidiIfA.SelectedIndex = idx;
+
+                    idx = toolStripComboBoxMidiIfB.Items.Add(dev.Name);
+                    if (string.Equals(dev.Name, Settings.Default.MidiIF_B))
+                        toolStripComboBoxMidiIfB.SelectedIndex = idx;
+
                     dev.Dispose();
                 }
 
-                if (toolStripComboBoxMidiIf.Items.Count < 1)
+                if (toolStripComboBoxMidiIfA.Items.Count < 1)
                 {
                     MessageBox.Show(
                         "There are no MIDI IN devices.\r\n" +
@@ -218,7 +226,10 @@ namespace zanac.MAmidiMEmo.Gui
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
-            MidiManager.MidiEventReceived += MidiManager_MidiEventReceived;
+            InstrumentBase.StaticPropertyChanged += InstrumentBase_StaticPropertyChanged;
+
+            MidiManager.MidiEventReceivedA += MidiManager_MidiEventReceivedA;
+            MidiManager.MidiEventReceivedB += MidiManager_MidiEventReceivedB;
 
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
@@ -229,6 +240,8 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            Settings.Default.MWinPort = toolStripComboBoxPort.SelectedIndex;
+
             Settings.Default.MWinProgNo = toolStripComboBoxProgNo.SelectedIndex;
             Settings.Default.MWinKeyCh = toolStripComboBoxKeyCh.SelectedIndex;
             Settings.Default.MWinCC = toolStripComboBoxCC.SelectedIndex;
@@ -249,11 +262,11 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 //Program change
                 var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-                MidiManager.SendMidiEvent(pe);
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
+                MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), pe);
             }
-            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-            MidiManager.SendMidiEvent(e);
+            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
+            MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), e);
         }
 
         private void PianoControl1_NoteOff(object sender, NoteOffEvent e)
@@ -262,11 +275,11 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 //Program change
                 var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-                MidiManager.SendMidiEvent(pe);
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
+                MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), pe);
             }
-            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-            MidiManager.SendMidiEvent(e);
+            e.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
+            MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), e);
         }
 
         /// <summary>
@@ -279,8 +292,8 @@ namespace zanac.MAmidiMEmo.Gui
             var cce = new ControlChangeEvent
                 ((SevenBitNumber)toolStripComboBoxCC.SelectedIndex,
                 (SevenBitNumber)pianoControl1.EntryDataValue);
-            cce.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-            MidiManager.SendMidiEvent(cce);
+            cce.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
+            MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), cce);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -363,21 +376,50 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripComboBox1_DropDown(object sender, EventArgs e)
+        private void toolStripComboBoxMidiIfA_DropDown(object sender, EventArgs e)
         {
-            toolStripComboBoxMidiIf.Items.Clear();
+            toolStripComboBoxMidiIfA.Items.Clear();
             try
             {
                 int si = -1;
                 foreach (var dev in MidiManager.GetInputMidiDevices())
                 {
-                    int i = toolStripComboBoxMidiIf.Items.Add(dev.Name);
+                    int i = toolStripComboBoxMidiIfA.Items.Add(dev.Name);
                     if (dev.Name.Equals(Settings.Default.MidiIF))
                         si = i;
                     dev.Dispose();
                 }
                 if (si >= 0)
-                    toolStripComboBoxMidiIf.SelectedIndex = si;
+                    toolStripComboBoxMidiIfA.SelectedIndex = si;
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show("Failed to set MIDI I/F.");
+            }
+        }
+
+
+        private void toolStripComboBoxMidiIfB_DropDown(object sender, EventArgs e)
+        {
+            toolStripComboBoxMidiIfB.Items.Clear();
+            try
+            {
+                int si = -1;
+                foreach (var dev in MidiManager.GetInputMidiDevices())
+                {
+                    int i = toolStripComboBoxMidiIfB.Items.Add(dev.Name);
+                    if (dev.Name.Equals(Settings.Default.MidiIF))
+                        si = i;
+                    dev.Dispose();
+                }
+                if (si >= 0)
+                    toolStripComboBoxMidiIfB.SelectedIndex = si;
 
             }
             catch (Exception ex)
@@ -396,14 +438,35 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void toolStripComboBoxMidiIfA_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (Program.IsVSTiMode())
                 return;
 
             try
             {
-                MidiManager.SetInputMidiDevice(toolStripComboBoxMidiIf.Text);
+                MidiManager.SetInputMidiDeviceA(toolStripComboBoxMidiIfA.Text);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show("Failed to set MIDI I/F.");
+            }
+        }
+
+
+        private void toolStripComboBoxMidiIfB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Program.IsVSTiMode())
+                return;
+
+            try
+            {
+                MidiManager.SetInputMidiDeviceB(toolStripComboBoxMidiIfB.Text);
             }
             catch (Exception ex)
             {
@@ -750,11 +813,11 @@ namespace zanac.MAmidiMEmo.Gui
         {
             //All Note Off
             var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(me);
+            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
 
             //All Sounds Off
             me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(me);
+            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
 
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 inst.AllSoundOff();
@@ -763,7 +826,7 @@ namespace zanac.MAmidiMEmo.Gui
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             var me = new ControlChangeEvent((SevenBitNumber)121, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(me);
+            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -915,11 +978,6 @@ namespace zanac.MAmidiMEmo.Gui
             pianoControl1.SetReceiveChannel(int.Parse(tb.Text) - 1, tb.Checked);
         }
 
-        private void toolStripComboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            pianoControl1.SetMouseChannel(toolStripComboBoxKeyCh.SelectedIndex);
-        }
-
         private void toolStripButtonCat_Click(object sender, EventArgs e)
         {
             propertyGrid.PropertySort = PropertySort.Categorized;
@@ -1060,7 +1118,7 @@ namespace zanac.MAmidiMEmo.Gui
                 //Program change
                 var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
                 pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
-                MidiManager.SendMidiEvent(pe);
+                MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), pe);
             }
         }
 
@@ -1256,6 +1314,16 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        private void InstrumentBase_StaticPropertyChanged(object sender, PropertyChangingEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(InstrumentBase.MasterGain):
+                    metroTrackBarVol.Value = (int)(InstrumentBase.MasterGain * 100f);
+                    break;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1414,24 +1482,44 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-        private void MidiManager_MidiEventReceived(object sender, MidiEvent e)
+        private void MidiManager_MidiEventReceivedA(object sender, MidiEvent e)
         {
             if (e.EventType == MidiEventType.NoteOn)
             {
                 NoteOnEvent noe = e as NoteOnEvent;
                 if (noe != null && noe.Velocity != 0)
                 {
-                    lock (chNoteOnData)
-                        chNoteOnData[noe.Channel] = noe.Velocity;
+                    lock (chNoteOnDataA)
+                        chNoteOnDataA[noe.Channel] = noe.Velocity;
                 }
                 TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
                 if (tnoe != null && tnoe.Velocity != 0)
                 {
-                    lock (chNoteOnData)
-                        chNoteOnData[tnoe.Channel] = tnoe.Velocity;
+                    lock (chNoteOnDataA)
+                        chNoteOnDataA[tnoe.Channel] = tnoe.Velocity;
                 }
             }
         }
+
+        private void MidiManager_MidiEventReceivedB(object sender, MidiEvent e)
+        {
+            if (e.EventType == MidiEventType.NoteOn)
+            {
+                NoteOnEvent noe = e as NoteOnEvent;
+                if (noe != null && noe.Velocity != 0)
+                {
+                    lock (chNoteOnDataB)
+                        chNoteOnDataB[noe.Channel] = noe.Velocity;
+                }
+                TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
+                if (tnoe != null && tnoe.Velocity != 0)
+                {
+                    lock (chNoteOnDataB)
+                        chNoteOnDataB[tnoe.Channel] = tnoe.Velocity;
+                }
+            }
+        }
+
         private void setTitle(string text)
         {
             labelTitle.BeginInvoke(new MethodInvoker(() =>
@@ -1444,7 +1532,9 @@ namespace zanac.MAmidiMEmo.Gui
             }));
         }
 
-        private int[] chNoteOnData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        private int[] chNoteOnDataA = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        private int[] chNoteOnDataB = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         private Brush chDispBarBrush = new SolidBrush(Color.FromArgb(115, 63, 0));
 
@@ -1465,7 +1555,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             for (int i = 0; i < 16; i++)
             {
-                var vel = chNoteOnData[i];
+                var vel = chNoteOnDataA[i];
 
                 int x = i * w + 2;
                 int y = bh * (127 - vel) / 127;
@@ -1475,8 +1565,9 @@ namespace zanac.MAmidiMEmo.Gui
                 vel -= 8;
                 if (vel < 0)
                     vel = 0;
-                chNoteOnData[i] = vel;
+                chNoteOnDataA[i] = vel;
             }
         }
+
     }
 }

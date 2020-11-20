@@ -16,6 +16,7 @@ using zanac.MAmidiMEmo.Mame;
 using Melanchall.DryWetMidi.Core;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -67,17 +68,21 @@ namespace zanac.MAmidiMEmo.Instruments
             if (funcPtr != IntPtr.Zero)
                 getLastOutputBufferSamples = Marshal.GetDelegateForFunctionPointer<delegate_getLastOutputBufferSamples>(funcPtr);
 
-            Midi.MidiManager.MidiEventReceived += MidiManager_MidiEventReceived;
+            Midi.MidiManager.MidiEventReceivedA += MidiManager_MidiEventReceivedA;
+            Midi.MidiManager.MidiEventReceivedB += MidiManager_MidiEventReceivedB;
 
             for (int i = 0; i < Enum.GetNames(typeof(InstrumentType)).Length; i++)
                 instruments.Add(new List<InstrumentBase>());
 
-            NrpnLsb = new byte[16];
-            NrpnMsb = new byte[16];
-            RpnLsb = new byte[16];
-            RpnMsb = new byte[16];
-            DataLsb = new byte[16];
-            DataMsb = new byte[16];
+            NrpnLsb = new byte[2, 16];
+            NrpnMsb = new byte[2, 16];
+            RpnLsb = new byte[2, 16];
+            RpnMsb = new byte[2, 16];
+            DataLsb = new byte[2, 16];
+            DataMsb = new byte[2, 16];
+
+            sysExData.Add(new List<byte>());
+            sysExData.Add(new List<byte>());
         }
 
         /// <summary>
@@ -347,32 +352,32 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        public static byte[] DataLsb
+        private static byte[,] DataLsb
         {
             get;
         }
 
-        public static byte[] DataMsb
+        private static byte[,] DataMsb
         {
             get;
         }
 
-        public static byte[] NrpnLsb
+        private static byte[,] NrpnLsb
         {
             get;
         }
 
-        public static byte[] NrpnMsb
+        private static byte[,] NrpnMsb
         {
             get;
         }
 
-        public static byte[] RpnLsb
+        private static byte[,] RpnLsb
         {
             get;
         }
 
-        public static byte[] RpnMsb
+        private static byte[,] RpnMsb
         {
             get;
         }
@@ -394,7 +399,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="midiEvent"></param>
-        private static void MidiManager_MidiEventReceived(object sender, MidiEvent e)
+        private static void MidiManager_MidiEventReceivedA(object sender, MidiEvent e)
         {
             if (e is ActiveSensingEvent)
                 return;
@@ -403,11 +408,18 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
-                lock (ExclusiveLockObject)
-                    ProcessCC(e);
+                ProcessSysEx(MidiPort.PortA, e);
 
-                foreach(var i in instruments)
-                    i.ForEach((dev) => { dev.NotifyMidiEvent(e); });
+                //lock (ExclusiveLockObject)
+                ProcessCC(MidiPort.PortA, e);
+
+                foreach (var i in instruments)
+                    i.ForEach((dev) =>
+                    {
+                        if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                            dev.MidiPort == Midi.MidiPort.PortA)
+                            dev.NotifyMidiEvent(e);
+                    });
             }
             finally
             {
@@ -415,7 +427,92 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        private static void ProcessCC(MidiEvent e)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="midiEvent"></param>
+        private static void MidiManager_MidiEventReceivedB(object sender, MidiEvent e)
+        {
+            if (e is ActiveSensingEvent)
+                return;
+
+            try
+            {
+                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                ProcessSysEx(MidiPort.PortB, e);
+
+                //lock (ExclusiveLockObject)
+                ProcessCC(MidiPort.PortB, e);
+
+                foreach (var i in instruments)
+                    i.ForEach((dev) =>
+                    {
+                        if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                            dev.MidiPort == Midi.MidiPort.PortB)
+                            dev.NotifyMidiEvent(e);
+                    });
+            }
+            finally
+            {
+                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+            }
+        }
+
+        private static List<List<byte>> sysExData = new List<List<byte>>();
+
+        private static void ProcessSysEx(MidiPort port, MidiEvent e)
+        {
+            SysExEvent midiEvent = e as SysExEvent;
+            if (midiEvent != null)
+            {
+                sysExData[(int)port - 1].AddRange(midiEvent.Data);
+                if (midiEvent.Completed)
+                {
+                    List<byte> data = sysExData[(int)port - 1];
+                    try
+                    {
+                        if (data[data.Count - 1] != 0xf7)
+                            return;
+
+                        //All device
+                        if (!(data.Count > 2 && data[0] == 0x7f && data[1] == 0x7f))
+                            return;
+
+                        if (!(data.Count > 4))
+                            return;
+
+                        switch (data[2])
+                        {
+                            //COMMON
+                            case 0x04:
+                                {
+                                    switch (data[3])
+                                    {
+                                        //MASTER VOLUME
+                                        case 0x01:
+                                            {
+                                                if (data.Count > 6)
+                                                    InstrumentBase.MasterGain = (float)data[5] / 127f;
+
+                                                break;
+                                            }
+                                    }
+                                    break;
+                                }
+                        }
+                    }
+                    finally
+                    {
+                        data.Clear();
+                    }
+                }
+            }
+        }
+
+        private static void ProcessCC(MidiPort port, MidiEvent e)
         {
             ControlChangeEvent midiEvent = e as ControlChangeEvent;
             if (midiEvent != null)
@@ -423,24 +520,24 @@ namespace zanac.MAmidiMEmo.Instruments
                 switch (midiEvent.ControlNumber)
                 {
                     case 6:    //Data Entry MSB
-                        DataMsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        DataMsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
 
                         switch (lastDateEntryType)
                         {
                             case DataEntryType.Nrpn:
-                                ProcessNrpn(midiEvent, null);
+                                ProcessNrpn(port, midiEvent, null);
                                 break;
                             case DataEntryType.Rpn:
                                 break;
                         }
                         break;
                     case 38:    //Data Entry LSB
-                        DataLsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        DataLsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
 
                         switch (lastDateEntryType)
                         {
                             case DataEntryType.Nrpn:
-                                ProcessNrpn(null, midiEvent);
+                                ProcessNrpn(port, null, midiEvent);
                                 break;
                             case DataEntryType.Rpn:
                                 break;
@@ -456,30 +553,30 @@ namespace zanac.MAmidiMEmo.Instruments
                         break;
 
                     case 98:    //NRPN LSB
-                        NrpnLsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        NrpnLsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
                         lastDateEntryType = DataEntryType.Nrpn;
                         break;
                     case 99:    //NRPN MSB
-                        NrpnMsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        NrpnMsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
                         lastDateEntryType = DataEntryType.Nrpn;
                         break;
                     case 100:    //RPN LSB
-                        RpnLsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        RpnLsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
                         lastDateEntryType = DataEntryType.Rpn;
                         break;
                     case 101:    //RPN MSB
-                        RpnMsb[midiEvent.Channel] = midiEvent.ControlValue;
+                        RpnMsb[(int)port - 1, midiEvent.Channel] = midiEvent.ControlValue;
                         lastDateEntryType = DataEntryType.Rpn;
                         break;
                 }
             }
         }
 
-        private static void ProcessNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        private static void ProcessNrpn(MidiPort port, ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {
-                switch (NrpnMsb[dataMsb.Channel])
+                switch (NrpnMsb[(int)port - 1, dataMsb.Channel])
                 {
                     case 64:    // Inst Add/Del for Inst
                         {
@@ -489,9 +586,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             foreach (var inst in InstrumentManager.GetAllInstruments())
                             {
-                                if (inst.DeviceID == NrpnLsb[dataMsb.Channel])  // for Device ID
+                                if (inst.DeviceID == NrpnLsb[(int)port - 1, dataMsb.Channel])  // for Device ID
                                 {
-                                    if (inst.UnitNumber == DataLsb[dataMsb.Channel])    // for Unit No
+                                    if (inst.UnitNumber == DataLsb[(int)port - 1, dataMsb.Channel])    // for Unit No
                                     {
                                         for (int i = 0; i < 6; i++)
                                             inst.Channels[i] = (dataMsb.ControlValue & (1 << i)) != 0;
@@ -505,9 +602,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             foreach (var inst in InstrumentManager.GetAllInstruments())
                             {
-                                if (inst.DeviceID == NrpnLsb[dataMsb.Channel])  // for Device ID
+                                if (inst.DeviceID == NrpnLsb[(int)port - 1, dataMsb.Channel])  // for Device ID
                                 {
-                                    if (inst.UnitNumber == DataLsb[dataMsb.Channel])    // for Unit No
+                                    if (inst.UnitNumber == DataLsb[(int)port - 1, dataMsb.Channel])    // for Unit No
                                     {
                                         for (int i = 0; i < 6; i++)
                                             inst.Channels[i + 6] = (dataMsb.ControlValue & (1 << i)) != 0;
@@ -521,9 +618,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             foreach (var inst in InstrumentManager.GetAllInstruments())
                             {
-                                if (inst.DeviceID == NrpnLsb[dataMsb.Channel])  // for Device ID
+                                if (inst.DeviceID == NrpnLsb[(int)port - 1, dataMsb.Channel])  // for Device ID
                                 {
-                                    if (inst.UnitNumber == DataLsb[dataMsb.Channel])    // for Unit No
+                                    if (inst.UnitNumber == DataLsb[(int)port - 1, dataMsb.Channel])    // for Unit No
                                     {
                                         for (int i = 0; i < 1; i++)
                                             inst.Channels[i + 15] = (dataMsb.ControlValue & (1 << i)) != 0;
@@ -537,7 +634,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             if (dataLsb != null)
             {
-                switch (NrpnMsb[dataLsb.Channel])
+                switch (NrpnMsb[(int)port - 1, dataLsb.Channel])
                 {
                     case 65:
                         {

@@ -22,7 +22,7 @@ namespace zanac.MAmidiMEmo.Midi
 
         public void SendEvent(MidiEvent midiEvent)
         {
-            MidiManager.SendMidiEvent(midiEvent);
+            MidiManager.SendMidiEvent(MidiPort.PortA, midiEvent);
             EventSent?.Invoke(this, new MidiEventSentEventArgs(midiEvent));
         }
     }

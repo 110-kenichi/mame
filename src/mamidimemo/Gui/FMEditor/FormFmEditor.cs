@@ -208,7 +208,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pianoControl1.SetMouseChannel(toolStripComboBoxCh.SelectedIndex);
             for (int i = 0; i < 16; i++)
                 pianoControl1.SetReceiveChannel(i, false);
             pianoControl1.SetReceiveChannel(toolStripComboBoxCh.SelectedIndex, true);

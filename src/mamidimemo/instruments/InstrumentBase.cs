@@ -134,6 +134,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static float f_MasterGain = 1.0f;
 
+        public static event EventHandler<PropertyChangingEventArgs> StaticPropertyChanged;
+
         /// <summary>
         /// 
         /// </summary>
@@ -152,6 +154,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
                     DeferredWriteData(SetOutputGain, uint.MaxValue, "lspeaker", 0, f_MasterGain);
                     DeferredWriteData(SetOutputGain, uint.MaxValue, "rspeaker", 0, f_MasterGain);
+
+                    StaticPropertyChanged?.Invoke(typeof(InstrumentBase), new PropertyChangingEventArgs(nameof(MasterGain)));
                 }
             }
         }
@@ -670,6 +674,19 @@ namespace zanac.MAmidiMEmo.Instruments
                 ChannelTypes[i] = ChannelType.Normal;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Receving MIDI Port")]
+        [DefaultValue(MidiPort.PortAB)]
+        public virtual MidiPort MidiPort
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// 

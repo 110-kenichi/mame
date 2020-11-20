@@ -577,6 +577,7 @@
     <Compile Include="Mame\MameIf.cs" />
     <Compile Include="Midi\InternalMidiPlayerDevice.cs" />
     <Compile Include="Midi\MidiManager.cs" />
+    <Compile Include="Midi\MidiPort.cs" />
     <Compile Include="Midi\NoteNames.cs" />
     <Compile Include="Midi\NoteOnTimbreInfo.cs" />
     <Compile Include="Midi\TaggedNoteOnEvent.cs" />

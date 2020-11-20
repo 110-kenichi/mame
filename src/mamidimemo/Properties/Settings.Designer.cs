@@ -394,5 +394,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmTarget"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MidiIF_B {
+            get {
+                return ((string)(this["MidiIF_B"]));
+            }
+            set {
+                this["MidiIF_B"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinPort {
+            get {
+                return ((int)(this["MWinPort"]));
+            }
+            set {
+                this["MWinPort"] = value;
+            }
+        }
     }
 }

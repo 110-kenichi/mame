@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.2.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.3.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -234,6 +234,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
+		Supported MIDI IN B.
+        Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
         Added FM Synthesis register value randomizer to FM Synthesis Editor.
 		Added FM Synthesis global register to FM Synthesis Editor.
