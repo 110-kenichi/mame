@@ -206,7 +206,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 11. (TBD)
    You can modify current environment and all timbre parameters via System Exclusive MIDI Message.
 
-   SysEx format:
+   Master Volume: "F0 7F 7F 04 01 00 nn F7"
 
 	YM2151:(TBD)
 	YM2612:(TBD)

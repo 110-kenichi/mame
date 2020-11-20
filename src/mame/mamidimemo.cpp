@@ -635,7 +635,7 @@ extern "C"
 
 	k051649_device *k051649_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
-	DllExport void SCC1_waveform_w(unsigned int unitNumber, unsigned int address, unsigned char data[], int length)
+	DllExport void SCC1_waveform_w(unsigned int unitNumber, unsigned int address, char *data, int length)
 	{
 		if (k051649_devices[unitNumber] == NULL)
 		{
