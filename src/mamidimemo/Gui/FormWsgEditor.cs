@@ -156,16 +156,12 @@ namespace zanac.MAmidiMEmo.Gui
 
                 Graphics g = e.Graphics;
                 Size sz = this.ClientSize;
-                Size dotSz = new Size(sz.Width / (wsgLen == 0 ? 1 : wsgLen), sz.Height / (f_WsgMaxValue + 1));
-                int my = dotSz.Height * f_WsgMaxValue;
-                int oy = sz.Height - my;
+                Size dotSz = Size.Empty;
+                dotSz = new Size(sz.Width / (wsgLen == 0 ? 1 : wsgLen), sz.Height / (f_WsgMaxValue + 1));
 
                 //fill bg
-                using (SolidBrush sb = new SolidBrush(BackColor))
-                    g.FillRectangle(sb, e.ClipRectangle);
                 using (SolidBrush sb = new SolidBrush(Color.Black))
-                    g.FillRectangle(sb, new Rectangle(0, oy, dotSz.Width * wsgLen, my));
-
+                    g.FillRectangle(sb, e.ClipRectangle);
                 //draw grid
                 using (Pen pen = new Pen(Color.DarkGray))
                 {
@@ -174,14 +170,14 @@ namespace zanac.MAmidiMEmo.Gui
                         for (int x = 0; x < wsgLen; x++)
                         {
                             Pen dp = x + 1 == wsgLen / 2 || x + 1 == wsgLen ? pen2 : pen;
-                            g.DrawLine(dp, (x * dotSz.Width) + dotSz.Width - 1, oy, (x * dotSz.Width) + dotSz.Width - 1, sz.Height);
+                            g.DrawLine(dp, (x * dotSz.Width) + dotSz.Width - 1, 0, (x * dotSz.Width) + dotSz.Width - 1, sz.Height);
                         }
                         for (int y = 0; y < (f_WsgMaxValue + 1); y++)
                         {
                             Pen dp = y + 1 == (f_WsgMaxValue + 1) / 2 || y == f_WsgMaxValue ? pen2 : pen;
                             g.DrawLine(dp,
                                 0, sz.Height - ((y * dotSz.Height) + dotSz.Height),
-                                (wsgLen * dotSz.Width), sz.Height - ((y * dotSz.Height) + dotSz.Height));
+                                sz.Width, sz.Height - ((y * dotSz.Height) + dotSz.Height));
                         }
                     }
                 }
@@ -190,18 +186,19 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     for (int x = 0; x < wsgLen; x++)
                     {
-                        int y = ResultOfWsgData[x] * dotSz.Height;
-                        if (ResultOfWsgData[x] > f_WsgMaxValue / 2)
+                        if (ResultOfWsgData[x] <= f_WsgMaxValue / 2)
                         {
                             g.FillRectangle(sb,
-                                x * dotSz.Width, oy + my - y,
-                                dotSz.Width - 1, y - my / 2);
+                                x * dotSz.Width,
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[x] + 1) * dotSz.Height);
                         }
                         else
                         {
                             g.FillRectangle(sb,
-                                x * dotSz.Width, oy + my / 2,
-                                dotSz.Width - 1, my - y - my / 2);
+                                x * dotSz.Width,
+                                sz.Height - (ResultOfWsgData[x] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[x] - f_WsgMaxValue / 2) * dotSz.Height);
                         }
                     }
                 }
@@ -244,43 +241,36 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (ResultOfWsgData[wxv.X] != (byte)wxv.Y)
                     {
-                        int y = ResultOfWsgData[wxv.X] * dotSz.Height;
-                        int my = dotSz.Height * f_WsgMaxValue;
-                        int oy = sz.Height - my;
-                        if (ResultOfWsgData[wxv.X] > f_WsgMaxValue / 2)
+                        if (ResultOfWsgData[wxv.X] <= f_WsgMaxValue / 2)
                         {
                             Invalidate(new Rectangle(
                                 wxv.X * dotSz.Width,
-                                oy + my - y,
-                                dotSz.Width - 1, y - my / 2));
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[wxv.X] + 1) * dotSz.Height));
                         }
                         else
                         {
                             Invalidate(new Rectangle(
                                 wxv.X * dotSz.Width,
-                                oy + my / 2,
-                                dotSz.Width - 1,
-                                my - y - my / 2));
+                                sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
                         }
-
 
                         ResultOfWsgData[wxv.X] = (byte)wxv.Y;
 
-                        y = ResultOfWsgData[wxv.X] * dotSz.Height;
-                        if (ResultOfWsgData[wxv.X] > f_WsgMaxValue / 2)
+                        if (ResultOfWsgData[wxv.X] <= f_WsgMaxValue / 2)
                         {
                             Invalidate(new Rectangle(
                                 wxv.X * dotSz.Width,
-                                oy + my - y,
-                                dotSz.Width - 1, y - my / 2));
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[wxv.X] + 1) * dotSz.Height));
                         }
                         else
                         {
                             Invalidate(new Rectangle(
                                 wxv.X * dotSz.Width,
-                                oy + my / 2,
-                                dotSz.Width - 1,
-                                my - y - my / 2));
+                                sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
                         }
 
                         updateText();

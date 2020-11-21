@@ -438,17 +438,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                byte fv_l = (byte)((int)Math.Round(15 * CalcCurrentVolume()) & 0xf);
-                byte fv_r = fv_l;
-
+                var vol = CalcCurrentVolume();
                 byte pan = CalcCurrentPanpot();
 
                 //if (pan < 63)   //left
                 //    fv_r = (byte)((byte)(fv_r * pan / 63) & 0xf);
                 //else if (pan > 64)  //right
                 //    fv_l = (byte)((byte)(fv_l * (127 - pan) / 63) & 0xf);
-                fv_l = (byte)Math.Round(15d * fv_l * Math.Cos(Math.PI / 2 * (pan / 127d)));
-                fv_r = (byte)Math.Round(15d * fv_r * Math.Sin(Math.PI / 2 * (pan / 127d)));
+                byte fv_l = (byte)Math.Round(15d * vol * Math.Cos(Math.PI / 2 * (pan / 127d)));
+                byte fv_r = (byte)Math.Round(15d * vol * Math.Sin(Math.PI / 2 * (pan / 127d)));
 
                 fv_r |= (byte)(NamcoCus30ReadData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x04) & 0x80);
 
@@ -460,6 +458,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x00, fv_l);
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)Slot * 8 + 0x04, fv_r);
                 NamcoCus30WriteData(parentModule.UnitNumber, 0x100 + (uint)(((Slot - 1) * 8) & 0x3f) + 0x04, noise);
+            }
+
+            public override void OnPanpotUpdated()
+            {
+                OnVolumeUpdated();
             }
 
             /// <summary>
