@@ -112,6 +112,21 @@ namespace zanac.MAmidiMEmo.Gui
                     chart1.Refresh();
                     updateText();
                 }
+                else
+                {
+                    if (yv < chart1.ChartAreas[0].AxisY.Minimum)
+                    {
+                        pt.YValues[0] = chart1.ChartAreas[0].AxisY.Minimum;
+                        chart1.Refresh();
+                        updateText();
+                    }
+                    else if (yv > chart1.ChartAreas[0].AxisY.Maximum)
+                    {
+                        pt.YValues[0] = chart1.ChartAreas[0].AxisY.Maximum;
+                        chart1.Refresh();
+                        updateText();
+                    }
+                }
             }
             catch
             {
