@@ -32,6 +32,7 @@
 #include "..\devices\sound\cm32p.h"
 #include "..\devices\sound\cm32p.h"
 #include "..\devices\sound\262intf.h"
+#include "..\devices\sound\2608intf.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -1492,6 +1493,95 @@ extern "C"
 
 		cm32p_devices[unitNumber]->get_chanAssign(assign);
 	}
+
+
+	ym2608_device  *ym2608_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ym2608_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->write(address, data);
+	}
+
+
+	DllExport unsigned char ym2608_read(unsigned int unitNumber, unsigned int address)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return 0;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return 0;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return 0;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		return ym2608_devices[unitNumber]->read(address);
+	}
+
+	DllExport void ym2608_set_adpcma_callback(unsigned int unitNumber, OPNA_ADPCM_CALLBACK callback)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->set_adpcma_callback(callback);
+	}
+
+	DllExport void ym2608_set_adpcmb_callback(unsigned int unitNumber, OPNA_ADPCM_CALLBACK callback)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->set_adpcmb_callback(callback);
+	}
+
 
 }
 

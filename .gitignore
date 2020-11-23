@@ -85,3 +85,6 @@ Release(but Debug .NET)
 /src/mamidimemo/SoundFont2/.gitattributes
 /src/mamidimemo/SoundFont2/.gitignore
 /src/mamidimemo/SoundFont2/SoundFont2.sln
+/src/scci/Debug
+/src/scci/Release
+/src/scci/x64/Release

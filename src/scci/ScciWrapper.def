@@ -1,0 +1,8 @@
+LIBRARY   WRAPPER
+EXPORTS
+	InitializeScci
+	ReleaseScci
+	GetSoundChip
+	ReleaseSoundChip
+	SetRegister
+	GetWrittenRegisterData

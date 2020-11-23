@@ -68,6 +68,12 @@ void ym2608_device::timer_handler(int c,int count,int clock)
 
 void ym2608_device::stream_generate(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
+	if (!m_enable)
+		return;
+
+	//mamidimemo
+	psg_sound_stream_update(stream, inputs, outputs, samples);
+
 	ym2608_update_one(m_chip, outputs, samples);
 }
 
@@ -97,8 +103,8 @@ void ym2608_device::device_start()
 
 	/* initialize YM2608 */
 	m_chip = ym2608_init(this,clock(),rate,
-			&ym2608_device::static_internal_read_byte,
-			&ym2608_device::static_external_read_byte, &ym2608_device::static_external_write_byte,
+			&ym2608_device::static_adpcma_read_byte,
+			&ym2608_device::static_adpcmb_read_byte, &ym2608_device::static_external_write_byte,
 			&ym2608_device::static_timer_handler,&ym2608_device::static_irq_handler,&psgintf);
 	if (!m_chip)
 		throw emu_fatalerror("ym2608_device(%s): Error creating YM2608 chip", tag());
@@ -161,16 +167,16 @@ ym2608_device::ym2608_device(const machine_config &mconfig, const char *tag, dev
 	, m_timer{ nullptr, nullptr }
 	, m_chip(nullptr)
 	, m_irq_handler(*this)
-	, m_internal(*this, "internal")
+	//, m_internal(*this, "internal")
+	, m_adpcmb_callback(NULL)
 {
 }
 
-ROM_START( ym2608 )
-	ROM_REGION( 0x2000, "internal", 0 )
-	/*
-	This data is derived from the chip's output - internal ROM can't be read.
-	It was verified, using real YM2608, that this ADPCM stream produces 100% correct output signal.
-	*/
+
+//ROM_START( ym2608 )
+//	ROM_REGION( 0x2000, "internal", 0 )
+	//This data is derived from the chip's output - internal ROM can't be read.
+	//It was verified, using real YM2608, that this ADPCM stream produces 100% correct output signal.
 	// see YM2608_ADPCM_ROM_addr table in fm.c for current sample offsets
 	// original offset comments from Jarek:
 	// offset 0:
@@ -195,11 +201,12 @@ ROM_START( ym2608 )
 	  by playing it back into the chip as an external adpcm sample and produced
 	  an identical dac result. a decap would be nice to verify things 100%,
 	  but there is currently no reason to think this rom dump is incorrect. */
-	ROM_LOAD16_WORD( "ym2608_adpcm_rom.bin", 0x0000, 0x2000, CRC(23c9e0d8) SHA1(50b6c3e288eaa12ad275d4f323267bb72b0445df) )
-ROM_END
+//	ROM_LOAD16_WORD( "ym2608_adpcm_rom.bin", 0x0000, 0x2000, CRC(23c9e0d8) SHA1(50b6c3e288eaa12ad275d4f323267bb72b0445df) )
+//ROM_END
 
-
+/*
 const tiny_rom_entry *ym2608_device::device_rom_region() const
 {
 	return ROM_NAME( ym2608 );
 }
+*/

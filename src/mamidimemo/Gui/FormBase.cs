@@ -1,4 +1,5 @@
-﻿using MetroFramework.Forms;
+﻿// copyright-holders:K.Ito
+using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

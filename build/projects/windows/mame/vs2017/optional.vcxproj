@@ -255,6 +255,7 @@
     <ClInclude Include="..\..\..\..\..\src\devices\machine\ram.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\machine\timer.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\machine\z80daisy.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\2608intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\2610intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\262intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\3812intf.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\machine\ram.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\timer.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\z80daisy.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\2608intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\2610intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\262intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\3812intf.cpp" />

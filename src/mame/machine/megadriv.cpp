@@ -468,8 +468,8 @@ void md_base_state::megadriv_map(address_map &map)
 	map(0xd00000, 0xd0001f).rw(m_vdp, FUNC(sega315_5313_device::vdp_r), FUNC(sega315_5313_device::vdp_w)); // the earth defend
 	*/
 	map(0xe00000, 0xe0ffff).ram().mirror(0x1f0000).share("megadrive_ram");
-//  map(0xff0000, 0xffffff).readonly();
-		/*       0xe00000 - 0xffffff) == MAIN RAM (64kb, Mirrored, most games use ff0000 - ffffff) */
+	//  map(0xff0000, 0xffffff).readonly();
+			/*       0xe00000 - 0xffffff) == MAIN RAM (64kb, Mirrored, most games use ff0000 - ffffff) */
 }
 
 
@@ -582,13 +582,13 @@ TIMER_CALLBACK_MEMBER(md_base_state::megadriv_z80_run_state)
 	else
 	{
 		/* Check if z80 has the bus */
-	/*
-		if (m_genz80.z80_has_bus)
-			m_z80snd->resume(SUSPEND_REASON_HALT);
-		else
-			m_z80snd->suspend(SUSPEND_REASON_HALT, 1);
-	}
-	*/
+		/*
+			if (m_genz80.z80_has_bus)
+				m_z80snd->resume(SUSPEND_REASON_HALT);
+			else
+				m_z80snd->suspend(SUSPEND_REASON_HALT, 1);
+		}
+		*/
 }
 
 
@@ -963,8 +963,8 @@ void md_base_state::md_ntsc(machine_config &config)
 	screen.screen_vblank().set(FUNC(md_base_state::screen_vblank_megadriv)); /* Used to Sync the timing */
 	MCFG_VIDEO_START_OVERRIDE(md_base_state, megadriv)
 
-	/* sound hardware */
-	SPEAKER(config, "lspeaker").front_left();
+		/* sound hardware */
+		SPEAKER(config, "lspeaker").front_left();
 	SPEAKER(config, "rspeaker").front_right();
 	/*
 	YM2612(config, m_ymsnd, MASTER_CLOCK_NTSC / 7); /* 7.67 MHz */
@@ -1067,6 +1067,12 @@ void md_base_state::md_ntsc(machine_config &config)
 		YMF262(config, *m_ymf262[i], XTAL(14'318'181));
 		(*m_ymf262[i])->add_route(0, "lspeaker", 1.00);
 		(*m_ymf262[i])->add_route(1, "rspeaker", 1.00);
+
+		YM2608(config, *m_ym2608[i], 7987200); /* OPNA(88) */
+		//(*m_ym2608[i])->add_route(0, "lspeaker", 0.25);	//HACK: mamidimemo
+		//(*m_ym2608[i])->add_route(1, "rspeaker", 0.25);  //HACK: mamidimemo
+		(*m_ym2608[i])->add_route(2, "lspeaker", 2.00);
+		(*m_ym2608[i])->add_route(3, "rspeaker", 2.00);
 	}
 }
 /*
@@ -1075,7 +1081,7 @@ void md_base_state::md2_ntsc(machine_config &config)
 	md_ntsc(config);
 
 	// Internalized YM3438 in VDP ASIC
-	YM3438(config.replace(), m_ymsnd, MASTER_CLOCK_NTSC/7); // 7.67 MHz 
+	YM3438(config.replace(), m_ymsnd, MASTER_CLOCK_NTSC/7); // 7.67 MHz
 	m_ymsnd->add_route(0, "lspeaker", 0.50);
 	m_ymsnd->add_route(1, "rspeaker", 0.50);
 }
@@ -1130,8 +1136,8 @@ void md_base_state::md_pal(machine_config &config)
 
 	MCFG_VIDEO_START_OVERRIDE(md_base_state, megadriv)
 
-	/* sound hardware */
-	SPEAKER(config, "lspeaker").front_left();
+		/* sound hardware */
+		SPEAKER(config, "lspeaker").front_left();
 	SPEAKER(config, "rspeaker").front_right();
 	/*
 	YM2612(config, m_ymsnd, MASTER_CLOCK_PAL / 7); /* 7.67 MHz */

@@ -490,6 +490,7 @@
     <Compile Include="Instruments\Chips\SN76496.cs" />
     <Compile Include="Instruments\Chips\YM2151.cs" />
     <Compile Include="Instruments\Chips\YM2413.cs" />
+    <Compile Include="Instruments\Chips\YM2608.cs" />
     <Compile Include="Instruments\Chips\YM2610B.cs" />
     <Compile Include="Instruments\Chips\YM2612.cs" />
     <Compile Include="Instruments\Chips\YMF262.cs" />
@@ -512,6 +513,7 @@
     <Compile Include="Instruments\ProgramAssignmentType.cs" />
     <Compile Include="Instruments\CombinedTimbre.cs" />
     <Compile Include="Instruments\SimpleSerializer.cs" />
+    <Compile Include="Instruments\SoundEngineType.cs" />
     <Compile Include="Instruments\VstEffectControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundList.cs" />
@@ -583,6 +585,7 @@
     <Compile Include="Midi\TaggedNoteOnEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scci\ScciManager.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Types.cs" />
@@ -865,6 +868,9 @@
     <None Include="Samples\YMF262_GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="scci.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\NAMCO_CUS30.png" />
@@ -910,6 +916,12 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="scci.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="scciconfig.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Pause.png" />
     <None Include="Resources\Open.png" />
     <None Include="Resources\Stop.png" />
@@ -933,6 +945,12 @@
     <None Include="Resources\WS0.png" />
     <None Include="Resources\WS3.png" />
     <None Include="Resources\WS2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\scci\scci.vcxproj">
+      <Project>{dce05c04-33c4-4929-9076-d75d78725613}</Project>
+      <Name>scci</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

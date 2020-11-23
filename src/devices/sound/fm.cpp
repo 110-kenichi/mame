@@ -2859,8 +2859,8 @@ void ym2608_update_one(void *chip, FMSAMPLE **buffer, int length)
 			Limit( lt, MAXOUT, MINOUT );
 			Limit( rt, MAXOUT, MINOUT );
 			/* buffering */
-			bufL[i] = lt;
-			bufR[i] = rt;
+			bufL[i] = lt + bufL[i] / 8;	//mamidimemo
+			bufR[i] = rt + bufR[i] / 8;	//mamidimemo
 
 			#ifdef SAVE_SAMPLE
 				SAVE_ALL_CHANNELS
@@ -3428,7 +3428,6 @@ void ym2610b_update_one(void *chip, FMSAMPLE **buffer, int length)
 {
 	ym2610_state *F2610 = (ym2610_state *)chip;
 	FM_OPN *OPN   = &F2610->OPN;
-	FM_ST ST = OPN->ST;
 	YM_DELTAT *DELTAT = &F2610->deltaT;
 	int i,j;
 	FMSAMPLE  *bufL,*bufR;
@@ -3817,6 +3816,8 @@ int ym2610_write(void *chip, int a, uint8_t v)
 			case 0x13:  /* start address H */
 			case 0x14:  /* stop address L */
 			case 0x15:  /* stop address H */
+
+			case 0x16:  /* HACK: mamidimemo program_num */
 
 			case 0x19:  /* delta-n L */
 			case 0x1a:  /* delta-n H */

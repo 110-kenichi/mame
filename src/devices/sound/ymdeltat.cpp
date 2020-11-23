@@ -289,7 +289,7 @@ value:   START, REC, MEMDAT, REPEAT, SPOFF, x,x,RESET   meaning:
 		break;
 
 	case 0x06:  /* Prescale L (ADPCM and Record frq) */
-		program_no = reg[0x6];	//mamidimemo
+		program_no = reg[0x6];	//HACK: mamidimemo
 		break;
 
 	case 0x07:  /* Prescale H */

@@ -55,6 +55,60 @@
             this.toolStripButtonCat = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonA2Z = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPopup = new System.Windows.Forms.ToolStripButton();
+            this.tabControlBottom = new MetroFramework.Controls.MetroTabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
+            this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBoxPort = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripButton19 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton18 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton17 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton16 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton15 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton14 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripComboBoxProgNo = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBoxKeyCh = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroTrackBarVol = new MetroFramework.Controls.MetroTrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelClock = new System.Windows.Forms.Label();
+            this.panelOsc2 = new System.Windows.Forms.Panel();
+            this.labelTitle = new zanac.MAmidiMEmo.Gui.WrapLabel();
+            this.labelStat = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.labelCpuLoad = new System.Windows.Forms.Label();
+            this.panelChDisp = new System.Windows.Forms.Panel();
+            this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
+            this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,60 +166,7 @@
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
-            this.tabControlBottom = new MetroFramework.Controls.MetroTabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
-            this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
-            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBoxPort = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripButton19 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton18 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton17 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton16 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton15 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton14 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripComboBoxProgNo = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBoxKeyCh = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.metroTrackBarVol = new MetroFramework.Controls.MetroTrackBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelClock = new System.Windows.Forms.Label();
-            this.panelOsc2 = new System.Windows.Forms.Panel();
-            this.labelTitle = new zanac.MAmidiMEmo.Gui.WrapLabel();
-            this.labelStat = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.labelCpuLoad = new System.Windows.Forms.Label();
-            this.panelChDisp = new System.Windows.Forms.Panel();
-            this.toolStrip4 = new zanac.MAmidiMEmo.Gui.ClickThroughToolStrip();
-            this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -177,9 +178,6 @@
             this.contextMenuStripInst.SuspendLayout();
             this.contextMenuStripProp.SuspendLayout();
             this.toolStrip3.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).BeginInit();
             this.tabControlBottom.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.toolStrip2.SuspendLayout();
@@ -188,6 +186,9 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.toolStrip4.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -359,405 +360,6 @@
             resources.ApplyResources(this.toolStripButtonPopup, "toolStripButtonPopup");
             this.toolStripButtonPopup.Name = "toolStripButtonPopup";
             this.toolStripButtonPopup.Click += new System.EventHandler(this.toolStripButtonPopup_Click);
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.toolToolStripMenuItem,
-            this.helpToolStripMenuItem});
-            resources.ApplyResources(this.menuStrip1, "menuStrip1");
-            this.menuStrip1.Name = "menuStrip1";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.exportMAmidiToolStripMenuItem,
-            this.toolStripMenuItemExit});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            resources.ApplyResources(this.loadToolStripMenuItem, "loadToolStripMenuItem");
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            resources.ApplyResources(this.saveAsToolStripMenuItem, "saveAsToolStripMenuItem");
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // exportMAmidiToolStripMenuItem
-            // 
-            this.exportMAmidiToolStripMenuItem.Name = "exportMAmidiToolStripMenuItem";
-            resources.ApplyResources(this.exportMAmidiToolStripMenuItem, "exportMAmidiToolStripMenuItem");
-            this.exportMAmidiToolStripMenuItem.Click += new System.EventHandler(this.exportMAmidiToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItemExit
-            // 
-            this.toolStripMenuItemExit.Name = "toolStripMenuItemExit";
-            resources.ApplyResources(this.toolStripMenuItemExit, "toolStripMenuItemExit");
-            this.toolStripMenuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
-            // 
-            // toolToolStripMenuItem
-            // 
-            this.toolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingsToolStripMenuItem});
-            this.toolToolStripMenuItem.Name = "toolToolStripMenuItem";
-            resources.ApplyResources(this.toolToolStripMenuItem, "toolToolStripMenuItem");
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemAbout});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
-            // 
-            // toolStripMenuItemAbout
-            // 
-            this.toolStripMenuItemAbout.Name = "toolStripMenuItemAbout";
-            resources.ApplyResources(this.toolStripMenuItemAbout, "toolStripMenuItemAbout");
-            this.toolStripMenuItemAbout.Click += new System.EventHandler(this.toolStripMenuItemAbout_Click);
-            // 
-            // saveFileDialogMami
-            // 
-            this.saveFileDialogMami.DefaultExt = "MAmi";
-            this.saveFileDialogMami.FileName = "MyEnvironment";
-            resources.ApplyResources(this.saveFileDialogMami, "saveFileDialogMami");
-            this.saveFileDialogMami.SupportMultiDottedExtensions = true;
-            // 
-            // openFileDialogMami
-            // 
-            this.openFileDialogMami.DefaultExt = "*.MAmi";
-            this.openFileDialogMami.FileName = "MyEnvironment.MAmi";
-            resources.ApplyResources(this.openFileDialogMami, "openFileDialogMami");
-            this.openFileDialogMami.SupportMultiDottedExtensions = true;
-            // 
-            // timerOsc
-            // 
-            this.timerOsc.Interval = 50;
-            this.timerOsc.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.ClickThrough = false;
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(609, 609);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
-            this.toolStripComboBoxMidiIfA,
-            this.toolStripLabel6,
-            this.toolStripComboBoxMidiIfB,
-            this.toolStripDropDownButton1,
-            this.toolStripButton1,
-            this.toolStripButton2,
-            this.toolStripSeparator1,
-            this.toolStripButton20,
-            this.toolStripButton21});
-            resources.ApplyResources(this.toolStrip1, "toolStrip1");
-            this.toolStrip1.Name = "toolStrip1";
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
-            // 
-            // toolStripComboBoxMidiIfA
-            // 
-            this.toolStripComboBoxMidiIfA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBoxMidiIfA.Name = "toolStripComboBoxMidiIfA";
-            resources.ApplyResources(this.toolStripComboBoxMidiIfA, "toolStripComboBoxMidiIfA");
-            this.toolStripComboBoxMidiIfA.DropDown += new System.EventHandler(this.toolStripComboBoxMidiIfA_DropDown);
-            this.toolStripComboBoxMidiIfA.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxMidiIfA_SelectedIndexChanged);
-            // 
-            // toolStripLabel6
-            // 
-            this.toolStripLabel6.Name = "toolStripLabel6";
-            resources.ApplyResources(this.toolStripLabel6, "toolStripLabel6");
-            // 
-            // toolStripComboBoxMidiIfB
-            // 
-            this.toolStripComboBoxMidiIfB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBoxMidiIfB.Name = "toolStripComboBoxMidiIfB";
-            resources.ApplyResources(this.toolStripComboBoxMidiIfB, "toolStripComboBoxMidiIfB");
-            this.toolStripComboBoxMidiIfB.DropDown += new System.EventHandler(this.toolStripComboBoxMidiIfB_DropDown);
-            this.toolStripComboBoxMidiIfB.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxMidiIfB_SelectedIndexChanged);
-            // 
-            // toolStripDropDownButton1
-            // 
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lAToolStripMenuItem,
-            this.pCMToolStripMenuItem,
-            this.fMSynthesisToolStripMenuItem,
-            this.wSGToolStripMenuItem,
-            this.pSGToolStripMenuItem});
-            resources.ApplyResources(this.toolStripDropDownButton1, "toolStripDropDownButton1");
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            // 
-            // lAToolStripMenuItem
-            // 
-            this.lAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mT32ToolStripMenuItem,
-            this.extendCM32PToolStripMenuItem});
-            this.lAToolStripMenuItem.Name = "lAToolStripMenuItem";
-            resources.ApplyResources(this.lAToolStripMenuItem, "lAToolStripMenuItem");
-            // 
-            // mT32ToolStripMenuItem
-            // 
-            this.mT32ToolStripMenuItem.Name = "mT32ToolStripMenuItem";
-            resources.ApplyResources(this.mT32ToolStripMenuItem, "mT32ToolStripMenuItem");
-            this.mT32ToolStripMenuItem.Click += new System.EventHandler(this.mT32ToolStripMenuItem_Click);
-            // 
-            // extendCM32PToolStripMenuItem
-            // 
-            this.extendCM32PToolStripMenuItem.Name = "extendCM32PToolStripMenuItem";
-            resources.ApplyResources(this.extendCM32PToolStripMenuItem, "extendCM32PToolStripMenuItem");
-            this.extendCM32PToolStripMenuItem.Click += new System.EventHandler(this.extendCM32PToolStripMenuItem_Click);
-            // 
-            // pCMToolStripMenuItem
-            // 
-            this.pCMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extendC140ToolStripMenuItem,
-            this.extendSPC700ToolStripMenuItem});
-            this.pCMToolStripMenuItem.Name = "pCMToolStripMenuItem";
-            resources.ApplyResources(this.pCMToolStripMenuItem, "pCMToolStripMenuItem");
-            // 
-            // extendC140ToolStripMenuItem
-            // 
-            this.extendC140ToolStripMenuItem.Name = "extendC140ToolStripMenuItem";
-            resources.ApplyResources(this.extendC140ToolStripMenuItem, "extendC140ToolStripMenuItem");
-            this.extendC140ToolStripMenuItem.Click += new System.EventHandler(this.extendC140ToolStripMenuItem_Click);
-            // 
-            // extendSPC700ToolStripMenuItem
-            // 
-            this.extendSPC700ToolStripMenuItem.Name = "extendSPC700ToolStripMenuItem";
-            resources.ApplyResources(this.extendSPC700ToolStripMenuItem, "extendSPC700ToolStripMenuItem");
-            this.extendSPC700ToolStripMenuItem.Click += new System.EventHandler(this.extendSPC700ToolStripMenuItem_Click);
-            // 
-            // fMSynthesisToolStripMenuItem
-            // 
-            this.fMSynthesisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extendYM2610BToolStripMenuItem,
-            this.addYM2151ToolStripMenuItem,
-            this.addYM2612ToolStripMenuItem,
-            this.extendYM3812ToolStripMenuItem,
-            this.extendYM2413ToolStripMenuItem,
-            this.extendYMF262ToolStripMenuItem});
-            this.fMSynthesisToolStripMenuItem.Name = "fMSynthesisToolStripMenuItem";
-            resources.ApplyResources(this.fMSynthesisToolStripMenuItem, "fMSynthesisToolStripMenuItem");
-            // 
-            // extendYM2610BToolStripMenuItem
-            // 
-            this.extendYM2610BToolStripMenuItem.Name = "extendYM2610BToolStripMenuItem";
-            resources.ApplyResources(this.extendYM2610BToolStripMenuItem, "extendYM2610BToolStripMenuItem");
-            this.extendYM2610BToolStripMenuItem.Click += new System.EventHandler(this.extendYM2610BToolStripMenuItem_Click);
-            // 
-            // addYM2151ToolStripMenuItem
-            // 
-            this.addYM2151ToolStripMenuItem.Name = "addYM2151ToolStripMenuItem";
-            resources.ApplyResources(this.addYM2151ToolStripMenuItem, "addYM2151ToolStripMenuItem");
-            this.addYM2151ToolStripMenuItem.Click += new System.EventHandler(this.addYM2151ToolStripMenuItem_Click);
-            // 
-            // addYM2612ToolStripMenuItem
-            // 
-            this.addYM2612ToolStripMenuItem.Name = "addYM2612ToolStripMenuItem";
-            resources.ApplyResources(this.addYM2612ToolStripMenuItem, "addYM2612ToolStripMenuItem");
-            this.addYM2612ToolStripMenuItem.Click += new System.EventHandler(this.addYM2612ToolStripMenuItem_Click);
-            // 
-            // extendYM3812ToolStripMenuItem
-            // 
-            this.extendYM3812ToolStripMenuItem.Name = "extendYM3812ToolStripMenuItem";
-            resources.ApplyResources(this.extendYM3812ToolStripMenuItem, "extendYM3812ToolStripMenuItem");
-            this.extendYM3812ToolStripMenuItem.Click += new System.EventHandler(this.extendYM3812ToolStripMenuItem_Click);
-            // 
-            // extendYM2413ToolStripMenuItem
-            // 
-            this.extendYM2413ToolStripMenuItem.Name = "extendYM2413ToolStripMenuItem";
-            resources.ApplyResources(this.extendYM2413ToolStripMenuItem, "extendYM2413ToolStripMenuItem");
-            this.extendYM2413ToolStripMenuItem.Click += new System.EventHandler(this.extendYM2413ToolStripMenuItem_Click);
-            // 
-            // extendYMF262ToolStripMenuItem
-            // 
-            this.extendYMF262ToolStripMenuItem.Name = "extendYMF262ToolStripMenuItem";
-            resources.ApplyResources(this.extendYMF262ToolStripMenuItem, "extendYMF262ToolStripMenuItem");
-            this.extendYMF262ToolStripMenuItem.Click += new System.EventHandler(this.extendYMF262ToolStripMenuItem_Click);
-            // 
-            // wSGToolStripMenuItem
-            // 
-            this.wSGToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extendSCC1kToolStripMenuItem,
-            this.addNAMCOCUS30ToolStripMenuItem,
-            this.extendHuC6230ToolStripMenuItem});
-            this.wSGToolStripMenuItem.Name = "wSGToolStripMenuItem";
-            resources.ApplyResources(this.wSGToolStripMenuItem, "wSGToolStripMenuItem");
-            // 
-            // extendSCC1kToolStripMenuItem
-            // 
-            this.extendSCC1kToolStripMenuItem.Name = "extendSCC1kToolStripMenuItem";
-            resources.ApplyResources(this.extendSCC1kToolStripMenuItem, "extendSCC1kToolStripMenuItem");
-            this.extendSCC1kToolStripMenuItem.Click += new System.EventHandler(this.extendSCC1kToolStripMenuItem_Click);
-            // 
-            // addNAMCOCUS30ToolStripMenuItem
-            // 
-            this.addNAMCOCUS30ToolStripMenuItem.Name = "addNAMCOCUS30ToolStripMenuItem";
-            resources.ApplyResources(this.addNAMCOCUS30ToolStripMenuItem, "addNAMCOCUS30ToolStripMenuItem");
-            this.addNAMCOCUS30ToolStripMenuItem.Click += new System.EventHandler(this.addNAMCOCUS30ToolStripMenuItem_Click);
-            // 
-            // extendHuC6230ToolStripMenuItem
-            // 
-            this.extendHuC6230ToolStripMenuItem.Name = "extendHuC6230ToolStripMenuItem";
-            resources.ApplyResources(this.extendHuC6230ToolStripMenuItem, "extendHuC6230ToolStripMenuItem");
-            this.extendHuC6230ToolStripMenuItem.Click += new System.EventHandler(this.extendHuC6230ToolStripMenuItem_Click);
-            // 
-            // pSGToolStripMenuItem
-            // 
-            this.pSGToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extendMOS8580ToolStripMenuItem,
-            this.extendMOS6581ToolStripMenuItem,
-            this.extendNESAPUToolStripMenuItem,
-            this.extendGBAPUToolStripMenuItem,
-            this.extendPOKEYToolStripMenuItem,
-            this.addSN76496ToolStripMenuItem,
-            this.extendAY38910ToolStripMenuItem,
-            this.extendMSM5232ToolStripMenuItem,
-            this.extendBeepToolStripMenuItem});
-            this.pSGToolStripMenuItem.Name = "pSGToolStripMenuItem";
-            resources.ApplyResources(this.pSGToolStripMenuItem, "pSGToolStripMenuItem");
-            // 
-            // extendMOS8580ToolStripMenuItem
-            // 
-            this.extendMOS8580ToolStripMenuItem.Name = "extendMOS8580ToolStripMenuItem";
-            resources.ApplyResources(this.extendMOS8580ToolStripMenuItem, "extendMOS8580ToolStripMenuItem");
-            this.extendMOS8580ToolStripMenuItem.Click += new System.EventHandler(this.extendMOS8580ToolStripMenuItem_Click);
-            // 
-            // extendMOS6581ToolStripMenuItem
-            // 
-            this.extendMOS6581ToolStripMenuItem.Name = "extendMOS6581ToolStripMenuItem";
-            resources.ApplyResources(this.extendMOS6581ToolStripMenuItem, "extendMOS6581ToolStripMenuItem");
-            this.extendMOS6581ToolStripMenuItem.Click += new System.EventHandler(this.extendMOS6581ToolStripMenuItem_Click);
-            // 
-            // extendNESAPUToolStripMenuItem
-            // 
-            this.extendNESAPUToolStripMenuItem.Name = "extendNESAPUToolStripMenuItem";
-            resources.ApplyResources(this.extendNESAPUToolStripMenuItem, "extendNESAPUToolStripMenuItem");
-            this.extendNESAPUToolStripMenuItem.Click += new System.EventHandler(this.extendNESAPUToolStripMenuItem_Click);
-            // 
-            // extendGBAPUToolStripMenuItem
-            // 
-            this.extendGBAPUToolStripMenuItem.Name = "extendGBAPUToolStripMenuItem";
-            resources.ApplyResources(this.extendGBAPUToolStripMenuItem, "extendGBAPUToolStripMenuItem");
-            this.extendGBAPUToolStripMenuItem.Click += new System.EventHandler(this.extendGBAPUToolStripMenuItem_Click);
-            // 
-            // extendPOKEYToolStripMenuItem
-            // 
-            this.extendPOKEYToolStripMenuItem.Name = "extendPOKEYToolStripMenuItem";
-            resources.ApplyResources(this.extendPOKEYToolStripMenuItem, "extendPOKEYToolStripMenuItem");
-            this.extendPOKEYToolStripMenuItem.Click += new System.EventHandler(this.extendPOKEYToolStripMenuItem_Click);
-            // 
-            // addSN76496ToolStripMenuItem
-            // 
-            this.addSN76496ToolStripMenuItem.Name = "addSN76496ToolStripMenuItem";
-            resources.ApplyResources(this.addSN76496ToolStripMenuItem, "addSN76496ToolStripMenuItem");
-            this.addSN76496ToolStripMenuItem.Click += new System.EventHandler(this.addSN76496ToolStripMenuItem_Click);
-            // 
-            // extendAY38910ToolStripMenuItem
-            // 
-            this.extendAY38910ToolStripMenuItem.Name = "extendAY38910ToolStripMenuItem";
-            resources.ApplyResources(this.extendAY38910ToolStripMenuItem, "extendAY38910ToolStripMenuItem");
-            this.extendAY38910ToolStripMenuItem.Click += new System.EventHandler(this.extendAY38910ToolStripMenuItem_Click);
-            // 
-            // extendMSM5232ToolStripMenuItem
-            // 
-            this.extendMSM5232ToolStripMenuItem.Name = "extendMSM5232ToolStripMenuItem";
-            resources.ApplyResources(this.extendMSM5232ToolStripMenuItem, "extendMSM5232ToolStripMenuItem");
-            this.extendMSM5232ToolStripMenuItem.Click += new System.EventHandler(this.extendMSM5232ToolStripMenuItem_Click);
-            // 
-            // extendBeepToolStripMenuItem
-            // 
-            this.extendBeepToolStripMenuItem.Name = "extendBeepToolStripMenuItem";
-            resources.ApplyResources(this.extendBeepToolStripMenuItem, "extendBeepToolStripMenuItem");
-            this.extendBeepToolStripMenuItem.Click += new System.EventHandler(this.extendBeepToolStripMenuItem_Click);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
-            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton2.Image = global::zanac.MAmidiMEmo.Properties.Resources.Rst;
-            resources.ApplyResources(this.toolStripButton2, "toolStripButton2");
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-            // 
-            // toolStripButton20
-            // 
-            resources.ApplyResources(this.toolStripButton20, "toolStripButton20");
-            this.toolStripButton20.Name = "toolStripButton20";
-            this.toolStripButton20.CheckedChanged += new System.EventHandler(this.toolStripButton20_CheckedChanged);
-            this.toolStripButton20.Click += new System.EventHandler(this.toolStripButton20_Click);
-            // 
-            // toolStripButton21
-            // 
-            resources.ApplyResources(this.toolStripButton21, "toolStripButton21");
-            this.toolStripButton21.Name = "toolStripButton21";
-            this.toolStripButton21.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
-            this.toolStripButton21.Click += new System.EventHandler(this.toolStripButton21_Click);
-            // 
-            // multiMediaTimerComponent1
-            // 
-            this.multiMediaTimerComponent1.Enabled = false;
-            this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
-            this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
-            // 
-            // openFileDialogMidi
-            // 
-            this.openFileDialogMidi.DefaultExt = "*.mid";
-            resources.ApplyResources(this.openFileDialogMidi, "openFileDialogMidi");
-            this.openFileDialogMidi.SupportMultiDottedExtensions = true;
-            // 
-            // fileSystemWatcherMidi
-            // 
-            this.fileSystemWatcherMidi.EnableRaisingEvents = true;
-            this.fileSystemWatcherMidi.SynchronizingObject = this;
-            this.fileSystemWatcherMidi.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
-            // 
-            // timerReload
-            // 
-            this.timerReload.Tick += new System.EventHandler(this.timerReload_Tick);
-            // 
-            // saveFileDialogMAmidi
-            // 
-            this.saveFileDialogMAmidi.DefaultExt = "MAmi";
-            this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
-            resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
-            this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
             // 
             // tabControlBottom
             // 
@@ -1537,6 +1139,412 @@
             // 
             resources.ApplyResources(this.columnHeader1, "columnHeader1");
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.toolToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
+            this.menuStrip1.Name = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.exportMAmidiToolStripMenuItem,
+            this.toolStripMenuItemExit});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            resources.ApplyResources(this.loadToolStripMenuItem, "loadToolStripMenuItem");
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            resources.ApplyResources(this.saveAsToolStripMenuItem, "saveAsToolStripMenuItem");
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // exportMAmidiToolStripMenuItem
+            // 
+            this.exportMAmidiToolStripMenuItem.Name = "exportMAmidiToolStripMenuItem";
+            resources.ApplyResources(this.exportMAmidiToolStripMenuItem, "exportMAmidiToolStripMenuItem");
+            this.exportMAmidiToolStripMenuItem.Click += new System.EventHandler(this.exportMAmidiToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItemExit
+            // 
+            this.toolStripMenuItemExit.Name = "toolStripMenuItemExit";
+            resources.ApplyResources(this.toolStripMenuItemExit, "toolStripMenuItemExit");
+            this.toolStripMenuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
+            // 
+            // toolToolStripMenuItem
+            // 
+            this.toolToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.settingsToolStripMenuItem});
+            this.toolToolStripMenuItem.Name = "toolToolStripMenuItem";
+            resources.ApplyResources(this.toolToolStripMenuItem, "toolToolStripMenuItem");
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemAbout});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+            // 
+            // toolStripMenuItemAbout
+            // 
+            this.toolStripMenuItemAbout.Name = "toolStripMenuItemAbout";
+            resources.ApplyResources(this.toolStripMenuItemAbout, "toolStripMenuItemAbout");
+            this.toolStripMenuItemAbout.Click += new System.EventHandler(this.toolStripMenuItemAbout_Click);
+            // 
+            // saveFileDialogMami
+            // 
+            this.saveFileDialogMami.DefaultExt = "MAmi";
+            this.saveFileDialogMami.FileName = "MyEnvironment";
+            resources.ApplyResources(this.saveFileDialogMami, "saveFileDialogMami");
+            this.saveFileDialogMami.SupportMultiDottedExtensions = true;
+            // 
+            // openFileDialogMami
+            // 
+            this.openFileDialogMami.DefaultExt = "*.MAmi";
+            this.openFileDialogMami.FileName = "MyEnvironment.MAmi";
+            resources.ApplyResources(this.openFileDialogMami, "openFileDialogMami");
+            this.openFileDialogMami.SupportMultiDottedExtensions = true;
+            // 
+            // timerOsc
+            // 
+            this.timerOsc.Interval = 50;
+            this.timerOsc.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.ClickThrough = false;
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(609, 609);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this.toolStripComboBoxMidiIfA,
+            this.toolStripLabel6,
+            this.toolStripComboBoxMidiIfB,
+            this.toolStripDropDownButton1,
+            this.toolStripButton1,
+            this.toolStripButton2,
+            this.toolStripSeparator1,
+            this.toolStripButton20,
+            this.toolStripButton21});
+            resources.ApplyResources(this.toolStrip1, "toolStrip1");
+            this.toolStrip1.Name = "toolStrip1";
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+            // 
+            // toolStripComboBoxMidiIfA
+            // 
+            this.toolStripComboBoxMidiIfA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBoxMidiIfA.Name = "toolStripComboBoxMidiIfA";
+            resources.ApplyResources(this.toolStripComboBoxMidiIfA, "toolStripComboBoxMidiIfA");
+            this.toolStripComboBoxMidiIfA.DropDown += new System.EventHandler(this.toolStripComboBoxMidiIfA_DropDown);
+            this.toolStripComboBoxMidiIfA.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxMidiIfA_SelectedIndexChanged);
+            // 
+            // toolStripLabel6
+            // 
+            this.toolStripLabel6.Name = "toolStripLabel6";
+            resources.ApplyResources(this.toolStripLabel6, "toolStripLabel6");
+            // 
+            // toolStripComboBoxMidiIfB
+            // 
+            this.toolStripComboBoxMidiIfB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBoxMidiIfB.Name = "toolStripComboBoxMidiIfB";
+            resources.ApplyResources(this.toolStripComboBoxMidiIfB, "toolStripComboBoxMidiIfB");
+            this.toolStripComboBoxMidiIfB.DropDown += new System.EventHandler(this.toolStripComboBoxMidiIfB_DropDown);
+            this.toolStripComboBoxMidiIfB.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxMidiIfB_SelectedIndexChanged);
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lAToolStripMenuItem,
+            this.pCMToolStripMenuItem,
+            this.fMSynthesisToolStripMenuItem,
+            this.wSGToolStripMenuItem,
+            this.pSGToolStripMenuItem});
+            resources.ApplyResources(this.toolStripDropDownButton1, "toolStripDropDownButton1");
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            // 
+            // lAToolStripMenuItem
+            // 
+            this.lAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mT32ToolStripMenuItem,
+            this.extendCM32PToolStripMenuItem});
+            this.lAToolStripMenuItem.Name = "lAToolStripMenuItem";
+            resources.ApplyResources(this.lAToolStripMenuItem, "lAToolStripMenuItem");
+            // 
+            // mT32ToolStripMenuItem
+            // 
+            this.mT32ToolStripMenuItem.Name = "mT32ToolStripMenuItem";
+            resources.ApplyResources(this.mT32ToolStripMenuItem, "mT32ToolStripMenuItem");
+            this.mT32ToolStripMenuItem.Click += new System.EventHandler(this.mT32ToolStripMenuItem_Click);
+            // 
+            // extendCM32PToolStripMenuItem
+            // 
+            this.extendCM32PToolStripMenuItem.Name = "extendCM32PToolStripMenuItem";
+            resources.ApplyResources(this.extendCM32PToolStripMenuItem, "extendCM32PToolStripMenuItem");
+            this.extendCM32PToolStripMenuItem.Click += new System.EventHandler(this.extendCM32PToolStripMenuItem_Click);
+            // 
+            // pCMToolStripMenuItem
+            // 
+            this.pCMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.extendC140ToolStripMenuItem,
+            this.extendSPC700ToolStripMenuItem});
+            this.pCMToolStripMenuItem.Name = "pCMToolStripMenuItem";
+            resources.ApplyResources(this.pCMToolStripMenuItem, "pCMToolStripMenuItem");
+            // 
+            // extendC140ToolStripMenuItem
+            // 
+            this.extendC140ToolStripMenuItem.Name = "extendC140ToolStripMenuItem";
+            resources.ApplyResources(this.extendC140ToolStripMenuItem, "extendC140ToolStripMenuItem");
+            this.extendC140ToolStripMenuItem.Click += new System.EventHandler(this.extendC140ToolStripMenuItem_Click);
+            // 
+            // extendSPC700ToolStripMenuItem
+            // 
+            this.extendSPC700ToolStripMenuItem.Name = "extendSPC700ToolStripMenuItem";
+            resources.ApplyResources(this.extendSPC700ToolStripMenuItem, "extendSPC700ToolStripMenuItem");
+            this.extendSPC700ToolStripMenuItem.Click += new System.EventHandler(this.extendSPC700ToolStripMenuItem_Click);
+            // 
+            // fMSynthesisToolStripMenuItem
+            // 
+            this.fMSynthesisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.extendYM2610BToolStripMenuItem,
+            this.toolStripMenuItem2608,
+            this.addYM2151ToolStripMenuItem,
+            this.addYM2612ToolStripMenuItem,
+            this.extendYM3812ToolStripMenuItem,
+            this.extendYM2413ToolStripMenuItem,
+            this.extendYMF262ToolStripMenuItem});
+            this.fMSynthesisToolStripMenuItem.Name = "fMSynthesisToolStripMenuItem";
+            resources.ApplyResources(this.fMSynthesisToolStripMenuItem, "fMSynthesisToolStripMenuItem");
+            // 
+            // extendYM2610BToolStripMenuItem
+            // 
+            this.extendYM2610BToolStripMenuItem.Name = "extendYM2610BToolStripMenuItem";
+            resources.ApplyResources(this.extendYM2610BToolStripMenuItem, "extendYM2610BToolStripMenuItem");
+            this.extendYM2610BToolStripMenuItem.Click += new System.EventHandler(this.extendYM2610BToolStripMenuItem_Click);
+            // 
+            // addYM2151ToolStripMenuItem
+            // 
+            this.addYM2151ToolStripMenuItem.Name = "addYM2151ToolStripMenuItem";
+            resources.ApplyResources(this.addYM2151ToolStripMenuItem, "addYM2151ToolStripMenuItem");
+            this.addYM2151ToolStripMenuItem.Click += new System.EventHandler(this.addYM2151ToolStripMenuItem_Click);
+            // 
+            // addYM2612ToolStripMenuItem
+            // 
+            this.addYM2612ToolStripMenuItem.Name = "addYM2612ToolStripMenuItem";
+            resources.ApplyResources(this.addYM2612ToolStripMenuItem, "addYM2612ToolStripMenuItem");
+            this.addYM2612ToolStripMenuItem.Click += new System.EventHandler(this.addYM2612ToolStripMenuItem_Click);
+            // 
+            // extendYM3812ToolStripMenuItem
+            // 
+            this.extendYM3812ToolStripMenuItem.Name = "extendYM3812ToolStripMenuItem";
+            resources.ApplyResources(this.extendYM3812ToolStripMenuItem, "extendYM3812ToolStripMenuItem");
+            this.extendYM3812ToolStripMenuItem.Click += new System.EventHandler(this.extendYM3812ToolStripMenuItem_Click);
+            // 
+            // extendYM2413ToolStripMenuItem
+            // 
+            this.extendYM2413ToolStripMenuItem.Name = "extendYM2413ToolStripMenuItem";
+            resources.ApplyResources(this.extendYM2413ToolStripMenuItem, "extendYM2413ToolStripMenuItem");
+            this.extendYM2413ToolStripMenuItem.Click += new System.EventHandler(this.extendYM2413ToolStripMenuItem_Click);
+            // 
+            // extendYMF262ToolStripMenuItem
+            // 
+            this.extendYMF262ToolStripMenuItem.Name = "extendYMF262ToolStripMenuItem";
+            resources.ApplyResources(this.extendYMF262ToolStripMenuItem, "extendYMF262ToolStripMenuItem");
+            this.extendYMF262ToolStripMenuItem.Click += new System.EventHandler(this.extendYMF262ToolStripMenuItem_Click);
+            // 
+            // wSGToolStripMenuItem
+            // 
+            this.wSGToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.extendSCC1kToolStripMenuItem,
+            this.addNAMCOCUS30ToolStripMenuItem,
+            this.extendHuC6230ToolStripMenuItem});
+            this.wSGToolStripMenuItem.Name = "wSGToolStripMenuItem";
+            resources.ApplyResources(this.wSGToolStripMenuItem, "wSGToolStripMenuItem");
+            // 
+            // extendSCC1kToolStripMenuItem
+            // 
+            this.extendSCC1kToolStripMenuItem.Name = "extendSCC1kToolStripMenuItem";
+            resources.ApplyResources(this.extendSCC1kToolStripMenuItem, "extendSCC1kToolStripMenuItem");
+            this.extendSCC1kToolStripMenuItem.Click += new System.EventHandler(this.extendSCC1kToolStripMenuItem_Click);
+            // 
+            // addNAMCOCUS30ToolStripMenuItem
+            // 
+            this.addNAMCOCUS30ToolStripMenuItem.Name = "addNAMCOCUS30ToolStripMenuItem";
+            resources.ApplyResources(this.addNAMCOCUS30ToolStripMenuItem, "addNAMCOCUS30ToolStripMenuItem");
+            this.addNAMCOCUS30ToolStripMenuItem.Click += new System.EventHandler(this.addNAMCOCUS30ToolStripMenuItem_Click);
+            // 
+            // extendHuC6230ToolStripMenuItem
+            // 
+            this.extendHuC6230ToolStripMenuItem.Name = "extendHuC6230ToolStripMenuItem";
+            resources.ApplyResources(this.extendHuC6230ToolStripMenuItem, "extendHuC6230ToolStripMenuItem");
+            this.extendHuC6230ToolStripMenuItem.Click += new System.EventHandler(this.extendHuC6230ToolStripMenuItem_Click);
+            // 
+            // pSGToolStripMenuItem
+            // 
+            this.pSGToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.extendMOS8580ToolStripMenuItem,
+            this.extendMOS6581ToolStripMenuItem,
+            this.extendNESAPUToolStripMenuItem,
+            this.extendGBAPUToolStripMenuItem,
+            this.extendPOKEYToolStripMenuItem,
+            this.addSN76496ToolStripMenuItem,
+            this.extendAY38910ToolStripMenuItem,
+            this.extendMSM5232ToolStripMenuItem,
+            this.extendBeepToolStripMenuItem});
+            this.pSGToolStripMenuItem.Name = "pSGToolStripMenuItem";
+            resources.ApplyResources(this.pSGToolStripMenuItem, "pSGToolStripMenuItem");
+            // 
+            // extendMOS8580ToolStripMenuItem
+            // 
+            this.extendMOS8580ToolStripMenuItem.Name = "extendMOS8580ToolStripMenuItem";
+            resources.ApplyResources(this.extendMOS8580ToolStripMenuItem, "extendMOS8580ToolStripMenuItem");
+            this.extendMOS8580ToolStripMenuItem.Click += new System.EventHandler(this.extendMOS8580ToolStripMenuItem_Click);
+            // 
+            // extendMOS6581ToolStripMenuItem
+            // 
+            this.extendMOS6581ToolStripMenuItem.Name = "extendMOS6581ToolStripMenuItem";
+            resources.ApplyResources(this.extendMOS6581ToolStripMenuItem, "extendMOS6581ToolStripMenuItem");
+            this.extendMOS6581ToolStripMenuItem.Click += new System.EventHandler(this.extendMOS6581ToolStripMenuItem_Click);
+            // 
+            // extendNESAPUToolStripMenuItem
+            // 
+            this.extendNESAPUToolStripMenuItem.Name = "extendNESAPUToolStripMenuItem";
+            resources.ApplyResources(this.extendNESAPUToolStripMenuItem, "extendNESAPUToolStripMenuItem");
+            this.extendNESAPUToolStripMenuItem.Click += new System.EventHandler(this.extendNESAPUToolStripMenuItem_Click);
+            // 
+            // extendGBAPUToolStripMenuItem
+            // 
+            this.extendGBAPUToolStripMenuItem.Name = "extendGBAPUToolStripMenuItem";
+            resources.ApplyResources(this.extendGBAPUToolStripMenuItem, "extendGBAPUToolStripMenuItem");
+            this.extendGBAPUToolStripMenuItem.Click += new System.EventHandler(this.extendGBAPUToolStripMenuItem_Click);
+            // 
+            // extendPOKEYToolStripMenuItem
+            // 
+            this.extendPOKEYToolStripMenuItem.Name = "extendPOKEYToolStripMenuItem";
+            resources.ApplyResources(this.extendPOKEYToolStripMenuItem, "extendPOKEYToolStripMenuItem");
+            this.extendPOKEYToolStripMenuItem.Click += new System.EventHandler(this.extendPOKEYToolStripMenuItem_Click);
+            // 
+            // addSN76496ToolStripMenuItem
+            // 
+            this.addSN76496ToolStripMenuItem.Name = "addSN76496ToolStripMenuItem";
+            resources.ApplyResources(this.addSN76496ToolStripMenuItem, "addSN76496ToolStripMenuItem");
+            this.addSN76496ToolStripMenuItem.Click += new System.EventHandler(this.addSN76496ToolStripMenuItem_Click);
+            // 
+            // extendAY38910ToolStripMenuItem
+            // 
+            this.extendAY38910ToolStripMenuItem.Name = "extendAY38910ToolStripMenuItem";
+            resources.ApplyResources(this.extendAY38910ToolStripMenuItem, "extendAY38910ToolStripMenuItem");
+            this.extendAY38910ToolStripMenuItem.Click += new System.EventHandler(this.extendAY38910ToolStripMenuItem_Click);
+            // 
+            // extendMSM5232ToolStripMenuItem
+            // 
+            this.extendMSM5232ToolStripMenuItem.Name = "extendMSM5232ToolStripMenuItem";
+            resources.ApplyResources(this.extendMSM5232ToolStripMenuItem, "extendMSM5232ToolStripMenuItem");
+            this.extendMSM5232ToolStripMenuItem.Click += new System.EventHandler(this.extendMSM5232ToolStripMenuItem_Click);
+            // 
+            // extendBeepToolStripMenuItem
+            // 
+            this.extendBeepToolStripMenuItem.Name = "extendBeepToolStripMenuItem";
+            resources.ApplyResources(this.extendBeepToolStripMenuItem, "extendBeepToolStripMenuItem");
+            this.extendBeepToolStripMenuItem.Click += new System.EventHandler(this.extendBeepToolStripMenuItem_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton2.Image = global::zanac.MAmidiMEmo.Properties.Resources.Rst;
+            resources.ApplyResources(this.toolStripButton2, "toolStripButton2");
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // toolStripButton20
+            // 
+            resources.ApplyResources(this.toolStripButton20, "toolStripButton20");
+            this.toolStripButton20.Name = "toolStripButton20";
+            this.toolStripButton20.CheckedChanged += new System.EventHandler(this.toolStripButton20_CheckedChanged);
+            this.toolStripButton20.Click += new System.EventHandler(this.toolStripButton20_Click);
+            // 
+            // toolStripButton21
+            // 
+            resources.ApplyResources(this.toolStripButton21, "toolStripButton21");
+            this.toolStripButton21.Name = "toolStripButton21";
+            this.toolStripButton21.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
+            this.toolStripButton21.Click += new System.EventHandler(this.toolStripButton21_Click);
+            // 
+            // multiMediaTimerComponent1
+            // 
+            this.multiMediaTimerComponent1.Enabled = false;
+            this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
+            this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
+            // 
+            // openFileDialogMidi
+            // 
+            this.openFileDialogMidi.DefaultExt = "*.mid";
+            resources.ApplyResources(this.openFileDialogMidi, "openFileDialogMidi");
+            this.openFileDialogMidi.SupportMultiDottedExtensions = true;
+            // 
+            // fileSystemWatcherMidi
+            // 
+            this.fileSystemWatcherMidi.EnableRaisingEvents = true;
+            this.fileSystemWatcherMidi.SynchronizingObject = this;
+            this.fileSystemWatcherMidi.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
+            // 
+            // timerReload
+            // 
+            this.timerReload.Tick += new System.EventHandler(this.timerReload_Tick);
+            // 
+            // saveFileDialogMAmidi
+            // 
+            this.saveFileDialogMAmidi.DefaultExt = "MAmi";
+            this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
+            resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
+            this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
+            // 
+            // toolStripMenuItem2608
+            // 
+            this.toolStripMenuItem2608.Name = "toolStripMenuItem2608";
+            resources.ApplyResources(this.toolStripMenuItem2608, "toolStripMenuItem2608");
+            this.toolStripMenuItem2608.Click += new System.EventHandler(this.extendYM2608ToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1558,11 +1566,6 @@
             this.contextMenuStripProp.ResumeLayout(false);
             this.toolStrip3.ResumeLayout(false);
             this.toolStrip3.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).EndInit();
             this.tabControlBottom.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.toolStrip2.ResumeLayout(false);
@@ -1575,6 +1578,11 @@
             this.toolStrip4.ResumeLayout(false);
             this.toolStrip4.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcherMidi)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1710,6 +1718,7 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxMidiIfB;
         private System.Windows.Forms.ToolStripLabel toolStripLabel6;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxPort;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2608;
     }
 }
 

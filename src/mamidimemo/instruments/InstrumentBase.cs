@@ -1928,7 +1928,6 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 Program.SoundUpdated();
             }
-
 #else
 
             lock (deferredWriteData)

@@ -195,6 +195,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                         var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
                         Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
                         Settings.Default.Save();
+
+                        Scci.ScciManager.TryReleaseScci();
                     }
                     catch (Exception ex)
                     {

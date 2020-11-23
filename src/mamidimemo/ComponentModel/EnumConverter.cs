@@ -61,5 +61,15 @@ namespace zanac.MAmidiMEmo.ComponentModel
             }
             return base.ConvertTo(context, culture, value, destinationType);
         }
+
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            return true;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            return new StandardValuesCollection(Enum.GetValues(typeof(TEnum)));
+        }
     }
 }
