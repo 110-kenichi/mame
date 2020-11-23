@@ -88,3 +88,5 @@ Release(but Debug .NET)
 /src/scci/Debug
 /src/scci/Release
 /src/scci/x64/Release
+/src/scci/scci.vcxproj.user
+/src/scci/scci.vcxproj.filters
