@@ -2087,6 +2087,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            public bool ShouldSerializePcmData()
+            {
+                return f_PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                f_PcmData = new byte[0];
+            }
+
             [DataMember]
             [Category("Chip")]
             [Description("Global Settings")]

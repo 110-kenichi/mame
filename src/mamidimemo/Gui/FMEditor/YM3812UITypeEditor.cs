@@ -65,16 +65,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
-                foreach (var i in InstrumentManager.GetInstruments((int)InstrumentType.YM3812 + 1))
-                {
-                    Parallel.ForEach(i.BaseTimbres, t =>
-                    {
-                        if (t == tim)
-                            inst = (YM3812)i;
-                        if (inst != null)
-                            return;
-                    });
-                }
+                inst = InstrumentManager.FindParentInstrument(InstrumentType.YM3812, tim) as YM3812;
             }
             finally
             {

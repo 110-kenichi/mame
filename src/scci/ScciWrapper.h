@@ -24,4 +24,5 @@ extern "C" {
 
 	__declspec(dllexport) DWORD __stdcall GetWrittenRegisterData(void* pChip, DWORD addr);
 
+	__declspec(dllexport) BOOL __stdcall IsBufferEmpty(void* pChip);
 }

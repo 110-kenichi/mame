@@ -14,20 +14,20 @@ using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
-using static zanac.MAmidiMEmo.Instruments.Chips.YMF262;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2608;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     /// <summary>
     /// 
     /// </summary>
-    public class YMF262UITypeEditor : UITypeEditor
+    public class YM2608UITypeEditor : UITypeEditor
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="type"></param>
-        public YMF262UITypeEditor(Type type)
+        public YM2608UITypeEditor(Type type)
         {
 
         }
@@ -59,13 +59,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             if (editorService == null)
                 return value;
 
-            YMF262Timbre tim = context.Instance as YMF262Timbre;
-            YMF262 inst = null;
+            YM2608Timbre tim = context.Instance as YM2608Timbre;
+            YM2608 inst = null;
             try
             {
                 //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
-                inst = InstrumentManager.FindParentInstrument(InstrumentType.YMF262, tim) as YMF262;
+                inst = InstrumentManager.FindParentInstrument(InstrumentType.YM2608, tim) as YM2608;
             }
             finally
             {
@@ -74,42 +74,48 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             if (inst != null)
             {
-                using (FormYMF262Editor ed = new FormYMF262Editor(inst, tim))
+                using (FormYM2608Editor ed = new FormYM2608Editor(inst, tim))
                 {
                     var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
-                        nameof(tim.FB));
+                        nameof(tim.FB),
+                        nameof(tim.AMS),
+                        nameof(tim.FMS),
+                        "GlobalSettings.EN",
+                        "GlobalSettings.LFOEN",
+                        "GlobalSettings.LFRQ"
+                        );
                     ed.MmlValueGeneral = mmlValueGeneral;
-                    var consel = inst.CONSEL;
-                    inst.CONSEL = 6;
 
                     List<string> mmlValueOps = new List<string>();
                     for (int i = 0; i < tim.Ops.Length; i++)
                     {
                         var op = tim.Ops[i];
                         mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
+                            nameof(op.EN),
                             nameof(op.AR),
-                            nameof(op.DR),
+                            nameof(op.D1R),
+                            nameof(op.D2R),
                             nameof(op.RR),
                             nameof(op.SL),
-                            nameof(op.SR),
                             nameof(op.TL),
-                            nameof(op.KSL),
-                            nameof(op.KSR),
-                            nameof(op.MFM),
+                            nameof(op.RS),
+                            nameof(op.MUL),
+                            nameof(op.DT1),
                             nameof(op.AM),
-                            nameof(op.VIB),
-                            nameof(op.EG),
-                            nameof(op.WS)
+                            nameof(op.SSG)
                             ));
                     }
 
                     DialogResult dr = editorService.ShowDialog(ed);
-                    inst.CONSEL = consel;
                     if (dr == DialogResult.OK)
-                        return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                    {
+                        return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                    }
                     else
-                        return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                    {
+                        return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
+                    }
                 }
             }
 

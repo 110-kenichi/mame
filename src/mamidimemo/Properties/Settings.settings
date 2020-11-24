@@ -101,5 +101,8 @@
     <Setting Name="MWinPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="YM2608EdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

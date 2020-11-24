@@ -83,3 +83,11 @@ __declspec(dllexport) DWORD __stdcall GetWrittenRegisterData(void* pChip, DWORD 
 
 	return ((SoundChip *)pChip)->getWrittenRegisterData(addr);
 }
+
+__declspec(dllexport) BOOL __stdcall IsBufferEmpty(void* pChip)
+{
+	if (pChip == NULL)
+		return FALSE;
+
+	return ((SoundChip *)pChip)->isBufferEmpty();
+}

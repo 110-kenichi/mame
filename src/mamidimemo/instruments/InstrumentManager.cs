@@ -125,6 +125,22 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        public static InstrumentBase FindParentInstrument(InstrumentType instrumentType, TimbreBase timbre)
+        {
+            InstrumentBase inst = null;
+            foreach (var i in InstrumentManager.GetInstruments((uint)instrumentType + 1))
+            {
+                Parallel.ForEach(i.BaseTimbres, t =>
+                {
+                    if (t == timbre)
+                        inst = i;
+                    if (inst != null)
+                        return;
+                });
+            }
+            return inst;
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -418,5 +418,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["MWinPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2608EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2608EdSize"]));
+            }
+            set {
+                this["YM2608EdSize"] = value;
+            }
+        }
     }
 }

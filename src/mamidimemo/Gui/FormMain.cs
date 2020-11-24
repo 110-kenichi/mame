@@ -176,7 +176,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("MT32", Resources.MT32);
             imageList1.Images.Add("CM32P", Resources.CM32P);
             imageList1.Images.Add("YMF262", Resources.YMF262);
-            imageList1.Images.Add("YM2608", Resources.YM2610B);
+            imageList1.Images.Add("YM2608", Resources.YM2608);
 
             if (Program.IsVSTiMode())
             {

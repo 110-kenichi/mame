@@ -62,9 +62,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private object spfmPtrLock = new object();
         private IntPtr spfmPtr;
 
         private SoundEngineType f_SoundEngineType;
+        private SoundEngineType f_CurrentSoundEngineType;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
@@ -81,22 +83,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value)
                 {
-                    if (spfmPtr != IntPtr.Zero)
+                    lock (spfmPtrLock)
                     {
-                        ScciManager.ReleaseSoundChip(spfmPtr);
-                        spfmPtr = IntPtr.Zero;
-                    }
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            ScciManager.ReleaseSoundChip(spfmPtr);
+                            spfmPtr = IntPtr.Zero;
+                        }
 
-                    f_SoundEngineType = value;
-                    switch (f_SoundEngineType)
-                    {
-                        case SoundEngineType.Software:
-                            break;
-                        case SoundEngineType.SPFM_LT:
-                            spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, SC_CHIP_CLOCK.SC_CLOCK_3579545);
-                            break;
+                        f_SoundEngineType = value;
+
+                        switch (f_SoundEngineType)
+                        {
+                            case SoundEngineType.Software:
+                                f_CurrentSoundEngineType = f_SoundEngineType;
+                                break;
+                            case SoundEngineType.SPFM_LT:
+                                spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, SC_CHIP_CLOCK.SC_CLOCK_3579545);
+                                if (spfmPtr != IntPtr.Zero)
+                                    f_CurrentSoundEngineType = f_SoundEngineType;
+                                else
+                                    f_CurrentSoundEngineType = SoundEngineType.Software;
+                                break;
+                        }
                     }
+                    AllSoundOff();
                 }
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
             }
         }
 
@@ -383,15 +406,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     op = 3;
                     break;
             }
-            if (spfmPtr != IntPtr.Zero)
-            {
-                ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data);
-            }
-            else
-            {
-                DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
-                DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
-            }
+            lock (spfmPtrLock)
+                if (CurrentSoundEngine == SoundEngineType.SPFM_LT)
+                {
+                    ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data);
+                }
+                else
+                {
+                    DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
+                    DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
+                }
 
             /*
             try
@@ -446,11 +470,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
-            if (spfmPtr != IntPtr.Zero)
-            {
-                ScciManager.ReleaseSoundChip(spfmPtr);
-                spfmPtr = IntPtr.Zero;
-            }
+            lock (spfmPtrLock)
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
 
             base.Dispose();
         }
@@ -665,6 +690,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             private YM2151 parentModule;
 
+            private uint unitNumber;
+
             private YM2151Timbre timbre;
 
             /// <summary>
@@ -678,6 +705,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 this.parentModule = parentModule;
                 this.timbre = (YM2151Timbre)timbre;
+
+                this.unitNumber = parentModule.UnitNumber;
             }
 
             /// <summary>
@@ -710,11 +739,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //Volume
                 OnVolumeUpdated();
                 //On
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x2);
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x01, 0, 0, (byte)0x0);
+                parentModule.Ym2151WriteData(unitNumber, 0x01, 0, 0, (byte)0x2);
+                parentModule.Ym2151WriteData(unitNumber, 0x01, 0, 0, (byte)0x0);
 
                 byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(op | Slot));
+                parentModule.Ym2151WriteData(unitNumber, 0x08, 0, 0, (byte)(op | Slot));
             }
 
 
@@ -739,53 +768,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.NFRQ = gs.NFRQ.Value;
                 }
 
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
+                parentModule.Ym2151WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
                 for (int op = 0; op < 4; op++)
                 {
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     switch (timbre.ALG)
                     {
                         case 0:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 1:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 2:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 3:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 4:
                             if (op != 1 && op != 3)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 5:
                             if (op == 4)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 6:
                             if (op == 4)
-                                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 7:
                             break;
                     }
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
                 if (!IsKeyOff)
                 {
                     byte open = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(open | Slot));
+                    parentModule.Ym2151WriteData(unitNumber, 0x08, 0, 0, (byte)(open | Slot));
                 }
 
                 OnPanpotUpdated();
@@ -839,7 +868,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 foreach (int op in ops)
                 {
                     //$60+: total level
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
                 }
             }
 
@@ -889,8 +918,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     nn = 14;
                 }
 
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn));
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x30, 0, Slot, (byte)(kf << 2));
+                parentModule.Ym2151WriteData(unitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn));
+                parentModule.Ym2151WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2));
 
                 base.OnPitchUpdated();
             }
@@ -953,7 +982,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     pan = 0x2;
                 else
                     pan = 0x3;
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x20, 0, Slot, (byte)(pan << 6 | (timbre.FB << 3) | timbre.ALG));
+                parentModule.Ym2151WriteData(unitNumber, 0x20, 0, Slot, (byte)(pan << 6 | (timbre.FB << 3) | timbre.ALG));
             }
 
             /// <summary>
@@ -961,15 +990,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
+                parentModule.Ym2151WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
                 for (int op = 0; op < 4; op++)
                 {
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
-                    parentModule.Ym2151WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                    parentModule.Ym2151WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
+                    parentModule.Ym2151WriteData(unitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
                 OnPanpotUpdated();
@@ -982,7 +1011,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.SoundOff();
 
-                parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(0x00 | Slot));
+                parentModule.Ym2151WriteData(unitNumber, 0x08, 0, 0, (byte)(0x00 | Slot));
             }
 
         }

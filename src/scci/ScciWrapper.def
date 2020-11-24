@@ -6,3 +6,4 @@ EXPORTS
 	ReleaseSoundChip
 	SetRegister
 	GetWrittenRegisterData
+	IsBufferEmpty

@@ -10,6 +10,19 @@ namespace zanac.MAmidiMEmo.Scci
 {
     public static class ScciManager
     {
+
+        // mode defines
+        public const uint SC_MODE_ASYNC = (0x00000000);
+        public const uint SC_MODE_SYNC = (0x00000001);
+
+        // sound chip Acquisition mode defines
+        public const uint SC_ACQUISITION_MODE_NEAR = (0x00000000);
+        public const uint SC_ACQUISITION_MODE_MATCH = (0x00000001);
+
+        public const uint SC_WAIT_REG = (0xffffffff);   // ウェイとコマンド送信（データは送信するコマンド数）
+        public const uint SC_FLUSH_REG = (0xfffffffe);  // 書き込みデータフラッシュ待ち
+        public const uint SC_DIRECT_BUS = (0x80000000);	// アドレスバスダイレクトモード
+
         private static object lockObject = new object();
 
         private const string SCCI_WRAPPER_DLL_NAME = "ScciWrapper";
@@ -93,13 +106,36 @@ namespace zanac.MAmidiMEmo.Scci
         /// <returns></returns>
         public static bool SetRegister(IntPtr pChip, uint dAddr, uint pData)
         {
+            return SetRegister(pChip, dAddr, pData, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        public static bool SetRegister(IntPtr pChip, uint dAddr, uint pData, bool useCache)
+        {
             if (Environment.Is64BitProcess)
                 return false;
 
             lock (lockObject)
-                return SetRegisterInternal(pChip, dAddr, pData);
+            {
+                if (useCache)
+                {
+                    var prevData = GetWrittenRegisterData(pChip, dAddr);
+                    if (prevData != pData)
+                        return SetRegisterInternal(pChip, dAddr, pData);
+                    else
+                        return true;
+                }
+                else
+                {
+                    return SetRegisterInternal(pChip, dAddr, pData);
+                }
+            }
         }
-
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GetWrittenRegisterData")]
         private static extern UInt32 GetWrittenRegisterDataInternal(IntPtr pChip, uint addr);
@@ -117,6 +153,24 @@ namespace zanac.MAmidiMEmo.Scci
 
             lock (lockObject)
                 return GetWrittenRegisterDataInternal(pChip, addr);
+        }
+
+        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "IsBufferEmpty")]
+        private static extern bool IsBufferEmptyInternal(IntPtr pChip);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        public static bool IsBufferEmpty(IntPtr pChip)
+        {
+            if (Environment.Is64BitProcess)
+                return true;
+
+            lock (lockObject)
+                return IsBufferEmptyInternal(pChip);
         }
 
     }
@@ -199,6 +253,15 @@ namespace zanac.MAmidiMEmo.Scci
         SC_CLOCK_14318180 = 14318180, // OPL2
         SC_CLOCK_16934400 = 16934400, // YMF271
         SC_CLOCK_23011361 = 23011361, // PWM
+    };
+
+    // Sound chip location
+    public enum SC_CHIP_LOCATION
+    {
+        SC_LOCATION_MONO = 0,
+        SC_LOCATION_LEFT = 1,
+        SC_LOCATION_RIGHT = 2,
+        SC_LOCATION_STEREO = 3
     };
 
 }
