@@ -334,7 +334,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void YM2608WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
-            YM2608WriteData(unitNumber, address, op, slot, data, false);
+            YM2608WriteData(unitNumber, address, op, slot, data, true);
         }
         /// <summary>
         /// 
@@ -723,7 +723,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //ADPCM A TOTAL LEVEL MAX
             YM2608WriteData(UnitNumber, 0x11, 0, 0, 0x3f);
             //ADPCM B
-            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x20);  //EXTMEM
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x20, false);  //EXTMEM
             YM2608WriteData(UnitNumber, 0x01, 0, 3, 0xC2);  //LR, 8bit DRAM
 
             AllSoundOff();
@@ -985,8 +985,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x00);   //CLEAR MASK
             YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x80);   //IRQ RESET
             //Ctrl1
-            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01);   //RESET
-            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x60);   //REC, EXTMEM
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);   //RESET
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x60, false);   //REC, EXTMEM
             //Ctrl2
             YM2608WriteData(UnitNumber, 0x01, 0, 3, 0x32);   //LR, 8bit DRAM
 
@@ -1005,14 +1005,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 tlen = 256 * 1024;
             //Transfer
             for (int j = i & 0xffffe0; j < tlen; j++)
-                YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[j]);
+                YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[j], false);
             //Zero padding
             for (int j = tlen; j < tlen + ((0x20 - (tlen & 0x1f)) & 0x1f); j++)
-                YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80);
+                YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);
 
             // Finish
-            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01);  //RESET
-            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x00);
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);  //RESET
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x00, false);
 
             // Wait
             while (!ScciManager.IsBufferEmpty(spfmPtr))
@@ -1352,8 +1352,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x07, 0, 0, (byte)0xff);
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 0, (byte)0xff);
                 //ADPCM
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01);
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00);
+                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01, false);   //RESET
+                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00, false);   //STOP
             }
         }
 
@@ -1530,14 +1530,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (kon != 0)
                             {
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
-                                parentModule.YM2608WriteData(unitNumber, (byte)(0x10), 0, 0, kon);
+                                parentModule.YM2608WriteData(unitNumber, (byte)(0x10), 0, 0, kon, false);
                             }
                         }
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x1B); //CLEAR FLAGS
-                            parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x80); //IRQ RESET
+                            parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x1B, false); //CLEAR FLAGS
+                            parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x80, false); //IRQ RESET
 
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x20); //ACCESS TO MEM
 
@@ -1575,7 +1575,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             //KeyOn
                             byte loop = timbre.LoopEnable ? (byte)0x10 : (byte)0x00;
-                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x80 | 0x20 | loop));   //PLAY, ACCESS TO MEM, LOOP
+                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x80 | 0x20 | loop), false);   //PLAY, ACCESS TO MEM, LOOP
                         }
                         break;
                 }
@@ -2133,8 +2133,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x01));
-                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x00));
+                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x01, false);  //RESET
+                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x00, false);  //STOP
                         }
                         break;
                 }
