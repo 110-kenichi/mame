@@ -55,7 +55,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <summary>
         /// Thread Safe
         /// </summary>
-        public int Progress
+        public int Percentage
         {
             get
             {
@@ -136,20 +136,22 @@ namespace zanac.MAmidiMEmo.Gui
 
                 f.Message = initialMessage;
 
-                var t = Task.Run(new Action(() =>
+                f.Shown += (s, e) =>
                 {
-                    var now = DateTime.Now;
+                    var t = Task.Run(new Action(() =>
+                    {
+                        var now = DateTime.Now;
 
-                    action(f);
+                        action(f);
 
-                    // Dummy wait for elegant UI
-                    var span = DateTime.Now - now;
-                    if (span.TotalMilliseconds < 500)
-                        Thread.Sleep((int)(500 - span.TotalMilliseconds));
+                        // Dummy wait for elegant UI
+                        var span = DateTime.Now - now;
+                        if (span.TotalMilliseconds < 500)
+                            Thread.Sleep((int)(500 - span.TotalMilliseconds));
 
-                    f.Invoke(new MethodInvoker(() => { f.Close(); }));
-                }));
-
+                        f.Invoke(new MethodInvoker(() => { f.Close(); }));
+                    }));
+                };
                 f.ShowDialog(parent);
             }
         }

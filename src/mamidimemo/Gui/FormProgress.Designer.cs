@@ -29,23 +29,23 @@
         private void InitializeComponent()
         {
             this.metroProgressBar1 = new MetroFramework.Controls.MetroProgressBar();
-            this.labelMessage = new System.Windows.Forms.Label();
+            this.labelMessage = new MetroFramework.Controls.MetroLabel();
             this.SuspendLayout();
             // 
             // metroProgressBar1
             // 
-            this.metroProgressBar1.Location = new System.Drawing.Point(13, 145);
+            this.metroProgressBar1.Location = new System.Drawing.Point(15, 138);
             this.metroProgressBar1.Name = "metroProgressBar1";
             this.metroProgressBar1.Size = new System.Drawing.Size(454, 23);
             this.metroProgressBar1.TabIndex = 0;
             // 
             // labelMessage
             // 
-            this.labelMessage.Location = new System.Drawing.Point(13, 71);
+            this.labelMessage.Location = new System.Drawing.Point(15, 60);
             this.labelMessage.Name = "labelMessage";
-            this.labelMessage.Size = new System.Drawing.Size(454, 71);
+            this.labelMessage.Size = new System.Drawing.Size(452, 75);
             this.labelMessage.TabIndex = 1;
-            this.labelMessage.Text = "Text";
+            this.labelMessage.Text = "metroLabel1";
             // 
             // FormProgress
             // 
@@ -71,6 +71,6 @@
         #endregion
 
         private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
-        private System.Windows.Forms.Label labelMessage;
+        private MetroFramework.Controls.MetroLabel labelMessage;
     }
 }

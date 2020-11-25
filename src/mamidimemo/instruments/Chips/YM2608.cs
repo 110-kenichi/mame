@@ -923,10 +923,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updatePcmData(YM2608Timbre timbre)
         {
-            FormProgress.RunDialog(Resources.UpdatingADPCM, new Action<FormProgress>((f) =>
-                {
-                    updatePcmDataCore(timbre, f);
-                }));
+            FormProgress.RunDialog(Resources.UpdatingADPCM,
+                new Action<FormProgress>((f) => { updatePcmDataCore(timbre, f); }));
         }
 
         private void updatePcmDataCore(YM2608Timbre timbre, FormProgress fp)
@@ -938,7 +936,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 List<byte> pcmData = new List<byte>();
                 uint nextStartAddress = 0;
-                fp.Progress = 0;
                 for (int i = 0; i < Timbres.Length; i++)
                 {
                     var tim = Timbres[i];
@@ -972,7 +969,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     }
                 }
-                fp.Progress = 10;
                 transferPcmData(pcmData.ToArray(), fp);
             }
         }
@@ -990,7 +986,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (transferData[i] != lastTransferPcmData[i])
                     break;
             }
-            fp.Progress = 20;
             transferPcmDataCore(transferData, i, fp);
             lastTransferPcmData = transferData;
         }
@@ -1016,20 +1011,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2608WriteData(UnitNumber, 0x0C, 0, 3, 0xff);
             YM2608WriteData(UnitNumber, 0x0D, 0, 3, 0xff);
 
-            int tlen = transferData.Length;
-            if (tlen > 256 * 1024)
-                tlen = 256 * 1024;
+            int endAddress = transferData.Length;
+            if (endAddress > 256 * 1024)
+                endAddress = 256 * 1024;
 
             //Transfer
-            for (int j = i & 0xffffe0; j < tlen; j++)
+            int startAddress = i & 0xffffe0;
+            int len = endAddress - startAddress;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int adr = startAddress; adr < endAddress; adr++)
             {
-                YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[j], false);
+                YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[adr], false);
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                    fp.Percentage = percentage;
+                lastPercentage = percentage;
+                index++;
             }
 
-            fp.Progress = 90;
-            
             //Zero padding
-            for (int j = tlen; j < tlen + ((0x20 - (tlen & 0x1f)) & 0x1f); j++)
+            for (int j = endAddress; j < endAddress + ((0x20 - (endAddress & 0x1f)) & 0x1f); j++)
                 YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);   //Adds silent data
 
             // Finish
@@ -1039,8 +1043,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             // Wait
             while (!ScciManager.IsBufferEmpty(spfmPtr))
                 Thread.Sleep(10);
-
-            fp.Progress = 100;
         }
 
         /// <summary>

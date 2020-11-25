@@ -49,7 +49,6 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
         YM2151, YM2612, YM3812, YM2413, YM2610B, YMF262
 		YM2601 ★★★ Place legitimate ym2608_adpcm_rom.bin file in the Mami dir ★★★
-		
         SID, POKEY, GB APU, SN76496, NES APU, MSM5232(+TA7630), AY-3-8910
         NAMCO CUS30, SCC, HuC6280
         C140, SPC700
@@ -222,6 +221,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	SN76489:(TBD)
 	:::
 
+12. SPFM
+
+   You can use real sound chip instead of emulation chip.
+   Currently supported chip is YM2151 and YM2608 on SPFM.
+
 *** Known issues and limitations *** 
 
    1. MT-32 & CM32-P can not store/restore last settings.
@@ -383,3 +387,12 @@ https://www.keshikan.net/fonts.html
 
 * M+ FONT
 http://itouhiro.hatenablog.com/entry/20130602/font
+
+* GeneralUser GS
+http://schristiancollins.com/generaluser.php
+
+* MSGS
+https://sites.google.com/site/senasan007/Home/cw_midi_c
+
+* VST.NET
+https://github.com/obiwanjacobi/vst.net

@@ -241,7 +241,7 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   Connecting to a real chip via SPFT... に類似しているローカライズされた文字列を検索します。
+        ///   Connecting to a real chip via SPFM... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ConnectingSPFM {
             get {
