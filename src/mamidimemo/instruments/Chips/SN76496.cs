@@ -318,11 +318,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case SoundType.PSG:
                             psgOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
                             break;
                         case SoundType.NOISE:
                             noiseOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn NOISE ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn NOISE ch" + emptySlot + " " + note.ToString());
                             break;
                     }
                     rv.Add(snd);

@@ -383,7 +383,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SCC1Sound snd = new SCC1Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     sccOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn SCC ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn SCC ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

@@ -637,7 +637,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             C6280WriteData(parentModule.UnitNumber, 0x808, null, timbre.LfoFreq);
                             C6280WriteData(parentModule.UnitNumber, 0x809, null, (byte)((timbre.LfoEnable ? 0x00 : 0x80) | timbre.LfoMode));
 
-                            FormMain.OutputDebugLog("KeyOn LFO ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn LFO ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.WSG:
@@ -645,18 +645,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
-                            FormMain.OutputDebugLog("KeyOn PSG ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.PCM:
                         {
                             parentModule.setPcmData(Slot, timbre.PcmData);
-                            FormMain.OutputDebugLog("KeyOn PSG(PCM) ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PSG(PCM) ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                 }

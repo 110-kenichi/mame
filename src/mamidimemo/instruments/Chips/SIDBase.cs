@@ -439,7 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

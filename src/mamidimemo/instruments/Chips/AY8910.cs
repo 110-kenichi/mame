@@ -446,7 +446,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     AY8910Sound snd = new AY8910Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

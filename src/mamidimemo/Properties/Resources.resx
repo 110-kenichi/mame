@@ -301,4 +301,35 @@
   <data name="UpdatingADPCM" xml:space="preserve">
     <value>Updating ADPCM data...</value>
   </data>
+  <data name="AdpcmBufferExceeded" xml:space="preserve">
+    <value>ADPCM buffer exceeded.</value>
+  </data>
+  <data name="AdpcmBufferUsed" xml:space="preserve">
+    <value>ADPCM buffer used {0}/256 KB.</value>
+  </data>
+  <data name="FailedLoadMAmi" xml:space="preserve">
+    <value>Failed to load the MAmi file.</value>
+  </data>
+  <data name="FailedLoadMAmidi" xml:space="preserve">
+    <value>Failed to load the MAmidi file.</value>
+  </data>
+  <data name="FailedLoadMidi" xml:space="preserve">
+    <value>Failed to load the MIDI file.</value>
+  </data>
+  <data name="FailedMidiIf" xml:space="preserve">
+    <value>Failed to set MIDI I/F.</value>
+  </data>
+  <data name="FailedSaveEnv" xml:space="preserve">
+    <value>Failed to save the current env.</value>
+  </data>
+  <data name="FailedSaveMAmidi" xml:space="preserve">
+    <value>Failed to save the current env and midi into the MAmidi file.</value>
+  </data>
+  <data name="LoadMidiFile" xml:space="preserve">
+    <value>Please load a midi file to save the current env and midi file into the MAmidi file.</value>
+  </data>
+  <data name="WanrSPC700SampleLength" xml:space="preserve">
+    <value>Some sample loop length is not a multiple of 16.
+So, sound glitches may occur.</value>
+  </data>
 </root>

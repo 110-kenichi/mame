@@ -23,6 +23,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 
 //https://wiki.superfamicom.org/spc700-reference
 
@@ -984,7 +985,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     */
 
-                    FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn INST ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)
@@ -2171,76 +2172,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     DrumTimbres[i].BaseNote =
                         (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
                 }
-
-                /*
-                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
-                {
-                    openFileDialog.SupportMultiDottedExtensions = true;
-                    openFileDialog.Title = "Select a SoundFont v2.0 file";
-                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
-
-                    var fr = openFileDialog.ShowDialog(null);
-                    if (fr != DialogResult.OK)
-                        return;
-
-                    var sf2 = new SF2(openFileDialog.FileName);
-
-                    var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
-                    int tn = 0;
-                    bool warningAlign = false;
-                    foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
-                    {
-                        if (s.SampleType == SF2SampleLink.MonoSample ||
-                            s.SampleType == SF2SampleLink.LeftSample)
-                        {
-                            var tim = (SPC700PcmTimbre)DrumSoundTable.PcmTimbres[tn];
-
-                            double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
-                            tim.BaseFreqency = baseFreq;
-                            tim.SampleRate = s.SampleRate;
-
-                            uint start = s.Start;
-                            uint end = s.End;
-                            if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
-                                end = s.LoopEnd;
-
-                            if ((end - start + 1) % 16 != 0)
-                                warningAlign = true;
-                            uint len = (end - start + 1) & 0xfffffff0;
-                            if (len == 0)
-                                len = 16;
-
-                            if ((s.LoopStart - start + 1) % 16 != 0)
-                                warningAlign = true;
-                            uint loopStart = (s.LoopStart - start) & 0xfffffff0;
-
-                            short[] samples = new short[len];
-                            for (uint i = 0; i < len; i++)
-                                samples[i] = spl[start + i];
-
-                            uint brrLoopStart;
-                            var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
-
-                            tim.PcmData = result;
-                            tim.LoopPoint = (ushort)(brrLoopStart / 9);
-                            var nidx = s.SampleName.IndexOf('\0');
-                            if (nidx >= 0)
-                                tim.TimbreName = s.SampleName.Substring(0, nidx);
-                            else
-                                tim.TimbreName = s.SampleName;
-
-                            tn++;
-
-                            if (tn == 128)
-                                break;
-                        }
-                    }
-                    if (warningAlign)
-                    {
-                        MessageBox.Show("Some sample length or loop point is not a multiple of 16.\r\n" +
-                            "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);
-                    }
-                }*/
             }
             catch (Exception ex)
             {
@@ -2362,16 +2293,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     uint loopStart = 0;
                     uint loopLen = 0;
 
-                    //var tim2 = Timbres[tn + 1 + offset];
-                    //short[] samples2 = new short[(olen | 0xf) + 1];
-                    //Array.Copy(spl, s.Start, samples2, 0, olen);
-                    //var result2 = Brr.BrrEncoder.ConvertRawWave(samples2, false, s.LoopStart < s.LoopEnd, s.LoopStart - s.Start, out brrLoopStart);
-                    //tim2.SampleRate = s.SampleRate;
-                    //tim2.BaseFreqency = baseFreq;
-                    //brrLoopStart /= 9;
-                    //tim2.AdpcmData = result2;
-                    //tim.LoopPoint = (ushort)brrLoopStart;
-
                     if (s.LoopStart < s.LoopEnd)
                     {
                         loopStart = s.LoopStart - s.Start;
@@ -2379,20 +2300,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (loopLen % 16 != 0)
                             warningAlign = true;
-
-                        //if (tn == 0)
-                        //{
-                        //    byte[] sample_dat = new byte[samples.Length * 2];
-                        //    for (int i = 0; i < samples.Length; i++)
-                        //    {
-                        //        short data = samples[i];
-                        //        if (i == loopStart || i == samples.Length - 16)
-                        //            data = short.MaxValue;
-                        //        sample_dat[i * 2] = (byte)(data & 0xff);
-                        //        sample_dat[i * 2 + 1] = (byte)((data & 0xff00) >> 8);
-                        //    }
-                        //    File.WriteAllBytes(@"C:\Users\zanac2\Desktop\aaa.pcm", sample_dat);
-                        //}
 
                         samples = resampleLoop16(s, samples, baseFreq, ref baseFreq, ref end, ref loopStart, ref loopLen);
                     }
@@ -2424,20 +2331,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 samples[samples.Length - 16 + i] = avgData[i];
                             }
                         }
-
-                        //if (tn == 0)
-                        //{
-                        //    byte[] sample_dat = new byte[samples.Length * 2];
-                        //    for (int i = 0; i < samples.Length; i++)
-                        //    {
-                        //        short data = samples[i];
-                        //        if (i == loopStart || i == samples.Length - 16)
-                        //            data = short.MaxValue;
-                        //        sample_dat[i * 2] = (byte)(data & 0xff);
-                        //        sample_dat[i * 2 + 1] = (byte)((data & 0xff00) >> 8);
-                        //    }
-                        //    File.WriteAllBytes(@"C:\Users\zanac2\Desktop\bbb.pcm", sample_dat);
-                        //}
                     }
 
                     var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
@@ -2479,8 +2372,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             if (warningAlign)
             {
-                MessageBox.Show("Some sample loop length is not a multiple of 16.\r\n" +
-                    "So, sound glitches may occur.", "Warning", MessageBoxButtons.OK);
+                MessageBox.Show(Resources.WanrSPC700SampleLength, "Warning", MessageBoxButtons.OK);
             }
         }
 

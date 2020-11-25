@@ -501,7 +501,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     */
 
-                    FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn INST ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

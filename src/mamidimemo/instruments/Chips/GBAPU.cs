@@ -567,9 +567,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             UpdatePitch(0x80);
 
                             if (lastSoundType == SoundType.SPSG)
-                                FormMain.OutputDebugLog("KeyOn SPSG ch" + Slot + " " + NoteOnEvent.ToString());
+                                FormMain.OutputDebugLog(parentModule, "KeyOn SPSG ch" + Slot + " " + NoteOnEvent.ToString());
                             else
-                                FormMain.OutputDebugLog("KeyOn PSG ch" + (Slot + partialReserveSpsg) + " " + NoteOnEvent.ToString());
+                                FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + (Slot + partialReserveSpsg) + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.WAV:
@@ -591,7 +591,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             UpdatePitch(0x80);
 
-                            FormMain.OutputDebugLog("KeyOn WAV ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn WAV ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.NOISE:
@@ -606,7 +606,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             UpdatePitch(0x80);
 
-                            FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                 }

@@ -61,6 +61,24 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   ADPCM buffer exceeded. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AdpcmBufferExceeded {
+            get {
+                return ResourceManager.GetString("AdpcmBufferExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ADPCM buffer used {0}/256 KB. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AdpcmBufferUsed {
+            get {
+                return ResourceManager.GetString("AdpcmBufferUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap ALG1 {
@@ -280,6 +298,60 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Failed to load the MAmi file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedLoadMAmi {
+            get {
+                return ResourceManager.GetString("FailedLoadMAmi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to load the MAmidi file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedLoadMAmidi {
+            get {
+                return ResourceManager.GetString("FailedLoadMAmidi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to load the MIDI file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedLoadMidi {
+            get {
+                return ResourceManager.GetString("FailedLoadMidi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to set MIDI I/F. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedMidiIf {
+            get {
+                return ResourceManager.GetString("FailedMidiIf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to save the current env. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedSaveEnv {
+            get {
+                return ResourceManager.GetString("FailedSaveEnv", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to save the current env and midi into the MAmidi file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedSaveMAmidi {
+            get {
+                return ResourceManager.GetString("FailedSaveMAmidi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap GB_APU {
@@ -306,6 +378,15 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("Inst", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Please load a midi file to save the current env and midi file into the MAmidi file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string LoadMidiFile {
+            get {
+                return ResourceManager.GetString("LoadMidiFile", resourceCulture);
             }
         }
         
@@ -515,6 +596,16 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string UpdatingADPCM {
             get {
                 return ResourceManager.GetString("UpdatingADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Some sample loop length is not a multiple of 16.
+        ///So, sound glitches may occur. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string WanrSPC700SampleLength {
+            get {
+                return ResourceManager.GetString("WanrSPC700SampleLength", resourceCulture);
             }
         }
         

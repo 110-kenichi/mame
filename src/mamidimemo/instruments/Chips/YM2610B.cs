@@ -926,11 +926,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case ToneType.FM:
                             fmOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.ADPCM_A:
                             pcmaOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn PCM-A ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PCM-A ch" + emptySlot + " " + note.ToString());
 
                             //HACK: store pcm data to local buffer to avoid "thread lock"
                             var pct = (AdpcmTimbre)parentModule.AdpcmASoundTable.PcmTimbres[note.NoteNumber];
@@ -939,7 +939,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case ToneType.ADPCM_B:
                             pcmbOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
 
                             //HACK: store pcm data to local buffer to avoid "thread lock"
                             lock (parentModule.tmpPcmDataTable)
@@ -947,7 +947,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case ToneType.SSG:
                             ssgOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn SSG ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn SSG ch" + emptySlot + " " + note.ToString());
                             break;
                     }
                     rv.Add(snd);
@@ -2051,7 +2051,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound(ADPCM-B)")]
-            [Description("Loop enable")]
+            [Description("ADPCM-B Loop enable")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
@@ -2070,11 +2070,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_PcmData = new byte[0];
 
             [TypeConverter(typeof(TypeConverter))]
-            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(OpnAdpcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound(ADPCM-B)")]
-            [Description("YM2610 ADPCM-B DATA. 55.5 kHz sampling rate at 12-bit from 4-bit data.")]
-            [PcmFileLoaderEditor("Audio File(*.pcmb)|*.pcmb", 0, 8, 1, 16777215)]
+            [Description("YM2610 ADPCM-B DATA. 55.5 kHz sampling rate at 12-bit from 4-bit data.\r\n" +
+                "Or, wave file 16bit mono. MAX 16MB.")]
+            [PcmFileLoaderEditor("Audio File(*.pcmb, *.wav)|*.pcmb;*.wav", 0, 16, 1, 16777215)]
             public byte[] PcmData
             {
                 get

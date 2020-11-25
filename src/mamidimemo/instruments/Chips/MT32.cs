@@ -630,7 +630,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     MT32Sound snd = new MT32Sound(parentModule, this, timbre, note, emptySlot);
                     instOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

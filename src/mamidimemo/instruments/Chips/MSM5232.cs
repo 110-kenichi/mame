@@ -459,11 +459,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case SoundGroup.Group1:
                             chAOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn A ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn A ch" + emptySlot + " " + note.ToString());
                             break;
                         case SoundGroup.Group2:
                             chBOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn B ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn B ch" + emptySlot + " " + note.ToString());
                             break;
                     }
 

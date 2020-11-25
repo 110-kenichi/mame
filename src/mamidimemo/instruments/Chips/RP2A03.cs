@@ -454,31 +454,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case ToneType.SQUARE:
                             sqOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn SQ ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn SQ ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.TRIANGLE:
                             triOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn Tri ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn Tri ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.NOISE:
                             noiseOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn Noise ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn Noise ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.DPCM:
                             dpcmOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn DPCM ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn DPCM ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.FDS:
                             fdsOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn FDS ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn FDS ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.VRC6_SQ:
                             vrc6SqOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn VRC6(SQ) ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn VRC6(SQ) ch" + emptySlot + " " + note.ToString());
                             break;
                         case ToneType.VRC6_SAW:
                             vrc6SawOnSounds.Add(snd);
-                            FormMain.OutputDebugLog("KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
                             break;
                     }
                     rv.Add(snd);

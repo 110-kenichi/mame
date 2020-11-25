@@ -570,7 +570,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             ch4OnSounds.Add(snd);
                             break;
                     }
-                    FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

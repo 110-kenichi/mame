@@ -342,7 +342,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     NAMCO_CUS30Sound snd = new NAMCO_CUS30Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     wsgOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn WSG ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn WSG ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

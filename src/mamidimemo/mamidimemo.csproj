@@ -430,6 +430,7 @@
     <Compile Include="Gui\OscUtility.cs" />
     <Compile Include="Gui\EnvelopeUITypeEditor.cs" />
     <Compile Include="Gui\EnvelopeEditorAttribute.cs" />
+    <Compile Include="Gui\OpnAdpcmFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\TextEditorControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -163,32 +163,32 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                         fs.Refresh();
                     }
 
-                    if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
-                    {
-                        try
-                        {
-                            var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
-                            InstrumentManager.ClearAllInstruments();
-                            var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
-                            InstrumentManager.RestoreSettings(settings);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.GetType() == typeof(Exception))
-                                throw;
-                            else if (ex.GetType() == typeof(SystemException))
-                                throw;
-
-                            MessageBox.Show(ex.ToString());
-                        }
-                    }
-
                     try
                     {
                         var fm = new FormMain();
                         fm.Shown += (_, __) =>
                         {
                             fm.BeginInvoke(new MethodInvoker(() => { fs.Close(); }));
+
+                            if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
+                            {
+                                try
+                                {
+                                    var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
+                                    InstrumentManager.ClearAllInstruments();
+                                    var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
+                                    InstrumentManager.RestoreSettings(settings);
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+
+                                    MessageBox.Show(ex.ToString());
+                                }
+                            }
                         };
                         Application.Run(fm);
 

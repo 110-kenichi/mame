@@ -66,10 +66,13 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="log"></param>
         [Conditional("DEBUG")]
-        public static void OutputDebugLog(String log)
+        public static void OutputDebugLog(InstrumentBase inst, String log)
         {
             if (outputListView == null || outputListView.IsDisposed || !outputListView.IsHandleCreated)
                 return;
+
+            if(inst != null)
+                log = "[" + inst.Name + "(" + inst.UnitNumber + ")]" + log;
 
             outputListView?.BeginInvoke(new MethodInvoker(() =>
             {
@@ -87,10 +90,13 @@ namespace zanac.MAmidiMEmo.Gui
         /// 
         /// </summary>
         /// <param name="log"></param>
-        public static void OutputLog(String log)
+        public static void OutputLog(InstrumentBase inst, String log)
         {
-            if (outputListView.IsDisposed)
+            if (outputListView == null || outputListView.IsDisposed)
                 return;
+
+            if (inst != null)
+                log = "[" + inst.Name + "(" + inst.UnitNumber + ")]" + log;
 
             outputListView?.BeginInvoke(new MethodInvoker(() =>
             {
@@ -412,7 +418,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to set MIDI I/F.");
+                MessageBox.Show(Resources.FailedMidiIf);
             }
         }
 
@@ -426,7 +432,7 @@ namespace zanac.MAmidiMEmo.Gui
                 foreach (var dev in MidiManager.GetInputMidiDevices())
                 {
                     int i = toolStripComboBoxMidiIfB.Items.Add(dev.Name);
-                    if (dev.Name.Equals(Settings.Default.MidiIF))
+                    if (dev.Name.Equals(Settings.Default.MidiIF_B))
                         si = i;
                     dev.Dispose();
                 }
@@ -441,7 +447,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to set MIDI I/F.");
+                MessageBox.Show(Resources.FailedMidiIf);
             }
         }
 
@@ -466,7 +472,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to set MIDI I/F.");
+                MessageBox.Show(Resources.FailedMidiIf);
             }
         }
 
@@ -487,7 +493,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to set MIDI I/F.");
+                MessageBox.Show(Resources.FailedMidiIf);
             }
         }
 
@@ -694,7 +700,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to save the current env.");
+                MessageBox.Show(Resources.FailedSaveEnv + "\r\n" + ex.Message);
             }
         }
 
@@ -721,7 +727,7 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-                    MessageBox.Show("Failed to save the current env.\r\n" + ex.Message);
+                    MessageBox.Show(Resources.FailedSaveEnv + "\r\n" + ex.Message);
                 }
             }
         }
@@ -757,7 +763,7 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-                    MessageBox.Show("Failed to load the MAmi file.\r\n" + ex.Message);
+                    MessageBox.Show(Resources.FailedLoadMAmi + "\r\n" + ex.Message);
                 }
             }
             else if (ext.Equals(".MAmidi", StringComparison.OrdinalIgnoreCase))
@@ -772,7 +778,7 @@ namespace zanac.MAmidiMEmo.Gui
                         ZipArchiveEntry midiEntry = archive.GetEntry("midi.midi");
                         if (mamiEntry == null || midiEntry == null)
                         {
-                            MessageBox.Show("Failed to load the MAmidi file.");
+                            MessageBox.Show(Resources.FailedLoadMAmidi);
                             return;
                         }
                         using (var sr = new StreamReader(mamiEntry.Open()))
@@ -790,7 +796,7 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-                    MessageBox.Show("Failed to load the MAmidi file.");
+                    MessageBox.Show(Resources.FailedLoadMAmidi + "\r\n" + ex.Message);
                 }
             }
         }
@@ -811,7 +817,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to load the MAmi file.\r\n" + ex.Message);
+                MessageBox.Show(Resources.FailedLoadMAmi + "\r\n" + ex.Message);
             }
         }
 
@@ -1327,7 +1333,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
-                MessageBox.Show("Failed to load the file.\r\n" + ex.Message);
+                MessageBox.Show(Resources.FailedLoadMidi + "\r\n" + ex.Message);
             }
         }
 
@@ -1450,7 +1456,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (loadedMidiFile == null)
             {
-                MessageBox.Show("Please load a midi file to save the current env and midi file.");
+                MessageBox.Show(Resources.LoadMidiFile);
                 return;
             }
 
@@ -1494,7 +1500,7 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-                    MessageBox.Show("Failed to save the current env and midi.\r\n" + ex.Message);
+                    MessageBox.Show(Resources.FailedSaveMAmidi + "\r\n" + ex.Message);
                 }
             }
         }

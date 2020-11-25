@@ -250,7 +250,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
         Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
 		Fixed CUS30 Volume calculation.
 		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
-		Supported the SPFM Light to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
+		Supported the SPFM to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
         Added FM Synthesis register value randomizer to FM Synthesis Editor.
 		Added FM Synthesis global register to FM Synthesis Editor.

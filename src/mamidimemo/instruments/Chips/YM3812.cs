@@ -409,7 +409,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM3812Sound snd = new YM3812Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
                     fmOnSounds.Add(snd);
 
-                    FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)

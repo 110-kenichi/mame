@@ -127,10 +127,7 @@ namespace zanac.MAmidiMEmo.Gui
             using (FormProgress f = new FormProgress())
             {
                 if (parent == null)
-                {
-                    f.TopMost = true;
                     f.StartPosition = FormStartPosition.CenterScreen;
-                }
 
                 f.CreateControl();
 
