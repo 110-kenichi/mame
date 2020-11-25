@@ -223,8 +223,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 12. SPFM
 
-   You can use real sound chip instead of emulation chip.
-   Currently supported chip is YM2151 and YM2608 on SPFM.
+   You can use a real sound chip instead of software emulation chip.
+   Currently supported chips are YM2151 and YM2608 on SPFM.
+   Before using the SPFM, you must setup SCCI by using the scciconfig.exe.
 
 *** Known issues and limitations *** 
 
