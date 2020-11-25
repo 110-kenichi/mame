@@ -48,6 +48,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    Note: Currently supported chips are the following.
 
         YM2151, YM2612, YM3812, YM2413, YM2610B, YMF262
+		YM2601 ★★★ Place legitimate ym2608_adpcm_rom.bin file in the Mami dir ★★★
+		
         SID, POKEY, GB APU, SN76496, NES APU, MSM5232(+TA7630), AY-3-8910
         NAMCO CUS30, SCC, HuC6280
         C140, SPC700
@@ -140,6 +142,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 	YMF262:
 	 http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
+
+	YM2608:
+     https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
+
 
    *[Channels]
     Select which MIDI ch messages the chip receives.
@@ -238,7 +244,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Supported MIDI IN B.
         Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
 		Fixed CUS30 Volume calculation.
-		Added YM2608(OPNA) chip.
+		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
+		Supported the SPFM Light to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
         Added FM Synthesis register value randomizer to FM Synthesis Editor.
 		Added FM Synthesis global register to FM Synthesis Editor.

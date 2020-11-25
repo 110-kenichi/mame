@@ -98,7 +98,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             case SoundEngineType.Software:
                                 f_CurrentSoundEngineType = f_SoundEngineType;
                                 break;
-                            case SoundEngineType.SPFM_LT:
+                            case SoundEngineType.SPFM:
                                 spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, SC_CHIP_CLOCK.SC_CLOCK_3579545);
                                 if (spfmPtr != IntPtr.Zero)
                                     f_CurrentSoundEngineType = f_SoundEngineType;
@@ -407,7 +407,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
             }
             lock (spfmPtrLock)
-                if (CurrentSoundEngine == SoundEngineType.SPFM_LT)
+                if (CurrentSoundEngine == SoundEngineType.SPFM)
                 {
                     ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data);
                 }

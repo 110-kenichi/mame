@@ -31,6 +31,15 @@ namespace zanac.MAmidiMEmo.Gui
 {
     public partial class FormMain : FormBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static FormMain AppliactionForm
+        {
+            get;
+            private set;
+        }
+
         private static ListView outputListView;
 
         private static ToolStripStatusLabel statusLabel = new ToolStripStatusLabel();
@@ -119,6 +128,8 @@ namespace zanac.MAmidiMEmo.Gui
         public FormMain()
         {
             InitializeComponent();
+
+            AppliactionForm = this;
 
             unsafe
             {

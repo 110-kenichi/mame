@@ -1,4 +1,5 @@
-﻿using System;
+﻿// copyright-holders:K.Ito
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete]
     public class MultiMediaTimerComponent : Component
     {
         [DllImport("winmm.dll", SetLastError = true)]

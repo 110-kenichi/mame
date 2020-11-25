@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Scci
 {
@@ -32,6 +34,17 @@ namespace zanac.MAmidiMEmo.Scci
 
         private static bool initialized;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool IsScciInitialized
+        {
+            get
+            {
+                return initialized;
+            }
+        }
+
         private static void TryInitializeScci()
         {
             if (Environment.Is64BitProcess)
@@ -40,7 +53,12 @@ namespace zanac.MAmidiMEmo.Scci
             lock (lockObject)
             {
                 if (!initialized)
-                    initialized = InitializeScci() == 0 ? true : false;
+                {
+                    FormProgress.RunDialog(Resources.ConnectingSPFM, new Action<FormProgress>((f) =>
+                    {
+                        initialized = InitializeScci() == 0 ? true : false;
+                    }));
+                }
             }
         }
 

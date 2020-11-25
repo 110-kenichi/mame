@@ -1,4 +1,5 @@
-﻿using System;
+﻿// copyright-holders:K.Ito
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ using System.Diagnostics;
 
 namespace zanac.MAmidiMEmo.Util
 {
-    class CpuUsage
+    public class CpuUsage
     {
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool GetSystemTimes(

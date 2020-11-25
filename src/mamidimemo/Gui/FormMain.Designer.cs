@@ -137,6 +137,7 @@
             this.extendSPC700ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fMSynthesisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM2610BToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
             this.addYM2151ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addYM2612ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM3812ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -161,12 +162,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
-            this.multiMediaTimerComponent1 = new zanac.MAmidiMEmo.ComponentModel.MultiMediaTimerComponent(this.components);
             this.openFileDialogMidi = new System.Windows.Forms.OpenFileDialog();
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
-            this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1349,6 +1348,12 @@
             resources.ApplyResources(this.extendYM2610BToolStripMenuItem, "extendYM2610BToolStripMenuItem");
             this.extendYM2610BToolStripMenuItem.Click += new System.EventHandler(this.extendYM2610BToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem2608
+            // 
+            this.toolStripMenuItem2608.Name = "toolStripMenuItem2608";
+            resources.ApplyResources(this.toolStripMenuItem2608, "toolStripMenuItem2608");
+            this.toolStripMenuItem2608.Click += new System.EventHandler(this.extendYM2608ToolStripMenuItem_Click);
+            // 
             // addYM2151ToolStripMenuItem
             // 
             this.addYM2151ToolStripMenuItem.Name = "addYM2151ToolStripMenuItem";
@@ -1510,12 +1515,6 @@
             this.toolStripButton21.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
             this.toolStripButton21.Click += new System.EventHandler(this.toolStripButton21_Click);
             // 
-            // multiMediaTimerComponent1
-            // 
-            this.multiMediaTimerComponent1.Enabled = false;
-            this.multiMediaTimerComponent1.Interval = ((uint)(1000u));
-            this.multiMediaTimerComponent1.Resolution = ((uint)(1000u));
-            // 
             // openFileDialogMidi
             // 
             this.openFileDialogMidi.DefaultExt = "*.mid";
@@ -1538,12 +1537,6 @@
             this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
             resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
             this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
-            // 
-            // toolStripMenuItem2608
-            // 
-            this.toolStripMenuItem2608.Name = "toolStripMenuItem2608";
-            resources.ApplyResources(this.toolStripMenuItem2608, "toolStripMenuItem2608");
-            this.toolStripMenuItem2608.Click += new System.EventHandler(this.extendYM2608ToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -1664,7 +1657,6 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxKeyCh;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
-        private ComponentModel.MultiMediaTimerComponent multiMediaTimerComponent1;
         private ComponentModel.ToolStripBase toolStrip3;
         private System.Windows.Forms.ToolStripButton toolStripButtonCat;
         private System.Windows.Forms.ToolStripButton toolStripButtonA2Z;

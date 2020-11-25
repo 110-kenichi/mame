@@ -407,6 +407,12 @@
     <Compile Include="Gui\FMEditor\FormFmEditor.Designer.cs">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FormProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormProgress.Designer.cs">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormSplash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -713,6 +719,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.resx">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormProgress.resx">
+      <DependentUpon>FormProgress.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>

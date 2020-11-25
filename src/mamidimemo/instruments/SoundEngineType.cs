@@ -16,7 +16,7 @@ namespace zanac.MAmidiMEmo.Instruments
     {
         [Description("Software")]
         Software,
-        [Description("SPFM LT")]
-        SPFM_LT
+        [Description("Real(SPFM)")]
+        SPFM
     }
 }

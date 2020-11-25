@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -24,10 +25,10 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 
-//http://www.ajworld.net/neogeodev/ym2610am2.html
-//https://wiki.neogeodev.org/index.php?title=YM2610_registers
+//https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -104,7 +105,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             case SoundEngineType.Software:
                                 f_CurrentSoundEngineType = f_SoundEngineType;
                                 break;
-                            case SoundEngineType.SPFM_LT:
+                            case SoundEngineType.SPFM:
                                 spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2608, SC_CHIP_CLOCK.SC_CLOCK_7987200);
                                 if (spfmPtr != IntPtr.Zero)
                                     f_CurrentSoundEngineType = f_SoundEngineType;
@@ -357,7 +358,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
             }
             lock (spfmPtrLock)
-                if (CurrentSoundEngine == SoundEngineType.SPFM_LT)
+                if (CurrentSoundEngine == SoundEngineType.SPFM)
                 {
                     uint reg = (uint)(slot / 3) << 8;
                     ScciManager.SetRegister(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)), data, useCache);
@@ -419,7 +420,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Program.SoundUpdating();
                 FlushDeferredWriteData();
 
-                if (CurrentSoundEngine == SoundEngineType.SPFM_LT)
+                if (CurrentSoundEngine == SoundEngineType.SPFM)
                 {
                     uint reg = (uint)(slot / 3) << 9;
                     lock (spfmPtrLock)
@@ -728,7 +729,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             AllSoundOff();
 
-            lastTransferPcmData = new byte[] { };
+            lock (spfmPtrLock)
+                lastTransferPcmData = new byte[] { };
             updatePcmData(null);
         }
 
@@ -921,50 +923,63 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updatePcmData(YM2608Timbre timbre)
         {
-            if (CurrentSoundEngine != SoundEngineType.SPFM_LT)
-                return;
-
-            List<byte> pcmData = new List<byte>();
-            uint nextStartAddress = 0;
-            for (int i = 0; i < Timbres.Length; i++)
-            {
-                var tim = Timbres[i];
-
-                tim.PcmAddressStart = 0;
-                tim.PcmAddressEnd = 0;
-                if (tim.PcmData.Length != 0)
+            FormProgress.RunDialog(Resources.UpdatingADPCM, new Action<FormProgress>((f) =>
                 {
-                    int tlen = tim.PcmData.Length;
-                    int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
-                    //check bank
-                    if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
-                    {
-                        for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
-                            pcmData.Add(0);
-                        nextStartAddress |= 0x1ffff;
-                        nextStartAddress += 1;
-                    }
-                    if (nextStartAddress + tlen + pad - 1 < 0x40000)   //MAX 256KB
-                    {
-                        tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
+                    updatePcmDataCore(timbre, f);
+                }));
+        }
 
-                        //Write PCM data
-                        pcmData.AddRange(tim.PcmData);
-                        //Add 32 byte pad
-                        for (int j = 0; j < pad; j++)
-                            pcmData.Add(0x80);
+        private void updatePcmDataCore(YM2608Timbre timbre, FormProgress fp)
+        {
+            lock (spfmPtrLock)
+            {
+                if (CurrentSoundEngine != SoundEngineType.SPFM)
+                    return;
 
-                        nextStartAddress = Timbres[i].PcmAddressEnd + 1;
+                List<byte> pcmData = new List<byte>();
+                uint nextStartAddress = 0;
+                fp.Progress = 0;
+                for (int i = 0; i < Timbres.Length; i++)
+                {
+                    var tim = Timbres[i];
+
+                    tim.PcmAddressStart = 0;
+                    tim.PcmAddressEnd = 0;
+                    if (tim.PcmData.Length != 0)
+                    {
+                        int tlen = tim.PcmData.Length;
+                        int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
+                                                                    //check bank
+                        if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
+                        {
+                            for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
+                                pcmData.Add(0);
+                            nextStartAddress |= 0xffff;
+                            nextStartAddress += 1;
+                        }
+                        if (nextStartAddress + tlen + pad - 1 < 0x40000)   //MAX 256KB
+                        {
+                            tim.PcmAddressStart = nextStartAddress;
+                            tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
+
+                            //Write PCM data
+                            pcmData.AddRange(tim.PcmData);
+                            //Add 32 byte pad
+                            for (int j = 0; j < pad; j++)
+                                pcmData.Add(0x80);  //Adds silent data
+
+                            nextStartAddress = Timbres[i].PcmAddressEnd + 1;
+                        }
                     }
                 }
+                fp.Progress = 10;
+                transferPcmData(pcmData.ToArray(), fp);
             }
-            transferPcmData(pcmData.ToArray());
         }
 
         private byte[] lastTransferPcmData;
 
-        private void transferPcmData(byte[] transferData)
+        private void transferPcmData(byte[] transferData, FormProgress fp)
         {
             var tmpArray = transferData;
             if (lastTransferPcmData.Length < tmpArray.Length)
@@ -975,20 +990,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (transferData[i] != lastTransferPcmData[i])
                     break;
             }
-            transferPcmDataCore(transferData, i);
+            fp.Progress = 20;
+            transferPcmDataCore(transferData, i, fp);
             lastTransferPcmData = transferData;
         }
 
-        private void transferPcmDataCore(byte[] transferData, int i)
+        private void transferPcmDataCore(byte[] transferData, int i, FormProgress fp)
         {
             //flag
-            YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x00);   //CLEAR MASK
+            YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x13);   //CLEAR MASK
             YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x80);   //IRQ RESET
-            //Ctrl1
+                                                             //Ctrl1
             YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);   //RESET
             YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x60, false);   //REC, EXTMEM
-            //Ctrl2
-            YM2608WriteData(UnitNumber, 0x01, 0, 3, 0x32);   //LR, 8bit DRAM
+                                                                    //Ctrl2
+            YM2608WriteData(UnitNumber, 0x01, 0, 3, 0x02);   //LR, 8bit DRAM
 
             //START
             YM2608WriteData(UnitNumber, 0x02, 0, 3, (byte)((i >> 5) & 0xff));
@@ -1003,12 +1019,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             int tlen = transferData.Length;
             if (tlen > 256 * 1024)
                 tlen = 256 * 1024;
+
             //Transfer
             for (int j = i & 0xffffe0; j < tlen; j++)
+            {
                 YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[j], false);
+            }
+
+            fp.Progress = 90;
+            
             //Zero padding
             for (int j = tlen; j < tlen + ((0x20 - (tlen & 0x1f)) & 0x1f); j++)
-                YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);
+                YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);   //Adds silent data
 
             // Finish
             YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);  //RESET
@@ -1017,6 +1039,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             // Wait
             while (!ScciManager.IsBufferEmpty(spfmPtr))
                 Thread.Sleep(10);
+
+            fp.Progress = 100;
         }
 
         /// <summary>
@@ -1545,7 +1569,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             OnVolumeUpdated();
                             OnPanpotUpdated();
 
-                            if (parentModule.CurrentSoundEngine == SoundEngineType.SPFM_LT)
+                            if (parentModule.CurrentSoundEngine == SoundEngineType.SPFM)
                             {
                                 //pcm start
                                 parentModule.YM2608WriteData(unitNumber, 0x02, 0, 3, (byte)((timbre.PcmAddressStart >> 5) & 0xff));
@@ -2462,12 +2486,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-    typeof(UITypeEditor)), Localizable(false)]
+        typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
             [Category("Sound(FM)")]
             [Description("You can copy and paste this text data to other same type timber.\r\n" +
-    "ALG, FB, AR, D1R(DR), D2R(SR), RR, SL, TL, RS(KS), MUL, DT1, AM(AMS), SSG_EG, ...\r\n" +
+        "ALG, FB, AR, D1R(DR), D2R(SR), RR, SL, TL, RS(KS), MUL, DT1, AM(AMS), SSG_EG, ...\r\n" +
                 "You can use comma or space chars as delimiter.")]
             public string MmlSerializeData
             {
@@ -2627,7 +2651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound(ADPCM-B)")]
-            [Description("YM2610 ADPCM-B DATA. 55.5 kHz sampling rate at 12-bit from 4-bit data.")]
+            [Description("YM2608 ADPCM-B DATA. 55.5 kHz sampling rate at 12-bit from 4-bit data.")]
             [PcmFileLoaderEditor("Audio File(*.pcmb)|*.pcmb", 0, 8, 1, 65535)]
             public byte[] PcmData
             {

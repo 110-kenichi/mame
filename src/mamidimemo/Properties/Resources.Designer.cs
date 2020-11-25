@@ -241,6 +241,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Connecting to a real chip via SPFT... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ConnectingSPFM {
+            get {
+                return ResourceManager.GetString("ConnectingSPFM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap donate {
@@ -497,6 +506,15 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("Title", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Updating ADPCM data... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UpdatingADPCM {
+            get {
+                return ResourceManager.GetString("UpdatingADPCM", resourceCulture);
             }
         }
         
