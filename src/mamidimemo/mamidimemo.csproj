@@ -197,6 +197,12 @@
     <Compile Include="Gui\ClickThroughToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\FMEditor\FormToneSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormToneSelector.Designer.cs">
+      <DependentUpon>FormToneSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FMEditor\FormYM2413Editor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -630,6 +636,9 @@
     <Compile Include="Util\FM-SoundConvertor\VOPM.cs" />
     <Compile Include="Util\MathParser.cs" />
     <Compile Include="Util\Utility.cs" />
+    <EmbeddedResource Include="Gui\FMEditor\FormToneSelector.resx">
+      <DependentUpon>FormToneSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">
       <DependentUpon>FormYM2413Editor.cs</DependentUpon>
     </EmbeddedResource>

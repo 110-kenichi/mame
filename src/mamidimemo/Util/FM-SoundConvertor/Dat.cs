@@ -5,8 +5,7 @@ using System;
 
 using static FM_SoundConvertor.Path;
 using static FM_SoundConvertor.File;
-
-
+using System.Collections.Generic;
 
 namespace FM_SoundConvertor
 {
@@ -160,8 +159,10 @@ namespace FM_SoundConvertor
 
 
 
-		public static Tone Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path, Option @Option)
 		{
+            List<Tone> tones = new List<Tone>();
+
 			var Buffer = ReadByte(Path);
 			if (Buffer.Length == DatLength())
 			{
@@ -172,7 +173,7 @@ namespace FM_SoundConvertor
 				var BufferPmd = "";
 				var BufferVopm = Vopm.New();
 
-				for (int i = 0; i < ToneLength(); )//++i)
+				for (int i = 0; i < ToneLength(); ++i)
 				{
 					Get(ref vTone, Buffer, i);
 
@@ -181,21 +182,22 @@ namespace FM_SoundConvertor
 					if (Option.bPmd) Pmd.Put(vTone, ref BufferPmd);
 					if (Option.bVopm) Vopm.Put(vTone, ref BufferVopm);
 
-                    return vTone;
-				}
+                    if (vTone.IsValid())
+                        tones.Add(new Tone(vTone));
+                }
 
-				if (Option.bMuc) Muc.Writer(Path, BufferMuc);
+                if (Option.bMuc) Muc.Writer(Path, BufferMuc);
 				if (Option.bFmp) Fmp.Writer(Path, BufferFmp);
 				if (Option.bPmd) Pmd.Writer(Path, BufferPmd);
 				if (Option.bVopm) Vopm.Writer(Path, BufferVopm);
 			}
 
-            return null;
+            return tones;
 		}
 
 
 
-		public static Tone Reader(string[] aPath, Option @Option)
+		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
 		{
 			foreach (var Path in aPath)
 			{

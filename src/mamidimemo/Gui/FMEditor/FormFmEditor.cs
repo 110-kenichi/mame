@@ -298,47 +298,52 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             if (toolStripButtonPlay.Checked && !ignorePlayingFlag)
             {
-                if (playing != null)
-                {
-                    PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
-                    playing = null;
-                }
-
-                ni = (SevenBitNumber)toolStripComboBoxNote.SelectedIndex;
-                vi = (SevenBitNumber)toolStripComboBoxVelo.SelectedIndex;
-                PianoControl1_NoteOn(null, new TaggedNoteOnEvent(new NoteOnEvent(ni, vi)) { MonitorEvent = true });
-                playing = new object();
-                object _playing = playing;
-
-                int wait = 500;
-                switch (toolStripComboBoxGate.SelectedIndex)
-                {
-                    case 0:
-                        //500ms
-                        wait = 500;
-                        break;
-                    case 1:
-                        //1000ms
-                        wait = 1000;
-                        break;
-                    case 2:
-                        //2000ms
-                        wait = 2000;
-                        break;
-                    case 3:
-                        //5000ms
-                        wait = 5000;
-                        break;
-                }
-                await Task.Delay(wait);
-
-                if (playing == _playing)
-                {
-                    PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
-                    playing = null;
-                }
+                await play();
             }
 
+        }
+
+        private async Task play()
+        {
+            if (playing != null)
+            {
+                PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
+                playing = null;
+            }
+
+            ni = (SevenBitNumber)toolStripComboBoxNote.SelectedIndex;
+            vi = (SevenBitNumber)toolStripComboBoxVelo.SelectedIndex;
+            PianoControl1_NoteOn(null, new TaggedNoteOnEvent(new NoteOnEvent(ni, vi)) { MonitorEvent = true });
+            playing = new object();
+            object _playing = playing;
+
+            int wait = 500;
+            switch (toolStripComboBoxGate.SelectedIndex)
+            {
+                case 0:
+                    //500ms
+                    wait = 500;
+                    break;
+                case 1:
+                    //1000ms
+                    wait = 1000;
+                    break;
+                case 2:
+                    //2000ms
+                    wait = 2000;
+                    break;
+                case 3:
+                    //5000ms
+                    wait = 5000;
+                    break;
+            }
+            await Task.Delay(wait);
+
+            if (playing == _playing)
+            {
+                PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
+                playing = null;
+            }
         }
 
         /// <summary>
@@ -538,42 +543,91 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             importFile(openFileDialogTone.FileName);
         }
 
-        private void importFile(string file)
+        private async void importFile(string file)
         {
             string ext = System.IO.Path.GetExtension(file);
             string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
             var Option = new Option();
             try
             {
-                Tone tone = null;
+                IEnumerable<Tone> tones = null;
                 switch (ext.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case ".MUC":
-                        tone = Muc.Reader(importFile, Option);
+                        tones = Muc.Reader(importFile, Option);
                         break;
                     case ".DAT":
-                        tone = Dat.Reader(importFile, Option);
+                        tones = Dat.Reader(importFile, Option);
                         break;
                     case ".MWI":
-                        tone = Fmp.Reader(importFile, Option);
+                        tones = Fmp.Reader(importFile, Option);
                         break;
                     case ".MML":
-                        tone = Pmd.Reader(importFile, Option);
+                        tones = Pmd.Reader(importFile, Option);
                         break;
                     case ".FXB":
-                        tone = Vopm.Reader(importFile, Option);
+                        tones = Vopm.Reader(importFile, Option);
                         break;
                 }
-                if (tone != null && tone.IsValid())
+                if (tones != null && tones.Count() > 0)
                 {
-                    try
+                    if (tones.Count() == 1)
                     {
-                        ignorePlayingFlag = true;
-                        ApplyTone(tone);
+                        try
+                        {
+                            ignorePlayingFlag = true;
+                            ApplyTone(tones.ToArray()[0]);
+                        }
+                        finally
+                        {
+                            ignorePlayingFlag = false;
+                        }
                     }
-                    finally
+                    else
                     {
-                        ignorePlayingFlag = false;
+                        List<string> ses = new List<string>();
+
+                        foreach (var c in controls.Values)
+                            ses.Add(c.SerializeData);
+
+                        using (var f = new FormToneSelector(tones))
+                        {
+                            f.SelectedIndexChanged += async (s, e) =>
+                            {
+                                try
+                                {
+                                    ignorePlayingFlag = true;
+                                    ApplyTone(f.SelectedTone);
+                                }
+                                finally
+                                {
+                                    ignorePlayingFlag = false;
+                                }
+                                await play();
+                            };
+                            DialogResult dr = f.ShowDialog(this);
+                            try
+                            {
+                                ignorePlayingFlag = true;
+                                if (dr == DialogResult.OK)
+                                {
+                                    ApplyTone(f.SelectedTone);
+                                }
+                                else
+                                {
+                                    //restore
+                                    int idx = 0;
+                                    foreach (var c in controls.Values)
+                                        c.SerializeData = ses[idx++];
+                                }
+                            }
+                            finally
+                            {
+                                ignorePlayingFlag = false;
+                            }
+                            if (dr == DialogResult.OK)
+                                await play();
+                        }
                     }
                 }
             }
@@ -604,13 +658,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (drags.Length == 1)
                 {
-                    if (System.IO.File.Exists(drags[0]) &&
+                    var fn = drags[0];
+                    var ext = System.IO.Path.GetExtension(fn);
+                    if (System.IO.File.Exists(fn) &&
                         (
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
                         ))
                     {
                         importFile(drags[0]);
@@ -627,19 +683,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (drags.Length == 1)
                 {
-                    if (System.IO.File.Exists(drags[0]) &&
+                    var fn = drags[0];
+                    var ext = System.IO.Path.GetExtension(fn);
+                    if (System.IO.File.Exists(fn) &&
                         (
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        System.IO.Path.GetExtension(drags[0]).Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
                         ))
                     {
                         e.Effect = DragDropEffects.All;
                     }
                 }
-            }   
+            }
         }
     }
 }

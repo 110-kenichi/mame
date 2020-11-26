@@ -5,8 +5,7 @@ using System;
 
 using static FM_SoundConvertor.Path;
 using static FM_SoundConvertor.File;
-
-
+using System.Collections.Generic;
 
 namespace FM_SoundConvertor
 {
@@ -65,9 +64,11 @@ namespace FM_SoundConvertor
 
 
 
-		public static Tone Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path, Option @Option)
 		{
-			var vTone = new Tone();
+            List<Tone> tones = new List<Tone>();
+
+            var vTone = new Tone();
 			bool bLineComment = false;
 
 			var BufferMuc = "";
@@ -180,6 +181,9 @@ namespace FM_SoundConvertor
 								if (Option.bDat) Dat.Put(vTone, ref BufferDat);
 								if (Option.bFmp) Fmp.Put(vTone, ref BufferFmp);
 								if (Option.bVopm) Vopm.Put(vTone, ref BufferVopm);
+
+                                if (vTone.IsValid())
+                                    tones.Add(new Tone(vTone));
 							}
 							State = eState.Entry;
 							break;
@@ -192,12 +196,12 @@ namespace FM_SoundConvertor
 			if (Option.bFmp) Fmp.Writer(Path, BufferFmp);
 			if (Option.bVopm) Vopm.Writer(Path, BufferVopm);
 
-            return vTone;
+            return tones;
 		}
 
 
 
-		public static Tone Reader(string[] aPath, Option @Option)
+		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
 		{
 			foreach (var Path in aPath)
 			{
