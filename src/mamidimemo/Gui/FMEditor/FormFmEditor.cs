@@ -582,6 +582,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             ignorePlayingFlag = false;
                         }
+                        await play();
                     }
                     else
                     {

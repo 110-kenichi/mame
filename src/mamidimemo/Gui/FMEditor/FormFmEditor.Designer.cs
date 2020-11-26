@@ -454,7 +454,7 @@
             this.metroButtonImport.Name = "metroButtonImport";
             this.metroButtonImport.Size = new System.Drawing.Size(75, 23);
             this.metroButtonImport.TabIndex = 0;
-            this.metroButtonImport.Text = "&Import";
+            this.metroButtonImport.Text = "&Import...";
             this.metroButtonImport.UseSelectable = true;
             this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);
             this.metroButtonImport.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragDrop);

@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.4.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.5.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
 2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.
         Supported loading a WAV file (16bit mono) as ADPCM-B data for YM2608, YM2610B chips.
 2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
