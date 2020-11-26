@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
@@ -97,6 +98,34 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             base.OnClosing(e);
 
             Settings.Default.YM3812EdSize = Size;
+        }
+
+
+        protected override void ApplyTone(Tone tone)
+        {
+            ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
+            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+            ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
+            ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = null;
+            ((RegisterValue)this["General"]["GlobalSettings.VIB"]).NullableValue = null;
+
+            for (int i = 0; i < 2; i++)
+            {
+                ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR / 2;
+                ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR / 2;
+                ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
+                ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
+                ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
+                ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
+                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = tone.aOp[i].AM;
+                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
+            }
+            if (string.IsNullOrWhiteSpace(tone.Name))
+                timbre.Memo = tone.Name;
         }
     }
 

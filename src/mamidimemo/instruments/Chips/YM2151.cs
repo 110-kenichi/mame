@@ -97,13 +97,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.Software:
                                 f_CurrentSoundEngineType = f_SoundEngineType;
+                                SetDevicePassThru(false);
                                 break;
                             case SoundEngineType.SPFM:
                                 spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, SC_CHIP_CLOCK.SC_CLOCK_3579545);
                                 if (spfmPtr != IntPtr.Zero)
+                                {
                                     f_CurrentSoundEngineType = f_SoundEngineType;
+                                    SetDevicePassThru(true);
+                                }
                                 else
+                                {
                                     f_CurrentSoundEngineType = SoundEngineType.Software;
+                                    SetDevicePassThru(false);
+                                }
                                 break;
                         }
                     }
@@ -411,11 +418,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data);
                 }
-                else
-                {
-                    DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
-                    DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
-                }
+            DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
+            DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
 
             /*
             try

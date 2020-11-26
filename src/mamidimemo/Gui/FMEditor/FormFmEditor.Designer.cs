@@ -53,14 +53,16 @@
             this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxCC = new System.Windows.Forms.ToolStripComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonCancel = new MetroFramework.Controls.MetroButton();
-            this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.metroButtonRand1 = new MetroFramework.Controls.MetroButton();
             this.metroButtonParams = new MetroFramework.Controls.MetroButton();
             this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
+            this.buttonOK = new MetroFramework.Controls.MetroButton();
+            this.buttonCancel = new MetroFramework.Controls.MetroButton();
+            this.metroButtonImport = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.openFileDialogTone = new System.Windows.Forms.OpenFileDialog();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -71,11 +73,10 @@
             // 
             this.panelPiano.Controls.Add(this.pianoControl1);
             this.panelPiano.Controls.Add(this.toolStrip2);
-            this.panelPiano.Controls.Add(this.tableLayoutPanel1);
             this.panelPiano.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelPiano.Location = new System.Drawing.Point(5, 511);
+            this.panelPiano.Location = new System.Drawing.Point(5, 503);
             this.panelPiano.Name = "panelPiano";
-            this.panelPiano.Size = new System.Drawing.Size(793, 143);
+            this.panelPiano.Size = new System.Drawing.Size(793, 80);
             this.panelPiano.TabIndex = 4;
             // 
             // pianoControl1
@@ -83,7 +84,7 @@
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pianoControl1.Location = new System.Drawing.Point(0, 25);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(793, 82);
+            this.pianoControl1.Size = new System.Drawing.Size(793, 55);
             this.pianoControl1.TabIndex = 0;
             // 
             // toolStrip2
@@ -351,39 +352,22 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 4, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonParams, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTarget, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 3, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 107);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 583);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(2);
-            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(793, 36);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(793, 71);
             this.tableLayoutPanel1.TabIndex = 3;
-            // 
-            // buttonCancel
-            // 
-            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(713, 5);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 3;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseSelectable = true;
-            // 
-            // buttonOK
-            // 
-            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(632, 5);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 2;
-            this.buttonOK.Text = "OK";
-            this.buttonOK.UseSelectable = true;
             // 
             // metroButtonRand1
             // 
@@ -443,6 +427,39 @@
             this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
+            // buttonOK
+            // 
+            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonOK.Location = new System.Drawing.Point(632, 43);
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.TabIndex = 2;
+            this.buttonOK.Text = "&OK";
+            this.buttonOK.UseSelectable = true;
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.Location = new System.Drawing.Point(713, 43);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.Text = "&Cancel";
+            this.buttonCancel.UseSelectable = true;
+            // 
+            // metroButtonImport
+            // 
+            this.metroButtonImport.AllowDrop = true;
+            this.metroButtonImport.Location = new System.Drawing.Point(5, 43);
+            this.metroButtonImport.Name = "metroButtonImport";
+            this.metroButtonImport.Size = new System.Drawing.Size(75, 23);
+            this.metroButtonImport.TabIndex = 0;
+            this.metroButtonImport.Text = "&Import";
+            this.metroButtonImport.UseSelectable = true;
+            this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);
+            this.metroButtonImport.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragDrop);
+            this.metroButtonImport.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragEnter);
+            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
@@ -451,7 +468,7 @@
             this.panel1.Location = new System.Drawing.Point(5, 60);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.panel1.Size = new System.Drawing.Size(793, 451);
+            this.panel1.Size = new System.Drawing.Size(793, 443);
             this.panel1.TabIndex = 5;
             // 
             // flowLayoutPanel1
@@ -465,16 +482,21 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(50, 50);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
+            // openFileDialogTone
+            // 
+            this.openFileDialogTone.DefaultExt = "*.mid";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM)|*.muc;*.dat;*.mwi;*.mml;*.fxb";
+            this.openFileDialogTone.SupportMultiDottedExtensions = true;
+            this.openFileDialogTone.Title = "Load MIDI file";
+            // 
             // FormFmEditor
             // 
-            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(803, 664);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelPiano);
-            this.KeyPreview = true;
+            this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormFmEditor";
@@ -518,5 +540,7 @@
         private MetroFramework.Controls.MetroButton metroButtonRand1;
         private MetroFramework.Controls.MetroButton metroButtonParams;
         private MetroFramework.Controls.MetroTextBox metroTextBoxTarget;
+        private MetroFramework.Controls.MetroButton metroButtonImport;
+        private System.Windows.Forms.OpenFileDialog openFileDialogTone;
     }
 }

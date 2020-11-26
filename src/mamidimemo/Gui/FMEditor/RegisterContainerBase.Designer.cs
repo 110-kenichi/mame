@@ -37,17 +37,18 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBoxSR, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(18, 152);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(18, 98);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(237, 25);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(346, 25);
             this.tableLayoutPanel1.TabIndex = 13;
             // 
             // label1
@@ -67,7 +68,7 @@
             // 
             // 
             this.textBoxSR.CustomButton.Image = null;
-            this.textBoxSR.CustomButton.Location = new System.Drawing.Point(664, 1);
+            this.textBoxSR.CustomButton.Location = new System.Drawing.Point(100, 1);
             this.textBoxSR.CustomButton.Name = "";
             this.textBoxSR.CustomButton.Size = new System.Drawing.Size(17, 17);
             this.textBoxSR.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -86,7 +87,7 @@
             this.textBoxSR.SelectionLength = 0;
             this.textBoxSR.SelectionStart = 0;
             this.textBoxSR.ShortcutsEnabled = true;
-            this.textBoxSR.Size = new System.Drawing.Size(134, 19);
+            this.textBoxSR.Size = new System.Drawing.Size(118, 19);
             this.textBoxSR.TabIndex = 1;
             this.textBoxSR.UseSelectable = true;
             this.textBoxSR.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -100,11 +101,10 @@
             this.labelName.Location = new System.Drawing.Point(3, 3);
             this.labelName.Name = "labelName";
             this.labelName.RenderingMode = System.Drawing.Text.TextRenderingHint.SystemDefault;
-            this.labelName.Size = new System.Drawing.Size(15, 174);
+            this.labelName.Size = new System.Drawing.Size(15, 120);
             this.labelName.TabIndex = 0;
             this.labelName.Text = null;
             this.labelName.TextDrawMode = zanac.MAmidiMEmo.Gui.FMEditor.DrawMode.TopBottom;
-            this.labelName.TransparentBackground = false;
             // 
             // RegisterContainerBase
             // 
@@ -114,10 +114,10 @@
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.labelName);
-            this.MinimumSize = new System.Drawing.Size(0, 180);
+            this.MinimumSize = new System.Drawing.Size(2, 128);
             this.Name = "RegisterContainerBase";
             this.Padding = new System.Windows.Forms.Padding(3);
-            this.Size = new System.Drawing.Size(258, 180);
+            this.Size = new System.Drawing.Size(367, 126);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

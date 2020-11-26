@@ -43,7 +43,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Name = "RegisterOscViewer";
-            this.Size = new System.Drawing.Size(259, 131);
+            this.Size = new System.Drawing.Size(160, 131);
             this.ResumeLayout(false);
 
         }

@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
@@ -100,6 +101,34 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             base.OnClosing(e);
 
             Settings.Default.YM2608EdSize = Size;
+        }
+
+        protected override void ApplyTone(Tone tone)
+        {
+            ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
+            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+            ((RegisterValue)this["General"]["AMS"]).Value = 0;
+            ((RegisterValue)this["General"]["FMS"]).Value = 0;
+            ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOEN"]).NullableValue = null;
+            ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = null;
+
+            for (int i = 0; i < 4; i++)
+            {
+                ((RegisterFlag)this["Operator " + (i + 1)]["EN"]).Value = true;
+                ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
+                ((RegisterValue)this["Operator " + (i + 1)]["D1R"]).Value = tone.aOp[i].DR;
+                ((RegisterValue)this["Operator " + (i + 1)]["D1R"]).Value = tone.aOp[i].SR;
+                ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
+                ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
+                ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
+                ((RegisterValue)this["Operator " + (i + 1)]["RS"]).Value = tone.aOp[i].KS;
+                ((RegisterValue)this["Operator " + (i + 1)]["MUL"]).Value = tone.aOp[i].ML;
+                ((RegisterValue)this["Operator " + (i + 1)]["DT1"]).Value = tone.aOp[i].DT;
+                ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
+            }
+            if (string.IsNullOrWhiteSpace(tone.Name))
+                timbre.Memo = tone.Name;
         }
 
     }

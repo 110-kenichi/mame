@@ -1388,6 +1388,25 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="address"></param>
+        /// <param name="data"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_set_device_passthru(uint unitNumber, string tagName, byte enable);
+
+        private static delegate_set_device_passthru set_device_passthru;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="passthru"></param>
+        protected void SetDevicePassThru(bool passthru)
+        {
+            set_device_passthru(UnitNumber, SoundInterfaceTagNamePrefix, passthru ? (byte)1 : (byte)0);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void delegate_device_reset(uint unitNumber, string tagName);
 
@@ -1580,6 +1599,10 @@ namespace zanac.MAmidiMEmo.Instruments
             IntPtr funcPtr = MameIF.GetProcAddress("set_device_enable");
             if (funcPtr != IntPtr.Zero)
                 set_device_enable = Marshal.GetDelegateForFunctionPointer<delegate_set_device_enable>(funcPtr);
+
+            funcPtr = MameIF.GetProcAddress("set_device_passthru");
+            if (funcPtr != IntPtr.Zero)
+                set_device_passthru = Marshal.GetDelegateForFunctionPointer<delegate_set_device_passthru>(funcPtr);
 
             funcPtr = MameIF.GetProcAddress("set_output_gain");
             if (funcPtr != IntPtr.Zero)

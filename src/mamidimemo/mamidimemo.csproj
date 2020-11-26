@@ -617,6 +617,17 @@
     <Compile Include="SoundFont2\SoundFont2\SF2Types.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Utils.cs" />
     <Compile Include="Util\CpuUsage.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Dat.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Directory.cs" />
+    <Compile Include="Util\FM-SoundConvertor\File.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Fmp.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Main.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Muc.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Option.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Path.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Pmd.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Tone.cs" />
+    <Compile Include="Util\FM-SoundConvertor\VOPM.cs" />
     <Compile Include="Util\MathParser.cs" />
     <Compile Include="Util\Utility.cs" />
     <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">

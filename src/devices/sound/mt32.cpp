@@ -57,6 +57,7 @@ void mt32_device::device_start()
 
 	m_stream = stream_alloc(0, 2, machine().sample_rate());
 	m_enable = 0;
+	m_passthru = 0;
 
 	mt32emu_report_handler_i a;
 	a.v0 = NULL;

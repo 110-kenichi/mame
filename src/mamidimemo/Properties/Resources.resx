@@ -307,6 +307,9 @@
   <data name="AdpcmBufferUsed" xml:space="preserve">
     <value>ADPCM buffer used {0}/256 KB.</value>
   </data>
+  <data name="FailedLoadFile" xml:space="preserve">
+    <value>Failed to load the file.</value>
+  </data>
   <data name="FailedLoadMAmi" xml:space="preserve">
     <value>Failed to load the MAmi file.</value>
   </data>

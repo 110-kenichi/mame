@@ -104,13 +104,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.Software:
                                 f_CurrentSoundEngineType = f_SoundEngineType;
+                                SetDevicePassThru(false);
                                 break;
                             case SoundEngineType.SPFM:
                                 spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2608, SC_CHIP_CLOCK.SC_CLOCK_7987200);
                                 if (spfmPtr != IntPtr.Zero)
+                                {
                                     f_CurrentSoundEngineType = f_SoundEngineType;
+                                    SetDevicePassThru(true);
+                                }
                                 else
+                                {
                                     f_CurrentSoundEngineType = SoundEngineType.Software;
+                                    SetDevicePassThru(false);
+                                }
                                 break;
                         }
                     }
@@ -363,30 +370,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     uint reg = (uint)(slot / 3) << 8;
                     ScciManager.SetRegister(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)), data, useCache);
                 }
-                else
-                {
 #if DEBUG
-                    try
-                    {
-                        Program.SoundUpdating();
+            try
+            {
+                Program.SoundUpdating();
 #endif
-                    uint reg = (uint)(slot / 3) * 2;
+            {
+                uint reg = (uint)(slot / 3) * 2;
 #if DEBUG
-                        YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
-                        YM2608_write(unitNumber, reg + 1, data);
+                YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                YM2608_write(unitNumber, reg + 1, data);
 #else
-                    DeferredWriteData(YM2608_write, unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
-                    DeferredWriteData(YM2608_write, unitNumber, reg + 1, data);
+                DeferredWriteData(YM2608_write, unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                DeferredWriteData(YM2608_write, unitNumber, reg + 1, data);
 #endif
-
+            }
 #if DEBUG
-                    }
-                    finally
-                    {
-                        Program.SoundUpdated();
-                    }
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
 #endif
-                }
         }
 
 

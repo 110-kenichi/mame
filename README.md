@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.3.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.4.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.
+        Supported loading a WAV file (16bit mono) as ADPCM-B data for YM2608, YM2610B chips.
 2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
 		Supported MIDI IN B.
         Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
@@ -365,35 +367,38 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 * MAME
 https://www.mamedev.org
 
-* DryWetMidi
+* DryWetMidi - Copyright (c) 2018 Maxim Dobroselsky
 https://github.com/melanchall/drywetmidi
 
-* Newtonsoft.Json
+* Newtonsoft.Json - Copyright © James Newton-King 2008
 https://www.nuget.org/packages/Newtonsoft.Json/12.0.3/license
 
-* ValueInjecter
+* ValueInjecter - Copyright (c) 2015 Valentin Plamadeala
 https://github.com/omuleanu/ValueInjecter/blob/master/LICENSE
 
-* Fast Colored TextBox for Syntax Highlighting
-https://github.com/melanchall/drywetmidi
+* Fast Colored TextBox for Syntax Highlighting - Copyright (C) Pavel Torgashov, 2011-2016. 
+https://github.com/PavelTorgashov/FastColoredTextBox
 
-* MUNT
+* MUNT - kingguppy, sergm
 https://ja.osdn.net/projects/sfnet_munt/
 
-* FluidLite
+* FluidLite -  (c) 2016 Robin Lobel
 https://github.com/divideconcept/FluidLite
 
 * Font "DSEG" by けしかん
 https://www.keshikan.net/fonts.html
 
-* M+ FONT
+* M+ FONT - 森下浩司
 http://itouhiro.hatenablog.com/entry/20130602/font
 
-* GeneralUser GS
+* GeneralUser GS - S. Christian Collins
 http://schristiancollins.com/generaluser.php
 
 * MSGS
 https://sites.google.com/site/senasan007/Home/cw_midi_c
 
-* VST.NET
+* VST.NET - Marc Jacobi
 https://github.com/obiwanjacobi/vst.net
+
+* FM-SoundConvertor - Copyright (c) 2020 D.M.88
+https://github.com/DM-88/FM-SoundConvertor

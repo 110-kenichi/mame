@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
@@ -102,6 +103,42 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Settings.Default.YM2413EdSize = Size;
         }
 
+
+        protected override void ApplyTone(Tone tone)
+        {
+            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+            ((RegisterValue)this["General"]["tim.SUS"]).Value = 0;
+
+            ((RegisterValue)this["Modulator"]["AR"]).Value = tone.aOp[0].AR / 2;
+            ((RegisterValue)this["Modulator"]["DR"]).Value = tone.aOp[0].DR / 2;
+            ((RegisterValue)this["Modulator"]["RR"]).Value = tone.aOp[0].RR;
+            ((RegisterValue)this["Modulator"]["SL"]).Value = tone.aOp[0].SL;
+            ((RegisterValue)this["Modulator"]["SR"]).Value = tone.aOp[0].SR / 2;
+            ((RegisterValue)this["Modulator"]["TL"]).Value = tone.aOp[0].TL / 2;
+            ((RegisterValue)this["Modulator"]["KSL"]).Value = tone.aOp[0].KS;
+            ((RegisterValue)this["Modulator"]["KSR"]).Value = 0;
+            ((RegisterValue)this["Modulator"]["MUL"]).Value = tone.aOp[0].ML;
+            ((RegisterValue)this["Modulator"]["AM"]).Value = tone.aOp[0].AM;
+            ((RegisterValue)this["Modulator"]["VIB"]).Value = 0;
+            ((RegisterValue)this["Modulator"]["EG"]).Value = 0;
+            ((RegisterValue)this["Modulator"]["DIST"]).Value = 0;
+
+            ((RegisterValue)this["Career"]["AR"]).Value = tone.aOp[1].AR / 2;
+            ((RegisterValue)this["Career"]["DR"]).Value = tone.aOp[1].DR / 2;
+            ((RegisterValue)this["Career"]["RR"]).Value = tone.aOp[1].RR;
+            ((RegisterValue)this["Career"]["SL"]).Value = tone.aOp[1].SL;
+            ((RegisterValue)this["Career"]["SR"]).Value = tone.aOp[1].SR / 2;
+            ((RegisterValue)this["Career"]["KSL"]).Value = tone.aOp[1].KS;
+            ((RegisterValue)this["Career"]["KSR"]).Value = 0;
+            ((RegisterValue)this["Career"]["MUL"]).Value = tone.aOp[1].ML;
+            ((RegisterValue)this["Career"]["AM"]).Value = tone.aOp[1].AM;
+            ((RegisterValue)this["Career"]["VIB"]).Value = 0;
+            ((RegisterValue)this["Career"]["EG"]).Value = 0;
+            ((RegisterValue)this["Career"]["DIST"]).Value = 0;
+
+            if (string.IsNullOrWhiteSpace(tone.Name))
+                timbre.Memo = tone.Name;
+        }
 
     }
 

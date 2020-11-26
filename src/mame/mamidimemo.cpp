@@ -151,6 +151,23 @@ extern "C"
 		sd->set_enable(enable);
 	}
 
+	DllExport void set_device_passthru(unsigned int unitNumber, char* name, int passthru)
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		std::string num = std::to_string(unitNumber);
+		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+		if (sd == nullptr)
+			return;
+
+		sd->set_passthru(passthru);
+	}
 
 	DllExport void set_clock(unsigned int unitNumber, char* name, unsigned int clock)
 	{

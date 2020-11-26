@@ -113,6 +113,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             return controls[name];
         }
 
+
+        public RegisterBase this[string name]
+        {
+            get
+            {
+                return controls[name];
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

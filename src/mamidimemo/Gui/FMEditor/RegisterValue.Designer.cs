@@ -30,7 +30,7 @@
         {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelName = new System.Windows.Forms.Label();
-            this.trackBar = new TrackBarWheel();
+            this.trackBar = new zanac.MAmidiMEmo.Gui.TrackBarWheel();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
@@ -48,12 +48,13 @@
             this.tableLayoutPanel.Controls.Add(this.numericUpDown, 0, 2);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 3;
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.Size = new System.Drawing.Size(46, 109);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(46, 97);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // labelName
@@ -71,7 +72,8 @@
             // 
             this.trackBar.AutoSize = false;
             this.trackBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar.Location = new System.Drawing.Point(3, 15);
+            this.trackBar.Location = new System.Drawing.Point(3, 12);
+            this.trackBar.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.trackBar.Maximum = 31;
             this.trackBar.Name = "trackBar";
             this.trackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -81,7 +83,8 @@
             // 
             // numericUpDown
             // 
-            this.numericUpDown.Location = new System.Drawing.Point(3, 87);
+            this.numericUpDown.Location = new System.Drawing.Point(3, 78);
+            this.numericUpDown.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.numericUpDown.Maximum = new decimal(new int[] {
             31,
             0,
@@ -98,7 +101,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "RegisterValue";
-            this.Size = new System.Drawing.Size(46, 109);
+            this.Size = new System.Drawing.Size(46, 97);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).EndInit();

@@ -400,6 +400,7 @@ device_mixer_interface::device_mixer_interface(const machine_config &mconfig, de
 	m_mixer_stream(nullptr)
 {
 	m_enable = 1;
+	m_passthru = 0;
 }
 
 
@@ -534,7 +535,7 @@ void device_mixer_interface::sound_stream_update(sound_stream &stream, stream_sa
 		//memidimemo
 		device_t *dev = stream.input_source_device(inp);
 		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(dev);
-		if (!sd->m_enable)
+		if (!sd->m_enable || sd->m_passthru)
 			continue;
 
 		// loop over samples

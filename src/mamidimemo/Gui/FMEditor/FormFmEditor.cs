@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using MetroFramework.Forms;
@@ -8,6 +9,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -348,6 +351,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             return controls[itemName];
         }
 
+        public RegisterContainerBase this[string itemName]
+        {
+            get
+            {
+                return controls[itemName];
+            }
+        }
+
         private void metroButtonParams_Click(object sender, EventArgs e)
         {
             var names = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -517,6 +528,118 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             Control_ValueChanged(this, null);
         }
-    }
 
+        private void metroButtonImport_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = openFileDialogTone.ShowDialog(this);
+            if (dr != DialogResult.OK)
+                return;
+
+            importFile(openFileDialogTone.FileName);
+        }
+
+        private void importFile(string file)
+        {
+            string ext = System.IO.Path.GetExtension(file);
+            string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
+            var Option = new Option();
+            try
+            {
+                Tone tone = null;
+                switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                {
+                    case ".MUC":
+                        tone = Muc.Reader(importFile, Option);
+                        break;
+                    case ".DAT":
+                        tone = Dat.Reader(importFile, Option);
+                        break;
+                    case ".MWI":
+                        tone = Fmp.Reader(importFile, Option);
+                        break;
+                    case ".MML":
+                        tone = Pmd.Reader(importFile, Option);
+                        break;
+                    case ".FXB":
+                        tone = Vopm.Reader(importFile, Option);
+                        break;
+                }
+                if (tone != null && tone.IsValid())
+                {
+                    try
+                    {
+                        ignorePlayingFlag = true;
+                        ApplyTone(tone);
+                    }
+                    finally
+                    {
+                        ignorePlayingFlag = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected virtual void ApplyTone(Tone tone)
+        {
+
+        }
+
+        private void metroButtonImport_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (System.IO.File.Exists(drags[0]) &&
+                        (
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ))
+                    {
+                        importFile(drags[0]);
+                    }
+                }
+            }
+        }
+
+        private void metroButtonImport_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    if (System.IO.File.Exists(drags[0]) &&
+                        (
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        System.IO.Path.GetExtension(drags[0]).Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ))
+                    {
+                        e.Effect = DragDropEffects.All;
+                    }
+                }
+            }   
+        }
+    }
 }

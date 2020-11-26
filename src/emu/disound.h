@@ -97,6 +97,8 @@ public:
 	int inputnum_from_device(device_t &device, int outputnum = 0) const;
 	volatile int m_enable;
 	virtual void set_enable(int enable) { m_enable = enable; }
+	volatile int m_passthru;
+	virtual void set_passthru(int passthru) { m_passthru = passthru; }
 
 	//
 	//  Filter.h

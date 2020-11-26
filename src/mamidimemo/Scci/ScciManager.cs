@@ -56,6 +56,7 @@ namespace zanac.MAmidiMEmo.Scci
                 {
                     FormProgress.RunDialog(Resources.ConnectingSPFM, new Action<FormProgress>((f) =>
                     {
+                        f.Percentage = -1;
                         initialized = InitializeScci() == 0 ? true : false;
                     }));
                 }

@@ -13,7 +13,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
     {
         private string labelText;
         private DrawMode _dm = DrawMode.BottomUp;
-        private bool _transparentBG = false;
         System.Drawing.Text.TextRenderingHint _renderMode = System.Drawing.Text.TextRenderingHint.SystemDefault;
 
         private System.ComponentModel.Container components = new System.ComponentModel.Container();
@@ -23,9 +22,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         public VerticalLabel()
         {
-            base.CreateControl();
             InitializeComponent();
-            SetStyle(System.Windows.Forms.ControlStyles.Opaque, true);
+
+            DoubleBuffered = true;
         }
 
         /// <summary>
@@ -65,17 +64,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Pen labelBorderPen;
             SolidBrush labelBackColorBrush;
 
-            if (_transparentBG)
-            {
-                labelBorderPen = new Pen(Color.Empty, 0);
-                labelBackColorBrush = new SolidBrush(Color.Empty);
-            }
-            else
-            {
-                labelBorderPen = new Pen(controlBackColor, 0);
-                labelBackColorBrush = new SolidBrush(controlBackColor);
-            }
-            
+            labelBorderPen = new Pen(controlBackColor, 0);
+            labelBackColorBrush = new SolidBrush(controlBackColor);
+
             SolidBrush labelForeColorBrush = new SolidBrush(base.ForeColor);
             base.OnPaint(e);
             vlblControlWidth = this.Size.Width;
@@ -84,7 +75,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             e.Graphics.FillRectangle(labelBackColorBrush, 0, 0, vlblControlWidth, vlblControlHeight);
             e.Graphics.TextRenderingHint = this._renderMode;
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            
+
             if (this.TextDrawMode == DrawMode.BottomUp)
             {
                 vlblTransformX = 0;
@@ -100,26 +91,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 e.Graphics.TranslateTransform(vlblControlWidth, 0);
                 e.Graphics.RotateTransform(90);
                 e.Graphics.DrawString(labelText, Font, labelForeColorBrush, 0, 0, StringFormat.GenericTypographic);
-            }            
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override CreateParams CreateParams//v1.10 
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x20;  // Turn on WS_EX_TRANSPARENT
-                return cp;
             }
         }
-
-        private void VerticalTextBox_Resize(object sender, System.EventArgs e)
-        {
-            Invalidate();
-        }
-
+      
         /// <summary>
         /// Graphics rendering mode. Supprot for antialiasing.
         /// </summary>
@@ -129,7 +103,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             get { return _renderMode; }
             set { _renderMode = value; }
         }
-        
+
         /// <summary>
         /// The text to be displayed in the control
         /// </summary>
@@ -146,7 +120,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 Invalidate();
             }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -157,19 +131,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             set { _dm = value; }
         }
 
-
-        [Category("Properties"), Description("Whether the text will be drawn with transparent background or not.")]
-        public bool TransparentBackground
-        {
-            get { return _transparentBG; }
-            set { _transparentBG = value; }
-        }
     }
 
     /// <summary>
     /// Text Drawing Mode
     /// </summary>
-    public enum DrawMode{
+    public enum DrawMode
+    {
         /// <summary>
         /// Text is drawn from bottom - up
         /// </summary>

@@ -86,6 +86,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         "GlobalSettings.LFRQ"
                         );
                     ed.MmlValueGeneral = mmlValueGeneral;
+                    var lastTone = tim.ToneType;
+                    tim.ToneType = ToneType.FM;
 
                     List<string> mmlValueOps = new List<string>();
                     for (int i = 0; i < tim.Ops.Length; i++)
@@ -114,6 +116,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     }
                     else
                     {
+                        tim.ToneType = lastTone;
                         return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                     }
                 }

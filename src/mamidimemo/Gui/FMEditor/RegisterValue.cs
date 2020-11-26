@@ -24,6 +24,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             set
             {
+                if (value < Minimum)
+                    value = Minimum;
+                else if (value > Maximum)
+                    value = Maximum;
                 if (trackBar.Value != value)
                     trackBar.Value = value;
             }
@@ -44,9 +48,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             set
             {
                 if (value == null)
+                {
                     trackBar.Value = trackBar.Minimum;
+                }
                 else
+                {
+                    if (value < Minimum)
+                        value = Minimum;
+                    else if (value > Maximum)
+                        value = Maximum;
                     trackBar.Value = value.Value;
+                }
 
             }
         }

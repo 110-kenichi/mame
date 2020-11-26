@@ -81,12 +81,26 @@ namespace zanac.MAmidiMEmo.Gui
                     metroProgressBar1.Invoke(new MethodInvoker(() =>
                     {
                         if (!metroProgressBar1.IsDisposed)
-                            metroProgressBar1.Value = value;
+                        {
+                            if (value < 0)
+                                metroProgressBar1.ProgressBarStyle = ProgressBarStyle.Marquee;
+                            else
+                            {
+                                metroProgressBar1.ProgressBarStyle = ProgressBarStyle.Continuous;
+                                metroProgressBar1.Value = value;
+                            }
+                        }
                     }));
                 }
                 else
                 {
-                    metroProgressBar1.Value = value;
+                    if (value < 0)
+                        metroProgressBar1.ProgressBarStyle = ProgressBarStyle.Marquee;
+                    else
+                    {
+                        metroProgressBar1.ProgressBarStyle = ProgressBarStyle.Continuous;
+                        metroProgressBar1.Value = value;
+                    }
                 }
             }
         }
