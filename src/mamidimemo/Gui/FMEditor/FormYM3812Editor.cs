@@ -120,12 +120,46 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
                 ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = 0;
                 ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
-                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = tone.aOp[i].AM;
+                ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
+                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = 0;
                 ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
                 ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
             }
-            if (!string.IsNullOrWhiteSpace(tone.Name))
-                timbre.Memo = tone.Name;
+            timbre.Memo = tone.Name;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected override void ApplyTone(TimbreBase timbre, Tone tone)
+        {
+            YM3812Timbre tim = (YM3812Timbre)timbre;
+
+            tim.ALG = (byte)tone.AL;
+            tim.FB = (byte)tone.FB;
+            tim.GlobalSettings.Enable = false;
+            tim.GlobalSettings.AMD = null;
+            tim.GlobalSettings.VIB = null;
+
+            for (int i = 0; i < 2; i++)
+            {
+                tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
+                tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
+                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
+                tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
+                tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
+                tim.Ops[i].KSR = 0;
+                tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
+                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                tim.Ops[i].VR = 0;
+                tim.Ops[i].EG = 0;
+                tim.Ops[i].WS = 0;
+            }
+            timbre.Memo = tone.Name;
         }
 
         /// <summary>
@@ -155,6 +189,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tim.Ops[i].KSL;
                 ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tim.Ops[i].KSR;
                 ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tim.Ops[i].MFM;
+                ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tim.Ops[i].AM;
                 ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = tim.Ops[i].VR;
                 ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tim.Ops[i].EG;
                 ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tim.Ops[i].WS;
