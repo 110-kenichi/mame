@@ -25,6 +25,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
     {
         private Dictionary<String, RegisterContainerBase> controls = new Dictionary<string, RegisterContainerBase>();
 
+        private bool singleSelect;
+
         public InstrumentBase Instrument
         {
             get;
@@ -55,9 +57,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public FormFmEditor(InstrumentBase inst, TimbreBase timbre)
+        public FormFmEditor(InstrumentBase inst, TimbreBase timbre) : this(inst, timbre, true)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public FormFmEditor(InstrumentBase inst, TimbreBase timbre, bool singleSelect)
         {
             InitializeComponent();
+
+            this.singleSelect = singleSelect;
 
             for (int nn = 0; nn < 128; nn++)
             {
@@ -80,13 +91,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.Timbre = timbre;
             this.Instrument = inst;
 
+            ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
             for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
             {
-                if (Instrument.BaseTimbres[i] == timbre)
-                {
-                    TimbreNo = i + 1;
-                    break;
-                }
+                metroComboBoxTimbres.Items.Add(new TimbreItem(inst.BaseTimbres[i], i));
+                if (inst.BaseTimbres[i] == timbre)
+                    TimbreNo = i;
+            }
+            metroComboBoxTimbres.SelectedIndex = TimbreNo;
+            ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
+
+            if (singleSelect)
+            {
+                metroComboBoxTimbres.Enabled = false;
+                metroButtonImportAll.Enabled = false;
             }
 
             setTitle();
@@ -97,6 +115,32 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
+        }
+
+        private class TimbreItem
+        {
+            public TimbreBase Timbre
+            {
+                get;
+                private set;
+            }
+
+            public int Number
+            {
+                get;
+                private set;
+            }
+
+            public TimbreItem(TimbreBase timbre, int number)
+            {
+                Timbre = timbre;
+                Number = number;
+            }
+
+            public override string ToString()
+            {
+                return "No " + Number.ToString() + " " + Timbre.Memo;
+            }
         }
 
         /// <summary>
@@ -112,7 +156,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             base.OnClosing(e);
         }
 
-
         private void Default_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
         {
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
@@ -126,7 +169,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Instrument.Name + "(" + Instrument.UnitNumber + ")");
-            sb.Append(" - Instrument " + TimbreNo);
+            sb.Append(" - Instrument");
 
             this.Text = sb.ToString();
         }
@@ -207,6 +250,34 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private bool ignoreMetroComboBoxTimbres_SelectedIndexChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void metroComboBoxTimbres_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ignoreMetroComboBoxTimbres_SelectedIndexChanged)
+                return;
+
+            TimbreItem ti = (TimbreItem)metroComboBoxTimbres.Items[metroComboBoxTimbres.SelectedIndex];
+            this.Timbre = ti.Timbre;
+            this.TimbreNo = ti.Number;
+
+            try
+            {
+                ignorePlayingFlag = true;
+                ApplyTimbre(ti.Timbre);
+            }
+            finally
+            {
+                ignorePlayingFlag = false;
+            }
+            Control_ValueChanged(this, null);
         }
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -543,7 +614,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             importFile(openFileDialogTone.FileName);
         }
 
-        private async void importFile(string file)
+        private void importFile(string file)
         {
             string ext = System.IO.Path.GetExtension(file);
             string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
@@ -582,7 +653,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             ignorePlayingFlag = false;
                         }
-                        await play();
+                        Control_ValueChanged(this, null);
                     }
                     else
                     {
@@ -591,43 +662,81 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         foreach (var c in controls.Values)
                             ses.Add(c.SerializeData);
 
-                        using (var f = new FormToneSelector(tones))
+                        if (singleSelect)
                         {
-                            f.SelectedIndexChanged += async (s, e) =>
+                            using (var f = new FormToneSelector(tones))
                             {
+                                f.SelectedIndexChanged += (s, e) =>
+                               {
+                                   try
+                                   {
+                                       ignorePlayingFlag = true;
+                                       ApplyTone(f.SelectedTone);
+                                   }
+                                   finally
+                                   {
+                                       ignorePlayingFlag = false;
+                                   }
+                                   Control_ValueChanged(this, null);
+                               };
+                                DialogResult dr = f.ShowDialog(this);
                                 try
                                 {
                                     ignorePlayingFlag = true;
-                                    ApplyTone(f.SelectedTone);
+                                    if (dr == DialogResult.OK)
+                                    {
+                                        try
+                                        {
+                                            ignorePlayingFlag = true;
+                                            ApplyTone(f.SelectedTone);
+                                        }
+                                        finally
+                                        {
+                                            ignorePlayingFlag = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //restore
+                                        int idx = 0;
+                                        foreach (var c in controls.Values)
+                                            c.SerializeData = ses[idx++];
+                                    }
                                 }
                                 finally
                                 {
                                     ignorePlayingFlag = false;
                                 }
-                                await play();
-                            };
-                            DialogResult dr = f.ShowDialog(this);
+                            }
+                        }
+                        else
+                        {
                             try
                             {
                                 ignorePlayingFlag = true;
-                                if (dr == DialogResult.OK)
+                                ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
+                                Util.Utility.BeginControlUpdate(this);
+
+                                for (int i = 0; i < tones.Count(); i++)
                                 {
-                                    ApplyTone(f.SelectedTone);
+                                    if (i >= metroComboBoxTimbres.Items.Count)
+                                        break;
+                                    TimbreItem ti = (TimbreItem)metroComboBoxTimbres.Items[i];
+                                    this.Timbre = ti.Timbre;
+                                    this.TimbreNo = ti.Number;
+                                    ApplyTimbre(ti.Timbre);
+                                    ApplyTone(tones.ElementAt(i));
+                                    metroComboBoxTimbres.Items[i] = new TimbreItem(ti.Timbre, i);
                                 }
-                                else
-                                {
-                                    //restore
-                                    int idx = 0;
-                                    foreach (var c in controls.Values)
-                                        c.SerializeData = ses[idx++];
-                                }
+
+                                metroComboBoxTimbres.SelectedIndex = 0;
                             }
                             finally
                             {
+                                Util.Utility.EndControlUpdate(this);
+                                ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
                                 ignorePlayingFlag = false;
                             }
-                            if (dr == DialogResult.OK)
-                                await play();
                         }
                     }
                 }
@@ -649,7 +758,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected virtual void ApplyTone(Tone tone)
         {
-
+            //nothing
         }
 
         private void metroButtonImport_DragDrop(object sender, DragEventArgs e)
@@ -672,7 +781,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     {
                         this.BeginInvoke(new MethodInvoker(() =>
                         {
-                            if(!this.IsDisposed)
+                            if (!this.IsDisposed)
                                 importFile(drags[0]);
                         }));
                     }
@@ -704,5 +813,73 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected virtual void ApplyTimbre(TimbreBase timbre)
+        {
+            //nothing
+        }
+
+        private void metroButtonImportAll_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    var fn = drags[0];
+                    var ext = System.IO.Path.GetExtension(fn);
+                    if (System.IO.File.Exists(fn) &&
+                        (
+                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ))
+                    {
+                        this.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            if (!this.IsDisposed)
+                                importFile(drags[0]);
+                        }));
+                    }
+                }
+            }
+        }
+
+        private void metroButtonImportAll_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (drags.Length == 1)
+                {
+                    var fn = drags[0];
+                    var ext = System.IO.Path.GetExtension(fn);
+                    if (System.IO.File.Exists(fn) &&
+                        (
+                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                        ))
+                    {
+                        e.Effect = DragDropEffects.All;
+                    }
+                }
+            }
+        }
+
+        private void metroButtonImportAll_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

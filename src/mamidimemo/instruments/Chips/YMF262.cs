@@ -166,7 +166,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(YMF262UITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public YMF262Timbre[] Timbres
         {
@@ -1723,6 +1723,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte EN
+            {
+                get
+                {
+                    return Enable ? (byte)1 : (byte)0;
+                }
+                set
+                {
+                    Enable = value == 0 ? false : true;
+                }
             }
 
             private byte? f_CONSEL;

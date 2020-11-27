@@ -76,7 +76,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public FormYM3812Editor(YM3812 inst, YM3812Timbre timbre) : base(inst, timbre)
+        public FormYM3812Editor(YM3812 inst, YM3812Timbre timbre, bool singleSelect) : base(inst, timbre, singleSelect)
         {
             this.timbre = timbre;
             InitializeComponent();
@@ -124,8 +124,41 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
                 ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
             }
-            if (string.IsNullOrWhiteSpace(tone.Name))
+            if (!string.IsNullOrWhiteSpace(tone.Name))
                 timbre.Memo = tone.Name;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected override void ApplyTimbre(TimbreBase timbre)
+        {
+            YM3812Timbre tim = (YM3812Timbre)timbre;
+            this.timbre = tim;
+
+            this["General"].Target = tim;
+            ((RegisterValue)this["General"]["ALG"]).Value = tim.ALG;
+            ((RegisterValue)this["General"]["FB"]).Value = tim.FB;
+            ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = tim.GlobalSettings.Enable;
+            ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = tim.GlobalSettings.AMD;
+            ((RegisterValue)this["General"]["GlobalSettings.VIB"]).NullableValue = tim.GlobalSettings.VIB;
+            for (int i = 0; i < 2; i++)
+            {
+                this["Operator " + (i + 1)].Target = tim.Ops[i];
+                ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tim.Ops[i].AR;
+                ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tim.Ops[i].DR;
+                ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tim.Ops[i].RR;
+                ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tim.Ops[i].SL;
+                ((RegisterValue)this["Operator " + (i + 1)]["SR"]).NullableValue = tim.Ops[i].SR;
+                ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tim.Ops[i].TL;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tim.Ops[i].KSL;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tim.Ops[i].KSR;
+                ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tim.Ops[i].MFM;
+                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = tim.Ops[i].VR;
+                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tim.Ops[i].EG;
+                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tim.Ops[i].WS;
+            }
         }
     }
 

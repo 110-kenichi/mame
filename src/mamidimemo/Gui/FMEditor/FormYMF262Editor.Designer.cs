@@ -95,10 +95,11 @@
             this.ClientSize = new System.Drawing.Size(624, 441);
             this.Name = "FormYMF262Editor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "YM3812 Editor";
+            this.Text = "YMF262 Editor";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -59,7 +59,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             if (editorService == null)
                 return value;
 
+            bool singleSel = true;
             YM3812Timbre tim = context.Instance as YM3812Timbre;
+            YM3812Timbre[] tims = value as YM3812Timbre[];
+            if (tims != null)
+            {
+                tim = tims[0];
+                singleSel = false;
+            }
+
             YM3812 inst = null;
             try
             {
@@ -74,46 +82,58 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             if (inst != null)
             {
-                using (FormYM3812Editor ed = new FormYM3812Editor(inst, tim))
+                using (FormYM3812Editor ed = new FormYM3812Editor(inst, tim, singleSel))
                 {
-                    var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
+                    if (singleSel)
+                    {
+                        var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
                         nameof(tim.FB),
                         "GlobalSettings.EN",
                         "GlobalSettings.AMD",
                         "GlobalSettings.VIB"
                     );
-                    ed.MmlValueGeneral = mmlValueGeneral;
+                        ed.MmlValueGeneral = mmlValueGeneral;
 
-                    List<string> mmlValueOps = new List<string>();
-                    for (int i = 0; i < tim.Ops.Length; i++)
-                    {
-                        var op = tim.Ops[i];
-                        mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
-                            nameof(op.AR),
-                            nameof(op.DR),
-                            nameof(op.RR),
-                            nameof(op.SL),
-                            nameof(op.SR),
-                            nameof(op.TL),
-                            nameof(op.KSL),
-                            nameof(op.KSR),
-                            nameof(op.MFM),
-                            nameof(op.AM),
-                            nameof(op.VR),
-                            nameof(op.EG),
-                            nameof(op.WS)
-                            ));
-                    }
+                        List<string> mmlValueOps = new List<string>();
+                        for (int i = 0; i < tim.Ops.Length; i++)
+                        {
+                            var op = tim.Ops[i];
+                            mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
+                                nameof(op.AR),
+                                nameof(op.DR),
+                                nameof(op.RR),
+                                nameof(op.SL),
+                                nameof(op.SR),
+                                nameof(op.TL),
+                                nameof(op.KSL),
+                                nameof(op.KSR),
+                                nameof(op.MFM),
+                                nameof(op.AM),
+                                nameof(op.VR),
+                                nameof(op.EG),
+                                nameof(op.WS)
+                                ));
+                        }
 
-                    DialogResult dr = editorService.ShowDialog(ed);
-                    if (dr == DialogResult.OK)
-                    {
-                        return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                        DialogResult dr = editorService.ShowDialog(ed);
+                        if (dr == DialogResult.OK)
+                        {
+                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                        }
+                        else
+                        {
+                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                        }
                     }
                     else
                     {
-                        return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                        string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
+                        DialogResult dr = editorService.ShowDialog(ed);
+                        if (dr == DialogResult.OK)
+                            return value;
+                        else
+                            return JsonConvert.DeserializeObject<YM3812Timbre[]>(org);
                     }
                 }
             }

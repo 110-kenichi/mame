@@ -34,6 +34,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void Alg_ValueChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (this.BackgroundImage != null)
+                this.BackgroundImage.Dispose();
+
             switch (alg.Value)
             {
                 case 0:

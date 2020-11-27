@@ -59,7 +59,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             if (editorService == null)
                 return value;
 
+            bool singleSel = true;
             YM2608Timbre tim = context.Instance as YM2608Timbre;
+            YM2608Timbre[] tims = value as YM2608Timbre[];
+            if (tims != null)
+            {
+                tim = tims[0];
+                singleSel = false;
+            }
+
             YM2608 inst = null;
             try
             {
@@ -74,50 +82,62 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             if (inst != null)
             {
-                using (FormYM2608Editor ed = new FormYM2608Editor(inst, tim))
+                using (FormYM2608Editor ed = new FormYM2608Editor(inst, tim, singleSel))
                 {
-                    var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
-                        nameof(tim.ALG),
-                        nameof(tim.FB),
-                        nameof(tim.AMS),
-                        nameof(tim.FMS),
-                        "GlobalSettings.EN",
-                        "GlobalSettings.LFOEN",
-                        "GlobalSettings.LFRQ"
-                        );
-                    ed.MmlValueGeneral = mmlValueGeneral;
-                    var lastTone = tim.ToneType;
-                    tim.ToneType = ToneType.FM;
-
-                    List<string> mmlValueOps = new List<string>();
-                    for (int i = 0; i < tim.Ops.Length; i++)
+                    if (singleSel)
                     {
-                        var op = tim.Ops[i];
-                        mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
-                            nameof(op.EN),
-                            nameof(op.AR),
-                            nameof(op.D1R),
-                            nameof(op.D2R),
-                            nameof(op.RR),
-                            nameof(op.SL),
-                            nameof(op.TL),
-                            nameof(op.RS),
-                            nameof(op.MUL),
-                            nameof(op.DT1),
-                            nameof(op.AM),
-                            nameof(op.SSG)
-                            ));
-                    }
+                        var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
+                            nameof(tim.ALG),
+                            nameof(tim.FB),
+                            nameof(tim.AMS),
+                            nameof(tim.FMS),
+                            "GlobalSettings.EN",
+                            "GlobalSettings.LFOEN",
+                            "GlobalSettings.LFRQ"
+                            );
+                        ed.MmlValueGeneral = mmlValueGeneral;
+                        var lastTone = tim.ToneType;
+                        tim.ToneType = ToneType.FM;
 
-                    DialogResult dr = editorService.ShowDialog(ed);
-                    if (dr == DialogResult.OK)
-                    {
-                        return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        List<string> mmlValueOps = new List<string>();
+                        for (int i = 0; i < tim.Ops.Length; i++)
+                        {
+                            var op = tim.Ops[i];
+                            mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
+                                nameof(op.EN),
+                                nameof(op.AR),
+                                nameof(op.D1R),
+                                nameof(op.D2R),
+                                nameof(op.RR),
+                                nameof(op.SL),
+                                nameof(op.TL),
+                                nameof(op.RS),
+                                nameof(op.MUL),
+                                nameof(op.DT1),
+                                nameof(op.AM),
+                                nameof(op.SSG)
+                                ));
+                        }
+
+                        DialogResult dr = editorService.ShowDialog(ed);
+                        if (dr == DialogResult.OK)
+                        {
+                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        }
+                        else
+                        {
+                            tim.ToneType = lastTone;
+                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
+                        }
                     }
                     else
                     {
-                        tim.ToneType = lastTone;
-                        return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
+                        string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
+                        DialogResult dr = editorService.ShowDialog(ed);
+                        if (dr == DialogResult.OK)
+                            return value;
+                        else
+                            return JsonConvert.DeserializeObject<YM2608Timbre[]>(org);
                     }
                 }
             }

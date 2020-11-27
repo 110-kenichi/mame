@@ -289,7 +289,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(YM2608UITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public YM2608Timbre[] Timbres
         {

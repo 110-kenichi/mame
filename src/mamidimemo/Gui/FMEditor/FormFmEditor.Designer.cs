@@ -63,10 +63,15 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.openFileDialogTone = new System.Windows.Forms.OpenFileDialog();
+            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
+            this.metroComboBoxTimbres = new MetroFramework.Controls.MetroComboBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPiano
@@ -371,7 +376,8 @@
             // 
             // metroButtonRand1
             // 
-            this.metroButtonRand1.Location = new System.Drawing.Point(5, 5);
+            this.metroButtonRand1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonRand1.Location = new System.Drawing.Point(5, 6);
             this.metroButtonRand1.Name = "metroButtonRand1";
             this.metroButtonRand1.Size = new System.Drawing.Size(75, 23);
             this.metroButtonRand1.TabIndex = 0;
@@ -381,7 +387,8 @@
             // 
             // metroButtonParams
             // 
-            this.metroButtonParams.Location = new System.Drawing.Point(86, 5);
+            this.metroButtonParams.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonParams.Location = new System.Drawing.Point(86, 6);
             this.metroButtonParams.Name = "metroButtonParams";
             this.metroButtonParams.Size = new System.Drawing.Size(75, 23);
             this.metroButtonParams.TabIndex = 1;
@@ -429,6 +436,7 @@
             // 
             // buttonOK
             // 
+            this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOK.Location = new System.Drawing.Point(632, 43);
             this.buttonOK.Name = "buttonOK";
@@ -439,6 +447,7 @@
             // 
             // buttonCancel
             // 
+            this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Location = new System.Drawing.Point(713, 43);
             this.buttonCancel.Name = "buttonCancel";
@@ -450,6 +459,7 @@
             // metroButtonImport
             // 
             this.metroButtonImport.AllowDrop = true;
+            this.metroButtonImport.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonImport.Location = new System.Drawing.Point(5, 43);
             this.metroButtonImport.Name = "metroButtonImport";
             this.metroButtonImport.Size = new System.Drawing.Size(75, 23);
@@ -465,10 +475,10 @@
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.flowLayoutPanel1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(5, 60);
+            this.panel1.Location = new System.Drawing.Point(5, 95);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(3);
-            this.panel1.Size = new System.Drawing.Size(793, 443);
+            this.panel1.Size = new System.Drawing.Size(793, 408);
             this.panel1.TabIndex = 5;
             // 
             // flowLayoutPanel1
@@ -489,6 +499,62 @@
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
             this.openFileDialogTone.Title = "Load MIDI file";
             // 
+            // metroLabel1
+            // 
+            this.metroLabel1.AutoSize = true;
+            this.metroLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroLabel1.Location = new System.Drawing.Point(3, 0);
+            this.metroLabel1.Name = "metroLabel1";
+            this.metroLabel1.Size = new System.Drawing.Size(54, 35);
+            this.metroLabel1.TabIndex = 2;
+            this.metroLabel1.Text = "&Timbre:";
+            this.metroLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // metroComboBoxTimbres
+            // 
+            this.metroComboBoxTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroComboBoxTimbres.FormattingEnabled = true;
+            this.metroComboBoxTimbres.ItemHeight = 23;
+            this.metroComboBoxTimbres.Location = new System.Drawing.Point(63, 3);
+            this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
+            this.metroComboBoxTimbres.Size = new System.Drawing.Size(646, 29);
+            this.metroComboBoxTimbres.TabIndex = 3;
+            this.metroComboBoxTimbres.UseSelectable = true;
+            this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.Controls.Add(this.metroComboBoxTimbres, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAll, 2, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(5, 60);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(793, 35);
+            this.tableLayoutPanel2.TabIndex = 4;
+            // 
+            // metroButtonImportAll
+            // 
+            this.metroButtonImportAll.AllowDrop = true;
+            this.metroButtonImportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonImportAll.Location = new System.Drawing.Point(715, 6);
+            this.metroButtonImportAll.Name = "metroButtonImportAll";
+            this.metroButtonImportAll.Size = new System.Drawing.Size(75, 23);
+            this.metroButtonImportAll.TabIndex = 3;
+            this.metroButtonImportAll.Text = "Import &all...";
+            this.metroButtonImportAll.UseSelectable = true;
+            this.metroButtonImportAll.Click += new System.EventHandler(this.metroButtonImportAll_Click);
+            this.metroButtonImportAll.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragDrop);
+            this.metroButtonImportAll.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragEnter);
+            // 
             // FormFmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -497,6 +563,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelPiano);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.tableLayoutPanel2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormFmEditor";
@@ -510,7 +577,10 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -542,5 +612,9 @@
         private MetroFramework.Controls.MetroTextBox metroTextBoxTarget;
         private MetroFramework.Controls.MetroButton metroButtonImport;
         private System.Windows.Forms.OpenFileDialog openFileDialogTone;
+        private MetroFramework.Controls.MetroLabel metroLabel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private MetroFramework.Controls.MetroComboBox metroComboBoxTimbres;
+        private MetroFramework.Controls.MetroButton metroButtonImportAll;
     }
 }

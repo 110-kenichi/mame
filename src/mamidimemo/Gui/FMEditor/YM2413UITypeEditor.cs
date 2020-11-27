@@ -59,7 +59,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             if (editorService == null)
                 return value;
 
+            bool singleSel = true;
             YM2413Timbre tim = context.Instance as YM2413Timbre;
+            YM2413Timbre[] tims = value as YM2413Timbre[];
+            if (tims != null)
+            {
+                tim = tims[0];
+                singleSel = false;
+            }
+
             YM2413 inst = null;
             try
             {
@@ -73,9 +81,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             if (inst != null)
             {
-                using (FormYM2413Editor ed = new FormYM2413Editor(inst, tim))
+                using (FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel))
                 {
-                    var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
+                    if (singleSel)
+                    {
+                        var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.FB),
                         nameof(tim.SUS));
                     var tt = tim.ToneType;
@@ -126,6 +136,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     {
                         tim.ToneType = tt;
                         return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                    }
+                    }
+                    else
+                    {
+                        string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
+                        DialogResult dr = editorService.ShowDialog(ed);
+                        if (dr == DialogResult.OK)
+                            return value;
+                        else
+                            return JsonConvert.DeserializeObject<YM2413Timbre[]>(org);
                     }
                 }
             }

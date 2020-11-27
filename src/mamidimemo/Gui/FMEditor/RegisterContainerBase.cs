@@ -17,7 +17,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     public partial class RegisterContainerBase : UserControl
     {
-        private object target;
+        public object Target
+        {
+            get;
+            set;
+        }
 
         private Dictionary<String, RegisterBase> controls = new Dictionary<string, RegisterBase>();
 
@@ -72,7 +76,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             InitializeComponent();
 
             RegisterName = registerName;
-            this.target = target;
+            this.Target = target;
             labelName.Text = registerName;
         }
 
@@ -137,20 +141,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 case RegisterFlag rf:
                     {
-                        SimpleSerializer.DeserializeProps(target, rf.Value ? "1" : "0", rf.ItemName);
+                        SimpleSerializer.DeserializeProps(Target, rf.Value ? "1" : "0", rf.ItemName);
                         break;
                     }
                 case RegisterValue rc:
                     if (rc.IsNullable)
                     {
                         if (rc.NullableValue == null)
-                            SimpleSerializer.DeserializeProps(target, "", rc.ItemName);
+                            SimpleSerializer.DeserializeProps(Target, "", rc.ItemName);
                         else
-                            SimpleSerializer.DeserializeProps(target, rc.Value.ToString((IFormatProvider)null), rc.ItemName);
+                            SimpleSerializer.DeserializeProps(Target, rc.Value.ToString((IFormatProvider)null), rc.ItemName);
                     }
                     else
                     {
-                        SimpleSerializer.DeserializeProps(target, rc.Value.ToString((IFormatProvider)null), rc.ItemName);
+                        SimpleSerializer.DeserializeProps(Target, rc.Value.ToString((IFormatProvider)null), rc.ItemName);
                     }
                     break;
             }

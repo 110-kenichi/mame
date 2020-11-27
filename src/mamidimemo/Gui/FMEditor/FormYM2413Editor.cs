@@ -79,7 +79,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public FormYM2413Editor(YM2413 inst, YM2413Timbre timbre) : base(inst, timbre)
+        public FormYM2413Editor(YM2413 inst, YM2413Timbre timbre, bool singleSelect) : base(inst, timbre, singleSelect)
         {
             this.timbre = timbre;
             InitializeComponent();
@@ -107,7 +107,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         protected override void ApplyTone(Tone tone)
         {
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
-            ((RegisterValue)this["General"]["tim.SUS"]).Value = 0;
+            ((RegisterValue)this["General"]["SUS"]).Value = 0;
 
             ((RegisterValue)this["Modulator"]["AR"]).Value = tone.aOp[0].AR / 2;
             ((RegisterValue)this["Modulator"]["DR"]).Value = tone.aOp[0].DR / 2;
@@ -136,10 +136,52 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["EG"]).Value = 0;
             ((RegisterValue)this["Career"]["DIST"]).Value = 0;
 
-            if (string.IsNullOrWhiteSpace(tone.Name))
+            if (!string.IsNullOrWhiteSpace(tone.Name))
                 timbre.Memo = tone.Name;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected override void ApplyTimbre(TimbreBase timbre)
+        {
+            YM2413Timbre tim = (YM2413Timbre)timbre;
+            this.timbre = tim;
+
+            this["General"].Target = tim;
+            ((RegisterValue)this["General"]["FB"]).Value = tim.FB;
+            ((RegisterValue)this["General"]["SUS"]).Value = tim.SUS;
+
+            this["Modulator"].Target = tim.Modulator;
+            ((RegisterValue)this["Modulator"]["AR"]).Value = tim.Modulator.AR;
+            ((RegisterValue)this["Modulator"]["DR"]).Value = tim.Modulator.DR;
+            ((RegisterValue)this["Modulator"]["RR"]).Value = tim.Modulator.RR;
+            ((RegisterValue)this["Modulator"]["SL"]).Value = tim.Modulator.SL;
+            ((RegisterValue)this["Modulator"]["SR"]).NullableValue = tim.Modulator.SR;
+            ((RegisterValue)this["Modulator"]["TL"]).Value = tim.Modulator.TL;
+            ((RegisterValue)this["Modulator"]["KSL"]).Value = tim.Modulator.KSL;
+            ((RegisterValue)this["Modulator"]["KSR"]).Value = tim.Modulator.KSR;
+            ((RegisterValue)this["Modulator"]["MUL"]).Value = tim.Modulator.MUL;
+            ((RegisterValue)this["Modulator"]["AM"]).Value = tim.Modulator.AM;
+            ((RegisterValue)this["Modulator"]["VIB"]).Value = tim.Modulator.VIB;
+            ((RegisterValue)this["Modulator"]["EG"]).Value = tim.Modulator.EG;
+            ((RegisterValue)this["Modulator"]["DIST"]).Value = tim.Modulator.DIST;
+
+            this["Career"].Target = tim.Career;
+            ((RegisterValue)this["Career"]["AR"]).Value = tim.Career.AR;
+            ((RegisterValue)this["Career"]["DR"]).Value = tim.Career.DR;
+            ((RegisterValue)this["Career"]["RR"]).Value = tim.Career.RR;
+            ((RegisterValue)this["Career"]["SL"]).Value = tim.Career.SL;
+            ((RegisterValue)this["Career"]["SR"]).NullableValue = tim.Career.SR;
+            ((RegisterValue)this["Career"]["KSL"]).Value = tim.Career.KSL;
+            ((RegisterValue)this["Career"]["KSR"]).Value = tim.Career.KSR;
+            ((RegisterValue)this["Career"]["MUL"]).Value = tim.Career.MUL;
+            ((RegisterValue)this["Career"]["AM"]).Value = tim.Career.AM;
+            ((RegisterValue)this["Career"]["VIB"]).Value = tim.Career.VIB;
+            ((RegisterValue)this["Career"]["EG"]).Value = tim.Career.EG;
+            ((RegisterValue)this["Career"]["DIST"]).Value = tim.Career.DIST;
+        }
     }
 
 }
