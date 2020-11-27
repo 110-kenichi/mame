@@ -84,9 +84,9 @@ namespace FM_SoundConvertor
             AL = tone.AL;
             aOp = new Op[4];
             aOp[0] = new Op(tone.aOp[0]);
-            aOp[1] = new Op(tone.aOp[0]);
-            aOp[2] = new Op(tone.aOp[0]);
-            aOp[3] = new Op(tone.aOp[0]);
+            aOp[1] = new Op(tone.aOp[1]);
+            aOp[2] = new Op(tone.aOp[2]);
+            aOp[3] = new Op(tone.aOp[3]);
         }
 
         public bool IsValid()

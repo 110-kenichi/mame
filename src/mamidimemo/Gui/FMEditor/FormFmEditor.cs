@@ -670,7 +670,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
                         ))
                     {
-                        importFile(drags[0]);
+                        this.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            if(!this.IsDisposed)
+                                importFile(drags[0]);
+                        }));
                     }
                 }
             }

@@ -67,7 +67,7 @@ namespace FM_SoundConvertor {
 		
 		public static string[] ReadLine(string Path){
 			Path = UnCloak(Path);
-			if (Exist(Path)) return System.IO.File.ReadAllLines(Path, System.Text.Encoding.ASCII);
+			if (Exist(Path)) return System.IO.File.ReadAllLines(Path, System.Text.Encoding.Default);
 			return System.Array.Empty<string>();
 		}
 		
@@ -75,7 +75,7 @@ namespace FM_SoundConvertor {
 		
 		public static string ReadText(string Path){
 			Path = UnCloak(Path);
-			if (Exist(Path)) return System.IO.File.ReadAllText(Path, System.Text.Encoding.ASCII);
+			if (Exist(Path)) return System.IO.File.ReadAllText(Path, System.Text.Encoding.Default);
 			return System.String.Empty;
 		}
 		
@@ -91,14 +91,14 @@ namespace FM_SoundConvertor {
 		
 		public static void WriteLine(string Path, string[] aLine){
 			Path = UnCloak(Path);
-			System.IO.File.WriteAllLines(Path, aLine, System.Text.Encoding.ASCII);
+			System.IO.File.WriteAllLines(Path, aLine, System.Text.Encoding.Default);
 		}
 		
 		
 		
 		public static void WriteText(string Path, string Text){
 			Path = UnCloak(Path);
-			System.IO.File.WriteAllText(Path, Text, System.Text.Encoding.ASCII);
+			System.IO.File.WriteAllText(Path, Text, System.Text.Encoding.Default);
 		}
 		
 		

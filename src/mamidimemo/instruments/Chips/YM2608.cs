@@ -287,8 +287,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public YM2608Timbre[] Timbres
@@ -2267,7 +2267,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(YM2608UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
-            [DisplayName("(Detailed)")]
+            [DisplayName("(Detailed) - Open FM register editor")]
             [Description("Open FM register editor.")]
             [TypeConverter(typeof(EmptyTypeConverter))]
             public string Detailed

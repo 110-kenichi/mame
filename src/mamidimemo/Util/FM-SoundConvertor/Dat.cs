@@ -6,6 +6,7 @@ using System;
 using static FM_SoundConvertor.Path;
 using static FM_SoundConvertor.File;
 using System.Collections.Generic;
+using System.Text;
 
 namespace FM_SoundConvertor
 {
@@ -100,17 +101,17 @@ namespace FM_SoundConvertor
 			Tone.AL = Buffer[o + (int)ePut.FBAL] & 0x7;
 			Tone.FB = Buffer[o + (int)ePut.FBAL] >> 3;
 
-			var aChar = new char[]
+			var aChar = new byte[]
 			{
-				(char)Buffer[o + (int)ePut.Name0],
-				(char)Buffer[o + (int)ePut.Name1],
-				(char)Buffer[o + (int)ePut.Name2],
-				(char)Buffer[o + (int)ePut.Name3],
-				(char)Buffer[o + (int)ePut.Name4],
-				(char)Buffer[o + (int)ePut.Name5],
+				Buffer[o + (int)ePut.Name0],
+				Buffer[o + (int)ePut.Name1],
+				Buffer[o + (int)ePut.Name2],
+				Buffer[o + (int)ePut.Name3],
+				Buffer[o + (int)ePut.Name4],
+				Buffer[o + (int)ePut.Name5],
 			};
-			Tone.Name = "";
-			foreach (var Char in aChar) if (Char != 0) Tone.Name += Char.ToString();
+            
+            Tone.Name = Encoding.GetEncoding("Shift_JIS").GetString(aChar);
 
 			Tone.Number = i;
 		}

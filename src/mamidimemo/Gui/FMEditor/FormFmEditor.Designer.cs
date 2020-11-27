@@ -419,7 +419,7 @@
             this.metroTextBoxTarget.SelectionStart = 0;
             this.metroTextBoxTarget.ShortcutsEnabled = true;
             this.metroTextBoxTarget.Size = new System.Drawing.Size(459, 26);
-            this.metroTextBoxTarget.TabIndex = 4;
+            this.metroTextBoxTarget.TabIndex = 2;
             this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
             this.metroTextBoxTarget.UseSelectable = true;
             this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
@@ -433,7 +433,7 @@
             this.buttonOK.Location = new System.Drawing.Point(632, 43);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 2;
+            this.buttonOK.TabIndex = 4;
             this.buttonOK.Text = "&OK";
             this.buttonOK.UseSelectable = true;
             // 
@@ -443,7 +443,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(713, 43);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "&Cancel";
             this.buttonCancel.UseSelectable = true;
             // 
@@ -453,7 +453,7 @@
             this.metroButtonImport.Location = new System.Drawing.Point(5, 43);
             this.metroButtonImport.Name = "metroButtonImport";
             this.metroButtonImport.Size = new System.Drawing.Size(75, 23);
-            this.metroButtonImport.TabIndex = 0;
+            this.metroButtonImport.TabIndex = 3;
             this.metroButtonImport.Text = "&Import...";
             this.metroButtonImport.UseSelectable = true;
             this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);

@@ -608,7 +608,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category(" Timbres")]
         [Description("Combine multiple Timbres (0-255)\r\n" +
             "Override PatchTimbres to Timbres when you set binding patch numbers.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
@@ -620,7 +620,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
-        [Category("Chip")]
+        [Category(" Timbres")]
         [Description("Drum ch(usually 10ch) Timbres table")]
         [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableNoteCollectionConverter))]
