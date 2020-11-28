@@ -375,16 +375,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdating();
 #endif
-            {
-                uint reg = (uint)(slot / 3) * 2;
+                {
+                    uint reg = (uint)(slot / 3) * 2;
 #if DEBUG
-                YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
-                YM2608_write(unitNumber, reg + 1, data);
+                    YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                    YM2608_write(unitNumber, reg + 1, data);
 #else
                 DeferredWriteData(YM2608_write, unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
                 DeferredWriteData(YM2608_write, unitNumber, reg + 1, data);
 #endif
-            }
+                }
 #if DEBUG
             }
             finally
@@ -932,12 +932,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (CurrentSoundEngine != SoundEngineType.SPFM)
                     return;
 
-            FormProgress.RunDialog(Resources.UpdatingADPCM,
-                    new Action<FormProgress>((f) => { updatePcmDataCore(timbre, f); }));
-        }
-
-        private void updatePcmDataCore(YM2608Timbre timbre, FormProgress fp)
-        {
             lock (spfmPtrLock)
             {
                 if (CurrentSoundEngine != SoundEngineType.SPFM)
@@ -983,8 +977,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     }
                 }
-                transferPcmData(pcmData.ToArray(), fp);
-                FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, pcmData.Count / 1024));
+                if (pcmData.Count != 0)
+                {
+                    FormProgress.RunDialog(Resources.UpdatingADPCM,
+                            new Action<FormProgress>((f) =>
+                            {
+                                transferPcmData(pcmData.ToArray(), f);
+                            }));
+                    FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, pcmData.Count / 1024));
+                }
             }
         }
 
@@ -1489,91 +1490,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.ADPCM_A:
                         {
                             //KeyOn
-                            byte kon = 0;
-                            byte ofst = 0;
-                            switch (NoteOnEvent.NoteNumber)
-                            {
-                                case 35:    //BD
-                                case 36:    //BD
-
-                                case 60:
-                                case 61:
-                                case 62:
-                                case 63:
-                                case 64:
-                                case 65:
-                                case 66:
-                                case 72:
-                                case 75:
-                                case 76:
-                                case 77:
-                                    kon = 0x01;
-                                    ofst = 0;
-                                    break;
-                                case 37:    //STICK
-                                    kon = 0x20;
-                                    ofst = 5;
-                                    break;
-                                case 38:    //SD
-                                case 39:    //CLAP
-                                case 40:    //SD
-
-                                case 67:
-                                case 68:
-                                case 69:
-                                case 70:
-                                    kon = 0x02;
-                                    ofst = 1;
-                                    break;
-                                case 41:    //TOM
-                                case 43:    //TOM
-                                case 45:    //TOM
-                                case 47:    //TOM
-                                case 48:    //TOM
-                                case 50:    //TOM
-
-                                case 71:
-                                case 78:
-                                    kon = 0x10;
-                                    ofst = 4;
-                                    break;
-                                case 42:    //HH
-                                case 44:    //HH
-                                case 46:    //HH
-
-                                case 54:    //BELL
-                                case 56:    //BELL
-                                case 58:    //BELL
-                                case 80:    //BELL
-
-                                case 73:
-                                case 79:
-                                    kon = 0x08;
-                                    ofst = 3;
-                                    break;
-                                case 49:    //Symbal
-                                case 51:    //Symbal
-                                case 52:    //Symbal
-                                case 53:    //Symbal
-                                case 55:    //Symbal
-                                case 57:    //Symbal
-                                case 59:    //Symbal
-
-                                case 81:    //TRIANGLE
-                                case 74:
-                                    kon = 0x04;
-                                    ofst = 2;
-                                    break;
-                            }
-                            int pan = CalcCurrentPanpot();
-                            if (pan < 32)
-                                pan = 0x2;
-                            else if (pan > 96)
-                                pan = 0x1;
-                            else
-                                pan = 0x3;
+                            byte kon, ofst;
+                            getDrumKeyAndOffset(out kon, out ofst);
                             if (kon != 0)
                             {
+                                int pan = CalcCurrentPanpot();
+                                if (pan < 32)
+                                    pan = 0x2;
+                                else if (pan > 96)
+                                    pan = 0x1;
+                                else
+                                    pan = 0x3;
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x10), 0, 0, kon, false);
                             }
@@ -1626,6 +1553,90 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="kon"></param>
+            /// <param name="ofst"></param>
+            private void getDrumKeyAndOffset(out byte kon, out byte ofst)
+            {
+                kon = 0;
+                ofst = 0;
+                switch (NoteOnEvent.NoteNumber)
+                {
+                    case 35:    //BD
+                    case 36:    //BD
+
+                    case 60:
+                    case 61:
+                    case 62:
+                    case 63:
+                    case 64:
+                    case 65:
+                    case 66:
+                    case 72:
+                    case 75:
+                    case 76:
+                    case 77:
+                        kon = 0x01;
+                        ofst = 0;
+                        break;
+                    case 37:    //STICK
+                        kon = 0x20;
+                        ofst = 5;
+                        break;
+                    case 38:    //SD
+                    case 39:    //CLAP
+                    case 40:    //SD
+
+                    case 67:
+                    case 68:
+                    case 69:
+                    case 70:
+                        kon = 0x02;
+                        ofst = 1;
+                        break;
+                    case 41:    //TOM
+                    case 43:    //TOM
+                    case 45:    //TOM
+                    case 47:    //TOM
+                    case 48:    //TOM
+                    case 50:    //TOM
+
+                    case 71:
+                    case 78:
+                        kon = 0x10;
+                        ofst = 4;
+                        break;
+                    case 42:    //HH
+                    case 44:    //HH
+                    case 46:    //HH
+
+                    case 54:    //BELL
+                    case 56:    //BELL
+                    case 58:    //BELL
+                    case 80:    //BELL
+
+                    case 73:
+                    case 79:
+                        kon = 0x08;
+                        ofst = 3;
+                        break;
+                    case 49:    //Symbal
+                    case 51:    //Symbal
+                    case 52:    //Symbal
+                    case 53:    //Symbal
+                    case 55:    //Symbal
+                    case 57:    //Symbal
+                    case 59:    //Symbal
+
+                    case 81:    //TRIANGLE
+                    case 74:
+                        kon = 0x04;
+                        ofst = 2;
+                        break;
+                }
+            }
 
             public override void OnSoundParamsUpdated()
             {
@@ -1966,78 +1977,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2608WriteData(unitNumber, 0xB4, 0, Slot, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
                         break;
                     case ToneType.ADPCM_A:
-                        byte ofst = 0;
-                        switch (NoteOnEvent.NoteNumber)
+                        byte kon, ofst;
+                        getDrumKeyAndOffset(out kon, out ofst);
+                        if (kon != 0)
                         {
-                            case 35:    //BD
-                            case 36:    //BD
-
-                            case 60:
-                            case 61:
-                            case 62:
-                            case 63:
-                            case 64:
-                            case 65:
-                            case 66:
-                            case 72:
-                            case 75:
-                            case 76:
-                            case 77:
-                                ofst = 0;
-                                break;
-                            case 37:    //STICK
-                                ofst = 5;
-                                break;
-                            case 38:    //SD
-                            case 39:    //CLAP
-                            case 40:    //SD
-
-                            case 67:
-                            case 68:
-                            case 69:
-                            case 70:
-                                ofst = 1;
-                                break;
-                            case 41:    //TOM
-                            case 43:    //TOM
-                            case 45:    //TOM
-                            case 47:    //TOM
-                            case 48:    //TOM
-                            case 50:    //TOM
-
-                            case 71:
-                            case 78:
-                                ofst = 4;
-                                break;
-                            case 42:    //HH
-                            case 44:    //HH
-                            case 46:    //HH
-
-                            case 54:    //BELL
-                            case 56:    //BELL
-                            case 58:    //BELL
-                            case 80:    //BELL
-
-                            case 73:
-                            case 79:
-                                ofst = 3;
-                                break;
-                            case 49:    //Symbal
-                            case 51:    //Symbal
-                            case 52:    //Symbal
-                            case 53:    //Symbal
-                            case 55:    //Symbal
-                            case 57:    //Symbal
-                            case 59:    //Symbal
-
-                            case 81:    //TRIANGLE
-                            case 74:
-                                ofst = 2;
-                                break;
+                            byte fv = (byte)(((byte)Math.Round(31 * CalcCurrentVolume()) & 0x1f));
+                            parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
                         }
-                        byte fv = (byte)(((byte)Math.Round(31 * CalcCurrentVolume()) & 0x1f));
-                        parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
-
                         break;
                     case ToneType.ADPCM_B:
                         parentModule.YM2608WriteData(unitNumber, 0x01, 0, 3, (byte)(pan << 6 | 0x02)); //LR, 8bit RAM
@@ -2104,76 +2050,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.ADPCM_A:
                         {
                             //KeyOn
-                            byte kon = 0;
-                            switch (NoteOnEvent.NoteNumber)
+                            byte kon, ofst;
+                            getDrumKeyAndOffset(out kon, out ofst);
+                            if (kon != 0)
                             {
-                                case 35:    //BD
-                                case 36:    //BD
-
-                                case 60:
-                                case 61:
-                                case 62:
-                                case 63:
-                                case 64:
-                                case 65:
-                                case 66:
-                                case 72:
-                                case 75:
-                                case 76:
-                                case 77:
-                                    kon = 0x01;
-                                    break;
-                                case 37:    //STICK
-                                    kon = 0x20;
-                                    break;
-                                case 38:    //SD
-                                case 39:    //CLAP
-                                case 40:    //SD
-
-                                case 67:
-                                case 68:
-                                case 69:
-                                case 70:
-                                    kon = 0x02;
-                                    break;
-                                case 41:    //TOM
-                                case 43:    //TOM
-                                case 45:    //TOM
-                                case 47:    //TOM
-                                case 48:    //TOM
-                                case 50:    //TOM
-
-                                case 71:
-                                case 78:
-                                    kon = 0x10;
-                                    break;
-                                case 42:    //HH
-                                case 44:    //HH
-                                case 46:    //HH
-
-                                case 54:    //BELL
-                                case 56:    //BELL
-                                case 58:    //BELL
-                                case 80:    //BELL
-
-                                case 73:
-                                case 79:
-                                    kon = 0x08;
-                                    break;
-                                case 49:    //Symbal
-                                case 51:    //Symbal
-                                case 52:    //Symbal
-                                case 53:    //Symbal
-                                case 55:    //Symbal
-                                case 57:    //Symbal
-                                case 59:    //Symbal
-
-                                case 81:    //TRIANGLE
-                                case 74:
-                                    kon = 0x03;
-                                    break;
+                                parentModule.YM2608WriteData(unitNumber, 0x10, 0, 0, (byte)(0x80 | kon), false);
                             }
-                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 0, (byte)(0x80 | kon));
                         }
                         break;
                     case ToneType.ADPCM_B:
