@@ -929,84 +929,82 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void updatePcmData(YM2608Timbre timbre)
         {
             lock (spfmPtrLock)
-                if (CurrentSoundEngine != SoundEngineType.SPFM)
-                    return;
-
-            lock (spfmPtrLock)
             {
                 if (CurrentSoundEngine != SoundEngineType.SPFM)
                     return;
+            }
+            List<byte> pcmData = new List<byte>();
+            uint nextStartAddress = 0;
+            for (int i = 0; i < Timbres.Length; i++)
+            {
+                var tim = Timbres[i];
 
-                List<byte> pcmData = new List<byte>();
-                uint nextStartAddress = 0;
-                for (int i = 0; i < Timbres.Length; i++)
+                tim.PcmAddressStart = 0;
+                tim.PcmAddressEnd = 0;
+                if (tim.PcmData.Length != 0)
                 {
-                    var tim = Timbres[i];
-
-                    tim.PcmAddressStart = 0;
-                    tim.PcmAddressEnd = 0;
-                    if (tim.PcmData.Length != 0)
+                    int tlen = tim.PcmData.Length;
+                    int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
+                                                                //check bank
+                    if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
                     {
-                        int tlen = tim.PcmData.Length;
-                        int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
-                                                                    //check bank
-                        if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
-                        {
-                            for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
-                                pcmData.Add(0);
-                            nextStartAddress |= 0xffff;
-                            nextStartAddress += 1;
-                        }
-                        if (nextStartAddress + tlen + pad - 1 < 0x40000)   //MAX 256KB
-                        {
-                            tim.PcmAddressStart = nextStartAddress;
-                            tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
+                        for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
+                            pcmData.Add(0);
+                        nextStartAddress |= 0xffff;
+                        nextStartAddress += 1;
+                    }
+                    if (nextStartAddress + tlen + pad - 1 < 0x40000)   //MAX 256KB
+                    {
+                        tim.PcmAddressStart = nextStartAddress;
+                        tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
 
-                            //Write PCM data
-                            pcmData.AddRange(tim.PcmData);
-                            //Add 32 byte pad
-                            for (int j = 0; j < pad; j++)
-                                pcmData.Add(0x80);  //Adds silent data
+                        //Write PCM data
+                        pcmData.AddRange(tim.PcmData);
+                        //Add 32 byte pad
+                        for (int j = 0; j < pad; j++)
+                            pcmData.Add(0x80);  //Adds silent data
 
-                            nextStartAddress = Timbres[i].PcmAddressEnd + 1;
-                        }
-                        else
-                        {
-                            MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
-                            break;
-                        }
+                        nextStartAddress = Timbres[i].PcmAddressEnd + 1;
+                    }
+                    else
+                    {
+                        MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
+                        break;
                     }
                 }
-                if (pcmData.Count != 0)
-                {
-                    FormProgress.RunDialog(Resources.UpdatingADPCM,
-                            new Action<FormProgress>((f) =>
+            }
+            if (pcmData.Count != 0)
+            {
+                FormProgress.RunDialog(Resources.UpdatingADPCM,
+                        new Action<FormProgress>((f) =>
+                        {
+                            lock (spfmPtrLock)
                             {
-                                transferPcmData(pcmData.ToArray(), f);
-                            }));
-                    FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, pcmData.Count / 1024));
-                }
+                                if (CurrentSoundEngine != SoundEngineType.SPFM)
+                                    return;
+                                transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                            }
+                        }));
+                FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, pcmData.Count / 1024));
             }
         }
 
         private byte[] lastTransferPcmData;
 
-        private void transferPcmData(byte[] transferData, FormProgress fp)
+        private void transferPcmOnlyDiffData(byte[] transferData, FormProgress fp)
         {
-            var tmpArray = transferData;
-            if (lastTransferPcmData.Length < tmpArray.Length)
-                tmpArray = lastTransferPcmData;
-            int i = 0;
-            for (i = 0; i < tmpArray.Length; i++)
+            for (int i = 0; i < transferData.Length; i++)
             {
-                if (transferData[i] != lastTransferPcmData[i])
+                if (i >= lastTransferPcmData.Length || transferData[i] != lastTransferPcmData[i])
+                {
+                    sendPcmData(transferData, i, fp);
+                    lastTransferPcmData = transferData;
                     break;
+                }
             }
-            transferPcmDataCore(transferData, i, fp);
-            lastTransferPcmData = transferData;
         }
 
-        private void transferPcmDataCore(byte[] transferData, int i, FormProgress fp)
+        private void sendPcmData(byte[] transferData, int i, FormProgress fp)
         {
             //flag
             YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x13);   //CLEAR MASK
@@ -1178,7 +1176,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             fmOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
                             break;
-                        case ToneType.ADPCM_A:
+                        case ToneType.RHYTHM:
                             switch (note.NoteNumber)
                             {
                                 case 35:    //BD
@@ -1297,7 +1295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                             break;
                         }
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         {
                             switch (note.NoteNumber)
                             {
@@ -1487,7 +1485,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             OnVolumeUpdated();
                         }
                         break;
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         {
                             //KeyOn
                             byte kon, ofst;
@@ -1730,7 +1728,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         OnPitchUpdated();
                         OnVolumeUpdated();
                         break;
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         OnPanpotUpdated();
                         OnVolumeUpdated();
                         break;
@@ -1803,7 +1801,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                         break;
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         byte fv = (byte)(((byte)Math.Round(63 * CalcCurrentVolume()) & 0x2f));
                         parentModule.YM2608WriteData(unitNumber, 0x11, 0, 0, (byte)fv);
                         break;
@@ -1976,7 +1974,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //$B4+: panning, FMS, AMS
                         parentModule.YM2608WriteData(unitNumber, 0xB4, 0, Slot, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
                         break;
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         byte kon, ofst;
                         getDrumKeyAndOffset(out kon, out ofst);
                         if (kon != 0)
@@ -2047,7 +2045,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         parentModule.YM2608WriteData(unitNumber, 7, 0, 0, (byte)data);
                         break;
-                    case ToneType.ADPCM_A:
+                    case ToneType.RHYTHM:
                         {
                             //KeyOn
                             byte kon, ofst;
@@ -2586,8 +2584,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
-            [IgnoreDataMember]
-            [JsonIgnore]
+            [DataMember]
             [Browsable(false)]
             public uint PcmAddressStart
             {
@@ -2595,8 +2592,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
-            [IgnoreDataMember]
-            [JsonIgnore]
+            [DataMember]
             [Browsable(false)]
             public uint PcmAddressEnd
             {
@@ -3241,7 +3237,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             FM,
             SSG,
-            ADPCM_A,
+            RHYTHM,
             ADPCM_B,
         }
     }

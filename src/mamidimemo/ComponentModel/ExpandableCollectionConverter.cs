@@ -164,7 +164,20 @@ namespace zanac.MAmidiMEmo.ComponentModel
             {
                 IList c = component as IList;
                 if (c != null)
-                    c[index] = value;
+                {
+                    try
+                    {
+                        c[index] = value;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
+                    }
+                }
             }
 
             public override string Description
