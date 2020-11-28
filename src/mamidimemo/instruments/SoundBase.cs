@@ -472,11 +472,11 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
                 //急激な変化を抑制
                 var mv = ((double)ParentModule.Modulations[NoteOnEvent.Channel] / 127d) + mdepth;
-                if (mv != modultionLevel)
-                    modultionLevel += (mv - modultionLevel) / 1.25;
+                if (mv != modulationLevel)
+                    modulationLevel += (mv - modulationLevel) / 1.25;
 
                 double modHz = radian * ParentModule.GetModulationRateHz(NoteOnEvent.Channel);
-                ModultionDeltaNoteNumber = modultionLevel * Math.Sin(modHz);
+                ModultionDeltaNoteNumber = modulationLevel * Math.Sin(modHz);
                 ModultionDeltaNoteNumber *= ((double)ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] +
                     ((double)ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] / 127d));
 
@@ -539,7 +539,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// モジュレーションホイール値(0-1.0)
         /// </summary>
-        private double modultionLevel;
+        private double modulationLevel;
 
         private bool f_modulationEnabled;
 

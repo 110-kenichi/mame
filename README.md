@@ -245,7 +245,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-2.5.7.0 Added "Dumping sound" to RHYTHM sound.
+2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
+        Fixed ADPCM-B not sounding unexpectedly on YM2608.
+		Improved ADPCM-B on YM2608 transfer speed vis SCCI.
+		Fixed SSG sounding unexpectedly when volume changing on YM2608 and YM2610B
+		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
 2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
 2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
 2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.

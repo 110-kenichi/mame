@@ -1338,6 +1338,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updatePsgVolume()
             {
+                if (IsSoundOff)
+                    return;
+
                 byte fv = (byte)(((byte)Math.Round(15 * CalcCurrentVolume()) & 0xf));
                 switch (lastSoundType)
                 {

@@ -17,6 +17,8 @@ using Melanchall.DryWetMidi.Core;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Gui;
+using Melanchall.DryWetMidi.Common;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -425,6 +427,8 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
+                FormMain.OutputDebugLog(null, "A: " + e.ToString());
+
                 ProcessSysEx(MidiPort.PortA, e);
 
                 //lock (ExclusiveLockObject)
@@ -459,6 +463,8 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
+                FormMain.OutputDebugLog(null, "B: " + e.ToString());
+
                 ProcessSysEx(MidiPort.PortB, e);
 
                 //lock (ExclusiveLockObject)
@@ -491,34 +497,113 @@ namespace zanac.MAmidiMEmo.Instruments
                     List<byte> data = sysExData[(int)port - 1];
                     try
                     {
-                        if (data[data.Count - 1] != 0xf7)
+                        if (data[data.Count - 1] != 0xf7)   //END SysEx
                             return;
 
-                        //All device
-                        if (!(data.Count > 2 && data[0] == 0x7f && data[1] == 0x7f))
+                        if (!(data.Count >= 1))
                             return;
-
-                        if (!(data.Count > 4))
-                            return;
-
-                        switch (data[2])
+                        switch (data[0])
                         {
-                            //COMMON
-                            case 0x04:
-                                {
-                                    switch (data[3])
-                                    {
-                                        //MASTER VOLUME
-                                        case 0x01:
-                                            {
-                                                if (data.Count > 6)
-                                                    InstrumentBase.MasterGain = (float)data[5] / 127f;
-
-                                                break;
-                                            }
-                                    }
+                            //All device
+                            case 0x7f:
+                                if (data.Count <= 1)
                                     break;
+                                switch (data[1])
+                                {
+                                    //All device
+                                    case 0x7f:
+                                        if (data.Count <= 2)
+                                            break;
+                                        switch (data[2])
+                                        {
+                                            //COMMON
+                                            case 0x04:
+                                                {
+                                                    if (data.Count <= 3)
+                                                        break;
+                                                    switch (data[3])
+                                                    {
+                                                        //MASTER VOLUME
+                                                        case 0x01:
+                                                            {
+                                                                if (data.Count > 6)
+                                                                    InstrumentBase.MasterGain = (float)data[5] / 127f;
+                                                                break;
+                                                            }
+                                                    }
+                                                    break;
+                                                }
+                                        }
+                                        break;
                                 }
+                                break;
+                            //GM
+                            case 0x7e:
+                                if (data.Count <= 1)
+                                    break;
+                                switch (data[1])
+                                {
+                                    //All device
+                                    case 0x7f:
+                                        if (data.Count <= 2)
+                                            break;
+                                        switch (data[2])
+                                        {
+                                            //
+                                            case 0x09:
+                                                if (data.Count <= 3)
+                                                    break;
+                                                switch (data[3])
+                                                {
+                                                    //GM RESET
+                                                    case 0x01:
+                                                        {
+                                                            Panic();
+                                                            Reset();
+                                                            break;
+                                                        }
+                                                }
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
+                            //Roland
+                            case 0x41:
+                                if (data.Count <= 1)
+                                    break;
+                                switch (data[1])
+                                {
+                                    //All device
+                                    default:
+                                        if (data.Count <= 2)
+                                            break;
+                                        switch (data[2])
+                                        {
+                                            //
+                                            case 0x42:
+                                                if (data.Count <= 3)
+                                                    break;
+                                                switch (data[3])
+                                                {
+                                                    case 0x12:
+                                                        {
+                                                            if (data.Count <= 6)
+                                                                break;
+                                                            //GS RESET
+                                                            if (data[4] == 0x40 && data[5] == 0x00 && data[6] == 0x7f)
+                                                            {
+                                                                Panic();
+                                                                Reset();
+                                                            }
+                                                            break;
+                                                        }
+                                                }
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
                         }
                     }
                     finally
@@ -709,5 +794,52 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Panic()
+        {
+            //All Note Off
+            var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
+            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+
+            //All Sounds Off
+            me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+
+            foreach (var inst in InstrumentManager.GetAllInstruments())
+                inst.AllSoundOff();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Reset()
+        {
+            foreach (var inst in InstrumentManager.GetAllInstruments())
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    inst.Pitchs[i] = 8192;
+                    inst.PitchBendRanges[i] = 2;
+                    inst.ProgramNumbers[i] = 0;
+                    inst.Volumes[i] = 127;
+                    inst.Expressions[i] = 127;
+                    inst.Panpots[i] = 64;
+                    inst.Modulations[i] = 0;
+                    inst.ModulationRates[i] = 64;
+                    inst.ModulationDepthes[i] = 64;
+                    inst.ModulationDelays[i] = 64;
+                    inst.ModulationDepthRangesNote[i] = 0;
+                    inst.ModulationDepthRangesCent[i] = 64;
+                    inst.Holds[i] = 0;
+                    inst.Portamentos[i] = 0;
+                    inst.PortamentoTimes[i] = 0;
+                    inst.MonoMode[i] = 0;
+                    inst.PolyMode[i] = 0;
+                }
+            }
+        }
     }
 }

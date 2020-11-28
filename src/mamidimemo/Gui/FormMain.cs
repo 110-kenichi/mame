@@ -829,21 +829,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            Panic();
-        }
-
-        private static void Panic()
-        {
-            //All Note Off
-            var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
-
-            //All Sounds Off
-            me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
-
-            foreach (var inst in InstrumentManager.GetAllInstruments())
-                inst.AllSoundOff();
+            InstrumentManager.Panic();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -1231,7 +1217,7 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
 
             midiPlayback.Stop();
-            Panic();
+            InstrumentManager.Panic();
             midiPlayback.MoveToStart();
             midiPlayback.Start();
             this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Play;
@@ -1260,7 +1246,7 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
 
             midiPlayback.Stop();
-            Panic();
+            InstrumentManager.Panic();
             midiPlayback.MoveToStart();
             this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
         }

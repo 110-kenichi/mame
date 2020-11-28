@@ -349,6 +349,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void YM2608WriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache)
         {
+            YM2608WriteData(unitNumber, address, op, slot, data, useCache, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void YM2608WriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache, bool internalOnly)
+        {
             switch (op)
             {
                 case 0:
@@ -364,12 +372,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     op = 3;
                     break;
             }
-            lock (spfmPtrLock)
-                if (CurrentSoundEngine == SoundEngineType.SPFM)
-                {
-                    uint reg = (uint)(slot / 3) << 8;
-                    ScciManager.SetRegister(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)), data, useCache);
-                }
+            if (!internalOnly)
+            {
+                lock (spfmPtrLock)
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                    {
+                        uint reg = (uint)(slot / 3) << 8;
+                        ScciManager.SetRegister(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)), data, useCache);
+                    }
+            }
 #if DEBUG
             try
             {
@@ -1527,22 +1538,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 parentModule.YM2608WriteData(unitNumber, 0x0C, 0, 3, (byte)(0xff));
                                 parentModule.YM2608WriteData(unitNumber, 0x0D, 0, 3, (byte)(0xff));
                             }
-                            else
                             {
                                 //HACK: mamidimemo
                                 //prognum
-                                parentModule.YM2608WriteData(unitNumber, 0x06, 0, 3, (byte)(timbreIndex));
+                                parentModule.YM2608WriteData(unitNumber, 0x06, 0, 3, (byte)(timbreIndex), false, true);
                                 //pcm start
-                                parentModule.YM2608WriteData(unitNumber, 0x02, 0, 3, (byte)(0));
-                                parentModule.YM2608WriteData(unitNumber, 0x03, 0, 3, (byte)(0));
+                                parentModule.YM2608WriteData(unitNumber, 0x02, 0, 3, (byte)(0), false, true);
+                                parentModule.YM2608WriteData(unitNumber, 0x03, 0, 3, (byte)(0), false, true);
                                 //pcm end
                                 ushort len = 0;
                                 if (timbre.PcmData.Length > 0)
                                     len = (ushort)(((timbre.PcmData.Length - 1) & 0xffffff) >> 5);
-                                parentModule.YM2608WriteData(unitNumber, 0x04, 0, 3, (byte)(len & 0xff));
-                                parentModule.YM2608WriteData(unitNumber, 0x05, 0, 3, (byte)(len >> 8));
+                                parentModule.YM2608WriteData(unitNumber, 0x04, 0, 3, (byte)(len & 0xff), false, true);
+                                parentModule.YM2608WriteData(unitNumber, 0x05, 0, 3, (byte)(len >> 8), false, true);
                             }
-
                             //KeyOn
                             byte loop = timbre.LoopEnable ? (byte)0x10 : (byte)0x00;
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x80 | 0x20 | loop), false);   //PLAY, ACCESS TO MEM, LOOP
@@ -1817,6 +1826,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updatePsgVolume()
             {
+                if (IsSoundOff)
+                    return;
+
                 byte fv = (byte)(((byte)Math.Round(15 * CalcCurrentVolume()) & 0xf));
                 switch (lastSoundType)
                 {
@@ -2052,12 +2064,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             getDrumKeyAndOffset(out kon, out ofst);
                             if (kon != 0)
                             {
+                                parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, 0);
                                 parentModule.YM2608WriteData(unitNumber, 0x10, 0, 0, (byte)(0x80 | kon), false);
                             }
                         }
                         break;
                     case ToneType.ADPCM_B:
                         {
+                            parentModule.YM2608WriteData(unitNumber, 0x0B, 0, 3, 0);    //VOLUME 0
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x01, false);  //RESET
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x00, false);  //STOP
                         }

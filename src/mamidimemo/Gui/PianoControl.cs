@@ -107,7 +107,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             receiveChs[ch] = receive;
         }
-        
+
         protected override void OnClientSizeChanged(EventArgs e)
         {
             keyPathBlackTable.Clear();
@@ -456,20 +456,31 @@ namespace zanac.MAmidiMEmo.Gui
 
         private int lastKeyOn = -1;
 
+        private bool dataEntryPressed;
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            lastKeyOff();
-
-            for (int keyNum = 0; keyNum < 128; keyNum++)
+            if (0 <= e.X && e.X < wKeyW && 0 <= e.Y && e.Y < Height)
             {
-                bool black;
-                GraphicsPath path = getKeyPath(keyNum, out black);
-                var r = new Region(path);
-                if (r.IsVisible(e.Location))
+                InternalEntryDataValue = (SystemInformation.MouseWheelScrollDelta * 127 * (Height - e.Y)) / Height;
+                Invalidate(new Rectangle(0, 0, wKeyW, Height));
+                dataEntryPressed = true;
+            }
+            else
+            {
+                for (int keyNum = 0; keyNum < 128; keyNum++)
                 {
-                    lastKeyOn = keyNum;
-                    var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
-                    NoteOn?.Invoke(this, noe);
+                    bool black;
+                    GraphicsPath path = getKeyPath(keyNum, out black);
+                    var r = new Region(path);
+                    if (r.IsVisible(e.Location))
+                    {
+                        lastKeyOff();
+
+                        lastKeyOn = keyNum;
+                        var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                        NoteOn?.Invoke(this, noe);
+                    }
                 }
             }
         }
@@ -491,26 +502,36 @@ namespace zanac.MAmidiMEmo.Gui
         protected override void OnMouseUp(MouseEventArgs e)
         {
             lastKeyOff();
+            dataEntryPressed = false;
+
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            for (int keyNum = 0; keyNum < 128; keyNum++)
+            if (dataEntryPressed)
             {
-                bool black;
-                GraphicsPath path = getKeyPath(keyNum, out black);
-                var r = new Region(path);
-                if (r.IsVisible(e.Location))
+                InternalEntryDataValue = (SystemInformation.MouseWheelScrollDelta * 127 * (Height - e.Y)) / Height;
+                Invalidate(new Rectangle(0, 0, wKeyW, Height));
+            }
+            else
+            {
+                for (int keyNum = 0; keyNum < 128; keyNum++)
                 {
-                    if (lastKeyOn >= 0)
+                    bool black;
+                    GraphicsPath path = getKeyPath(keyNum, out black);
+                    var r = new Region(path);
+                    if (r.IsVisible(e.Location))
                     {
-                        if (lastKeyOn != keyNum)
+                        if (lastKeyOn >= 0)
                         {
-                            lastKeyOff();
+                            if (lastKeyOn != keyNum)
+                            {
+                                lastKeyOff();
 
-                            lastKeyOn = keyNum;
-                            var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
-                            NoteOn?.Invoke(this, noe);
+                                lastKeyOn = keyNum;
+                                var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                                NoteOn?.Invoke(this, noe);
+                            }
                         }
                     }
                 }
