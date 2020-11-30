@@ -166,7 +166,7 @@
             this.toolStripButtonHook.Name = "toolStripButtonHook";
             this.toolStripButtonHook.Size = new System.Drawing.Size(64, 22);
             this.toolStripButtonHook.Text = "HookMidi";
-            this.toolStripButtonHook.Visible = false;
+            this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
             // toolStripSeparator1
             // 

@@ -135,7 +135,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
-            //Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
+            Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
         }
 
         private class TimbreItem
@@ -170,7 +170,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
-            //Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
+            Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
 
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
             Settings.Default.FmHook = toolStripButtonHook.Checked;
