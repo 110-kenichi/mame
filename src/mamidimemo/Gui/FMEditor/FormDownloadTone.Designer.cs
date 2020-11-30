@@ -42,9 +42,9 @@
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.metroLabelRemaining = new MetroFramework.Controls.MetroLabel();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
-            this.metroLink1 = new MetroFramework.Controls.MetroLink();
             this.metroTextBox1 = new MetroFramework.Controls.MetroTextBox();
             this.metroTextBox2 = new MetroFramework.Controls.MetroTextBox();
+            this.metroLink1 = new MetroFramework.Controls.MetroLink();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -94,6 +94,7 @@
             this.imageList1.Images.SetKeyName(0, "FOLDER");
             this.imageList1.Images.SetKeyName(1, "UP");
             this.imageList1.Images.SetKeyName(2, "SOUND");
+            this.imageList1.Images.SetKeyName(3, "TXT");
             // 
             // listBoxTones
             // 
@@ -203,17 +204,6 @@
             this.metroLabel2.Text = "GitHub &User Name:";
             this.metroLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // metroLink1
-            // 
-            this.metroLink1.AutoSize = true;
-            this.metroLink1.Location = new System.Drawing.Point(3, 32);
-            this.metroLink1.Name = "metroLink1";
-            this.metroLink1.Size = new System.Drawing.Size(133, 23);
-            this.metroLink1.TabIndex = 2;
-            this.metroLink1.Text = "&Personal access token:";
-            this.metroLink1.UseSelectable = true;
-            this.metroLink1.Click += new System.EventHandler(this.metroLink1_Click);
-            // 
             // metroTextBox1
             // 
             this.tableLayoutPanel2.SetColumnSpan(this.metroTextBox1, 3);
@@ -287,6 +277,17 @@
             this.metroTextBox2.WaterMark = "Enter your personal access token here. (Needs \"read:packages\" permission)";
             this.metroTextBox2.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.metroTextBox2.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
+            // metroLink1
+            // 
+            this.metroLink1.AutoSize = true;
+            this.metroLink1.Location = new System.Drawing.Point(3, 32);
+            this.metroLink1.Name = "metroLink1";
+            this.metroLink1.Size = new System.Drawing.Size(133, 23);
+            this.metroLink1.TabIndex = 2;
+            this.metroLink1.Text = "&Personal access token:";
+            this.metroLink1.UseSelectable = true;
+            this.metroLink1.Click += new System.EventHandler(this.metroLink1_Click);
             // 
             // FormDownloadTone
             // 

@@ -97,7 +97,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             var contentsUrl = $"https://api.github.com/repos/110-kenichi/ToneLibrary/contents";
             accessedContentsUrlStack.Push(contentsUrl);
-            accessedContentsDirNameStack.Push("/");
+            accessedContentsDirNameStack.Push("./");
             await updateDirList(contentsUrl);
         }
 
@@ -181,11 +181,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     }
                                     else
                                     {
-                                        var fn = (string)file["path"];
+                                        var fn = (string)file["name"];
                                         var ext = System.IO.Path.GetExtension(fn);
                                         if (FormFmEditor.IsSupportedExtension(ext))
                                         {
                                             var item = new ListViewItem(fn, "SOUND");
+                                            item.Tag = file;
+                                            metroListViewDir.Items.Add(item);
+                                        }
+                                        else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            var item = new ListViewItem(fn, "TXT");
                                             item.Tag = file;
                                             metroListViewDir.Items.Add(item);
                                         }
@@ -262,8 +269,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     }
                                     else
                                     {
-                                        listBoxTones.Items.Clear();
-
                                         //file
                                         var fn = (string)file["path"];
                                         var ext = System.IO.Path.GetExtension(fn);
@@ -304,39 +309,48 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             if (this.IsDisposed)
                                                 return;
                                         }
-
-                                        //Import tone file
-                                        IEnumerable<Tone> tones = null;
-                                        var Option = new Option();
-                                        string[] importFile = { dlDestFilePath.ToLower(CultureInfo.InvariantCulture) };
-                                        switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                                        if (FormFmEditor.IsSupportedExtension(ext))
                                         {
-                                            case ".MUC":
-                                                tones = Muc.Reader(importFile, Option);
-                                                break;
-                                            case ".DAT":
-                                                tones = Dat.Reader(importFile, Option);
-                                                break;
-                                            case ".MWI":
-                                                tones = Fmp.Reader(importFile, Option);
-                                                break;
-                                            case ".MML":
-                                                tones = Pmd.Reader(importFile, Option);
-                                                break;
-                                            case ".FXB":
-                                                tones = Vopm.Reader(importFile, Option);
-                                                break;
-                                        }
+                                            listBoxTones.Items.Clear();
 
-                                        //Listing tones
-                                        if (tones != null && tones.Count() > 0)
+                                            //Import tone file
+                                            IEnumerable<Tone> tones = null;
+                                            var Option = new Option();
+                                            string[] importFile = { dlDestFilePath.ToLower(CultureInfo.InvariantCulture) };
+                                            switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                                            {
+                                                case ".MUC":
+                                                    tones = Muc.Reader(importFile, Option);
+                                                    break;
+                                                case ".DAT":
+                                                    tones = Dat.Reader(importFile, Option);
+                                                    break;
+                                                case ".MWI":
+                                                    tones = Fmp.Reader(importFile, Option);
+                                                    break;
+                                                case ".MML":
+                                                    tones = Pmd.Reader(importFile, Option);
+                                                    break;
+                                                case ".FXB":
+                                                    tones = Vopm.Reader(importFile, Option);
+                                                    break;
+                                            }
+
+                                            //Listing tones
+                                            if (tones != null && tones.Count() > 0)
+                                            {
+                                                foreach (var tone in tones)
+                                                    listBoxTones.Items.Add(tone);
+
+                                                listBoxTones.SelectedItem = null;
+                                            }
+                                            SelectedTones = tones;
+                                        }
+                                        else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            foreach (var tone in tones)
-                                                listBoxTones.Items.Add(tone);
-
-                                            listBoxTones.SelectedItem = null;
+                                            Process.Start(dlDestFilePath);
                                         }
-                                        SelectedTones = tones;
                                     }
                                     break;
                             }
