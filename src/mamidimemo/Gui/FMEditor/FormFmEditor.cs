@@ -45,6 +45,23 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             private set;
         } = 0;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        public RegisterContainerBase GetControl(string itemName)
+        {
+            return controls[itemName];
+        }
+
+        public RegisterContainerBase this[string itemName]
+        {
+            get
+            {
+                return controls[itemName];
+            }
+        }
 
         /// <summary>
         /// 
@@ -84,6 +101,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             Settings.Default.SettingsLoaded += Default_SettingsLoaded;
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
+            toolStripButtonHook.Checked = Settings.Default.FmHook;
             toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
@@ -105,6 +123,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 metroComboBoxTimbres.Enabled = false;
                 metroButtonImportAll.Enabled = false;
+                metroButtonImportAllGit.Enabled = false;
             }
 
             setTitle();
@@ -115,6 +134,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
+
+            //Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
         }
 
         private class TimbreItem
@@ -149,7 +170,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            //Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
+
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
+            Settings.Default.FmHook = toolStripButtonHook.Checked;
             Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;
             Settings.Default.FmGateTime = toolStripComboBoxGate.SelectedIndex;
             Settings.Default.FmNote = toolStripComboBoxNote.SelectedIndex;
@@ -159,6 +183,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private void Default_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
         {
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
+            toolStripButtonHook.Checked = Settings.Default.FmHook;
             toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
@@ -369,12 +394,51 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0)
             {
-                await play();
+                await testPlay();
             }
 
         }
 
-        private async Task play()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MidiManager_MidiEventHooked(object sender, CancelMidiEventReceivedEventArgs e)
+        {
+            if (!this.IsHandleCreated)
+                return;
+
+            this.Invoke(new MethodInvoker(() =>
+            {
+                if (toolStripButtonHook.Checked)
+                {
+                    switch (e.Event.Event)
+                    {
+                        case NoteOnEvent non:
+                            if (non.Velocity != 0)
+                                PianoControl1_NoteOn(null, new TaggedNoteOnEvent(non) { MonitorEvent = true });
+                            else
+                                PianoControl1_NoteOff(null, new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            break;
+                        case NoteOffEvent noff:
+                            PianoControl1_NoteOff(null, noff);
+                            break;
+                        default:
+                            Instrument.NotifyMidiEvent(e.Event.Event);
+                            break;
+                    }
+                    e.Cancel = true;
+                }
+            }));
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private async Task testPlay()
         {
             if (playing != null)
             {
@@ -417,25 +481,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="itemName"></param>
-        /// <returns></returns>
-        public RegisterContainerBase GetControl(string itemName)
-        {
-            return controls[itemName];
-        }
-
-        public RegisterContainerBase this[string itemName]
-        {
-            get
-            {
-                return controls[itemName];
-            }
-        }
-
-        private void metroButtonParams_Click(object sender, EventArgs e)
+        private void metroButtonRandParams_Click(object sender, EventArgs e)
         {
             var names = metroTextBoxTarget.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             List<string> targetName = new List<string>();
@@ -640,6 +686,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         tones = Vopm.Reader(importFile, Option);
                         break;
                 }
+
                 if (tones != null && tones.Count() > 0)
                 {
                     if (tones.Count() == 1)
@@ -666,19 +713,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             using (var f = new FormToneSelector(tones))
                             {
-                                f.SelectedIndexChanged += (s, e) =>
-                               {
-                                   try
-                                   {
-                                       ignorePlayingFlag++;
-                                       ApplyTone(f.SelectedTone);
-                                   }
-                                   finally
-                                   {
-                                       ignorePlayingFlag--;
-                                   }
-                                   Control_ValueChanged(this, null);
-                               };
+                                f.SelectedToneChanged += (s, e) => { tryApplyTone(f.SelectedTone); };
                                 DialogResult dr = f.ShowDialog(this);
                                 try
                                 {
@@ -697,45 +732,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                 }
                                 finally
                                 {
-                                    ignorePlayingFlag++;
+                                    ignorePlayingFlag--;
                                 }
                             }
                         }
                         else
                         {
-                            try
-                            {
-                                ignorePlayingFlag++;
-                                try
-                                {
-                                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
-
-                                    for (int i = 0; i < tones.Count(); i++)
-                                    {
-                                        if (i >= metroComboBoxTimbres.Items.Count)
-                                            break;
-                                        TimbreItem ti = (TimbreItem)metroComboBoxTimbres.Items[i];
-                                        this.Timbre = ti.Timbre;
-                                        this.TimbreNo = ti.Number;
-                                        ApplyTone(ti.Timbre, tones.ElementAt(i));
-                                        metroComboBoxTimbres.Items[i] = new TimbreItem(ti.Timbre, i);
-                                    }
-
-                                    metroComboBoxTimbres.SelectedIndex = 0;
-                                }
-                                finally
-                                {
-                                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
-                                }
-                                metroComboBoxTimbres_SelectedIndexChanged(null, null);
-                                metroComboBoxTimbres.Invalidate();
-                            }
-                            finally
-                            {
-                                ignorePlayingFlag--;
-                            }
-
-                            this.Invalidate(true);
+                            tryApplyTones(tones);
                         }
                     }
                 }
@@ -769,6 +772,63 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             //nothing
         }
 
+
+        private void tryApplyTones(IEnumerable<Tone> tones)
+        {
+            if (tones != null && tones.Count() != 0)
+            {
+                try
+                {
+                    ignorePlayingFlag++;
+                    try
+                    {
+                        ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
+
+                        for (int i = 0; i < tones.Count(); i++)
+                        {
+                            if (i >= metroComboBoxTimbres.Items.Count)
+                                break;
+                            TimbreItem ti = (TimbreItem)metroComboBoxTimbres.Items[i];
+                            this.Timbre = ti.Timbre;
+                            this.TimbreNo = ti.Number;
+                            ApplyTone(ti.Timbre, tones.ElementAt(i));
+                            metroComboBoxTimbres.Items[i] = new TimbreItem(ti.Timbre, i);
+                        }
+
+                        metroComboBoxTimbres.SelectedIndex = 0;
+                    }
+                    finally
+                    {
+                        ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
+                    }
+                    metroComboBoxTimbres_SelectedIndexChanged(null, null);
+                    metroComboBoxTimbres.Invalidate();
+                }
+                finally
+                {
+                    ignorePlayingFlag--;
+                }
+            }
+        }
+
+        private void tryApplyTone(Tone tone)
+        {
+            if (tone != null)
+            {
+                try
+                {
+                    ignorePlayingFlag++;
+                    ApplyTone(tone);
+                }
+                finally
+                {
+                    ignorePlayingFlag--;
+                }
+                Control_ValueChanged(this, null);
+            }
+        }
+
+
         private void metroButtonImport_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -778,14 +838,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     var fn = drags[0];
                     var ext = System.IO.Path.GetExtension(fn);
-                    if (System.IO.File.Exists(fn) &&
-                        (
-                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
-                        ))
+                    if (System.IO.File.Exists(fn) && IsSupportedExtension(ext))
                     {
                         this.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -795,6 +848,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ext"></param>
+        /// <returns></returns>
+        public static bool IsSupportedExtension(String ext)
+        {
+            if (ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+               )
+                return true;
+            else
+                return false;
         }
 
         private void metroButtonImport_DragEnter(object sender, DragEventArgs e)
@@ -807,17 +878,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     var fn = drags[0];
                     var ext = System.IO.Path.GetExtension(fn);
-                    if (System.IO.File.Exists(fn) &&
-                        (
-                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
-                        ))
-                    {
+                    if (System.IO.File.Exists(fn) && IsSupportedExtension(ext))
                         e.Effect = DragDropEffects.All;
-                    }
                 }
             }
         }
@@ -840,14 +902,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     var fn = drags[0];
                     var ext = System.IO.Path.GetExtension(fn);
-                    if (System.IO.File.Exists(fn) &&
-                        (
-                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
-                        ))
+                    if (System.IO.File.Exists(fn) && IsSupportedExtension(ext))
                     {
                         this.BeginInvoke(new MethodInvoker(() =>
                         {
@@ -869,17 +924,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     var fn = drags[0];
                     var ext = System.IO.Path.GetExtension(fn);
-                    if (System.IO.File.Exists(fn) &&
-                        (
-                        ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                        ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
-                        ))
-                    {
+                    if (System.IO.File.Exists(fn) && IsSupportedExtension(ext))
                         e.Effect = DragDropEffects.All;
-                    }
                 }
             }
         }
@@ -891,6 +937,75 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 return;
 
             importFile(openFileDialogTone.FileName, true);
+        }
+
+        private void metroButtonImportGit_Click(object sender, EventArgs ea)
+        {
+            //backup
+            List<string> ses = new List<string>();
+            foreach (var c in controls.Values)
+                ses.Add(c.SerializeData);
+
+            using (var f = new FormDownloadTone(false))
+            {
+                f.SelectedToneChanged += (s, e) => { tryApplyTone(f.SelectedTone); };
+
+                var dr = f.ShowDialog(this);
+                try
+                {
+                    ignorePlayingFlag++;
+                    if (dr == DialogResult.OK)
+                    {
+                        ApplyTone(f.SelectedTone);
+                    }
+                    else
+                    {
+                        //restore
+                        int idx = 0;
+                        foreach (var c in controls.Values)
+                            c.SerializeData = ses[idx++];
+                    }
+                }
+                finally
+                {
+                    ignorePlayingFlag--;
+                }
+            }
+        }
+
+        private void metroButtonImportAllGit_Click(object sender, EventArgs ea)
+        {
+            //backup
+            List<string> ses = new List<string>();
+            foreach (var c in controls.Values)
+                ses.Add(c.SerializeData);
+
+            using (var f = new FormDownloadTone(true))
+            {
+                f.SelectedToneChanged += (s, e) => { tryApplyTone(f.SelectedTone); };
+
+                var dr = f.ShowDialog(this);
+                try
+                {
+                    ignorePlayingFlag++;
+                    if (dr == DialogResult.OK)
+                    {
+                        var tones = f.SelectedTones;
+                        tryApplyTones(tones);
+                    }
+                    else
+                    {
+                        //restore
+                        int idx = 0;
+                        foreach (var c in controls.Values)
+                            c.SerializeData = ses[idx++];
+                    }
+                }
+                finally
+                {
+                    ignorePlayingFlag--;
+                }
+            }
         }
 
     }

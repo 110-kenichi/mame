@@ -298,6 +298,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Failed to launch. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FailedLaunch {
+            get {
+                return ResourceManager.GetString("FailedLaunch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to load the file. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string FailedLoadFile {

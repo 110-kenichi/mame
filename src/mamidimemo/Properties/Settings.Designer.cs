@@ -430,5 +430,41 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["YM2608EdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitHubUserName {
+            get {
+                return ((string)(this["GitHubUserName"]));
+            }
+            set {
+                this["GitHubUserName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitHubPersonalAccessToken {
+            get {
+                return ((string)(this["GitHubPersonalAccessToken"]));
+            }
+            set {
+                this["GitHubPersonalAccessToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FmHook {
+            get {
+                return ((bool)(this["FmHook"]));
+            }
+            set {
+                this["FmHook"] = value;
+            }
+        }
     }
 }

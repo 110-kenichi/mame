@@ -105,6 +105,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         protected override void ApplyTone(Tone tone)
         {
+            timbre.ToneType = ToneType.FM;
+
             ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
             ((RegisterValue)this["General"]["AMS"]).Value = 0;
@@ -137,6 +139,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         protected override void ApplyTone(TimbreBase timbre, Tone tone)
         {
             YM2610BTimbre tim = (YM2610BTimbre)timbre;
+
+            tim.ToneType = ToneType.FM;
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
@@ -171,6 +175,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             YM2610BTimbre tim = (YM2610BTimbre)timbre;
             this.timbre = tim;
+
+            tim.ToneType = ToneType.FM;
 
             this["General"].Target = tim;
             ((RegisterValue)this["General"]["ALG"]).Value = tim.ALG;

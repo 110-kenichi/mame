@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.5.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.5.8.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,9 +245,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
 2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
         Fixed ADPCM-B not sounding unexpectedly on YM2608.
-		Improved ADPCM-B on YM2608 transfer speed vis SCCI.
+		Improved ADPCM-B on YM2608 transfer speed via SCCI.
 		Fixed SSG sounding unexpectedly when volume changing on YM2608 and YM2610B
 		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
 2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.

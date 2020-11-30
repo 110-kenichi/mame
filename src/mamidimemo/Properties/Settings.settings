@@ -104,5 +104,14 @@
     <Setting Name="YM2608EdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
+    <Setting Name="GitHubUserName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GitHubPersonalAccessToken" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FmHook" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

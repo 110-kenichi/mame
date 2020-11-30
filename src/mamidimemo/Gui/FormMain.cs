@@ -1228,6 +1228,8 @@ namespace zanac.MAmidiMEmo.Gui
             if (midiPlayback == null)
                 return;
 
+            if (this.labelStat.Image != null)
+                this.labelStat.Image.Dispose();
             if (midiPlayback.IsRunning)
             {
                 midiPlayback.Stop();
@@ -1248,6 +1250,8 @@ namespace zanac.MAmidiMEmo.Gui
             midiPlayback.Stop();
             InstrumentManager.Panic();
             midiPlayback.MoveToStart();
+            if (this.labelStat.Image != null)
+                this.labelStat.Image.Dispose();
             this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
         }
 

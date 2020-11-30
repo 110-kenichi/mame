@@ -11,6 +11,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -33,7 +34,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "2.5.7.0";
+        public const string FILE_VERSION = "2.5.8.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2020 Itoken.All rights reserved.";
@@ -131,6 +132,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         /// <param name="parentModule">親モジュール</param>
         public static void Main(IntPtr parentModule)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             System.Resources.ResourceManager rm =
                 new System.Resources.ResourceManager("System", typeof(UriFormat).Assembly);
             string dummy = rm.GetString("Arg_EmptyOrNullString");

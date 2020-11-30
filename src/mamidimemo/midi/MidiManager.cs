@@ -5,6 +5,7 @@ using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -160,14 +161,13 @@ namespace zanac.MAmidiMEmo.Midi
 
         private static BytesToMidiEventConverter midiConverter = new Melanchall.DryWetMidi.Core.BytesToMidiEventConverter();
 
-
         /// <summary>
         /// 
         /// </summary>
         public static void SendMidiEvent(MidiPort port, byte data1, byte data2, byte data3)
         {
             var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
-            Midi.MidiManager.SendMidiEvent(port, me);
+            SendMidiEvent(port, me);
         }
 
         /// <summary>
@@ -179,8 +179,10 @@ namespace zanac.MAmidiMEmo.Midi
             for (int i = 0; i < length; i++)
                 buf.Add(data[i]);
             var me = midiConverter.Convert(buf.ToArray());
-            Midi.MidiManager.SendMidiEvent(port, me);
+            SendMidiEvent(port, me);
         }
+
+        public static event MidiEventHookHandler MidiEventHooked;
 
         /// <summary>
         /// 
@@ -189,6 +191,12 @@ namespace zanac.MAmidiMEmo.Midi
         /// <param name="e"></param>
         private static void midiEventReceivedA(object sender, MidiEventReceivedEventArgs e)
         {
+            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, e);
+            MidiEventHooked?.Invoke(sender, ea);
+
+            if (ea.Cancel)
+                return;
+
             MidiEventReceivedA?.Invoke(sender, e.Event);
         }
 
@@ -200,6 +208,12 @@ namespace zanac.MAmidiMEmo.Midi
         /// <param name="e"></param>
         private static void midiEventReceivedB(object sender, MidiEventReceivedEventArgs e)
         {
+            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, e);
+            MidiEventHooked?.Invoke(sender, ea);
+
+            if (ea.Cancel)
+                return;
+
             MidiEventReceivedB?.Invoke(sender, e.Event);
         }
 
@@ -270,5 +284,39 @@ namespace zanac.MAmidiMEmo.Midi
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public delegate void MidiEventHookHandler(object sender, CancelMidiEventReceivedEventArgs e);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CancelMidiEventReceivedEventArgs : CancelEventArgs
+    {
+        public MidiEventReceivedEventArgs Event
+        {
+            get;
+            private set;
+        }
+
+        public MidiPort Port
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        public CancelMidiEventReceivedEventArgs(MidiPort port, MidiEventReceivedEventArgs e)
+        {
+            Port = port;
+            Event = e;
+        }
+    }
 
 }

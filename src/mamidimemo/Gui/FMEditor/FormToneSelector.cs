@@ -13,7 +13,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     public partial class FormToneSelector : FormBase
     {
-        public event EventHandler SelectedIndexChanged;
+        public event EventHandler SelectedToneChanged;
 
         public Tone SelectedTone
         {
@@ -23,6 +23,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tones"></param>
         public FormToneSelector(IEnumerable<Tone> tones)
         {
             InitializeComponent();
@@ -30,12 +34,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             foreach (var tone in tones)
                 listBoxTones.Items.Add(tone);
 
-            listBoxTones.SelectedIndex = 0;
+            listBoxTones.SelectedItem = null;
+            buttonOK.Enabled = false;
         }
 
         private void listBoxTones_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedIndexChanged?.Invoke(this, e);
+            buttonOK.Enabled = listBoxTones.SelectedItem != null;
+            SelectedToneChanged?.Invoke(this, e);
         }
 
         private void listBoxTones_DoubleClick(object sender, EventArgs e)

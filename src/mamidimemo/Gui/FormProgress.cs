@@ -115,18 +115,28 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="initialMessage"></param>
         /// <param name="taskAction"></param>
-        public static void RunDialog(string initialMessage, Action<FormProgress> taskAction)
+        public static void RunDialog(string initialMessage, Action<FormProgress> taskAction) 
+        {
+            RunDialog(initialMessage, taskAction, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="initialMessage"></param>
+        /// <param name="taskAction"></param>
+        public static void RunDialog(string initialMessage, Action<FormProgress> taskAction, Action cancelHandler)
         {
             if (FormMain.AppliactionForm != null)
             {
                 FormMain.AppliactionForm.Invoke(new MethodInvoker(() =>
                 {
-                    runDialogCore(FormMain.AppliactionForm, initialMessage, taskAction);
+                    runDialogCore(FormMain.AppliactionForm, initialMessage, taskAction, cancelHandler);
                 }));
             }
             else
             {
-                runDialogCore(null, initialMessage, taskAction);
+                runDialogCore(null, initialMessage, taskAction, cancelHandler);
             }
         }
 
@@ -136,12 +146,21 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="parent"></param>
         /// <param name="initialMessage"></param>
         /// <param name="action"></param>
-        private static void runDialogCore(Form parent, string initialMessage, Action<FormProgress> action)
+        private static void runDialogCore(Form parent, string initialMessage, Action<FormProgress> action, Action cancelHandler)
         {
             using (FormProgress f = new FormProgress())
             {
                 if (parent == null)
                     f.StartPosition = FormStartPosition.CenterScreen;
+
+                if (cancelHandler != null)
+                {
+                    f.metroButtonCancel.Enabled = true;
+                    f.metroButtonCancel.Click += (s, e) =>
+                    {
+                        cancelHandler.Invoke();
+                    };
+                }
 
                 f.CreateControl();
 
@@ -166,5 +185,6 @@ namespace zanac.MAmidiMEmo.Gui
                 f.ShowDialog(parent);
             }
         }
+
     }
 }

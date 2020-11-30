@@ -42,6 +42,7 @@
             this.toolStripComboBoxCh = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonHook = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxNote = new System.Windows.Forms.ToolStripComboBox();
@@ -59,6 +60,7 @@
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
+            this.metroButtonImportGit = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -67,6 +69,7 @@
             this.metroComboBoxTimbres = new MetroFramework.Controls.MetroComboBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
+            this.metroButtonImportAllGit = new MetroFramework.Controls.MetroButton();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -99,6 +102,7 @@
             this.toolStripComboBoxCh,
             this.toolStripLabel2,
             this.toolStripButtonPlay,
+            this.toolStripButtonHook,
             this.toolStripSeparator1,
             this.toolStripLabel1,
             this.toolStripComboBoxNote,
@@ -152,8 +156,17 @@
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
             this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(89, 22);
-            this.toolStripButtonPlay.Text = "Play on edit";
+            this.toolStripButtonPlay.Size = new System.Drawing.Size(85, 22);
+            this.toolStripButtonPlay.Text = "PlayOnEdit";
+            // 
+            // toolStripButtonHook
+            // 
+            this.toolStripButtonHook.CheckOnClick = true;
+            this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonHook.Name = "toolStripButtonHook";
+            this.toolStripButtonHook.Size = new System.Drawing.Size(64, 22);
+            this.toolStripButtonHook.Text = "HookMidi";
+            this.toolStripButtonHook.Visible = false;
             // 
             // toolStripSeparator1
             // 
@@ -363,6 +376,7 @@
             this.tableLayoutPanel1.Controls.Add(this.buttonOK, 3, 2);
             this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 4, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 583);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -394,7 +408,7 @@
             this.metroButtonParams.TabIndex = 1;
             this.metroButtonParams.Text = "Rand &Fine";
             this.metroButtonParams.UseSelectable = true;
-            this.metroButtonParams.Click += new System.EventHandler(this.metroButtonParams_Click);
+            this.metroButtonParams.Click += new System.EventHandler(this.metroButtonRandParams_Click);
             // 
             // metroTextBoxTarget
             // 
@@ -470,6 +484,17 @@
             this.metroButtonImport.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragDrop);
             this.metroButtonImport.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragEnter);
             // 
+            // metroButtonImportGit
+            // 
+            this.metroButtonImportGit.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonImportGit.Location = new System.Drawing.Point(86, 43);
+            this.metroButtonImportGit.Name = "metroButtonImportGit";
+            this.metroButtonImportGit.Size = new System.Drawing.Size(75, 23);
+            this.metroButtonImportGit.TabIndex = 3;
+            this.metroButtonImportGit.Text = "Import &Git...";
+            this.metroButtonImportGit.UseSelectable = true;
+            this.metroButtonImportGit.Click += new System.EventHandler(this.metroButtonImportGit_Click);
+            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
@@ -517,7 +542,7 @@
             this.metroComboBoxTimbres.ItemHeight = 23;
             this.metroComboBoxTimbres.Location = new System.Drawing.Point(63, 3);
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.metroComboBoxTimbres.Size = new System.Drawing.Size(646, 29);
+            this.metroComboBoxTimbres.Size = new System.Drawing.Size(525, 29);
             this.metroComboBoxTimbres.TabIndex = 3;
             this.metroComboBoxTimbres.UseSelectable = true;
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
@@ -526,13 +551,15 @@
             // 
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnCount = 4;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.Controls.Add(this.metroComboBoxTimbres, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAll, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAllGit, 3, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(5, 60);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -545,7 +572,8 @@
             // 
             this.metroButtonImportAll.AllowDrop = true;
             this.metroButtonImportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonImportAll.Location = new System.Drawing.Point(715, 6);
+            this.metroButtonImportAll.AutoSize = true;
+            this.metroButtonImportAll.Location = new System.Drawing.Point(594, 6);
             this.metroButtonImportAll.Name = "metroButtonImportAll";
             this.metroButtonImportAll.Size = new System.Drawing.Size(75, 23);
             this.metroButtonImportAll.TabIndex = 3;
@@ -554,6 +582,18 @@
             this.metroButtonImportAll.Click += new System.EventHandler(this.metroButtonImportAll_Click);
             this.metroButtonImportAll.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragDrop);
             this.metroButtonImportAll.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragEnter);
+            // 
+            // metroButtonImportAllGit
+            // 
+            this.metroButtonImportAllGit.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonImportAllGit.AutoSize = true;
+            this.metroButtonImportAllGit.Location = new System.Drawing.Point(675, 6);
+            this.metroButtonImportAllGit.Name = "metroButtonImportAllGit";
+            this.metroButtonImportAllGit.Size = new System.Drawing.Size(115, 23);
+            this.metroButtonImportAllGit.TabIndex = 3;
+            this.metroButtonImportAllGit.Text = "Import all Gi&t...";
+            this.metroButtonImportAllGit.UseSelectable = true;
+            this.metroButtonImportAllGit.Click += new System.EventHandler(this.metroButtonImportAllGit_Click);
             // 
             // FormFmEditor
             // 
@@ -616,5 +656,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private MetroFramework.Controls.MetroComboBox metroComboBoxTimbres;
         private MetroFramework.Controls.MetroButton metroButtonImportAll;
+        private MetroFramework.Controls.MetroButton metroButtonImportAllGit;
+        private MetroFramework.Controls.MetroButton metroButtonImportGit;
+        private System.Windows.Forms.ToolStripButton toolStripButtonHook;
     }
 }
