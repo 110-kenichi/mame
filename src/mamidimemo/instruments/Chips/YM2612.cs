@@ -1178,7 +1178,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Operators")]
-            [DefaultValue((byte)0)]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             [DisplayName("Operators(Ops)")]

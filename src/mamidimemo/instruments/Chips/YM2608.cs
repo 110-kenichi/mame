@@ -641,6 +641,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public YM2608(uint unitNumber) : base(unitNumber)
         {
+            SetDevicePassThru(false);
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
@@ -737,6 +739,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             //SSG OFF
             YM2608WriteData(UnitNumber, 0x07, 0, 0, 0x3f);
+            //RESET PRESCALER
+            YM2608WriteData(UnitNumber, 0x2D, 0, 0, 0xFF, false);
+            //YM2608WriteData(UnitNumber, 0x2E, 0, 0, 0xFF, false);
             //ADPCM A TOTAL LEVEL MAX
             YM2608WriteData(UnitNumber, 0x11, 0, 0, 0x3f);
             //ADPCM B
@@ -1943,14 +1948,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double freq = CalcCurrentFrequency();
 
-                //freq = Math.Round(7987200 / 64 / 2 / freq);
-                freq = Math.Round(7987200 / 72 / 2 / freq); //HACK: Sync with FM sample rate
-                if (freq > 0xfff)
-                    freq = 0xfff;
-                ushort tp = (ushort)freq;
+                if (parentModule.CurrentSoundEngine == SoundEngineType.SPFM)
+                {
+                    freq = Math.Round(7987200 / 64 / freq);
+                    if (freq > 0xfff)
+                        freq = 0xfff;
+                    ushort tp = (ushort)freq;
 
-                parentModule.YM2608WriteData(unitNumber, (byte)(0 + (Slot * 2)), 0, 0, (byte)(tp & 0xff));
-                parentModule.YM2608WriteData(unitNumber, (byte)(1 + (Slot * 2)), 0, 0, (byte)((tp >> 8) & 0xf));
+                    parentModule.YM2608WriteData(unitNumber, (byte)(0 + (Slot * 2)), 0, 0, (byte)(tp & 0xff));
+                    parentModule.YM2608WriteData(unitNumber, (byte)(1 + (Slot * 2)), 0, 0, (byte)((tp >> 8) & 0xf));
+                }
+                {
+                    freq = Math.Round(7987200 / 72 / 2 / freq); //HACK: Sync with FM sample rate because SSG stream is mixed with OPNA stream directly by MAmidiMEmo design.
+                    if (freq > 0xfff)
+                        freq = 0xfff;
+                    ushort tp = (ushort)freq;
+
+                    parentModule.YM2608WriteData(unitNumber, (byte)(0 + (Slot * 2)), 0, 0, (byte)(tp & 0xff), true, true);
+                    parentModule.YM2608WriteData(unitNumber, (byte)(1 + (Slot * 2)), 0, 0, (byte)((tp >> 8) & 0xf), true, true);
+                }
             }
 
             /// <summary>
@@ -2390,7 +2406,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(FM)")]
             [Description("Operators")]
-            [DefaultValue((byte)0)]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             [DisplayName("Operators(Ops)")]
@@ -2496,7 +2511,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SSG_EG",
 
                         "Ops[2].AR",
-                        "Ops[2].D2R",
+                        "Ops[2].D1R",
                         "Ops[2].D2R",
                         "Ops[2].RR",
                         "Ops[2].SL",
@@ -2508,8 +2523,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SSG_EG",
 
                         "Ops[3].AR",
-                        "Ops[3].D3R",
-                        "Ops[3].D3R",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
                         "Ops[3].RR",
                         "Ops[3].SL",
                         "Ops[3].TL",

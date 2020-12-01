@@ -1455,8 +1455,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double freq = CalcCurrentFrequency();
 
-                //freq = Math.Round(8000000 / 64 / 2 / freq);
-                freq = Math.Round(8000000 / 72 / 2 / freq); //HACK: Sync with FM sample rate
+                freq = Math.Round(8000000 / 64 / 2 / freq);
+                //freq = Math.Round(8000000 / 72 / 2 / freq); //HACK: Sync with FM sample rate
                 if (freq > 0xfff)
                     freq = 0xfff;
                 ushort tp = (ushort)freq;
@@ -1900,7 +1900,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(FM)")]
             [Description("Operators")]
-            [DefaultValue((byte)0)]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             [DisplayName("Operators(Ops)")]
@@ -2006,7 +2005,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SSG_EG",
 
                         "Ops[2].AR",
-                        "Ops[2].D2R",
+                        "Ops[2].D1R",
                         "Ops[2].D2R",
                         "Ops[2].RR",
                         "Ops[2].SL",
@@ -2018,8 +2017,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SSG_EG",
 
                         "Ops[3].AR",
-                        "Ops[3].D3R",
-                        "Ops[3].D3R",
+                        "Ops[3].D1R",
+                        "Ops[3].D2R",
                         "Ops[3].RR",
                         "Ops[3].SL",
                         "Ops[3].TL",

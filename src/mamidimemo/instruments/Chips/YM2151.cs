@@ -455,6 +455,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public YM2151(uint unitNumber) : base(unitNumber)
         {
+            SetDevicePassThru(false);
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 

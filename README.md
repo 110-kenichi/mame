@@ -1,4 +1,4 @@
-MAmidiMEmo V2.5.9.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.6.0.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.6.0.0 Fixed crashing when FM operators was reset.
+		Fixed SSG tone frequency on real YM2608 chip.
 2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
 2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
 2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
