@@ -741,7 +741,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2608WriteData(UnitNumber, 0x07, 0, 0, 0x3f);
             //RESET PRESCALER
             YM2608WriteData(UnitNumber, 0x2D, 0, 0, 0xFF, false);
-            //YM2608WriteData(UnitNumber, 0x2E, 0, 0, 0xFF, false);
+            //6CH MODE
+            YM2608WriteData(UnitNumber, 0x29, 0, 0, 0xFF, false);
             //ADPCM A TOTAL LEVEL MAX
             YM2608WriteData(UnitNumber, 0x11, 0, 0, 0x3f);
             //ADPCM B
