@@ -70,9 +70,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         private object spfmPtrLock = new object();
+
         private IntPtr spfmPtr;
 
         private SoundEngineType f_SoundEngineType;
+
         private SoundEngineType f_CurrentSoundEngineType;
 
         [DataMember]
@@ -378,7 +380,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (CurrentSoundEngine == SoundEngineType.SPFM)
                     {
                         uint reg = (uint)(slot / 3) << 8;
-                        ScciManager.SetRegister(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)), data, useCache);
+                        uint adrs = (uint)(reg + address + (op * 4) + (slot % 3));
+                        ScciManager.SetRegister(spfmPtr, adrs, data, useCache);
                     }
             }
 #if DEBUG
@@ -386,8 +389,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdating();
 #endif
-                {
-                    uint reg = (uint)(slot / 3) * 2;
+            {
+                uint reg = (uint)(slot / 3) * 2;
 #if DEBUG
                     YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
                     YM2608_write(unitNumber, reg + 1, data);
@@ -395,7 +398,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 DeferredWriteData(YM2608_write, unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
                 DeferredWriteData(YM2608_write, unitNumber, reg + 1, data);
 #endif
-                }
+            }
 #if DEBUG
             }
             finally
@@ -1909,8 +1912,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (d != 0)
                                 freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
 
-                            parentModule.YM2608WriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((freq >> 8) & 7)));
-                            parentModule.YM2608WriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & freq));
+                            parentModule.YM2608WriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((freq >> 8) & 7)), false);
+                            parentModule.YM2608WriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & freq), false);
                         }
                         break;
                     case ToneType.SSG:

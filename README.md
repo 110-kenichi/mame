@@ -1,4 +1,4 @@
-MAmidiMEmo V2.6.1.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.6.2.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.6.2.0 Turned off write cache for frequency register on the real YM2608 and YM2515 chip.
 2.6.1.0 Fixed CH mode set 3 instead of 6 on YM2608. Affected only S/W emulation.
 2.6.0.0 Fixed crashing when FM operators was reset.
 		Fixed SSG tone frequency on real YM2608 chip.

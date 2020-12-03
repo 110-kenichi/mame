@@ -392,11 +392,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
-
         /// <summary>
         /// 
         /// </summary>
         private void Ym2151WriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        {
+            Ym2151WriteData(unitNumber, address, op, slot, data, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void Ym2151WriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache)
         {
             switch (op)
             {
@@ -416,8 +423,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             lock (spfmPtrLock)
                 if (CurrentSoundEngine == SoundEngineType.SPFM)
                 {
-                    ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data);
+                    ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data, useCache);
                 }
+
             DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
             DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
 
@@ -924,8 +932,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     nn = 14;
                 }
 
-                parentModule.Ym2151WriteData(unitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn));
-                parentModule.Ym2151WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2));
+                parentModule.Ym2151WriteData(unitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn), false);
+                parentModule.Ym2151WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2), false);
 
                 base.OnPitchUpdated();
             }
