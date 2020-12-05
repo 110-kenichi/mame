@@ -1089,7 +1089,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -1098,7 +1098,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -1109,7 +1109,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -1120,12 +1127,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
         }
 
         internal override void AllSoundOff()
         {
-            soundManager.AllSoundOff();
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -1403,10 +1410,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
 
-            internal override void AllSoundOff()
+            internal override void ProcessAllSoundOff()
             {
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-                ControlChange(me);
+                ProcessControlChange(me);
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -1519,6 +1526,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     pan = 0x1;
                                 else
                                     pan = 0x3;
+
+                                byte fv = (byte)(((byte)Math.Round(63 * CalcCurrentVolume(true)) & 0x3f));
+                                parentModule.YM2608WriteData(unitNumber, 0x11, 0, 0, (byte)fv);
+
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x10), 0, 0, kon, false);
                             }
@@ -1820,7 +1831,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                     case ToneType.RHYTHM:
-                        byte fv = (byte)(((byte)Math.Round(63 * CalcCurrentVolume()) & 0x2f));
+                        byte fv = (byte)(((byte)Math.Round(63 * CalcCurrentVolume(true)) & 0x3f));
                         parentModule.YM2608WriteData(unitNumber, 0x11, 0, 0, (byte)fv);
                         break;
                     case ToneType.ADPCM_B:

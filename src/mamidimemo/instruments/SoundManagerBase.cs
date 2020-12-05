@@ -110,7 +110,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        public virtual void PitchBend(PitchBendEvent midiEvent)
+        public virtual void ProcessPitchBend(PitchBendEvent midiEvent)
         {
             foreach (var t in AllSounds)
             {
@@ -130,7 +130,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="value"></param>
-        public virtual void ControlChange(ControlChangeEvent midiEvent)
+        public virtual void ProcessControlChange(ControlChangeEvent midiEvent)
         {
             switch (midiEvent.ControlNumber)
             {
@@ -146,8 +146,11 @@ namespace zanac.MAmidiMEmo.Instruments
                             t.ModulationEnabled = midiEvent.ControlValue != 0;
                     }
                     break;
-                case 6:    //Data Entry
-                           //nothing
+                case 6:    //Data Entry MSB
+
+                    break;
+                case 38:   //Data Entry MSB
+
                     break;
                 case 7:    //Volume
                     foreach (var t in AllSounds)
@@ -186,14 +189,14 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                     break;
 
-                //GPCS
+                //GPCS1
                 case 16:
                 case 17:
                 case 18:
                 case 19:
                     {
                         int no = midiEvent.ControlNumber - 16 + 1;
-                        ProcessGPCS(midiEvent, no);
+                        processGPCS(midiEvent.Channel, no, midiEvent.ControlValue, 0);
                     }
                     break;
                 case 64:    //Holds
@@ -204,18 +207,18 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (t.IsSoundOff)
                                 continue;
                             if (t.NoteOnEvent.Channel == midiEvent.Channel)
-                                KeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
+                                ProcessKeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                     }
                     break;
-                //GPCS
+                //GPCS2
                 case 80:
                 case 81:
                 case 82:
                 case 83:
                     {
                         int no = midiEvent.ControlNumber - 80 + 1;
-                        ProcessGPCS(midiEvent, no);
+                        processGPCS(midiEvent.Channel, no, midiEvent.ControlValue, 0);
                     }
                     break;
 
@@ -227,7 +230,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 74:
                 case 75:
                 case 79:
-                    processSCCS(midiEvent);
+                    processSCCS(midiEvent.Channel, midiEvent.ControlNumber, midiEvent.ControlValue, 0);
                     break;
                 case 84:
                     LastNoteNumbers[midiEvent.Channel] = 0x80 | (int)midiEvent.ControlValue;
@@ -245,28 +248,95 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                                 continue;
 
-                            KeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
+                            ProcessKeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                         break;
                     }
             }
         }
 
+        private ControlChangeEvent[] lastDataLsb = new ControlChangeEvent[16];
+
+        private ControlChangeEvent[] lastDataMsb = new ControlChangeEvent[16];
+
+        public virtual void ProcessNrpnData(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            if (dataMsb != null)
+            {
+                switch (parentModule.NrpnMsb[dataMsb.Channel])
+                {
+                    default:
+                        break;
+                }
+
+                lastDataMsb[dataMsb.Channel] = dataMsb;
+            }
+            if (dataLsb != null)
+            {
+                switch (parentModule.NrpnMsb[dataLsb.Channel])
+                {
+                    case 0:
+                        {
+                            switch (parentModule.NrpnLsb[dataMsb.Channel])
+                            {
+                                //GPCS1
+                                case 16:
+                                case 17:
+                                case 18:
+                                case 19:
+                                    if (lastDataLsb[dataLsb.Channel] != null)
+                                    {
+                                        int no = parentModule.NrpnLsb[dataMsb.Channel] - 16 + 1;
+                                        processGPCS(dataMsb.Channel, no, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    }
+                                    break;
+                                //SCCS
+                                case 70:
+                                case 71:
+                                case 72:
+                                case 73:
+                                case 74:
+                                case 75:
+                                case 79:
+                                    if (lastDataLsb[dataLsb.Channel] != null)
+                                        processSCCS(dataMsb.Channel, parentModule.NrpnLsb[dataMsb.Channel], lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    break;
+                                //GPCS2
+                                case 80:
+                                case 81:
+                                case 82:
+                                case 83:
+                                    if (lastDataLsb[dataLsb.Channel] != null)
+                                    {
+                                        int no = parentModule.NrpnLsb[dataMsb.Channel] - 80 + 1;
+                                        processGPCS(dataMsb.Channel, no, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    }
+                                    break;
+                            }
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+                lastDataLsb[dataLsb.Channel] = dataLsb;
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        abstract internal void AllSoundOff();
+        abstract internal void ProcessAllSoundOff();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        private void processSCCS(ControlChangeEvent midiEvent)
+        private void processSCCS(int channel, int controlNumber, int msbValue, int lsbValue)
         {
-            var tim = parentModule.GetLastTimbre(midiEvent.Channel);
+            var tim = parentModule.GetLastTimbre(channel);
             bool process = false;
-            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, midiEvent.ControlNumber - 70 + 1))
+            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, controlNumber - 70 + 1))
             {
                 if (ipi != null)
                 {
@@ -276,8 +346,10 @@ namespace zanac.MAmidiMEmo.Instruments
                         Attribute.GetCustomAttribute(pi, typeof(SlideParametersAttribute)) as SlideParametersAttribute;
                     if (attribute != null)
                     {
-                        int len = (attribute.SliderMax - attribute.SliderMin) + 1;
-                        int val = len * midiEvent.ControlValue / 128;
+                        int len = attribute.SliderMax - attribute.SliderMin;
+                        int val = len * msbValue / 127;
+                        val += (len / 127) * lsbValue / 127;
+                        val += attribute.SliderMin;
 
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                         try
@@ -305,7 +377,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (dattribute != null)
                         {
                             double len = dattribute.SliderMax - dattribute.SliderMin;
-                            double val = len * (double)midiEvent.ControlValue / (double)128;
+                            double val = len * (double)msbValue / 127d;
+                            val += (len / 127d) * (double)lsbValue / 127d;
+                            val += attribute.SliderMin;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
@@ -335,9 +409,9 @@ namespace zanac.MAmidiMEmo.Instruments
                                 {
                                     //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
+                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, msbValue.ToString())));
 
-                                    pd.SetValue(ipi.Owner, val > 63);
+                                    pd.SetValue(ipi.Owner, val > 127 / 2);
                                 }
                                 finally
                                 {
@@ -348,7 +422,8 @@ namespace zanac.MAmidiMEmo.Instruments
                             else if (ipi.Property.PropertyType.IsEnum)
                             {
                                 var vals = Enum.GetValues(ipi.Property.PropertyType);
-                                int val = vals.Length * midiEvent.ControlValue / 128;
+                                int val = vals.Length * msbValue / 127;
+                                val += (vals.Length / 127) * lsbValue / 127;
 
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
@@ -374,16 +449,21 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                         continue;
 
-                    if (t.NoteOnEvent.Channel == midiEvent.Channel && t.Timbre == tim)
+                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
                         t.OnSoundParamsUpdated();
                 }
             }
         }
 
-        private void ProcessGPCS(ControlChangeEvent midiEvent, int no)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
+        /// <param name="no"></param>
+        private void processGPCS(int channel, int controlNumber, int msbValue, int lsbValue)
         {
             bool process = false;
-            foreach (var ipi in parentModule.GPCS[midiEvent.Channel].GetPropertyInfo(parentModule, no))
+            foreach (var ipi in parentModule.GPCS[channel].GetPropertyInfo(parentModule, controlNumber))
             {
                 if (ipi != null)
                 {
@@ -393,8 +473,10 @@ namespace zanac.MAmidiMEmo.Instruments
                         Attribute.GetCustomAttribute(pi, typeof(SlideParametersAttribute)) as SlideParametersAttribute;
                     if (attribute != null)
                     {
-                        int len = (attribute.SliderMax - attribute.SliderMin) + 1;
-                        int val = len * midiEvent.ControlValue / 128;
+                        int len = attribute.SliderMax - attribute.SliderMin;
+                        int val = len * msbValue / 127;
+                        val += (len / 127) * lsbValue / 127;
+                        val += attribute.SliderMin;
 
                         var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                         try
@@ -422,7 +504,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (dattribute != null)
                         {
                             double len = dattribute.SliderMax - dattribute.SliderMin;
-                            double val = len * (double)midiEvent.ControlValue / (double)128;
+                            double val = len * (double)msbValue / 127d;
+                            val += (len / 127d) * lsbValue / 127d;
+                            val += attribute.SliderMin;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
@@ -452,9 +536,9 @@ namespace zanac.MAmidiMEmo.Instruments
                                 {
                                     //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, midiEvent.ControlValue.ToString())));
+                                    var val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, msbValue.ToString())));
 
-                                    pd.SetValue(ipi.Owner, val > 63);
+                                    pd.SetValue(ipi.Owner, val > 127 / 2);
                                 }
                                 finally
                                 {
@@ -465,7 +549,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             else if (ipi.Property.PropertyType.IsEnum)
                             {
                                 var vals = Enum.GetValues(ipi.Property.PropertyType);
-                                int val = vals.Length * midiEvent.ControlValue / 128;
+                                int val = vals.Length * msbValue / 127;
 
                                 var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                                 try
@@ -491,7 +575,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
                         continue;
 
-                    if (t.NoteOnEvent.Channel == midiEvent.Channel)
+                    if (t.NoteOnEvent.Channel == channel)
                         t.OnSoundParamsUpdated();
                 }
             }
@@ -636,7 +720,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="note"></param>
-        public virtual void KeyOn(TaggedNoteOnEvent note)
+        public virtual void ProcessKeyOn(TaggedNoteOnEvent note)
         {
             if (preProcessArrpegioForKeyOn(note))
                 return;
@@ -671,7 +755,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="note"></param>
-        public virtual void KeyOff(NoteOffEvent note)
+        public virtual void ProcessKeyOff(NoteOffEvent note)
         {
             if (preProcessArpeggioForKeyOff(note))
                 return;
@@ -972,63 +1056,102 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (slot < 0)
             {
-                List<T> onSndsCh = new List<T>();
-                int mono = inst.MonoMode[newNote.Channel];
+                List<T> offSnds = new List<T>();
+                List<T> sameChSnds = new List<T>();
                 for (int i = 0; i < onSounds.Count; i++)
                 {
                     var onSnd = onSounds[i];
                     if (onSnd.IsSoundOff)
                     {
+                        offSnds.Add(onSnd);
+                        continue;
+                        /*
                         AllSounds.Remove(onSnd);
                         onSounds.RemoveAt(i);
                         onSnd.Dispose();
                         i--;
                         continue;
+                        */
                     }
                     if (newNote.Channel == onSnd.NoteOnEvent.Channel)
-                        onSndsCh.Add(onSnd);
+                        sameChSnds.Add(onSnd);
                 }
 
-                //Mono Mode. Remove same ch sounds.
+                //Process Mono Mode. Remove same ch sounds up to max.
+                int mono = inst.MonoMode[newNote.Channel];
                 if (mono != 0)
                 {
-                    for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
+                    for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
-                        var onSnd = onSndsCh[i];
-                        AllSounds.Remove(onSnd);
-                        onSounds.Remove(onSnd);
-                        onSndsCh.RemoveAt(i);
-                        onSnd.Dispose();
-                        i--;
+                        var onSnd = sameChSnds[i];
+                        if (onSnd.IsSoundOn)
+                        {
+                            AllSounds.Remove(onSnd);
+                            onSounds.Remove(onSnd);
+
+                            sameChSnds.RemoveAt(i);
+                            onSnd.Dispose();
+                            i--;
+                        }
                     }
                 }
 
-                Dictionary<int, bool> usedTable = new Dictionary<int, bool>();
-                for (int i = 0; i < onSounds.Count; i++)
-                    usedTable.Add(onSounds[i].Slot, true);
+                //Delete same drum sound from same ch
+                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
+                {
+                    for (int i = 0; i < sameChSnds.Count; i++)
+                    {
+                        var onSnd = sameChSnds[i];
+                        if (onSnd.IsSoundOn && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                        {
+                            AllSounds.Remove(onSnd);
+                            onSounds.Remove(onSnd);
 
-                //使っていないスロットがあればそれを返す
+                            sameChSnds.RemoveAt(i);
+                            onSnd.Dispose();
+                            i--;
+                        }
+                    }
+                }
+
+                //Search unused slot
+                Dictionary<int, bool> usedSlotTable = new Dictionary<int, bool>();
+                for (int i = 0; i < onSounds.Count; i++)
+                    usedSlotTable.Add(onSounds[i].Slot, true);
+                foreach (var offSnd in offSnds)
+                    usedSlotTable.Add(offSnd.Slot, true);
                 for (int i = 0; i < maxSlot; i++)
                 {
-                    if (!usedTable.ContainsKey(i))
+                    if (!usedSlotTable.ContainsKey(i))
                         return i;
                 }
 
+                List<T> onSndsRemoved = new List<T>(onSounds);
+
                 //Proces Poly mode
-                List<T> onSndsRm = new List<T>(onSounds);
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
-                for (int i = onSndsRm.Count - 1; i >= 0; i--)
+                for (int i = onSndsRemoved.Count - 1; i >= 0; i--)
                 {
-                    var onSnd = onSndsRm[i];
+                    var onSnd = onSndsRemoved[i];
                     if (polyList[onSnd.NoteOnEvent.Channel] > 0)
                     {
-                        onSndsRm.RemoveAt(i);
+                        onSndsRemoved.RemoveAt(i);
                         polyList[onSnd.NoteOnEvent.Channel]--;
                     }
                 }
 
-                //一番古いキーオフされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last sound off sound
+                foreach (var snd in offSnds)
+                {
+                    if (snd.Slot < maxSlot && snd.IsSoundOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return snd.Slot;
+                    }
+                }
+                foreach (var snd in onSndsRemoved)
                 {
                     if (snd.Slot < maxSlot && snd.IsSoundOff)
                     {
@@ -1039,8 +1162,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //一番古いキーオフされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last key off sound
+                foreach (var snd in onSndsRemoved)
                 {
                     if (snd.Slot < maxSlot && snd.IsKeyOff)
                     {
@@ -1051,8 +1174,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //一番古いキーオンされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last key on sound
+                foreach (var snd in onSndsRemoved)
                 {
                     if (snd.Slot < maxSlot)
                     {
@@ -1062,6 +1185,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         return snd.Slot;
                     }
                 }
+
+                //Search last sounding sound
                 foreach (var snd in onSounds)
                 {
                     if (snd.Slot < maxSlot)
@@ -1120,50 +1245,56 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             //gather leader and followers
             Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
-            Dictionary<uint, Dictionary<int, bool>> insts = new Dictionary<uint, Dictionary<int, bool>>();
+            Dictionary<uint, Dictionary<int, bool>> usedSlotTable = new Dictionary<uint, Dictionary<int, bool>>();
             foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
             {
                 instskey.Add(i.UnitNumber, i);
                 if (i.UnitNumber == inst.UnitNumber || inst.UnitNumber == (int)i.FollowerMode - 1)
-                    insts.Add(i.UnitNumber, new Dictionary<int, bool>());
+                    usedSlotTable.Add(i.UnitNumber, new Dictionary<int, bool>());
             }
 
             if (slot < 0)
             {
                 List<T> onSnds = new List<T>();
-                List<T> onSndsCh = new List<T>();
-                int mono = inst.MonoMode[newNote.Channel];
+                List<T> offSnds = new List<T>();
+                List<T> sameChSnds = new List<T>();
                 for (int i = 0; i < onSounds.Count; i++)
                 {
                     var onSnd = onSounds[i];
-                    if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
+                    if (usedSlotTable.ContainsKey(onSnd.ParentModule.UnitNumber))
                     {
                         if (onSnd.IsSoundOff)
                         {
+                            offSnds.Add(onSnd);
+                            continue;
+                            /*
                             AllSounds.Remove(onSnd);
                             onSounds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
                             continue;
+                            */
                         }
                         onSnds.Add(onSnd);
                         if (newNote.Channel == onSnd.NoteOnEvent.Channel)
-                            onSndsCh.Add(onSnd);
+                            sameChSnds.Add(onSnd);
                     }
                 }
 
-                //Mono Mode. Remove same ch sounds.
+                //Process Mono Mode. Remove same ch sounds up to max.
+                int mono = inst.MonoMode[newNote.Channel];
                 if (mono != 0)
                 {
-                    for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
+                    for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
-                        var onSnd = onSndsCh[i];
+                        var onSnd = sameChSnds[i];
                         if (onSnd.IsSoundOn)
                         {
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
+
                             onSnds.Remove(onSnd);
-                            onSndsCh.RemoveAt(i);
+                            sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
                         }
@@ -1173,48 +1304,62 @@ namespace zanac.MAmidiMEmo.Instruments
                 //Delete same drum sound from same ch
                 if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
                 {
-                    for (int i = 0; i < onSndsCh.Count; i++)
+                    for (int i = 0; i < sameChSnds.Count; i++)
                     {
-                        var onSnd = onSndsCh[i];
+                        var onSnd = sameChSnds[i];
                         if (onSnd.IsSoundOn && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
+
                             onSnds.Remove(onSnd);
-                            onSndsCh.RemoveAt(i);
+                            sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
                         }
                     }
                 }
 
-                //使っていないスロットがあればそれを返す
+                //Search completely unused slot
                 foreach (var onSnd in onSnds)
-                    insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                    usedSlotTable[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                foreach (var offSnd in offSnds)
+                    usedSlotTable[offSnd.ParentModule.UnitNumber].Add(offSnd.Slot, true);
                 for (int i = offset; i < maxSlot; i++)
                 {
-                    foreach (var ist in insts.Keys)
+                    foreach (var ist in usedSlotTable.Keys)
                     {
-                        if (!insts[ist].ContainsKey(i))
+                        if (!usedSlotTable[ist].ContainsKey(i))
                             return ((I)instskey[ist], i);
                     }
                 }
 
+                List<T> onSndsRemoved = new List<T>(onSnds);
+
                 //Process Poly mode
-                List<T> onSndsRm = new List<T>(onSnds);
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
-                for (int i = onSndsRm.Count - 1; i >= 0; i--)
+                for (int i = onSndsRemoved.Count - 1; i >= 0; i--)
                 {
-                    var onSnd = onSndsRm[i];
+                    var onSnd = onSndsRemoved[i];
                     if (polyList[onSnd.NoteOnEvent.Channel] > 0)
                     {
-                        onSndsRm.RemoveAt(i);
+                        onSndsRemoved.RemoveAt(i);
                         polyList[onSnd.NoteOnEvent.Channel]--;
                     }
                 }
 
-                //一番古いキーオフされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last sound off sound
+                foreach (var snd in offSnds)
+                {
+                    if (offset <= snd.Slot && snd.Slot < maxSlot)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return ((I)snd.ParentModule, snd.Slot);
+                    }
+                }
+                foreach (var snd in onSndsRemoved)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff)
                     {
@@ -1225,8 +1370,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //一番古いキーオフされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last key off sound
+                foreach (var snd in onSndsRemoved)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
                     {
@@ -1237,8 +1382,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //一番古いキーオンされたスロットを探す
-                foreach (var snd in onSndsRm)
+                //Search last key on sound
+                foreach (var snd in onSndsRemoved)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
@@ -1248,6 +1393,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         return ((I)snd.ParentModule, snd.Slot);
                     }
                 }
+
+                //Search last sounding sound
                 foreach (var snd in onSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
@@ -1265,7 +1412,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 for (int i = 0; i < onSounds.Count; i++)
                 {
                     var snd = onSounds[i];
-                    if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                    if (!usedSlotTable.ContainsKey(snd.ParentModule.UnitNumber))
                         continue;
 
                     if (snd.Slot == slot)

@@ -231,13 +231,13 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
             }
         }
 
-        public void ProcessSoundControl(ControlChangeEvent midiEvent)
+        public void ProcessSoundControl(int channel, int controlNumber, int msbValue, int lsbValue)
         {
             foreach (var vp in this)
             {
-                foreach (var pn in vp.VECCSS[midiEvent.Channel].GetProperties(vp, midiEvent.ControlNumber - 90))
+                foreach (var pn in vp.VECCSS[channel].GetProperties(vp, controlNumber - 90))
                 {
-                    float val = (float)midiEvent.ControlValue / (float)128;
+                    float val = (float)msbValue / (float)127;
                     vp.Settings.SetPropertyValue(pn, val);
                 }
             }

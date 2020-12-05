@@ -879,7 +879,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -888,7 +888,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -899,7 +899,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -910,12 +917,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
         }
 
         internal override void AllSoundOff()
         {
-            soundManager.AllSoundOff();
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -1014,10 +1021,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 8);
             }
 
-            internal override void AllSoundOff()
+            internal override void ProcessAllSoundOff()
             {
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-                ControlChange(me);
+                ProcessControlChange(me);
 
                 for (int i = 0; i < 8; i++)
                 {

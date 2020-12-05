@@ -1046,7 +1046,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -1055,12 +1055,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         internal override void AllSoundOff()
         {
-            soundManager.AllSoundOff();
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -1130,10 +1130,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return emptySlot;
             }
 
-            internal override void AllSoundOff()
+            internal override void ProcessAllSoundOff()
             {
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-                ControlChange(me);
+                ProcessControlChange(me);
             }
         }
 

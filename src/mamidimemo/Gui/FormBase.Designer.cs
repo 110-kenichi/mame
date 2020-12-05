@@ -37,7 +37,7 @@
             this.ClientSize = new System.Drawing.Size(585, 503);
             this.Name = "FormBase";
             this.Padding = new System.Windows.Forms.Padding(5, 60, 5, 10);
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.DropShadow;
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.Text = "FormBase";
             this.Theme = MetroFramework.MetroThemeStyle.Default;
             this.ResumeLayout(false);

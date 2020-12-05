@@ -2155,10 +2155,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     switch (lastDateEntryType[midiEvent.Channel])
                     {
                         case DataEntryType.Nrpn:
-                            processNrpn(midiEvent, null);
+                            OnNrpnDataEntered(midiEvent, null);
                             break;
                         case DataEntryType.Rpn:
-                            processRpn(midiEvent, null);
+                            OnRpnDataEntered(midiEvent, null);
                             break;
                     }
                     break;
@@ -2168,10 +2168,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     switch (lastDateEntryType[midiEvent.Channel])
                     {
                         case DataEntryType.Nrpn:
-                            processNrpn(null, midiEvent);
+                            OnNrpnDataEntered(null, midiEvent);
                             break;
                         case DataEntryType.Rpn:
-                            processRpn(null, midiEvent);
+                            OnRpnDataEntered(null, midiEvent);
                             break;
                     }
                     break;
@@ -2212,7 +2212,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 95:
                     {
                         if (VSTPlugins != null)
-                            VSTPlugins.ProcessSoundControl(midiEvent);
+                            VSTPlugins.ProcessSoundControl(midiEvent.Channel, midiEvent.ControlNumber, midiEvent.ControlValue, 0);
                     }
                     break;
 
@@ -2274,9 +2274,13 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private ControlChangeEvent[] lastDataLsb = new ControlChangeEvent[16];
+
+        private ControlChangeEvent[] lastDataMsb = new ControlChangeEvent[16];
+
         abstract internal void AllSoundOff();
 
-        private void processNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        protected virtual void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {
@@ -2285,18 +2289,31 @@ namespace zanac.MAmidiMEmo.Instruments
                     default:
                         break;
                 }
+
+                lastDataMsb[dataMsb.Channel] = dataMsb;
             }
             if (dataLsb != null)
             {
                 switch (NrpnMsb[dataLsb.Channel])
                 {
+                    //Sound Control
+                    case 91:
+                    case 92:
+                    case 93:
+                    case 94:
+                    case 95:
+                        if (VSTPlugins != null)
+                            VSTPlugins.ProcessSoundControl(dataMsb.Channel, dataMsb.ControlNumber, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                        break;
                     default:
                         break;
                 }
+
+                lastDataLsb[dataLsb.Channel] = dataLsb;
             }
         }
 
-        private void processRpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        protected virtual void OnRpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {

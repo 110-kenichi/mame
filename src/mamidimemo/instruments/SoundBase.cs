@@ -302,11 +302,21 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected double CalcCurrentVolume()
         {
+            return CalcCurrentVolume(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected double CalcCurrentVolume(bool ignoreVelocity)
+        {
             double v = 1;
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            v *= NoteOnEvent.Velocity / 127d;
+            if(!ignoreVelocity)
+                v *= NoteOnEvent.Velocity / 127d;
 
             if (AdsrEngine != null)
                 v *= AdsrEngine.OutputLevel;
