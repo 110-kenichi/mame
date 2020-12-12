@@ -440,6 +440,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SCC1Timbre timbre;
 
+            private byte lastWaveTable;
+
             /// <summary>
             /// 
             /// </summary>
@@ -477,6 +479,63 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void SetTimbre()
             {
                 Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), timbre.WsgData);
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override void OnProcessFx()
+            {
+                updateWsgData();
+
+                base.OnProcessFx();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void OnSoundParamsUpdated()
+            {
+                base.OnSoundParamsUpdated();
+
+                updateWsgData();
+
+                OnPitchUpdated();
+
+                OnVolumeUpdated();
+            }
+
+            private void updateWsgData()
+            {
+                if (FxEngine != null && FxEngine.Active)
+                {
+                    var eng = (SccFxEngine)FxEngine;
+                    if (eng.MorphValue != null)
+                    {
+                        var no = (byte)(eng.MorphValue.Value & 3);
+                        if (lastWaveTable != no)
+                        {
+                            lastWaveTable = no;
+                            sbyte[] wsgData;
+                            switch (no)
+                            {
+                                case 1:
+                                    wsgData = timbre.WsgDataMorph1;
+                                    break;
+                                case 2:
+                                    wsgData = timbre.WsgDataMorph2;
+                                    break;
+                                case 3:
+                                    wsgData = timbre.WsgDataMorph3;
+                                    break;
+                                default:
+                                    wsgData = timbre.WsgData;
+                                    break;
+                            }
+                            Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData);
+                        }
+                    }
+                }
             }
 
             /// <summary>
@@ -533,8 +592,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public class SCC1Timbre : TimbreBase
         {
 
-            private sbyte[] f_wavedata = new sbyte[32];
-
             [TypeConverter(typeof(ArrayConverter))]
             [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(8)]
@@ -543,15 +600,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Wave Table (32 samples, 8 bit signed data)")]
             public sbyte[] WsgData
             {
-                get
-                {
-                    return f_wavedata;
-                }
-                set
-                {
-                    f_wavedata = value;
-                }
-            }
+                get;
+                set;
+            } = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(8)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
+            public sbyte[] WsgDataMorph1
+            {
+                get;
+                set;
+            } = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(8)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 2 (32 samples, 8 bit signed data)")]
+            public sbyte[] WsgDataMorph2
+            {
+                get;
+                set;
+            } = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(8)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 3 (32 samples, 8 bit signed data)")]
+            public sbyte[] WsgDataMorph3
+            {
+                get;
+                set;
+            } = new sbyte[32];
 
             public bool ShouldSerializeWsgData()
             {
@@ -565,7 +652,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public void ResetWsgData()
             {
-                f_wavedata = new sbyte[32];
+                WsgData = new sbyte[32];
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -578,33 +665,144 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get
                 {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < WsgData.Length; i++)
-                    {
-                        if (sb.Length != 0)
-                            sb.Append(' ');
-                        sb.Append(WsgData[i].ToString((IFormatProvider)null));
-                    }
-                    return sb.ToString();
+                    return createWsgDataSerializeData(WsgData);
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    var vs = new List<sbyte>();
-                    foreach (var val in vals)
-                    {
-                        sbyte v = 0;
-                        if (sbyte.TryParse(val, out v))
-                            vs.Add(v);
-                    }
-                    for (int i = 0; i < Math.Min(WsgData.Length, vs.Count); i++)
-                        WsgData[i] = vs[i];
+                    applyWsgSerializeData(value, WsgData);
                 }
+            }
+
+            public bool ShouldSerializeWsgDataMorph1()
+            {
+                foreach (var dt in WsgDataMorph1)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetWsgDataMorph1()
+            {
+                WsgDataMorph1 = new sbyte[32];
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataMorph1SerializeData
+            {
+                get
+                {
+                    return createWsgDataSerializeData(WsgDataMorph1);
+                }
+                set
+                {
+                    applyWsgSerializeData(value, WsgDataMorph1);
+                }
+            }
+
+
+            public bool ShouldSerializeWsgDataMorph2()
+            {
+                foreach (var dt in WsgDataMorph2)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetWsgDataMorph2()
+            {
+                WsgDataMorph2 = new sbyte[32];
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 2 (32 samples, 8 bit signed data)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataMorph2SerializeData
+            {
+                get
+                {
+                    return createWsgDataSerializeData(WsgDataMorph2);
+                }
+                set
+                {
+                    applyWsgSerializeData(value, WsgDataMorph2);
+                }
+            }
+
+            public bool ShouldSerializeWsgDataMorph3()
+            {
+                foreach (var dt in WsgDataMorph3)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetWsgDataMorph3()
+            {
+                WsgDataMorph3 = new sbyte[32];
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 3 (32 samples, 8 bit signed data)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataMorph3SerializeData
+            {
+                get
+                {
+                    return createWsgDataSerializeData(WsgDataMorph3);
+                }
+                set
+                {
+                    applyWsgSerializeData(value, WsgDataMorph3);
+                }
+            }
+
+
+            private static void applyWsgSerializeData(string value, sbyte[] data)
+            {
+                string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var vs = new List<sbyte>();
+                foreach (var val in vals)
+                {
+                    sbyte v = 0;
+                    if (sbyte.TryParse(val, out v))
+                        vs.Add(v);
+                }
+                for (int i = 0; i < Math.Min(data.Length, vs.Count); i++)
+                    data[i] = vs[i];
+            }
+
+            private static string createWsgDataSerializeData(sbyte[] data)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(' ');
+                    sb.Append(data[i].ToString((IFormatProvider)null));
+                }
+                return sb.ToString();
             }
 
             public SCC1Timbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
+                this.SDS.FxS = new SccFxSettings();
 
 
             }
@@ -629,5 +827,184 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<SccFxSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class SccFxSettings : BasicFxSettings
+        {
+
+            private string f_MorphEnvelopes;
+
+            [DataMember]
+            [Description("Set wave table number by text. Input wave table number and split it with space like the Famitracker.\r\n" +
+                       "0-3(0 is normal table) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 3)]
+            public string MorphEnvelopes
+            {
+                get
+                {
+                    return f_MorphEnvelopes;
+                }
+                set
+                {
+                    if (f_MorphEnvelopes != value)
+                    {
+                        MorphEnvelopesRepeatPoint = -1;
+                        MorphEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            MorphEnvelopesNums = new int[] { };
+                            f_MorphEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_MorphEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                MorphEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                MorphEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 3)
+                                        v = 3;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        MorphEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (MorphEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (MorphEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_MorphEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeDutyEnvelopes()
+            {
+                return !string.IsNullOrEmpty(MorphEnvelopes);
+            }
+
+            public void ResetDutyEnvelopes()
+            {
+                MorphEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] MorphEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesReleasePoint { get; set; } = -1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override AbstractFxEngine CreateEngine()
+            {
+                return new SccFxEngine(this);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class SccFxEngine : BasicFxEngine
+        {
+            private SccFxSettings settings;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public SccFxEngine(SccFxSettings settings) : base(settings)
+            {
+                this.settings = settings;
+            }
+
+            private uint f_morphCounter;
+
+            public byte? MorphValue
+            {
+                get;
+                private set;
+            }
+
+            protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
+            {
+                bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
+
+                MorphValue = null;
+                if (settings.MorphEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.MorphEnvelopesNums.Length;
+                        if (settings.MorphEnvelopesReleasePoint >= 0)
+                            vm = settings.MorphEnvelopesReleasePoint;
+                        if (f_morphCounter >= vm)
+                        {
+                            if (settings.MorphEnvelopesRepeatPoint >= 0)
+                                f_morphCounter = (uint)settings.MorphEnvelopesRepeatPoint;
+                            else
+                                f_morphCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.MorphEnvelopesReleasePoint < 0)
+                            f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
+
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
+                    }
+                    if (f_morphCounter < settings.MorphEnvelopesNums.Length)
+                    {
+                        int vol = settings.MorphEnvelopesNums[f_morphCounter++];
+
+                        MorphValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                return process;
+            }
+        }
     }
 }

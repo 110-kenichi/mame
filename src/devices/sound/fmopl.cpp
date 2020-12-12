@@ -253,7 +253,7 @@ struct OPL_SLOT
 			state = EG_ATT;
 
 			//HACK: mamidimemo Force Damp
-			volume = MAX_ATT_INDEX;
+			//volume = MAX_ATT_INDEX;
 		}
 		key |= key_set;
 	}

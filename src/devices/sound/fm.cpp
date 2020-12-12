@@ -887,7 +887,7 @@ static inline void FM_KEYON(uint8_t type, FM_CH *CH , int s )
 		SLOT->state = EG_ATT;
 
 		//HACK: mamidimemo Force Damp
-		SLOT->volume = MAX_ATT_INDEX;
+		//SLOT->volume = MAX_ATT_INDEX;
 	}
 }
 

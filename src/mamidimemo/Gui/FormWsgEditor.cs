@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -69,6 +70,19 @@ namespace zanac.MAmidiMEmo.Gui
         public FormWsgEditor()
         {
             InitializeComponent();
+
+            Size = Settings.Default.WsgEdSize;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.WsgEdSize = Size;
         }
 
         /// <summary>

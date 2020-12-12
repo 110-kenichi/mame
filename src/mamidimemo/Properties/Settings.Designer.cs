@@ -466,5 +466,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmHook"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size WsgEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["WsgEdSize"]));
+            }
+            set {
+                this["WsgEdSize"] = value;
+            }
+        }
     }
 }

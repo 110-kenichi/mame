@@ -397,10 +397,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (!IsDisposed && ActiveFx && FxEngine != null)
             {
                 if (FxEngine.Process(this, IsKeyOff, IsSoundOff))
-                {
-                    OnPitchUpdated();
-                    OnVolumeUpdated();
-                }
+                    OnProcessFx();
 
                 ActiveFx = FxEngine.Active;
 
@@ -412,13 +409,22 @@ namespace zanac.MAmidiMEmo.Instruments
             return -1;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessFx()
+        {
+            OnPitchUpdated();
+            OnVolumeUpdated();
+        }
+
         private double processAdsr(object state)
         {
             if (!IsDisposed && ActiveADSR && AdsrEngine != null)
             {
                 AdsrEngine.Process();
 
-                OnVolumeUpdated();
+                OnProcessAdsr();
 
                 if (AdsrEngine.AdsrState != AdsrState.SoundOff)
                     return 1;
@@ -427,6 +433,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 TrySoundOff();
             }
             return -1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessAdsr()
+        {
+            OnVolumeUpdated();
         }
 
         private static double[] PortamentSpeedTable ={
@@ -502,6 +516,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 return 1;
             }
             return -1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessModulation()
+        {
+            OnPitchUpdated();
         }
 
         /// <summary>

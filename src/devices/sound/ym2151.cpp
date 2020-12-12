@@ -439,7 +439,7 @@ void ym2151_device::YM2151Operator::key_on(uint32_t key_set, uint32_t eg_cnt)
 		}
 
 		// HACK: mamidimemo Force Damp
-		volume = MAX_ATT_INDEX;
+		//volume = MAX_ATT_INDEX;
 		state = EG_ATT;
 	}
 	key |= key_set;
