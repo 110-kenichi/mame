@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -27,7 +28,6 @@ namespace zanac.MAmidiMEmo.ComponentModel
             DoubleSlideParametersAttribute att = (DoubleSlideParametersAttribute)context.PropertyDescriptor.Attributes[typeof(DoubleSlideParametersAttribute)];
 
             DoubleTrackBar track = new DoubleTrackBar();
-            track.ValueChanged += Track_ValueChanged;
             track.Precision = att.Precision;
             track.Maximum = att.SliderMax;
             track.Minimum = att.SliderMin;
@@ -38,26 +38,43 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 freq = 1;
             track.TickFrequency = (int)freq;
 
-            double result;
-            if (double.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value), out result))
+            if (double.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value), out double result))
                 track.Value = result;
 
             if (att.SliderDynamicSetValue)
                 track.Tag = context;
+
+            track.ValueChanged += Track_ValueChanged;
             service.DropDownControl(track);
 
-            return context.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
+            if (valueChanged)
+                return context.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
+            else
+                return value;
         }
+
+        bool valueChanged;
 
         private void Track_ValueChanged(object sender, EventArgs e)
         {
+            valueChanged = true;
+
             DoubleTrackBar track = (DoubleTrackBar)sender;
             toolTip.SetToolTip(track, track.Value.ToString());
             ITypeDescriptorContext ctx = (ITypeDescriptorContext)track.Tag;
             if (ctx != null)
             {
                 var val = ctx.PropertyDescriptor.Converter.ConvertFromString(track.Value.ToString());
-                ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
+                try
+                {
+                    //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                    ctx.PropertyDescriptor.SetValue(ctx.Instance, val);
+                }
+                finally
+                {
+                    //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                }
             }
         }
 

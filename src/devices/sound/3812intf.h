@@ -3,6 +3,7 @@
 #ifndef MAME_SOUND_3812INTF_H
 #define MAME_SOUND_3812INTF_H
 
+#include "vgmwrite.h"
 
 class ym3812_device : public device_t, public device_sound_interface
 {
@@ -19,6 +20,9 @@ public:
 	u8 read_port_r();
 	void control_port_w(u8 data);
 	void write_port_w(u8 data);
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	// device-level overrides
@@ -54,6 +58,8 @@ private:
 	emu_timer *     m_timer[3];
 	void *          m_chip;
 	devcb_write_line m_irq_handler;
+
+	vgm_writer *m_vgm_writer;
 };
 
 DECLARE_DEVICE_TYPE(YM3812, ym3812_device)

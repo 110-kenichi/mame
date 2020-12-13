@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private bool f_Enable;
 
         [DataMember]
-        [Description("Whether enable Sound Driver Level Arpeggio")]
+        [Description("Whether enable sound driver level Arpeggio.")]
         [DefaultValue(false)]
         public bool Enable
         {
@@ -43,7 +43,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private bool f_Hold;
 
         [DataMember]
-        [Description("Select whether Arpeggio key hold or no")]
+        [Description("Select whether Arpeggio key hold or no.")]
         [DefaultValue(false)]
         public bool Hold
         {
@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 if (f_ArpResolution != value)
                 {
                     f_ArpResolution = value;
-                    ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_HZ / Beat) / (double)ArpResolution;
+                    ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_1KHZ / Beat) / (double)ArpResolution;
                 }
             }
         }
@@ -193,7 +193,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 if (f_GateTime != value)
                 {
                     f_GateTime = value;
-                    ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_HZ / Beat) / (double)ArpResolution;
+                    ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_1KHZ / Beat) / (double)ArpResolution;
                 }
             }
         }
@@ -223,13 +223,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// </summary>
         public ArpSettings()
         {
-            ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_HZ / Beat) / (double)ArpResolution;
+            ArpStep = (60d * HighPrecisionTimer.TIMER_BASIC_1KHZ / Beat) / (double)ArpResolution;
         }
 
         #region Etc
 
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
         public string Memo
         {
             get;

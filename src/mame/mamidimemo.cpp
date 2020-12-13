@@ -1,12 +1,15 @@
 // copyright-holders:K.Ito
 #include "emu.h"
+#include "osdepend.h"
 #include "emumem.h"
 #include "machine.h"
+#include "vgmwrite.h"
 #include "..\frontend\mame\mame.h"
 #include "..\frontend\mame\cheat.h"
 #include "..\devices\sound\fm.h"
 #include "..\devices\sound\ym2151.h"
 #include "..\devices\sound\ym2413.h"
+#include "..\devices\sound\emu2413.h"
 #include "..\devices\sound\2612intf.h"
 #include "..\devices\sound\gb.h"
 #include "..\devices\sound\sn76496.h"
@@ -25,7 +28,11 @@
 #include "..\devices\sound\2610intf.h"
 #include "..\devices\sound\mt32.h"
 #include "..\munt\mt32emu\src\c_interface\c_interface.h"
+#include "..\munt\mt32emu\soxr\src\soxr.h"
 #include "..\devices\sound\cm32p.h"
+#include "..\devices\sound\cm32p.h"
+#include "..\devices\sound\262intf.h"
+#include "..\devices\sound\2608intf.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -35,6 +42,77 @@ extern "C"
 {
 	//memodimemo
 
+	DllExport int sample_rate()
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return 0;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return 0;
+
+		return rm->sample_rate();
+	}
+
+	DllExport void start_recording_to(char* name)
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		rm->sound().start_recording_to(name);
+	}
+
+	DllExport void stop_recording()
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		rm->sound().stop_recording();
+	}
+
+	DllExport void start_vgm_recording_to(unsigned int unitNumber, char* name, char * filePath)
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		std::string num = std::to_string(unitNumber);
+		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+		if (sd == nullptr)
+			return;
+
+		sd->vgm_start(filePath);
+	}
+
+	DllExport void stop_vgm_recording(unsigned int unitNumber, char* name)
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		std::string num = std::to_string(unitNumber);
+		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+		if (sd == nullptr)
+			return;
+
+		sd->vgm_stop();
+	}
 
 	DllExport void device_reset(unsigned int unitNumber, char* name)
 	{
@@ -73,6 +151,23 @@ extern "C"
 		sd->set_enable(enable);
 	}
 
+	DllExport void set_device_passthru(unsigned int unitNumber, char* name, int passthru)
+	{
+		mame_machine_manager *mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine *rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		std::string num = std::to_string(unitNumber);
+		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+		if (sd == nullptr)
+			return;
+
+		sd->set_passthru(passthru);
+	}
 
 	DllExport void set_clock(unsigned int unitNumber, char* name, unsigned int clock)
 	{
@@ -121,13 +216,20 @@ extern "C"
 		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
 			return;
 
-		std::string num = std::to_string(unitNumber);
-		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
-		//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
-		if (sd == nullptr)
-			return;
+		if (unitNumber != UINT32_MAX)
+		{
+			std::string num = std::to_string(unitNumber);
+			device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name) + num).c_str()));
+			//device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->root_device().subdevice((std::string(name) + num).c_str()));
+			if (sd == nullptr)
+				return;
 
-		sd->set_output_gain(channel, gain);
+			sd->set_output_gain(channel, gain);
+		}
+		else
+		{
+			rm->osd().set_mastervolume(-32 * (1.0 - gain));
+		}
 	}
 
 	std::map<std::string, device_sound_interface *> speakerSoundInterface;
@@ -182,6 +284,28 @@ extern "C"
 			speakerSoundInterface[key] = sd;
 		}
 		return speakerSoundInterface[key]->lastOutBufferSamples;
+	}
+
+	DllExport void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback)
+	{
+		std::string key = std::string(name).c_str();
+		auto itr = speakerSoundInterface.find(key);
+		if (itr == speakerSoundInterface.end())
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			device_sound_interface *sd = dynamic_cast<device_sound_interface *>(rm->device((std::string(name)).c_str()));
+			if (sd == nullptr)
+				return;
+
+			speakerSoundInterface[key] = sd;
+		}
+		speakerSoundInterface[key]->set_stream_update_callback(callback);
 	}
 
 	DllExport void set_vst_fx_callback(unsigned int unitNumber, char* name, VST_FX_CALLBACK callback)
@@ -274,7 +398,30 @@ extern "C"
 		ym3812_devices[unitNumber]->write(address, data);
 	}
 
-	ym2413_device *ym2413_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	ymf262_device *ymf262_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ymf262_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ymf262_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymf262_device *ymf262 = dynamic_cast<ymf262_device *>(rm->device((std::string("ymf262_") + num).c_str()));
+			if (ymf262 == nullptr)
+				return;
+
+			ymf262_devices[unitNumber] = ymf262;
+		}
+		ymf262_devices[unitNumber]->write(address, data);
+	}
+
+	emu2413_device *ym2413_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym2413_write(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
@@ -288,7 +435,7 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			ym2413_device *ym2413 = dynamic_cast<ym2413_device *>(rm->device((std::string("ym2413_") + num).c_str()));
+			emu2413_device  *ym2413 = dynamic_cast<emu2413_device  *>(rm->device((std::string("ym2413_") + num).c_str()));
 			//ym2413_device *ym2413 = dynamic_cast<ym2413_device *>(rm->root_device().subdevice((std::string("ym2413_") + num).c_str()));
 			if (ym2413 == nullptr)
 				return;
@@ -506,7 +653,7 @@ extern "C"
 
 	k051649_device *k051649_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
-	DllExport void SCC1_waveform_w(unsigned int unitNumber, unsigned int address, unsigned char data)
+	DllExport void SCC1_waveform_w(unsigned int unitNumber, unsigned int address, char *data, int length)
 	{
 		if (k051649_devices[unitNumber] == NULL)
 		{
@@ -525,7 +672,8 @@ extern "C"
 
 			k051649_devices[unitNumber] = scc1;
 		}
-		k051649_devices[unitNumber]->k052539_waveform_w(address, data);
+		for (int i = 0; i < length; i++)
+			k051649_devices[unitNumber]->k052539_waveform_w(address + i, data[i]);
 	}
 
 	DllExport void SCC1_volume_w(unsigned int unitNumber, unsigned int address, unsigned char data)
@@ -877,6 +1025,28 @@ extern "C"
 	}
 
 
+	DllExport void c6280_set_pcm_callback(unsigned int unitNumber, C6280_PCM_CALLBACK callback)
+	{
+		if (c6280_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			c6280_device *c6280 = dynamic_cast<c6280_device *>(rm->device((std::string("c6280_") + num).c_str()));
+			if (c6280 == nullptr)
+				return;
+
+			c6280_devices[unitNumber] = c6280;
+		}
+
+		c6280_devices[unitNumber]->set_pcm_callback(callback);
+	}
+
 	snes_sound_device *spc700_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void spc_ram_w(unsigned int unitNumber, unsigned int address, unsigned char data)
@@ -942,7 +1112,18 @@ extern "C"
 		spc700_devices[unitNumber]->set_callback(callback);
 	}
 
+	DllExport void spc700_resample(double org_rate, double target_rate, short* org_buffer, size_t org_len, short* target_buffer, size_t target_len)
+	{
+		soxr_datatype_t itype = SOXR_INT16_I;
+		soxr_datatype_t otype = SOXR_INT16_I;
+		soxr_io_spec_t iospec = soxr_io_spec(itype, otype);
+		soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_20_BITQ, 0);
 
+		size_t idone = 0;
+		size_t odone = 0;
+
+		soxr_oneshot(org_rate, target_rate, 1, org_buffer, org_len, &idone, target_buffer, target_len, &odone, &iospec, &qSpec, NULL);
+	}
 
 	pokey_device *pokey_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
@@ -1216,7 +1397,7 @@ extern "C"
 		return cm32p_devices[unitNumber]->add_sf(card_id, sf);
 	}
 
-	DllExport void cm32p_set_tone(unsigned int unitNumber, unsigned char card_id, unsigned char tone_no, unsigned short sf_preset_no)
+	DllExport void cm32p_set_tone(unsigned int unitNumber, unsigned char card_id, unsigned short tone_no, unsigned short sf_preset_no)
 	{
 		if (cm32p_devices[unitNumber] == NULL)
 		{
@@ -1283,6 +1464,142 @@ extern "C"
 
 		cm32p_devices[unitNumber]->initialize_memory();
 	}
+
+
+	DllExport void cm32p_set_chanAssign(unsigned int unitNumber, u8 *assign)
+	{
+		if (cm32p_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			cm32p_device *cm32p = dynamic_cast<cm32p_device   *>(rm->device((std::string("cm32p_") + num).c_str()));
+			if (cm32p == nullptr)
+				return;
+
+			cm32p_devices[unitNumber] = cm32p;
+		}
+
+		cm32p_devices[unitNumber]->set_chanAssign(assign);
+	}
+
+
+	DllExport void cm32p_get_chanAssign(unsigned int unitNumber, u8 *assign)
+	{
+		if (cm32p_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			cm32p_device *cm32p = dynamic_cast<cm32p_device   *>(rm->device((std::string("cm32p_") + num).c_str()));
+			if (cm32p == nullptr)
+				return;
+
+			cm32p_devices[unitNumber] = cm32p;
+		}
+
+		cm32p_devices[unitNumber]->get_chanAssign(assign);
+	}
+
+
+	ym2608_device  *ym2608_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ym2608_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->write(address, data);
+	}
+
+
+	DllExport unsigned char ym2608_read(unsigned int unitNumber, unsigned int address)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return 0;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return 0;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return 0;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		return ym2608_devices[unitNumber]->read(address);
+	}
+
+	DllExport void ym2608_set_adpcma_callback(unsigned int unitNumber, OPNA_ADPCM_CALLBACK callback)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->set_adpcma_callback(callback);
+	}
+
+	DllExport void ym2608_set_adpcmb_callback(unsigned int unitNumber, OPNA_ADPCM_CALLBACK callback)
+	{
+		if (ym2608_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager *mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine *rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ym2608_device *ym2608 = dynamic_cast<ym2608_device  *>(rm->device((std::string("ym2608_") + num).c_str()));
+			if (ym2608 == nullptr)
+				return;
+
+			ym2608_devices[unitNumber] = ym2608;
+		}
+		ym2608_devices[unitNumber]->set_adpcmb_callback(callback);
+	}
+
+
 }
 
 

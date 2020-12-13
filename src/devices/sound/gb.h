@@ -4,6 +4,7 @@
 #ifndef MAME_SOUND_GB_H
 #define MAME_SOUND_GB_H
 
+#include "vgmwrite.h"
 
 class gameboy_sound_device : public device_t,
 							public device_sound_interface
@@ -15,6 +16,9 @@ public:
 	virtual u8 wave_r(offs_t offset) = 0;
 	virtual void sound_w(offs_t offset, u8 data) = 0;
 	virtual void wave_w(offs_t offset, u8 data) = 0;
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	gameboy_sound_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock);
@@ -158,6 +162,8 @@ protected:
 	virtual void corrupt_wave_ram() { };
 	uint64_t noise_period_cycles();
 	TIMER_CALLBACK_MEMBER(timer_callback);
+
+	vgm_writer *m_vgm_writer;
 };
 
 

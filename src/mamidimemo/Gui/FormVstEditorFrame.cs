@@ -4,13 +4,14 @@ using System.Windows.Forms;
 
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
+using MetroFramework.Forms;
 
 namespace zanac.MAmidiMEmo.Gui
 {
     /// <summary>
     /// The frame in which a custom plugin editor UI is displayed.
     /// </summary>
-    public partial class FormVstEditorFrame : Form
+    public partial class FormVstEditorFrame : FormBase
     {
         /// <summary>
         /// Default ctor.

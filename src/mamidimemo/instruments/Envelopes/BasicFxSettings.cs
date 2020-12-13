@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
 
 namespace zanac.MAmidiMEmo.Instruments.Envelopes
 {
@@ -25,7 +26,9 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
         [DataMember]
         [Description("Set volume envelop by text. Input volume value and split it with space like the Famitracker.\r\n" +
-                    "0(0%)-128(100%) \"|\" is repeat point. \"/\" is release point.")]
+                    "0(0%)-127(100%) \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(0,127)]
         public string VolumeEnvelopes
         {
             get
@@ -45,7 +48,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_VolumeEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {
@@ -111,12 +114,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [IgnoreDataMember]
         [DefaultValue(-1)]
         public int VolumeEnvelopesReleasePoint { get; set; } = -1;
-
+        
         private string f_PitchEnvelopes;
 
         [DataMember]
         [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the Famitracker.\r\n" +
                    "-8193 ～ 0 ～ 8192 \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(-8193, 8192)]
         public string PitchEnvelopes
         {
             get
@@ -136,7 +141,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_PitchEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {
@@ -203,6 +208,27 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DefaultValue(-1)]
         public int PitchEnvelopesReleasePoint { get; set; } = -1;
 
+        private PitchStepType f_PitchStepType;
+
+
+        [DataMember]
+        [Description("Set pitch step type.")]
+        [DefaultValue(PitchStepType.Relative)]
+        public PitchStepType PitchStepType
+        {
+            get
+            {
+                return f_PitchStepType;
+            }
+            set
+            {
+                if (f_PitchStepType != value)
+                {
+                    f_PitchStepType = value;
+                }
+            }
+        }
+
         private int f_PitchEnvelopeRange = 2;
 
         [DataMember]
@@ -220,12 +246,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     f_PitchEnvelopeRange = value;
             }
         }
-
+        
         private string f_ArpEnvelopes;
 
         [DataMember]
         [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the Famitracker.\r\n" +
                    "-128 ～ 0 ～ 127 \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(-128, 127)]
         public string ArpEnvelopes
         {
             get
@@ -245,7 +273,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                         return;
                     }
                     f_ArpEnvelopes = value;
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<int> vs = new List<int>();
                     for (int i = 0; i < vals.Length; i++)
                     {
@@ -344,6 +372,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
     }
 
+    public enum PitchStepType
+    {
+        Relative,
+        Absolute,
+    }
 
     public enum ArpStepType
     {
@@ -351,4 +384,6 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         Relative,
         Fixed,
     }
+
+
 }

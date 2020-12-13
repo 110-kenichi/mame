@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include "vgmwrite.h"
 
 /* --- select emulation chips --- */
 #define BUILD_YM3812 (1)
@@ -37,7 +38,7 @@ typedef unsigned char (*OPL_PORTHANDLER_R)(device_t *device);
 
 #if BUILD_YM3812
 
-void *ym3812_init(device_t *device, uint32_t clock, uint32_t rate);
+void *ym3812_init(device_t *device, uint32_t clock, uint32_t rate, vgm_writer *vgm);
 void ym3812_clock_changed(void *chip, uint32_t clock, uint32_t rate);
 void ym3812_shutdown(void *chip);
 void ym3812_reset_chip(void *chip);

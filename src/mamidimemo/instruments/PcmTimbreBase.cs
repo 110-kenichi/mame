@@ -19,7 +19,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        [DataMember]
+        [IgnoreDataMember]
+        [Description("Key name of this timbre.")]
         public String KeyName
         {
             get;
@@ -30,6 +31,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
+        [Description("Note number of this timbre.")]
         public int NoteNumber
         {
             get;
@@ -40,6 +42,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
+        [Description("Set name of this timbre.")]
         public String TimbreName
         {
             get;
@@ -57,6 +60,26 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        private int f_PanShift;
+
+        [DataMember]
+        [Description("Base pan pot offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int PanShift
+        {
+            get => f_PanShift;
+            set
+            {
+                f_PanShift = value;
+                if (f_PanShift < -127)
+                    f_PanShift = -127;
+                else if (f_PanShift > 127)
+                    f_PanShift = 127;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -64,8 +87,8 @@ namespace zanac.MAmidiMEmo.Instruments
         public PcmTimbreBase(int noteNumber)
         {
             NoteNumber = noteNumber;
-            var no = new NoteOnEvent((SevenBitNumber)NoteNumber, (SevenBitNumber)0);
-            KeyName = no.GetNoteName() + no.GetNoteOctave().ToString();
+
+            KeyName = Midi.MidiManager.GetNoteName((SevenBitNumber)noteNumber);
         }
     }
 }

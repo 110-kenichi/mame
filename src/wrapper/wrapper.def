@@ -1,7 +1,15 @@
 LIBRARY   WRAPPER
 EXPORTS
+	InitializeDotNet
    	HasExited
 	SoundUpdating
 	SoundUpdated
 	RestartApplication
+	CloseApplication
+	IsVSTiMode
+	SetVSTiMode
+	SendMidiEvent
+	LoadData
+	SaveData
+	SoundTimerCallback
 	MainWarpper			@4

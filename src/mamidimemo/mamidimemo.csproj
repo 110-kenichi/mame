@@ -7,7 +7,7 @@
     <ProjectGuid>{60192987-27BB-4ADC-AC5A-03EA2846A569}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>zanac.MAmidiMEmo</RootNamespace>
-    <AssemblyName>MAmidiMEmo</AssemblyName>
+    <AssemblyName>MAmidiMEmoUI</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -23,7 +23,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -46,7 +46,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
@@ -59,6 +59,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\Output\Release\</OutputPath>
@@ -68,6 +69,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release%28but Debug .NET%29|x86'">
     <OutputPath>..\..\Output\Release\</OutputPath>
@@ -78,6 +80,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -87,6 +90,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\..\Output\Release64\</OutputPath>
@@ -96,6 +100,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release%28but Debug .NET%29|x64'">
     <OutputPath>..\..\Output\Release64\</OutputPath>
@@ -106,14 +111,27 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Melanchall.DryWetMidi, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.0.0\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -124,8 +142,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -162,14 +185,288 @@
     <!-- any additional x64 specific references -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\CacheMemory.cs" />
+    <Compile Include="ComponentModel\EmptyTypeConverter.cs" />
+    <Compile Include="ComponentModel\EnumTypeEditor.cs" />
+    <Compile Include="ComponentModel\EnumConverter.cs" />
+    <Compile Include="ComponentModel\ExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
+    <Compile Include="ComponentModel\JsonHelper.cs" />
+    <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
+    <Compile Include="Gui\ClickThroughToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormDownloadTone.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormDownloadTone.Designer.cs">
+      <DependentUpon>FormDownloadTone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormToneSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormToneSelector.Designer.cs">
+      <DependentUpon>FormToneSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2413Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2413Editor.Designer.cs">
+      <DependentUpon>FormYM2413Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2608Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2608Editor.Designer.cs">
+      <DependentUpon>FormYM2608Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYMF262Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYMF262Editor.Designer.cs">
+      <DependentUpon>FormYMF262Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3812Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3812Editor.Designer.cs">
+      <DependentUpon>FormYM3812Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2610BEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2610BEditor.Designer.cs">
+      <DependentUpon>FormYM2610BEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2612Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2612Editor.Designer.cs">
+      <DependentUpon>FormYM2612Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2151Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2151Editor.Designer.cs">
+      <DependentUpon>FormYM2151Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterSpace.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterSpace.Designer.cs">
+      <DependentUpon>RegisterSpace.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg2OpImg.Designer.cs">
+      <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOscViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOscViewer.Designer.cs">
+      <DependentUpon>RegisterOscViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterContainerBase.Designer.cs">
+      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOplWaveForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOplWaveForm.Designer.cs">
+      <DependentUpon>RegisterOplWaveForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterEnvForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterEnvForm.Designer.cs">
+      <DependentUpon>RegisterEnvForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterBase.Designer.cs">
+      <DependentUpon>RegisterBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg4OpImg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterAlg4OpImg.Designer.cs">
+      <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2608GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2608GeneralContainer.Designer.cs">
+      <DependentUpon>YM2608GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BGeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BGeneralContainer.Designer.cs">
+      <DependentUpon>YM2610BGeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2608OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2608OperatorContainer.Designer.cs">
+      <DependentUpon>YM2608OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BOperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BOperatorContainer.Designer.cs">
+      <DependentUpon>YM2610BOperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413GeneralContainer.Designer.cs">
+      <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2608UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YMF262OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262OperatorContainer.Designer.cs">
+      <DependentUpon>YMF262OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YMF262GeneralContainer.Designer.cs">
+      <DependentUpon>YMF262GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812GeneralContainer.Designer.cs">
+      <DependentUpon>YM3812GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2413OperatorContainer.Designer.cs">
+      <DependentUpon>YM2413OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3812OperatorContainer.Designer.cs">
+      <DependentUpon>YM3812OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612OperatorContainer.Designer.cs">
+      <DependentUpon>YM2612OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2612GeneralContainer.Designer.cs">
+      <DependentUpon>YM2612GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151GeneralContainer.Designer.cs">
+      <DependentUpon>YM2151GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2151OperatorContainer.Designer.cs">
+      <DependentUpon>YM2151OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterFlag.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterFlag.Designer.cs">
+      <DependentUpon>RegisterFlag.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterValue.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterValue.Designer.cs">
+      <DependentUpon>RegisterValue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterContainerBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2610BUITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2413UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YMF262UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2612UITypeEditor.cs" />
+    <Compile Include="Gui\FormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormBase.Designer.cs">
+      <DependentUpon>FormBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormDrumTableEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormDrumTableEditor.Designer.cs">
+      <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormFmEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormFmEditor.Designer.cs">
+      <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormProgress.Designer.cs">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormSplash.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\FormSplash.Designer.cs">
       <DependentUpon>FormSplash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DrumTableUITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2151UITypeEditor.cs" />
+    <Compile Include="Gui\FormEnvelopeEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormEnvelopeEditor.Designer.cs">
+      <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\OscUtility.cs" />
+    <Compile Include="Gui\EnvelopeUITypeEditor.cs" />
+    <Compile Include="Gui\EnvelopeEditorAttribute.cs" />
+    <Compile Include="Gui\OpnAdpcmFileLoaderUITypeEditor.cs" />
+    <Compile Include="Gui\TextEditorControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\TextEditorControl.Designer.cs">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormTextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormTextEditor.Designer.cs">
+      <DependentUpon>FormTextEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DropDownTextUITypeEditor.cs" />
+    <Compile Include="Gui\FormTextUITypeEditor.cs" />
+    <Compile Include="Gui\TrackBarWheel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\VerticalLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\WrapLabel.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\WsgBitWideAttribute.cs" />
     <Compile Include="ComponentModel\InstancePropertyInfo.cs" />
@@ -233,8 +530,10 @@
     <Compile Include="Instruments\Chips\SN76496.cs" />
     <Compile Include="Instruments\Chips\YM2151.cs" />
     <Compile Include="Instruments\Chips\YM2413.cs" />
+    <Compile Include="Instruments\Chips\YM2608.cs" />
     <Compile Include="Instruments\Chips\YM2610B.cs" />
     <Compile Include="Instruments\Chips\YM2612.cs" />
+    <Compile Include="Instruments\Chips\YMF262.cs" />
     <Compile Include="Instruments\Chips\YM3812.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxEngine.cs" />
     <Compile Include="Instruments\Envelopes\AbstractFxSettingsBase.cs" />
@@ -246,6 +545,15 @@
     <Compile Include="Instruments\Envelopes\BasicFxSettings.cs" />
     <Compile Include="Instruments\GeneralPurposeControlSettings.cs" />
     <Compile Include="Instruments\HighPrecisionTimer.cs" />
+    <Compile Include="Instruments\FollowerIndex.cs" />
+    <Compile Include="Instruments\ChannelType.cs" />
+    <Compile Include="Instruments\DrumTimbre.cs" />
+    <Compile Include="Instruments\ProgramAssignmentTimbreNumber.cs" />
+    <Compile Include="Instruments\ProgramAssignmentNumber.cs" />
+    <Compile Include="Instruments\ProgramAssignmentType.cs" />
+    <Compile Include="Instruments\CombinedTimbre.cs" />
+    <Compile Include="Instruments\SimpleSerializer.cs" />
+    <Compile Include="Instruments\SoundEngineType.cs" />
     <Compile Include="Instruments\VstEffectControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundControlChangeSettings.cs" />
     <Compile Include="Instruments\SoundList.cs" />
@@ -285,7 +593,7 @@
       <DependentUpon>FormSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\PcmTableEditorAttribute.cs" />
-    <Compile Include="Gui\WsgITypeEditor.cs" />
+    <Compile Include="Gui\WsgUITypeEditor.cs" />
     <Compile Include="Gui\PcmTableUITypeEditor.cs" />
     <Compile Include="Gui\FormWsgEditor.cs">
       <SubType>Form</SubType>
@@ -309,14 +617,155 @@
     <Compile Include="Instruments\Vst\VstPluginContextWrapper.cs" />
     <Compile Include="Instruments\Vst\VstSettings.cs" />
     <Compile Include="Mame\MameIf.cs" />
+    <Compile Include="Midi\InternalMidiPlayerDevice.cs" />
     <Compile Include="Midi\MidiManager.cs" />
+    <Compile Include="Midi\MidiPort.cs" />
+    <Compile Include="Midi\NoteNames.cs" />
+    <Compile Include="Midi\NoteOnTimbreInfo.cs" />
+    <Compile Include="Midi\TaggedNoteOnEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scci\ScciManager.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Types.cs" />
+    <Compile Include="SoundFont2\SoundFont2\SF2Utils.cs" />
+    <Compile Include="Util\CpuUsage.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Dat.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Directory.cs" />
+    <Compile Include="Util\FM-SoundConvertor\File.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Fmp.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Main.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Muc.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Option.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Path.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Pmd.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Tone.cs" />
+    <Compile Include="Util\FM-SoundConvertor\VOPM.cs" />
+    <Compile Include="Util\MathParser.cs" />
+    <Compile Include="Util\Utility.cs" />
+    <EmbeddedResource Include="Gui\FMEditor\FormDownloadTone.resx">
+      <DependentUpon>FormDownloadTone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormToneSelector.resx">
+      <DependentUpon>FormToneSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">
+      <DependentUpon>FormYM2413Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2608Editor.resx">
+      <DependentUpon>FormYM2608Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYMF262Editor.resx">
+      <DependentUpon>FormYMF262Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM3812Editor.resx">
+      <DependentUpon>FormYM3812Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2610BEditor.resx">
+      <DependentUpon>FormYM2610BEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2612Editor.resx">
+      <DependentUpon>FormYM2612Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
+      <DependentUpon>FormYM2151Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterSpace.resx">
+      <DependentUpon>RegisterSpace.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterAlg2OpImg.resx">
+      <DependentUpon>RegisterAlg2OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOscViewer.resx">
+      <DependentUpon>RegisterOscViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOplWaveForm.resx">
+      <DependentUpon>RegisterOplWaveForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterEnvForm.resx">
+      <DependentUpon>RegisterEnvForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterBase.resx">
+      <DependentUpon>RegisterBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterAlg4OpImg.resx">
+      <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2608GeneralContainer.resx">
+      <DependentUpon>YM2608GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2610BGeneralContainer.resx">
+      <DependentUpon>YM2610BGeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2608OperatorContainer.resx">
+      <DependentUpon>YM2608OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2610BOperatorContainer.resx">
+      <DependentUpon>YM2610BOperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2413GeneralContainer.resx">
+      <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YMF262OperatorContainer.resx">
+      <DependentUpon>YMF262OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YMF262GeneralContainer.resx">
+      <DependentUpon>YMF262GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3812GeneralContainer.resx">
+      <DependentUpon>YM3812GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2413OperatorContainer.resx">
+      <DependentUpon>YM2413OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3812OperatorContainer.resx">
+      <DependentUpon>YM3812OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2612OperatorContainer.resx">
+      <DependentUpon>YM2612OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2612GeneralContainer.resx">
+      <DependentUpon>YM2612GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2151GeneralContainer.resx">
+      <DependentUpon>YM2151GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2151OperatorContainer.resx">
+      <DependentUpon>YM2151OperatorContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterFlag.resx">
+      <DependentUpon>RegisterFlag.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterValue.resx">
+      <DependentUpon>RegisterValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
+      <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormBase.resx">
+      <DependentUpon>FormBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormDrumTableEditor.resx">
+      <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.resx">
+      <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormProgress.resx">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormProp.resx">
       <DependentUpon>FormProp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormEnvelopeEditor.resx">
+      <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\TextEditorControl.resx">
+      <DependentUpon>TextEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormVstEditorFrame.resx">
       <DependentUpon>FormVstEditorFrame.cs</DependentUpon>
@@ -326,12 +775,16 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormPcmTableEditor.resx">
       <DependentUpon>FormPcmTableEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormTextEditor.resx">
+      <DependentUpon>FormTextEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormWsgEditor.resx">
       <DependentUpon>FormWsgEditor.cs</DependentUpon>
@@ -353,6 +806,7 @@
       <Link>README.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Data\cm32p_card05_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -372,10 +826,71 @@
     <None Include="Data\cm32p_card10_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\cm32p_card16_tone.tbl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\cm32p_internal_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\GeneralUser GS v1.471.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\msgs.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DelZoneID.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\DataSources\zanac.MAmidiMEmo.Gui.Data.datasource" />
+    <None Include="Resources\ArcadeClassic.ttf" />
+    <None Include="Resources\DSEG14Classic-Regular.ttf" />
+    <None Include="Resources\DSEG14ClassicMini-BoldItalic.ttf" />
+    <None Include="Resources\DSEG7ClassicMini-BoldItalic.ttf" />
+    <None Include="Resources\PixelMplus12-Regular.ttf" />
+    <None Include="Resources\VideoPhreak.ttf" />
+    <None Include="Samples\2608_rhythm\bd.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\hh.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\rim.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\sd.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\tom.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\2608_rhythm\top.pcma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\HuC6280_GM x8.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\HuC6280_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\msgs_min_drum_11025.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\msgs_min_drum_22050.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\msgs_min_inst_11025.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\msgs_min_inst_22050.sf2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\NAMCO_CUS30_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\NES GM x8.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\NES GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\Panic.pdn" />
@@ -399,9 +914,36 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Samples\YM2151_GM%28from OPNA%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2413_GM%28Custom Only%29 x8.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2413_GM%28Custom Only%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2413_GM%28Preset Only%29 x6 Drum x3.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2413_GM%28Preset Only%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2608_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2612_GM%28from OPNA%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM3812_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YMF262_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="scci.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\NAMCO_CUS30.png" />
@@ -440,6 +982,49 @@
     <None Include="..\..\build\generated\version.cpp">
       <Link>version.cpp</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Rec.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ALG1.PNG" />
+    <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\YM2608.png" />
+    <None Include="scci.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="scciconfig.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Pause.png" />
+    <None Include="Resources\Open.png" />
+    <None Include="Resources\Stop.png" />
+    <None Include="Resources\Play.png" />
+    <None Include="Resources\ALG11.png" />
+    <None Include="Resources\ALG12.png" />
+    <Content Include="Resources\ALG2.PNG" />
+    <Content Include="Resources\ALG3.PNG" />
+    <Content Include="Resources\ALG4.PNG" />
+    <Content Include="Resources\ALG5.PNG" />
+    <Content Include="Resources\ALG6.PNG" />
+    <Content Include="Resources\ALG7.PNG" />
+    <Content Include="Resources\ALG8.PNG" />
+    <Content Include="Resources\ALG9.PNG" />
+    <None Include="Resources\WS6.png" />
+    <None Include="Resources\WS5.png" />
+    <None Include="Resources\WS4.png" />
+    <None Include="Resources\WS7.png" />
+    <None Include="Resources\YMF262.png" />
+    <None Include="Resources\WS1.png" />
+    <None Include="Resources\WS0.png" />
+    <None Include="Resources\WS3.png" />
+    <None Include="Resources\WS2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\scci\scci.vcxproj">
+      <Project>{dce05c04-33c4-4929-9076-d75d78725613}</Project>
+      <Name>scci</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

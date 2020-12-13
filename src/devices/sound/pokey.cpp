@@ -314,7 +314,21 @@ void pokey_device::device_start()
 
 	// set our instruction counter
 	set_icountptr(m_icount);
+
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void pokey_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_POKEY, clock());
+};
+
+void pokey_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 //-------------------------------------------------
 //  device_reset - device-specific reset
@@ -418,23 +432,27 @@ void pokey_device::device_timer(emu_timer &timer, device_timer_id id, int param,
 	default:
 		throw emu_fatalerror("Unknown id in pokey_device::device_timer");
 	}
+
 	SoundUpdated();
 }
 
 void pokey_device::execute_run()
 {
-	int en = m_enable;
-	if (en != 0)
-		SoundUpdating();
-	do
+	if (m_enable != 0)
 	{
-		if (en != 0)
+		SoundUpdating();
+		do
+		{
 			step_one_clock();
-		m_icount--;
+			m_icount--;
 
-	} while (m_icount > 0);
-	if (en != 0)
+		} while (m_icount > 0);
 		SoundUpdated();
+	}
+	else
+	{
+		m_icount = 0;
+	}
 }
 
 

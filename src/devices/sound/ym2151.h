@@ -35,6 +35,7 @@
 
 #pragma once
 
+#include "vgmwrite.h"
 
 //**************************************************************************
 //  TYPE DEFINITIONS
@@ -63,6 +64,9 @@ public:
 	void data_w(u8 data);
 
 	DECLARE_WRITE_LINE_MEMBER(reset_w);
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	// device-level overrides
@@ -267,6 +271,8 @@ private:
 	int op_calc(YM2151Operator * OP, unsigned int env, signed int pm);
 	int op_calc1(YM2151Operator * OP, unsigned int env, signed int pm);
 	void refresh_EG(YM2151Operator * op);
+
+	vgm_writer *m_vgm_writer;
 };
 
 // ======================> ym2164_device

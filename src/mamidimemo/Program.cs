@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using Accessibility;
+using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -10,6 +11,7 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -32,24 +34,18 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "1.2.1.0";
+        public const string FILE_VERSION = "2.6.4.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2020 Itoken.All rights reserved.";
 
         public static ISerializationBinder SerializationBinder = new KnownTypesBinder();
 
-        public static readonly JsonSerializerSettings JsonAutoSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, SerializationBinder = SerializationBinder };
+        public static readonly JsonSerializerSettings JsonAutoSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = SerializationBinder };
 
         private static Thread mainThread;
 
         internal static string RestartRequiredApplication;
-
-        public static void RestartApplication()
-        {
-            if (RestartRequiredApplication != null)
-                Process.Start(RestartRequiredApplication);
-        }
 
         public static event EventHandler ShuttingDown;
 
@@ -57,15 +53,15 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         /// <summary>
         /// ダミー(遅延Assemblyロード回避)
         /// </summary>
-        private static MultilineStringEditor dummyEditor = new MultilineStringEditor();
+        private static readonly MultilineStringEditor dummyEditor = new MultilineStringEditor();
 
         /// <summary>
         /// ダミー(遅延Assemblyロード回避)
         /// </summary>
-        private static AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
+        private static readonly AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
 #pragma warning restore  CS0414
 
-        private static Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        private static readonly Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         private static Dictionary<string, Type> assemblieTypes;
 
@@ -76,9 +72,10 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                 if (assemblieTypes == null)
                 {
                     assemblieTypes = new Dictionary<string, Type>();
-                    var ts = AppDomain.CurrentDomain.GetAssemblies()
-                                .Where(a => a.FullName.StartsWith("MAmidiMEmo,"))
-                                .SelectMany(a => a.GetTypes()).ToArray();
+                    Type[] ts = Assembly.GetExecutingAssembly().GetTypes();
+                    //ts = AppDomain.CurrentDomain.GetAssemblies()
+                    //            .Where(a => a.FullName.StartsWith("MAmidiMEmoUI,"))
+                    //            .SelectMany(a => a.GetTypes()).ToArray();
                     foreach (var t in ts)
                     {
                         var attr = t.GetCustomAttributes(typeof(DataContractAttribute), true).FirstOrDefault() as DataContractAttribute;
@@ -119,14 +116,29 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public static string MAmiDir
+        {
+            get
+            {
+                return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+        }
+
+        /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
         /// <param name="parentModule">親モジュール</param>
         public static void Main(IntPtr parentModule)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             System.Resources.ResourceManager rm =
                 new System.Resources.ResourceManager("System", typeof(UriFormat).Assembly);
             string dummy = rm.GetString("Arg_EmptyOrNullString");
+
+            ThreadPool.SetMaxThreads(250, 1000);
 
             MameIF.Initialize(parentModule);
             var threadStart = new ManualResetEvent(false);
@@ -134,6 +146,9 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
             {
                 threadStart.Set();
                 Settings.Default.Reload();
+
+                if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
+                    Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
                 f_CurrentSamplingRate = 48000;
                 int.TryParse(Settings.Default.SampleRate, out f_CurrentSamplingRate);
@@ -151,37 +166,40 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                         fs.Refresh();
                     }
 
-                    if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
-                    {
-                        try
-                        {
-                            var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
-                            var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
-                            InstrumentManager.RestoreSettings(settings);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.GetType() == typeof(Exception))
-                                throw;
-                            else if (ex.GetType() == typeof(SystemException))
-                                throw;
-
-                            MessageBox.Show(ex.ToString());
-                        }
-                    }
-
                     try
                     {
                         var fm = new FormMain();
                         fm.Shown += (_, __) =>
                         {
                             fm.BeginInvoke(new MethodInvoker(() => { fs.Close(); }));
+
+                            if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
+                            {
+                                try
+                                {
+                                    var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
+                                    InstrumentManager.ClearAllInstruments();
+                                    var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
+                                    InstrumentManager.RestoreSettings(settings);
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+
+                                    MessageBox.Show(ex.ToString());
+                                }
+                            }
                         };
                         Application.Run(fm);
 
                         var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
                         Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
                         Settings.Default.Save();
+
+                        Scci.ScciManager.TryReleaseScci();
                     }
                     catch (Exception ex)
                     {
@@ -213,6 +231,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
             var es = new EnvironmentSettings();
             try
             {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
                 InstrumentManager.SaveSettings(es);
             }
             catch (Exception ex)
@@ -224,7 +244,97 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
 
                 MessageBox.Show(ex.ToString());
             }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
             return es;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void RestartApplication()
+        {
+            if (RestartRequiredApplication != null)
+                Process.Start(RestartRequiredApplication);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void CloseApplication()
+        {
+            Application.Exit();
+
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
+                Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
+                Settings.Default.Save();
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+        }
+
+        private static IntPtr saveDataPtr;
+
+        unsafe public static int SaveData(void** saveBuf)
+        {
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                var es = Program.SaveEnvironmentSettings();
+                string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
+                byte[] buf = Encoding.Unicode.GetBytes(StringCompressionUtility.Compress(data));
+
+                if (saveDataPtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(saveDataPtr);
+                saveDataPtr = Marshal.AllocHGlobal(buf.Length);
+                Marshal.Copy(buf, 0, saveDataPtr, buf.Length);
+
+                *saveBuf = saveDataPtr.ToPointer();
+                return buf.Length;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+            return 0;
+        }
+
+        unsafe public static void LoadData(byte* data, int length)
+        {
+            try
+            {
+                string text = StringCompressionUtility.Decompress(Encoding.Unicode.GetString(data, length));
+                InstrumentManager.ClearAllInstruments();
+                var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(text, Program.JsonAutoSettings);
+                InstrumentManager.RestoreSettings(settings);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         /// <summary>
@@ -255,6 +365,25 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         public static void SoundUpdated()
         {
             lockSlim.ExitWriteLock();
+        }
+
+
+        private static bool vstiMode;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SetVSTiMode()
+        {
+            vstiMode = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool IsVSTiMode()
+        {
+            return vstiMode;
         }
 
         /// <summary>

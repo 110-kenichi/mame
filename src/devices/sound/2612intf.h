@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "vgmwrite.h"
 
 class ym2612_device : public device_t, public device_sound_interface
 {
@@ -19,6 +20,11 @@ public:
 
 	// update request from fm.cpp
 	static void update_request(device_t *param) { downcast<ym2612_device *>(param)->update_request(); }
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
+
+	vgm_writer *m_vgm_writer;
 
 protected:
 	ym2612_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock);

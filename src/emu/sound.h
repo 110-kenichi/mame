@@ -210,6 +210,7 @@ public:
 
 	// global controls
 	void start_recording();
+	void start_recording_to(char *wavfile);
 	void stop_recording();
 	void set_attenuation(int attenuation);
 	void ui_mute(bool turn_off = true) { mute(turn_off, MUTE_REASON_UI); }

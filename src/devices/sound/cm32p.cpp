@@ -85,6 +85,8 @@ void cm32p_device::initialize_memory()
 	cm32p_ram.system.reserveSettings[3] = 0;
 	cm32p_ram.system.reserveSettings[4] = 0;
 	cm32p_ram.system.reserveSettings[5] = 0;
+	for (int i = 6; i < 16; i++)
+		cm32p_ram.system.reserveSettings[i] = 0;
 
 	cm32p_ram.system.chanAssign[0] = 10;
 	cm32p_ram.system.chanAssign[1] = 11;
@@ -92,13 +94,15 @@ void cm32p_device::initialize_memory()
 	cm32p_ram.system.chanAssign[3] = 13;
 	cm32p_ram.system.chanAssign[4] = 14;
 	cm32p_ram.system.chanAssign[5] = 15;
+	for (int i = 0; i < 10; i++)
+		cm32p_ram.system.chanAssign2[i] = 16;
 
 	cm32p_ram.system.masterVol = 100;
 	fluid_synth_set_gain(synth_rev_off, 100.f / DEFAULT_GAIN_BASE);
 	fluid_synth_set_gain(synth_rev_on, 100.f / DEFAULT_GAIN_BASE);
 
 	//patch temp
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 16; i++) {
 		MemParams::PatchTemp *patchTemp = &cm32p_ram.patchTemp[i];
 
 		// Note that except for the rhythm part, these patch fields will be set in setProgram() below anyway.
@@ -123,8 +127,14 @@ void cm32p_device::initialize_memory()
 		case 5:
 			patchTemp->patch.toneNumber = 64;	// Soft Tp 1
 			break;
+		default:
+			patchTemp->patch.toneNumber = 0;
+			break;
 		}
-		program_select(cm32p_ram.system.chanAssign[i], patchTemp->patch.toneMedia, patchTemp->patch.toneNumber);
+		if (i < 6)
+			program_select(cm32p_ram.system.chanAssign[i], patchTemp->patch.toneMedia, 0, patchTemp->patch.toneNumber);
+		else
+			program_select(cm32p_ram.system.chanAssign2[i - 6], patchTemp->patch.toneMedia, 0, patchTemp->patch.toneNumber);
 
 		patchTemp->patch.keyShift = 12;
 		patchTemp->patch.fineTune = 50;
@@ -142,6 +152,7 @@ void cm32p_device::initialize_memory()
 		patchTemp->patch.lfoManDepth = 4;
 		patchTemp->patch.detuneDepth = 12;
 
+		memset(bank_no, 0, sizeof(bank_no));
 		memset(rpn_lsb, 0, sizeof(rpn_lsb));
 		memset(rpn_msb, 0, sizeof(rpn_msb));
 		memset(rpn_data, 0, sizeof(rpn_data));
@@ -167,13 +178,31 @@ void cm32p_device::initialize_memory()
 		case 5:
 			patchTemp->panpot = 45;
 			break;
+		default:
+			patchTemp->panpot = 64;
+			break;
 		}
-		fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign[i], 10, 127 - patchTemp->panpot);
-		fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign[i], 10, 127 - patchTemp->panpot);
-
+		if (i < 6)
+		{
+			fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign[i], 10, 127 - patchTemp->panpot);
+			fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign[i], 10, 127 - patchTemp->panpot);
+		}
+		else
+		{
+			fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign2[i - 6], 10, 127 - patchTemp->panpot);
+			fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign2[i - 6], 10, 127 - patchTemp->panpot);
+		}
 		patchTemp->outputLevel = 100;
-		fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign[i], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
-		fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign[i], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
+		if (i < 6)
+		{
+			fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign[i], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
+			fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign[i], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
+		}
+		else
+		{
+			fluid_synth_cc(synth_rev_off, cm32p_ram.system.chanAssign2[i - 6], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
+			fluid_synth_cc(synth_rev_on, cm32p_ram.system.chanAssign2[i - 6], 7, (int)roundf((float)127 * ((float)patchTemp->outputLevel / (float)100)));
+		}
 	}
 
 	//patch
@@ -211,6 +240,7 @@ void cm32p_device::device_start()
 {
 	m_stream = stream_alloc(0, 2, machine().sample_rate());
 	m_enable = 0;
+	m_passthru = 0;
 
 	settings = new_fluid_settings();
 	fluid_settings_setnum(settings, "synth.sample-rate", machine().sample_rate());
@@ -227,7 +257,7 @@ void cm32p_device::sound_stream_update(sound_stream &stream, stream_sample_t **i
 	stream_sample_t *buffer1 = outputs[0];
 	stream_sample_t *buffer2 = outputs[1];
 
-	if (!m_enable || memory_initialized == 0)
+	if (memory_initialized == 0)
 	{
 		memset(buffer1, 0, samples * sizeof(*buffer1));
 		memset(buffer2, 0, samples * sizeof(*buffer2));
@@ -313,31 +343,77 @@ void cm32p_device::add_sf(u8 card_id, fluid_sfont_t *sf)
 	}
 }
 
-void cm32p_device::set_tone(u8 card_id, u8 tone_no, u16 sf_preset_no)
+void cm32p_device::set_tone(u8 card_id, u16 tone_no, u16 sf_preset_no)
 {
-	tone_table[card_id << 8 | tone_no] = sf_preset_no;
+	tone_table[card_id << 16 | tone_no] = sf_preset_no;
 }
 
 void cm32p_device::set_card(u8 id)
 {
-	card_id = id;
+	if (card_id != id)
+	{
+		if (id >= 16)
+		{
+			for (int i = 0; i < 128; i++) {
+				PatchParam *patch = &cm32p_ram.patches[i];
+				patch->toneMedia = 1;
+				patch->toneNumber = i;
+			}
+		}
+		else 
+		{
+			if (card_id >= 16)
+			{
+				for (int i = 0; i < 128; i++) {
+					PatchParam *patch = &cm32p_ram.patches[i];
+
+					patch->toneMedia = cm32p_device::default_patch_table_media[i];
+					patch->toneNumber = cm32p_device::default_patch_table_no[i];
+				}
+			}
+		}
+		card_id = id;
+	}
 }
 
-void cm32p_device::program_select(u8 channel, u8 tone_media, u8 tone_no)
+void cm32p_device::set_chanAssign(u8* assign) {
+	for (int i = 0; i < 16; i++)
+	{
+		if (i < 6)
+			cm32p_ram.system.chanAssign[i] = assign[i];
+		else if (i >= 6)
+			cm32p_ram.system.chanAssign2[i - 6] = assign[i];
+	}
+}
+
+void cm32p_device::get_chanAssign(u8* assign) {
+	for (int i = 0; i < 16; i++)
+	{
+		if (i < 6)
+			assign[i] = cm32p_ram.system.chanAssign[i];
+		else if (i >= 6)
+			assign[i] = cm32p_ram.system.chanAssign2[i - 6];
+	}
+}
+
+
+void cm32p_device::program_select(u8 channel, u8 tone_media, u8 bank_no, u8 tone_no)
 {
 	u8 cid = card_id;
 	if (tone_media == 0)
 		cid = 0;
-	u16 sf_preset_no = tone_table[cid << 8 | tone_no];
+	u16 sf_preset_no = tone_table[cid << 16 | bank_no << 8 | tone_no];
 	fluid_synth_program_select(synth_rev_off, channel, sf_table[cid], (sf_preset_no >> 8) & 0xff, sf_preset_no & 0xff);
 	fluid_synth_program_select(synth_rev_on, channel, sf_table[cid], (sf_preset_no >> 8) & 0xff, sf_preset_no & 0xff);
 }
 
 void cm32p_device::play_msg(u8 type, u8 channel, u32 param1, u32 param2)
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 16; i++)
 	{
-		if (cm32p_ram.system.chanAssign[i] != channel)
+		if (i < 6 && cm32p_ram.system.chanAssign[i] != channel)
+			continue;
+		if (i >= 6 && cm32p_ram.system.chanAssign2[i - 6] != channel)
 			continue;
 
 		switch (type)
@@ -374,10 +450,13 @@ void cm32p_device::play_msg(u8 type, u8 channel, u32 param1, u32 param2)
 			PatchParam pp = pt.patch;
 			switch (param1)
 			{
+			case 0:
+				bank_no[channel] = param2;
+				break;
 			case 6:
 				if (rpn_lsb[channel] == 0 && rpn_msb[channel] == 0)
 				{
-					switch(rpn_type[channel])
+					switch (rpn_type[channel])
 					{
 					case 2:
 						pp.benderRange = rpn_data[channel];
@@ -433,7 +512,7 @@ void cm32p_device::applyPatchParameters(const u8 &channel, PatchParam &pp, MemPa
 	if (pt.patch.toneMedia > 1)
 		pt.patch.toneMedia = 1;
 
-	program_select(channel, pp.toneMedia, pp.toneNumber);
+	program_select(channel, pp.toneMedia, bank_no[channel], pp.toneNumber);
 	fluid_synth_pitch_wheel_sens(synth_rev_off, channel, pp.benderRange);
 	fluid_synth_pitch_wheel_sens(synth_rev_on, channel, pp.benderRange);
 	fluid_synth_cc(synth_rev_off, channel, 10, 127 - pt.panpot);
@@ -558,7 +637,7 @@ void cm32p_device::playSysexWithoutHeader(u8 device, u8 command, const u8 *sysex
 	if (checksum != sysex[len - 1]) {
 		//printDebug("playSysexWithoutHeader: Message checksum is incorrect (provided: %02x, expected: %02x)!", sysex[len - 1], checksum);
 		return;
-	}
+}
 	len -= 1; // Exclude checksum
 	switch (command) {
 	case SYSEX_CMD_WSD:
@@ -705,7 +784,12 @@ void cm32p_device::writeMemoryRegion(const MemoryRegion *region, u32 addr, u32 l
 		//printDebug("Patch temp: Patch %d, offset %x, len %d", off/16, off % 16, len);
 
 		for (unsigned int i = first; i <= last; i++) {
-			u8 channel = cm32p_ram.system.chanAssign[i];
+			u8 channel = 0;
+			if (i < 6)
+				channel = cm32p_ram.system.chanAssign[i];
+			else if (i >= 6)
+				channel = cm32p_ram.system.chanAssign2[i - 6];
+
 			MemParams::PatchTemp pt = cm32p_ram.patchTemp[i];
 			PatchParam pp = pt.patch;
 
@@ -781,13 +865,13 @@ void MemoryRegion::read(unsigned int entry, unsigned int off, u8 *dst, unsigned 
 		synth->printDebug("read[%d]: parameters start out of bounds: entry=%d, off=%d, len=%d", type, entry, off, len);
 #endif
 		return;
-	}
+}
 	if (off + len > entrySize * entries) {
 #if MT32EMU_MONITOR_SYSEX > 0
 		synth->printDebug("read[%d]: parameters end out of bounds: entry=%d, off=%d, len=%d", type, entry, off, len);
 #endif
 		len = entrySize * entries - off;
-	}
+}
 	u8 *src = getRealMemory();
 	if (src == NULL) {
 #if MT32EMU_MONITOR_SYSEX > 0
@@ -796,7 +880,7 @@ void MemoryRegion::read(unsigned int entry, unsigned int off, u8 *dst, unsigned 
 		return;
 	}
 	memcpy(dst, src + off, len);
-	}
+}
 
 void MemoryRegion::write(unsigned int entry, unsigned int off, const u8 *src, unsigned int len, bool init) const {
 	unsigned int memOff = entry * entrySize + off;
@@ -807,7 +891,7 @@ void MemoryRegion::write(unsigned int entry, unsigned int off, const u8 *src, un
 		synth->printDebug("write[%d]: parameters start out of bounds: entry=%d, off=%d, len=%d", type, entry, off, len);
 #endif
 		return;
-	}
+}
 	if (off + len > entrySize * entries) {
 #if MT32EMU_MONITOR_SYSEX > 0
 		synth->printDebug("write[%d]: parameters end out of bounds: entry=%d, off=%d, len=%d", type, entry, off, len);
@@ -832,9 +916,9 @@ void MemoryRegion::write(unsigned int entry, unsigned int off, const u8 *src, un
 				synth->printDebug("write[%d]: Wanted 0x%02x at %d, but max 0x%02x", type, desiredValue, memOff, maxValue);
 #endif
 				desiredValue = maxValue;
-		}
+			}
 			dest[memOff] = desiredValue;
-	}
+		}
 		else if (desiredValue != 0) {
 #if MT32EMU_MONITOR_SYSEX > 0
 			// Only output debug info if they wanted to write non-zero, since a lot of things cause this to spit out a lot of debug info otherwise.
@@ -843,7 +927,7 @@ void MemoryRegion::write(unsigned int entry, unsigned int off, const u8 *src, un
 		}
 		memOff++;
 	}
-}
+	}
 
 u8 cm32p_device::calcSysexChecksum(const u8 *data, const u32 len, const u8 initChecksum) {
 	unsigned int checksum = -initChecksum;

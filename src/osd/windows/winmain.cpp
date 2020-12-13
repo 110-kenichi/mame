@@ -289,17 +289,26 @@ void RestartApplication();
 
 int main(int argc, char *argv[])
 {
+	/*
 	std::vector<std::string> args = osd_get_command_line(argc, argv);
+	*/
 	//mamidimemo
-	args.push_back("genesis");
-	args.push_back("-cart");
-	//exeファイルのパスを分解
-	char path[_MAX_PATH];
-	char drive[_MAX_DRIVE];
-	char dir[_MAX_DIR];
-	_splitpath(argv[0], drive, dir, nullptr, nullptr);
-	_makepath(path, drive, dir, "dummy", ".out");
-	args.push_back(path);
+	std::vector<std::string> args;
+	{
+		args.push_back(argv[0]);
+		args.push_back("genesis");
+		args.push_back("-cart");
+		//exeファイルのパスを分解
+		char path[_MAX_PATH];
+		char drive[_MAX_DRIVE];
+		char dir[_MAX_DIR];
+		_splitpath(argv[0], drive, dir, nullptr, nullptr);
+		_makepath(path, drive, dir, "dummy", ".out");
+		args.push_back(path);
+		//argv
+		for (int i = 1; i < argc; i++)
+			args.push_back(argv[i]);
+	}
 	//args.push_back("-log");
 
 	// use small output buffers on non-TTYs (i.e. pipes)
@@ -348,6 +357,9 @@ int main(int argc, char *argv[])
 
 static BOOL WINAPI control_handler(DWORD type)
 {
+	//mamidimemo
+	return TRUE;
+
 	// indicate to the user that we detected something
 	switch (type)
 	{

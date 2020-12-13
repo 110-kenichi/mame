@@ -108,7 +108,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)utils.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
@@ -142,7 +142,7 @@
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <ProgramDataBaseFileName>$(OutDir)utils.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
@@ -276,6 +276,7 @@
     <ClInclude Include="..\..\..\..\..\src\lib\util\unzip.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\util\vbiparse.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\util\vecstream.h" />
+    <ClInclude Include="..\..\..\..\..\src\lib\util\vgmwrite.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\util\wavwrite.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\util\xmlfile.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\util\zippath.h" />
@@ -351,6 +352,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\util\vecstream.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\src\lib\util\vgmwrite.cpp" />
     <ClCompile Include="..\..\..\..\..\src\lib\util\wavwrite.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\util\xmlfile.cpp">

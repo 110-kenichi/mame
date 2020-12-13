@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -25,8 +26,10 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("General Purpose Control 1(Control Change No.16(0x10))\r\n" +
             "Link Data Entry message value with the specified instrument property value (Only the property that has a slider editor)\r\n" +
-            "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16 message.\r\n" +
-            "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16 message.")]
+            "eg 1) \"GainLeft,GainRight\"\r\n" +
+            "... You can change Gain property values dynamically via MIDI Control Change No.16 message.\r\n" +
+            "eg 2) \"16+Timbres[0].Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\n" +
+            "... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16 message.")]
         [DefaultValue(null)]
         public string GeneralPurposeControl1
         {
@@ -139,6 +142,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static Dictionary<Type, Dictionary<string, InstancePropertyInfo>> propertyInfoTable = new Dictionary<Type, Dictionary<string, InstancePropertyInfo>>();
 
+        private static Regex removeRegex = new Regex(@"[ ()+\-^*/^]|\bsin\b|\bcos\b|\btg\b|\bctg\b|\bsh\b|\bch\b|\bth\b|\bsqrt\b|\bexp\b|\blog\b|\bln\b|\babs\b|\bpi\b|\be\b", RegexOptions.Compiled);
+
+        private static Regex nameRegex = new Regex(@"\ [0-9]*", RegexOptions.Compiled);
+
         /// <summary>
         /// 
         /// </summary>
@@ -156,12 +163,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 foreach (var propertyName in propNameParts)
                 {
-                    var pn = propertyName.Trim();
+                    var fm = " " + propertyName.Trim();
+                    var pn = nameRegex.Replace(removeRegex.Replace(fm, " "), "");
+
                     if (propertyInfoTable.ContainsKey(tt))
                     {
                         if (propertyInfoTable[tt].ContainsKey(pn))
                         {
-                            plist.Add(propertyInfoTable[tt][pn]);
+                            var tpi = propertyInfoTable[tt][pn];
+                            plist.Add(new InstancePropertyInfo(tpi.Owner, tpi.Property) { Formula = fm, Symbol = pn });
                             continue;
                         }
                     }
@@ -173,6 +183,9 @@ namespace zanac.MAmidiMEmo.Instruments
                     var pi = getPropertyInfo(inst, pn);
                     if (pi != null)
                     {
+                        pi.Formula = fm;
+                        pi.Symbol = pn;
+
                         SlideParametersAttribute attribute =
                             Attribute.GetCustomAttribute(pi.Property, typeof(SlideParametersAttribute)) as SlideParametersAttribute;
                         if (attribute != null)
@@ -277,6 +290,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
         public string Memo
         {
             get;

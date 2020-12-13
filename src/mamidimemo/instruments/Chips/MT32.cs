@@ -81,7 +81,58 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public MT32Timbre[] Timbres
         {
             get;
-            private set;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override CombinedTimbre[] CombinedTimbres
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public override DrumTimbre[] DrumTimbres
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override ProgramAssignmentNumber[] ProgramAssignments
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public override FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public override ArpSettings GlobalARP
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        public override ChannelType[] ChannelTypes
+        {
+            get;
+            set;
         }
 
         [Browsable(false)]
@@ -206,6 +257,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [Browsable(false)]
+        public override byte[] Holds
+        {
+            get
+            {
+                return base.Holds;
+            }
+        }
+
+        [Browsable(false)]
         public override byte[] Portamentos
         {
             get
@@ -232,6 +292,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [Browsable(false)]
+        public override byte[] PolyMode
+        {
+            get
+            {
+                return base.PolyMode;
+            }
+        }
 
         private const float DEFAULT_GAIN = 1.0f;
 
@@ -268,23 +336,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="serializeData"></param>
         public override void RestoreFrom(string serializeData)
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<MT32>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<MT32>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -328,6 +386,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlayMsg(uint unitNumber, uint msg)
         {
+            mt32_play_msg(unitNumber, msg);
+            //DeferredWriteData(mt32_play_msg, unitNumber, msg);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -336,7 +397,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -345,6 +406,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MT32PlaySysEx(uint unitNumber, byte[] sysex)
         {
+            mt32_play_sysex(unitNumber, sysex, sysex.Length);
+            //DeferredWriteData(mt32_play_sysex, unitNumber, sysex, sysex.Length);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -353,7 +417,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private static FieldInfo channelEventParameters;
@@ -398,9 +462,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             this.soundManager = new MT32SoundManager(this);
 
-            Timbres = new MT32Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new MT32Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new MT32Timbre();
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
+            DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
         }
 
         protected override void OnMidiEvent(MidiEvent midiEvent)
@@ -421,12 +493,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         msg = (uint)((0x80 | noff.Channel) | noff.NoteNumber << 8 | noff.Velocity << 16);
                         break;
                     }
+                case TaggedNoteOnEvent non:
+                    {
+                        msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
+                        break;
+                    }
                 case NoteOnEvent non:
                     {
-                        if (non.Velocity == 0)
-                            msg = (uint)((0x80 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
-                        else
-                            msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
+                        msg = (uint)((0x90 | non.Channel) | non.NoteNumber << 8 | non.Velocity << 16);
                         break;
                     }
                 case NoteAftertouchEvent na:
@@ -484,6 +558,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (non.Velocity == 0)
                             OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
                         else
+                            OnNoteOnEvent(new TaggedNoteOnEvent(non));
+                        break;
+                    }
+                case TaggedNoteOnEvent non:
+                    {
+                        if (non.Velocity == 0)
+                            OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                        else
                             OnNoteOnEvent(non);
                         break;
                     }
@@ -494,9 +576,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -505,7 +587,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -530,37 +617,57 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                MT32Sound snd = new MT32Sound(parentModule, this, timbre, note, emptySlot);
-                instOnSounds.Add(snd);
+                foreach (MT32Timbre timbre in parentModule.GetBaseTimbres(note))
+                {
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                    MT32Sound snd = new MT32Sound(parentModule, this, timbre, note, emptySlot);
+                    instOnSounds.Add(snd);
 
-                return snd;
+                    FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(TaggedNoteOnEvent note, MT32Timbre timbre)
             {
                 int emptySlot = -1;
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 24));
+                emptySlot = SearchEmptySlotAndOff(parentModule, instOnSounds, note, 32);
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+            }
         }
 
 
@@ -582,7 +689,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public MT32Sound(MT32 parentModule, MT32SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public MT32Sound(MT32 parentModule, MT32SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];

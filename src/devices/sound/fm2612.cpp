@@ -775,6 +775,9 @@ static inline void FM_KEYON(fm2612_FM_OPN *OPN, fm2612_FM_CH *CH , int s )
 
 			/* directly switch to Decay (or Sustain) */
 			SLOT->state = (SLOT->sl == MIN_ATT_INDEX) ? EG_SUS : EG_DEC;
+
+			//HACK: mamidimemo Force Damp
+			//SLOT->state = EG_ATT;
 		}
 
 		/* recalculate EG output */
@@ -2486,6 +2489,7 @@ int ym2612_write(void *chip, int a, uint8_t v)
 			break;  /* verified on real YM2608 */
 
 		addr = F2612->OPN.ST.address;
+		(downcast<ym2612_device *>(F2612->device))->m_vgm_writer->vgm_write(0x00, addr, v);
 		F2612->REGS[addr] = v;
 		switch( addr & 0xf0 )
 		{
@@ -2527,6 +2531,7 @@ int ym2612_write(void *chip, int a, uint8_t v)
 			break;  /* verified on real YM2608 */
 
 		addr = F2612->OPN.ST.address;
+		(downcast<ym2612_device *>(F2612->device))->m_vgm_writer->vgm_write(0x01, addr, v);
 		F2612->REGS[addr | 0x100] = v;
 		ym2612_device::update_request(F2612->OPN.ST.device);
 		OPNWriteReg(&(F2612->OPN),addr | 0x100,v);

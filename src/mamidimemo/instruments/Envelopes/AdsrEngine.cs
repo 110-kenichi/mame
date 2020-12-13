@@ -64,7 +64,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <param name="rate">[sec]</param>
         public void SetAttackRate(double rate)
         {
-            attackRate = rate * HighPrecisionTimer.TIMER_BASIC_HZ;
+            attackRate = rate * HighPrecisionTimer.TIMER_BASIC_1KHZ;
             attackCoef = calcCoef(rate, targetRatioA);
             attackBase = (1.0 + targetRatioA) * (1.0 - attackCoef);
         }
@@ -75,7 +75,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <param name="rate">[sec]</param>
         public void SetDecayRate(double rate)
         {
-            decayRate = rate * HighPrecisionTimer.TIMER_BASIC_HZ;
+            decayRate = rate * HighPrecisionTimer.TIMER_BASIC_1KHZ;
             decayCoef = calcCoef(rate, targetRatioDR);
             decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
         }
@@ -86,7 +86,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         /// <param name="rate">[sec]</param>
         public void SetReleaseRate(double rate)
         {
-            releaseRate = rate * HighPrecisionTimer.TIMER_BASIC_HZ;
+            releaseRate = rate * HighPrecisionTimer.TIMER_BASIC_1KHZ;
             releaseCoef = calcCoef(rate, targetRatioDR);
             releaseBase = -targetRatioDR * (1.0 - releaseCoef);
         }

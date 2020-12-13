@@ -232,7 +232,21 @@ void nesapu_device::device_start()
 	save_item(NAME(m_APU.buf_pos));
 	save_item(NAME(m_APU.step_mode));
 #endif
+
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void nesapu_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_NESAPU, clock());
+};
+
+void nesapu_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 /* TODO: sound channels should *ALL* have DC volume decay */
 
@@ -451,6 +465,9 @@ static inline void apu_dpcmreset(apu_t::dpcm_t *chan)
 	chan->irq_occurred = false;
 	chan->enabled = true; /* Fixed * Proper DPCM channel ENABLE/DISABLE flag behaviour*/
 	chan->vol = 0; /* Fixed * DPCM DAC resets itself when restarted */
+
+	// I have no idea how to do this at all since DPCM reads are done using a callback function.
+	//vgm_write_large_data(vgm_idx, 0x01, 0x10000, chan->address, chan->length, chan->memory->get_read_ptr(0xC000));
 }
 
 /* OUTPUT DPCM WAVE SAMPLE (VALUES FROM -64 to +63) */
@@ -1153,6 +1170,8 @@ void nesapu_device::write(offs_t address, u8 value)
 	}
 
 	m_stream->update();
+
+	m_vgm_writer->vgm_write(0x00, address, value);
 
 	if (address <= 0xff)
 	{

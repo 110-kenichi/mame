@@ -18,6 +18,7 @@ using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -63,16 +64,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return 9;
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
         }
 
         private byte f_RHY;
@@ -142,14 +133,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [Category(" Timbres")]
+        [Description("Timbres")]
+        [EditorAttribute(typeof(YM2413UITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public YM2413Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
         private const float DEFAULT_GAIN = 4.0f;
@@ -186,8 +177,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<YM2413>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<YM2413>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -244,6 +235,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void YM2413WriteData(uint unitNumber, byte address, int slot, byte data)
         {
+            DeferredWriteData(YM2413_write, unitNumber, (uint)0, (byte)(address + slot));
+            DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -253,7 +247,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -280,8 +274,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YM2413Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new YM2413Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new YM2413Timbre();
             setPresetInstruments();
 
@@ -317,9 +311,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -328,7 +322,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -339,7 +333,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -350,7 +351,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -358,9 +364,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM2413SoundManager : SoundManagerBase
         {
-            private List<YM2413Sound> fmOnSounds = new List<YM2413Sound>(9);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private List<YM2413Sound> drumOnSounds = new List<YM2413Sound>(9);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<YM2413Sound> fmOnSounds = new SoundList<YM2413Sound>(9);
+
+            private static SoundList<YM2413Sound> drumBDOnSounds = new SoundList<YM2413Sound>(1);
+            private static SoundList<YM2413Sound> drumSDOnSounds = new SoundList<YM2413Sound>(1);
+            private static SoundList<YM2413Sound> drumHHOnSounds = new SoundList<YM2413Sound>(1);
+            private static SoundList<YM2413Sound> drumTOMOnSounds = new SoundList<YM2413Sound>(1);
+            private static SoundList<YM2413Sound> drumSYMOnSounds = new SoundList<YM2413Sound>(1);
 
             private YM2413 parentModule;
 
@@ -377,51 +400,440 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
-                YM2413Sound snd = new YM2413Sound(parentModule, this, timbre, note, emptySlot);
-                if (parentModule.RHY == 0)
+                foreach (YM2413Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    fmOnSounds.Add(snd);
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
+
+                    YM2413Sound snd = new YM2413Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    if (parentModule.RHY == 0)
+                    {
+                        fmOnSounds.Add(snd);
+                    }
+                    else
+                    {
+                        if (timbre.ToneType != ToneType.DrumSet)
+                        {
+                            fmOnSounds.Add(snd);
+                        }
+                        else
+                        {
+                            switch (note.NoteNumber)
+                            {
+                                case 35:    //BD
+                                case 36:    //BD
+
+                                case 60:
+                                case 61:
+                                case 62:
+                                case 63:
+                                case 64:
+                                case 65:
+                                case 66:
+                                case 72:
+                                case 75:
+                                case 76:
+                                case 77:
+                                    drumBDOnSounds.Add(snd);
+                                    break;
+                                case 37:    //STICK
+                                case 38:    //SD
+                                case 39:    //CLAP
+                                case 40:    //SD
+
+                                case 67:
+                                case 68:
+                                case 69:
+                                case 70:
+                                    drumSDOnSounds.Add(snd);
+                                    break;
+                                case 41:    //TOM
+                                case 43:    //TOM
+                                case 45:    //TOM
+                                case 47:    //TOM
+                                case 48:    //TOM
+                                case 50:    //TOM
+
+                                case 71:
+                                case 78:
+                                    drumTOMOnSounds.Add(snd);
+                                    break;
+                                case 42:    //HH
+                                case 44:    //HH
+                                case 46:    //HH
+
+                                case 54:    //BELL
+                                case 56:    //BELL
+                                case 58:    //BELL
+                                case 80:    //BELL
+
+                                case 73:
+                                case 79:
+                                    drumHHOnSounds.Add(snd);
+                                    break;
+                                case 49:    //Symbal
+                                case 51:    //Symbal
+                                case 52:    //Symbal
+                                case 53:    //Symbal
+                                case 55:    //Symbal
+                                case 57:    //Symbal
+                                case 59:    //Symbal
+
+                                case 81:    //TRIANGLE
+                                case 74:
+                                    drumSYMOnSounds.Add(snd);
+                                    break;
+                            }
+                        }
+                    }
+                    FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
+            }
+
+
+            /// <summary>
+            /// 未使用のスロットを検索する
+            /// 空が無い場合は最初に鳴った音を消す
+            /// </summary>
+            /// <param name="onSounds"></param>
+            /// <param name="maxSlot"></param>
+            /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
+            /// <returns></returns>
+            protected (YM2413, int) SearchCustomEmptySlotAndOffForLeader(YM2413Timbre timbre, YM2413 inst, SoundList<YM2413Sound> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot, int offset)
+            {
+                //gather leader and followers
+                Dictionary<YM2413, YM2413Timbre> customTimbre = new Dictionary<YM2413, YM2413Timbre>();
+                Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
+                Dictionary<uint, Dictionary<int, bool>> insts = new Dictionary<uint, Dictionary<int, bool>>();
+                foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
+                {
+                    customTimbre.Add((YM2413)i, null);
+                    instskey.Add(i.UnitNumber, i);
+                    if (i.UnitNumber == inst.UnitNumber || inst.UnitNumber == (int)i.FollowerMode - 1)
+                        insts.Add(i.UnitNumber, new Dictionary<int, bool>());
+                }
+
+                if (slot < 0)
+                {
+                    List<YM2413Sound> onSnds = new List<YM2413Sound>();
+                    List<YM2413Sound> onSndsCh = new List<YM2413Sound>();
+                    int mono = inst.MonoMode[newNote.Channel];
+                    for (int i = 0; i < onSounds.Count; i++)
+                    {
+                        var onSnd = onSounds[i];
+                        if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
+                        {
+                            if (onSnd.IsSoundOff)
+                            {
+                                AllSounds.Remove(onSnd);
+                                onSounds.RemoveAt(i);
+                                onSnd.Dispose();
+                                i--;
+                                continue;
+                            }
+                            var yt = (YM2413Timbre)onSnd.Timbre;
+                            if (yt.ToneType == ToneType.Custom)
+                                customTimbre[(YM2413)onSnd.ParentModule] = yt;
+                            onSnds.Add(onSnd);
+                            if (newNote.Channel == onSnd.NoteOnEvent.Channel)
+                                onSndsCh.Add(onSnd);
+                        }
+                    }
+
+                    //Mono Mode. Remove same ch sounds.
+                    if (mono != 0)
+                    {
+                        for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
+                        {
+                            var onSnd = onSndsCh[i];
+                            AllSounds.Remove(onSnd);
+                            onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
+                            onSndsCh.RemoveAt(i);
+                            onSnd.Dispose();
+                            i--;
+                        }
+                    }
+
+                    //Delete same drum sound from same ch
+                    if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
+                    {
+                        for (int i = 0; i < onSndsCh.Count; i++)
+                        {
+                            var onSnd = onSndsCh[i];
+                            if (onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                            {
+                                AllSounds.Remove(onSnd);
+                                onSounds.Remove(onSnd);
+                                onSnds.Remove(onSnd);
+                                onSndsCh.RemoveAt(i);
+                                onSnd.Dispose();
+                                i--;
+                            }
+                        }
+                    }
+
+                    //使っていないスロットがあればそれを返す
+                    foreach (var onSnd in onSnds)
+                        insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                    for (int i = offset; i < maxSlot; i++)
+                    {
+                        foreach (var ist in insts.Keys)
+                        {
+                            var ctim = customTimbre[(YM2413)instskey[ist]];
+                            if (!insts[ist].ContainsKey(i) && (ctim == null || ctim == timbre))
+                                return ((YM2413)instskey[ist], i);
+                        }
+                    }
+
+                    //Proces Poly mode
+                    List<YM2413Sound> onSndsRm = new List<YM2413Sound>(onSnds);
+                    List<byte> polyList = new List<byte>(parentModule.PolyMode);
+                    for (int i = onSndsRm.Count - 1; i >= 0; i--)
+                    {
+                        var onSnd = onSndsRm[i];
+                        if (polyList[onSnd.NoteOnEvent.Channel] > 0)
+                        {
+                            onSndsRm.RemoveAt(i);
+                            polyList[onSnd.NoteOnEvent.Channel]--;
+                        }
+                    }
+
+                    //一番古いキーオフされたスロットを探す
+                    foreach (var snd in onSndsRm)
+                    {
+                        var ctim = customTimbre[(YM2413)snd.ParentModule];
+                        if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff &&
+                            (ctim == null || ctim == timbre))
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.Remove(snd);
+                            snd.Dispose();
+                            return ((YM2413)snd.ParentModule, snd.Slot);
+                        }
+                    }
+
+                    //一番古いキーオフされたスロットを探す
+                    foreach (var snd in onSndsRm)
+                    {
+                        var ctim = customTimbre[(YM2413)snd.ParentModule];
+                        if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff &&
+                            (ctim == null || ctim == timbre))
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.Remove(snd);
+                            snd.Dispose();
+                            return ((YM2413)snd.ParentModule, snd.Slot);
+                        }
+                    }
+
+                    //一番古いキーオンされたスロットを探す
+                    foreach (var snd in onSndsRm)
+                    {
+                        var ctim = customTimbre[(YM2413)snd.ParentModule];
+                        if (offset <= snd.Slot && snd.Slot < maxSlot &&
+                            (ctim == null || ctim == timbre))
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.Remove(snd);
+                            snd.Dispose();
+                            return ((YM2413)snd.ParentModule, snd.Slot);
+                        }
+                    }
+                    foreach (var snd in onSnds)
+                    {
+                        var ctim = customTimbre[(YM2413)snd.ParentModule];
+                        if (offset <= snd.Slot && snd.Slot < maxSlot &&
+                            (ctim == null || ctim == timbre))
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.Remove(snd);
+                            snd.Dispose();
+                            return ((YM2413)snd.ParentModule, snd.Slot);
+                        }
+                    }
+
+                    foreach (var snd in onSnds)
+                    {
+                        var ctim = customTimbre[(YM2413)snd.ParentModule];
+                        if (offset <= snd.Slot && snd.Slot < maxSlot)
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.Remove(snd);
+                            snd.Dispose();
+
+                            //remove all other custom sounds on same inst
+                            foreach (var sndSameInst in onSnds)
+                            {
+                                if (sndSameInst == snd)
+                                    continue;
+
+                                if (sndSameInst.ParentModule == snd.ParentModule && ((YM2413Timbre)snd.Timbre).ToneType == ToneType.Custom)
+                                {
+                                    AllSounds.Remove(sndSameInst);
+                                    onSounds.Remove(sndSameInst);
+                                    sndSameInst.Dispose();
+                                }
+                            }
+
+                            return ((YM2413)snd.ParentModule, snd.Slot);
+                        }
+                    }
+
                 }
                 else
                 {
-                    if (timbre.ToneType != ToneType.DrumSet)
-                        fmOnSounds.Add(snd);
-                }
-                FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                    //既存の音を消す
+                    for (int i = 0; i < onSounds.Count; i++)
+                    {
+                        var snd = onSounds[i];
+                        if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
+                            continue;
 
-                return snd;
+                        if (snd.Slot == slot)
+                        {
+                            AllSounds.Remove(snd);
+                            onSounds.RemoveAt(i);
+                            snd.Dispose();
+                            break;
+                        }
+                    }
+                    return (inst, slot);
+                }
+
+                return (inst, -1);
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (YM2413 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, YM2413Timbre timbre)
             {
-                int emptySlot = -1;
-                if (parentModule.RHY == 0)
+                var emptySlot = (parentModule, -1);
+
+                byte RHY = parentModule.RHY;
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
                 {
-                    emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
+                    if (gs.RHY.HasValue)
+                        RHY = gs.RHY.Value;
+                }
+
+                if (RHY == 0)
+                {
+                    emptySlot = SearchCustomEmptySlotAndOffForLeader(timbre, parentModule, fmOnSounds, note, 9, -1, 0);
                 }
                 else
                 {
-                    var pn = parentModule.ProgramNumbers[note.Channel];
-                    var timbre = parentModule.Timbres[pn];
                     if (timbre.ToneType != ToneType.DrumSet)
-                        emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                    {
+                        emptySlot = SearchCustomEmptySlotAndOffForLeader(timbre, parentModule, fmOnSounds, note, 6, -1, 0);
+                    }
                     else
-                        emptySlot = SearchEmptySlotAndOff(drumOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                    {
+                        switch (note.NoteNumber)
+                        {
+                            case 35:    //BD
+                            case 36:    //BD
+
+                            case 60:
+                            case 61:
+                            case 62:
+                            case 63:
+                            case 64:
+                            case 65:
+                            case 66:
+                            case 72:
+                            case 75:
+                            case 76:
+                            case 77:
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumBDOnSounds, note, 1);
+                                break;
+                            case 37:    //STICK
+                            case 38:    //SD
+                            case 39:    //CLAP
+                            case 40:    //SD
+
+                            case 67:
+                            case 68:
+                            case 69:
+                            case 70:
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumSDOnSounds, note, 1);
+                                break;
+                            case 41:    //TOM
+                            case 43:    //TOM
+                            case 45:    //TOM
+                            case 47:    //TOM
+                            case 48:    //TOM
+                            case 50:    //TOM
+
+                            case 71:
+                            case 78:
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumTOMOnSounds, note, 1);
+                                break;
+                            case 42:    //HH
+                            case 44:    //HH
+                            case 46:    //HH
+
+                            case 54:    //BELL
+                            case 56:    //BELL
+                            case 58:    //BELL
+                            case 80:    //BELL
+
+                            case 73:
+                            case 79:
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumHHOnSounds, note, 1);
+                                break;
+                            case 49:    //Symbal
+                            case 51:    //Symbal
+                            case 52:    //Symbal
+                            case 53:    //Symbal
+                            case 55:    //Symbal
+                            case 57:    //Symbal
+                            case 59:    //Symbal
+
+                            case 81:    //TRIANGLE
+                            case 74:
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumSYMOnSounds, note, 1);
+                                break;
+                        }
+                    }
                 }
+
                 return emptySlot;
+            }
+
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 9; i++)
+                    YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                if (parentModule.RHY != 0)
+                    YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
             }
 
         }
@@ -433,8 +845,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private class YM2413Sound : SoundBase
         {
             private YM2413 parentModule;
-
-            private SevenBitNumber programNumber;
 
             private YM2413Timbre timbre;
 
@@ -449,12 +859,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2413Sound(YM2413 parentModule, YM2413SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2413Sound(YM2413 parentModule, YM2413SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (YM2413Timbre)timbre;
                 lastToneType = this.timbre.ToneType;
             }
 
@@ -465,7 +873,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
-                //
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.RHY.HasValue)
+                        parentModule.RHY = gs.RHY.Value;
+                }
+
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -477,7 +891,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.OnSoundParamsUpdated();
 
-                //
+                var gs = timbre.GlobalSettings;
+                if (gs.Enable)
+                {
+                    if (gs.RHY.HasValue)
+                        parentModule.RHY = gs.RHY.Value;
+                }
+
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -488,34 +908,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte tl = (byte)(15 - (byte)Math.Round(15 * CalcCurrentVolume()));
                 if (lastToneType != ToneType.DrumSet)
                 {
-                    YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)lastToneType << 4 | tl));
+                    var tt = timbre.ToneType;
+                    if (FxEngine != null && FxEngine.Active)
+                    {
+                        var eng = FxEngine as YM2413FxEngine;
+                        if (eng?.ToneValue != null)
+                            tt = (ToneType)(eng.ToneValue.Value & 15);
+                    }
+                    YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)tt << 4 | tl));
                 }
                 else if (parentModule.RHY == 1)
                 {
-                    switch (NoteOnEvent.GetNoteName())
+                    switch (NoteOnEvent.NoteNumber)
                     {
-                        case NoteName.C:    //BD
+                        case 35:    //BD
+                        case 36:    //BD
+
+                        case 60:
+                        case 61:
+                        case 62:
+                        case 63:
+                        case 64:
+                        case 65:
+                        case 66:
+                        case 72:
+                        case 75:
+                        case 76:
+                        case 77:
                             YM2413WriteData(parentModule.UnitNumber, 0x36, 0, tl);
                             break;
-                        case NoteName.D:    //SD
+                        case 37:    //STICK
+                        case 38:    //SD
+                        case 39:    //CLAP
+                        case 40:    //SD
+
+                        case 67:
+                        case 68:
+                        case 69:
+                        case 70:
                             parentModule.lastDrumVolume37 = (byte)(tl | (parentModule.lastDrumVolume37 & 0xf0));
                             YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
                             break;
-                        case NoteName.F:    //TOM
+                        case 41:    //TOM
+                        case 43:    //TOM
+                        case 45:    //TOM
+                        case 47:    //TOM
+                        case 48:    //TOM
+                        case 50:    //TOM
+
+                        case 71:
+                        case 78:
                             parentModule.lastDrumVolume38 = (byte)(tl << 4 | (parentModule.lastDrumVolume38 & 0x0f));
                             YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
                             break;
-                        case NoteName.FSharp:    //HH
+                        case 42:    //HH
+                        case 44:    //HH
+                        case 46:    //HH
+
+                        case 54:    //BELL
+                        case 56:    //BELL
+                        case 58:    //BELL
+                        case 80:    //BELL
+
+                        case 73:
+                        case 79:
                             parentModule.lastDrumVolume37 = (byte)(tl << 4 | (parentModule.lastDrumVolume37 & 0x0f));
                             YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
                             break;
-                        case NoteName.ASharp:    //Symbal
+                        case 49:    //Symbal
+                        case 51:    //Symbal
+                        case 52:    //Symbal
+                        case 53:    //Symbal
+                        case 55:    //Symbal
+                        case 57:    //Symbal
+                        case 59:    //Symbal
+
+                        case 81:    //TRIANGLE
+                        case 74:
                             parentModule.lastDrumVolume38 = (byte)(tl | (parentModule.lastDrumVolume38 & 0xf0));
                             YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
                             break;
@@ -531,14 +1003,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (lastToneType != ToneType.DrumSet)
                 {
-                    double d = CalcCurrentPitch();
+                    double d = CalcCurrentPitchDeltaNoteNumber();
 
-                    int noteNum = NoteOnEvent.NoteNumber + (int)d;
+                    int nn = NoteOnEvent.NoteNumber;
+                    if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                        nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                    int noteNum = nn + (int)d;
                     if (noteNum > 127)
                         noteNum = 127;
                     else if (noteNum < 0)
                         noteNum = 0;
-                    var nnOn = new NoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
+                    var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
                     ushort freq = convertFmFrequency(nnOn);
                     var oct = nnOn.GetNoteOctave();
                     if (oct < 0)
@@ -552,34 +1027,84 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte kon = IsKeyOff ? (byte)0 : (byte)0x10;
                     lastFreqData = (byte)(timbre.SUS << 5 | kon | octave | ((freq >> 8) & 1));
 
-                    Program.SoundUpdating();
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq));
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData);
-                    Program.SoundUpdated();
                 }
-                else if (parentModule.RHY == 1 && !IsKeyOff)
+                else if (parentModule.RHY == 1)
                 {
                     byte kon = 0;
-                    switch (NoteOnEvent.GetNoteName())
+
+                    switch (NoteOnEvent.NoteNumber)
                     {
-                        case NoteName.C:    //BD
+                        case 35:    //BD
+                        case 36:    //BD
+
+                        case 60:
+                        case 61:
+                        case 62:
+                        case 63:
+                        case 64:
+                        case 65:
+                        case 66:
+                        case 72:
+                        case 75:
+                        case 76:
+                        case 77:
                             kon = 0x10;
                             break;
-                        case NoteName.D:    //SD
+                        case 37:    //STICK
+                        case 38:    //SD
+                        case 39:    //CLAP
+                        case 40:    //SD
+
+                        case 67:
+                        case 68:
+                        case 69:
+                        case 70:
                             kon = 0x08;
                             break;
-                        case NoteName.F:    //TOM
+                        case 41:    //TOM
+                        case 43:    //TOM
+                        case 45:    //TOM
+                        case 47:    //TOM
+                        case 48:    //TOM
+                        case 50:    //TOM
+
+                        case 71:
+                        case 78:
                             kon = 0x04;
                             break;
-                        case NoteName.FSharp:    //HH
+                        case 42:    //HH
+                        case 44:    //HH
+                        case 46:    //HH
+
+                        case 54:    //BELL
+                        case 56:    //BELL
+                        case 58:    //BELL
+                        case 80:    //BELL
+
+                        case 73:
+                        case 79:
                             kon = 0x01;
                             break;
-                        case NoteName.ASharp:    //Symbal
+                        case 49:    //Symbal
+                        case 51:    //Symbal
+                        case 52:    //Symbal
+                        case 53:    //Symbal
+                        case 55:    //Symbal
+                        case 57:    //Symbal
+                        case 59:    //Symbal
+
+                        case 81:    //TRIANGLE
+                        case 74:
                             kon = 0x02;
                             break;
                     }
                     if (kon != 0)
                     {
+                        parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
+                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
+
                         parentModule.lastDrumKeyOn |= (byte)kon;
                         YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //on
                     }
@@ -599,7 +1124,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413Modulator m = timbre.Modulator;
                 YM2413Career c = timbre.Career;
 
-                Program.SoundUpdating();
                 //$00+:
                 YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
                 YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
@@ -610,9 +1134,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
                 YM2413WriteData(parentModule.UnitNumber, 0x05, 0, (byte)((c.AR << 4 | c.DR)));
                 //$06+:
-                YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)((m.SR << 4 | m.RR)));
-                YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)((c.SR << 4 | c.RR)));
-                Program.SoundUpdated();
+                if (m.SR.HasValue && m.EG == 0)
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.SR.Value));
+                else
+                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
+
+                if (c.SR.HasValue && c.EG == 0)
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.SR.Value));
+                else
+                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
             }
 
             /// <summary>
@@ -624,29 +1154,90 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (lastToneType != ToneType.DrumSet)
                 {
+                    YM2413Modulator m = timbre.Modulator;
+                    if (m.SR.HasValue && m.EG == 0)
+                    {
+                        YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | 1 << 5 | m.KSR << 4 | m.MUL)));
+                        YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
+                    }
+                    YM2413Career c = timbre.Career;
+                    if (c.SR.HasValue && c.EG == 0)
+                    {
+                        YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
+                        YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | 1 << 5 | c.KSR << 4 | c.MUL)));
+                    }
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, (byte)(timbre.SUS << 5 | lastFreqData & 0x0f));
                 }
                 else if (parentModule.RHY == 1)
                 {
                     byte kon = 0;
-                    switch (NoteOnEvent.GetNoteName())
+                    switch (NoteOnEvent.NoteNumber)
                     {
-                        case NoteName.C:    //BD
+                        case 35:    //BD
+                        case 36:    //BD
+
+                        case 60:
+                        case 61:
+                        case 62:
+                        case 63:
+                        case 64:
+                        case 65:
+                        case 66:
+                        case 72:
+                        case 75:
+                        case 76:
+                        case 77:
                             kon = 0x10;
                             break;
-                        case NoteName.D:    //SD
+                        case 37:    //STICK
+                        case 38:    //SD
+                        case 39:    //CLAP
+                        case 40:    //SD
+
+                        case 67:
+                        case 68:
+                        case 69:
+                        case 70:
                             kon = 0x08;
                             break;
-                        case NoteName.F:    //TOM
+                        case 41:    //TOM
+                        case 43:    //TOM
+                        case 45:    //TOM
+                        case 47:    //TOM
+                        case 48:    //TOM
+                        case 50:    //TOM
+
+                        case 71:
+                        case 78:
                             kon = 0x04;
                             break;
-                        case NoteName.FSharp:    //HH
+                        case 42:    //HH
+                        case 44:    //HH
+                        case 46:    //HH
+
+                        case 54:    //BELL
+                        case 56:    //BELL
+                        case 58:    //BELL
+                        case 80:    //BELL
+
+                        case 73:
+                        case 79:
                             kon = 0x01;
                             break;
-                        case NoteName.ASharp:    //Symbal
+                        case 49:    //Symbal
+                        case 51:    //Symbal
+                        case 52:    //Symbal
+                        case 53:    //Symbal
+                        case 55:    //Symbal
+                        case 57:    //Symbal
+                        case 59:    //Symbal
+
+                        case 81:    //TRIANGLE
+                        case 74:
                             kon = 0x02;
                             break;
                     }
+
                     if (kon != 0)
                     {
                         parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
@@ -696,7 +1287,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note)
             {
                 if (parentModule.FrequencyAccuracyMode)
                     return freqTable1[(int)note.GetNoteName() + 1];
@@ -710,7 +1301,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note, bool plus)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
             {
                 if (plus)
                 {
@@ -736,7 +1327,85 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class YM2413Timbre : TimbreBase
         {
-            #region FM Symth
+            #region FM Synth
+
+
+            [Category("Sound")]
+            [Editor(typeof(YM2413UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Detailed) - Open FM register editor")]
+            [Description("Open FM register editor for Custom Tone.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string Detailed
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                         nameof(FB),
+                         nameof(SUS),
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                         nameof(FB),
+                         nameof(SUS),
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST");
+                }
+            }
 
 
             private ToneType f_ToneType;
@@ -828,6 +1497,94 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Category("Sound")]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "FB, AR, DR, RR, SL, SR, TL, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, AR, DR, RR, SL, SR, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST, SUS")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        "FB",
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST",
+
+                        "SUS");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        "FB",
+
+                        "Modulator.AR",
+                        "Modulator.DR",
+                        "Modulator.RR",
+                        "Modulator.SL",
+                        "Modulator.SR",
+                        "Modulator.TL",
+                        "Modulator.KSL",
+                        "Modulator.KSR",
+                        "Modulator.MUL",
+                        "Modulator.AM",
+                        "Modulator.VIB",
+                        "Modulator.EG",
+                        "Modulator.DIST",
+
+                        "Career.AR",
+                        "Career.DR",
+                        "Career.RR",
+                        "Career.SL",
+                        "Career.SR",
+                        "Career.KSL",
+                        "Career.KSR",
+                        "Career.MUL",
+                        "Career.AM",
+                        "Career.VIB",
+                        "Career.EG",
+                        "Career.DIST",
+
+                        "SUS");
+                }
+            }
+
+            [DataMember]
+            [Category("Chip")]
+            [Description("Global Settings")]
+            public YM2413GlobalSettings GlobalSettings
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -835,7 +1592,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Modulator = new YM2413Modulator();
                 Career = new YM2413Career();
-                this.SDS.FxS = new BasicFxSettings();
+
+                GlobalSettings = new YM2413GlobalSettings();
+
+                this.SDS.FxS = new YM2413FxSettings();
             }
 
             public override void RestoreFrom(string serializeData)
@@ -858,6 +1618,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413GlobalSettings>))]
+        [DataContract]
+        [MidiHook]
+        public class YM2413GlobalSettings : ContextBoundObject
+        {
+            [DataMember]
+            [Category("Chip")]
+            [Description("Override global settings")]
+            public bool Enable
+            {
+                get;
+                set;
+            }
+
+            private byte? f_RHY;
+
+            /// <summary>
+            /// Vibrato depth (0:7 cent 1:14 cent)
+            /// </summary>
+            [DataMember]
+            [Category("Chip")]
+            [Description("Rhythm mode (0:Off(9ch) 1:On(6ch))\r\n" +
+            "Set DrumSet to ToneType in Timbre to output drum sound")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? RHY
+            {
+                get
+                {
+                    return f_RHY;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 1);
+                    f_RHY = v;
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -865,7 +1668,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             Custom,
             Violin,
-            Guitor,
+            Guiter,
             Piano,
             Flute,
             Clarinet,
@@ -891,6 +1694,194 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [MidiHook]
         public class YM2413Operator : ContextBoundObject
         {
+
+            private byte f_AR;
+
+            /// <summary>
+            /// Attack Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Attack Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte AR
+            {
+                get
+                {
+                    return f_AR;
+                }
+                set
+                {
+                    f_AR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_DR;
+
+            /// <summary>
+            /// Decay Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Decay Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte DR
+            {
+                get
+                {
+                    return f_DR;
+                }
+                set
+                {
+                    f_DR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_RR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Release Rate (0-15)\r\n" +
+                "When EG = 0, Used both Sustain Rate & Release Rate")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte RR
+            {
+                get
+                {
+                    return f_RR;
+                }
+                set
+                {
+                    f_RR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_SL;
+
+            /// <summary>
+            /// Sustain Level (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Sustain Level (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte SL
+            {
+                get
+                {
+                    return f_SL;
+                }
+                set
+                {
+                    f_SL = (byte)(value & 15);
+                }
+            }
+
+            private byte? f_SR;
+
+            /// <summary>
+            /// Sustain rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? SR
+            {
+                get
+                {
+                    return f_SR;
+                }
+                set
+                {
+                    if (value.HasValue)
+                        f_SR = (byte)(value & 15);
+                    else
+                        f_SR = value;
+                }
+            }
+
+            private byte f_KSL;
+
+            /// <summary>
+            /// Key Scaling Level(0-3)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSL
+            {
+                get
+                {
+                    return f_KSL;
+                }
+                set
+                {
+                    f_KSL = (byte)(value & 3);
+                }
+            }
+
+            private byte f_KSR;
+
+            /// <summary>
+            /// Keyboard scaling rate (0-1)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Keyboard Scaling Rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSR
+            {
+                get
+                {
+                    return f_KSR;
+                }
+                set
+                {
+                    f_KSR = (byte)(value & 1);
+                }
+            }
+
+            private byte f_MUL;
+
+            /// <summary>
+            /// Multiply (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Multiply (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte MUL
+            {
+                get
+                {
+                    return f_MUL;
+                }
+                set
+                {
+                    f_MUL = (byte)(value & 15);
+                }
+            }
 
             private byte f_AM;
 
@@ -961,77 +1952,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_KSR;
-
-            /// <summary>
-            /// Keyboard scaling rate (0-1)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSR
-            {
-                get
-                {
-                    return f_KSR;
-                }
-                set
-                {
-                    f_KSR = (byte)(value & 1);
-                }
-            }
-
-
-            private byte f_MUL;
-
-            /// <summary>
-            /// Multiply (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Multiply (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte MUL
-            {
-                get
-                {
-                    return f_MUL;
-                }
-                set
-                {
-                    f_MUL = (byte)(value & 15);
-                }
-            }
-
-            private byte f_KSL;
-
-            /// <summary>
-            /// Key Scaling Level(0-3)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSL
-            {
-                get
-                {
-                    return f_KSL;
-                }
-                set
-                {
-                    f_KSL = (byte)(value & 3);
-                }
-            }
-
-
             private byte f_DIST;
 
             /// <summary>
@@ -1052,98 +1972,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_DIST = (byte)(value & 1);
-                }
-            }
-
-            private byte f_AR;
-
-            /// <summary>
-            /// Attack Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Attack Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AR
-            {
-                get
-                {
-                    return f_AR;
-                }
-                set
-                {
-                    f_AR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_DR;
-
-            /// <summary>
-            /// Decay Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte DR
-            {
-                get
-                {
-                    return f_DR;
-                }
-                set
-                {
-                    f_DR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_SR;
-
-            /// <summary>
-            /// Sustain Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Sustain Level (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte SR
-            {
-                get
-                {
-                    return f_SR;
-                }
-                set
-                {
-                    f_SR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_RR;
-
-            /// <summary>
-            /// release rate(0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Release Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RR
-            {
-                get
-                {
-                    return f_RR;
-                }
-                set
-                {
-                    f_RR = (byte)(value & 15);
                 }
             }
 
@@ -1185,10 +2013,56 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Description("Memo")]
+            [DefaultValue(null)]
             public string Memo
             {
                 get;
                 set;
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR, RR, SL, SR, TL, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1243,10 +2117,55 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Description("Memo")]
+            [DefaultValue(null)]
             public string Memo
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR), RR, SL, SR, KSL, KSR, MUL, AM(AMS), VIB, EG, DIST\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(SR),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MUL),
+                        nameof(AM),
+                        nameof(VIB),
+                        nameof(EG),
+                        nameof(DIST));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1288,6 +2207,185 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             #endregion
 
         }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413FxSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class YM2413FxSettings : BasicFxSettings
+        {
+
+            private string f_ToneEnvelopes;
+
+            [DataMember]
+            [Description("Set ToneType envelop by text. Input ToneType value and split it with space like the Famitracker.\r\n" +
+                       "0-15 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 15)]
+            public string ToneEnvelopes
+            {
+                get
+                {
+                    return f_ToneEnvelopes;
+                }
+                set
+                {
+                    if (f_ToneEnvelopes != value)
+                    {
+                        ToneEnvelopesRepeatPoint = -1;
+                        ToneEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            ToneEnvelopesNums = new int[] { };
+                            f_ToneEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_ToneEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                ToneEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                ToneEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 15)
+                                        v = 15;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        ToneEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < ToneEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (ToneEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (ToneEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(ToneEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_ToneEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeDutyEnvelopes()
+            {
+                return !string.IsNullOrEmpty(ToneEnvelopes);
+            }
+
+            public void ResetDutyEnvelopes()
+            {
+                ToneEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] ToneEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int ToneEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int ToneEnvelopesReleasePoint { get; set; } = -1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override AbstractFxEngine CreateEngine()
+            {
+                return new YM2413FxEngine(this);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class YM2413FxEngine : BasicFxEngine
+        {
+            private YM2413FxSettings settings;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public YM2413FxEngine(YM2413FxSettings settings) : base(settings)
+            {
+                this.settings = settings;
+            }
+
+            private uint f_toneCounter;
+
+            public byte? ToneValue
+            {
+                get;
+                private set;
+            }
+
+            protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
+            {
+                bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
+
+                ToneValue = null;
+                if (settings.ToneEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.ToneEnvelopesNums.Length;
+                        if (settings.ToneEnvelopesReleasePoint >= 0)
+                            vm = settings.ToneEnvelopesReleasePoint;
+                        if (f_toneCounter >= vm)
+                        {
+                            if (settings.ToneEnvelopesRepeatPoint >= 0)
+                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                            else
+                                f_toneCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.ToneEnvelopesReleasePoint < 0)
+                            f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+
+                        //if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ToneEnvelopesRepeatPoint >= 0)
+                        //        f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                        //}
+                    }
+                    if (f_toneCounter < settings.ToneEnvelopesNums.Length)
+                    {
+                        int vol = settings.ToneEnvelopesNums[f_toneCounter++];
+
+                        ToneValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                return process;
+            }
+        }
+
     }
 
 

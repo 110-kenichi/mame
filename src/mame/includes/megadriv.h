@@ -11,6 +11,7 @@
 #include "sound/2612intf.h"
 #include "sound/ym2151.h"
 #include "sound/ym2413.h"
+#include "sound/emu2413.h"
 #include "sound/gb.h"
 #include "sound/sn76496.h"
 #include "sound/namco.h"
@@ -29,6 +30,8 @@
 #include "video/315_5313.h"
 #include "sound/mt32.h"
 #include "sound/cm32p.h"
+#include "sound/262intf.h"
+#include "sound/2608intf.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -97,7 +100,7 @@ public:
 			didx++;
 			//YM2413
 			strcpy(device_names[didx][i], (std::string("ym2413_") + num).c_str());
-			m_ym2413[i] = new optional_device<ym2413_device>(*this, device_names[didx][i]);
+			m_ym2413[i] = new optional_device<emu2413_device>(*this, device_names[didx][i]);
 			didx++;
 			//sn76496(PSG)
 			strcpy(device_names[didx][i], (std::string("sn76496_") + num).c_str());
@@ -167,10 +170,18 @@ public:
 			strcpy(device_names[didx][i], (std::string("cm32p_") + num).c_str());
 			m_cm32p[i] = new optional_device<cm32p_device>(*this, device_names[didx][i]);
 			didx++;
+			//OPL3
+			strcpy(device_names[didx][i], (std::string("ymf262_") + num).c_str());
+			m_ymf262[i] = new optional_device<ymf262_device>(*this, device_names[didx][i]);
+			didx++;
+			//ym2608
+			strcpy(device_names[didx][i], (std::string("ym2608_") + num).c_str());
+			m_ym2608[i] = new optional_device<ym2608_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 22 ][8][100];
+	char device_names[ 24 ][8][100];
 	optional_device<ym2151_device> *m_ym2151[8];	//1
 	optional_device<ym2612_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -179,7 +190,7 @@ public:
 	optional_device<nesapu_device> *m_nesapu[8];	//6
 	optional_device<k051649_device> *m_scc1[8];	//7
 	optional_device<ym3812_device> *m_ym3812[8];	//8
-	optional_device<ym2413_device> *m_ym2413[8];	//9
+	optional_device<emu2413_device> *m_ym2413[8];	//9
 	optional_device<msm5232_device> *m_msm5232[8];	//10
 	optional_device<ay8910_device> *m_ay8910[8];	//11
 	optional_device<mos8580_device> *m_sid8580[8];	//12
@@ -192,6 +203,8 @@ public:
 	optional_device<ym2610b_device> *m_ym2610b[8];	//19
 	optional_device<mt32_device> *m_mt32[8];	//20
 	optional_device<cm32p_device> *m_cm32p[8];	//21
+	optional_device<ymf262_device> *m_ymf262[8];	//22
+	optional_device<ym2608_device> *m_ym2608[8];	//23
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

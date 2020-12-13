@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormAbout : Form
+    public partial class FormAbout : FormBase
     {
         public FormAbout()
         {

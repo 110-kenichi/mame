@@ -205,4 +205,137 @@
   <data name="CM32P" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\CM32P.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Rec" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Rec.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YMF262" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YMF262.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DSEG7ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DSEG7ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PixelMplus12_Regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PixelMplus12-Regular.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DSEG14ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DSEG14ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="YM2608" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2608.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConnectingSPFM" xml:space="preserve">
+    <value>Connecting to a real chip via SPFM...</value>
+  </data>
+  <data name="UpdatingADPCM" xml:space="preserve">
+    <value>Updating ADPCM data...</value>
+  </data>
+  <data name="AdpcmBufferExceeded" xml:space="preserve">
+    <value>ADPCM buffer exceeded.</value>
+  </data>
+  <data name="AdpcmBufferUsed" xml:space="preserve">
+    <value>ADPCM buffer used {0}/256 KB.</value>
+  </data>
+  <data name="FailedLoadFile" xml:space="preserve">
+    <value>Failed to load the file.</value>
+  </data>
+  <data name="FailedLoadMAmi" xml:space="preserve">
+    <value>Failed to load the MAmi file.</value>
+  </data>
+  <data name="FailedLoadMAmidi" xml:space="preserve">
+    <value>Failed to load the MAmidi file.</value>
+  </data>
+  <data name="FailedLoadMidi" xml:space="preserve">
+    <value>Failed to load the MIDI file.</value>
+  </data>
+  <data name="FailedMidiIf" xml:space="preserve">
+    <value>Failed to set MIDI I/F.</value>
+  </data>
+  <data name="FailedSaveEnv" xml:space="preserve">
+    <value>Failed to save the current env.</value>
+  </data>
+  <data name="FailedSaveMAmidi" xml:space="preserve">
+    <value>Failed to save the current env and midi into the MAmidi file.</value>
+  </data>
+  <data name="LoadMidiFile" xml:space="preserve">
+    <value>Please load a midi file to save the current env and midi file into the MAmidi file.</value>
+  </data>
+  <data name="WanrSPC700SampleLength" xml:space="preserve">
+    <value>Some sample loop length is not a multiple of 16.
+So, sound glitches may occur.</value>
+  </data>
+  <data name="FailedLaunch" xml:space="preserve">
+    <value>Failed to launch.</value>
+  </data>
 </root>

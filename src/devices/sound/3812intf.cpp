@@ -82,8 +82,10 @@ void ym3812_device::device_start()
 
 	m_irq_handler.resolve();
 
+	m_vgm_writer = new vgm_writer(machine());
+
 	/* stream system initialize */
-	m_chip = ym3812_init(this, clock(), rate);
+	m_chip = ym3812_init(this, clock(), rate, m_vgm_writer);
 	if (!m_chip)
 		throw emu_fatalerror("ym3812_device(%s): Error creating YM3812 chip", tag());
 
@@ -98,6 +100,18 @@ void ym3812_device::device_start()
 	m_timer[1] = timer_alloc(TIMER_B);
 	m_timer[2] = timer_alloc(TIMER_IRQ_SYNC);
 }
+
+void ym3812_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_YM3812, clock());
+};
+
+void ym3812_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 void ym3812_device::device_clock_changed()
 {

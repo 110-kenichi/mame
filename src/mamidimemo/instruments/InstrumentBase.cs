@@ -4,6 +4,7 @@ using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,12 +17,16 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
+using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -73,9 +78,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_GainLeft != value)
                 {
                     f_GainLeft = value;
-                    Program.SoundUpdating();
-                    SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, value);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 0, value);
                 }
             }
         }
@@ -111,9 +115,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_GainRight != value)
                 {
                     f_GainRight = value;
-                    Program.SoundUpdating();
-                    SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, value);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(SetOutputGain, UnitNumber, SoundInterfaceTagNamePrefix, 1, value);
                 }
             }
         }
@@ -126,6 +129,62 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void ResetGainRight()
         {
             GainRight = 1.0f;
+        }
+
+
+        private static float f_MasterGain = 1.0f;
+
+        public static event EventHandler<PropertyChangingEventArgs> StaticPropertyChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public static float MasterGain
+        {
+            get
+            {
+                return f_MasterGain;
+            }
+            set
+            {
+                if (f_MasterGain != value)
+                {
+                    f_MasterGain = value;
+
+                    DeferredWriteData(SetOutputGain, uint.MaxValue, "lspeaker", 0, f_MasterGain);
+                    DeferredWriteData(SetOutputGain, uint.MaxValue, "rspeaker", 0, f_MasterGain);
+
+                    StaticPropertyChanged?.Invoke(typeof(InstrumentBase), new PropertyChangingEventArgs(nameof(MasterGain)));
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [DefaultValue(FollowerUnit.None)]
+        [Description("Enable Follower mode. Share free voice channels with specified leader unit and does not accept any Note On MIDI event.\r\n" +
+            "Be sure to set same settings with the leader unit.")]
+        public virtual FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [Description("Global Dynamic Arpeggio Settings. This can be overrided by a Timbre settins.")]
+        public virtual ArpSettings GlobalARP
+        {
+            get;
+            set;
         }
 
         private FilterMode f_FilterMode = FilterMode.LowPass;
@@ -141,9 +200,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterMode != value)
                 {
                     f_FilterMode = value;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, f_FilterMode, FilterCutoff, FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, f_FilterMode, FilterCutoff, FilterResonance);
                 }
             }
         }
@@ -185,9 +243,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterCutOff != v)
                 {
                     f_FilterCutOff = v;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, f_FilterCutOff, FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, f_FilterCutOff, FilterResonance);
                 }
             }
         }
@@ -220,35 +277,47 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_FilterResonance != v)
                 {
                     f_FilterResonance = v;
-                    Program.SoundUpdating();
-                    set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, f_FilterResonance);
-                    Program.SoundUpdated();
+
+                    DeferredWriteData(set_filter, UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, f_FilterResonance);
                 }
             }
         }
+
+        private VSTPluginCollection f_VSTPlugins;
 
         [DataMember]
         [Category("Filter")]
         [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST")]
         public VSTPluginCollection VSTPlugins
         {
-            get;
-            set;
-        } = new VSTPluginCollection();
+            get
+            {
+                if (Program.IsVSTiMode())
+                    return null;
+                return f_VSTPlugins;
+            }
+            set
+            {
+                if (!Program.IsVSTiMode())
+                    f_VSTPlugins = value;
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string Memo
         {
             get;
             set;
         }
 
-        [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-        typeof(UITypeEditor)), Localizable(false)]
+        [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]
         [Description("You can copy and paste this text data to other same type Instrument.\r\nNote: Open dropdown editor then copy all text and paste to dropdown editor. Do not copy and paste one liner text.")]
@@ -256,12 +325,24 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
+                //return JsonHelper.SerializeToMinimalJson(this);   NG: cant reset child member value
                 return JsonConvert.SerializeObject(this, Formatting.Indented);
             }
             set
             {
-                RestoreFrom(value);
+                JObject jo = JObject.Parse(value);
+                jo["UnitNumber"] = UnitNumber;
+
+                RestoreFrom(jo.ToString());
+                if (!Program.IsVSTiMode())
+                    serializeVstFx();
+                set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
             }
+        }
+
+        private void serializeVstFx()
+        {
+            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
         }
 
         public abstract void RestoreFrom(string serializeData);
@@ -323,18 +404,302 @@ namespace zanac.MAmidiMEmo.Instruments
             get;
         }
 
+        private TimbreBase[] lastNoteOnTimbres = new TimbreBase[16];
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase GetLastTimbre(int channel)
+        {
+            if (lastNoteOnTimbres[channel] != null)
+                return lastNoteOnTimbres[channel];
+
+            int pn = (int)ProgramAssignments[ProgramNumbers[channel]];
+
+            if ((pn & 0xffff0000) != 0)
+            {
+                int ptidx = pn & 0xffff;
+                if (ptidx >= CombinedTimbres.Length)
+                    ptidx = CombinedTimbres.Length - 1;
+                var pts = CombinedTimbres[ptidx];
+                for (int i = 0; i < pts.BindTimbres.Length; i++)
+                {
+                    if (pts.BindTimbres[i] != null) //if Timbre assigned
+                        return CombinedTimbres[ptidx];
+                }
+            }
+
+            int btidx = pn & 0xffff;
+            if (btidx >= BaseTimbres.Length)
+                btidx = BaseTimbres.Length - 1;
+            return BaseTimbres[btidx];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
+        {
+            List<TimbreBase> ts = new List<TimbreBase>();
+
+            var tb = ev.Tag as NoteOnTimbreInfo;
+            if (tb != null)
+            {
+                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
+                if (ctb != null)
+                {
+                    foreach (int? tn in ctb.BindTimbres)
+                    {
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add(BaseTimbres[tn.Value]);
+                    }
+                }
+                else
+                {
+                    ts.Add(tb.Timbre);
+                }
+                return ts.ToArray();
+            }
+
+            switch (ChannelTypes[ev.Channel])
+            {
+                case ChannelType.Normal:
+                    {
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add(BaseTimbres[tn.Value]);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(BaseTimbres[btidx]);
+                        break;
+                    }
+                case ChannelType.Drum:
+                    {
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
+                        {
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
+                            {
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                {
+                                    if (tn != null && tn.Value < BaseTimbres.Length)
+                                        ts.Add(BaseTimbres[tn.Value]);
+                                }
+                                if (ts.Count != 0)
+                                    return ts.ToArray();
+                            }
+
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            ts.Add(BaseTimbres[btidx]);
+                        }
+                        break;
+                    }
+            }
+
+            return ts.ToArray();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual int[] GetBaseTimbreIndexes(TaggedNoteOnEvent ev)
+        {
+            List<int> ts = new List<int>();
+
+            NoteOnTimbreInfo tb = ev.Tag as NoteOnTimbreInfo;
+            if (tb != null)
+            {
+                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
+                if (ctb != null)
+                {
+                    foreach (int? tn in ctb.BindTimbres)
+                    {
+                        if (tn != null && tn.Value < BaseTimbres.Length)
+                            ts.Add((int)tn);
+                    }
+                }
+                else
+                {
+                    ts.Add(tb.TimbreNo);
+                }
+                return ts.ToArray();
+            }
+
+            switch (ChannelTypes[ev.Channel])
+            {
+                case ChannelType.Normal:
+                    {
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            {
+                                if (tn != null && tn.Value < BaseTimbres.Length)
+                                    ts.Add((int)tn);
+                            }
+                            if (ts.Count != 0)
+                                return ts.ToArray();
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        ts.Add(btidx);
+                        break;
+                    }
+                case ChannelType.Drum:
+                    {
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
+                        {
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
+                            {
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                {
+                                    if (tn != null && tn.Value < BaseTimbres.Length)
+                                        ts.Add((int)tn);
+                                }
+                                if (ts.Count != 0)
+                                    return ts.ToArray();
+                            }
+
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            ts.Add(btidx);
+                        }
+                        break;
+                    }
+            }
+            return ts.ToArray();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
-        [Category("MIDI")]
-        [Description("Receving MIDI ch <MIDI 16ch>")]
+        [Category(" Timbres")]
+        [Description("Combine multiple Timbres (0-255)\r\n" +
+            "Override PatchTimbres to Timbres when you set binding patch numbers.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual CombinedTimbre[] CombinedTimbres
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        [Category(" Timbres")]
+        [Description("Drum ch(usually 10ch) Timbres table")]
+        [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableNoteCollectionConverter))]
+        public virtual DrumTimbre[] DrumTimbres
+        {
+            get;
+            set;
+        }
+
+        public void ResetDrumTimbres()
+        {
+            for (int i = 0; i < DrumTimbres.Length; i++)
+                DrumTimbres[i] = new DrumTimbre(i, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Channel type <MIDI 16ch>")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
+        [CollectionDefaultValue(true)]
+        public virtual ChannelType[] ChannelTypes
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeChannelTypes()
+        {
+            for (int i = 0; i < ChannelTypes.Length; i++)
+            {
+                if (i == 9)
+                {
+                    if (ChannelTypes[i] != ChannelType.Drum)
+                        return true;
+                }
+                else
+                {
+                    if (ChannelTypes[i] != ChannelType.Normal)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public void ResetChannelTypes()
+        {
+            for (int i = 0; i < ChannelTypes.Length; i++)
+                ChannelTypes[i] = ChannelType.Normal;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Receving MIDI Port")]
+        [DefaultValue(MidiPort.PortAB)]
+        public virtual MidiPort MidiPort
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Receving MIDI ch <MIDI 16ch>")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         [CollectionDefaultValue(true)]
         public virtual bool[] Channels
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeChannels()
@@ -350,7 +715,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetChannels()
         {
             for (int i = 0; i < Channels.Length; i++)
-                Channels[i] = false;
+                Channels[i] = true;
         }
 
         /// <summary>
@@ -359,13 +724,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Pitch (0 - 8192 - 16383) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(16383)]
         [CollectionDefaultValue((ushort)8192)]
         public virtual ushort[] Pitchs
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePitchs()
@@ -387,13 +752,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Pitch bend sensitivity [half note] <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)2)]
         public virtual byte[] PitchBendRanges
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePitchBendRanges()
@@ -409,19 +774,50 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetPitchBendRanges()
         {
             for (int i = 0; i < PitchBendRanges.Length; i++)
-                Pitchs[i] = 2;
+                PitchBendRanges[i] = 2;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Assign the Timbre/CombinedTimbre to program number.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual ProgramAssignmentNumber[] ProgramAssignments
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+            {
+                if ((int)ProgramAssignments[i] != i)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void ResetProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+        }
+
 
         [DataMember]
         [Category("MIDI")]
         [Description("Program number (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] ProgramNumbers
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeProgramNumbers()
@@ -437,26 +833,19 @@ namespace zanac.MAmidiMEmo.Instruments
         public void ResetProgramNumbers()
         {
             for (int i = 0; i < ProgramNumbers.Length; i++)
-                Pitchs[i] = 0;
+                ProgramNumbers[i] = 0;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public abstract TimbreBase GetTimbre(int channel);
-
 
         [DataMember]
         [Category("MIDI")]
         [Description("Volume (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)127)]
         public virtual byte[] Volumes
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeVolumes()
@@ -478,13 +867,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Volume (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)127)]
         public virtual byte[] Expressions
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -507,13 +896,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Volume ((L)0-63(C)64-127(R)) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] Panpots
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializePanpots()
@@ -535,13 +924,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] Modulations
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulations()
@@ -564,13 +953,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Rate (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationRates
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -607,13 +996,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDepthes
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDepthes()
@@ -635,13 +1024,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Delay (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDelays
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDelays()
@@ -680,13 +1069,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth Range[Half Note] (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] ModulationDepthRangesNote
         {
             get;
-            private set;
+            set;
         }
 
         public bool ShouldSerializeModulationDepthRangesNote()
@@ -709,13 +1098,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Modulation Depth Range[Cent] (0-64-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)64)]
         public virtual byte[] ModulationDepthRangesCent
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -735,17 +1124,55 @@ namespace zanac.MAmidiMEmo.Instruments
                 ModulationDepthRangesCent[i] = 64;
         }
 
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Holds (0:Off 64:On) <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [Mask(127)]
+        [CollectionDefaultValue((byte)0)]
+        public virtual byte[] Holds
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public virtual byte[] LastHolds
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeHolds()
+        {
+            foreach (var dt in Holds)
+            {
+                if (dt != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetHolds()
+        {
+            for (int i = 0; i < Holds.Length; i++)
+                Holds[i] = 0;
+        }
+
 
         [DataMember]
         [Category("MIDI")]
         [Description("Portamento (0:Off 64:On) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] Portamentos
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -769,13 +1196,13 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Portamento Time (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] PortamentoTimes
         {
             get;
-            private set;
+            set;
         }
 
 
@@ -797,16 +1224,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("MIDI")]
-        [Description("Mono mode (0-127) 0:Disable mono mode <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableCollectionConverter))]
+        [Description("Mono mode (0-127) 0:Disable mono mode N:Number of max voices <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]
         public virtual byte[] MonoMode
         {
             get;
-            private set;
+            set;
         }
-
 
         public bool ShouldSerializeMonoMode()
         {
@@ -824,14 +1250,43 @@ namespace zanac.MAmidiMEmo.Instruments
                 MonoMode[i] = 0;
         }
 
-
         [DataMember]
         [Category("MIDI")]
+        [Description("Poly mode (0-127) 0:Disable Poly mode N:Number of reserved voices <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [Mask(127)]
+        [CollectionDefaultValue((byte)0)]
+        public virtual byte[] PolyMode
+        {
+            get;
+            set;
+        }
+
+
+        public bool ShouldSerializePolyMode()
+        {
+            foreach (var dt in PolyMode)
+            {
+                if (dt != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetPolyMode()
+        {
+            for (int i = 0; i < PolyMode.Length; i++)
+                PolyMode[i] = 0;
+        }
+
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
         [Description("General Purpose Control Settings <MIDI 16ch>\r\n" +
             "Link Data Entry message value with the Instrument property value (Only the property that has a slider editor)\r\n" +
             "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
             "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16-19,80-83 message.")]
         [DisplayName("General Purpose Control Settings(GPCS)")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         public GeneralPurposeControlSettings[] GPCS
         {
             get;
@@ -870,23 +1325,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 GPCS[i].GeneralPurposeControl8 = null;
             }
         }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="maxVoice"></param>
-        /// <returns></returns>
-        protected int CalcMaxVoiceNumber(int channel, byte maxVoice)
-        {
-            if (MonoMode[channel] == 0 || MonoMode[channel] > maxVoice)
-                return maxVoice;
-            else
-                return MonoMode[channel];
-        }
-
-
 
         [Browsable(false)]
         public byte[] DataLsb
@@ -945,6 +1383,25 @@ namespace zanac.MAmidiMEmo.Instruments
         private delegate void delegate_set_device_enable(uint unitNumber, string tagName, byte enable);
 
         private static delegate_set_device_enable set_device_enable;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_set_device_passthru(uint unitNumber, string tagName, byte enable);
+
+        private static delegate_set_device_passthru set_device_passthru;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="passthru"></param>
+        protected void SetDevicePassThru(bool passthru)
+        {
+            set_device_passthru(UnitNumber, SoundInterfaceTagNamePrefix, passthru ? (byte)1 : (byte)0);
+        }
 
         /// <summary>
         /// 
@@ -1032,6 +1489,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         private static void SetVstFxCallback(uint unitNumber, string name, delg_vst_fx_callback callback)
         {
+            DeferredWriteData(set_vst_fx_callback, unitNumber, name, callback);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -1040,7 +1499,7 @@ namespace zanac.MAmidiMEmo.Instruments
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -1056,6 +1515,82 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private GCHandle vstHandle;
 
+        #region VGM
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delg_start_vgm_recording_to(uint unitNumber, string tagName, string vgmPath);
+
+        private delg_start_vgm_recording_to start_vgm_recording_to;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private delg_start_vgm_recording_to StartVgmRecordingToInternal
+        {
+            get
+            {
+                if (start_vgm_recording_to == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("start_vgm_recording_to");
+                    if (funcPtr != IntPtr.Zero)
+                        start_vgm_recording_to = (delg_start_vgm_recording_to)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_start_vgm_recording_to));
+                }
+                return start_vgm_recording_to;
+            }
+        }
+
+        private bool vgmRecording;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmPath"></param>
+        public virtual void StartVgmRecordingTo(string vgmPath)
+        {
+            vgmRecording = true;
+
+            var now = DateTime.Now;
+            string op = Path.Combine(vgmPath, this.Name + "_" + this.UnitNumber + "_" +
+                now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-'));
+
+            StartVgmRecordingToInternal(UnitNumber, SoundInterfaceTagNamePrefix, op);
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delg_stop_vgm_recording(uint unitNumber, string tagName);
+
+        private delg_stop_vgm_recording stop_vgm_recording;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private delg_stop_vgm_recording StopVgmRecordingInternal
+        {
+            get
+            {
+                if (stop_vgm_recording == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("stop_vgm_recording");
+                    if (funcPtr != IntPtr.Zero)
+                        stop_vgm_recording = (delg_stop_vgm_recording)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_stop_vgm_recording));
+                }
+                return stop_vgm_recording;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void StopVgmRecording()
+        {
+            vgmRecording = false;
+            StopVgmRecordingInternal(UnitNumber, SoundInterfaceTagNamePrefix);
+        }
+
+        #endregion
+
+        #region ctor
+
         /// <summary>
         /// 
         /// </summary>
@@ -1064,6 +1599,10 @@ namespace zanac.MAmidiMEmo.Instruments
             IntPtr funcPtr = MameIF.GetProcAddress("set_device_enable");
             if (funcPtr != IntPtr.Zero)
                 set_device_enable = Marshal.GetDelegateForFunctionPointer<delegate_set_device_enable>(funcPtr);
+
+            funcPtr = MameIF.GetProcAddress("set_device_passthru");
+            if (funcPtr != IntPtr.Zero)
+                set_device_passthru = Marshal.GetDelegateForFunctionPointer<delegate_set_device_passthru>(funcPtr);
 
             funcPtr = MameIF.GetProcAddress("set_output_gain");
             if (funcPtr != IntPtr.Zero)
@@ -1084,7 +1623,11 @@ namespace zanac.MAmidiMEmo.Instruments
             funcPtr = MameIF.GetProcAddress("set_vst_fx_callback");
             if (funcPtr != IntPtr.Zero)
                 set_vst_fx_callback = Marshal.GetDelegateForFunctionPointer<delegate_set_vst_fx_callback>(funcPtr);
+
+            deferredWriteData = new List<(Delegate, object[])>();
         }
+
+        public const int DEFAULT_MAX_TIMBRES = 256;
 
         /// <summary>
         /// 
@@ -1097,13 +1640,35 @@ namespace zanac.MAmidiMEmo.Instruments
 
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
-            set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
-            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
+            GlobalARP = new ArpSettings();
+
+            set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
             vstHandle = GCHandle.Alloc(this);
 
-            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+            if (!Program.IsVSTiMode())
+                initVstPlugins();
+
+            CombinedTimbres = new CombinedTimbre[DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < DEFAULT_MAX_TIMBRES; i++)
+                CombinedTimbres[i] = new CombinedTimbre();
+
+            DrumTimbres = new DrumTimbre[128];
+            for (int i = 0; i < DrumTimbres.Length; i++)
+                DrumTimbres[i] = new DrumTimbre(i, null);
+
+            ProgramAssignments = new ProgramAssignmentNumber[128];
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+
+            ChannelTypes = new ChannelType[] {
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Drum, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
+                    ChannelType.Normal };
 
             Channels = new bool[] {
                     true, true, true,
@@ -1238,6 +1803,24 @@ namespace zanac.MAmidiMEmo.Instruments
                     0, 0, 0,
                     0, 0, 0,
                     0, 0, 0, 0};
+            PolyMode = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
+            Holds = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
+            LastHolds = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
             GPCS = new GeneralPurposeControlSettings[]{
                 new GeneralPurposeControlSettings(),
                 new GeneralPurposeControlSettings(),
@@ -1277,6 +1860,16 @@ namespace zanac.MAmidiMEmo.Instruments
             };
         }
 
+        private void initVstPlugins()
+        {
+            f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
+            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+
+            VSTPlugins = new VSTPluginCollection();
+        }
+
+        #endregion
+
         #region IDisposable Support
 
         private bool disposedValue = false; // 重複する呼び出しを検出するには
@@ -1290,16 +1883,21 @@ namespace zanac.MAmidiMEmo.Instruments
                     //マネージ状態を破棄します (マネージ オブジェクト)。
 
                 }
+                if (vgmRecording)
+                    StopVgmRecordingInternal(UnitNumber, SoundInterfaceTagNamePrefix);
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
                 // TODO: 大きなフィールドを null に設定します。
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 0);
 
-                SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
-                lock (InstrumentBase.VstPluginContextLockObject)
+                if (VSTPlugins != null)
                 {
-                    foreach (var vp in VSTPlugins)
-                        vp.Dispose();
+                    SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
+
+                    lock (InstrumentBase.VstPluginContextLockObject)
+                    {
+                        VSTPlugins.Dispose();
+                    }
                 }
 
                 if (vstHandle != null && vstHandle.IsAllocated)
@@ -1319,10 +1917,94 @@ namespace zanac.MAmidiMEmo.Instruments
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public virtual void Dispose()
         {
+            Program.SoundUpdating();
+
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
             GC.SuppressFinalize(this);
+
+            Program.SoundUpdated();
+        }
+
+        #endregion
+
+        #region deferredWriteData
+
+        private static List<(Delegate, object[])> deferredWriteData;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="delg"></param>
+        /// <param name="args"></param>
+        protected static void DeferredWriteData(Delegate delg, params object[] args)
+        {
+#if DEBUG
+
+            try
+            {
+                Program.SoundUpdating();
+                delg.DynamicInvoke(args);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+#else
+
+            lock (deferredWriteData)
+            {
+                deferredWriteData.Add((delg, args));
+                if (deferredWriteData.Count != 1)
+                    return;
+            }
+            void act()
+            {
+                try
+                {
+                    Program.SoundUpdating();
+                    lock (deferredWriteData)
+                    {
+                        foreach (var (d, a) in deferredWriteData)
+                            d.DynamicInvoke(a);
+                        deferredWriteData.Clear();
+                    }
+                }
+                finally
+                {
+                    Program.SoundUpdated();
+                }
+            }
+            Task.Factory.StartNew(act);
+#endif
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void FlushDeferredWriteData()
+        {
+            lock (deferredWriteData)
+            {
+                if (deferredWriteData.Count == 0)
+                    return;
+            }
+
+            try
+            {
+                Program.SoundUpdating();
+                lock (deferredWriteData)
+                {
+                    foreach (var (d, a) in deferredWriteData)
+                        d.DynamicInvoke(a);
+                    deferredWriteData.Clear();
+                }
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
         }
 
         #endregion
@@ -1335,13 +2017,16 @@ namespace zanac.MAmidiMEmo.Instruments
             set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 1);
         }
 
+        #region MIDI
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
         internal void NotifyMidiEvent(MidiEvent midiEvent)
         {
-            OnMidiEvent(midiEvent);
+            lock (MidiManager.SoundExclusiveLockObject)
+                OnMidiEvent(midiEvent);
         }
 
         /// <summary>
@@ -1369,14 +2054,41 @@ namespace zanac.MAmidiMEmo.Instruments
                     case NoteOnEvent non:
                         {
                             if (non.Velocity == 0)
-                                OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            {
+                                if (ChannelTypes[non.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
+                                    OnNoteOffEvent(new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            }
                             else
-                                OnNoteOnEvent(non);
+                            {
+                                if (FollowerMode != FollowerUnit.None)
+                                    break;
+                                lastNoteOnTimbres[ce.Channel] = null;
+                                OnNoteOnEvent(new TaggedNoteOnEvent(non));
+                            }
+                            break;
+                        }
+                    case TaggedNoteOnEvent tnon:
+                        {
+                            if (tnon.Velocity == 0)
+                            {
+                                if (ChannelTypes[tnon.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
+                                    OnNoteOffEvent(new NoteOffEvent(tnon.NoteNumber, (SevenBitNumber)0) { Channel = tnon.Channel, DeltaTime = tnon.DeltaTime });
+                            }
+                            else
+                            {
+                                if (FollowerMode != FollowerUnit.None && !tnon.MonitorEvent)
+                                    break;
+                                var ni = tnon.Tag as NoteOnTimbreInfo;
+                                if (ni != null)
+                                    lastNoteOnTimbres[ce.Channel] = ni.Timbre;
+                                OnNoteOnEvent(tnon);
+                            }
                             break;
                         }
                     case NoteOffEvent noff:
                         {
-                            OnNoteOffEvent(noff);
+                            if (ChannelTypes[noff.Channel] != ChannelType.Drum && Holds[ce.Channel] < 64)
+                                OnNoteOffEvent(noff);
                             break;
                         }
                     case ControlChangeEvent cont:
@@ -1411,7 +2123,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected virtual void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected virtual void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
 
         }
@@ -1443,10 +2155,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     switch (lastDateEntryType[midiEvent.Channel])
                     {
                         case DataEntryType.Nrpn:
-                            processNrpn(midiEvent, null);
+                            OnNrpnDataEntered(midiEvent, null);
                             break;
                         case DataEntryType.Rpn:
-                            processRpn(midiEvent, null);
+                            OnRpnDataEntered(midiEvent, null);
                             break;
                     }
                     break;
@@ -1456,10 +2168,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     switch (lastDateEntryType[midiEvent.Channel])
                     {
                         case DataEntryType.Nrpn:
-                            processNrpn(null, midiEvent);
+                            OnNrpnDataEntered(null, midiEvent);
                             break;
                         case DataEntryType.Rpn:
-                            processRpn(null, midiEvent);
+                            OnRpnDataEntered(null, midiEvent);
                             break;
                     }
                     break;
@@ -1474,6 +2186,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     break;
                 case 11:    //Expression
                     Expressions[midiEvent.Channel] = midiEvent.ControlValue;
+                    break;
+                case 64:    //Holds
+                    LastHolds[midiEvent.Channel] = Holds[midiEvent.Channel];
+                    Holds[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
                 case 65:    //Portamento
                     Portamentos[midiEvent.Channel] = midiEvent.ControlValue;
@@ -1495,14 +2211,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 94:
                 case 95:
                     {
-                        foreach (var vp in VSTPlugins)
-                        {
-                            foreach (var pn in vp.VECCSS[midiEvent.Channel].GetProperties(vp, midiEvent.ControlNumber - 90))
-                            {
-                                float val = (float)midiEvent.ControlValue / (float)128;
-                                vp.Settings.SetPropertyValue(pn, val);
-                            }
-                        }
+                        if (VSTPlugins != null)
+                            VSTPlugins.ProcessSoundControl(midiEvent.Channel, midiEvent.ControlNumber, midiEvent.ControlValue, 0);
                     }
                     break;
 
@@ -1539,6 +2249,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         Expressions[i] = 127;
                         PitchBendRanges[i] = 2;
                         Pitchs[i] = 8192;
+                        Holds[i] = 0;
+                        LastHolds[i] = 0;
                         Modulations[i] = 0;
                         ModulationRates[i] = 64;
                         ModulationDepthes[i] = 64;
@@ -1547,6 +2259,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         ModulationDepthRangesCent[i] = 0x40;
                         Portamentos[i] = 0;
                         PortamentoTimes[i] = 0;
+
+                        MonoMode[i] = 0;
+                        PolyMode[i] = 0;
                     }
                     break;
                 case 126:    //MONO Mode
@@ -1554,12 +2269,18 @@ namespace zanac.MAmidiMEmo.Instruments
                     break;
                 case 127:    //POLY Mode
                     MonoMode[midiEvent.Channel] = 0;
+                    PolyMode[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
             }
         }
 
+        private ControlChangeEvent[] lastDataLsb = new ControlChangeEvent[16];
 
-        private void processNrpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        private ControlChangeEvent[] lastDataMsb = new ControlChangeEvent[16];
+
+        abstract internal void AllSoundOff();
+
+        protected virtual void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {
@@ -1568,18 +2289,31 @@ namespace zanac.MAmidiMEmo.Instruments
                     default:
                         break;
                 }
+
+                lastDataMsb[dataMsb.Channel] = dataMsb;
             }
             if (dataLsb != null)
             {
                 switch (NrpnMsb[dataLsb.Channel])
                 {
+                    //Sound Control
+                    case 91:
+                    case 92:
+                    case 93:
+                    case 94:
+                    case 95:
+                        if (VSTPlugins != null)
+                            VSTPlugins.ProcessSoundControl(dataMsb.Channel, dataMsb.ControlNumber, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                        break;
                     default:
                         break;
                 }
+
+                lastDataLsb[dataLsb.Channel] = dataLsb;
             }
         }
 
-        private void processRpn(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        protected virtual void OnRpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)
             {
@@ -1651,6 +2385,10 @@ namespace zanac.MAmidiMEmo.Instruments
             Pitchs[midiEvent.Channel] = midiEvent.PitchValue;
         }
 
+        #endregion
+
+        #region VST
+
         /// <summary>
         /// 
         /// </summary>
@@ -1658,79 +2396,24 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="pos"></param>
         private void vst_fx_callback(IntPtr buffer, int samples)
         {
-            if (samples == 0)
-                return;
-
-            int[][] buf = new int[2][] { new int[samples], new int[samples] };
-            IntPtr[] pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
-            Marshal.Copy(pt[0], buf[0], 0, samples);
-            Marshal.Copy(pt[1], buf[1], 0, samples);
-
-            using (VstAudioBufferManager bufA = new VstAudioBufferManager(2, samples))
-            using (VstAudioBufferManager bufB = new VstAudioBufferManager(2, samples))
-            {
-                lock (InstrumentBase.VstPluginContextLockObject)
-                {
-                    bool processed = false;
-                    foreach (var vp in VSTPlugins)
-                    {
-                        var ctx = vp.PluginContext;
-                        if (ctx != null)
-                        {
-                            int idx = 0;
-                            foreach (VstAudioBuffer vab in bufA)
-                            {
-                                Parallel.ForEach(Partitioner.Create(0, samples), range =>
-                                {
-                                    for (var i = range.Item1; i < range.Item2; i++)
-                                        vab[i] = (float)buf[idx][i] / 32767.0f;
-                                });
-                                //for (int i = 0; i < samples; i++)
-                                //    vab[i] = (float)buf[idx][i] / (float)int.MaxValue;
-                                idx++;
-                            }
-                            break;
-                        }
-                    }
-
-                    VstAudioBufferManager bufa = bufA;
-                    VstAudioBufferManager bufb = bufA;
-                    foreach (var vp in VSTPlugins)
-                    {
-                        var ctx = vp.PluginContext;
-                        if (ctx != null)
-                        {
-                            ctx.Context.PluginCommandStub.SetBlockSize(samples);
-                            ctx.Context.PluginCommandStub.ProcessReplacing(bufa.ToArray<VstAudioBuffer>(), bufb.ToArray<VstAudioBuffer>());
-                            processed = true;
-                        }
-                        var tmp = bufa;
-                        bufa = bufb;
-                        bufb = tmp;
-                    }
-
-                    if (processed)
-                    {
-                        int idx = 0;
-                        foreach (VstAudioBuffer vab in bufb)
-                        {
-                            Parallel.ForEach(Partitioner.Create(0, samples), range =>
-                            {
-                                for (var i = range.Item1; i < range.Item2; i++)
-                                    buf[idx][i] = (int)(vab[i] * 32767.0f);
-                            });
-                            //for (int i = 0; i < samples; i++)
-                            //    buf[idx][i] = (int)(vab[i] * int.MaxValue);
-                            idx++;
-                        }
-                        Marshal.Copy(buf[0], 0, pt[0], samples);
-                        Marshal.Copy(buf[1], 0, pt[1], samples);
-                    }
-                }
-            }
-
+            if (VSTPlugins != null)
+                VSTPlugins.ProcessCallback(buffer, samples);
         }
 
+        #endregion
+
+        #region MENU
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal virtual IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
+        {
+            return null;
+        }
+
+        #endregion
     }
 
     public enum FilterMode

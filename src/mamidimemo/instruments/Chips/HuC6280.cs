@@ -77,24 +77,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public HuC6280Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
+        private PcmData[] pcmTable;
+
+        private class PcmData
         {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            int currentPos;
+
+            byte[] pcmData;
+
+            public bool IsEndOfData
+            {
+                get
+                {
+                    return currentPos >= pcmData.Length;
+                }
+            }
+
+            public byte GetNextData()
+            {
+                if (currentPos < pcmData.Length)
+                    return pcmData[currentPos++];
+                else
+                    return 0;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public PcmData(byte[] pcmData)
+            {
+                this.pcmData = new byte[pcmData.Length];
+                Array.Copy(pcmData, this.pcmData, pcmData.Length);
+            }
         }
 
         /// <summary>
@@ -105,8 +130,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<HuC6280>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<HuC6280>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -135,6 +160,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void C6280WriteData(uint unitNumber, uint address, int? slot, byte data)
         {
+            if (slot != null)
+                DeferredWriteData(C6280_w, unitNumber, (uint)0x800, (byte)slot.Value);
+            DeferredWriteData(C6280_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -145,7 +174,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -157,6 +186,78 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delg_callback();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_set_callback(uint unitNumber, delg_callback callback);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void C6280SetCallback(uint unitNumber, delg_callback callback)
+        {
+            set_callback(unitNumber, callback);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void pcm_callback()
+        {
+            lock (pcmTable)
+            {
+                for (int i = 0; i < pcmTable.Length; i++)
+                {
+                    if (pcmTable[i] != null && !pcmTable[i].IsEndOfData)
+                    {
+                        C6280WriteData(UnitNumber, 0x800, null, (byte)i);
+                        var data = pcmTable[i].GetNextData();
+                        C6280WriteData(UnitNumber, 0x806, null, (byte)(data >> 3));
+
+                        if (pcmTable[i].IsEndOfData)
+                            pcmTable[i] = null;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="data"></param>
+        private void setPcmData(int slot, byte[] data)
+        {
+            lock (pcmTable)
+            {
+                if (data == null)
+                    pcmTable[slot] = null;
+                else
+                    pcmTable[slot] = new PcmData(data);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_set_callback set_callback
+        {
+            get;
+            set;
+        }
+
+        private static double[] volumeTable = new double[32];
+
         /// <summary>
         /// 
         /// </summary>
@@ -165,12 +266,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             IntPtr funcPtr = MameIF.GetProcAddress("c6280_w");
             if (funcPtr != IntPtr.Zero)
                 C6280_w = (delegate_c6280_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_c6280_w));
+            funcPtr = MameIF.GetProcAddress("c6280_set_pcm_callback");
+            if (funcPtr != IntPtr.Zero)
+                set_callback = (delegate_set_callback)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_set_callback));
+
+            double level = 1;
+            double step = 48.0 / 32.0;
+            for (int i = 0; i < 30; i++)
+            {
+                volumeTable[i] = level;
+                level /= Math.Pow(10.0, step / 20.0);
+            }
+            volumeTable[30] = volumeTable[31] = 0;
         }
 
         private Hu6280SoundManager soundManager;
 
 
-        private const float DEFAULT_GAIN = 6.0f;
+        private const float DEFAULT_GAIN = 1.5f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -192,6 +305,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainRight = DEFAULT_GAIN;
         }
 
+        private delg_callback f_pcm_callback;
 
         /// <summary>
         /// 
@@ -201,12 +315,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new HuC6280Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new HuC6280Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new HuC6280Timbre();
             setPresetInstruments();
 
             this.soundManager = new Hu6280SoundManager(this);
+
+            pcmTable = new PcmData[6];
+
+            f_pcm_callback = new delg_callback(pcm_callback);
+            C6280SetCallback(UnitNumber, f_pcm_callback);
+        }
+
+
+        private bool disposedValue = false; // 重複する呼び出しを検出するには
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    //マネージ状態を破棄します (マネージ オブジェクト)。
+                    soundManager?.Dispose();
+                    soundManager = null;
+                }
+
+                // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
+                // TODO: 大きなフィールドを null に設定します。
+                C6280SetCallback(UnitNumber, null);
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
+        ~HuC6280()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(false);
         }
 
         /// <summary>
@@ -214,8 +366,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public override void Dispose()
         {
-            soundManager?.Dispose();
-            base.Dispose();
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(true);
+            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -232,14 +386,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 0x00, 0x00, 0x01, 0x03, 0x05, 0x07, 0x09, 0x0c  };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmPath"></param>
+        public override void StartVgmRecordingTo(string vgmPath)
+        {
+            base.StartVgmRecordingTo(vgmPath);
+
+            //Sound On
+            C6280WriteData(UnitNumber, 0x801, null, (byte)0xff);
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -248,7 +413,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -259,7 +424,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -270,7 +442,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -278,12 +455,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class Hu6280SoundManager : SoundManagerBase
         {
-            private SoundList<Hu6280Sound> lfoOnSounds = new SoundList<Hu6280Sound>(1);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<Hu6280Sound> wsgOnSounds = new SoundList<Hu6280Sound>(2);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<Hu6280Sound> noiseOnSounds = new SoundList<Hu6280Sound>(1);
+            private static SoundList<Hu6280Sound> lfoOnSounds = new SoundList<Hu6280Sound>(1);
 
+            private static SoundList<Hu6280Sound> wsgOnSounds = new SoundList<Hu6280Sound>(2);
 
             private HuC6280 parentModule;
 
@@ -302,74 +489,106 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                Hu6280Sound snd = new Hu6280Sound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.SoundType)
+                foreach (HuC6280Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    case SoundType.WSGLFO:
-                        lfoOnSounds.Add(snd);
-                        break;
-                    case SoundType.WSG:
-                        wsgOnSounds.Add(snd);
-                        break;
-                    case SoundType.NOISE:
-                        noiseOnSounds.Add(snd);
-                        break;
-                }
-                snd.KeyOn();
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    Hu6280Sound snd = new Hu6280Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    switch (timbre.SoundType)
+                    {
+                        case SoundType.WSGLFO:
+                            lfoOnSounds.Add(snd);
+                            break;
+                        case SoundType.WSG:
+                            wsgOnSounds.Add(snd);
+                            break;
+                        case SoundType.NOISE:
+                            wsgOnSounds.Add(snd);
+                            break;
+                        case SoundType.PCM:
+                            wsgOnSounds.Add(snd);
+                            break;
+                    }
+
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (HuC6280 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, HuC6280Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 switch (timbre.SoundType)
                 {
                     case SoundType.WSGLFO:
                         {
-                            emptySlot = SearchEmptySlotAndOff(lfoOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, lfoOnSounds, note, 1);
                             break;
                         }
+                    case SoundType.PCM:
                     case SoundType.WSG:
                         {
                             if (timbre.PartialReserveWSGLFO)
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2, -1, 2);
                                 else
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4, -1, 2);
                             }
                             else
                             {
                                 if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
                                 else
-                                    emptySlot = SearchEmptySlotAndOff(wsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 6));
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6);
                             }
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6, -1, 4);
                             break;
                         }
                 }
+
                 return emptySlot;
+            }
+
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    C6280WriteData(parentModule.UnitNumber, 0x804, i, (byte)0);
+                    C6280WriteData(parentModule.UnitNumber, 0x807, i, (byte)0);
+                }
             }
 
         }
@@ -383,13 +602,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private HuC6280 parentModule;
 
-            private SevenBitNumber programNumber;
-
             private HuC6280Timbre timbre;
 
             private SoundType lastSoundType;
-
-            private int partialReserveLfo;
 
             /// <summary>
             /// 
@@ -398,15 +613,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public Hu6280Sound(HuC6280 parentModule, Hu6280SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public Hu6280Sound(HuC6280 parentModule, Hu6280SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (HuC6280Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
-                if (lastSoundType == SoundType.WSG && this.timbre.PartialReserveWSGLFO)
-                    partialReserveLfo = 2;
             }
 
             /// <summary>
@@ -416,15 +628,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
+                C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
+                C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)0);
+
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                         {
-                            Program.SoundUpdating();
-
                             //ch0 WSG
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)Slot);
-                            C6280WriteData(parentModule.UnitNumber, 0x804, null, (byte)Slot);
+
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
@@ -436,29 +648,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             C6280WriteData(parentModule.UnitNumber, 0x808, null, timbre.LfoFreq);
                             C6280WriteData(parentModule.UnitNumber, 0x809, null, (byte)((timbre.LfoEnable ? 0x00 : 0x80) | timbre.LfoMode));
 
-                            Program.SoundUpdated();
-                            FormMain.OutputDebugLog("KeyOn LFO ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn LFO ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.WSG:
                         {
-                            Program.SoundUpdating();
-
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
                             foreach (var d in timbre.WsgData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
-                            Program.SoundUpdated();
-                            FormMain.OutputDebugLog("KeyOn PSG ch" + (Slot + partialReserveLfo) + " " + NoteOnEvent.ToString());
+
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + Slot + " " + NoteOnEvent.ToString());
+                            break;
+                        }
+                    case SoundType.PCM:
+                        {
+                            parentModule.setPcmData(Slot, timbre.PcmData);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PSG(PCM) ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            Program.SoundUpdating();
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 4));
-                            for (int i = 0; i < 32; i++)
-                                C6280WriteData(parentModule.UnitNumber, 0x806, null, 0);
-                            Program.SoundUpdated();
-                            FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                 }
@@ -486,23 +695,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 var vol = CalcCurrentVolume();
-                byte wvol = (byte)Math.Round(31d * vol);
+                byte wvol = 31;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (vol < volumeTable[i])
+                    {
+                        wvol = (byte)(31 - i);
+                        break;
+                    }
+                }
+                if ((wvol & 1) == 1)
+                    wvol &= 0xfe;
+                else
+                    wvol |= 1;
 
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, (Slot + partialReserveLfo), (byte)(0x80 | wvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)(0x80 | wvol));
+                            break;
+                        }
+                    case SoundType.PCM:
+                        {
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)(0xc0 | wvol));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot + 4, (byte)(0x80 | wvol));
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)(0x80 | wvol));
                             break;
                         }
                 }
@@ -514,9 +737,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
 
                 //Freq
@@ -524,22 +744,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
+                    case SoundType.PCM:
                         {
                             ushort wsgfreq = convertWsgFrequency(freq);
 
-                            Program.SoundUpdating();
-                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + partialReserveLfo));
-                            C6280WriteData(parentModule.UnitNumber, 0x802, null, (byte)(wsgfreq & 0xff));
-                            C6280WriteData(parentModule.UnitNumber, 0x803, null, (byte)((wsgfreq >> 8) & 0x0f));
-                            Program.SoundUpdated();
-
+                            C6280WriteData(parentModule.UnitNumber, 0x802, Slot, (byte)(wsgfreq & 0xff));
+                            C6280WriteData(parentModule.UnitNumber, 0x803, Slot, (byte)((wsgfreq >> 8) & 0x0f));
                             break;
                         }
                     case SoundType.NOISE:
                         {
                             ushort noisefreq = convertNoiseFrequency(freq);
 
-                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot + 4, (byte)(0x80 | noisefreq));
+                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot, (byte)(0x80 | noisefreq));
 
                             break;
                         }
@@ -554,24 +771,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPanpotUpdated()
             {
                 //Pan
-                int pan = parentModule.Panpots[NoteOnEvent.Channel] - 1;
-                if (pan < 0)
-                    pan = 0;
+                int pan = CalcCurrentPanpot();
 
-                byte left = (byte)Math.Round(15d * Math.Cos(Math.PI / 2 * (pan / 126d)));
-                byte right = (byte)Math.Round(15d * Math.Sin(Math.PI / 2 * (pan / 126d)));
+                double left = 0;
+                double right = 0;
+                if (pan > 64)
+                    left = Math.Cos(Math.PI / 2 * (pan / 127d));
+                else
+                    left = Math.Cos(Math.PI / 2 * (64 / 127d));
+                if (pan < 64)
+                    right = Math.Sin(Math.PI / 2 * (pan / 127d));
+                else
+                    right = Math.Sin(Math.PI / 2 * (64 / 127d));
+
+                byte wlvol = 0;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (left < volumeTable[i])
+                    {
+                        wlvol = (byte)((31 - i) / 2);
+                        break;
+                    }
+                }
+                byte wrvol = 0;
+                for (int i = volumeTable.Length - 1; i >= 0; i--)
+                {
+                    if (right < volumeTable[i])
+                    {
+                        wrvol = (byte)((31 - i) / 2);
+                        break;
+                    }
+                }
 
                 switch (lastSoundType)
                 {
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
+                    case SoundType.PCM:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, (Slot + partialReserveLfo), (byte)(left << 4 | right));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot, (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot + 4, (byte)(left << 4 | right));
+                            C6280WriteData(parentModule.UnitNumber, 0x805, Slot, (byte)(wlvol << 4 | wrvol));
                             break;
                         }
                 }
@@ -590,13 +833,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.WSGLFO:
                     case SoundType.WSG:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, (Slot + partialReserveLfo), (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)0);
+                            break;
+                        }
+                    case SoundType.PCM:
+                        {
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)0);
+                            parentModule.setPcmData(Slot, null);
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot + 4, (byte)0);
-                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot + 4, (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x804, Slot, (byte)0);
+                            C6280WriteData(parentModule.UnitNumber, 0x807, Slot, (byte)0);
                             break;
                         }
                 }
@@ -668,7 +917,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
             private bool f_PartialReserveNoise;
 
             [DataMember]
@@ -692,7 +940,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_wsgdata = new byte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(5)]
             [DataMember]
             [Category("Sound")]
@@ -745,7 +993,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<byte> vs = new List<byte>();
                     foreach (var val in vals)
                     {
@@ -758,6 +1006,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte[] f_PcmData = new byte[0];
+
+            [TypeConverter(typeof(TypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Unsigned 8bit(Only high 5bit is used) PCM Raw Data or WAV Data. (MAX 64KB, 1ch @ 6991.3Hz)")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
+            public byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    f_PcmData = value;
+                }
+            }
+
+            public bool ShouldSerializePcmData()
+            {
+                return PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                PcmData = new byte[0];
+            }
 
             private bool f_LfoEnable = true;
 
@@ -821,7 +1098,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_lfodata = new byte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(5)]
             [DataMember]
             [Category("Sound")]
@@ -874,7 +1151,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<byte> vs = new List<byte>();
                     foreach (var val in vals)
                     {
@@ -929,6 +1206,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             WSG,
             WSGLFO,
             NOISE,
+            PCM
         }
 
     }

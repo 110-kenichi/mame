@@ -46,7 +46,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [DataMember]
         [Description("Set interval of envelope changing [ms]")]
         [DefaultValue(typeof(uint), "50")]
-        [SlideParametersAttribute((int)HighPrecisionTimer.TIMER_BASIC_INTERVAL, 10000)]
+        [SlideParametersAttribute(1, 10000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public uint EnvelopeInterval
         {
@@ -58,7 +58,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             {
                 if (value > 10000)
                     value = 10000;
-                if (f_Interval != value && value >= HighPrecisionTimer.TIMER_BASIC_INTERVAL)
+                if (f_Interval != value && value >= 1)
                 {
                     f_Interval = value;
                 }
@@ -67,6 +67,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
         [DataMember]
         [Description("Memo")]
+        [DefaultValue(null)]
         public string Memo
         {
             get;

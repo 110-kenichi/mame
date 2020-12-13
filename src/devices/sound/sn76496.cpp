@@ -290,7 +290,28 @@ void sn76496_base_device::device_start()
 	m_ready_handler(ASSERT_LINE);
 
 	register_for_save_states();
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void sn76496_base_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_SN76496, clock());
+
+	m_vgm_writer->vgm_header_set(0x01, m_feedback_mask);
+	m_vgm_writer->vgm_header_set(0x02, m_whitenoise_tap1);
+	m_vgm_writer->vgm_header_set(0x03, m_whitenoise_tap2);
+	m_vgm_writer->vgm_header_set(0x04, m_negate);
+	m_vgm_writer->vgm_header_set(0x05, m_stereo);
+	m_vgm_writer->vgm_header_set(0x06, m_clock_divider);
+	m_vgm_writer->vgm_header_set(0x07, m_sega_style_psg);	// how ironic that it does just the opposite of its name
+};
+
+void sn76496_base_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 void sn76496_base_device::device_clock_changed()
 {
@@ -300,6 +321,8 @@ void sn76496_base_device::device_clock_changed()
 void sn76496_base_device::stereo_w(u8 data)
 {
 	m_sound->update();
+	m_vgm_writer->vgm_write(0x01, data, 0x00);
+
 	if (m_stereo) m_stereo_mask = data;
 	else fatalerror("sn76496_base_device: Call to stereo write with mono chip!\n");
 }
@@ -316,6 +339,7 @@ void sn76496_base_device::write(u8 data)
 
 	// update the output buffer before changing the registers
 	m_sound->update();
+	m_vgm_writer->vgm_write(0x00, data, 0x00);
 
 	if (data & 0x80)
 	{

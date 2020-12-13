@@ -49,7 +49,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int SoundType {
             get {
                 return ((int)(this["SoundType"]));
@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int AudioLatency {
             get {
                 return ((int)(this["AudioLatency"]));
@@ -116,6 +116,366 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["PaLatency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputDir {
+            get {
+                return ((string)(this["OutputDir"]));
+            }
+            set {
+                this["OutputDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinProgNo {
+            get {
+                return ((int)(this["MWinProgNo"]));
+            }
+            set {
+                this["MWinProgNo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinKeyCh {
+            get {
+                return ((int)(this["MWinKeyCh"]));
+            }
+            set {
+                this["MWinKeyCh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FmPlayOnEdit {
+            get {
+                return ((bool)(this["FmPlayOnEdit"]));
+            }
+            set {
+                this["FmPlayOnEdit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("127")]
+        public int FmVelocity {
+            get {
+                return ((int)(this["FmVelocity"]));
+            }
+            set {
+                this["FmVelocity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int FmGateTime {
+            get {
+                return ((int)(this["FmGateTime"]));
+            }
+            set {
+                this["FmGateTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int FmNote {
+            get {
+                return ((int)(this["FmNote"]));
+            }
+            set {
+                this["FmNote"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size MWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["MWinSize"]));
+            }
+            set {
+                this["MWinSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("320")]
+        public int MWinSp1Pos {
+            get {
+                return ((int)(this["MWinSp1Pos"]));
+            }
+            set {
+                this["MWinSp1Pos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("420")]
+        public int MWinSp2Pos {
+            get {
+                return ((int)(this["MWinSp2Pos"]));
+            }
+            set {
+                this["MWinSp2Pos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinTab {
+            get {
+                return ((int)(this["MWinTab"]));
+            }
+            set {
+                this["MWinTab"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2151EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2151EdSize"]));
+            }
+            set {
+                this["YM2151EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2610BEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2610BEdSize"]));
+            }
+            set {
+                this["YM2610BEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2612EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2612EdSize"]));
+            }
+            set {
+                this["YM2612EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM3812EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM3812EdSize"]));
+            }
+            set {
+                this["YM3812EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2413EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2413EdSize"]));
+            }
+            set {
+                this["YM2413EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YMF262EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YMF262EdSize"]));
+            }
+            set {
+                this["YMF262EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size PWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["PWinSize"]));
+            }
+            set {
+                this["PWinSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinCC {
+            get {
+                return ((int)(this["MWinCC"]));
+            }
+            set {
+                this["MWinCC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int FmCC {
+            get {
+                return ((int)(this["FmCC"]));
+            }
+            set {
+                this["FmCC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoReload {
+            get {
+                return ((bool)(this["AutoReload"]));
+            }
+            set {
+                this["AutoReload"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int MasterVolume {
+            get {
+                return ((int)(this["MasterVolume"]));
+            }
+            set {
+                this["MasterVolume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("!ALG")]
+        public string FmTarget {
+            get {
+                return ((string)(this["FmTarget"]));
+            }
+            set {
+                this["FmTarget"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MidiIF_B {
+            get {
+                return ((string)(this["MidiIF_B"]));
+            }
+            set {
+                this["MidiIF_B"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MWinPort {
+            get {
+                return ((int)(this["MWinPort"]));
+            }
+            set {
+                this["MWinPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size YM2608EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2608EdSize"]));
+            }
+            set {
+                this["YM2608EdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitHubUserName {
+            get {
+                return ((string)(this["GitHubUserName"]));
+            }
+            set {
+                this["GitHubUserName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GitHubPersonalAccessToken {
+            get {
+                return ((string)(this["GitHubPersonalAccessToken"]));
+            }
+            set {
+                this["GitHubPersonalAccessToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FmHook {
+            get {
+                return ((bool)(this["FmHook"]));
+            }
+            set {
+                this["FmHook"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size WsgEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["WsgEdSize"]));
+            }
+            set {
+                this["WsgEdSize"] = value;
             }
         }
     }

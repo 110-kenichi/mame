@@ -1652,7 +1652,21 @@ void ym2413_device::device_start()
 			save_item(NAME(sl->wavetable), chnum * ARRAY_LENGTH(ch->SLOT) + slotnum);
 		}
 	}
+
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void ym2413_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_YM2413, clock());
+};
+
+void ym2413_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 //-------------------------------------------------
 //  device_clock_changed
@@ -1722,6 +1736,7 @@ void ym2413_device::register_port_w(u8 data)
 void ym2413_device::data_port_w(u8 data)
 {
 	m_stream->update();
+	m_vgm_writer->vgm_write(0x00, address, data);
 	write_reg(address, data);
 }
 

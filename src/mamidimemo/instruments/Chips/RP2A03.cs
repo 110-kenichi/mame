@@ -74,14 +74,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip")]
-        [Description("Delta PCM Data (Max 4081 bytes)")]
+        [Description("Assign PCM data to DPCM soundtype instrument.\r\n" +
+            "Delta PCM Data (Max 4081 bytes)")]
         [Editor(typeof(PcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [PcmTableEditor("DMC File(*.dmc)|*.dmc")]
         [TypeConverter(typeof(CustomObjectTypeConverter))]
         public DPcmSoundTable DeltaPcmSoundTable
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -96,28 +97,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        public RP2A03Timbre[] f_Timbres;
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public RP2A03Timbre[] Timbres
         {
-            get;
-            private set;
+            get
+            {
+                return f_Timbres;
+            }
+            set
+            {
+                f_Timbres = value;
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
+        public void ResetTimbres()
         {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
+                Timbres[i] = new RP2A03Timbre();
         }
 
         /// <summary>
@@ -128,8 +136,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<RP2A03>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<RP2A03>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -200,6 +208,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void RP2A03WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(RP2A03_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -208,17 +218,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="unitNumber"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         private static byte RP2A03ReadData(uint unitNumber, uint address)
         {
             try
             {
                 Program.SoundUpdating();
+
+                FlushDeferredWriteData();
+
                 return RP2A03_read(unitNumber, address);
             }
             finally
@@ -228,10 +244,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
+        /// <summary>
         /// 
         /// </summary>
+        /// <param name="unitNumber"></param>
+        /// <param name="data"></param>
         private static void RP2A03SetDpcm(uint unitNumber, byte[] data)
         {
+            DeferredWriteData(RP2A03_SetDPCM, unitNumber, data, (uint)data.Length);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -241,6 +262,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdated();
             }
+            */
         }
 
         /// <summary>
@@ -298,8 +320,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new RP2A03Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new RP2A03Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new RP2A03Timbre();
             DeltaPcmSoundTable = new DPcmSoundTable();
 
@@ -329,9 +351,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -340,7 +362,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -351,7 +373,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -362,7 +391,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -370,19 +404,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class RP2A03SoundManager : SoundManagerBase
         {
-            private SoundList<RP2A03Sound> sqOnSounds = new SoundList<RP2A03Sound>(2);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<RP2A03Sound> triOnSounds = new SoundList<RP2A03Sound>(1);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<RP2A03Sound> noiseOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> sqOnSounds = new SoundList<RP2A03Sound>(2);
 
-            private SoundList<RP2A03Sound> dpcmOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> triOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> fdsOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> noiseOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> vrc6SqOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> dpcmOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> fdsOnSounds = new SoundList<RP2A03Sound>(1);
+
+            private static SoundList<RP2A03Sound> vrc6SqOnSounds = new SoundList<RP2A03Sound>(2);
+
+            private static SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
 
             private RP2A03 parentModule;
 
@@ -399,102 +446,132 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                RP2A03Sound snd = new RP2A03Sound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.ToneType)
+                foreach (RP2A03Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    case ToneType.SQUARE:
-                        sqOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn SQ ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.TRIANGLE:
-                        triOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn Tri ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.NOISE:
-                        noiseOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn Noise ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.DPCM:
-                        dpcmOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn DPCM ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.FDS:
-                        fdsOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn FDS ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.VRC6_SQ:
-                        vrc6SqOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn VRC6(SQ) ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case ToneType.VRC6_SAW:
-                        vrc6SawOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
-                        break;
-                }
-                snd.KeyOn();
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    RP2A03Sound snd = new RP2A03Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    switch (timbre.ToneType)
+                    {
+                        case ToneType.SQUARE:
+                            sqOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn SQ ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.TRIANGLE:
+                            triOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn Tri ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.NOISE:
+                            noiseOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn Noise ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.DPCM:
+                            dpcmOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn DPCM ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.FDS:
+                            fdsOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn FDS ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.VRC6_SQ:
+                            vrc6SqOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn VRC6(SQ) ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.VRC6_SAW:
+                            vrc6SawOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
+                            break;
+                    }
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (RP2A03 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, RP2A03Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (timbre.ToneType)
                 {
                     case ToneType.SQUARE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(sqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, sqOnSounds, note, 2);
                             break;
                         }
                     case ToneType.TRIANGLE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(triOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, triOnSounds, note, 1);
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, 1);
                             break;
                         }
                     case ToneType.DPCM:
                         {
-                            emptySlot = SearchEmptySlotAndOff(dpcmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, dpcmOnSounds, note, 1);
                             break;
                         }
                     case ToneType.FDS:
                         {
-                            emptySlot = SearchEmptySlotAndOff(fdsOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fdsOnSounds, note, 1);
                             break;
                         }
                     case ToneType.VRC6_SQ:
                         {
-                            emptySlot = SearchEmptySlotAndOff(vrc6SqOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, vrc6SqOnSounds, note, 2);
                             break;
                         }
                     case ToneType.VRC6_SAW:
                         {
-                            emptySlot = SearchEmptySlotAndOff(vrc6SawOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, vrc6SawOnSounds, note, 1);
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
+                RP2A03WriteData(parentModule.UnitNumber, 0x15, 0);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0x83, 0xc0);
+
+                RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (0 << 12)), 0x00);
+                RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (1 << 12)), 0x00);
+
+                RP2A03WriteData(parentModule.UnitNumber, 0xb002, 0x00);
+            }
         }
 
 
@@ -505,8 +582,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private RP2A03 parentModule;
-
-            private SevenBitNumber programNumber;
 
             private RP2A03Timbre timbre;
 
@@ -519,11 +594,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public RP2A03Sound(RP2A03 parentModule, RP2A03SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public RP2A03Sound(RP2A03 parentModule, RP2A03SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (RP2A03Timbre)timbre;
 
                 lastToneType = this.timbre.ToneType;
             }
@@ -539,9 +613,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.SQUARE:
                         {
-                            var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                            var timbre = parentModule.Timbres[pn];
-
                             byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << Slot)));
 
@@ -558,14 +629,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.TRIANGLE:
                         {
-                            var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                            var timbre = parentModule.Timbres[pn];
-
                             byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
 
                             RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
                                 (byte)(timbre.LengthCounterDisable << 7 | timbre.TriCounterLength));
+
+                            //Volume
+                            updateTriVolume();
 
                             //Freq
                             updateTriPitch();
@@ -588,8 +659,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             //https://wiki.nesdev.com/w/index.php/APU_DMC
 
-                            var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                            var timbre = parentModule.Timbres[pn];
                             int noteNum = NoteOnEvent.NoteNumber;
 
                             //keyoff
@@ -667,9 +736,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.SQUARE:
                         {
-                            var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                            var timbre = parentModule.Timbres[pn];
-
                             RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x01),
                                 (byte)(timbre.SQSweep.Enable << 7 | timbre.SQSweep.UpdateRate << 4 |
                                 timbre.SQSweep.Direction << 3 | timbre.SQSweep.Range));
@@ -683,6 +749,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.TRIANGLE:
                         {
+                            //Volume
+                            updateTriVolume();
                             //Freq
                             updateTriPitch();
 
@@ -700,9 +768,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.DPCM:
                         {
                             //https://wiki.nesdev.com/w/index.php/APU_DMC
-
-                            var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                            var timbre = parentModule.Timbres[pn];
 
                             // Loop / Smple Rate
                             RP2A03WriteData(parentModule.UnitNumber, (uint)0x10,
@@ -734,13 +799,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 switch (lastToneType)
                 {
                     case ToneType.SQUARE:
                         updateSqVolume();
+                        break;
+                    case ToneType.TRIANGLE:
+                        updateTriVolume();
                         break;
                     case ToneType.NOISE:
                         updateNoiseVolume();
@@ -779,6 +844,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x00), (byte)(dc << 6 | ld << 5 | dd << 4 | fv));
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void updateTriVolume()
+            {
+                var fv = Math.Round(timbre.Volume * CalcCurrentVolume());
+
+                if (fv < 0.01)
+                {
+                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
+                    RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
+                }
+                else
+                {
+                    byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                    RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
+
+                    RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
+                        (byte)(timbre.LengthCounterDisable << 7 | timbre.TriCounterLength));
+                }
             }
 
             /// <summary>
@@ -896,102 +983,105 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateSqPitch()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 16)) - 1;
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x02), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateTriPitch()
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 32)) - 1;
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x02), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateNoisePitch()
             {
-                if (IsSoundOff)
-                    return;
+                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
 
+                int kf = 0;
+                if (d > 0)
+                    kf = (int)d % 63;
+                else if (d < 0)
+                    kf = 63 + ((int)d % 63);
+
+                int noted = (int)d / 63;
+                if (d < 0)
+                    noted -= 1;
+
+                int nn = NoteOnEvent.NoteNumber;
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                int noteNum = nn + noted;
+                if (noteNum > 127)
+                    noteNum = 127;
+                else if (noteNum < 0)
+                    noteNum = 0;
+                int n = 31 - (noteNum % 32);
+
+                /*
                 var pitch = (int)(parentModule.Pitchs[NoteOnEvent.Channel] - 8192) / (8192 / 32);
                 int n = 31 - ((NoteOnEvent.NoteNumber + pitch) % 32);
+                */
 
                 var nt = timbre.NoiseType;
                 if (FxEngine != null && FxEngine.Active)
                 {
                     var eng = (NesFxEngine)FxEngine;
-                    nt = (byte)(eng.DutyValue & 1);
+                    if (eng.DutyValue != null)
+                        nt = (byte)(eng.DutyValue.Value & 1);
                 }
 
-                Program.SoundUpdating();
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x02), (byte)((nt << 7) | (n & 0xf)));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x03), (byte)(timbre.PlayLength << 3));
-                Program.SoundUpdated();
             }
 
             private void updateFdsPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 // p = 65536 * f / 1789773d
                 freq = Math.Round(64 * 65536 * freq / (21477272d / 12d));
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, 0x82, (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, 0x83, (byte)((n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateVrc6SQPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (16 * freq)) - 1;
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9001 + (Slot << 12)), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (Slot << 12)), (byte)(0x80 | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             private void updateVrc6SawPitch()
             {
-                if (IsSoundOff)
-                    return;
                 double freq = CalcCurrentFrequency();
                 //t = (CPU / (14 * f)) - 1
                 freq = Math.Round(((21477272d / 12d) / (14 * freq)) - 1);
                 if (freq > 0x7ff)
                     freq = 0x7ff;
                 var n = (ushort)freq;
-                Program.SoundUpdating();
+
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB001), (byte)(n & 0xff));
                 RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | (n >> 8) & 0x7));
-                Program.SoundUpdated();
             }
 
             public override void SoundOff()
@@ -1008,14 +1098,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.TRIANGLE:
                         {
+                            RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
+
                             byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
-
                             byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~8);
                             RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
@@ -1101,7 +1191,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_LengthDisable = 1;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound(SQ/Tri)")]
             [Description("Square/Tri Length Counter Clock Disable (0:Enable 1:Disable)")]
@@ -1194,7 +1284,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_PlayLength;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound")]
             [Description("Square/Tri Play Length (0-31)")]
@@ -1216,7 +1306,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte f_TriCounterLength = 127;
 
-            [Browsable(false)]
+            //[Browsable(false)]
             [DataMember]
             [Category("Sound(Tri)")]
             [Description("Tri Linear Counter Length (0-127)")]
@@ -1341,7 +1431,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_WsgData = new byte[64];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(6)]
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1394,7 +1484,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<byte> vs = new List<byte>();
                     foreach (var val in vals)
                     {
@@ -1414,7 +1504,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("FDS LFO Frequency(0 - 4095)")]
             [SlideParametersAttribute(0, 4095)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
             public uint LfoFreq
             {
                 get
@@ -1427,8 +1516,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            public bool ShouldSerializeLfoFreq()
+            {
+                return f_LfoFreq != 0;
+            }
 
-            private uint f_LfoGain;
+            public void ResetLfoFreq()
+            {
+                f_LfoFreq = 0;
+            }
+
+
+            private byte f_LfoGain;
 
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1436,7 +1535,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [SlideParametersAttribute(0, 63)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue((byte)0)]
-            public uint LfoGain
+            public byte LfoGain
             {
                 get
                 {
@@ -1444,14 +1543,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_LfoGain = (uint)(value & 63);
+                    f_LfoGain = (byte)(value & 63);
                 }
             }
 
             private sbyte[] f_LfoData = new sbyte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(3)]
             [DataMember]
             [Category("Sound(FDS)")]
@@ -1504,7 +1603,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     var vs = new List<sbyte>();
                     foreach (var val in vals)
                     {
@@ -1577,6 +1676,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set duty/noise envelop by text. Input duty/noise value and split it with space like the Famitracker.\r\n" +
                        "0-3(0-7:VRC6) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 7)]
             public string DutyEnvelopes
             {
                 get
@@ -1596,7 +1697,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_DutyEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1719,14 +1820,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesRepeatPoint < 0)
+                        if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {
@@ -1755,6 +1856,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Square Sweep Enable (0:Disable 1:Enable)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
             public byte Enable
             {
                 get
@@ -1774,6 +1876,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Square Sweep Update Rate (0-7)")]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
             public byte UpdateRate
             {
                 get
@@ -1793,6 +1896,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Wave Length (0:Decrease 1:Increse)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
             public byte Direction
             {
                 get
@@ -1812,6 +1916,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Wave Length (0-7)")]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
             public byte Range
             {
                 get

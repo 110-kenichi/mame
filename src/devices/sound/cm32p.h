@@ -77,7 +77,7 @@ struct MemParams {
 		PatchParam patch;
 		u8 panpot; // PANPOT 0-127 (R-L)
 		u8 outputLevel; // OUTPUT LEVEL 0-100
-	} ALIGN_PACKED patchTemp[6];
+	} ALIGN_PACKED patchTemp[16];
 
 	PatchParam patches[128];
 
@@ -89,6 +89,7 @@ struct MemParams {
 		u8 reserveSettings[6]; // PARTIAL RESERVE (PART 1) 0-31
 		u8 chanAssign[6]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		u8 masterVol; // MASTER VOLUME 0-100
+		u8 chanAssign2[10]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 	} ALIGN_PACKED system;
 };
 
@@ -130,13 +131,17 @@ public:
 
 	void add_sf(u8 card_id, fluid_sfont_t *sf);
 
-	void set_tone(u8 card_id, u8 tone_no, u16 sf_preset_no);
+	void set_tone(u8 card_id, u16 tone_no, u16 sf_preset_no);
 
 	void set_card(u8 card_id);
 
 	void set_enable(int enable);
 
 	void initialize_memory();
+
+	void set_chanAssign(u8* assign);
+
+	void get_chanAssign(u8* assign);
 
 protected:
 	// device-level overrides
@@ -155,12 +160,13 @@ private:
 	fluid_synth_t *synth_rev_on;
 	fluid_synth_t *synth_rev_off;
 
+	u8 bank_no[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	u8 rpn_lsb[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	u8 rpn_msb[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	u8 rpn_data[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	u8 rpn_type[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	std::map<u16, u16> tone_table;
+	std::map<u32, u16> tone_table;
 	std::map<u8, unsigned int> sf_table;
 	u8 card_id;
 
@@ -196,7 +202,7 @@ private:
 		 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	};
 
-	void program_select(u8 channel, u8 tone_media, u8 tone_no);
+	void program_select(u8 channel, u8 tone_media, u8 bank_no, u8 tone_no);
 
 	void playSysexWithoutFraming(const u8 *sysex, u32 len);
 
@@ -294,7 +300,7 @@ public:
 
 class PatchTempMemoryRegion : public MemoryRegion {
 public:
-	PatchTempMemoryRegion(cm32p_device *useSynth, u8 *useRealMemory, u8 *useMaxTable) : MemoryRegion(useSynth, useRealMemory, useMaxTable, MR_PatchTemp, CM32P_MEMADDR(0x500000), sizeof(MemParams::PatchTemp), 6) {}
+	PatchTempMemoryRegion(cm32p_device *useSynth, u8 *useRealMemory, u8 *useMaxTable) : MemoryRegion(useSynth, useRealMemory, useMaxTable, MR_PatchTemp, CM32P_MEMADDR(0x500000), sizeof(MemParams::PatchTemp), 16) {}
 };
 class PatchesMemoryRegion : public MemoryRegion {
 public:

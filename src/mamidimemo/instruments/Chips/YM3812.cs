@@ -18,12 +18,14 @@ using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 
 //http://www.oplx.com/opl2/docs/adlib_sb.txt
 //ftp://ftp.oldskool.org/pub/drivers/Yamaha/yamaha_ym3812.pdf
+//http://www.shikadi.net/moddingwiki/OPL_chip
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -133,26 +135,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [Category(" Timbres")]
+        [Description("Timbres")]
+        [EditorAttribute(typeof(YM3812UITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public YM3812Timbre[] Timbres
         {
             get;
-            private set;
+            set;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
 
         /// <summary>
         /// 
@@ -162,8 +153,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<YM3812>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<YM3812>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -202,11 +193,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
+            //Channel        1   2   3   4   5   6   7   8   9
+            //Operator 1    00  01  02  08  09  0A  10  11  12
+            //Operator 2    03  04  05  0B  0C  0D  13  14  15
+
+            DeferredWriteData(YM3812_write, unitNumber, (uint)0, (byte)(address + (op * 3) + addressTable[slot]));
+            DeferredWriteData(YM3812_write, unitNumber, (uint)1, data);
+            /*
             try
             {
-                //Channel        1   2   3   4   5   6   7   8   9
-                //Operator 1    00  01  02  08  09  0A  10  11  12
-                //Operator 2    03  04  05  0B  0C  0D  13  14  15
 
                 Program.SoundUpdating();
                 YM3812_write(unitNumber, 0, (byte)(address + (op * 3) + addressTable[slot]));
@@ -215,7 +210,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -261,8 +256,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new YM3812Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new YM3812Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new YM3812Timbre();
             setPresetInstruments();
 
@@ -317,6 +312,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
+            //WS Enable
             YM3812WriteData(UnitNumber, (byte)0x01, 0, 0, (byte)0x20);
         }
 
@@ -324,9 +320,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -335,7 +331,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -346,7 +342,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -357,7 +360,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -365,7 +373,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class YM3812SoundManager : SoundManagerBase
         {
-            private SoundList<YM3812Sound> fmOnSounds = new SoundList<YM3812Sound>(9);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<YM3812Sound> fmOnSounds = new SoundList<YM3812Sound>(9);
 
             private YM3812 parentModule;
 
@@ -382,37 +403,58 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
-                YM3812Sound snd = new YM3812Sound(parentModule, this, timbre, note, emptySlot);
-                fmOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn FM ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (YM3812Timbre timbre in parentModule.GetBaseTimbres(note))
+                {
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    YM3812Sound snd = new YM3812Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    fmOnSounds.Add(snd);
+
+                    FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (YM3812 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                int emptySlot = -1;
-
-                var pn = parentModule.ProgramNumbers[note.Channel];
-
-                var timbre = parentModule.Timbres[pn];
-                emptySlot = SearchEmptySlotAndOff(fmOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 9));
-                return emptySlot;
+                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 9; i++)
+                {
+                    YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
+                }
+            }
         }
 
 
@@ -423,8 +465,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private YM3812 parentModule;
-
-            private SevenBitNumber programNumber;
 
             private YM3812Timbre timbre;
 
@@ -437,11 +477,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM3812Sound(YM3812 parentModule, YM3812SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM3812Sound(YM3812 parentModule, YM3812SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (YM3812Timbre)timbre;
             }
 
             /// <summary>
@@ -454,15 +493,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.AMD.HasValue)
                         parentModule.AMD = gs.AMD.Value;
                     if (gs.VIB.HasValue)
                         parentModule.VIB = gs.VIB.Value;
-                    Program.SoundUpdated();
                 }
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -477,15 +513,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.AMD.HasValue)
                         parentModule.AMD = gs.AMD.Value;
                     if (gs.VIB.HasValue)
                         parentModule.VIB = gs.VIB.Value;
-                    Program.SoundUpdated();
                 }
 
-                //
                 SetTimbre();
                 //Volume
                 OnVolumeUpdated();
@@ -496,16 +529,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 var v = CalcCurrentVolume();
                 for (int op = 0; op < 2; op++)
                 {
                     YM3812Operator o = timbre.Ops[op];
                     //$40+: Scaling level/ total level
                     if (timbre.ALG == 1 || op == 1)
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | (63 - (byte)Math.Round((63 - o.TL) * v))));
+                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                     else
                         YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
                 }
@@ -517,14 +547,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                double d = CalcCurrentPitch();
+                double d = CalcCurrentPitchDeltaNoteNumber();
 
-                int noteNum = NoteOnEvent.NoteNumber + (int)d;
+                int nn = NoteOnEvent.NoteNumber;
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+
+                int noteNum = nn + (int)d;
                 if (noteNum > 127)
                     noteNum = 127;
                 else if (noteNum < 0)
                     noteNum = 0;
-                var nnOn = new NoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
+                var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
                 ushort freq = convertFmFrequency(nnOn);
                 var octave = nnOn.GetNoteOctave();
                 if (octave < 0)
@@ -543,11 +577,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
 
                 //keyon
-                lastFreqData = (byte)(0x20 | octave | ((freq >> 8) & 3));
-                Program.SoundUpdating();
+                byte kon = IsKeyOff ? (byte)0 : (byte)0x20;
+                lastFreqData = (byte)(kon | octave | ((freq >> 8) & 3));
+
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xa0 + Slot), 0, 0, (byte)(0xff & freq));
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xb0 + Slot), 0, 0, lastFreqData);
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }
@@ -557,23 +591,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                Program.SoundUpdating();
                 for (int op = 0; op < 2; op++)
                 {
                     YM3812Operator o = timbre.Ops[op];
                     //$20+: Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-                    YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.EG << 6 | o.KSR | o.MFM)));
+                    YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
                     //$60+: Attack Rate / Decay Rate
                     YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
-                    YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                    if (o.SR.HasValue && o.EG == 0)
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.SR.Value));
+                    else
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+
                     //$e0+: Waveform Select
                     YM3812WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)(o.WS));
                 }
 
                 //$C0+: algorithm and feedback
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xc0 + Slot), 0, 0, (byte)(timbre.FB << 1 | timbre.ALG));
-                Program.SoundUpdated();
             }
 
             /// <summary>
@@ -582,6 +618,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void SoundOff()
             {
                 base.SoundOff();
+
+                for (int op = 0; op < 2; op++)
+                {
+                    YM3812Operator o = timbre.Ops[op];
+                    if (o.SR.HasValue && o.EG == 0)
+                    {
+                        YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
+                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                    }
+                }
 
                 YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + Slot), 0, 0, (byte)(lastFreqData & 0x1f));
             }
@@ -609,7 +655,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note)
             {
                 return freqTable[(int)note.GetNoteName() + 1];
             }
@@ -620,7 +666,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(NoteOnEvent note, bool plus)
+            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
             {
                 if (plus)
                     return freqTable[(int)note.GetNoteName() + 2];
@@ -636,25 +682,92 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class YM3812Timbre : TimbreBase
         {
-            #region FM Symth
+            #region FM Synth
 
-            private byte f_FB;
-
-            [DataMember]
             [Category("Sound")]
-            [Description("Feedback (0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte FB
+            [Editor(typeof(YM3812UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Detailed) - Open FM register editor")]
+            [Description("Open FM register editor.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string Detailed
             {
                 get
                 {
-                    return f_FB;
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+                        
+                        "GlobalSettings.EN",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.VIB",
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
                 }
                 set
                 {
-                    f_FB = (byte)(value & 7);
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "GlobalSettings.EN",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.VIB",
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
                 }
             }
 
@@ -680,6 +793,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte f_FB;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Feedback (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FB
+            {
+                get
+                {
+                    return f_FB;
+                }
+                set
+                {
+                    f_FB = (byte)(value & 7);
+                }
+            }
+
             #endregion
 
             /// <summary>
@@ -690,10 +823,92 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Operators")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [DisplayName("Operators(Ops)")]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             public YM3812Operator[] Ops
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Category("Sound")]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "ALG, FB, AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS, ...\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(ALG),
+                        nameof(FB),
+
+                        "Ops[0].AR",
+                        "Ops[0].DR",
+                        "Ops[0].RR",
+                        "Ops[0].SL",
+                        "Ops[0].SR",
+                        "Ops[0].TL",
+                        "Ops[0].KSL",
+                        "Ops[0].KSR",
+                        "Ops[0].MFM",
+                        "Ops[0].AM",
+                        "Ops[0].VR",
+                        "Ops[0].EG",
+                        "Ops[0].WS",
+
+                        "Ops[1].AR",
+                        "Ops[1].DR",
+                        "Ops[1].RR",
+                        "Ops[1].SL",
+                        "Ops[1].SR",
+                        "Ops[1].TL",
+                        "Ops[1].KSL",
+                        "Ops[1].KSR",
+                        "Ops[1].MFM",
+                        "Ops[1].AM",
+                        "Ops[1].VR",
+                        "Ops[1].EG",
+                        "Ops[1].WS");
+                }
             }
 
             [DataMember]
@@ -746,6 +961,216 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [MidiHook]
         public class YM3812Operator : ContextBoundObject
         {
+
+            private byte f_AR;
+
+            /// <summary>
+            /// Attack Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Attack Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte AR
+            {
+                get
+                {
+                    return f_AR;
+                }
+                set
+                {
+                    f_AR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_DR;
+
+            /// <summary>
+            /// Decay Rate (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Decay Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte DR
+            {
+                get
+                {
+                    return f_DR;
+                }
+                set
+                {
+                    f_DR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_RR;
+
+            /// <summary>
+            /// release rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Release Rate (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte RR
+            {
+                get
+                {
+                    return f_RR;
+                }
+                set
+                {
+                    f_RR = (byte)(value & 15);
+                }
+            }
+
+            private byte f_SL;
+
+            /// <summary>
+            /// Sustain Level (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Sustain Level (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte SL
+            {
+                get
+                {
+                    return f_SL;
+                }
+                set
+                {
+                    f_SL = (byte)(value & 15);
+                }
+            }
+
+            private byte? f_SR;
+
+            /// <summary>
+            /// Sustain rate(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("When EG = 0 and value is set, Used as Sustain Rate (0-15) when KOFF")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? SR
+            {
+                get
+                {
+                    return f_SR;
+                }
+                set
+                {
+                    if (value.HasValue)
+                        f_SR = (byte)(value & 15);
+                    else
+                        f_SR = value;
+                }
+            }
+
+            private byte f_TL;
+
+            /// <summary>
+            /// Total Level(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Total Level (0-63)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 63)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte TL
+            {
+                get
+                {
+                    return f_TL;
+                }
+                set
+                {
+                    f_TL = (byte)(value & 63);
+                }
+            }
+
+            private byte f_KSL;
+
+            /// <summary>
+            /// Key Scaling Level(0-3)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSL
+            {
+                get
+                {
+                    return f_KSL;
+                }
+                set
+                {
+                    f_KSL = (byte)(value & 3);
+                }
+            }
+
+            private byte f_KSR;
+
+            /// <summary>
+            /// Keyboard scaling rate (0-1)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte KSR
+            {
+                get
+                {
+                    return f_KSR;
+                }
+                set
+                {
+                    f_KSR = (byte)(value & 1);
+                }
+            }
+
+            private byte f_MFM = 1;
+
+            /// <summary>
+            /// Modulator Frequency Multiple (0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Modulator Frequency Multiple (0-1-15)")]
+            [DefaultValue((byte)1)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte MFM
+            {
+                get
+                {
+                    return f_MFM;
+                }
+                set
+                {
+                    f_MFM = (byte)(value & 15);
+                }
+            }
 
             private byte f_AM;
 
@@ -816,191 +1241,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_KSR;
-
-            /// <summary>
-            /// Keyboard scaling rate (0-1)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Keyboard scaling rate (1: the sound's envelope is foreshortened as it rises in pitch.")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSR
-            {
-                get
-                {
-                    return f_KSR;
-                }
-                set
-                {
-                    f_KSR = (byte)(value & 1);
-                }
-            }
-
-            private byte f_MFM = 1;
-
-            /// <summary>
-            /// Modulator Frequency Multiple (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Modulator Frequency Multiple (0-1-15)")]
-            [DefaultValue((byte)1)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte MFM
-            {
-                get
-                {
-                    return f_MFM;
-                }
-                set
-                {
-                    f_MFM = (byte)(value & 15);
-                }
-            }
-
-            private byte f_KSL;
-
-            /// <summary>
-            /// Key Scaling Level(0-3)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Key Scaling Level (00:No Change 10:1.5dB/8ve 01:3dB/8ve 11:6dB/8ve)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSL
-            {
-                get
-                {
-                    return f_KSL;
-                }
-                set
-                {
-                    f_KSL = (byte)(value & 3);
-                }
-            }
-
-            private byte f_TL;
-
-            /// <summary>
-            /// Total Level(0-127)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Total Level (0-63)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 63)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte TL
-            {
-                get
-                {
-                    return f_TL;
-                }
-                set
-                {
-                    f_TL = (byte)(value & 63);
-                }
-            }
-
-            private byte f_AR;
-
-            /// <summary>
-            /// Attack Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Attack Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AR
-            {
-                get
-                {
-                    return f_AR;
-                }
-                set
-                {
-                    f_AR = (byte)(value & 15);
-                }
-            }
-
-
-            private byte f_DR;
-
-            /// <summary>
-            /// Decay Rate (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte DR
-            {
-                get
-                {
-                    return f_DR;
-                }
-                set
-                {
-                    f_DR = (byte)(value & 15);
-                }
-            }
-
-            private byte f_SL;
-
-            /// <summary>
-            /// Sustain Level (0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Sustain Level (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte SL
-            {
-                get
-                {
-                    return f_SL;
-                }
-                set
-                {
-                    f_SL = (byte)(value & 15);
-                }
-            }
-
-            private byte f_RR;
-
-            /// <summary>
-            /// release rate(0-15)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Release Rate (0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RR
-            {
-                get
-                {
-                    return f_RR;
-                }
-                set
-                {
-                    f_RR = (byte)(value & 15);
-                }
-            }
-
             private byte f_WS;
 
             /// <summary>
@@ -1024,15 +1264,59 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
             #region Etc
 
             [DataMember]
             [Description("Memo")]
+            [DefaultValue(null)]
             public string Memo
             {
                 get;
                 set;
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                typeof(UITypeEditor)), Localizable(false)]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Description("You can copy and paste this text data to other same type timber.\r\n" +
+                "AR, DR, RR, SL, TL, KSL, KSR, MFM, AM(AMS), VR, EG(EGT), WS\r\n" +
+                "You can use comma or space chars as delimiter.")]
+            public string MmlSerializeData
+            {
+                get
+                {
+                    return SimpleSerializer.SerializeProps(this,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MFM),
+                        nameof(AM),
+                        nameof(VR),
+                        nameof(EG),
+                        nameof(WS));
+                }
+                set
+                {
+                    SimpleSerializer.DeserializeProps(this, value,
+                        nameof(AR),
+                        nameof(DR),
+                        nameof(RR),
+                        nameof(SL),
+                        nameof(TL),
+                        nameof(KSL),
+                        nameof(KSR),
+                        nameof(MFM),
+                        nameof(AM),
+                        nameof(VR),
+                        nameof(EG),
+                        nameof(WS));
+                }
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1088,6 +1372,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [Browsable(false)]
+            public byte EN
+            {
+                get
+                {
+                    return Enable ? (byte)1 : (byte)0;
+                }
+                set
+                {
+                    Enable = value == 0 ? false : true;
+                }
             }
 
             private byte? f_AMD;

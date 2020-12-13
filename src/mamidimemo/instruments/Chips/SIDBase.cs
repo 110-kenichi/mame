@@ -80,10 +80,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_FC != v)
                 {
                     f_FC = v;
-                    Program.SoundUpdating();
+
                     SidWriteData(UnitNumber, 21, (byte)(f_FC & 0x7));
                     SidWriteData(UnitNumber, 22, (byte)(f_FC >> 3));
-                    Program.SoundUpdated();
                 }
             }
         }
@@ -207,24 +206,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SIDTimbre[] Timbres
         {
             get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            set;
         }
 
         /// <summary>
@@ -279,6 +268,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void SidWriteData(uint unitNumber, int address, byte data)
         {
+            DeferredWriteData(Sid_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -287,7 +278,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         private const float DEFAULT_GAIN = 0.5f;
@@ -335,8 +326,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new SIDTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new SIDTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new SIDTimbre();
             setPresetInstruments();
 
@@ -359,9 +350,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -370,7 +361,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -381,7 +372,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -392,7 +390,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -400,7 +403,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SIDSoundManager : SoundManagerBase
         {
-            private SoundList<SIDSound> psgOnSounds = new SoundList<SIDSound>(3);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SIDSound> psgOnSounds = new SoundList<SIDSound>(3);
 
             private SIDBase parentModule;
 
@@ -417,50 +433,75 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                SIDSound snd = new SIDSound(parentModule, this, timbre, note, emptySlot);
-                psgOnSounds.Add(snd);
-                FormMain.OutputDebugLog("KeyOn PSG ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                foreach (SIDTimbre timbre in parentModule.GetBaseTimbres(note))
+                {
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    psgOnSounds.Add(snd);
+
+                    FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (SIDBase inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, SIDTimbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (timbre.PhysicalChannel)
                 {
                     case PhysicalChannel.Indeterminatene:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 3));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3);
                             break;
                         }
                     case PhysicalChannel.Ch1:
                     case PhysicalChannel.Ch2:
                     case PhysicalChannel.Ch3:
                         {
-                            emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1);
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1, (int)timbre.PhysicalChannel - 1, 0);
                             break;
                         }
                 }
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    parentModule.SidWriteData(parentModule.UnitNumber, i * 7 + 4, 0);
+                }
+            }
         }
 
 
@@ -471,8 +512,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private SIDBase parentModule;
-
-            private SevenBitNumber programNumber;
 
             private SIDTimbre timbre;
 
@@ -485,11 +524,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SIDSound(SIDBase parentModule, SIDSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SIDSound(SIDBase parentModule, SIDSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (SIDTimbre)timbre;
 
                 lastWaveform = this.timbre.Waveform;
             }
@@ -504,7 +542,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.FC.HasValue)
                         parentModule.FC = gs.FC.Value;
                     if (gs.RES.HasValue)
@@ -512,10 +549,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.OFF3.HasValue)
                         parentModule.OFF3 = gs.OFF3.Value;
                     if (gs.FILT.HasValue)
-                        parentModule.FILT = gs.FILT.Value;
+                        parentModule.FILT = (FilterChannel)gs.FILT.Value;
                     if (gs.FilterType.HasValue)
-                        parentModule.FilterType = gs.FilterType.Value;
-                    Program.SoundUpdated();
+                        parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
 
                 SetTimbre();
@@ -531,7 +567,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.FC.HasValue)
                         parentModule.FC = gs.FC.Value;
                     if (gs.RES.HasValue)
@@ -539,10 +574,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.OFF3.HasValue)
                         parentModule.OFF3 = gs.OFF3.Value;
                     if (gs.FILT.HasValue)
-                        parentModule.FILT = gs.FILT.Value;
+                        parentModule.FILT = (FilterChannel)gs.FILT.Value;
                     if (gs.FilterType.HasValue)
-                        parentModule.FilterType = gs.FilterType.Value;
-                    Program.SoundUpdated();
+                        parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
 
                 SetTimbre();
@@ -568,15 +602,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
-                double v = 1;
-                v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
-                v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-
-                if (FxEngine != null)
-                    v *= FxEngine.OutputLevel;
+                var v = CalcCurrentVolume();
 
                 parentModule.Volume = (byte)Math.Round(15 * v);
             }
@@ -611,7 +637,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
                 var un = parentModule.UnitNumber;
-                Program.SoundUpdating();
+
                 parentModule.RES = res;
                 parentModule.FC = fc;
                 parentModule.SidWriteData(un, Slot * 7 + 2, (byte)(pw & 0xff));
@@ -621,7 +647,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 parentModule.SidWriteData(un, Slot * 7 + 1, (byte)(f >> 8));
                 parentModule.SidWriteData(un, Slot * 7 + 0, (byte)(f & 0xff));
-                Program.SoundUpdated();
 
                 base.OnPitchUpdated();
             }
@@ -649,6 +674,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Physical Channel")]
+            [DefaultValue(PhysicalChannel.Indeterminatene)]
             public PhysicalChannel PhysicalChannel
             {
                 get;
@@ -769,7 +795,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [DefaultValue((ushort)2047)]
             [Description("Pulse Width (0-4095)(0% - 100%)")]
             [SlideParametersAttribute(0, 4095)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -783,6 +808,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_PW = (ushort)(value & 4095);
                 }
+            }
+
+            public bool ShouldSerializePW()
+            {
+                return PW != 2047;
+            }
+
+            public void ResetPW()
+            {
+                PW = 2047;
             }
 
             private byte f_RING;
@@ -873,6 +908,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip")]
             [Description("Override global settings")]
+            [DefaultValue(false)]
             public bool Enable
             {
                 get;
@@ -947,7 +983,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private FilterChannel? f_FILT;
+            private FilterChannel2? f_FILT;
 
             /// <summary>
             /// 
@@ -956,7 +992,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip")]
             [DefaultValue(null)]
             [Description("Apply Filter Ch")]
-            public FilterChannel? FILT
+            public FilterChannel2? FILT
             {
                 get => f_FILT;
                 set
@@ -965,7 +1001,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private FilterTypes? f_FilterType;
+            private FilterTypes2? f_FilterType;
 
             /// <summary>
             /// 
@@ -974,8 +1010,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip")]
             [DefaultValue(null)]
             [Description("Filter Type")]
-            [TypeConverter(typeof(FlagsEnumConverter))]
-            public FilterTypes? FilterType
+            public FilterTypes2? FilterType
             {
                 get => f_FilterType;
                 set
@@ -1010,6 +1045,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             HighPass = 4,
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Flags]
+        public enum FilterTypes2
+        {
+            None = 0,
+            LowPass = 1,
+            BandPass = 2,
+            LowBandPass = 3,
+            HighPass = 4,
+            LowHighPass = 5,
+            BandHighPass = 6,
+            LowBandHighPass = 7,
+        }
+
 
         /// <summary>
         /// 
@@ -1021,6 +1072,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ch1 = 1,
             Ch2 = 2,
             Ch3 = 4,
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Flags]
+        public enum FilterChannel2
+        {
+            None = 0,
+            Ch1 = 1,
+            Ch2 = 2,
+            Ch12 = 3,
+            Ch3 = 4,
+            Ch13 = 5,
+            Ch23 = 6,
+            Ch123 = 7,
         }
 
         /// <summary>
@@ -1104,14 +1171,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesRepeatPoint < 0)
+                        if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {
@@ -1143,11 +1210,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.ResonanceEnvelopesRepeatPoint < 0)
                             f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
 
-                        if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
-                        {
-                            if (settings.ResonanceEnvelopesRepeatPoint >= 0)
-                                f_resCounter = (uint)settings.ResonanceEnvelopesRepeatPoint;
-                        }
+                        //if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ResonanceEnvelopesRepeatPoint >= 0)
+                        //        f_resCounter = (uint)settings.ResonanceEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_resCounter < settings.ResonanceEnvelopesNums.Length)
                     {
@@ -1179,11 +1246,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.CutOffEnvelopesRepeatPoint < 0)
                             f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
 
-                        if (f_cutCounter >= settings.CutOffEnvelopesNums.Length)
-                        {
-                            if (settings.CutOffEnvelopesRepeatPoint >= 0)
-                                f_cutCounter = (uint)settings.CutOffEnvelopesRepeatPoint;
-                        }
+                        //if (f_cutCounter >= settings.CutOffEnvelopesNums.Length)
+                        //{
+                        //    if (settings.CutOffEnvelopesRepeatPoint >= 0)
+                        //        f_cutCounter = (uint)settings.CutOffEnvelopesRepeatPoint;
+                        //}
                     }
 
                     if (f_cutCounter < settings.CutOffEnvelopesNums.Length)
@@ -1216,11 +1283,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (settings.WaveFormEnvelopesRepeatPoint < 0)
                             f_wavCounter = (uint)settings.WaveFormEnvelopesNums.Length;
 
-                        if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length)
-                        {
-                            if (settings.WaveFormEnvelopesRepeatPoint >= 0)
-                                f_wavCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
-                        }
+                        //if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length)
+                        //{
+                        //    if (settings.WaveFormEnvelopesRepeatPoint >= 0)
+                        //        f_wavCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
+                        //}
                     }
 
                     if (f_wavCounter < settings.WaveFormEnvelopesNums.Length)
@@ -1249,6 +1316,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set duty envelop by text. Input duty value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 4095 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 4095)]
             public string DutyEnvelopes
             {
                 get
@@ -1268,7 +1337,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_DutyEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1341,6 +1410,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 15 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 15)]
             public string ResonanceEnvelopes
             {
                 get
@@ -1360,7 +1431,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_ResonanceEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1433,6 +1504,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 2047 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 2047)]
             public string CutOffEnvelopes
             {
                 get
@@ -1452,7 +1525,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_CutOffEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1524,6 +1597,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
                        "1 ～ 8(Tri:1 Saw:2 Pulse:4 Noise:8) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(1, 8)]
             public string WaveFormEnvelopes
             {
                 get
@@ -1543,7 +1618,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_WaveFormEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {

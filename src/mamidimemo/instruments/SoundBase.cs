@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
+using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -38,6 +40,15 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public DrumTimbre DrumTimbre
+        {
+            get;
+            private set;
+        }
+
         public bool IsDisposed
         {
             get;
@@ -50,7 +61,13 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        public bool IsSoundOff
+        public virtual bool IsSoundOn
+        {
+            get;
+            private set;
+        }
+
+        public virtual bool IsSoundOff
         {
             get;
             private set;
@@ -68,7 +85,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// MIDIイベント
         /// </summary>
-        public NoteOnEvent NoteOnEvent
+        public TaggedNoteOnEvent NoteOnEvent
         {
             get;
             private set;
@@ -78,13 +95,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="slot">チップ上の物理的なチャンネル(MIDI chと区別するためスロットとする)</param>
-        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot)
+        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot)
         {
             NoteOnEvent = noteOnEvent;
             Slot = slot;
             ParentModule = parentModule;
             ParentManager = manager;
             Timbre = timbre;
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                DrumTimbre = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber];
         }
 
         public event EventHandler Disposed;
@@ -110,6 +129,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void KeyOn()
         {
+            IsSoundOn = true;
+
             if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
                 ParentModule.Modulations[NoteOnEvent.Channel] > 0)
                 ModulationEnabled = true;
@@ -128,12 +149,12 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
             var adsrs = Timbre.SDS.ADSR;
-            EnableADSR = adsrs.Enable;
-            if (EnableADSR)
+            ActiveADSR = adsrs.Enable;
+            if (ActiveADSR)
             {
                 AdsrEngine = new AdsrEngine();
                 AdsrEngine.SetAttackRate(Math.Pow(10d * (127d - adsrs.AR) / 127d, 2));
-                AdsrEngine.SetDecayRate(Math.Pow(10d * (adsrs.DR / 127d), 2));
+                AdsrEngine.SetDecayRate(Math.Pow(100d * (adsrs.DR / 127d), 2));
                 AdsrEngine.SetReleaseRate(Math.Pow(60d * (adsrs.RR / 127d), 2));
                 AdsrEngine.SetSustainLevel((127d - adsrs.SL) / 127d);
                 AdsrEngine.Gate(true);
@@ -141,9 +162,22 @@ namespace zanac.MAmidiMEmo.Instruments
 
             var efs = Timbre.SDS.FxS;
             if (efs != null)
-                EnableFx = efs.Enable;
+                ActiveFx = efs.Enable;
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+
+            if (DrumTimbre != null)
+            {
+                HighPrecisionTimer.SetPeriodicCallback
+                    (new Func<object, double>(processGateTime), DrumTimbre.GateTime, this, true);
+            }
+        }
+
+        private double processGateTime(object state)
+        {
+            if (!IsDisposed && !IsSoundOff)
+                KeyOff();
+            return -1;
         }
 
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOn;
@@ -159,8 +193,7 @@ namespace zanac.MAmidiMEmo.Instruments
             IsKeyOff = true;
             AdsrEngine?.Gate(false);
 
-            if (CurrentAdsrState == AdsrState.SoundOff)
-                SoundOff();
+            TrySoundOff();
 
             SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
         }
@@ -168,7 +201,20 @@ namespace zanac.MAmidiMEmo.Instruments
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOff;
 
         /// <summary>
-        ///キーオフ
+        /// サウンドオフ
+        /// </summary>
+        public virtual bool TrySoundOff()
+        {
+            if (ActiveADSR || ActiveFx)
+                return false;
+
+            SoundOff();
+
+            return true;
+        }
+
+        /// <summary>
+        /// サウンドオフ
         /// </summary>
         public virtual void SoundOff()
         {
@@ -217,24 +263,29 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected double CalcCurrentFrequency()
         {
-            double d = CalcCurrentPitch();
+            double d = CalcCurrentPitchDeltaNoteNumber();
 
-            double noteNum = Math.Pow(2.0, ((double)NoteOnEvent.NoteNumber + d - 69.0) / 12.0);
+            int nn = NoteOnEvent.NoteNumber;
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+
+            double noteNum = Math.Pow(2.0, ((double)nn + d - 69.0) / 12.0);
             double freq = 440.0 * noteNum;
             return freq;
         }
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        protected double CalcCurrentPitch()
+        protected double CalcCurrentPitchDeltaNoteNumber()
         {
             var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
 
             double d1 = ((double)pitch / 8192d) * range;
-            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber;
+            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;
@@ -251,11 +302,21 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected double CalcCurrentVolume()
         {
+            return CalcCurrentVolume(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected double CalcCurrentVolume(bool ignoreVelocity)
+        {
             double v = 1;
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            v *= NoteOnEvent.Velocity / 127d;
+            if(!ignoreVelocity)
+                v *= NoteOnEvent.Velocity / 127d;
 
             if (AdsrEngine != null)
                 v *= AdsrEngine.OutputLevel;
@@ -266,6 +327,27 @@ namespace zanac.MAmidiMEmo.Instruments
             v *= ArpeggiateLevel;
 
             return v;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected byte CalcCurrentPanpot()
+        {
+            int pan = ParentModule.Panpots[NoteOnEvent.Channel] - 1;
+
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
+            else
+                pan += Timbre.PanShift;
+
+            if (pan < 0)
+                pan = 0;
+            else if (pan > 127)
+                pan = 127;
+
+            return (byte)pan;
         }
 
         private double f_ArpeggiateDeltaNoteNumber;
@@ -312,37 +394,53 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processFx(object state)
         {
-            if (!IsDisposed && !IsSoundOff && EnableFx && FxEngine != null)
+            if (!IsDisposed && ActiveFx && FxEngine != null)
             {
                 if (FxEngine.Process(this, IsKeyOff, IsSoundOff))
-                {
-                    OnPitchUpdated();
-                    OnVolumeUpdated();
-                }
+                    OnProcessFx();
 
-                EnableFx = FxEngine.Active;
+                ActiveFx = FxEngine.Active;
 
-                if (EnableFx)
+                if (ActiveFx)
                     return FxEngine.Settings.EnvelopeInterval;
+                else if (IsKeyOff)
+                    TrySoundOff();
             }
             return -1;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessFx()
+        {
+            OnPitchUpdated();
+            OnVolumeUpdated();
+        }
+
         private double processAdsr(object state)
         {
-            if (!IsDisposed && !IsSoundOff && EnableADSR && AdsrEngine != null)
+            if (!IsDisposed && ActiveADSR && AdsrEngine != null)
             {
                 AdsrEngine.Process();
 
-                OnVolumeUpdated();
+                OnProcessAdsr();
 
                 if (AdsrEngine.AdsrState != AdsrState.SoundOff)
-                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    return 1;
 
-                EnableADSR = false;
-                SoundOff();
+                ActiveADSR = false;
+                TrySoundOff();
             }
             return -1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessAdsr()
+        {
+            OnVolumeUpdated();
         }
 
         private static double[] PortamentSpeedTable ={
@@ -361,10 +459,9 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processPortamento(object state)
         {
-            if (!IsDisposed && !IsSoundOff && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
+            if (!IsDisposed && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
-                //double delta = -portStartNoteDeltSign * 12d / Math.Pow(((double)ParentModule.PortamentoTimes[NoteOnEvent.Channel] / 2d) + 1d, 1.25);
-                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] * HighPrecisionTimer.TIMER_BASIC_INTERVAL / 100d;
+                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] / 100;
                 PortamentoDeltaNoteNumber += delta;
 
                 if (portStartNoteDeltSign < 0 && PortamentoDeltaNoteNumber >= 0)
@@ -375,7 +472,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnPitchUpdated();
 
                 if (PortamentoDeltaNoteNumber != 0)
-                    return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                    return 1;
 
                 PortamentoEnabled = false;
             }
@@ -384,38 +481,49 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double processModulation(object state)
         {
-            if (!IsDisposed && !IsSoundOff && ModulationEnabled)
+            if (!IsDisposed && ModulationEnabled)
             {
-                double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_HZ);
+                double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_1KHZ);
 
                 double mdepth = 0;
                 if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64)
                 {
-                    if (modulationStartCounter < 10d * HighPrecisionTimer.TIMER_BASIC_HZ)
+                    if (modulationStartCounter < 10d * HighPrecisionTimer.TIMER_BASIC_1KHZ)
                         modulationStartCounter += 1.0;
 
-                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * HighPrecisionTimer.TIMER_BASIC_HZ)
+                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * HighPrecisionTimer.TIMER_BASIC_1KHZ)
                         mdepth = (double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] / 127d;
                 }
                 //急激な変化を抑制
                 var mv = ((double)ParentModule.Modulations[NoteOnEvent.Channel] / 127d) + mdepth;
-                if (mv != modultionLevel)
-                    modultionLevel += (mv - modultionLevel) / 1.25;
+                if (mv != modulationLevel)
+                    modulationLevel += (mv - modulationLevel) / 1.25;
 
                 double modHz = radian * ParentModule.GetModulationRateHz(NoteOnEvent.Channel);
-                ModultionDeltaNoteNumber = modultionLevel * Math.Sin(modHz);
+                ModultionDeltaNoteNumber = modulationLevel * Math.Sin(modHz);
                 ModultionDeltaNoteNumber *= ((double)ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] +
                     ((double)ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] / 127d));
+
+                OnPitchUpdated();
+
+                if (modulationStep == 0 && IsSoundOff)
+                    return -1;
 
                 modulationStep += 1.0;
                 if (modHz > 2 * Math.PI)
                     modulationStep = 0;
 
-                OnPitchUpdated();
-
-                return HighPrecisionTimer.TIMER_BASIC_INTERVAL;
+                return 1;
             }
             return -1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void OnProcessModulation()
+        {
+            OnPitchUpdated();
         }
 
         /// <summary>
@@ -463,7 +571,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// モジュレーションホイール値(0-1.0)
         /// </summary>
-        private double modultionLevel;
+        private double modulationLevel;
 
         private bool f_modulationEnabled;
 
@@ -492,8 +600,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         f_modulationEnabled = value;
                     }
                     if (f_modulationEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processModulation), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), 1, null);
                 }
             }
         }
@@ -528,8 +635,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_portamentoEnabled = value;
 
                     if (f_portamentoEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processPortamento), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), 1, null);
                 }
             }
         }
@@ -541,7 +647,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// ADSRの有効無効
         /// </summary>
-        public bool EnableADSR
+        public bool ActiveADSR
         {
             get
             {
@@ -554,8 +660,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_AdsrEnabled = value;
 
                     if (f_AdsrEnabled)
-                        HighPrecisionTimer.SetFixedPeriodicCallback(new Func<object, double>(processAdsr), null);
-                    //HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processAdsr), HighPrecisionTimer.TIMER_BASIC_INTERVAL, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processAdsr), 1, null);
                 }
             }
         }
@@ -565,7 +670,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// Fxの有効無効
         /// </summary>
-        public bool EnableFx
+        public bool ActiveFx
         {
             get
             {

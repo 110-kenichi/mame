@@ -166,8 +166,21 @@ void gameboy_sound_device::device_start()
 	SAVE_CHANNEL(m_snd_2);
 	SAVE_CHANNEL(m_snd_3);
 	SAVE_CHANNEL(m_snd_4);
+
+	m_vgm_writer = new vgm_writer(machine());
 }
 
+void gameboy_sound_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_GBSOUND, clock() ? clock() : 4194304);
+};
+
+void gameboy_sound_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 //-------------------------------------------------
 //  device_clock_changed
@@ -706,6 +719,8 @@ void dmg_apu_device::wave_w(offs_t offset, u8 data)
 	m_channel->update();
 	update_state();
 
+	m_vgm_writer->vgm_write(0x00, AUD3W0 + offset, data);
+
 	if (m_snd_3.on)
 	{
 		if (m_snd_3.sample_reading)
@@ -725,6 +740,8 @@ void cgb04_apu_device::wave_w(offs_t offset, u8 data)
 	m_channel->update();
 	update_state();
 
+	m_vgm_writer->vgm_write(0x00, AUD3W0 + offset, data);
+
 	if (m_snd_3.on)
 	{
 		m_snd_regs[AUD3W0 + (m_snd_3.offset/2)] = data;
@@ -742,6 +759,8 @@ void dmg_apu_device::sound_w(offs_t offset, u8 data)
 	m_channel->update();
 	update_state();
 
+	m_vgm_writer->vgm_write(0x00, offset, data);
+
 	/* Only register NR52 is accessible if the sound controller is disabled */
 	if (!m_snd_control.on && offset != NR52 && offset != NR11 && offset != NR21 && offset != NR31 && offset != NR41)
 		return;
@@ -755,6 +774,8 @@ void cgb04_apu_device::sound_w(offs_t offset, u8 data)
 	/* change in registers so update first */
 	m_channel->update();
 	update_state();
+
+	m_vgm_writer->vgm_write(0x00, offset, data);
 
 	/* Only register NR52 is accessible if the sound controller is disabled */
 	if (!m_snd_control.on && offset != NR52)

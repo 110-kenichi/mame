@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "vgmwrite.h"
 
 DECLARE_DEVICE_TYPE(SN76496,  sn76496_device)
 DECLARE_DEVICE_TYPE(U8106,    u8106_device)
@@ -26,6 +27,9 @@ public:
 	void stereo_w(u8 data);
 	void write(u8 data);
 	DECLARE_READ_LINE_MEMBER( ready_r ) { return m_ready_state ? 1 : 0; }
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	sn76496_base_device(
@@ -78,6 +82,8 @@ private:
 	int32_t           m_output[4];        // 1-bit output of each channel, pre-volume
 
 	emu_timer *m_ready_timer;
+
+	vgm_writer *m_vgm_writer;
 };
 
 // SN76496: Whitenoise verified, phase verified, periodic verified (by Michael Zapf)

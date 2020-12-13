@@ -254,24 +254,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public PokeyTimbre[] Timbres
         {
             get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            set;
         }
 
         /// <summary>
@@ -282,8 +272,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<POKEY>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<POKEY>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -323,6 +313,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void PokeyWriteData(uint unitNumber, int address, byte data)
         {
+            DeferredWriteData(Pokey_write, unitNumber, address, data);
+            writeData[address] = data;
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -332,7 +325,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -343,6 +336,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 //Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 if (writeData.ContainsKey(address))
                     return writeData[address];
                 else
@@ -380,6 +375,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void PokeySetOutputType(uint unitNumber, PokeyOutputType type, double r, double c, double v)
         {
+            DeferredWriteData(Pokey_set_output_type, unitNumber, type, r, c, v);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -388,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -429,6 +426,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainRight = DEFAULT_GAIN;
         }
 
+        [Browsable(false)]
+        public override FollowerUnit FollowerMode
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -437,8 +441,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new PokeyTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new PokeyTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new PokeyTimbre();
             setPresetInstruments();
 
@@ -471,9 +475,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -482,7 +486,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -493,7 +497,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -504,7 +515,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -535,65 +551,87 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                PokeySound snd = new PokeySound(parentModule, this, timbre, note, emptySlot);
-                switch (((PokeyTimbre)timbre).Channel)
+                foreach (PokeyTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    case ChannelType.CH1:
-                        ch1OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH2:
-                        ch2OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH3:
-                        ch3OnSounds.Add(snd);
-                        break;
-                    case ChannelType.CH4:
-                        ch4OnSounds.Add(snd);
-                        break;
-                }
-                FormMain.OutputDebugLog("KeyOn ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
+                    int emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot < 0)
+                        continue;
 
-                return snd;
+                    PokeySound snd = new PokeySound(parentModule, this, timbre, note, emptySlot);
+                    switch (((PokeyTimbre)timbre).Channel)
+                    {
+                        case ChannelType.CH1:
+                            ch1OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH2:
+                            ch2OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH3:
+                            ch3OnSounds.Add(snd);
+                            break;
+                        case ChannelType.CH4:
+                            ch4OnSounds.Add(snd);
+                            break;
+                    }
+                    FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private int searchEmptySlot(TaggedNoteOnEvent note, PokeyTimbre timbre)
             {
                 int emptySlot = -1;
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (((PokeyTimbre)timbre).Channel)
                 {
                     case ChannelType.CH1:
-                        emptySlot = SearchEmptySlotAndOff(ch1OnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch1OnSounds, note, 1);
                         break;
                     case ChannelType.CH2:
-                        emptySlot = SearchEmptySlotAndOff(ch2OnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch2OnSounds, note, 1);
                         break;
                     case ChannelType.CH3:
-                        emptySlot = SearchEmptySlotAndOff(ch3OnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch3OnSounds, note, 1);
                         break;
                     case ChannelType.CH4:
-                        emptySlot = SearchEmptySlotAndOff(ch4OnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                        emptySlot = SearchEmptySlotAndOff(parentModule, ch4OnSounds, note, 1);
                         break;
                 }
 
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 4; i++)
+                    parentModule.PokeyWriteData(parentModule.UnitNumber, ((int)i * 2) + 1, (byte)(0));
+            }
         }
 
 
@@ -604,8 +642,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private POKEY parentModule;
-
-            private SevenBitNumber programNumber;
 
             private PokeyTimbre timbre;
 
@@ -620,11 +656,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public PokeySound(POKEY parentModule, PokeySoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public PokeySound(POKEY parentModule, PokeySoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (PokeyTimbre)timbre;
 
                 lastChType = this.timbre.Channel;
                 lastCH43_21 = this.timbre.CH43_21;
@@ -640,14 +675,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.Clock.HasValue)
                         parentModule.Clock = gs.Clock.Value;
                     if (gs.AC_15kHz.HasValue)
                         parentModule.AC_15kHz = gs.AC_15kHz.Value;
                     if (gs.AC_POLY9.HasValue)
                         parentModule.AC_POLY9 = gs.AC_POLY9.Value;
-                    Program.SoundUpdated();
                 }
 
                 OnVolumeUpdated();
@@ -662,7 +695,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    Program.SoundUpdating();
                     if (gs.OutputType.HasValue)
                         parentModule.OutputType = gs.OutputType.Value;
                     if (gs.RegisterR.HasValue)
@@ -678,7 +710,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.AC_15kHz = gs.AC_15kHz.Value;
                     if (gs.AC_POLY9.HasValue)
                         parentModule.AC_POLY9 = gs.AC_POLY9.Value;
-                    Program.SoundUpdated();
                 }
 
                 OnVolumeUpdated();
@@ -691,6 +722,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
+                if (IsSoundOff)
+                    return;
+
                 updateVolume();
             }
 
@@ -699,9 +733,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateVolume()
             {
-                if (IsSoundOff)
-                    return;
-
                 byte fv = (byte)Math.Round(15 * CalcCurrentVolume());
 
                 var tt = timbre.ToneType;
@@ -1067,6 +1098,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set ToneType envelop by text. Input ToneType value and split it with space like the Famitracker.\r\n" +
                        "0-7 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 7)]
             public string ToneEnvelopes
             {
                 get
@@ -1086,7 +1119,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_ToneEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1209,14 +1242,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.ToneEnvelopesRepeatPoint < 0)
+                        if (settings.ToneEnvelopesReleasePoint < 0)
                             f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
-                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
-                        {
-                            if (settings.ToneEnvelopesRepeatPoint >= 0)
-                                f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
-                        }
+                        //if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        //{
+                        //    if (settings.ToneEnvelopesRepeatPoint >= 0)
+                        //        f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                     {

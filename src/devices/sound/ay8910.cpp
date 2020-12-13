@@ -582,6 +582,7 @@ YM2203 Japanese datasheet contents, translated: http://www.larwe.com/technical/c
 */
 
 #include "emu.h"
+#include "vgmwrite.h"
 #include "ay8910.h"
 
 /*************************************
@@ -935,6 +936,8 @@ u16 ay8910_device::mix_3D()
 
 void ay8910_device::ay8910_write_reg(int r, int v)
 {
+	m_vgm_writer->vgm_write(0x00, r, v);
+
 	if ((r & 0xf) == AY_EASHAPE) // shared register
 		r &= 0xf;
 
@@ -1335,6 +1338,10 @@ void ay8910_device::ay8910_statesave()
 //  device_start - device-specific startup
 //-------------------------------------------------
 
+#include "2610intf.h"
+#include "2612intf.h"
+
+
 void ay8910_device::device_start()
 {
 	const int master_clock = clock();
@@ -1366,8 +1373,44 @@ void ay8910_device::device_start()
 
 	ay_set_clock(master_clock);
 	ay8910_statesave();
+
+	m_vgm_writer = new vgm_writer(machine());
 }
 
+void ay8910_device::vgm_start(char *name)
+{
+	uint8_t chp_tp_vgm;
+
+	m_vgm_writer->vgm_start(name);
+
+	if (type() == AY8910) chp_tp_vgm = 0x00;
+	else if (type() == AY8912) chp_tp_vgm = 0x01;
+	else if (type() == AY8913) chp_tp_vgm = 0x02;
+	else if (type() == AY8930) chp_tp_vgm = 0x03;
+	else if (type() == AY8914) chp_tp_vgm = 0x04;
+	else if (type() == YM2149) chp_tp_vgm = 0x10;
+	else if (type() == YM3439) chp_tp_vgm = 0x11;
+	else if (type() == YMZ284) chp_tp_vgm = 0x12;
+	else if (type() == YMZ294) chp_tp_vgm = 0x13;
+	else if (type() == YM2610 || type() == YM2610B) chp_tp_vgm = 0x22;
+	else
+		chp_tp_vgm = 0xFF;
+
+	if (!(chp_tp_vgm & 0x20))
+	{
+		m_vgm_writer->vgm_open(VGMC_AY8910, clock());
+		m_vgm_writer->vgm_header_set(0x00, chp_tp_vgm);
+		m_vgm_writer->vgm_header_set(0x01, m_flags);
+		m_vgm_writer->vgm_header_set(0x10, m_res_load[0]);
+		m_vgm_writer->vgm_header_set(0x11, m_res_load[1]);
+		m_vgm_writer->vgm_header_set(0x12, m_res_load[2]);
+	}
+};
+
+void ay8910_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 void ay8910_device::ay8910_reset_ym()
 {

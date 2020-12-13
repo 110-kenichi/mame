@@ -1,4 +1,4 @@
-MAmidiMEmo V1.2.1.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.6.4.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -27,21 +27,28 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 		OS: Windows 7 SP1 or lator
 		Runtime: .NET Framework 4.7 or lator
+		         VC++ 2012 Runtime https://www.microsoft.com/en-au/download/details.aspx?id=30679
 
-1. Launch MAmidiMEmo.exe
+1. Extract downloaded zip file.
+   Execute "DelZoneID.ps1" on PowerShell to remove "Zone.Identifier" flag.
+
+2. Install VC++ runtime 2012 and .NET Framework 4.7 or lator.
+
+3. Launch MAmidiMEmo.exe
 
    Note: You can change the value of audio latency, sampling rate and audio output interface by [Tool] menu.
          PortAudio is a low latency sound engine. See http://www.portaudio.com/
 
-2. Select MIDI I/F from toolbar. MAmidiMEmo will recevie MIDI message from the selected MIDI I/F.
+4. Select MIDI I/F from toolbar. MAmidiMEmo will recevie MIDI message from the selected MIDI I/F.
 
    Note: You can use the loopMIDI (See http://www.tobias-erichsen.de/software/loopmidi.html) to send MIDI message from this PC to MAmidiMEmo.
 
-3. Add your favorite chips from the [Instruments] menu on the toolbar.
+5. Add your favorite chips from the [Instruments] menu on the toolbar.
 
    Note: Currently supported chips are the following.
 
-        YM2151, YM2612, YM3812, YM2413, YM2610B
+        YM2151, YM2612, YM3812, YM2413, YM2610B, YMF262
+		YM2601 ★★★ Place legitimate ym2608_adpcm_rom.bin file in the Mami dir ★★★
         SID, POKEY, GB APU, SN76496, NES APU, MSM5232(+TA7630), AY-3-8910
         NAMCO CUS30, SCC, HuC6280
         C140, SPC700
@@ -52,7 +59,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
    Note: You can add the chip up to 8 per same chip type and MAmidiMEmo eats more CPU power.
 
-4. Select the chip from the left pane and configure the chip on the right pane.
+6. Select the chip from the left pane and configure the chip on the right pane.
 
    *[Timbres]
     You can edit sound character from this property. It's selected by "Program Change" MIDI message.
@@ -132,10 +139,17 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
     CM-64:
 	 http://lib.roland.co.jp/support/jp/manuals/res/1809003/CM-64_j.pdf
 
+	YMF262:
+	 http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
+
+	YM2608:
+     https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
+
+
    *[Channels]
     Select which MIDI ch messages the chip receives.
 
-5. Play MIDI file by your favorite sequencer or player.
+7. Play MIDI file by your favorite sequencer or player.
    Of course, you can connect your favrite keyboard to MAmidiMEmo for live performance.
 
    MAmidiMEmo currently supports the following MIDI messages.
@@ -155,17 +169,17 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Effect Depth (for modifying a VST properties dynamically)
 		General Purpose Control (for modifying an instrument properties dynamically)
 
-6. Also, you can set the following sound driver settings from Timbre settings.
+8. Also, you can set the following sound driver settings from Timbre settings.
 
    Arpeggio
    ADSR
    Effect (Pitch/Volue/Duty macro)
 
-7. You can modify current timbre parameters via Sound control MIDI Message (70-75,79) dynamically.
+9. You can modify current timbre parameters via Sound control MIDI Message (70-75,79) dynamically.
    You can modify VST parameters via Effect Depth control MIDI Message (91-95) dynamically.
    You can modify other parameters via General Purpose control MIDI Message (16-19,80-83) dynamically.
 
-8. You can modify receving MIDI ch for the specific instrument via NRPN MIDI Message.
+10. You can modify receving MIDI ch for the specific instrument via NRPN MIDI Message.
 
    NRPN format is the following.
 
@@ -194,10 +208,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
           ch xx xx xx xx xx 16 15
 
 
-9. (TBD)
+11. (TBD)
    You can modify current environment and all timbre parameters via System Exclusive MIDI Message.
 
-   SysEx format:
+   Master Volume: "F0 7F 7F 04 01 00 nn F7"
 
 	YM2151:(TBD)
 	YM2612:(TBD)
@@ -207,9 +221,16 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	SN76489:(TBD)
 	:::
 
+12. SPFM
+
+   You can use a real sound chip instead of software emulation chip on 32bit version.
+   Currently supported chips are YM2151 and YM2608 on SPFM.
+   Before using the SPFM, you must setup SCCI by using the scciconfig.exe.
+
 *** Known issues and limitations *** 
 
-   1. MT-32 can not store/restore last settings.
+   1. MT-32 & CM32-P can not store/restore last settings.
+   2. HuC6820 suddenly stop sounding. Please restart MAmi.
    
 *** How to create build environment ***
 
@@ -224,8 +245,115 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-1.2.1.0 Added CM-32P SN-U110-10 simulation 
-1.2.0.0 Added CM-32P (This is an incomplete simulator)
+2.6.4.0 Supported dynamic wave form changing  on the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
+        Removed force dump disabling hack on FM chips.
+2.6.3.0 Fixed RYTHM ch volume calculation on the YM2608 chip.
+        Fixed SCCS, GPCS values calculation.
+		Improved sound channel assignment algorithm to keep last sounding channel. If you does not like this, please contact me.
+2.6.2.0 Turned off write cache for frequency register on the real YM2608 and YM2515 chip.
+2.6.1.0 Fixed CH mode set 3 instead of 6 on YM2608. Affected only S/W emulation.
+2.6.0.0 Fixed crashing when FM operators was reset.
+		Fixed SSG tone frequency on real YM2608 chip.
+2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
+2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
+2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
+        Fixed ADPCM-B not sounding unexpectedly on YM2608.
+		Improved ADPCM-B on YM2608 transfer speed via SCCI.
+		Fixed SSG sounding unexpectedly when volume changing on YM2608 and YM2610B
+		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
+2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
+2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
+2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.
+        Supported loading a WAV file (16bit mono) as ADPCM-B data for YM2608, YM2610B chips.
+2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
+		Supported MIDI IN B.
+        Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
+		Fixed CUS30 Volume calculation.
+		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
+		Supported the SPFM to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
+2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
+        Added FM Synthesis register value randomizer to FM Synthesis Editor.
+		Added FM Synthesis global register to FM Synthesis Editor.
+2.5.1.0 Improved MIDI file Player UI.
+2.5.0.0 Added MIDI file Player tab.
+		Supported MAmidi file that is MAmi file and midi file are archived file. To create MAmidi file, load midi file and export MAmidi file.
+		Fixed portamento time (Almost the same as the GS module portamento time).
+2.4.0.1 Improved UI.
+		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
+		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
+		Fixed freezing on MT32.
+		Fixed key off behavior of Fx Engine.
+		Updated MSGS.SF for CM32-P.
+2.4.0.0 Added Envelope Editor.
+2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
+		Fixed to turn off modulation after key off.
+		Applied Metro Style GUI and improved UI.
+2.3.0.1 Fixed YMF262 sample file and some minor bugs.
+2.3.0.0 Added YMF262(OPL3) chip.
+		Fixed Combined Drum does not sounding properly.
+2.2.5.1 Improved FM Synthesis Editor UI.
+2.2.5.0 Added PCM playback feature to HuC6280.
+		Fixed an error when opening the floating point value slider on some props.
+		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
+		Added a FM Synthesis GUI Editor.
+2.2.4.0 Fixed issue of modulation CC.
+		Fixed an error on MSM5232.
+		Improved NOISE ch freqeucncy on SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
+		Improved NOISE ch function on AY8910.
+2.2.3.0 Fixed issues related with SID property.
+		Improved sf loader for SPC700 and C140.
+		Added ZoneID remover script.
+2.2.2.0 Fixed not applying Relese Point for Envelope.
+        Fixed sound off timing while envelope processing.
+		Added sf2 loading feature to context menu of C140 instrument.
+		Removed DrumTimbreTable prop from C140 and SPC700 insts (Not suitable for PCM insts). Please use DrumTimbres prop to sound drum.
+		Improved assignment of YM2413 drum sounds.
+		Improved YM2413 custom sound sounding algorithm.
+		Fixed error when opening a YM2610B Timbre prop.
+2.2.1.0 Fixed HuC6820 WSG sound can't delete last noise sound.
+2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
+        Fixed HuC6820 volume calculation algorithm.
+        Fixed not saving WSG Type of NAMCO CUS30 Timbre.
+		Fixed error when opening a YM2413 Timbre property.
+		Added sf2 loading feature to context menu of SPC700 instrument.
+2.1.0.0 Changed YM2413 engine to emu2413 engine to get more sounds accuracy.
+        Added Tone Envelope property for YM2413 FxS settings. 
+		Added CM32-P Card #16.
+		Added MML like serialize property to the FM Synthesis chip.
+		Fixed FM Synthesis sounds.
+2.0.4.0 Extended POLY mode control change message. You can specify the number of reserved voices.
+        Fixed crashing on boot.
+2.0.3.0 Improved sounds output timing accuracy.
+        Supported HOLD1 control change message.
+2.0.2.0 Improved MT-32 sounds output timing & latency.
+2.0.1.0 Fixed crashing on some chip...
+2.0.0.0 Fixed some minor bugs.
+			Panic button sometimes does not work.
+			SerializeData does not work and cause crash.
+			FxS Arp does not work properly on Fixed mode.
+			Property Reset menu does not work properly.
+			Mono mode does not work properly.
+			RP2A03 Tri channel is stopped by Noise channel.
+			Specific property value does not save.
+		Added KeyShift, PitchShift, IgnoreKeyOff prop to Timbre prop.
+		Added Combined Timbre feature to Timbre prop. Treat patched Timbre as one Timbre.
+		Added Follower mode feature to Timbre prop. Share voice ch with another units.
+		Added Drum part to Timbre prop.
+		Added Global Arpeggio Settins to Instrument prop.
+		Added Instrument cloning menu in the instrument pane on the Main window.
+		Exposed RP2A03 Liner Counter Length.
+		Applied "Force Dump mode" always to FM Synthesis unit to prevent incomplete attack rate.
+		Added virtual SR parameter to YM2413.
+		Added sample of MAmi files.
+		Added drag & drop feature that MAmi file can be dropped into instrument list pnae.
+1.3.1.0 Added VGM supported chips.
+			GB APU, HuC6280
+1.3.0.0 Synced sound engine to MAME 0221 (May improved some sound accuracy).
+        Added wave file output feature. Please re-open option dialog and press [OK] to commit new settings.
+        Added VGM file separetedly output feature. Only supported the following chips.
+			YM2151, YM2612, YM3812, YM2413, POKEY, SN76496, NES APU, AY-3-8910
+1.2.1.0 Added CM-32P SN-U110-10 simulation .
+1.2.0.0 Added CM-32P (This is an incomplete simulator).
             Using FluidLite https://github.com/divideconcept/FluidLite , 
 			Using GeneralUser GS http://schristiancollins.com/generaluser.php
 		Fixed RPN/NRPN MIDI massages can not be handled properly. OMG.
@@ -251,3 +379,44 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 0.6.0.0 Added sound driver effects and portamento feature
 0.5.0.0 Added several chips
 0.1.0.0 First release
+
+*** Licenses ***
+
+* MAME
+https://www.mamedev.org
+
+* DryWetMidi - Copyright (c) 2018 Maxim Dobroselsky
+https://github.com/melanchall/drywetmidi
+
+* Newtonsoft.Json - Copyright © James Newton-King 2008
+https://www.nuget.org/packages/Newtonsoft.Json/12.0.3/license
+
+* ValueInjecter - Copyright (c) 2015 Valentin Plamadeala
+https://github.com/omuleanu/ValueInjecter/blob/master/LICENSE
+
+* Fast Colored TextBox for Syntax Highlighting - Copyright (C) Pavel Torgashov, 2011-2016. 
+https://github.com/PavelTorgashov/FastColoredTextBox
+
+* MUNT - kingguppy, sergm
+https://ja.osdn.net/projects/sfnet_munt/
+
+* FluidLite -  (c) 2016 Robin Lobel
+https://github.com/divideconcept/FluidLite
+
+* Font "DSEG" by けしかん
+https://www.keshikan.net/fonts.html
+
+* M+ FONT - 森下浩司
+http://itouhiro.hatenablog.com/entry/20130602/font
+
+* GeneralUser GS - S. Christian Collins
+http://schristiancollins.com/generaluser.php
+
+* MSGS
+https://sites.google.com/site/senasan007/Home/cw_midi_c
+
+* VST.NET - Marc Jacobi
+https://github.com/obiwanjacobi/vst.net
+
+* FM-SoundConvertor - Copyright (c) 2020 D.M.88
+https://github.com/DM-88/FM-SoundConvertor

@@ -38,6 +38,9 @@ device_sound_interface::device_sound_interface(const machine_config &mconfig, de
 	, lastIn{ 0.0, 0.0 }
 	, lastOut{ 0.0, 0.0 }
 	, cutoffMod(0.0)
+	, m_stream_update_callback(NULL)
+	, m_vst_fx_callback(NULL)
+
 {
 	calculateFeedbackAmount();
 }
@@ -397,6 +400,7 @@ device_mixer_interface::device_mixer_interface(const machine_config &mconfig, de
 	m_mixer_stream(nullptr)
 {
 	m_enable = 1;
+	m_passthru = 0;
 }
 
 
@@ -531,13 +535,17 @@ void device_mixer_interface::sound_stream_update(sound_stream &stream, stream_sa
 		//memidimemo
 		device_t *dev = stream.input_source_device(inp);
 		device_sound_interface *sd = dynamic_cast<device_sound_interface *>(dev);
-		if (!sd->m_enable)
+		if (!sd->m_enable || sd->m_passthru)
 			continue;
 
 		// loop over samples
 		for (int pos = 0; pos < samples; pos++)
 			outputs[outmap[inp]][pos] += inputs[inp][pos];
 	}
+
+	//mamidimemo
+	if (m_stream_update_callback != NULL)
+		m_stream_update_callback(outputs[0], samples);
 
 	if (lastOutBuffer != NULL)
 		delete[] lastOutBuffer;

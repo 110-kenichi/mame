@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "vgmwrite.h"
 
 class ym2413_device : public device_t, public device_sound_interface
 {
@@ -15,6 +16,9 @@ public:
 
 	void register_port_w(u8 data);
 	void data_port_w(u8 data);
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	ym2413_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock);
@@ -185,6 +189,7 @@ private:
 	void update_instrument_zero( uint8_t r );
 	void write_reg(int r, int v);
 
+	vgm_writer *m_vgm_writer;
 };
 
 DECLARE_DEVICE_TYPE(YM2413, ym2413_device)

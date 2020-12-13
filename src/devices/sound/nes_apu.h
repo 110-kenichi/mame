@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "vgmwrite.h"
 
 #include "nes_defs.h"
 
@@ -55,6 +56,9 @@ public:
 	u8 read(offs_t offset);
 	void write(offs_t offset, u8 data);
 	void set_dpcm(u8 *dpcm_data, u32 length);
+
+	void vgm_start(char *name);
+	void vgm_stop(void);
 
 protected:
 	// device-level overrides
@@ -97,6 +101,8 @@ private:
 	inline void apu_regwrite_fds(int address, u8 value);
 
 	inline void vrc6_write(int addr, u8 data);
+
+	vgm_writer *m_vgm_writer;
 };
 
 DECLARE_DEVICE_TYPE(NES_APU, nesapu_device)

@@ -52,6 +52,8 @@
 #define YM2149_PIN26_HIGH           (0x00) /* or N/C */
 #define YM2149_PIN26_LOW            (0x10)
 
+#include "vgmwrite.h"
+
 
 class ay8910_device : public device_t, public device_sound_interface
 {
@@ -121,6 +123,9 @@ public:
 		int    m_count;
 		double m_Kn[32];
 	};
+
+	virtual void vgm_start(char *name);
+	virtual void vgm_stop(void);
 
 	// internal interface for PSG component of YM device
 	// FIXME: these should be private, but vector06 accesses them directly
@@ -323,6 +328,8 @@ private:
 	devcb_read8 m_port_b_read_cb;
 	devcb_write8 m_port_a_write_cb;
 	devcb_write8 m_port_b_write_cb;
+
+	vgm_writer *m_vgm_writer;
 };
 
 DECLARE_DEVICE_TYPE(AY8910, ay8910_device)

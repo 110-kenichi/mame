@@ -255,13 +255,16 @@
     <ClInclude Include="..\..\..\..\..\src\devices\machine\ram.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\machine\timer.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\machine\z80daisy.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\2608intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\2610intf.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\262intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\3812intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\beep.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\cm32p_BReverbModel.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\c140.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\c6280.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\cm32p.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\emu2413.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\fm.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\fmopl.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\gb.h" />
@@ -286,6 +289,7 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\2612intf.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ym2413.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ymdeltat.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymf262.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\video\vector.h" />
     <ClInclude Include="..\..\..\..\..\src\mame\audio\snes_snd.h" />
   </ItemGroup>
@@ -323,7 +327,9 @@
     <ClCompile Include="..\..\..\..\..\src\devices\machine\ram.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\timer.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\machine\z80daisy.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\2608intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\2610intf.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\262intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\3812intf.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ay8910.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\beep.cpp" />
@@ -331,6 +337,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\c140.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\c6280.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\cm32p.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\emu2413.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fm.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fm2612.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fmopl.cpp" />
@@ -356,6 +363,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ym2413.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ymdeltat.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymf262.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\video\vector.cpp" />
     <ClCompile Include="..\..\..\..\..\src\mame\audio\snes_snd.cpp" />
   </ItemGroup>

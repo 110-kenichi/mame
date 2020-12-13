@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -20,6 +23,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 
 //https://wiki.superfamicom.org/spc700-reference
 
@@ -191,7 +195,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("Echo enable")]
-        [DefaultValue((byte)0)]
+        [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte ECEN
@@ -217,7 +221,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("Echo Feedback")]
-        [DefaultValue(typeof(sbyte), "0")]
+        [DefaultValue(typeof(sbyte), "31")]
         [SlideParametersAttribute(-128, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public sbyte EFB
@@ -242,7 +246,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Filter")]
         [Description("EDL specifies the delay between the main sound and the echoed sound. The delay is calculated as EDL * 16ms.")]
-        [DefaultValue((byte)0)]
+        [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 15)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte EDL
@@ -337,7 +341,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private sbyte f_COEF4 = 0;
+        private sbyte f_COEF4;
 
         [DataMember]
         [Category("Filter")]
@@ -388,7 +392,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private sbyte f_COEF6 = 0;
+        private sbyte f_COEF6;
 
         [DataMember]
         [Category("Filter")]
@@ -463,9 +467,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /*
         [DataMember]
         [Category("Chip")]
-        [Description("BRR ADPCM Data (MAX 64KB)")]
+        [Description("Assign PCM data to DRUM soundtype instrument.\r\n" +
+            "BRR ADPCM Data (MAX 64KB)")]
         [Editor(typeof(PcmTableUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [PcmTableEditor("Audio File(*.brr)|*.brr")]
         //[PcmTableEditor("Audio File(*.brr, *.wav)|*.brr;*.wav")]
@@ -475,6 +481,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get;
             private set;
         }
+        */
 
         /// <summary>
         /// 
@@ -494,8 +501,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SPC700Timbre[] Timbres
@@ -504,22 +511,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return f_Timbres;
             }
-            private set
+            set
             {
                 f_Timbres = value;
             }
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
-        }
-
 
         private const float DEFAULT_GAIN = 1.0f;
 
@@ -543,7 +539,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainRight = DEFAULT_GAIN;
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -552,8 +547,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<SPC700>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<SPC700>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                SPC700SetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
             {
@@ -579,11 +575,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate byte delegate_spc_ram_r(uint unitNumber, uint address);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_spc_resample(double org_rate, double target_rate, IntPtr org_buffer, uint org_len, IntPtr target_buffer, uint target_len);
+
         /// <summary>
         /// 
         /// </summary>
         private static void SPC700RamWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(spc_ram_w, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -592,7 +593,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -600,6 +601,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700RegWriteData(uint unitNumber, byte reg, byte data)
         {
+            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf2, reg);
+            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf3, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -609,7 +613,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -621,6 +625,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 spc_ram_w(unitNumber, 0xf2, reg);
                 return spc_ram_r(unitNumber, 0xf3);
             }
@@ -638,6 +644,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return spc_ram_r(unitNumber, address);
             }
             finally
@@ -668,6 +676,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        private static delegate_spc_resample spc_resample
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -688,6 +705,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void SPC700SetCallback(uint unitNumber, delg_callback callback)
         {
+            DeferredWriteData(set_callback, unitNumber, callback);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -696,7 +715,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -726,6 +745,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             funcPtr = MameIF.GetProcAddress("spc700_set_callback");
             if (funcPtr != IntPtr.Zero)
                 set_callback = (delegate_set_callback)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_set_callback));
+
+            funcPtr = MameIF.GetProcAddress("spc700_resample");
+            if (funcPtr != IntPtr.Zero)
+                spc_resample = (delegate_spc_resample)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_spc_resample));
         }
 
         private SPC700SoundManager soundManager;
@@ -737,18 +760,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public SPC700(uint unitNumber) : base(unitNumber)
         {
-            Timbres = new SPC700Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new SPC700Timbre[256];
+            for (int i = 0; i < 256; i++)
                 Timbres[i] = new SPC700Timbre();
 
-            DrumSoundTable = new SPC700PcmSoundTable();
+            //DrumSoundTable = new SPC700PcmSoundTable();
 
             setPresetInstruments();
 
             this.soundManager = new SPC700SoundManager(this);
 
             f_read_byte_callback = new delg_callback(read_byte_callback);
-
             SPC700SetCallback(UnitNumber, f_read_byte_callback);
 
             GainLeft = DEFAULT_GAIN;
@@ -768,8 +790,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             LMVOL = 127;
             RMVOL = 127;
             COEF1 = 127;
-        }
 
+            readSoundFontForTimbre = new ToolStripMenuItem("Import PCM from SF2 for &Timbre...");
+            readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
+
+            readSoundFontForDrumTimbre = new ToolStripMenuItem("Import PCM from SF2 for &DrumTimbre...");
+            readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
+        }
 
         #region IDisposable Support
 
@@ -783,11 +810,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     //マネージ状態を破棄します (マネージ オブジェクト)。
                     soundManager?.Dispose();
+                    soundManager = null;
+
+                    readSoundFontForTimbre?.Dispose();
+                    readSoundFontForTimbre = null;
+
+                    readSoundFontForDrumTimbre?.Dispose();
+                    readSoundFontForDrumTimbre = null;
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
                 // TODO: 大きなフィールドを null に設定します。
-                //SPC700SetCallback(UnitNumber, null);
+                SPC700SetCallback(UnitNumber, null);
 
                 disposedValue = true;
             }
@@ -843,9 +877,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -854,7 +888,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -865,7 +899,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -876,16 +917,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
         }
 
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
+        }
 
         /// <summary>
         /// 
         /// </summary>
         private class SPC700SoundManager : SoundManagerBase
         {
-            private SoundList<SPC700Sound> instOnSounds = new SoundList<SPC700Sound>(8);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<SPC700Sound> instOnSounds = new SoundList<SPC700Sound>(8);
 
             private SPC700 parentModule;
 
@@ -902,48 +960,81 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                SPC700Sound snd = new SPC700Sound(parentModule, this, timbre, note, emptySlot);
-                instOnSounds.Add(snd);
-
-                //HACK: store pcm data to local buffer to avoid "thread lock"
-                if (timbre.SoundType == SoundType.INST)
+                var bts = parentModule.GetBaseTimbres(note);
+                var ids = parentModule.GetBaseTimbreIndexes(note);
+                for (int i = 0; i < bts.Length; i++)
                 {
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[programNumber] = timbre.AdpcmData;
+                    SPC700Timbre timbre = (SPC700Timbre)bts[i];
+
+                    var emptySlot = searchEmptySlot(note);
+                    if (emptySlot.slot < 0)
+                        continue;
+
+                    SPC700Sound snd = new SPC700Sound(emptySlot.inst, this, timbre, note, emptySlot.slot, (byte)ids[i]);
+                    instOnSounds.Add(snd);
+
+                    //HACK: store pcm data to local buffer to avoid "thread lock"
+                    if (timbre.SoundType == SoundType.INST)
+                    {
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[ids[i]] = timbre.AdpcmData;
+                    }
+                    /*
+                    else if (timbre.SoundType == SoundType.DRUM)
+                    {
+                        var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
+                        lock (parentModule.tmpPcmDataTable)
+                            parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
+                    }
+                    */
+
+                    FormMain.OutputDebugLog(parentModule, "KeyOn INST ch" + emptySlot + " " + note.ToString());
+                    rv.Add(snd);
                 }
-                else if (timbre.SoundType == SoundType.DRUM)
+                for (int i = 0; i < rv.Count; i++)
                 {
-                    var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[note.NoteNumber];
-                    lock (parentModule.tmpPcmDataTable)
-                        parentModule.tmpPcmDataTable[note.NoteNumber + 128] = pct.PcmData;
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
                 }
 
-                FormMain.OutputDebugLog("KeyOn INST ch" + emptySlot + " " + note.ToString());
-                snd.KeyOn();
-
-                return snd;
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (SPC700 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                int emptySlot = -1;
+                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 8);
+            }
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                emptySlot = SearchEmptySlotAndOff(instOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 8));
-                return emptySlot;
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    byte bitPos = (byte)(1 << i);
+
+                    byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) & ~bitPos);
+                    SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
+                    byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) | bitPos);
+                    SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                }
             }
 
         }
@@ -957,13 +1048,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SPC700 parentModule;
 
-            private SevenBitNumber programNumber;
+            private byte timbreIndex;
 
             private SPC700Timbre timbre;
 
             private SoundType lastSoundType;
 
             private double baseFreq;
+
+            private uint sampleRate;
+
+            private ushort loopPoint;
 
             /// <summary>
             /// 
@@ -972,14 +1067,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SPC700Sound(SPC700 parentModule, SPC700SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
+                this.timbreIndex = timbreIndex;
                 this.timbre = (SPC700Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
-                baseFreq = this.timbre.BaseFreqency;
+                if (lastSoundType == SoundType.INST)
+                {
+                    baseFreq = this.timbre.BaseFreqency;
+                    sampleRate = this.timbre.SampleRate;
+                    loopPoint = this.timbre.LoopPoint;
+                }
+                /*
+                else if (lastSoundType == SoundType.DRUM)
+                {
+                    var pct = (SPC700PcmTimbre)parentModule.DrumSoundTable.PcmTimbres[noteOnEvent.NoteNumber];
+                    baseFreq = pct.BaseFreqency;
+                    sampleRate = pct.SampleRate;
+                    loopPoint = pct.LoopPoint;
+                }
+                */
             }
 
             /// <summary>
@@ -999,8 +1108,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 uint reg = (uint)(Slot * 16);
                 byte bitPos = (byte)(1 << Slot);
-
-                Program.SoundUpdating();
 
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
@@ -1046,18 +1153,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastSoundType == SoundType.INST)
                 {
                     //prognum no
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), programNumber);
+                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), timbreIndex);
                 }
+                /*
                 else if (lastSoundType == SoundType.DRUM)
                 {
                     //prognum no
                     int nn = NoteOnEvent.NoteNumber;
                     SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), (byte)(nn + 128));
                 }
+                */
                 //loop
-                ushort lpos = timbre.LoopPoint;
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (programNumber * 4) + 2), (byte)(lpos & 0xff));
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (programNumber * 4) + 3), (byte)(lpos >> 8));
+                ushort lpos = (ushort)(loopPoint * 9);
+                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff));
+                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8));
 
                 //ADSR
                 if (timbre.AdsrEnable)
@@ -1091,8 +1200,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) | bitPos);
                 SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
-
-                Program.SoundUpdated();
             }
 
 
@@ -1102,8 +1209,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 uint reg = (uint)(Slot * 16);
                 byte bitPos = (byte)(1 << Slot);
-
-                Program.SoundUpdating();
 
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
@@ -1172,8 +1277,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
                 SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
-
-                Program.SoundUpdated();
             }
 
             /// <summary>
@@ -1181,18 +1284,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 uint reg = (uint)(Slot * 16);
                 var vol = CalcCurrentVolume();
 
-                int pan = parentModule.Panpots[NoteOnEvent.Channel] - 1;
-                if (pan < 0)
-                    pan = 0;
+                int pan = CalcCurrentPanpot();
+                /*
+                if (lastSoundType == SoundType.DRUM)
+                {
+                    var pct = parentModule.DrumSoundTable.PcmTimbres[NoteOnEvent.NoteNumber];
+                    pan += pct.PanShift;
+                    if (pan < 0)
+                        pan = 0;
+                    else if (pan > 127)
+                        pan = 127;
+                }
+                */
 
-                byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 126d)));
-                byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 126d)));
+                byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 127d)));
+                byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 127d)));
                 SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 0), left);
                 SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 1), right);
             }
@@ -1207,9 +1316,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 uint freq = 0;
                 if (lastSoundType == SoundType.INST)
-                    freq = (uint)Math.Round(0x1000 * CalcCurrentFrequency() / baseFreq);
+                {
+                    freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 0x1000 * sampleRate / (double)32000);
+                }
+                /*
                 else if (lastSoundType == SoundType.DRUM)
-                    freq = (uint)Math.Round(0x1000 * (1d + CalcCurrentPitch()));
+                {
+                    double f = MidiManager.CalcCurrentFrequency
+                        (MidiManager.CalcNoteNumberFromFrequency(baseFreq) + CalcCurrentPitchDeltaNoteNumber());
+
+                    freq = (uint)Math.Round((f / baseFreq) * 0x1000 * sampleRate / (double)32000);
+                }*/
 
                 if (freq > 0x3fff)
                     freq = 0x3fff;
@@ -1225,9 +1342,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void SoundOff()
             {
-                if (IsSoundOff)
-                    return;
-
                 base.SoundOff();
 
                 byte bitPos = (byte)(1 << Slot);
@@ -1251,6 +1365,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Sound Type")]
             [DefaultValue(SoundType.INST)]
+            [Browsable(false)]
             public SoundType SoundType
             {
                 get;
@@ -1259,10 +1374,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set ADPCM base frequency [Hz]")]
+            [Description("Set ADPCM base frequency @ 32KHz [Hz]")]
             [DefaultValue(typeof(double), "500")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public double BaseFreqency
             {
                 get;
@@ -1271,14 +1386,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set loop point (0 - 65535) (Need to set loop flag in BRR PCM data)")]
-            [DefaultValue(typeof(ushort), "0")]
-            [SlideParametersAttribute(0, 65535)]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "22050")]
+            [SlideParametersAttribute(4000, 96000)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public ushort LoopPoint
+            public uint SampleRate
             {
                 get;
                 set;
+            } = 22050;
+
+            private ushort f_LoopPoint;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set data block number of loop point (0 - 7281) (Need to set the loop flag in BRR PCM data)")]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 7281)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ushort LoopPoint
+            {
+                get => f_LoopPoint;
+                set
+                {
+                    f_LoopPoint = value;
+                    if (f_LoopPoint > 7281)
+                        f_LoopPoint = 7281;
+                }
             }
 
             private byte[] f_AdcmData = new byte[0];
@@ -1566,6 +1700,47 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            [DataMember]
+            [Description("Set ADPCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "500")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 500;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "22050")]
+            [SlideParametersAttribute(4000, 96000)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 22050;
+
+            private ushort f_LoopPoint;
+
+            [DataMember]
+            [Description("Set data block number of loop point (0 - 7281) (Need to set the loop flag in BRR PCM data)")]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 7281)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ushort LoopPoint
+            {
+                get => f_LoopPoint;
+                set
+                {
+                    f_LoopPoint = value;
+                    if (f_LoopPoint > 7281)
+                        f_LoopPoint = 7281;
+                }
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1821,7 +1996,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private sbyte? f_COEF4 = 0;
+            private sbyte? f_COEF4;
 
             [DataMember]
             [Category("Filter")]
@@ -1862,7 +2037,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
 
-            private sbyte? f_COEF6 = 0;
+            private sbyte? f_COEF6;
 
             [DataMember]
             [Category("Filter")]
@@ -1925,6 +2100,290 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         }
 
+        #region MENU
+
+        private ToolStripMenuItem readSoundFontForTimbre;
+
+        private ToolStripMenuItem readSoundFontForDrumTimbre;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
+        {
+            return new ToolStripMenuItem[] { readSoundFontForTimbre, readSoundFontForDrumTimbre };
+        }
+
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 0;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadPcm(offset, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSoundFontForDrumTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 128;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SoundFont v2.0 file";
+                    openFileDialog.Filter = "SoundFont v2.0 File(*.sf2)|*.sf2";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadPcm(offset, true);
+                }
+                for (int i = 0; i < 128; i++)
+                {
+                    var tim = (SPC700Timbre)Timbres[i + 128];
+
+                    DrumTimbres[i].TimbreNumber = (ProgramAssignmentNumber)(i + 128);
+                    DrumTimbres[i].BaseNote =
+                        (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        private short[] resampleLoop16(SF2SampleHeader s, short[] osample, double obaseFreq, ref double tbaseFreq, ref uint tend, ref uint tloopStart, ref uint tloopLen)
+        {
+            //uint ostart = 0;
+            uint oend = s.End - s.Start;
+            if (s.LoopEnd < s.End && s.LoopStart < s.LoopEnd)
+                oend = s.LoopEnd - s.Start;
+
+            uint olen = oend + 1;
+            uint oloopStart = s.LoopStart - s.Start;
+            uint oloopLen = olen - oloopStart;
+
+            uint tlen = olen;
+            tloopStart = oloopStart;
+            tloopLen = oloopLen;
+            tend = oend;
+            tbaseFreq = obaseFreq;
+            double trate = 1;
+            if (oloopLen % 16 != 0)
+            {
+                tloopLen = ((oloopLen / 16) + 1) * 16;
+                trate = (double)oloopLen / (double)tloopLen;
+                tbaseFreq = obaseFreq / trate;
+
+                tloopLen = (uint)Math.Ceiling(oloopLen / trate);
+                tend = (uint)Math.Ceiling(oend / trate);
+                tlen = tend + 1;
+                tloopStart = tend - tloopLen + 1;
+            }
+
+            if (obaseFreq != tbaseFreq)
+            {
+                //resample
+
+                IntPtr op = Marshal.AllocHGlobal((int)(olen * sizeof(short)));
+                IntPtr tp = Marshal.AllocHGlobal((int)(tlen * sizeof(short)));
+                MarshalCopy(osample, op, 0, olen);
+
+                spc_resample(obaseFreq, tbaseFreq, op, olen, tp, tlen);
+
+                short[] tsamples = new short[tlen];
+                MarshalCopy(tp, tsamples, 0, tlen);
+
+                Marshal.FreeHGlobal(op);
+                Marshal.FreeHGlobal(tp);
+                return tsamples;
+            }
+            else
+            {
+                return osample;
+            }
+        }
+
+        public static void MarshalCopy(IntPtr source, short[] destination, uint startIndex, uint length)
+        {
+            unsafe
+            {
+                var sourcePtr = (short*)source;
+                for (var i = startIndex; i < startIndex + length; i++)
+                {
+                    destination[i] = *sourcePtr;
+                    sourcePtr++;
+                }
+            }
+        }
+
+        public static void MarshalCopy(short[] source, IntPtr destination, uint startIndex, uint length)
+        {
+            unsafe
+            {
+                var destPtr = (short*)destination;
+                for (var i = startIndex; i < startIndex + length; i++)
+                {
+                    *destPtr = source[i];
+                    destPtr++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        private void loadPcm(int offset, bool drum)
+        {
+            var sf2 = new SF2(openFileDialog.FileName);
+
+            var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
+            int tn = 0;
+            bool warningAlign = false;
+            foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
+            {
+                if (s.SampleType == SF2SampleLink.MonoSample ||
+                    s.SampleType == SF2SampleLink.LeftSample)
+                {
+                    var tim = Timbres[tn + offset];
+                    uint brrLoopStart;
+
+                    double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                    tim.SampleRate = s.SampleRate;
+
+                    uint start = 0;
+                    uint end = s.End - s.Start;
+                    if (s.LoopEnd < end && s.LoopStart < s.LoopEnd)
+                        end = s.LoopEnd;
+
+                    uint olen = end - start + 1;
+                    short[] samples = new short[olen];
+                    Array.Copy(spl, s.Start, samples, 0, olen);
+                    uint loopStart = 0;
+                    uint loopLen = 0;
+
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        loopStart = s.LoopStart - s.Start;
+                        loopLen = olen - loopStart;
+
+                        if (loopLen % 16 != 0)
+                            warningAlign = true;
+
+                        samples = resampleLoop16(s, samples, baseFreq, ref baseFreq, ref end, ref loopStart, ref loopLen);
+                    }
+
+                    tim.BaseFreqency = baseFreq;
+
+                    //offset to 16
+                    if (samples.Length % 16 != 0)
+                    {
+                        int sl = samples.Length;
+                        List<short> tsmpl = new List<short>();
+                        tsmpl.AddRange(samples);
+                        tsmpl.InsertRange(0, new short[16 - (sl % 16)]);
+                        samples = tsmpl.ToArray();
+                        loopStart += 16 - (uint)(sl % 16);
+                    }
+
+                    //For calc avarage PCM data on loop point to avoid glitch/noise sounsing
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        short[] avgData = new short[16];
+                        if (loopStart >= 16)
+                        {
+                            for (int i = 0; i < 16; i++)
+                                avgData[i] = (short)(((int)samples[loopStart - 16 + i] + (int)samples[samples.Length - 16 + i]) / 2);
+                            for (int i = 0; i < 16; i++)
+                            {
+                                samples[loopStart - 16 + i] = avgData[i];
+                                samples[samples.Length - 16 + i] = avgData[i];
+                            }
+                        }
+                    }
+
+                    var result = Brr.BrrEncoder.ConvertRawWave(samples, false, s.LoopStart < s.LoopEnd, loopStart, out brrLoopStart);
+                    brrLoopStart /= 9;
+
+                    tim.AdpcmData = result;
+                    tim.LoopPoint = (ushort)brrLoopStart;
+
+                    var nidx = s.SampleName.IndexOf('\0');
+                    if (nidx >= 0)
+                        tim.Memo = s.SampleName.Substring(0, nidx);
+                    else
+                        tim.Memo = s.SampleName;
+
+                    if (s.LoopStart < s.LoopEnd)
+                    {
+                        tim.SDS.ADSR.Enable = true;
+                        tim.SDS.ADSR.DR = 80;
+                        tim.SDS.ADSR.SL = 127;
+                    }
+                    else
+                    {
+                        tim.SDS.ADSR.Enable = false;
+                    }
+                    if (drum)
+                    {
+                        DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
+                        DrumTimbres[tn].BaseNote =
+                            (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
+                    }
+
+                    tn++;
+
+                    if (tn == 128)
+                        break;
+
+                    break;
+                }
+            }
+            if (warningAlign)
+            {
+                MessageBox.Show(Resources.WanrSPC700SampleLength, "Warning", MessageBoxButtons.OK);
+            }
+        }
+
+        #endregion
     }
 
 }

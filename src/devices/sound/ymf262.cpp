@@ -108,10 +108,10 @@ differences between OPL2 and OPL3 shown in datasheets:
 #define EG_OFF          0
 
 /* Routing connections between slots */
-#define CONN_NULL       0
-#define CONN_CHAN0      1
-#define CONN_PHASEMOD   19
-#define CONN_PHASEMOD2  20
+#define CONN_NULL       255
+#define CONN_CHAN0      0
+#define CONN_PHASEMOD   18
+#define CONN_PHASEMOD2  19
 
 namespace {
 
@@ -2627,8 +2627,8 @@ void ymf262_update_one(void *_chip, OPL3SAMPLE **buffers, int length)
 
 	OPL3SAMPLE  *ch_a = buffers[0]; // DO2 (mixed) left output for OPL4
 	OPL3SAMPLE  *ch_b = buffers[1]; // DO2 (mixed) right output for OPL4
-	OPL3SAMPLE  *ch_c = buffers[2]; // DO0 (FM only) left output for OPL4
-	OPL3SAMPLE  *ch_d = buffers[3]; // DO0 (FM only) right output for OPL4
+	OPL3SAMPLE  *ch_c = buffers[0]; // DO0 (FM only) left output for OPL4
+	OPL3SAMPLE  *ch_d = buffers[1]; // DO0 (FM only) right output for OPL4
 
 	for( i=0; i < length ; i++ )
 	{
@@ -2803,8 +2803,10 @@ void ymf262_update_one(void *_chip, OPL3SAMPLE **buffers, int length)
 		/* store to sound buffer */
 		ch_a[i] = a;
 		ch_b[i] = b;
+		/*
 		ch_c[i] = c;
 		ch_d[i] = d;
+		*/
 
 		advance(chip);
 	}

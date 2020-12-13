@@ -220,6 +220,8 @@ void c6280_device::c6280_w(offs_t offset, uint8_t data)
 	/* Update stream */
 	m_stream->update();
 
+	m_vgm_writer->vgm_write(0x00, offset, data);
+
 	switch (offset & 0x0f)
 	{
 		case 0x00: /* Channel select */
@@ -346,7 +348,25 @@ void c6280_device::device_start()
 	save_item(STRUCT_MEMBER(m_channel, noise_counter));
 	save_item(STRUCT_MEMBER(m_channel, noise_seed));
 	save_item(STRUCT_MEMBER(m_channel, tick));
+
+	m_vgm_writer = new vgm_writer(machine());
+
+	m_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(c6280_device::timer_callback), this));
+	m_timer->adjust(attotime::from_hz(7.159090 * 1000. * 1000. / 1024.), 0, attotime::from_hz(7.159090 * 1000. * 1000. / 1024.));
 }
+
+void c6280_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_C6280, clock());
+};
+
+void c6280_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
+
 
 void c6280_device::device_reset()
 {
@@ -357,4 +377,13 @@ void c6280_device::device_reset()
 		if (ch >= 4)
 			chan->noise_seed = 1;
 	}
+}
+
+TIMER_CALLBACK_MEMBER(c6280_device::timer_callback)
+{
+	if (m_enable == 0)
+		return;
+
+	if (m_callback != NULL)
+		m_callback();
 }

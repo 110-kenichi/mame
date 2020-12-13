@@ -10,6 +10,7 @@
 
 struct ssg_callbacks;
 
+typedef int8_t(*OPNA_ADPCM_CALLBACK)(u8 pn, int32_t pos);
 
 class ym2608_device : public ay8910_device,
 	public device_rom_interface
@@ -26,9 +27,12 @@ public:
 	// update request from fm.cpp
 	static void update_request(device_t *param) { downcast<ym2608_device *>(param)->update_request(); }
 
+	void set_adpcma_callback(OPNA_ADPCM_CALLBACK callback) { m_adpcma_callback = callback; };
+	void set_adpcmb_callback(OPNA_ADPCM_CALLBACK callback) { m_adpcmb_callback = callback; };
+
 protected:
 	// device-level overrides
-	virtual const tiny_rom_entry *device_rom_region() const override;
+	//virtual const tiny_rom_entry *device_rom_region() const override;
 	virtual void device_start() override;
 	virtual void device_clock_changed() override;
 	virtual void device_post_load() override;
@@ -45,10 +49,28 @@ private:
 	void timer_handler(int c, int count, int clock);
 	void update_request() { m_stream->update(); }
 
-	static uint8_t static_external_read_byte(device_t *param, offs_t offset) { return downcast<ym2608_device *>(param)->read_byte(offset); }
-	static void static_external_write_byte(device_t *param, offs_t offset, uint8_t data) { return downcast<ym2608_device *>(param)->space().write_byte(offset, data); }
-	static uint8_t static_internal_read_byte(device_t *param, offs_t offset) { return downcast<ym2608_device *>(param)->m_internal->as_u8(offset % downcast<ym2608_device *>(param)->m_internal->bytes()); };
+	static uint8_t static_adpcma_read_byte(device_t *param, offs_t offset) {
+		if (downcast<ym2608_device *>(param)->m_adpcma_callback != NULL)
+			return downcast<ym2608_device *>(param)->m_adpcma_callback(offset >> 24, offset & 0xffffff);
+		return 0;
 
+		//return downcast<ym2610_device *>(param)->space(0).read_byte(offset);
+	}
+	static uint8_t static_adpcmb_read_byte(device_t *param, offs_t offset) {
+		if (downcast<ym2608_device *>(param)->m_adpcmb_callback != NULL)
+			return downcast<ym2608_device *>(param)->m_adpcmb_callback(offset >> 24, offset & 0xffffff);
+		return 0;
+
+		//return downcast<ym2610_device *>(param)->space(1).read_byte(offset);
+	}
+
+	/*
+	static uint8_t static_external_read_byte(device_t *param, offs_t offset) { return downcast<ym2608_device *>(param)->read_byte(offset); }
+	*/
+	static void static_external_write_byte(device_t *param, offs_t offset, uint8_t data) { return downcast<ym2608_device *>(param)->space().write_byte(offset, data); }
+	/*
+	static uint8_t static_internal_read_byte(device_t *param, offs_t offset) { return downcast<ym2608_device *>(param)->m_internal->as_u8(offset % downcast<ym2608_device *>(param)->m_internal->bytes()); };
+	*/
 	static void static_irq_handler(device_t *param, int irq) { downcast<ym2608_device *>(param)->irq_handler(irq); }
 	static void static_timer_handler(device_t *param, int c, int count, int clock) { downcast<ym2608_device *>(param)->timer_handler(c, count, clock); }
 
@@ -57,9 +79,12 @@ private:
 	emu_timer *     m_timer[2];
 	void *          m_chip;
 	devcb_write_line m_irq_handler;
-	required_memory_region m_internal;
+	//required_memory_region m_internal;
 
 	static const ssg_callbacks psgintf;
+
+	OPNA_ADPCM_CALLBACK m_adpcma_callback;
+	OPNA_ADPCM_CALLBACK m_adpcmb_callback;
 };
 
 DECLARE_DEVICE_TYPE(YM2608, ym2608_device)

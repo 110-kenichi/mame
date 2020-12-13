@@ -33,5 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments
         YM2610B,    //19
         MT32,    //20
         CM32P,    //21
+        YMF262,    //22
+        YM2608,    //24
     }
 }

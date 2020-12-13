@@ -430,12 +430,17 @@ void ym2151_device::YM2151Operator::key_on(uint32_t key_set, uint32_t eg_cnt)
 	{
 		phase = 0;            /* clear phase */
 		state = EG_ATT;       /* KEY ON = attack */
+		
 		volume += (~volume * (eg_inc[eg_sel_ar + ((eg_cnt >> eg_sh_ar)&7)])) >> 4;
 		if (volume <= MIN_ATT_INDEX)
 		{
 			volume = MIN_ATT_INDEX;
 			state = EG_DEC;
 		}
+
+		// HACK: mamidimemo Force Damp
+		//volume = MAX_ATT_INDEX;
+		state = EG_ATT;
 	}
 	key |= key_set;
 }
@@ -663,6 +668,8 @@ void ym2151_device::write_reg(int r, int v)
 	timer_set ( attotime::from_hz(clock()) * 64, chip, 0, timer_callback_chip_busy);
 	status |= 0x80;   /* set busy flag for 64 chip clock cycles */
 #endif
+
+	m_vgm_writer->vgm_write(0x00, r, v);
 
 	switch(r & 0xe0)
 	{
@@ -1051,7 +1058,21 @@ void ym2151_device::device_start()
 	save_item(NAME(connect));
 
 	save_item(NAME(m_reset_active));
+
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void ym2151_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_YM2151, clock());
+};
+
+void ym2151_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 void ym2151_device::device_clock_changed()
 {

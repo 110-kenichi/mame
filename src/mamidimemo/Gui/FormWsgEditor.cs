@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MetroFramework.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,11 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormWsgEditor : Form
+    public partial class FormWsgEditor : FormBase
     {
+
+        public event EventHandler ValueChanged;
 
         public int WsgBitWide
         {
@@ -66,6 +70,19 @@ namespace zanac.MAmidiMEmo.Gui
         public FormWsgEditor()
         {
             InitializeComponent();
+
+            Size = Settings.Default.WsgEdSize;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.WsgEdSize = Size;
         }
 
         /// <summary>
@@ -76,6 +93,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             private byte[] f_ResultOfWsgData;
 
+            [Browsable(false)]
             public byte[] ResultOfWsgData
             {
                 get
@@ -84,6 +102,9 @@ namespace zanac.MAmidiMEmo.Gui
                 }
                 set
                 {
+                    if (value == null)
+                        return;
+
                     f_ResultOfWsgData = new byte[value.Length];
                     Array.Copy(value, f_ResultOfWsgData, value.Length);
                     wsgLen = f_ResultOfWsgData.Length;
@@ -135,7 +156,7 @@ namespace zanac.MAmidiMEmo.Gui
             /// </summary>
             public GraphControl()
             {
-
+                DoubleBuffered = true;
             }
 
             /// <summary>
@@ -150,7 +171,7 @@ namespace zanac.MAmidiMEmo.Gui
                 Graphics g = e.Graphics;
                 Size sz = this.ClientSize;
                 Size dotSz = Size.Empty;
-                dotSz = new Size(sz.Width / wsgLen, sz.Height / (f_WsgMaxValue + 1));
+                dotSz = new Size(sz.Width / (wsgLen == 0 ? 1 : wsgLen), sz.Height / (f_WsgMaxValue + 1));
 
                 //fill bg
                 using (SolidBrush sb = new SolidBrush(Color.Black))
@@ -179,10 +200,20 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     for (int x = 0; x < wsgLen; x++)
                     {
-                        g.FillRectangle(sb,
-                            x * dotSz.Width,
-                            sz.Height - (ResultOfWsgData[x] * dotSz.Height) - dotSz.Height + 1,
-                            dotSz.Width - 1, dotSz.Height - 1);
+                        if (ResultOfWsgData[x] <= f_WsgMaxValue / 2)
+                        {
+                            g.FillRectangle(sb,
+                                x * dotSz.Width,
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[x] + 1) * dotSz.Height);
+                        }
+                        else
+                        {
+                            g.FillRectangle(sb,
+                                x * dotSz.Width,
+                                sz.Height - (ResultOfWsgData[x] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[x] - f_WsgMaxValue / 2) * dotSz.Height);
+                        }
                     }
                 }
             }
@@ -224,15 +255,41 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (ResultOfWsgData[wxv.X] != (byte)wxv.Y)
                     {
-                        Invalidate(new Rectangle(wxv.X * dotSz.Width, sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
-                            dotSz.Width - 1, dotSz.Height - 1));
+                        if (ResultOfWsgData[wxv.X] <= f_WsgMaxValue / 2)
+                        {
+                            Invalidate(new Rectangle(
+                                wxv.X * dotSz.Width,
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[wxv.X] + 1) * dotSz.Height));
+                        }
+                        else
+                        {
+                            Invalidate(new Rectangle(
+                                wxv.X * dotSz.Width,
+                                sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
+                        }
 
                         ResultOfWsgData[wxv.X] = (byte)wxv.Y;
 
-                        Invalidate(new Rectangle(wxv.X * dotSz.Width, sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
-                            dotSz.Width - 1, dotSz.Height - 1));
+                        if (ResultOfWsgData[wxv.X] <= f_WsgMaxValue / 2)
+                        {
+                            Invalidate(new Rectangle(
+                                wxv.X * dotSz.Width,
+                                sz.Height - ((f_WsgMaxValue / 2 + 1) * dotSz.Height) + 1,
+                                dotSz.Width - 1, (f_WsgMaxValue / 2 - ResultOfWsgData[wxv.X] + 1) * dotSz.Height));
+                        }
+                        else
+                        {
+                            Invalidate(new Rectangle(
+                                wxv.X * dotSz.Width,
+                                sz.Height - (ResultOfWsgData[wxv.X] * dotSz.Height) - dotSz.Height + 1,
+                                dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
+                        }
 
                         updateText();
+
+                        ((FormWsgEditor)Parent).ValueChanged?.Invoke(Parent, EventArgs.Empty);
                     }
                 }
             }
@@ -245,7 +302,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (suspendWsgDataTextChange)
                 return;
 
-            string[] vals = textBoxWsgDataText.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] vals = textBoxWsgDataText.Text.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             List<byte> vs = new List<byte>();
             foreach (var val in vals)
             {

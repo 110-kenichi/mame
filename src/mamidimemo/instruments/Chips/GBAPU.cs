@@ -82,24 +82,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public GBAPUTimbre[] Timbres
         {
             get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            set;
         }
 
         /// <summary>
@@ -110,8 +100,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<GB_APU>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<GB_APU>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -156,6 +146,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void GbApuWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(GbApu_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -164,7 +156,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -182,6 +174,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void GbApuWaveWriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(GbApu_wave_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -190,7 +184,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -210,6 +204,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 Program.SoundUpdating();
+                FlushDeferredWriteData();
+
                 return GbApu_read(unitNumber, address);
             }
             finally
@@ -277,8 +273,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new GBAPUTimbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new GBAPUTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new GBAPUTimbre();
             setPresetInstruments();
 
@@ -292,6 +288,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
             base.Dispose();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmPath"></param>
+        public override void StartVgmRecordingTo(string vgmPath)
+        {
+            base.StartVgmRecordingTo(vgmPath);
+
+            //Sound On
+            GbApuWriteData(UnitNumber, 0x16, 0x80);
+            GbApuWriteData(UnitNumber, 0x14, 0x77);
         }
 
         /// <summary>
@@ -315,9 +324,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -326,7 +335,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -337,7 +346,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -348,7 +364,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -356,13 +377,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class GBSoundManager : SoundManagerBase
         {
-            private SoundList<GbSound> spsgOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
-            private SoundList<GbSound> psgOnSounds = new SoundList<GbSound>(2);
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
 
-            private SoundList<GbSound> wavOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<GbSound> spsgOnSounds = new SoundList<GbSound>(1);
 
-            private SoundList<GbSound> noiseOnSounds = new SoundList<GbSound>(1);
+            private static SoundList<GbSound> psgOnSounds = new SoundList<GbSound>(2);
+
+            private static SoundList<GbSound> wavOnSounds = new SoundList<GbSound>(1);
+
+            private static SoundList<GbSound> noiseOnSounds = new SoundList<GbSound>(1);
 
 
             private GB_APU parentModule;
@@ -384,74 +418,101 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                GbSound snd = new GbSound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.SoundType)
+                foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    case SoundType.SPSG:
-                        spsgOnSounds.Add(snd);
-                        break;
-                    case SoundType.PSG:
-                        psgOnSounds.Add(snd);
-                        break;
-                    case SoundType.WAV:
-                        wavOnSounds.Add(snd);
-                        break;
-                    case SoundType.NOISE:
-                        noiseOnSounds.Add(snd);
-                        break;
-                }
-                snd.KeyOn();
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    GbSound snd = new GbSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    switch (timbre.SoundType)
+                    {
+                        case SoundType.SPSG:
+                            spsgOnSounds.Add(snd);
+                            break;
+                        case SoundType.PSG:
+                            psgOnSounds.Add(snd);
+                            break;
+                        case SoundType.WAV:
+                            wavOnSounds.Add(snd);
+                            break;
+                        case SoundType.NOISE:
+                            noiseOnSounds.Add(snd);
+                            break;
+                    }
+
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (GB_APU inst, int slot) searchEmptySlot(TaggedNoteOnEvent note, GBAPUTimbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
                 switch (timbre.SoundType)
                 {
                     case SoundType.SPSG:
                         {
-                            emptySlot = SearchEmptySlotAndOff(spsgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, spsgOnSounds, note, 1);
                             break;
                         }
                     case SoundType.PSG:
                         {
                             if (timbre.PartialReserveSPSG)
-                                emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1);
                             else
-                                emptySlot = SearchEmptySlotAndOff(psgOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 2));
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2);
                             break;
                         }
                     case SoundType.WAV:
                         {
-                            emptySlot = SearchEmptySlotAndOff(wavOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wavOnSounds, note, 1);
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            emptySlot = SearchEmptySlotAndOff(noiseOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 1));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, noiseOnSounds, note, 1);
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 4; i++)
+                {
+                    uint reg = (uint)(i * 5);
+                    GbApuWriteData(parentModule.UnitNumber, reg + 2, 0x00);
+                }
+            }
         }
 
 
@@ -462,8 +523,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private GB_APU parentModule;
-
-            private SevenBitNumber programNumber;
 
             private GBAPUTimbre timbre;
 
@@ -478,11 +537,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public GbSound(GB_APU parentModule, GBSoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public GbSound(GB_APU parentModule, GBSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (GBAPUTimbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
                 if (lastSoundType == SoundType.PSG && this.timbre.PartialReserveSPSG)
@@ -516,9 +574,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             UpdatePitch(0x80);
 
                             if (lastSoundType == SoundType.SPSG)
-                                FormMain.OutputDebugLog("KeyOn SPSG ch" + Slot + " " + NoteOnEvent.ToString());
+                                FormMain.OutputDebugLog(parentModule, "KeyOn SPSG ch" + Slot + " " + NoteOnEvent.ToString());
                             else
-                                FormMain.OutputDebugLog("KeyOn PSG ch" + (Slot + partialReserveSpsg) + " " + NoteOnEvent.ToString());
+                                FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + (Slot + partialReserveSpsg) + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.WAV:
@@ -540,7 +598,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             UpdatePitch(0x80);
 
-                            FormMain.OutputDebugLog("KeyOn WAV ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn WAV ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                     case SoundType.NOISE:
@@ -555,7 +613,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             UpdatePitch(0x80);
 
-                            FormMain.OutputDebugLog("KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
+                            FormMain.OutputDebugLog(parentModule, "KeyOn NOISE ch" + Slot + " " + NoteOnEvent.ToString());
                             break;
                         }
                 }
@@ -574,9 +632,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 switch (lastSoundType)
                 {
                     case SoundType.SPSG:
@@ -653,9 +708,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public void UpdatePitch(byte keyOn)
             {
-                if (IsSoundOff)
-                    return;
-
                 double freq = CalcCurrentFrequency();
 
                 //Freq
@@ -667,11 +719,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             uint reg = (uint)((Slot + partialReserveSpsg) * 5);
                             ushort gfreq = convertPsgFrequency(freq);
 
-                            Program.SoundUpdating();
                             GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(gfreq & 0xff));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6) | ((gfreq >> 8) & 0x07)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                     case SoundType.WAV:
@@ -679,18 +728,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             uint reg = (uint)((Slot + 2) * 5);
                             ushort gfreq = convertWavFrequency(freq);
 
-                            Program.SoundUpdating();
                             GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(gfreq & 0xff));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6) | ((gfreq >> 8) & 0x07)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                     case SoundType.NOISE:
                         {
                             uint reg = (uint)((Slot + 3) * 5);
 
-                            int d = 15 - ((69 + (int)Math.Round(12 * Math.Log(freq / 440d, 2))) % 16);
+                            double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
+
+                            int kf = 0;
+                            if (d > 0)
+                                kf = (int)d % 63;
+                            else if (d < 0)
+                                kf = 63 + ((int)d % 63);
+
+                            int noted = (int)d / 63;
+                            if (d < 0)
+                                noted -= 1;
+
+                            int nn = NoteOnEvent.NoteNumber;
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                                nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                            int noteNum = nn + noted;
+                            if (noteNum > 127)
+                                noteNum = 127;
+                            else if (noteNum < 0)
+                                noteNum = 0;
+
+                            int v = 15 - (noteNum % 16);
 
                             byte dt = timbre.NoiseCounter;
                             if (FxEngine != null && FxEngine.Active)
@@ -699,11 +766,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 dt = (byte)(eng.DutyValue & 1);
                             }
 
-                            Program.SoundUpdating();
-                            GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(d << 4 | dt << 3 | timbre.NoiseDivRatio));
+                            GbApuWriteData(parentModule.UnitNumber, reg + 3, (byte)(v << 4 | dt << 3 | timbre.NoiseDivRatio));
                             GbApuWriteData(parentModule.UnitNumber, reg + 4, (byte)(keyOn | (timbre.EnableLength << 6)));
-                            Program.SoundUpdated();
-
                             break;
                         }
                 }
@@ -737,7 +801,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte mask = (byte)(0x11 << rslot);
                     byte ccpan = (byte)(cpan.Value & (byte)~mask);
 
-                    byte pan = parentModule.Panpots[NoteOnEvent.Channel];
+                    byte pan = CalcCurrentPanpot();
                     if (pan < 32)
                         pan = 0x10;
                     else if (pan > 96)
@@ -1052,7 +1116,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_wavedata = new byte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(4)]
             [DataMember]
             [Category("Sound")]
@@ -1105,7 +1169,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     List<byte> vs = new List<byte>();
                     foreach (var val in vals)
                     {
@@ -1127,7 +1191,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public SPSGSweepSettings SPSGSweep
             {
                 get;
-                private set;
+                set;
             }
 
 
@@ -1239,6 +1303,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set duty/noise envelop by text. Input duty/noise value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 3 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 3)]
             public string DutyEnvelopes
             {
                 get
@@ -1258,7 +1324,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_DutyEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -1371,14 +1437,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesRepeatPoint < 0)
+                        if (settings.DutyEnvelopesReleasePoint < 0)
                             f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        {
-                            if (settings.DutyEnvelopesRepeatPoint >= 0)
-                                f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        }
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {

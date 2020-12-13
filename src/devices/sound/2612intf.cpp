@@ -93,7 +93,21 @@ void ym2612_device::device_start()
 	m_chip = ym2612_init(this,clock(),rate,&ym2612_device::static_timer_handler,&ym2612_device::static_irq_handler);
 	if (!m_chip)
 		throw emu_fatalerror("ym2612_device(%s): Error creating YM2612 chip", tag());
+
+	m_vgm_writer = new vgm_writer(machine());
 }
+
+void ym2612_device::vgm_start(char *name)
+{
+	m_vgm_writer->vgm_start(name);
+
+	m_vgm_writer->vgm_open(VGMC_YM2612, clock());
+};
+
+void ym2612_device::vgm_stop(void)
+{
+	m_vgm_writer->vgm_stop();
+};
 
 void ym2612_device::device_clock_changed()
 {

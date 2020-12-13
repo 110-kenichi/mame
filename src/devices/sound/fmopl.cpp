@@ -72,7 +72,7 @@ Revision History:
 #include "emu.h"
 #include "fmopl.h"
 #include "ymdeltat.h"
-
+#include "vgmwrite.h"
 
 
 /* output final shift */
@@ -251,6 +251,9 @@ struct OPL_SLOT
 			Cnt = 0;
 			/* phase -> Attack */
 			state = EG_ATT;
+
+			//HACK: mamidimemo Force Damp
+			//volume = MAX_ATT_INDEX;
 		}
 		key |= key_set;
 	}
@@ -414,6 +417,7 @@ public:
 	int32_t output_deltat[4];     /* for Y8950 DELTA-T, chip is mono, that 4 here is just for safety */
 #endif
 
+	vgm_writer *m_vgm_writer;
 
 	/* status set and IRQ handling */
 	void STATUS_SET(int flag)
@@ -955,6 +959,9 @@ public:
 		else
 		{   /* data port */
 			if (UpdateHandler) UpdateHandler(UpdateParam, 0);
+
+			m_vgm_writer->vgm_write(0x00, address, v);
+			
 			WriteReg(address, v);
 		}
 		return status>>7;
@@ -2142,7 +2149,7 @@ void ym3812_clock_changed(void *chip, uint32_t clock, uint32_t rate)
 	reinterpret_cast<FM_OPL *>(chip)->clock_changed(clock, rate);
 }
 
-void * ym3812_init(device_t *device, uint32_t clock, uint32_t rate)
+void * ym3812_init(device_t *device, uint32_t clock, uint32_t rate, vgm_writer *vgm)
 {
 	/* emulator create */
 	FM_OPL *YM3812 = FM_OPL::Create(device,clock,rate,OPL_TYPE_YM3812);
@@ -2151,6 +2158,9 @@ void * ym3812_init(device_t *device, uint32_t clock, uint32_t rate)
 		OPL_save_state(YM3812, device);
 		ym3812_reset_chip(YM3812);
 	}
+
+	YM3812->m_vgm_writer = vgm;
+
 	return YM3812;
 }
 

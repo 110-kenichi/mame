@@ -17,6 +17,7 @@
 #pragma once
 
 #include "machine/rescap.h"
+#include "vgmwrite.h"
 
 /*
  *  ATARI Pokey (CO12294) pin-out
@@ -194,6 +195,9 @@ public:
 		m_output_type = pokey_device::DISCRETE_VAR_R;
 	}
 
+	void vgm_start(char *name);
+	void vgm_stop(void);
+
 protected:
 	// device-level overrides
 	virtual void device_start() override;
@@ -322,6 +326,8 @@ private:
 	double m_r_pullup;
 	double m_cap;
 	double m_v_ref;
+
+	vgm_writer *m_vgm_writer;
 };
 
 

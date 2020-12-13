@@ -80,24 +80,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataMember]
-        [Category("Chip")]
-        [Description("Timbres (0-127)")]
+        [Category(" Timbres")]
+        [Description("Timbres")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public MSM5232Timbre[] Timbres
         {
             get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override TimbreBase GetTimbre(int channel)
-        {
-            var pn = (SevenBitNumber)ProgramNumbers[channel];
-            return Timbres[pn];
+            set;
         }
 
         private double f_Capacitor;
@@ -155,8 +145,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<MSM5232>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                using (var obj = JsonConvert.DeserializeObject<MSM5232>(serializeData))
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)
             {
@@ -217,6 +207,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232WriteData(uint unitNumber, uint address, byte data)
         {
+            DeferredWriteData(MSM5232_write, unitNumber, address, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -225,7 +217,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -234,6 +226,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetVolume(uint unitNumber, int ch, byte data)
         {
+            DeferredWriteData(MSM5232_set_volume, unitNumber, ch, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -242,7 +236,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
 
@@ -251,6 +245,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetCapasitors(uint unitNumber, double cap1, double cap2, double cap3, double cap4, double cap5, double cap6, double cap7, double cap8)
         {
+            DeferredWriteData(MSM5232_set_capacitors, unitNumber, cap1, cap2, cap3, cap4, cap5, cap6, cap7, cap8);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -259,7 +255,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -267,6 +263,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void MSM5232SetCapacitors(uint unitNumber, int ch, byte data)
         {
+            DeferredWriteData(MSM5232_set_volume, unitNumber, ch, data);
+            /*
             try
             {
                 Program.SoundUpdating();
@@ -275,7 +273,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             finally
             {
                 Program.SoundUpdated();
-            }
+            }*/
         }
 
         /// <summary>
@@ -342,8 +340,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            Timbres = new MSM5232Timbre[128];
-            for (int i = 0; i < 128; i++)
+            Timbres = new MSM5232Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
+            for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new MSM5232Timbre();
             setPresetInstruments();
 
@@ -369,9 +367,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
-        protected override void OnNoteOnEvent(NoteOnEvent midiEvent)
+        protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            soundManager.KeyOn(midiEvent);
+            soundManager.ProcessKeyOn(midiEvent);
         }
 
         /// <summary>
@@ -380,7 +378,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOffEvent(NoteOffEvent midiEvent)
         {
-            soundManager.KeyOff(midiEvent);
+            soundManager.ProcessKeyOff(midiEvent);
         }
 
         /// <summary>
@@ -391,7 +389,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnControlChangeEvent(midiEvent);
 
-            soundManager.ControlChange(midiEvent);
+            soundManager.ProcessControlChange(midiEvent);
+        }
+
+        protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
+        {
+            base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
         /// <summary>
@@ -402,7 +407,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnPitchBendEvent(midiEvent);
 
-            soundManager.PitchBend(midiEvent);
+            soundManager.ProcessPitchBend(midiEvent);
+        }
+
+        internal override void AllSoundOff()
+        {
+            soundManager.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -410,8 +420,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class MSM5232SoundManager : SoundManagerBase
         {
-            private SoundList<MSM5232Sound> chAOnSounds = new SoundList<MSM5232Sound>(4);
-            private SoundList<MSM5232Sound> chBOnSounds = new SoundList<MSM5232Sound>(4);
+            private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            protected override SoundList<SoundBase> AllSounds
+            {
+                get
+                {
+                    return allSound;
+                }
+            }
+
+            private static SoundList<MSM5232Sound> chAOnSounds = new SoundList<MSM5232Sound>(4);
+            private static SoundList<MSM5232Sound> chBOnSounds = new SoundList<MSM5232Sound>(4);
 
             private MSM5232 parentModule;
 
@@ -428,57 +451,84 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="note"></param>
-            public override SoundBase SoundOn(NoteOnEvent note)
+            public override SoundBase[] SoundOn(TaggedNoteOnEvent note)
             {
-                int emptySlot = searchEmptySlot(note);
-                if (emptySlot < 0)
-                    return null;
+                List<SoundBase> rv = new List<SoundBase>();
 
-                var programNumber = (SevenBitNumber)parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[programNumber];
-                MSM5232Sound snd = new MSM5232Sound(parentModule, this, timbre, note, emptySlot);
-                switch (timbre.SoundGroup)
+                foreach (MSM5232Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
-                    case SoundGroup.Group1:
-                        chAOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn A ch" + emptySlot + " " + note.ToString());
-                        break;
-                    case SoundGroup.Group2:
-                        chBOnSounds.Add(snd);
-                        FormMain.OutputDebugLog("KeyOn B ch" + emptySlot + " " + note.ToString());
-                        break;
-                }
-                snd.KeyOn();
+                    var emptySlot = searchEmptySlot(note, timbre);
+                    if (emptySlot.slot < 0)
+                        continue;
 
-                return snd;
+                    MSM5232Sound snd = new MSM5232Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    switch (timbre.SoundGroup)
+                    {
+                        case SoundGroup.Group1:
+                            chAOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn A ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case SoundGroup.Group2:
+                            chBOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn B ch" + emptySlot + " " + note.ToString());
+                            break;
+                    }
+
+                    rv.Add(snd);
+                }
+                for (int i = 0; i < rv.Count; i++)
+                {
+                    var snd = rv[i];
+                    if (!snd.IsDisposed)
+                    {
+                        snd.KeyOn();
+                    }
+                    else
+                    {
+                        rv.Remove(snd);
+                        i--;
+                    }
+                }
+
+                return rv.ToArray();
             }
 
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            private int searchEmptySlot(NoteOnEvent note)
+            private (MSM5232 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note,MSM5232Timbre timbre)
             {
-                int emptySlot = -1;
+                var emptySlot = (parentModule, -1);
 
-                var pn = parentModule.ProgramNumbers[note.Channel];
-                var timbre = parentModule.Timbres[pn];
                 switch (timbre.SoundGroup)
                 {
                     case SoundGroup.Group1:
                         {
-                            emptySlot = SearchEmptySlotAndOff(chAOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, chAOnSounds, note, 4);
                             break;
                         }
                     case SoundGroup.Group2:
                         {
-                            emptySlot = SearchEmptySlotAndOff(chBOnSounds, note, parentModule.CalcMaxVoiceNumber(note.Channel, 4));
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, chBOnSounds, note, 4);
                             break;
                         }
                 }
+
                 return emptySlot;
             }
 
+            internal override void ProcessAllSoundOff()
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                ProcessControlChange(me);
+
+                for (int i = 0; i < 4; i++)
+                {
+                    MSM5232WriteData(parentModule.UnitNumber, (uint)(i + (0 * 4)), 0);
+                    MSM5232WriteData(parentModule.UnitNumber, (uint)(i + (1 * 4)), 0);
+                }
+            }
         }
 
 
@@ -489,8 +539,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
 
             private MSM5232 parentModule;
-
-            private SevenBitNumber programNumber;
 
             private MSM5232Timbre timbre;
 
@@ -503,11 +551,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public MSM5232Sound(MSM5232 parentModule, MSM5232SoundManager manager, TimbreBase timbre, NoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public MSM5232Sound(MSM5232 parentModule, MSM5232SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
-                this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];
-                this.timbre = parentModule.Timbres[programNumber];
+                this.timbre = (MSM5232Timbre)timbre;
                 this.lastGroup = (int)this.timbre.SoundGroup;
             }
 
@@ -539,9 +586,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                var timbre = parentModule.Timbres[pn];
-
                 MSM5232WriteData(parentModule.UnitNumber, (uint)(0x8 + lastGroup), timbre.AT);
                 MSM5232WriteData(parentModule.UnitNumber, (uint)(0xa + lastGroup), timbre.DT);
                 MSM5232WriteData(parentModule.UnitNumber, (uint)(0xc + lastGroup), (byte)(timbre.EGE << 5 | timbre.ARM << 4 | timbre.Harmonics));
@@ -552,9 +596,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 double v = 1;
                 v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
                 v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
@@ -576,12 +617,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                if (IsSoundOff)
-                    return;
-
                 if (!timbre.NoiseTone)
                 {
-                    int nn = (int)NoteOnEvent.NoteNumber;
+                    int nn = NoteOnEvent.NoteNumber;
+                    if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                        nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                     nn -= 36;
                     if (nn < 0)
                         nn = 0;
@@ -793,6 +833,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set harmonics envelop by text. Input harmonics value and split it with space like the Famitracker.\r\n" +
                        "0 ～ 15 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 15)]
             public string HarmonicsEnvelopes
             {
                 get
@@ -812,7 +854,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
                         }
                         f_HarmonicsEnvelopes = value;
-                        string[] vals = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                         List<int> vs = new List<int>();
                         for (int i = 0; i < vals.Length; i++)
                         {
@@ -935,14 +977,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.HarmonicsEnvelopesRepeatPoint < 0)
+                        if (settings.HarmonicsEnvelopesReleasePoint < 0)
                             f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesNums.Length;
 
-                        if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)
-                        {
-                            if (settings.HarmonicsEnvelopesRepeatPoint >= 0)
-                                f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesRepeatPoint;
-                        }
+                        //if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)
+                        //{
+                        //    if (settings.HarmonicsEnvelopesRepeatPoint >= 0)
+                        //        f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesRepeatPoint;
+                        //}
                     }
                     if (f_HarmonicsCounter < settings.HarmonicsEnvelopesNums.Length)
                     {

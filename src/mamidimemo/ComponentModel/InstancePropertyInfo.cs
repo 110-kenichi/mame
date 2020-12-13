@@ -22,6 +22,18 @@ namespace zanac.MAmidiMEmo.ComponentModel
             get;
         }
 
+        public string Formula
+        {
+            get;
+            set;
+        }
+
+        public string Symbol
+        {
+            get;
+            set;
+        }
+
         public InstancePropertyInfo(object ownerObject, PropertyInfo propertyInfo)
         {
             Owner = ownerObject;

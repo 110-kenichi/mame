@@ -912,10 +912,11 @@ sound_manager::sound_manager(running_machine &machine)
 	const char *wavfile = machine.options().wav_write();
 	const char *avifile = machine.options().avi_write();
 
+	/* memidimemo
 	// handle -nosound and lower sample rate if not recording WAV or AVI
 	if (m_nosound_mode && wavfile[0] == 0 && avifile[0] == 0)
 		machine.m_sample_rate = 11025;
-
+	*/
 	// count the mixers
 #if VERBOSE
 	mixer_interface_iterator iter(machine.root_device());
@@ -962,6 +963,11 @@ void sound_manager::start_recording()
 		m_wavfile = wav_open(wavfile, machine().sample_rate(), 2);
 }
 
+void sound_manager::start_recording_to(char *wavfile)
+{
+	// open the output WAV file if specified
+	m_wavfile = wav_open(wavfile, machine().sample_rate(), 2);
+}
 
 //-------------------------------------------------
 //  stop_recording - end audio recording
@@ -1145,8 +1151,6 @@ void SoundUpdated();
 
 void sound_manager::update(void *ptr, int param)
 {
-	SoundUpdating();
-
 	VPRINTF(("sound_update\n"));
 
 	g_profiler.start(PROFILER_SOUND);
@@ -1156,6 +1160,9 @@ void sound_manager::update(void *ptr, int param)
 	std::vector<std::vector<device_sound_interface *>> sis;
 	std::vector<std::vector<stream_sample_t *>> outs;
 	int idx = 0;
+
+	SoundUpdating();
+
 	for (speaker_device &speaker : speaker_device_iterator(machine().root_device()))
 	{
 		sis.emplace_back();
@@ -1233,6 +1240,8 @@ void sound_manager::update(void *ptr, int param)
 	// notify that new samples have been generated
 	emulator_info::sound_hook();
 
+	SoundUpdated();
+
 	g_profiler.stop();
 
 	//finalmix[0] left ch
@@ -1240,8 +1249,6 @@ void sound_manager::update(void *ptr, int param)
 	//  :::
 	//finalmix[N+0] left ch
 	//finalmix[N+1] right ch (N = finalmix_offset / 2)
-
-	SoundUpdated();
 }
 
 

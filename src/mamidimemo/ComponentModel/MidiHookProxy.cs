@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Messaging;
@@ -35,38 +36,41 @@ namespace zanac.MAmidiMEmo.ComponentModel
         /// <returns></returns>
         public override IMessage Invoke(IMessage msg)
         {
-            IMethodCallMessage call = (IMethodCallMessage)msg;
-            IMethodReturnMessage res = null;
-            IConstructionCallMessage ctor = call as IConstructionCallMessage;
-
-            if (ctor != null)
+            IConstructionCallMessage ccm = msg as IConstructionCallMessage;
+            if (ccm != null)
             {
-                //以下、コンストラクタを実行する処理
+                return this.InitializeServerObject(ccm);
 
-                RealProxy rp = RemotingServices.GetRealProxy(this.f_Target);
-                res = rp.InitializeServerObject(ctor);
-                MarshalByRefObject tp = this.GetTransparentProxy() as MarshalByRefObject;
-                res = EnterpriseServicesHelper.CreateConstructionReturnMessage(ctor, tp);
             }
-            else
+
+            IMethodCallMessage mcm = (IMethodCallMessage)msg;
+            object[] args = mcm.Args;
+            try
             {
-                //以下、コンストラクタ以外のメソッドを実行する処理
-                if (call.MethodName.StartsWith("set_"))
+                var mb = mcm.MethodBase;
+                if (mb.Name.StartsWith("set_"))
                 {
-                    lock (InstrumentManager.ExclusiveLockObject)
-                        res = RemotingServices.ExecuteMessage(this.f_Target, call);
+                    try
+                    {
+                        InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                        return RemotingServices.ExecuteMessage(this.f_Target, mcm) as ReturnMessage;
+                    }
+                    finally
+                    {
+                        InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                    }
                 }
                 else
                 {
-                    res = RemotingServices.ExecuteMessage(this.f_Target, call);
+                    return RemotingServices.ExecuteMessage(this.f_Target, mcm) as ReturnMessage;
                 }
             }
-
-            return res;
+            catch (TargetInvocationException ex)
+            {
+                return new ReturnMessage(ex.InnerException, mcm);
+            }
         }
-
-
-        private static ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
     }
 }
