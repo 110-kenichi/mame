@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F4CD40B1-C37C-452D-9785-640F26F0BF54}</ProjectGuid>
     <RootNamespace>expat</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
@@ -29,27 +29,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -97,13 +97,14 @@
       <AdditionalOptions>/bigobj /WX /w45038 /wd4003 /wd4005 /wd4018 /wd4060 /wd4065 /wd4100 /wd4127 /wd4146 /wd4201 /wd4244 /wd4245 /wd4250 /wd4267 /wd4310 /wd4319 /wd4324 /wd4334 /wd4389 /wd4456 /wd4457 /wd4458 /wd4459 /wd4702 /wd4706 /wd4804 /wd4805 /wd4996  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=&quot;expat-bugs@libexpat.org&quot;;PACKAGE_NAME=&quot;expat&quot;;PACKAGE_STRING=&quot;expat 2.1.1&quot;;PACKAGE_TARNAME=&quot;expat&quot;;PACKAGE_URL=&quot;&quot;;PACKAGE_VERSION=&quot;2.1.1&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT="expat-bugs@libexpat.org";PACKAGE_NAME="expat";PACKAGE_STRING="expat 2.1.1";PACKAGE_TARNAME="expat";PACKAGE_URL="";PACKAGE_VERSION="2.1.1";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -111,14 +112,14 @@
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\&quot;expat-bugs@libexpat.org\&quot;;PACKAGE_NAME=\&quot;expat\&quot;;PACKAGE_STRING=\&quot;expat 2.1.1\&quot;;PACKAGE_TARNAME=\&quot;expat\&quot;;PACKAGE_URL=\&quot;\&quot;;PACKAGE_VERSION=\&quot;2.1.1\&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\"expat-bugs@libexpat.org\";PACKAGE_NAME=\"expat\";PACKAGE_STRING=\"expat 2.1.1\";PACKAGE_TARNAME=\"expat\";PACKAGE_URL=\"\";PACKAGE_VERSION=\"2.1.1\";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
-  <Lib>
-    <OutputFile>$(OutDir)expat.lib</OutputFile>
-    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-    <TargetMachine>MachineX86</TargetMachine>
-  </Lib>
+    <Lib>
+      <OutputFile>$(OutDir)expat.lib</OutputFile>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,13 +131,14 @@
       <AdditionalOptions>/bigobj /WX /w45038 /wd4003 /wd4005 /wd4018 /wd4060 /wd4065 /wd4100 /wd4127 /wd4146 /wd4201 /wd4244 /wd4245 /wd4250 /wd4267 /wd4310 /wd4319 /wd4324 /wd4334 /wd4389 /wd4456 /wd4457 /wd4458 /wd4459 /wd4702 /wd4706 /wd4804 /wd4805 /wd4996  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=&quot;expat-bugs@libexpat.org&quot;;PACKAGE_NAME=&quot;expat&quot;;PACKAGE_STRING=&quot;expat 2.1.1&quot;;PACKAGE_TARNAME=&quot;expat&quot;;PACKAGE_URL=&quot;&quot;;PACKAGE_VERSION=&quot;2.1.1&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT="expat-bugs@libexpat.org";PACKAGE_NAME="expat";PACKAGE_STRING="expat 2.1.1";PACKAGE_TARNAME="expat";PACKAGE_URL="";PACKAGE_VERSION="2.1.1";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -144,14 +146,14 @@
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\&quot;expat-bugs@libexpat.org\&quot;;PACKAGE_NAME=\&quot;expat\&quot;;PACKAGE_STRING=\&quot;expat 2.1.1\&quot;;PACKAGE_TARNAME=\&quot;expat\&quot;;PACKAGE_URL=\&quot;\&quot;;PACKAGE_VERSION=\&quot;2.1.1\&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;MAME_DEBUG;MAME_PROFILER;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\"expat-bugs@libexpat.org\";PACKAGE_NAME=\"expat\";PACKAGE_STRING=\"expat 2.1.1\";PACKAGE_TARNAME=\"expat\";PACKAGE_URL=\"\";PACKAGE_VERSION=\"2.1.1\";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
-  <Lib>
-    <OutputFile>$(OutDir)expat.lib</OutputFile>
-    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-    <TargetMachine>MachineX64</TargetMachine>
-  </Lib>
+    <Lib>
+      <OutputFile>$(OutDir)expat.lib</OutputFile>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Lib>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -163,27 +165,29 @@
       <AdditionalOptions>/bigobj /WX /w45038 /wd4003 /wd4005 /wd4018 /wd4060 /wd4065 /wd4100 /wd4127 /wd4146 /wd4201 /wd4244 /wd4245 /wd4250 /wd4267 /wd4310 /wd4319 /wd4324 /wd4334 /wd4389 /wd4456 /wd4457 /wd4458 /wd4459 /wd4702 /wd4706 /wd4804 /wd4805 /wd4996  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=&quot;expat-bugs@libexpat.org&quot;;PACKAGE_NAME=&quot;expat&quot;;PACKAGE_STRING=&quot;expat 2.1.1&quot;;PACKAGE_TARNAME=&quot;expat&quot;;PACKAGE_URL=&quot;&quot;;PACKAGE_VERSION=&quot;2.1.1&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT="expat-bugs@libexpat.org";PACKAGE_NAME="expat";PACKAGE_STRING="expat 2.1.1";PACKAGE_TARNAME="expat";PACKAGE_URL="";PACKAGE_VERSION="2.1.1";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\&quot;expat-bugs@libexpat.org\&quot;;PACKAGE_NAME=\&quot;expat\&quot;;PACKAGE_STRING=\&quot;expat 2.1.1\&quot;;PACKAGE_TARNAME=\&quot;expat\&quot;;PACKAGE_URL=\&quot;\&quot;;PACKAGE_VERSION=\&quot;2.1.1\&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x86;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\"expat-bugs@libexpat.org\";PACKAGE_NAME=\"expat\";PACKAGE_STRING=\"expat 2.1.1\";PACKAGE_TARNAME=\"expat\";PACKAGE_URL=\"\";PACKAGE_VERSION=\"2.1.1\";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
-  <Lib>
-    <OutputFile>$(OutDir)expat.lib</OutputFile>
-    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-    <TargetMachine>MachineX86</TargetMachine>
-  </Lib>
+    <Lib>
+      <OutputFile>$(OutDir)expat.lib</OutputFile>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -196,27 +200,29 @@
       <AdditionalOptions>/bigobj /WX /w45038 /wd4003 /wd4005 /wd4018 /wd4060 /wd4065 /wd4100 /wd4127 /wd4146 /wd4201 /wd4244 /wd4245 /wd4250 /wd4267 /wd4310 /wd4319 /wd4324 /wd4334 /wd4389 /wd4456 /wd4457 /wd4458 /wd4459 /wd4702 /wd4706 /wd4804 /wd4805 /wd4996  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=&quot;expat-bugs@libexpat.org&quot;;PACKAGE_NAME=&quot;expat&quot;;PACKAGE_STRING=&quot;expat 2.1.1&quot;;PACKAGE_TARNAME=&quot;expat&quot;;PACKAGE_URL=&quot;&quot;;PACKAGE_VERSION=&quot;2.1.1&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT="expat-bugs@libexpat.org";PACKAGE_NAME="expat";PACKAGE_STRING="expat 2.1.1";PACKAGE_TARNAME="expat";PACKAGE_URL="";PACKAGE_VERSION="2.1.1";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader></PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat></DebugInformationFormat>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\&quot;expat-bugs@libexpat.org\&quot;;PACKAGE_NAME=\&quot;expat\&quot;;PACKAGE_STRING=\&quot;expat 2.1.1\&quot;;PACKAGE_TARNAME=\&quot;expat\&quot;;PACKAGE_URL=\&quot;\&quot;;PACKAGE_VERSION=\&quot;2.1.1\&quot;;STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;HAVE_MEMMOVE;HAVE_STDINT_H;HAVE_STDLIB_H;HAVE_STRING_H;PACKAGE_BUGREPORT=\"expat-bugs@libexpat.org\";PACKAGE_NAME=\"expat\";PACKAGE_STRING=\"expat 2.1.1\";PACKAGE_TARNAME=\"expat\";PACKAGE_URL=\"\";PACKAGE_VERSION=\"2.1.1\";STDC_HEADERS;XML_CONTEXT_BYTES=1024;XML_DTD;XML_NS;BYTEORDER=1234;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\..\3rdparty\dxsdk\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
-  <Lib>
-    <OutputFile>$(OutDir)expat.lib</OutputFile>
-    <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-    <TargetMachine>MachineX64</TargetMachine>
-  </Lib>
+    <Lib>
+      <OutputFile>$(OutDir)expat.lib</OutputFile>
+      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Lib>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>

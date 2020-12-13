@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{44BF23C9-B029-D83F-F967-89E56511B694}</ProjectGuid>
     <RootNamespace>mame</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
@@ -29,23 +29,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -2046,171 +2046,171 @@ C:\msys64\mingw64\bin\python.exe ../../../../../scripts/build/makelist.py  ../..
       <Link>scripts\resources\uwp\assets\Wide310x150Logo.scale-200.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture-grille.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture-grille.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture1x2rb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture1x2rb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture1x3rb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture1x3rb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture2x4bg.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture2x4bg.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture2x4rb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture2x4rb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\aperture4x6.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\aperture4x6.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\monochrome-chessboard.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\monochrome-chessboard.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\monochrome-matrix.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\monochrome-matrix.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\scanlines.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\scanlines.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\shadow-mask.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\shadow-mask.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\slot-mask-aligned.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\slot-mask-aligned.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\slot-mask.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\slot-mask.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\white.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\white.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\hq2x.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\hq2x.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\hq3x.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\hq3x.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\hq4x.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\hq4x.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\aperture_1_2_bgr.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\aperture_1_2_bgr.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\aperture_1_4_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\aperture_1_4_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\aperture_2_4_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\aperture_2_4_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\aperture_2_5_bgr.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\aperture_2_5_bgr.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\aperture_3_6_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\aperture_3_6_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\delta_1_2x1_bgr.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\delta_1_2x1_bgr.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\delta_1_4x1_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\delta_1_4x1_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\delta_2_4x1_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\delta_2_4x1_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\delta_2_4x2_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\delta_2_4x2_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\none.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\none.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\slot_2_4x4_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\slot_2_4x4_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\slot_2_5x4_bgr.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\slot_2_5x4_bgr.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\bgfx\chains\crt-geom\slot_3_7x6_rgb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\bgfx\chains\crt-geom\slot_3_7x6_rgb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\bb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\bb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\bk.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\bk.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\bn.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\bn.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\bp.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\bp.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\bq.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\bq.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\br.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\br.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wb.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wb.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wk.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wk.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wn.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wn.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wp.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wp.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wq.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wq.png</Link>
     </Image>
     <Image Include="..\..\..\..\..\artwork\chess\wr.png">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <Link>artwork\chess\wr.png</Link>
     </Image>
   </ItemGroup>
