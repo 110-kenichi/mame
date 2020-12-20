@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "emulator", "emulator", "{BD393F6A-29A4-F3E0-72E2-A486DE8BD135}"
 EndProject
@@ -129,7 +129,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VSTi", "VSTi", "{2C42A21C-D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mame_lib", "mame_lib.vcxproj", "{C4E46169-3DDF-4080-B3AA-F08D7F98682A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scci", "..\..\..\..\..\src\scci\scci.vcxproj", "{DCE05C04-33C4-4929-9076-D75D78725613}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScciWrapper", "..\..\..\..\..\src\scci\scci.vcxproj", "{DCE05C04-33C4-4929-9076-D75D78725613}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

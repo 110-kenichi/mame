@@ -143,6 +143,21 @@ namespace zanac.MAmidiMEmo.Instruments
             return inst;
         }
 
+
+        public static int FindInstrumentIndex(InstrumentBase instrument, TimbreBase timbre)
+        {
+            var index = -1;
+            Parallel.ForEach(instrument.BaseTimbres, (tim, state, idx) =>
+            {
+                if (tim == timbre)
+                {
+                    index = (int)idx;
+                    return;
+                }
+            });
+            return index;
+        }
+
         /// <summary>
         /// 
         /// </summary>

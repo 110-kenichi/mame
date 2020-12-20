@@ -511,220 +511,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return rv.ToArray();
             }
 
-
-            /// <summary>
-            /// 未使用のスロットを検索する
-            /// 空が無い場合は最初に鳴った音を消す
-            /// </summary>
-            /// <param name="onSounds"></param>
-            /// <param name="maxSlot"></param>
-            /// <param name="slot">強制的に割り当てるスロット。-1なら強制しない</param>
-            /// <returns></returns>
-            protected (YM2413, int) SearchCustomEmptySlotAndOffForLeader(YM2413Timbre timbre, YM2413 inst, SoundList<YM2413Sound> onSounds, TaggedNoteOnEvent newNote, int maxSlot, int slot, int offset)
-            {
-                //gather leader and followers
-                Dictionary<YM2413, YM2413Timbre> customTimbre = new Dictionary<YM2413, YM2413Timbre>();
-                Dictionary<uint, InstrumentBase> instskey = new Dictionary<uint, InstrumentBase>();
-                Dictionary<uint, Dictionary<int, bool>> insts = new Dictionary<uint, Dictionary<int, bool>>();
-                foreach (var i in InstrumentManager.GetInstruments(inst.DeviceID))
-                {
-                    customTimbre.Add((YM2413)i, null);
-                    instskey.Add(i.UnitNumber, i);
-                    if (i.UnitNumber == inst.UnitNumber || inst.UnitNumber == (int)i.FollowerMode - 1)
-                        insts.Add(i.UnitNumber, new Dictionary<int, bool>());
-                }
-
-                if (slot < 0)
-                {
-                    List<YM2413Sound> onSnds = new List<YM2413Sound>();
-                    List<YM2413Sound> onSndsCh = new List<YM2413Sound>();
-                    int mono = inst.MonoMode[newNote.Channel];
-                    for (int i = 0; i < onSounds.Count; i++)
-                    {
-                        var onSnd = onSounds[i];
-                        if (insts.ContainsKey(onSnd.ParentModule.UnitNumber))
-                        {
-                            if (onSnd.IsSoundOff)
-                            {
-                                AllSounds.Remove(onSnd);
-                                onSounds.RemoveAt(i);
-                                onSnd.Dispose();
-                                i--;
-                                continue;
-                            }
-                            var yt = (YM2413Timbre)onSnd.Timbre;
-                            if (yt.ToneType == ToneType.Custom)
-                                customTimbre[(YM2413)onSnd.ParentModule] = yt;
-                            onSnds.Add(onSnd);
-                            if (newNote.Channel == onSnd.NoteOnEvent.Channel)
-                                onSndsCh.Add(onSnd);
-                        }
-                    }
-
-                    //Mono Mode. Remove same ch sounds.
-                    if (mono != 0)
-                    {
-                        for (int i = 0; i < onSndsCh.Count - (mono - 1); i++)
-                        {
-                            var onSnd = onSndsCh[i];
-                            AllSounds.Remove(onSnd);
-                            onSounds.Remove(onSnd);
-                            onSnds.Remove(onSnd);
-                            onSndsCh.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                        }
-                    }
-
-                    //Delete same drum sound from same ch
-                    if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
-                    {
-                        for (int i = 0; i < onSndsCh.Count; i++)
-                        {
-                            var onSnd = onSndsCh[i];
-                            if (onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
-                            {
-                                AllSounds.Remove(onSnd);
-                                onSounds.Remove(onSnd);
-                                onSnds.Remove(onSnd);
-                                onSndsCh.RemoveAt(i);
-                                onSnd.Dispose();
-                                i--;
-                            }
-                        }
-                    }
-
-                    //使っていないスロットがあればそれを返す
-                    foreach (var onSnd in onSnds)
-                        insts[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
-                    for (int i = offset; i < maxSlot; i++)
-                    {
-                        foreach (var ist in insts.Keys)
-                        {
-                            var ctim = customTimbre[(YM2413)instskey[ist]];
-                            if (!insts[ist].ContainsKey(i) && (ctim == null || ctim == timbre))
-                                return ((YM2413)instskey[ist], i);
-                        }
-                    }
-
-                    //Proces Poly mode
-                    List<YM2413Sound> onSndsRm = new List<YM2413Sound>(onSnds);
-                    List<byte> polyList = new List<byte>(parentModule.PolyMode);
-                    for (int i = onSndsRm.Count - 1; i >= 0; i--)
-                    {
-                        var onSnd = onSndsRm[i];
-                        if (polyList[onSnd.NoteOnEvent.Channel] > 0)
-                        {
-                            onSndsRm.RemoveAt(i);
-                            polyList[onSnd.NoteOnEvent.Channel]--;
-                        }
-                    }
-
-                    //一番古いキーオフされたスロットを探す
-                    foreach (var snd in onSndsRm)
-                    {
-                        var ctim = customTimbre[(YM2413)snd.ParentModule];
-                        if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff &&
-                            (ctim == null || ctim == timbre))
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.Remove(snd);
-                            snd.Dispose();
-                            return ((YM2413)snd.ParentModule, snd.Slot);
-                        }
-                    }
-
-                    //一番古いキーオフされたスロットを探す
-                    foreach (var snd in onSndsRm)
-                    {
-                        var ctim = customTimbre[(YM2413)snd.ParentModule];
-                        if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff &&
-                            (ctim == null || ctim == timbre))
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.Remove(snd);
-                            snd.Dispose();
-                            return ((YM2413)snd.ParentModule, snd.Slot);
-                        }
-                    }
-
-                    //一番古いキーオンされたスロットを探す
-                    foreach (var snd in onSndsRm)
-                    {
-                        var ctim = customTimbre[(YM2413)snd.ParentModule];
-                        if (offset <= snd.Slot && snd.Slot < maxSlot &&
-                            (ctim == null || ctim == timbre))
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.Remove(snd);
-                            snd.Dispose();
-                            return ((YM2413)snd.ParentModule, snd.Slot);
-                        }
-                    }
-                    foreach (var snd in onSnds)
-                    {
-                        var ctim = customTimbre[(YM2413)snd.ParentModule];
-                        if (offset <= snd.Slot && snd.Slot < maxSlot &&
-                            (ctim == null || ctim == timbre))
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.Remove(snd);
-                            snd.Dispose();
-                            return ((YM2413)snd.ParentModule, snd.Slot);
-                        }
-                    }
-
-                    foreach (var snd in onSnds)
-                    {
-                        var ctim = customTimbre[(YM2413)snd.ParentModule];
-                        if (offset <= snd.Slot && snd.Slot < maxSlot)
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.Remove(snd);
-                            snd.Dispose();
-
-                            //remove all other custom sounds on same inst
-                            foreach (var sndSameInst in onSnds)
-                            {
-                                if (sndSameInst == snd)
-                                    continue;
-
-                                if (sndSameInst.ParentModule == snd.ParentModule && ((YM2413Timbre)snd.Timbre).ToneType == ToneType.Custom)
-                                {
-                                    AllSounds.Remove(sndSameInst);
-                                    onSounds.Remove(sndSameInst);
-                                    sndSameInst.Dispose();
-                                }
-                            }
-
-                            return ((YM2413)snd.ParentModule, snd.Slot);
-                        }
-                    }
-
-                }
-                else
-                {
-                    //既存の音を消す
-                    for (int i = 0; i < onSounds.Count; i++)
-                    {
-                        var snd = onSounds[i];
-                        if (!insts.ContainsKey(snd.ParentModule.UnitNumber))
-                            continue;
-
-                        if (snd.Slot == slot)
-                        {
-                            AllSounds.Remove(snd);
-                            onSounds.RemoveAt(i);
-                            snd.Dispose();
-                            break;
-                        }
-                    }
-                    return (inst, slot);
-                }
-
-                return (inst, -1);
-            }
-
             /// <summary>
             /// 
             /// </summary>
@@ -743,13 +529,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (RHY == 0)
                 {
-                    emptySlot = SearchCustomEmptySlotAndOffForLeader(timbre, parentModule, fmOnSounds, note, 9, -1, 0);
+                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
+
+                    {
+                        if (timbre.ToneType == ToneType.Custom && parentModule == emptySlot.parentModule)
+                        {
+                            int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
+                            for (int i = 0; i < emptySlot.parentModule.soundManager.AllSounds.Count; i++)
+                            {
+                                var snd = emptySlot.parentModule.soundManager.AllSounds[i];
+                                YM2413Timbre tim = (YM2413Timbre)snd.Timbre;
+                                if (tim.ToneType == ToneType.Custom)
+                                {
+                                    int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
+                                    if (idx != nidx)
+                                        snd.SoundOff();
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {
                     if (timbre.ToneType != ToneType.DrumSet)
                     {
-                        emptySlot = SearchCustomEmptySlotAndOffForLeader(timbre, parentModule, fmOnSounds, note, 6, -1, 0);
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                     }
                     else
                     {
@@ -818,6 +622,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             case 74:
                                 emptySlot = SearchEmptySlotAndOffForLeader(parentModule, drumSYMOnSounds, note, 1);
                                 break;
+                        }
+                    }
+                }
+
+                //sound off diffrent custom sound
+                {
+                    if (timbre.ToneType == ToneType.Custom && parentModule == emptySlot.parentModule)
+                    {
+                        int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
+                        for (int i = 0; i < emptySlot.parentModule.soundManager.AllSounds.Count; i++)
+                        {
+                            var snd = emptySlot.parentModule.soundManager.AllSounds[i];
+                            YM2413Timbre tim = (YM2413Timbre)snd.Timbre;
+                            if (tim.ToneType == ToneType.Custom)
+                            {
+                                int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
+                                if (idx != nidx)
+                                    snd.SoundOff();
+                            }
                         }
                     }
                 }
