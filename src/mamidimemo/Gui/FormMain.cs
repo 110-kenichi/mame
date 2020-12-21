@@ -1539,7 +1539,16 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 if (!labelTitle.IsDisposed && labelTitle.Tag != null)
                 {
-                    labelTitle.SetText(text.Replace((char)0, (char)' ').Trim());
+                    List<byte> data = new List<byte>();
+                    foreach (char ch in text)
+                    {
+                        if (ch == 0)
+                            break;
+                        data.Add((byte)ch);
+                    }
+                    text = Encoding.Default.GetString(data.ToArray());
+
+                    labelTitle.SetText(text);
                     labelTitle.Tag = null;
                 }
             }));

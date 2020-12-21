@@ -531,19 +531,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
 
+                    //sound off diffrent custom sound
                     {
-                        if (timbre.ToneType == ToneType.Custom && parentModule == emptySlot.parentModule)
+                        if (timbre.ToneType == ToneType.Custom)
                         {
-                            int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
-                            for (int i = 0; i < emptySlot.parentModule.soundManager.AllSounds.Count; i++)
+                            var psm = emptySlot.parentModule.soundManager;
+                            //int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
+                            for (int i = 0; i < psm.AllSounds.Count; i++)
                             {
-                                var snd = emptySlot.parentModule.soundManager.AllSounds[i];
+                                var snd = psm.AllSounds[i];
                                 YM2413Timbre tim = (YM2413Timbre)snd.Timbre;
-                                if (tim.ToneType == ToneType.Custom)
+                                if (tim.ToneType == ToneType.Custom && tim != timbre)
                                 {
-                                    int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
-                                    if (idx != nidx)
-                                        snd.SoundOff();
+                                    //int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
+                                    //if (idx != nidx)
+                                    snd.SoundOff();
                                 }
                             }
                         }
@@ -554,6 +556,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.ToneType != ToneType.DrumSet)
                     {
                         emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
+
+                        //sound off diffrent custom sound
+                        {
+                            if (timbre.ToneType == ToneType.Custom)
+                            {
+                                var psm = emptySlot.parentModule.soundManager;
+                                //int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
+                                for (int i = 0; i < psm.AllSounds.Count; i++)
+                                {
+                                    var snd = psm.AllSounds[i];
+                                    YM2413Timbre tim = (YM2413Timbre)snd.Timbre;
+                                    if (tim.ToneType == ToneType.Custom && tim != timbre)
+                                    {
+                                        //int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
+                                        //if (idx != nidx)
+                                        snd.SoundOff();
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -626,25 +648,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
 
-                //sound off diffrent custom sound
-                {
-                    if (timbre.ToneType == ToneType.Custom && parentModule == emptySlot.parentModule)
-                    {
-                        int nidx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, timbre);
-                        for (int i = 0; i < emptySlot.parentModule.soundManager.AllSounds.Count; i++)
-                        {
-                            var snd = emptySlot.parentModule.soundManager.AllSounds[i];
-                            YM2413Timbre tim = (YM2413Timbre)snd.Timbre;
-                            if (tim.ToneType == ToneType.Custom)
-                            {
-                                int idx = InstrumentManager.FindInstrumentIndex(emptySlot.parentModule, tim);
-                                if (idx != nidx)
-                                    snd.SoundOff();
-                            }
-                        }
-                    }
-                }
-
                 return emptySlot;
             }
 
@@ -653,10 +656,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                for (int i = 0; i < 9; i++)
-                    YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
-                if (parentModule.RHY != 0)
+                if (parentModule.RHY == 0)
+                {
+                    for (int i = 0; i < 9; i++)
+                        YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                }
+                else
+                {
+                    for (int i = 0; i < 6; i++)
+                        YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                    parentModule.lastDrumKeyOn = 0;
                     YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
+                }
             }
 
         }
@@ -708,6 +719,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 OnVolumeUpdated();
                 //Freq & kon
                 OnPitchUpdated();
+
+                if (lastToneType == ToneType.DrumSet && parentModule.RHY == 1)
+                {
+                    byte kon = 0;
+
+                    switch (NoteOnEvent.NoteNumber)
+                    {
+                        case 35:    //BD
+                        case 36:    //BD
+
+                        case 60:
+                        case 61:
+                        case 62:
+                        case 63:
+                        case 64:
+                        case 65:
+                        case 66:
+                        case 72:
+                        case 75:
+                        case 76:
+                        case 77:
+                            kon = 0x10;
+                            break;
+                        case 37:    //STICK
+                        case 38:    //SD
+                        case 39:    //CLAP
+                        case 40:    //SD
+
+                        case 67:
+                        case 68:
+                        case 69:
+                        case 70:
+                            kon = 0x08;
+                            break;
+                        case 41:    //TOM
+                        case 43:    //TOM
+                        case 45:    //TOM
+                        case 47:    //TOM
+                        case 48:    //TOM
+                        case 50:    //TOM
+
+                        case 71:
+                        case 78:
+                            kon = 0x04;
+                            break;
+                        case 42:    //HH
+                        case 44:    //HH
+                        case 46:    //HH
+
+                        case 54:    //BELL
+                        case 56:    //BELL
+                        case 58:    //BELL
+                        case 80:    //BELL
+
+                        case 73:
+                        case 79:
+                            kon = 0x01;
+                            break;
+                        case 49:    //Symbal
+                        case 51:    //Symbal
+                        case 52:    //Symbal
+                        case 53:    //Symbal
+                        case 55:    //Symbal
+                        case 57:    //Symbal
+                        case 59:    //Symbal
+
+                        case 81:    //TRIANGLE
+                        case 74:
+                            kon = 0x02;
+                            break;
+                    }
+                    if (kon != 0)
+                    {
+                        parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
+                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
+
+                        parentModule.lastDrumKeyOn |= (byte)kon;
+                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //on
+                    }
+                }
             }
 
             public override void OnSoundParamsUpdated()
@@ -852,85 +943,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq));
                     YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData);
-                }
-                else if (parentModule.RHY == 1)
-                {
-                    byte kon = 0;
-
-                    switch (NoteOnEvent.NoteNumber)
-                    {
-                        case 35:    //BD
-                        case 36:    //BD
-
-                        case 60:
-                        case 61:
-                        case 62:
-                        case 63:
-                        case 64:
-                        case 65:
-                        case 66:
-                        case 72:
-                        case 75:
-                        case 76:
-                        case 77:
-                            kon = 0x10;
-                            break;
-                        case 37:    //STICK
-                        case 38:    //SD
-                        case 39:    //CLAP
-                        case 40:    //SD
-
-                        case 67:
-                        case 68:
-                        case 69:
-                        case 70:
-                            kon = 0x08;
-                            break;
-                        case 41:    //TOM
-                        case 43:    //TOM
-                        case 45:    //TOM
-                        case 47:    //TOM
-                        case 48:    //TOM
-                        case 50:    //TOM
-
-                        case 71:
-                        case 78:
-                            kon = 0x04;
-                            break;
-                        case 42:    //HH
-                        case 44:    //HH
-                        case 46:    //HH
-
-                        case 54:    //BELL
-                        case 56:    //BELL
-                        case 58:    //BELL
-                        case 80:    //BELL
-
-                        case 73:
-                        case 79:
-                            kon = 0x01;
-                            break;
-                        case 49:    //Symbal
-                        case 51:    //Symbal
-                        case 52:    //Symbal
-                        case 53:    //Symbal
-                        case 55:    //Symbal
-                        case 57:    //Symbal
-                        case 59:    //Symbal
-
-                        case 81:    //TRIANGLE
-                        case 74:
-                            kon = 0x02;
-                            break;
-                    }
-                    if (kon != 0)
-                    {
-                        parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
-                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
-
-                        parentModule.lastDrumKeyOn |= (byte)kon;
-                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //on
-                    }
                 }
 
                 base.OnPitchUpdated();
