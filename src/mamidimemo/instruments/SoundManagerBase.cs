@@ -206,7 +206,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             if (t.IsSoundOff)
                                 continue;
-                            if (t.NoteOnEvent.Channel == midiEvent.Channel)
+                            if (t.IsKeyOff && t.NoteOnEvent.Channel == midiEvent.Channel)
                                 ProcessKeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                     }
