@@ -61,13 +61,21 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        public virtual bool IsSoundOn
+        public virtual bool IsSoundingStarted
         {
             get;
             private set;
         }
 
         public virtual bool IsSoundOff
+        {
+            get;
+            private set;
+        }
+
+        public static ulong soundOffTimeCounter;
+
+        public ulong SoundOffTime
         {
             get;
             private set;
@@ -129,7 +137,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void KeyOn()
         {
-            IsSoundOn = true;
+            IsSoundingStarted = true;
 
             if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
                 ParentModule.Modulations[NoteOnEvent.Channel] > 0)
@@ -219,6 +227,8 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void SoundOff()
         {
             IsSoundOff = true;
+
+            SoundOffTime = soundOffTimeCounter++;
 
             SoundSoundOff?.Invoke(this, EventArgs.Empty);
         }
