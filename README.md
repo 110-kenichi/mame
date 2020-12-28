@@ -1,4 +1,4 @@
-MAmidiMEmo V2.6.7.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo V2.6.8.0 / Itoken (c)2019, 2020 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.6.8.0 Fixed new sound channel assignment algorithm for the Drum ch.
 2.6.7.0 Fixed HOLD1 not working properly.
 2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
 2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).

@@ -1088,6 +1088,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             onSnd.SoundOff();
                             offSnds.Add(onSnd);
+                            onSounds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
@@ -1110,6 +1111,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             onSnd.SoundOff();
                             offSnds.Add(onSnd);
+                            onSounds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
@@ -1309,6 +1311,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             onSnd.SoundOff();
                             offSnds.Add(onSnd);
+                            onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
@@ -1332,6 +1335,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             onSnd.SoundOff();
                             offSnds.Add(onSnd);
+                            onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
