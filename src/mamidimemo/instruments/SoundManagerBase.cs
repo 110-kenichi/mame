@@ -1205,7 +1205,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Search last sounding sound
+                //Search last key off sound ignore Poly Mode
+                foreach (var snd in onSounds)
+                {
+                    if (snd.Slot < maxSlot && snd.IsKeyOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return snd.Slot;
+                    }
+                }
+
+                //Search last sounding sound ignore Poly Mode
                 foreach (var snd in onSounds)
                 {
                     if (snd.Slot < maxSlot)
@@ -1432,7 +1444,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Search last sounding sound
+                //Search last key off sound ignore Poly Mode
+                foreach (var snd in onSnds)
+                {
+                    if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return ((I)snd.ParentModule, snd.Slot);
+                    }
+                }
+
+                //Search last sounding sound ignore Poly Mode
                 foreach (var snd in onSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
