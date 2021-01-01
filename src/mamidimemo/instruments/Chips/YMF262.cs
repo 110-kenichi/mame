@@ -257,7 +257,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (slot >= 3)
                     {
                         adrH = 2;
-                        slot -= 4;
+                        slot -= 3;
                     }
                     if (op >= 2)
                     {
@@ -919,6 +919,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return SimpleSerializer.SerializeProps(this,
                         nameof(ALG),
                         nameof(FB),
+                        nameof(FB2),
+
+                        "GlobalSettings.EN",
+                        "GlobalSettings.DAM",
+                        "GlobalSettings.DVB",
 
                         "Ops[0].AR",
                         "Ops[0].DR",
@@ -982,6 +987,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SimpleSerializer.DeserializeProps(this, value,
                         nameof(ALG),
                         nameof(FB),
+                        nameof(FB2),
+
+                        "GlobalSettings.EN",
+                        "GlobalSettings.DAM",
+                        "GlobalSettings.DVB",
 
                         "Ops[0].AR",
                         "Ops[0].DR",

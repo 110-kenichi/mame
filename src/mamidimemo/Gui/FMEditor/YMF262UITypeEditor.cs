@@ -121,9 +121,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
                         if (dr == DialogResult.OK)
-                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                         else
-                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                     }
                     else
                     {
