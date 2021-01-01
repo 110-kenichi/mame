@@ -89,6 +89,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
                         nameof(tim.FB),
+                        nameof(tim.FB2),
                         "GlobalSettings.EN",
                         "GlobalSettings.DAM",
                         "GlobalSettings.DVB"
@@ -121,7 +122,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
                         if (dr == DialogResult.OK)
+                        {
+                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                                MessageBox.Show("You should CNT value to 1 or higher value to sound 4 operator sound.", "Warning", MessageBoxButtons.OK);
+
                             return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        }
                         else
                             return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                     }
@@ -133,7 +139,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
                         if (dr == DialogResult.OK)
+                        {
+                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                                MessageBox.Show("You should CNT value to 1 or higher value to sound 4 operator sound.", "Warning", MessageBoxButtons.OK);
                             return value;
+                        }
                         else
                             return JsonConvert.DeserializeObject<YMF262Timbre[]>(org);
                     }
