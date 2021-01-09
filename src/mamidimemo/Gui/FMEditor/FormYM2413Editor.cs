@@ -116,12 +116,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Modulator"]["SR"]).Value = tone.aOp[0].SR / 2;
             ((RegisterValue)this["Modulator"]["TL"]).Value = tone.aOp[0].TL / 2;
             ((RegisterValue)this["Modulator"]["KSL"]).Value = tone.aOp[0].KS;
-            ((RegisterValue)this["Modulator"]["KSR"]).Value = 0;
+            ((RegisterValue)this["Modulator"]["KSR"]).Value = tone.aOp[0].KSR;
             ((RegisterValue)this["Modulator"]["MUL"]).Value = tone.aOp[0].ML;
             ((RegisterValue)this["Modulator"]["AM"]).Value = tone.aOp[0].AM;
-            ((RegisterValue)this["Modulator"]["VIB"]).Value = 0;
-            ((RegisterValue)this["Modulator"]["EG"]).Value = 0;
-            ((RegisterValue)this["Modulator"]["DIST"]).Value = 0;
+            ((RegisterValue)this["Modulator"]["VIB"]).Value = tone.aOp[0].VIB;
+            ((RegisterValue)this["Modulator"]["EG"]).Value = tone.aOp[0].EG;
+            ((RegisterValue)this["Modulator"]["DIST"]).Value = tone.aOp[0].DT;
 
             ((RegisterValue)this["Career"]["AR"]).Value = tone.aOp[1].AR / 2;
             ((RegisterValue)this["Career"]["DR"]).Value = tone.aOp[1].DR / 2;
@@ -129,12 +129,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["SL"]).Value = tone.aOp[1].SL;
             ((RegisterValue)this["Career"]["SR"]).Value = tone.aOp[1].SR / 2;
             ((RegisterValue)this["Career"]["KSL"]).Value = tone.aOp[1].KS;
-            ((RegisterValue)this["Career"]["KSR"]).Value = 0;
+            ((RegisterValue)this["Career"]["KSR"]).Value = tone.aOp[1].KSR;
             ((RegisterValue)this["Career"]["MUL"]).Value = tone.aOp[1].ML;
             ((RegisterValue)this["Career"]["AM"]).Value = tone.aOp[1].AM;
-            ((RegisterValue)this["Career"]["VIB"]).Value = 0;
-            ((RegisterValue)this["Career"]["EG"]).Value = 0;
-            ((RegisterValue)this["Career"]["DIST"]).Value = 0;
+            ((RegisterValue)this["Career"]["VIB"]).Value = tone.aOp[1].VIB;
+            ((RegisterValue)this["Career"]["EG"]).Value = tone.aOp[1].EG;
+            ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].DT;
 
             timbre.Memo = tone.Name;
         }

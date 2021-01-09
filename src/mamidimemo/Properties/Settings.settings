@@ -116,5 +116,8 @@
     <Setting Name="WsgEdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
+    <Setting Name="WsgFirWeight" Type="System.String" Scope="User">
+      <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
+    </Setting>
   </Settings>
 </SettingsFile>

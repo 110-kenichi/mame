@@ -685,6 +685,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     case ".FXB":
                         tones = Vopm.Reader(importFile, Option);
                         break;
+                    case ".GWI":
+                        tones = Gwi.Reader(importFile, Option);
+                        break;
                 }
 
                 if (tones != null && tones.Count() > 0)
@@ -861,7 +864,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
                 ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
                 ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".GWI", StringComparison.OrdinalIgnoreCase)
                )
                 return true;
             else

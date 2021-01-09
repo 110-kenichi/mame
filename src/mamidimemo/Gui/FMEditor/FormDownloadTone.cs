@@ -24,11 +24,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
     public partial class FormDownloadTone : FormBase
     {
 
-        private Stack<string> accessedContentsUrlStack = new Stack<string>();
+        private static Stack<string> accessedContentsUrlStack = new Stack<string>();
 
-        private Stack<string> accessedContentsDirNameStack = new Stack<string>();
+        private static Stack<string> accessedContentsDirNameStack = new Stack<string>();
 
-        private string lastAccessedContentsUrl;
+        private static string lastAccessedContentsUrl;
 
         public event EventHandler SelectedToneChanged;
 
@@ -95,10 +95,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             base.OnShown(e);
 
-            var contentsUrl = $"https://api.github.com/repos/110-kenichi/ToneLibrary/contents";
-            accessedContentsUrlStack.Push(contentsUrl);
-            accessedContentsDirNameStack.Push("./");
-            await updateDirList(contentsUrl);
+            if (lastAccessedContentsUrl == null)
+            {
+                var contentsUrl = $"https://api.github.com/repos/110-kenichi/ToneLibrary/contents";
+                accessedContentsUrlStack.Push(contentsUrl);
+                accessedContentsDirNameStack.Push("./");
+                await updateDirList(contentsUrl);
+            }
+            else
+            {
+                await updateDirList(lastAccessedContentsUrl);
+            }
         }
 
         /// <summary>
@@ -190,7 +197,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             metroListViewDir.Items.Add(item);
                                         }
                                         else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
-                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase)
+                                            || fn.Equals("LICENSE", StringComparison.OrdinalIgnoreCase)
+                                            )
                                         {
                                             var item = new ListViewItem(fn, "TXT");
                                             item.Tag = file;
@@ -334,6 +343,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                                 case ".FXB":
                                                     tones = Vopm.Reader(importFile, Option);
                                                     break;
+                                                case ".GWI":
+                                                    tones = Gwi.Reader(importFile, Option);
+                                                    break;
                                             }
 
                                             //Listing tones
@@ -347,7 +359,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             SelectedTones = tones;
                                         }
                                         else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
-                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase)
+                                            || fn.Equals("LICENSE", StringComparison.OrdinalIgnoreCase))
                                         {
                                             Process.Start(dlDestFilePath);
                                         }

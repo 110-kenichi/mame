@@ -118,12 +118,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
                 ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
                 ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
-                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tone.aOp[i].KSR;
                 ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["VR"]).Value = tone.aOp[i].VIB;
+                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tone.aOp[i].EG;
+                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
             }
             timbre.Memo = tone.Name;
         }

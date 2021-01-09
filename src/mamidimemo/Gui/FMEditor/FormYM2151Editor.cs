@@ -117,7 +117,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterFlag)this["Operator " + (i + 1)]["EN"]).Value = true;
                 ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
                 ((RegisterValue)this["Operator " + (i + 1)]["D1R"]).Value = tone.aOp[i].DR;
-                ((RegisterValue)this["Operator " + (i + 1)]["D2R"]).Value = tone.aOp[i].SR;
+                ((RegisterValue)this["Operator " + (i + 1)]["D2R"]).Value = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
                 ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
                 ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
                 ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
@@ -153,7 +153,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim.Ops[i].Enable = 1;
                 tim.Ops[i].AR = (byte)tone.aOp[i].AR;
                 tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
-                tim.Ops[i].D2R = (byte)tone.aOp[i].SR;
+                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
                 tim.Ops[i].RR = (byte)tone.aOp[i].RR;
                 tim.Ops[i].SL = (byte)tone.aOp[i].SL;
                 tim.Ops[i].TL = (byte)tone.aOp[i].TL;

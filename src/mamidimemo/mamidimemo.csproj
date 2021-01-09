@@ -636,6 +636,7 @@
     <Compile Include="Util\FM-SoundConvertor\File.cs" />
     <Compile Include="Util\FM-SoundConvertor\Fmp.cs" />
     <Compile Include="Util\FM-SoundConvertor\Main.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Gwi.cs" />
     <Compile Include="Util\FM-SoundConvertor\Muc.cs" />
     <Compile Include="Util\FM-SoundConvertor\Option.cs" />
     <Compile Include="Util\FM-SoundConvertor\Path.cs" />
@@ -914,6 +915,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Samples\SCC1 GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\YM2151_GM%28from OPNA%29.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

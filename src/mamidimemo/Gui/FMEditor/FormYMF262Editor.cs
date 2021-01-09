@@ -106,32 +106,39 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         protected override void ApplyTone(Tone tone)
         {
             int alg = 0;
-            switch (tone.AL)
+            if (tone.CNT == -1)
             {
-                case 0:
-                    alg = 2;
-                    break;
-                case 1:
-                    alg = 4;    //?
-                    break;
-                case 2:
-                    alg = 4;    //?
-                    break;
-                case 3:
-                    alg = 3;    //?
-                    break;
-                case 4:
-                    alg = 3;
-                    break;
-                case 5:
-                    alg = 5;    //?
-                    break;
-                case 6:
-                    alg = 5;    //?
-                    break;
-                case 7:
-                    alg = 5;
-                    break;
+                switch (tone.AL)
+                {
+                    case 0:
+                        alg = 2;
+                        break;
+                    case 1:
+                        alg = 4;    //?
+                        break;
+                    case 2:
+                        alg = 4;    //?
+                        break;
+                    case 3:
+                        alg = 3;    //?
+                        break;
+                    case 4:
+                        alg = 3;
+                        break;
+                    case 5:
+                        alg = 5;    //?
+                        break;
+                    case 6:
+                        alg = 5;    //?
+                        break;
+                    case 7:
+                        alg = 5;
+                        break;
+                }
+            }
+            else
+            {
+                alg = tone.CNT;
             }
             ((RegisterValue)this["General"]["ALG"]).Value = alg;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
@@ -149,12 +156,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
                 ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
                 ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
-                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tone.aOp[i].KSR;
                 ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = tone.aOp[i].VIB;
+                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tone.aOp[i].EG;
+                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
             }
             timbre.Memo = tone.Name;
         }
