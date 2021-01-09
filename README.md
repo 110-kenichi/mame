@@ -246,6 +246,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
+        Added Random button & FIR button to the WSG Editor.
 2.7.1.1 Fixed YMF262 FM Synthesis editor error.
 2.7.1.0 Fixed YMF262 FM Synthesis editor error.
 2.7.0.0 Fixed unexpected sounding when volume changing on CUS30.

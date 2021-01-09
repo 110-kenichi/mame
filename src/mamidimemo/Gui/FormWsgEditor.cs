@@ -347,22 +347,32 @@ namespace zanac.MAmidiMEmo.Gui
             if (sign == 0)
                 sign = -1;
             int delta = rand.Next(f_WsgMaxValue / 2);
+            int sy = ByteWsgData[0];
+            int height = 0;
+            if (sign > 0)
+                height = rand.Next(f_WsgMaxValue - sy) + 1;
+            else
+                height = rand.Next(sy) + 1;
             for (int i = 1; i < ByteWsgData.Length; i++)
             {
                 int data = ByteWsgData[i - 1] + sign * delta;
-                if (data > f_WsgMaxValue)
+                if (data > f_WsgMaxValue || (sign > 0 && Math.Abs(data - sy) > height))
                 {
-                    data = f_WsgMaxValue;
+                    data = Math.Min(f_WsgMaxValue, sy + height);
                     delta = rand.Next(f_WsgMaxValue / 2);
                     len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sy = data;
                     sign = -1;
+                    height = rand.Next(sy) + 1;
                 }
-                else if (data < 0)
+                else if (data < 0 || (sign < 0 && Math.Abs(data - sy) > height))
                 {
-                    data = 0;
+                    data = Math.Max(0, sy - height);
                     delta = rand.Next(f_WsgMaxValue / 2);
                     len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sy = data;
                     sign = 1;
+                    height = rand.Next(f_WsgMaxValue - sy) + 1;
                 }
 
                 ByteWsgData[i] = (byte)data;
@@ -381,7 +391,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void metroButtonFir1_Click(object sender, EventArgs e)
         {
-            ByteWsgData = FIR(ByteWsgData, metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            ByteWsgData = applyFIR(ByteWsgData, metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
             updateText();
 
@@ -391,7 +401,7 @@ namespace zanac.MAmidiMEmo.Gui
         }
 
         //http://home.a00.itscom.net/hatada/asp/fir.html
-        static byte[] FIR(byte[] data, string[] weights)
+        private byte[] applyFIR(byte[] wsgData, string[] weights)
         {
             double[] wei = new double[weights.Length];
             double[] input = new double[weights.Length];
@@ -410,17 +420,46 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 input[m] = 0.0;     // 無音とみなす。
             }
-            for (int k = 0; k < data.Length; k++)
+            List<byte> orgData = new List<byte>(wsgData);
+            orgData.Add(0);
+            List<byte> firData = new List<byte>();
+            for (int k = 0; k < orgData.Count; k++)
             {
-                input[m % wei.Length] = (double)(data[k] & 0xFF) - 128;
+                input[m % wei.Length] = (double)orgData[k] - (f_WsgMaxValue / 2);
                 double val = 0.0;
                 for (int n = 0; n < wei.Length; n++)
                     val += input[(m - n) % wei.Length] * wei[n];
-                data[k] = (byte)(((int)(val) + 128) & 0xFF);
+                byte fdata = (byte)Math.Round(val + (f_WsgMaxValue / 2));
+                if (fdata > f_WsgMaxValue)
+                    fdata = (byte)f_WsgMaxValue;
+                else if (fdata < 0)
+                    fdata = 0;
+                firData.Add(fdata);
                 m++;
             }
+            firData.RemoveAt(0);
+            return firData.ToArray();
+        }
 
-            return data;
+        private void metroButtonMax_Click(object sender, EventArgs e)
+        {
+            int max = 0;
+            int min = f_WsgMaxValue;
+            for (int i = 0; i < ByteWsgData.Length; i++)
+            {
+                max = Math.Max(max, ByteWsgData[i]);
+                min = Math.Min(min, ByteWsgData[i]);
+            }
+            for (int i = 0; i < ByteWsgData.Length; i++)
+            {
+                ByteWsgData[i] = (byte)Math.Round((((double)ByteWsgData[i] - (double)min) / ((double)max - (double)min)) * (double)f_WsgMaxValue);
+            }
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
