@@ -72,6 +72,7 @@ namespace zanac.MAmidiMEmo.Gui
             InitializeComponent();
 
             Size = Settings.Default.WsgEdSize;
+            graphControl.Editor = this;
         }
 
         /// <summary>
@@ -90,6 +91,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         private class GraphControl : UserControl
         {
+            public FormWsgEditor Editor
+            {
+                get;
+                set;
+            }
 
             private byte[] f_ResultOfWsgData;
 
@@ -108,7 +114,8 @@ namespace zanac.MAmidiMEmo.Gui
                     f_ResultOfWsgData = new byte[value.Length];
                     Array.Copy(value, f_ResultOfWsgData, value.Length);
                     wsgLen = f_ResultOfWsgData.Length;
-                    updateText();
+
+                    Editor.updateText();
                 }
             }
 
@@ -130,26 +137,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
 
             private int f_WsgMaxValue = 15;
-
-            private void updateText()
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < ResultOfWsgData.Length; i++)
-                {
-                    if (sb.Length != 0)
-                        sb.Append(' ');
-                    sb.Append(ResultOfWsgData[i].ToString((IFormatProvider)null));
-                }
-                try
-                {
-                    ((FormWsgEditor)Parent).suspendWsgDataTextChange = true;
-                    ((FormWsgEditor)Parent).textBoxWsgDataText.Text = sb.ToString();
-                }
-                finally
-                {
-                    ((FormWsgEditor)Parent).suspendWsgDataTextChange = false;
-                }
-            }
 
             /// <summary>
             /// 
@@ -287,9 +274,9 @@ namespace zanac.MAmidiMEmo.Gui
                                 dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
                         }
 
-                        updateText();
+                        Editor.updateText();
 
-                        ((FormWsgEditor)Parent).ValueChanged?.Invoke(Parent, EventArgs.Empty);
+                        Editor.ValueChanged?.Invoke(Editor, EventArgs.Empty);
                     }
                 }
             }
@@ -315,6 +302,125 @@ namespace zanac.MAmidiMEmo.Gui
                 ByteWsgData[i] = vs[i] > f_WsgMaxValue ? (byte)f_WsgMaxValue : vs[i];
 
             graphControl.Invalidate();
+        }
+
+        private void updateText()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < graphControl.ResultOfWsgData.Length; i++)
+            {
+                if (sb.Length != 0)
+                    sb.Append(' ');
+                sb.Append(graphControl.ResultOfWsgData[i].ToString((IFormatProvider)null));
+            }
+            try
+            {
+                suspendWsgDataTextChange = true;
+                textBoxWsgDataText.Text = sb.ToString();
+            }
+            finally
+            {
+                suspendWsgDataTextChange = false;
+            }
+        }
+
+        private void metroButtonRand1_Click(object sender, EventArgs e)
+        {
+            var rand = new Random(DateTime.Now.GetHashCode());
+            for (int i = 0; i < ByteWsgData.Length; i++)
+                ByteWsgData[i] = (byte)rand.Next(f_WsgMaxValue);
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonRandom2_Click(object sender, EventArgs e)
+        {
+            var rand = new Random(DateTime.Now.GetHashCode());
+
+            ByteWsgData[0] = (byte)rand.Next(f_WsgMaxValue);
+            int len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+            int sign = rand.Next(1);
+            if (sign == 0)
+                sign = -1;
+            int delta = rand.Next(f_WsgMaxValue / 2);
+            for (int i = 1; i < ByteWsgData.Length; i++)
+            {
+                int data = ByteWsgData[i - 1] + sign * delta;
+                if (data > f_WsgMaxValue)
+                {
+                    data = f_WsgMaxValue;
+                    delta = rand.Next(f_WsgMaxValue / 2);
+                    len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sign = -1;
+                }
+                else if (data < 0)
+                {
+                    data = 0;
+                    delta = rand.Next(f_WsgMaxValue / 2);
+                    len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sign = 1;
+                }
+
+                ByteWsgData[i] = (byte)data;
+
+                len--;
+                if (len == 0)
+                    len = rand.Next(ByteWsgData.Length - 1) + 1;
+            }
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonFir1_Click(object sender, EventArgs e)
+        {
+            ByteWsgData = FIR(ByteWsgData, metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        //http://home.a00.itscom.net/hatada/asp/fir.html
+        static byte[] FIR(byte[] data, string[] weights)
+        {
+            double[] wei = new double[weights.Length];
+            double[] input = new double[weights.Length];
+            double sumWei = 0.0;
+            for (int n = 0; n < wei.Length; n++)
+            {
+                Double.TryParse(weights[n], out wei[n]);
+                sumWei += wei[n];
+            }
+            for (int n = 0; n < wei.Length; n++)
+            {
+                wei[n] /= sumWei;
+            }
+            int m = 0;
+            for (; m < wei.Length - 1; m++)
+            {
+                input[m] = 0.0;     // 無音とみなす。
+            }
+            for (int k = 0; k < data.Length; k++)
+            {
+                input[m % wei.Length] = (double)(data[k] & 0xFF) - 128;
+                double val = 0.0;
+                for (int n = 0; n < wei.Length; n++)
+                    val += input[(m - n) % wei.Length] * wei[n];
+                data[k] = (byte)(((int)(val) + 128) & 0xFF);
+                m++;
+            }
+
+            return data;
         }
     }
 }
