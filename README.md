@@ -1,4 +1,4 @@
-MAmidiMEmo 2.8.0.0 / Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 2.8.0.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.8.0.1 Fixed unexpected error on FM Tone Selector.
 2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
         Added Random button & FIR button to the WSG Editor.
 2.7.1.1 Fixed YMF262 FM Synthesis editor error.
