@@ -58,7 +58,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                                 name += " " + ctim.BindTimbres[3].Value;
                             break;
                         case TimbreBase tim:
-                            name += " " + tim.Memo;
+                            name += " " + tim.TimbreName;
                             break;
                         case DrumTimbre dtim:
                             name += " " + dtim.TimbreName;
@@ -67,10 +67,17 @@ namespace zanac.MAmidiMEmo.ComponentModel
                             dynamic dobj = obj;
                             try
                             {
-                                name += " " + dobj.Memo;
+                                name += " " + dobj.TimbreName;
                             }
                             catch
                             {
+                                try
+                                {
+                                    name += " " + dobj.Memo;
+                                }
+                                catch
+                                {
+                                }
                             }
                             break;
                     }

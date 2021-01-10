@@ -127,7 +127,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
                 ((RegisterValue)this["Operator " + (i + 1)]["SSG"]).Value = tone.aOp[i].SSG;
             }
-            timbre.Memo = tone.Name;
+            timbre.TimbreName = tone.Name;
         }
 
 
@@ -162,7 +162,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim.Ops[i].AM = (byte)tone.aOp[i].AM;
                 tim.Ops[i].SSG = (byte)tone.aOp[i].SSG;
             }
-            timbre.Memo = tone.Name;
+            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     switch (o)
                     {
                         case TimbreBase tim:
-                            name += " " + tim.Memo;
+                            name += " " + tim.TimbreName;
                             break;
                         case DrumTimbre dtim:
                             name += " " + dtim.TimbreName;

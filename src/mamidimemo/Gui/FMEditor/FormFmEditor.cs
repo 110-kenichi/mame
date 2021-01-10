@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             public override string ToString()
             {
-                return "No " + Number.ToString() + " " + Timbre.Memo;
+                return "No " + Number.ToString() + " " + Timbre.TimbreName;
             }
         }
 

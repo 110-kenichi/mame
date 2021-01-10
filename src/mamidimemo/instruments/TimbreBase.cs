@@ -115,6 +115,15 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
+        [Description("Name")]
+        [DefaultValue(null)]
+        public string TimbreName
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
         [Description("Memo")]
         [DefaultValue(null)]
         public string Memo

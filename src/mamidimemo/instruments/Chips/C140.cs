@@ -1257,9 +1257,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     var nidx = s.SampleName.IndexOf('\0');
                     if (nidx >= 0)
-                        tim.Memo = s.SampleName.Substring(0, nidx);
+                        tim.TimbreName = s.SampleName.Substring(0, nidx);
                     else
-                        tim.Memo = s.SampleName;
+                        tim.TimbreName = s.SampleName;
 
                     tn++;
 

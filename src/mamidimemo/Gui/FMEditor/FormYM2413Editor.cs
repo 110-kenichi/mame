@@ -136,7 +136,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["EG"]).Value = tone.aOp[1].EG;
             ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].DT;
 
-            timbre.Memo = tone.Name;
+            timbre.TimbreName = tone.Name;
         }
 
 
@@ -178,7 +178,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             tim.Career.EG = (byte)(0);
             tim.Career.DIST = (byte)(0);
 
-            timbre.Memo = tone.Name;
+            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>
