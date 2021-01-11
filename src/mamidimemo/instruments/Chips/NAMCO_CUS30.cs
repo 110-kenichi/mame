@@ -437,7 +437,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 byte[] wdata = timbre.WsgData;
                 for (int i = 0; i < 16; i++)
-                    NamcoCus30WriteData(parentModule.UnitNumber, (uint)((Slot * 16) + i), (byte)(((wdata[i * 2 + 1] & 0xf) << 4) | (wdata[i * 2] & 0xf)));
+                    NamcoCus30WriteData(parentModule.UnitNumber, (uint)((Slot * 16) + i), (byte)(((wdata[i * 2] & 0xf) << 4) | (wdata[i * 2 + 1] & 0xf)));
             }
 
             /// <summary>
