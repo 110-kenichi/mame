@@ -65,6 +65,40 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum MasterClockType : uint
+        {
+            NTSC = 53693175 / 7,
+            PAL = 53203424 / 7,
+        }
+
+        private uint f_MasterClock;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip")]
+        [Description("Set Master Clock of this chip")]
+        [TypeConverter(typeof(EnumConverter<MasterClockType>))]
+        [DefaultValue(MasterClockType.NTSC)]
+        public uint MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+                    SetClock(UnitNumber, (uint)value);
+                }
+            }
+        }
+
         private byte f_LFOEN;
 
         /// <summary>
@@ -273,6 +307,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public YM2612(uint unitNumber) : base(unitNumber)
         {
+            MasterClock = (int)MasterClockType.NTSC;
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
@@ -292,7 +328,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager?.Dispose();
             base.Dispose();
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -818,25 +854,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 else if (noteNum < 0)
                     noteNum = 0;
                 var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
-                ushort freq = convertFmFrequency(nnOn);
+                var freq = convertFmFrequency(nnOn, 0);
                 var octave = nnOn.GetNoteOctave();
                 if (octave < 0)
-                {
                     octave = 0;
-                    freq = freqTable[0];
-                }
-                if (octave > 7)
-                {
+                else if (octave > 7)
                     octave = 7;
-                    freq = freqTable[13];
-                }
                 octave = octave << 3;
 
                 if (d != 0)
-                    freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
+                    freq += (convertFmFrequency(nnOn, (d < 0) ? -1 : +1) - freq) * Math.Abs(d - Math.Truncate(d));
 
-                Ym2612WriteData(parentModule.UnitNumber, 0xa4, 0, Slot, (byte)(octave | ((freq >> 8) & 7)));
-                Ym2612WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, (byte)(0xff & freq));
+                ushort dfreq = (ushort)Math.Round(freq);
+
+                Ym2612WriteData(parentModule.UnitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)));
+                Ym2612WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq));
 
                 base.OnPitchUpdated();
             }
@@ -897,46 +929,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Ym2612WriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(Slot % 3)));
             }
 
-            private ushort[] freqTable = new ushort[] {
-                1214/2,
-                644,
-                681,
-                722,
-                765,
-                810,
-                858,
-                910,
-                964,
-                1021,
-                1081,
-                1146,
-                1214,
-                644*2,
-            };
-
             /// <summary>
             /// 
             /// </summary>
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(TaggedNoteOnEvent note)
+            private double convertFmFrequency(TaggedNoteOnEvent note, int deltaNoteNum)
             {
-                return freqTable[(int)note.GetNoteName() + 1];
-            }
+                int nn = note.NoteNumber + deltaNoteNum;
+                int oct = note.GetNoteOctave();
+                if (nn < 12)
+                {
+                    nn = 12;
+                    oct = 0;
+                }
+                else if (oct > 107)
+                {
+                    nn = 107;
+                    oct = 7;
+                }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="note"></param>
-            /// <param name="freq"></param>
-            /// <returns></returns>
-            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
-            {
-                if (plus)
-                    return freqTable[(int)note.GetNoteName() + 2];
-                else
-                    return freqTable[(int)note.GetNoteName()];
+                var freq = MidiManager.CalcCurrentFrequency(nn);
+
+                //https://github.com/jotego/jt12/blob/master/doc/YM2608J.PDF
+                var rv = (144 * freq * Math.Pow(2, 20) / parentModule.MasterClock) / Math.Pow(2, oct - 1);
+
+                return rv;
             }
         }
 
@@ -1029,7 +1048,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(FB),
                         nameof(AMS),
                         nameof(FMS),
-                        
+
                         "GlobalSettings.EN",
                         "GlobalSettings.LFOEN",
                         "GlobalSettings.LFRQ",

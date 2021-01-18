@@ -1405,25 +1405,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             else if (noteNum < 0)
                                 noteNum = 0;
                             var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
-                            ushort freq = convertFmFrequency(nnOn);
+                            var freq = convertFmFrequency(nnOn, 0);
                             var octave = nnOn.GetNoteOctave();
                             if (octave < 0)
-                            {
                                 octave = 0;
-                                freq = freqTable[0];
-                            }
-                            if (octave > 7)
-                            {
+                            else if (octave > 7)
                                 octave = 7;
-                                freq = freqTable[13];
-                            }
                             octave = octave << 3;
 
                             if (d != 0)
-                                freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
+                                freq += (convertFmFrequency(nnOn, (d < 0) ? -1 : +1) - freq) * Math.Abs(d - Math.Truncate(d));
 
-                            YM2610BWriteData(parentModule.UnitNumber, 0xa4, 0, Slot, (byte)(octave | ((freq >> 8) & 7)));
-                            YM2610BWriteData(parentModule.UnitNumber, 0xa0, 0, Slot, (byte)(0xff & freq));
+                            ushort dfreq = (ushort)Math.Round(freq);
+
+                            YM2610BWriteData(parentModule.UnitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)));
+                            YM2610BWriteData(parentModule.UnitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq));
                         }
                         break;
                     case ToneType.SSG:
@@ -1596,48 +1592,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            //https://github.com/jotego/jt12/blob/master/doc/YM2608J.PDF
-            private ushort[] freqTable = new ushort[] {
-                583,
-                617,
-                654,
-                693,
-                734,
-                778,
-                824,
-                873,
-                925,
-                980,
-                1038,
-                1100,
-                1165,
-                1235,
-            };
-
             /// <summary>
             /// 
             /// </summary>
             /// <param name="note"></param>
             /// <param name="freq"></param>
             /// <returns></returns>
-            private ushort convertFmFrequency(TaggedNoteOnEvent note)
+            private double convertFmFrequency(TaggedNoteOnEvent note, int deltaNoteNum)
             {
-                return freqTable[(int)note.GetNoteName() + 1];
+                int nn = note.NoteNumber + deltaNoteNum;
+                int oct = note.GetNoteOctave();
+                if (nn < 12)
+                {
+                    nn = 12;
+                    oct = 0;
+                }
+                else if (oct > 107)
+                {
+                    nn = 107;
+                    oct = 7;
+                }
+
+                var freq = MidiManager.CalcCurrentFrequency(nn);
+
+                //https://github.com/jotego/jt12/blob/master/doc/YM2608J.PDF
+                var rv = (144 * freq * Math.Pow(2, 20) / 8000000) / Math.Pow(2, oct - 1);
+
+                return rv;
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="note"></param>
-            /// <param name="freq"></param>
-            /// <returns></returns>
-            private ushort convertFmFrequency(TaggedNoteOnEvent note, bool plus)
-            {
-                if (plus)
-                    return freqTable[(int)note.GetNoteName() + 2];
-                else
-                    return freqTable[(int)note.GetNoteName()];
-            }
         }
 
         /// <summary>
