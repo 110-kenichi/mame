@@ -70,8 +70,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Select sound engine type.\r\n" +
-            "SPFT LT can only use ONLY on 32bit process and if possible.")]
+        [Description("Select sound engine type.")]
         [DefaultValue(SoundEngineType.Software)]
         public SoundEngineType SoundEngine
         {
@@ -127,6 +126,40 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return f_CurrentSoundEngineType;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum MAsterClockType : uint
+        {
+            Default = 3579545,
+            X68000 = 4000000,
+        }
+
+        private uint f_MasterClock;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip")]
+        [Description("Set Master Clock of this chip")]
+        [TypeConverter(typeof(EnumConverter<MAsterClockType>))]
+        [DefaultValue(MAsterClockType.Default)]
+        public uint MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+                    SetClock(UnitNumber, (uint)value);
+                }
             }
         }
 
@@ -464,6 +497,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public YM2151(uint unitNumber) : base(unitNumber)
         {
             SetDevicePassThru(false);
+
+            MasterClock = (int)MAsterClockType.Default;
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
