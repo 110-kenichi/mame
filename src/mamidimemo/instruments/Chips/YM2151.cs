@@ -132,7 +132,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        public enum MAsterClockType : uint
+        public enum MasterClockType : uint
         {
             Default = 3579545,
             X68000 = 4000000,
@@ -145,8 +145,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip")]
         [Description("Set Master Clock of this chip")]
-        [TypeConverter(typeof(EnumConverter<MAsterClockType>))]
-        [DefaultValue(MAsterClockType.Default)]
+        [TypeConverter(typeof(EnumConverter<MasterClockType>))]
+        [DefaultValue(MasterClockType.Default)]
         public uint MasterClock
         {
             get
@@ -498,7 +498,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             SetDevicePassThru(false);
 
-            MasterClock = (int)MAsterClockType.Default;
+            MasterClock = (int)MasterClockType.Default;
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
