@@ -152,7 +152,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
         [DefaultValue(MasterClockType.Default)]
@@ -2156,7 +2156,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     nn = 12;
                     oct = 0;
                 }
-                else if (oct > 107)
+                else if (nn > 107)
                 {
                     nn = 107;
                     oct = 7;

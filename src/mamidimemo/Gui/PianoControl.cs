@@ -24,6 +24,8 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Brush blueBrush = new SolidBrush(Color.LightBlue);
 
+        private Brush grayBrush = new SolidBrush(Color.LightGray);
+
         private Pen blackPen = new Pen(Color.Black);
 
         private int wKeyW;
@@ -240,7 +242,20 @@ namespace zanac.MAmidiMEmo.Gui
                 GraphicsPath path = getKeyPath(keyNum, out black);
                 if (rect.IntersectsWith(path.GetBounds()))
                 {
-                    if (!black)
+                    if (keyNum == 60)
+                    {
+                        if (onKeys.ContainsKey(keyNum))
+                            g.FillRegion(blueBrush, new Region(path));
+                        else
+                        {
+                            var r = new Region(path);
+                            g.FillRegion(whiteBrush, r);
+                            var b = r.GetBounds(g);
+                            g.FillPie(grayBrush, new Rectangle((int)b.X, (int)b.Bottom - (int)b.Width, (int)b.Width, (int)b.Width), 0, 360);
+                        }
+                        g.DrawPath(blackPen, path);
+                    }
+                    else if (!black)
                     {
                         if (onKeys.ContainsKey(keyNum))
                             g.FillRegion(blueBrush, new Region(path));

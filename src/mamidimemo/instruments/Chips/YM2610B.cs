@@ -1607,7 +1607,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     nn = 12;
                     oct = 0;
                 }
-                else if (oct > 107)
+                else if (nn > 107)
                 {
                     nn = 107;
                     oct = 7;
