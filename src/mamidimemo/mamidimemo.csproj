@@ -4,6 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <ProjectGuid>{60192987-27BB-4ADC-AC5A-03EA2846A569}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>zanac.MAmidiMEmo</RootNamespace>
@@ -121,8 +122,8 @@
     <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    <Reference Include="Melanchall.DryWetMidi, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.2\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
     <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
@@ -140,6 +141,8 @@
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\ValueInjecter.3.2.0\lib\net45\Omu.ValueInjecter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.IO.Compression" />
@@ -1025,9 +1028,29 @@
     <None Include="Resources\WS2.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FastDelegate.Net\FastDelegate.Net\FastDelegate.Net.csproj">
+      <Project>{fa0a043b-f264-43bc-83b8-28000c7f7b08}</Project>
+      <Name>FastDelegate.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LegacyWrapper\LegacyWrapper.Common\LegacyWrapper.Common.csproj">
+      <Project>{b9e346e3-ed4f-4824-b780-825d87be9d48}</Project>
+      <Name>LegacyWrapper.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LegacyWrapper\LegacyWrapper32\LegacyWrapper32.csproj">
+      <Project>{b7665a68-f19c-4539-9fe1-06b14ba774e3}</Project>
+      <Name>LegacyWrapper32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LegacyWrapper\LegacyWrapperClient\LegacyWrapperClient.csproj">
+      <Project>{cbba289f-8e61-4fea-8191-2794402c1333}</Project>
+      <Name>LegacyWrapperClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScciInterface\ScciWrapperInterface.csproj">
+      <Project>{26c36b22-d243-4cb4-9ab2-4895634d9a47}</Project>
+      <Name>ScciWrapperInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\scci\scci.vcxproj">
       <Project>{dce05c04-33c4-4929-9076-d75d78725613}</Project>
-      <Name>scci</Name>
+      <Name>ScciWrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

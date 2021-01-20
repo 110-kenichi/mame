@@ -90,3 +90,11 @@ Release(but Debug .NET)
 /src/scci/x64/Release
 /src/scci/scci.vcxproj.user
 /src/scci/scci.vcxproj.filters
+/src/LegacyWrapper/LegacyWrapper.Common/bin
+/src/LegacyWrapper/LegacyWrapper.Common/obj
+/src/LegacyWrapper/LegacyWrapper32/obj
+/src/LegacyWrapper/LegacyWrapper32/bin
+/src/LegacyWrapper/LegacyWrapperClient/obj
+/src/LegacyWrapper/LegacyWrapperClient/bin
+/src/ScciInterface/obj
+/src/ScciInterface/bin

@@ -308,6 +308,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public override void Dispose()
         {
+            if(Sid_write != null)
+                InstrumentBase.RemoveCachedDelegate(Sid_write);
             soundManager?.Dispose();
             base.Dispose();
         }

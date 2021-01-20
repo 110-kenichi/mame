@@ -39,7 +39,7 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         Point pc = PointToClient(new Point((int)m.LParam));
                         var cc = GetChildAtPoint(pc);
-                        if (cc == null)
+                        if (cc == null && Resizable)
                         {
                             int direct = 0;
                             Rectangle rtop = new Rectangle(0, 0, Size.Width, Padding.Top);

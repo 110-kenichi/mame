@@ -1,4 +1,4 @@
-MAmidiMEmo 2.8.1.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 2.9.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.9.0.0 Added Master Clock property to YM2151, YM2608, YM2610B, YM2612.
+        Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature is a heavy process.
 2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
 2.8.1.0 Updated sample sound and fixed some minor issue.
 2.8.0.1 Fixed unexpected error on FM Tone Selector.
@@ -433,3 +435,9 @@ https://github.com/obiwanjacobi/vst.net
 
 * FM-SoundConvertor - Copyright (c) 2020 D.M.88
 https://github.com/DM-88/FM-SoundConvertor
+
+* LegacyWrapper - Copyright (c) 2019 Franz Wimmer
+https://github.com/CodefoundryDE/LegacyWrapper
+
+* FastDelegate.Net - Copyright (c) 2015 coder0xff
+https://github.com/coder0xff/FastDelegate.Net

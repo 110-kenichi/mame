@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FastDelegate.Net;
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
@@ -1933,6 +1934,26 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static List<(Delegate, object[])> deferredWriteData;
 
+        private static Dictionary<Delegate, Func<Object, Object[], Object>> cachedFunc = new Dictionary<Delegate, Func<object, object[], object>>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="delg"></param>
+        protected static void RemoveCachedDelegate(Delegate delg)
+        {
+            try
+            {
+                Program.SoundUpdating();
+                if (cachedFunc.ContainsKey(delg))
+                    cachedFunc.Remove(delg);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1945,7 +1966,18 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 Program.SoundUpdating();
-                delg.DynamicInvoke(args);
+
+                Func<Object, Object[], Object> func = null;
+                if (cachedFunc.ContainsKey(delg))
+                    func = cachedFunc[delg];
+                else
+                {
+                    func = delg.Method.Bind();
+                    cachedFunc.Add(delg, func);
+                }
+                func.Invoke(delg, args);
+
+                //delg.DynamicInvoke(args);
             }
             finally
             {
@@ -1967,7 +1999,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     lock (deferredWriteData)
                     {
                         foreach (var (d, a) in deferredWriteData)
-                            d.DynamicInvoke(a);
+                        {
+                            Func<Object, Object[], Object> func = null;
+                            if (cachedFunc.ContainsKey(d))
+                                func = cachedFunc[d];
+                            else
+                            {
+                                func = d.Method.Bind();
+                                cachedFunc.Add(d, func);
+                            }
+                            func.Invoke(d, args);
+
+                            //d.DynamicInvoke(a);
+                        }
                         deferredWriteData.Clear();
                     }
                 }
@@ -1997,7 +2041,19 @@ namespace zanac.MAmidiMEmo.Instruments
                 lock (deferredWriteData)
                 {
                     foreach (var (d, a) in deferredWriteData)
-                        d.DynamicInvoke(a);
+                    {
+                        Func<Object, Object[], Object> func = null;
+                        if (cachedFunc.ContainsKey(d))
+                            func = cachedFunc[d];
+                        else
+                        {
+                            func = d.Method.Bind();
+                            cachedFunc.Add(d, func);
+                        }
+                        func.Invoke(d, a);
+
+                        //d.DynamicInvoke(a);
+                    }
                     deferredWriteData.Clear();
                 }
             }

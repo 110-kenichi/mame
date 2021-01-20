@@ -3,12 +3,11 @@
 #include "ScciWrapper.h"
 
 
-__declspec(dllexport) DWORD __stdcall InitializeScci()
+__declspec(dllexport) DWORD __cdecl  InitializeScci()
 {
 	// scci.dll‚Ì“Çž‚Ý
 	hScci = ::LoadLibrary(L"scci");
 	if (hScci == NULL) {
-		::FreeLibrary(hScci);
 		return GetLastError();
 	}
 
@@ -37,7 +36,7 @@ __declspec(dllexport) DWORD __stdcall InitializeScci()
 	return 0;
 }
 
-__declspec(dllexport) BOOL __stdcall ReleaseScci()
+__declspec(dllexport) BOOL __cdecl  ReleaseScci()
 {
 	if (pManager == NULL)
 		return TRUE;
@@ -52,7 +51,7 @@ __declspec(dllexport) BOOL __stdcall ReleaseScci()
 	return pManager->releaseInstance();
 }
 
-__declspec(dllexport) SoundChip* __stdcall GetSoundChip(int iSoundChipType, DWORD dClock)
+__declspec(dllexport) SoundChip* __cdecl  GetSoundChip(int iSoundChipType, DWORD dClock)
 {
 	if (pManager == NULL)
 		return NULL;
@@ -60,7 +59,7 @@ __declspec(dllexport) SoundChip* __stdcall GetSoundChip(int iSoundChipType, DWOR
 	return pManager->getSoundChip(iSoundChipType, dClock);
 }
 
-__declspec(dllexport) BOOL __stdcall ReleaseSoundChip(SoundChip * pSoundChip)
+__declspec(dllexport) BOOL __cdecl  ReleaseSoundChip(SoundChip * pSoundChip)
 {
 	if (pSoundChip == NULL)
 		return TRUE;
@@ -68,7 +67,7 @@ __declspec(dllexport) BOOL __stdcall ReleaseSoundChip(SoundChip * pSoundChip)
 	return pManager->releaseSoundChip(pSoundChip);
 }
 
-__declspec(dllexport) BOOL __stdcall SetRegister(void* pChip, DWORD dAddr, DWORD dData)
+__declspec(dllexport) BOOL __cdecl  SetRegister(void* pChip, DWORD dAddr, DWORD dData)
 {
 	if (pChip == NULL)
 		return FALSE;
@@ -76,7 +75,7 @@ __declspec(dllexport) BOOL __stdcall SetRegister(void* pChip, DWORD dAddr, DWORD
 	return ((SoundChip *)pChip)->setRegister(dAddr, dData);
 }
 
-__declspec(dllexport) DWORD __stdcall GetWrittenRegisterData(void* pChip, DWORD addr)
+__declspec(dllexport) DWORD __cdecl  GetWrittenRegisterData(void* pChip, DWORD addr)
 {
 	if (pChip == NULL)
 		return FALSE;
@@ -84,7 +83,7 @@ __declspec(dllexport) DWORD __stdcall GetWrittenRegisterData(void* pChip, DWORD 
 	return ((SoundChip *)pChip)->getWrittenRegisterData(addr);
 }
 
-__declspec(dllexport) BOOL __stdcall IsBufferEmpty(void* pChip)
+__declspec(dllexport) BOOL __cdecl  IsBufferEmpty(void* pChip)
 {
 	if (pChip == NULL)
 		return FALSE;

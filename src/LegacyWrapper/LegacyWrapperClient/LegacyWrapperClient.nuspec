@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Codefoundry.LegacyWrapper</id>
+    <title>Legacy Wrapper</title>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/CodefoundryDE/LegacyWrapper/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/CodefoundryDE/LegacyWrapper</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>LegacyWrapper uses a wrapper process to call dlls from a process of the opposing architecture (X86 or AMD64).</description>
+    <summary>Since you can't load a dll of another architecture directly, the wrapper utilizes a named pipe to abstract the call. You won't notice this though, because all the magic is hidden behind a single static method.</summary>
+    <copyright>Copyright (c) 2017, Franz Wimmer. (MIT License)</copyright>
+    <tags>LegacyWrapper LegacyWrapperClient dll library loader x86 x64 wrapper architecture</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\*.exe" exclude="bin\Release\*.vshost*" target="lib\net45" />
+    <file src="bin\Release\*.dll" target="lib\net45" /> 
+    <file src="bin\Release\*.pdb" target="lib\net45" />
+    <file src="bin\Release\*.xml" target="lib\net45" />
+    <file src="bin\Release\*.config" exclude="bin\Release\*.vshost*" target="lib\net45" />
+  </files>  
+</package>
