@@ -1977,14 +1977,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
                 func.Invoke(delg, args);
 
-                //delg.DynamicInvoke(args);
+                delg.DynamicInvoke(args);
             }
             finally
             {
                 Program.SoundUpdated();
             }
 #else
-
+            
             lock (deferredWriteData)
             {
                 deferredWriteData.Add((delg, args));
@@ -2010,7 +2010,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             }
                             func.Invoke(d, args);
 
-                            //d.DynamicInvoke(a);
+                            d.DynamicInvoke(a);
                         }
                         deferredWriteData.Clear();
                     }
