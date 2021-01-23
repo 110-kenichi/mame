@@ -116,9 +116,6 @@ namespace zanac.MAmidiMEmo.Scci
                     writtenDataCache.Remove(pSoundChip);
 
                 wrapperClient.ReleaseSoundChip(pSoundChip);
-
-                //FormMain.OutputLog(null, ts.ToString());
-                //ts = new TimeSpan();
             }
         }
 
@@ -135,8 +132,6 @@ namespace zanac.MAmidiMEmo.Scci
             SetRegister(pChip, dAddr, pData, true);
         }
 
-        //static TimeSpan ts = new TimeSpan();
-
         /// <summary>
         /// 
         /// </summary>
@@ -152,12 +147,7 @@ namespace zanac.MAmidiMEmo.Scci
                     var prevData = GetWrittenRegisterData(pChip, dAddr);
                     if (prevData != pData)
                     {
-                        //Stopwatch stopwatch = Stopwatch.StartNew();
-
                         wrapperClient.SetRegister(pChip, dAddr, pData);
-
-                        //stopwatch.Stop();
-                        //ts += stopwatch.Elapsed;
 
                         writtenDataCache[pChip][dAddr] = pData;
                     }

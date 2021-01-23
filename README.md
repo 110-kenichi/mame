@@ -1,4 +1,4 @@
-MAmidiMEmo 2.9.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 2.9.0.2/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -223,7 +223,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 12. SPFM
 
-   You can use a real sound chip instead of software emulation chip on 32bit version.
+   You can use a real sound chip instead of software emulation chip.
    Currently supported chips are YM2151 and YM2608 on SPFM.
    Before using the SPFM, you must setup SCCI by using the scciconfig.exe.
 
@@ -245,8 +245,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
+        Breaking changed OPNA SSG sound type property.
+2.9.0.1 Fixed unexpected exception while sounding.
 2.9.0.0 Added Master Clock property to YM2151, YM2608, YM2610B, YM2612.
-        Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature is a heavy process.
+        Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature needs more CPU power.
 2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
 2.8.1.0 Updated sample sound and fixed some minor issue.
 2.8.0.1 Fixed unexpected error on FM Tone Selector.

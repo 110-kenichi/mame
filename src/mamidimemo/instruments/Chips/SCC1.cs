@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private static void Scc1KeyOnOffWriteData(uint unitNumber, byte data)
         {
-            DeferredWriteData(SCC1_keyonoff_w, unitNumber, (byte)0, data);
+            DeferredWriteData(SCC1_keyonoff_w, unitNumber, (uint)0, data);
             /*
             try
             {

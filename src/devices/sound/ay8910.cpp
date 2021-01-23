@@ -1299,7 +1299,8 @@ void ay8910_device::build_mixer_table()
 	 */
 	else
 	{
-		build_3D_table(m_res_load[0], m_par, m_par_env, normalize, 3, m_zero_is_off, m_vol3d_table.get());
+		// Changed factor 3 -> 1 to prevent noise on OPNA mamidimemo
+		build_3D_table(m_res_load[0], m_par, m_par_env, normalize, 1, m_zero_is_off, m_vol3d_table.get());
 	}
 }
 

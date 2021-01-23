@@ -1087,7 +1087,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted)
                         {
                             onSnd.SoundOff();
-                            offSnds.Add(onSnd);
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
                             onSounds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
@@ -1110,7 +1111,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
                             onSnd.SoundOff();
-                            offSnds.Add(onSnd);
+                            if(!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
                             onSounds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
@@ -1322,7 +1324,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted)
                         {
                             onSnd.SoundOff();
-                            offSnds.Add(onSnd);
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
@@ -1346,7 +1349,8 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
                             onSnd.SoundOff();
-                            offSnds.Add(onSnd);
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);

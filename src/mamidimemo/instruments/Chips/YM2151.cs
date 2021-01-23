@@ -82,6 +82,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value)
                 {
+                    AllSoundOff();
+                    ClearWrittenDataCache();
+
                     lock (spfmPtrLock)
                     {
                         if (spfmPtr != IntPtr.Zero)
@@ -113,7 +116,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                     }
-                    AllSoundOff();
                 }
             }
         }
@@ -453,15 +455,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     op = 3;
                     break;
             }
-            lock (spfmPtrLock)
-                if (CurrentSoundEngine == SoundEngineType.SPFM)
-                {
-                    ScciManager.SetRegister(spfmPtr, (byte)(address + (op * 8) + slot), data, useCache);
-                }
+            byte adr = (byte)(address + (op * 8) + slot);
 
-            DeferredWriteData(Ym2151_write, unitNumber, (uint)0, (byte)(address + (op * 8) + slot));
-            DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
+            WriteData(adr, data, useCache, new Action(()=>
+            {
+                lock (spfmPtrLock)
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                        ScciManager.SetRegister(spfmPtr, adr, data, false);
 
+                DeferredWriteData(Ym2151_write, unitNumber, (uint)0, adr);
+                DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
+            }));
             /*
             try
             {

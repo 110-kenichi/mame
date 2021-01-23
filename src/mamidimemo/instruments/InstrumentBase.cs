@@ -1626,6 +1626,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 set_vst_fx_callback = Marshal.GetDelegateForFunctionPointer<delegate_set_vst_fx_callback>(funcPtr);
 
             deferredWriteData = new List<(Delegate, object[])>();
+
+            cachedWriteFunc = new Dictionary<Delegate, Func<object, object[], object>>();
         }
 
         public const int DEFAULT_MAX_TIMBRES = 256;
@@ -1635,6 +1637,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public InstrumentBase(uint unitNumber)
         {
+            writtenDataCache = new Dictionary<uint, uint>();
+
             UnitNumber = unitNumber;
 
             device_reset(UnitNumber, SoundInterfaceTagNamePrefix);
@@ -1934,7 +1938,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static List<(Delegate, object[])> deferredWriteData;
 
-        private static Dictionary<Delegate, Func<Object, Object[], Object>> cachedFunc = new Dictionary<Delegate, Func<object, object[], object>>();
+        private static Dictionary<Delegate, Func<Object, Object[], Object>> cachedWriteFunc;
 
         /// <summary>
         /// 
@@ -1945,12 +1949,64 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 Program.SoundUpdating();
-                if (cachedFunc.ContainsKey(delg))
-                    cachedFunc.Remove(delg);
+                if (cachedWriteFunc.ContainsKey(delg))
+                    cachedWriteFunc.Remove(delg);
             }
             finally
             {
                 Program.SoundUpdated();
+            }
+        }
+
+        private Dictionary<uint, uint> writtenDataCache;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void ClearWrittenDataCache()
+        {
+            lock (writtenDataCache)
+                writtenDataCache.Clear();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        protected UInt32? GetCachedWrittenData(uint address)
+        {
+            lock (writtenDataCache)
+                if (writtenDataCache.ContainsKey(address))
+                    return writtenDataCache[address];
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="useCache"></param>
+        /// <param name="wtiteAction"></param>
+        protected void WriteData(uint address, uint data, bool useCache, Action wtiteAction)
+        {
+            if (useCache)
+            {
+                var cacheData = GetCachedWrittenData(address);
+                if (cacheData == null || cacheData.Value != data)
+                {
+                    wtiteAction();
+                    lock (writtenDataCache)
+                        writtenDataCache[address] = data;
+                }
+            }
+            else
+            {
+                wtiteAction();
+                lock (writtenDataCache)
+                    writtenDataCache[address] = data;
             }
         }
 
@@ -1966,25 +2022,15 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 Program.SoundUpdating();
-
-                Func<Object, Object[], Object> func = null;
-                if (cachedFunc.ContainsKey(delg))
-                    func = cachedFunc[delg];
-                else
-                {
-                    func = delg.Method.Bind();
-                    cachedFunc.Add(delg, func);
-                }
-                func.Invoke(delg, args);
-
-                delg.DynamicInvoke(args);
+                invokeFunction(delg, args);
+                //delg.DynamicInvoke(args);
             }
             finally
             {
                 Program.SoundUpdated();
             }
 #else
-            
+
             lock (deferredWriteData)
             {
                 deferredWriteData.Add((delg, args));
@@ -2000,17 +2046,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         foreach (var (d, a) in deferredWriteData)
                         {
-                            Func<Object, Object[], Object> func = null;
-                            if (cachedFunc.ContainsKey(d))
-                                func = cachedFunc[d];
-                            else
-                            {
-                                func = d.Method.Bind();
-                                cachedFunc.Add(d, func);
-                            }
-                            func.Invoke(d, args);
-
-                            d.DynamicInvoke(a);
+                            invokeFunction(d, a);
+                            //d.DynamicInvoke(a);
                         }
                         deferredWriteData.Clear();
                     }
@@ -2022,6 +2059,19 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             Task.Factory.StartNew(act);
 #endif
+        }
+
+        private static void invokeFunction(Delegate d, object[] a)
+        {
+            Func<Object, Object[], Object> func = null;
+            if (cachedWriteFunc.ContainsKey(d))
+                func = cachedWriteFunc[d];
+            else
+            {
+                func = d.Method.Bind();
+                cachedWriteFunc.Add(d, func);
+            }
+            func.Invoke(d, a);
         }
 
         /// <summary>
@@ -2042,16 +2092,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     foreach (var (d, a) in deferredWriteData)
                     {
-                        Func<Object, Object[], Object> func = null;
-                        if (cachedFunc.ContainsKey(d))
-                            func = cachedFunc[d];
-                        else
-                        {
-                            func = d.Method.Bind();
-                            cachedFunc.Add(d, func);
-                        }
-                        func.Invoke(d, a);
-
+                        invokeFunction(d, a);
                         //d.DynamicInvoke(a);
                     }
                     deferredWriteData.Clear();

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Design;
 using System.Linq;
 using System.Reflection;
@@ -171,7 +172,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
-        private const float DEFAULT_GAIN = 2.0f;
+        private const float DEFAULT_GAIN = 1.5f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -360,6 +361,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.ProcessKeyOn(midiEvent);
+            /*
+            var rp = InstrumentManager.GetInstruments(6).ToArray()[0];
+            var ay = InstrumentManager.GetInstruments(11).ToArray()[0];
+
+            for (int i = 0; i < 256; i++)
+            {
+                RP2A03.RP2A03Timbre rpt = (RP2A03.RP2A03Timbre)rp.BaseTimbres[i];
+                AY8910.AY8910Timbre ayt = (AY8910.AY8910Timbre)ay.BaseTimbres[i];
+
+                switch (rpt.ToneType)
+                {
+                    case RP2A03.ToneType.SQUARE:
+                        ayt.SoundType = SoundType.PSG;
+                        break;
+                    case RP2A03.ToneType.NOISE:
+                        ayt.SoundType = SoundType.NOISE;
+                        break;
+                    case RP2A03.ToneType.TRIANGLE:
+                        Debug.WriteLine(i);
+                        ayt.SoundType = SoundType.PSG;
+                        break;
+                    default:
+                        ayt.SoundType = SoundType.ENVELOPE;
+                        break;
+                }
+                ayt.SDS = rpt.SDS;
+                ayt.TimbreName = rpt.TimbreName;
+            }
+
+            for (int idx = 0; idx < 128; idx++)
+            {
+                if (rp.DrumTimbres[idx].TimbreNumber != null)
+                {
+                    ay.DrumTimbres[idx] = rp.DrumTimbres[idx];
+                }
+            }
+            */
         }
 
         /// <summary>
