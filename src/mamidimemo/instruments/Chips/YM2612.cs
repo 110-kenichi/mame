@@ -307,7 +307,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public YM2612(uint unitNumber) : base(unitNumber)
         {
-            MasterClock = (int)MasterClockType.NTSC;
+            MasterClock = (uint)MasterClockType.NTSC;
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;

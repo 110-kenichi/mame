@@ -66,6 +66,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum MasterClockType : uint
+        {
+            Default = 1789773,
+        }
+
+        private uint f_MasterClock;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip")]
+        [Description("Set Master Clock of this chip")]
+        [TypeConverter(typeof(EnumConverter<MasterClockType>))]
+        [DefaultValue(MasterClockType.Default)]
+        public uint MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+                    SetClock(UnitNumber, (uint)value);
+                }
+            }
+        }
+
         private byte f_EnvelopeFrequencyCoarse = 2;
 
         /// <summary>
@@ -318,6 +351,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public AY8910(uint unitNumber) : base(unitNumber)
         {
+            MasterClock = (uint)MasterClockType.Default;
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
@@ -687,7 +722,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (gs.SyncWithNoteFrequencyDivider.HasValue)
                                 fm /= gs.SyncWithNoteFrequencyDivider.Value;
 
-                            var EP = (int)Math.Round((1.7897725 * 1000 * 1000) / (256 * fm));
+                            var EP = (int)Math.Round((double)parentModule.MasterClock / (256d * fm));
 
                             parentModule.f_EnvelopeFrequencyCoarse = (byte)(EP >> 8);
                             parentModule.f_EnvelopeFrequencyFine = (byte)(EP & 0xff);
@@ -715,7 +750,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //freq = 111860.78125 / TP
                 //TP = 111860.78125 / freq
-                freq = Math.Round(111860.78125 / freq);
+                freq = Math.Round(((double)parentModule.MasterClock / 16d) / freq);
                 if (freq > 0xfff)
                     freq = 0xfff;
                 ushort tp = (ushort)freq;

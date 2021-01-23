@@ -502,7 +502,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             SetDevicePassThru(false);
 
-            MasterClock = (int)MasterClockType.Default;
+            MasterClock = (uint)MasterClockType.Default;
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
