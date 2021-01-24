@@ -944,9 +944,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public AY8910Timbre()
             {
                 GlobalSettings = new AY8910GlobalSettings();
-                this.SDS.FxS = new AyFxSettings();
-
                 SoundType = SoundType.PSG;
+
+                this.SDS.FxS = new AyFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

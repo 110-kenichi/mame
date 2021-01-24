@@ -1993,11 +1993,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             if (((int)st & 4) != 0)
                             {
+                                var gs = timbre.GlobalSettings;
+                                if (gs.Enable)
+                                {
+                                    double freq = CalcCurrentFrequency();
+
+                                    // fE = fCLOCK / (256*EP)
+                                    // EP = CT+FT
+
+                                    // 256*EP * fE = fCLOCK
+                                    // EP = fCLOCK/(256 * fE)
+                                    // EP = 1.7897725 * 1000 * 1000 / (
+                                    if (gs.SyncWithNoteFrequency.HasValue)
+                                    {
+                                        var fm = freq;
+                                        if (gs.SyncWithNoteFrequencyDivider.HasValue)
+                                            fm /= gs.SyncWithNoteFrequencyDivider.Value;
+
+                                        var EP = (int)Math.Round((double)parentModule.MasterClock / (256d * fm));
+
+                                        parentModule.f_EnvelopeFrequencyCoarse = (byte)(EP >> 8);
+                                        parentModule.f_EnvelopeFrequencyFine = (byte)(EP & 0xff);
+                                    }
+                                }
 
                                 parentModule.YM2608WriteData(unitNumber, (byte)(12), 0, 0, parentModule.EnvelopeFrequencyCoarse);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(11), 0, 0, parentModule.EnvelopeFrequencyFine);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
-                                break;
                             }
                         }
                         break;
@@ -2708,7 +2730,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2608Operator() };
                 GlobalSettings = new YM2608GlobalSettings();
                 SsgSoundType = SsgSoundType.PSG;
-                this.SDS.FxS = new BasicFxSettings();
+                this.SDS.FxS = new YM2608FxSettings();
             }
 
             public override void RestoreFrom(string serializeData)
@@ -2730,6 +2752,186 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
         }
+
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608FxSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class YM2608FxSettings : BasicFxSettings
+        {
+
+            private string f_SoundTypeEnvelopes;
+
+            [DataMember]
+            [Description("Set dutysound type envelop by text. Input sound type value and split it with space like the Famitracker.\r\n" +
+                       "1:PSG 2:NOISE 4:ENVELOPE \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 7)]
+            public string SoundTypeEnvelopes
+            {
+                get
+                {
+                    return f_SoundTypeEnvelopes;
+                }
+                set
+                {
+                    if (f_SoundTypeEnvelopes != value)
+                    {
+                        SoundTypeEnvelopesRepeatPoint = -1;
+                        SoundTypeEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            SoundTypeEnvelopesNums = new int[] { };
+                            f_SoundTypeEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_SoundTypeEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                SoundTypeEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                SoundTypeEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 7)
+                                        v = 7;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        SoundTypeEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < SoundTypeEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (SoundTypeEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (SoundTypeEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(SoundTypeEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_SoundTypeEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeDutyEnvelopes()
+            {
+                return !string.IsNullOrEmpty(SoundTypeEnvelopes);
+            }
+
+            public void ResetDutyEnvelopes()
+            {
+                SoundTypeEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] SoundTypeEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int SoundTypeEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int SoundTypeEnvelopesReleasePoint { get; set; } = -1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override AbstractFxEngine CreateEngine()
+            {
+                return new YM2608FxEngine(this);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class YM2608FxEngine : BasicFxEngine
+        {
+            private YM2608FxSettings settings;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public YM2608FxEngine(YM2608FxSettings settings) : base(settings)
+            {
+                this.settings = settings;
+            }
+
+            private uint f_SoundType;
+
+            public byte? SoundType
+            {
+                get;
+                private set;
+            }
+
+            protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
+            {
+                bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
+
+                SoundType = null;
+                if (settings.SoundTypeEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.SoundTypeEnvelopesNums.Length;
+                        if (settings.SoundTypeEnvelopesReleasePoint >= 0)
+                            vm = settings.SoundTypeEnvelopesReleasePoint;
+                        if (f_SoundType >= vm)
+                        {
+                            if (settings.SoundTypeEnvelopesRepeatPoint >= 0)
+                                f_SoundType = (uint)settings.SoundTypeEnvelopesRepeatPoint;
+                            else
+                                f_SoundType = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.SoundTypeEnvelopesReleasePoint < 0)
+                            f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
+
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
+                    }
+                    if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
+                    {
+                        int vol = settings.SoundTypeEnvelopesNums[f_SoundType++];
+
+                        SoundType = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                return process;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -3164,6 +3366,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     Enable = value == 0 ? false : true;
+                }
+            }
+
+
+            private bool? f_SyncWithNoteFrequency;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("Set Env frequency to Note on (nearly) frequency.")]
+            [DefaultValue(null)]
+            public bool? SyncWithNoteFrequency
+            {
+                get => f_SyncWithNoteFrequency;
+                set
+                {
+                    f_SyncWithNoteFrequency = value;
+                }
+            }
+
+            private double? f_SyncWithNoteFrequencyMultiple;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("Set Env frequency divider for SyncWithNoteFrequency prop.")]
+            [DoubleSlideParametersAttribute(0d, 5d, 1d)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(null)]
+            public double? SyncWithNoteFrequencyDivider
+            {
+                get => f_SyncWithNoteFrequencyMultiple;
+                set
+                {
+                    f_SyncWithNoteFrequencyMultiple = value;
                 }
             }
 
