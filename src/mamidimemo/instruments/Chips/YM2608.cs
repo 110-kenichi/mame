@@ -1562,6 +1562,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             OnPitchUpdated();
                             OnVolumeUpdated();
+
+                            if (((int)lastSoundType & 4) != 0)
+                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
                         }
                         break;
                     case ToneType.RHYTHM:

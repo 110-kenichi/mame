@@ -730,6 +730,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 OnPitchUpdated();
                 OnVolumeUpdated();
+
+                if (((int)lastSoundType & 4) != 0)
+                    parentModule.Ay8910WriteData(parentModule.UnitNumber, 13, parentModule.EnvelopeType, false);
             }
 
             /// <summary>
