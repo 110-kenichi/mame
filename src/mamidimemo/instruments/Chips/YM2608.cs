@@ -91,44 +91,54 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value)
                 {
-                    AllSoundOff();
-                    ClearWrittenDataCache();
-
-                    lock (spfmPtrLock)
-                    {
-                        if (spfmPtr != IntPtr.Zero)
-                        {
-                            ScciManager.ReleaseSoundChip(spfmPtr);
-                            spfmPtr = IntPtr.Zero;
-                        }
-
-                        f_SoundEngineType = value;
-
-                        switch (f_SoundEngineType)
-                        {
-                            case SoundEngineType.Software:
-                                f_CurrentSoundEngineType = f_SoundEngineType;
-                                SetDevicePassThru(false);
-                                break;
-                            case SoundEngineType.SPFM:
-                                spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2608, SC_CHIP_CLOCK.SC_CLOCK_7987200);
-                                if (spfmPtr != IntPtr.Zero)
-                                {
-                                    f_CurrentSoundEngineType = f_SoundEngineType;
-                                    SetDevicePassThru(true);
-                                }
-                                else
-                                {
-                                    f_CurrentSoundEngineType = SoundEngineType.Software;
-                                    SetDevicePassThru(false);
-                                }
-                                break;
-                        }
-                    }
-
-                    initSounds();
+                    setSoundEngine(value);
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+            ClearWrittenDataCache();
+
+            lock (spfmPtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2608, (SC_CHIP_CLOCK)MasterClock);
+                        MasterClock = (uint)SC_CHIP_CLOCK.SC_CLOCK_7987200;
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            initSounds();
         }
 
         [Category("Chip(Dedicated)")]
@@ -172,6 +182,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
+                    setSoundEngine(SoundEngine);
                 }
             }
         }
@@ -1173,7 +1184,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         internal override void AllSoundOff()
         {
-            soundManager.ProcessAllSoundOff();
+            soundManager?.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -2674,7 +2685,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Global Settings")]
             public YM2608GlobalSettings GlobalSettings
             {
@@ -3130,7 +3141,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public class YM2608GlobalSettings : ContextBoundObject
         {
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Override global settings")]
             public bool Enable
             {

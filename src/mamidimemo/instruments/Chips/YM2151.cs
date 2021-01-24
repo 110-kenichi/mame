@@ -82,40 +82,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value)
                 {
-                    AllSoundOff();
-                    ClearWrittenDataCache();
+                    setSoundEngine(value);
+                }
+            }
+        }
 
-                    lock (spfmPtrLock)
-                    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+            ClearWrittenDataCache();
+
+            lock (spfmPtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, (SC_CHIP_CLOCK)MasterClock);
                         if (spfmPtr != IntPtr.Zero)
                         {
-                            ScciManager.ReleaseSoundChip(spfmPtr);
-                            spfmPtr = IntPtr.Zero;
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
                         }
-
-                        f_SoundEngineType = value;
-
-                        switch (f_SoundEngineType)
+                        else
                         {
-                            case SoundEngineType.Software:
-                                f_CurrentSoundEngineType = f_SoundEngineType;
-                                SetDevicePassThru(false);
-                                break;
-                            case SoundEngineType.SPFM:
-                                spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2151, SC_CHIP_CLOCK.SC_CLOCK_3579545);
-                                if (spfmPtr != IntPtr.Zero)
-                                {
-                                    f_CurrentSoundEngineType = f_SoundEngineType;
-                                    SetDevicePassThru(true);
-                                }
-                                else
-                                {
-                                    f_CurrentSoundEngineType = SoundEngineType.Software;
-                                    SetDevicePassThru(false);
-                                }
-                                break;
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
                         }
-                    }
+                        break;
                 }
             }
         }
@@ -145,7 +154,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
         [DefaultValue(MasterClockType.Default)]
@@ -161,6 +170,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
+                    setSoundEngine(SoundEngine);
                 }
             }
         }
@@ -171,7 +181,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// LFRQ (0-255)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("LFO Freq (0-255)")]
         [SlideParametersAttribute(0, 255)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -199,7 +209,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// Select AMD or PMD(0:AMD 1:PMD)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Select AMD or PMD (0:AMD 1:PMD)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -228,7 +238,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// LFO Depth(0-127)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("LFO Depth (0-127)")]
         [SlideParametersAttribute(0, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -258,7 +268,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
         [SlideParametersAttribute(0, 3)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -287,7 +297,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [Browsable(false)]
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Noise Enable (0:Disable 1:Enable)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -316,7 +326,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [Browsable(false)]
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description(" Noise Feequency (0-31)\r\n" +
             "3'579'545/(32*NFRQ)")]
         [SlideParametersAttribute(0, 31)]
@@ -650,7 +660,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         internal override void AllSoundOff()
         {
-            soundManager.ProcessAllSoundOff();
+            soundManager?.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -1459,7 +1469,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
 
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Global Settings")]
             public YM2151GlobalSettings GlobalSettings
             {
@@ -1905,7 +1915,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public class YM2151GlobalSettings : ContextBoundObject
         {
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Override global settings")]
             public bool Enable
             {
@@ -1935,7 +1945,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// LFRQ (0-255)
             /// </summary>
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("LFO Freq (0-255)")]
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 255)]
@@ -1958,7 +1968,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// Select AMD or PMD(0:AMD 1:PMD)
             /// </summary>
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Select AMD or PMD (0:AMD 1:PMD)")]
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
@@ -1985,7 +1995,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// LFO Depth(0-127)
             /// </summary>
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("LFO Depth (0-127)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 127)]
@@ -2013,7 +2023,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
             /// </summary>
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
@@ -2040,7 +2050,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [Browsable(false)]
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description("Noise Enable (0:Disable 1:Enable)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 1)]
@@ -2067,7 +2077,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [Browsable(false)]
             [DataMember]
-            [Category("Chip")]
+            [Category("Chip(Global)")]
             [Description(" Noise Feequency (0-31)\r\n" +
                 "3'579'545/(32*NFRQ)")]
             [DefaultValue((byte)0)]

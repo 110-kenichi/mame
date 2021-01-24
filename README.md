@@ -1,4 +1,4 @@
-MAmidiMEmo 2.9.0.2/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 2.9.1.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -245,6 +245,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
 2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
         Breaking changed OPNA SSG sound type property.
 2.9.0.1 Fixed unexpected exception while sounding.
