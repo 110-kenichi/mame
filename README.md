@@ -1,4 +1,4 @@
-MAmidiMEmo 2.9.1.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 2.9.1.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -234,7 +234,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    
 *** How to create build environment ***
 
-   1. Install *LATEST* Visual Studio 20197 w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
+   1. Install *LATEST* Visual Studio 2019 w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
    2. Install Windows 8.1 SDK and 10 SDK
    3. Install MinGW Development Environment(https://www.mamedev.org/tools/)
    4. Install vcpkg
@@ -245,6 +245,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
+        Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
 2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
 2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
         Breaking changed OPNA SSG sound type property.
