@@ -160,34 +160,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private Queue<byte> commandDataQueue = new Queue<byte>();
 
-        private void Tms5220DataW(byte data)
-        {
-            Tms5220DataW(data, false);
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        private void Tms5220DataW(byte data, bool trySpeechStop)
+        private void Tms5220DataW(byte data)
         {
-            /*
-            if (trySpeechStop)
-            {
-                bool spk = false;
-                try
-                {
-                    Program.SoundUpdating();
-                    if ((Tms5220_status_r(UnitNumber) & 0x80) != 0)
-                        spk = true;
-                }
-                finally
-                {
-                    Program.SoundUpdated();
-                }
-                if (spk)
-                    hardReset();
-            }
-            */
             lock (fifoQueue)
             {
                 fifoQueue.Enqueue(() =>
@@ -220,9 +197,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             lock (fifoQueue)
                 fifoQueue.Clear();
-
-            DeviceReset(UnitNumber, SoundInterfaceTagNamePrefix);
-
+            try
+            {
+                Program.SoundUpdating();
+                DeviceReset(UnitNumber, SoundInterfaceTagNamePrefix);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
             fifoQueue.Enqueue(() =>
             {
                 while (true)
@@ -248,7 +231,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         ManualResetEvent terminateFifoThread = new ManualResetEvent(false);
         ManualResetEvent waitingFifoData = new ManualResetEvent(false);
 
-        Thread loggingThread;
+        Thread processingThread;
 
         private void processFifoQueue()
         {
@@ -356,19 +339,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Dispose()
-        {
-            soundManager?.Dispose();
-
-            terminateFifoThread.Set();
-            loggingThread.Join();
-
-            base.Dispose();
-        }
-
         private TMS5220SoundManager soundManager;
 
         /// <summary>
@@ -386,16 +356,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             this.soundManager = new TMS5220SoundManager(this);
 
-            loggingThread = new Thread(new ThreadStart(processFifoQueue));
-            loggingThread.IsBackground = true;
-            loggingThread.Start();
+            processingThread = new Thread(new ThreadStart(processFifoQueue));
+            processingThread.IsBackground = true;
+            processingThread.Start();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Dispose()
+        {
+            soundManager?.Dispose();
+
+            terminateFifoThread.Set();
+            processingThread.Join();
+
+            base.Dispose();
+        }
+
+
 
         /// <summary>
         /// 
         /// </summary>
         private void setPresetInstruments()
         {
+            Timbres[0].ToneType = ToneType.Custom;
+            Timbres[0].CustomLpcData =
+                "0 02 00 12 06 03 06\r\n" +
+                "0 04 00 12 08 04 08\r\n" +
+                "0 05 00 13 10 06 09\r\n" +
+                "0 12 35 21 12 07 05 10 05 11 5 1 3\r\n" +
+                "0 14 36 20 11 10 07 10 03 11 6 2 3\r\n" +
+                "0 13 36 18 11 13 10 09 02 09 6 3 3\r\n" +
+                "0 11 36 16 12 15 10 07 01 09 6 2 4\r\n" +
+                "0 08 34 14 17 15 10 08 01 06 4 2 5\r\n" +
+                "0 07 30 15 07 15 10 07 05 05 2 3 4\r\n" +
+                "0 07 28 15 04 15 11 08 04 06 3 3 5\r\n" +
+                "0 05 26 15 15 15 12 09 07 06 3 3 4\r\n" +
+                "0 01 00 09 09 11 08\r\n" +
+                "0 01 00 11 03 05 08\r\n" +
+                "0 01 00 09 04 07 08\r\n" +
+                "0 01 00 09 04 07 08\r\n" +
+                "0 01 00 09 05 08 08\r\n" +
+                "0 03 00 00 09 11 10\r\n" +
+                "0 02 00 00 07 10 10";
+
+            // Vocab_US_TI99
         }
 
         /// <summary>
@@ -614,61 +621,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.hardReset();
 
                 //START
-                parentModule.Tms5220DataW((byte)(0x60), false);
+                parentModule.Tms5220DataW((byte)(0x60));
 
                 // Set freq
-                parentModule.SetClock(parentModule.UnitNumber,
-                    (uint)Math.Round(640000 * (CalcCurrentFrequency() / timbre.BaseFreqency)));
+                if (timbre.BaseFreqency != 0)
+                {
+                    parentModule.SetClock(parentModule.UnitNumber,
+                        (uint)Math.Round(640000 * (CalcCurrentFrequency() / timbre.BaseFreqency)));
+                }
 
                 // Send commands
-                foreach (var line in timbre.RawLPCData)
-                    sendCommand(line);
-
-                /*
-                sendCommand(0, 01, 00, 16, 03, 06, 07);
-                sendCommand(0, 01, 00, 14, 03, 05, 07);
-                sendCommand(0, 01, 00, 17, 03, 05, 07);
-                sendCommand(0, 01, 00, 17, 06, 07, 09);
-
-                //H
-                sendCommand(0, 02, 00, 12, 06, 03, 06);
-                sendCommand(0, 04, 00, 12, 08, 04, 08);
-                sendCommand(0, 05, 00, 13, 10, 06, 09);
-
-                //EL
-                sendCommand(0, 12, 35, 21, 12, 07, 05, 10, 05, 11, 5, 1, 3);
-                sendCommand(0, 14, 36, 20, 11, 10, 07, 10, 03, 11, 6, 2, 3);
-                sendCommand(0, 13, 36, 18, 11, 13, 10, 09, 02, 09, 6, 3, 3);
-                sendCommand(0, 11, 36, 16, 12, 15, 10, 07, 01, 09, 6, 2, 4);
-                sendCommand(0, 08, 34, 14, 17, 15, 10, 08, 01, 06, 4, 2, 5);
-                sendCommand(0, 07, 30, 15, 07, 15, 10, 07, 05, 05, 2, 3, 4);
-                sendCommand(0, 07, 28, 15, 04, 15, 11, 08, 04, 06, 3, 3, 5);
-                sendCommand(0, 05, 26, 15, 15, 15, 12, 09, 07, 06, 3, 3, 4);
-
-                //P
-                sendCommand(0, 01, 00, 09, 09, 11, 08);
-                sendCommand(0, 01, 00, 11, 03, 05, 08);
-                sendCommand(0, 01, 00, 09, 04, 07, 08);
-                sendCommand(0, 01, 00, 09, 04, 07, 08);
-                sendCommand(0, 01, 00, 09, 05, 08, 08);
-                sendCommand(0, 03, 00, 00, 09, 11, 10);
-                sendCommand(0, 02, 00, 00, 07, 10, 10);
-
-                /*
-                //SILENT
-                sendCommand(0, 01, 00, 00, 04, 07, 08);
-                sendCommand(0, 01, 00, 09, 03, 05, 08);
-                sendCommand(0, 01, 00, 14, 03, 06, 08);
-                sendCommand(0, 01, 00, 14, 03, 06, 08);
-                sendCommand(0, 01, 00, 15, 03, 06, 09);
-                sendCommand(0, 01, 00, 15, 03, 06, 08);
-                sendCommand(0, 01, 00, 16, 03, 06, 08);
-                sendCommand(0, 01, 00, 16, 04, 07, 09);
-                sendCommand(0, 01, 00, 10, 03, 06, 08);
-                sendCommand(0, 01, 00, 07, 04, 07, 09);
-                sendCommand(0, 01, 00, 16, 04, 06, 09);
-                sendCommand(0, 01, 00, 00, 09, 11, 11);
-                */
+                if (timbre.ToneType == ToneType.Custom)
+                {
+                    var lpcd = timbre.RawCustomLpcData;
+                    if (lpcd != null)
+                    {
+                        foreach (var line in lpcd)
+                            sendCommand(line);
+                    }
+                }
+                else
+                {
+                    var lpcd = timbre.PresetLpcData;
+                    if (lpcd != null)
+                        foreach (var data in lpcd)
+                            parentModule.Tms5220DataW(data);
+                }
 
                 //STOP
                 sendCommand(0, 15, 0, 0, 0, 0, 0);
@@ -727,6 +705,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnPitchUpdated()
             {
+                if (timbre.BaseFreqency != 0)
+                {
+                    parentModule.SetClock(parentModule.UnitNumber,
+                        (uint)Math.Round(640000 * (CalcCurrentFrequency() / timbre.BaseFreqency)));
+                }
                 base.OnPitchUpdated();
             }
 
@@ -749,12 +732,34 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class TMS5220Timbre : TimbreBase
         {
-            private string lpcData;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Sound Type")]
+            [DefaultValue(ToneType.Custom)]
+            public ToneType ToneType
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            [Category("Sound")]
+            [Editor(typeof(LpcUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+            [DefaultValue(null)]
+            public byte[] PresetLpcData
+            {
+                get;
+                set;
+            }
+
+            private string customLpcData;
 
             [DataMember]
             [Category("Sound")]
             [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
-            [TypeConverter(typeof(CustomExpandableObjectConverter))]
+            [TypeConverter(typeof(EmptyTypeConverter))]
             [Description("Set LPC Data like the following format.\r\n" +
                 "RPT(0-1) NRG(1-14) PITCH(0-63) K1(0-31) K2(0-31) K3(0-15) K4(0-15) (K5(0-15) K6(0-15) K7(0-15) K8(0-7) K9(0-7) K10(0-7))\r\n" +
                 "\r\n" +
@@ -762,15 +767,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 "0 02 00 12 06 03 06\r\n" +
                 "0 13 36 18 11 13 10 09 02 09 6 3 3")]
             [DefaultValue(null)]
-            public string LPCData
+            public string CustomLpcData
             {
                 get
                 {
-                    return lpcData;
+                    return customLpcData;
                 }
                 set
                 {
-                    if (lpcData != value)
+                    if (customLpcData != value)
                     {
                         List<byte[]> data = new List<byte[]>();
                         if (value != null)
@@ -858,9 +863,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             sb.AppendLine(line.ToString());
                         }
-                        lpcData = sb.ToString();
+                        customLpcData = sb.ToString();
 
-                        RawLPCData = data.ToArray();
+                        RawCustomLpcData = data.ToArray();
                     }
                 }
             }
@@ -868,7 +873,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Browsable(false)]
             [IgnoreDataMember]
             [JsonIgnore]
-            public byte[][] RawLPCData
+            public byte[][] RawCustomLpcData
             {
                 get;
                 set;
@@ -885,7 +890,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             } = 440;
-
 
             /// <summary>
             /// 
@@ -909,11 +913,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
 
-
                     System.Windows.Forms.MessageBox.Show(ex.ToString());
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum ToneType
+        {
+            Preset,
+            Custom,
+        }
+
 
     }
 }

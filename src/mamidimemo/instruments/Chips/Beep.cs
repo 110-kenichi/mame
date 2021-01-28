@@ -399,7 +399,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double freq = CalcCurrentFrequency();
 
-                BeepSetClock(parentModule.UnitNumber, IsSoundOff ? 0 : 1, (uint)freq);
+                BeepSetClock(parentModule.UnitNumber, IsSoundOff ? 0 : 1, (uint)Math.Round(freq));
 
                 base.OnPitchUpdated();
             }

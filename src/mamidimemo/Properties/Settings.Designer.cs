@@ -490,5 +490,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["WsgFirWeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size LpcEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["LpcEdSize"]));
+            }
+            set {
+                this["LpcEdSize"] = value;
+            }
+        }
     }
 }

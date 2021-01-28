@@ -444,6 +444,12 @@
     <Compile Include="Gui\FormEnvelopeEditor.Designer.cs">
       <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FormLpcEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormLpcEditor.Designer.cs">
+      <DependentUpon>FormLpcEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\OscUtility.cs" />
     <Compile Include="Gui\EnvelopeUITypeEditor.cs" />
     <Compile Include="Gui\EnvelopeEditorAttribute.cs" />
@@ -514,6 +520,7 @@
       <DependentUpon>PianoControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\VstUITypeEditor.cs" />
+    <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
     <Compile Include="Instruments\Chips\CM32P.cs" />
     <Compile Include="Instruments\Chips\MT32.cs" />
@@ -532,6 +539,14 @@
     <Compile Include="Instruments\Chips\Beep.cs" />
     <Compile Include="Instruments\Chips\SN76496.cs" />
     <Compile Include="Instruments\Chips\TMS5220.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
+    <None Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Toms_Diner.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Acorn.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Clock.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Large.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_TI99.cs" />
     <Compile Include="Instruments\Chips\YM2151.cs" />
     <Compile Include="Instruments\Chips\YM2413.cs" />
     <Compile Include="Instruments\Chips\YM2608.cs" />
@@ -768,6 +783,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormEnvelopeEditor.resx">
       <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormLpcEditor.resx">
+      <DependentUpon>FormLpcEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\TextEditorControl.resx">
       <DependentUpon>TextEditorControl.cs</DependentUpon>

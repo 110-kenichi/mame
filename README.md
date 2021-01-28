@@ -1,4 +1,4 @@
-MAmidiMEmo 2.9.1.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.0.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -145,6 +145,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	YM2608:
      https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
+	TMS5220
+	 https://www.dexsilicium.com/tms5220.pdf
+     http://www.stuartconner.me.uk/ti_portable_speech_lab/ti_portable_speech_lab.htm
 
    *[Channels]
     Select which MIDI ch messages the chip receives.
@@ -245,6 +248,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.0.0.0 Added TMS5220 Chip.
 2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
         Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
 2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
@@ -447,3 +451,6 @@ https://github.com/CodefoundryDE/LegacyWrapper
 
 * FastDelegate.Net - Copyright (c) 2015 coder0xff
 https://github.com/coder0xff/FastDelegate.Net
+
+* ArminJo/Talkie
+https://github.com/ArminJo/Talkie
