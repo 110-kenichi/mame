@@ -1409,9 +1409,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="address"></param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_device_reset(uint unitNumber, string tagName);
+        public delegate void delegate_device_reset(uint unitNumber, string tagName);
 
-        private static delegate_device_reset device_reset;
+        public static delegate_device_reset DeviceReset;
 
         /// <summary>
         /// 
@@ -1611,7 +1611,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             funcPtr = MameIF.GetProcAddress("device_reset");
             if (funcPtr != IntPtr.Zero)
-                device_reset = Marshal.GetDelegateForFunctionPointer<delegate_device_reset>(funcPtr);
+                DeviceReset = Marshal.GetDelegateForFunctionPointer<delegate_device_reset>(funcPtr);
 
             funcPtr = MameIF.GetProcAddress("set_filter");
             if (funcPtr != IntPtr.Zero)
@@ -1641,7 +1641,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             UnitNumber = unitNumber;
 
-            device_reset(UnitNumber, SoundInterfaceTagNamePrefix);
+            DeviceReset(UnitNumber, SoundInterfaceTagNamePrefix);
 
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);

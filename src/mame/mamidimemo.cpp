@@ -33,6 +33,7 @@
 #include "..\devices\sound\cm32p.h"
 #include "..\devices\sound\262intf.h"
 #include "..\devices\sound\2608intf.h"
+#include "..\devices\sound\tms5220.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -1599,6 +1600,49 @@ extern "C"
 		ym2608_devices[unitNumber]->set_adpcmb_callback(callback);
 	}
 
+	tms5220_device* tms5220_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void tms5220_data_w(unsigned int unitNumber, unsigned char data)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			tms5220_device* tms5220 = dynamic_cast<tms5220_device*>(rm->device((std::string("tms5220_") + num).c_str()));
+			if (tms5220 == nullptr)
+				return;
+
+			tms5220_devices[unitNumber] = tms5220;
+		}
+		tms5220_devices[unitNumber]->data_w(data);
+	}
+
+	DllExport int tms5220_status_r(unsigned int unitNumber)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return 0;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return 0;
+
+			std::string num = std::to_string(unitNumber);
+			tms5220_device* tms5220 = dynamic_cast<tms5220_device*>(rm->device((std::string("tms5220_") + num).c_str()));
+			if (tms5220 == nullptr)
+				return 0;
+
+			tms5220_devices[unitNumber] = tms5220;
+		}
+		return tms5220_devices[unitNumber]->status_r();
+	}
 
 }
 

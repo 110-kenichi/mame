@@ -219,9 +219,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\src\devices\machine\spchrom.h" />
     <ClInclude Include="..\..\..\..\..\src\mame\includes\megadriv.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\src\devices\machine\spchrom.cpp" />
     <ClCompile Include="..\..\..\..\..\src\mame\drivers\megadriv.cpp">
       <ObjectFileName>$(IntDir)src\mame\drivers\</ObjectFileName>
     </ClCompile>

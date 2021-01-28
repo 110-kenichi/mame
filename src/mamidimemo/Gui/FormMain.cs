@@ -194,6 +194,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("CM32P", Resources.CM32P);
             imageList1.Images.Add("YMF262", Resources.YMF262);
             imageList1.Images.Add("YM2608", Resources.YM2608);
+            imageList1.Images.Add("TMS5220", Resources.TMS5220);
 
             if (Program.IsVSTiMode())
             {
@@ -633,6 +634,11 @@ namespace zanac.MAmidiMEmo.Gui
         private void extendYM2608ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.YM2608);
+        }
+
+        private void sP0256ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.TMS5220);
         }
 
         /// <summary>

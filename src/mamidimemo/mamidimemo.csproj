@@ -531,6 +531,7 @@
     <Compile Include="Instruments\Chips\SIDBase.cs" />
     <Compile Include="Instruments\Chips\Beep.cs" />
     <Compile Include="Instruments\Chips\SN76496.cs" />
+    <Compile Include="Instruments\Chips\TMS5220.cs" />
     <Compile Include="Instruments\Chips\YM2151.cs" />
     <Compile Include="Instruments\Chips\YM2413.cs" />
     <Compile Include="Instruments\Chips\YM2608.cs" />
@@ -999,6 +1000,7 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />
     <None Include="scci.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

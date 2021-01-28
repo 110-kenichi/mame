@@ -483,6 +483,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (spfmPtrLock)
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
             base.Dispose();
         }
 

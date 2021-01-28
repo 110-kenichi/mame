@@ -157,6 +157,8 @@
             this.extendAY38910ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendMSM5232ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendBeepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.eTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sP0256ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -1130,6 +1132,7 @@
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listView1.HideSelection = false;
             this.listView1.Name = "listView1";
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -1285,7 +1288,8 @@
             this.pCMToolStripMenuItem,
             this.fMSynthesisToolStripMenuItem,
             this.wSGToolStripMenuItem,
-            this.pSGToolStripMenuItem});
+            this.pSGToolStripMenuItem,
+            this.eTCToolStripMenuItem});
             resources.ApplyResources(this.toolStripDropDownButton1, "toolStripDropDownButton1");
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             // 
@@ -1479,6 +1483,19 @@
             this.extendBeepToolStripMenuItem.Name = "extendBeepToolStripMenuItem";
             resources.ApplyResources(this.extendBeepToolStripMenuItem, "extendBeepToolStripMenuItem");
             this.extendBeepToolStripMenuItem.Click += new System.EventHandler(this.extendBeepToolStripMenuItem_Click);
+            // 
+            // eTCToolStripMenuItem
+            // 
+            this.eTCToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sP0256ToolStripMenuItem});
+            this.eTCToolStripMenuItem.Name = "eTCToolStripMenuItem";
+            resources.ApplyResources(this.eTCToolStripMenuItem, "eTCToolStripMenuItem");
+            // 
+            // sP0256ToolStripMenuItem
+            // 
+            this.sP0256ToolStripMenuItem.Name = "sP0256ToolStripMenuItem";
+            resources.ApplyResources(this.sP0256ToolStripMenuItem, "sP0256ToolStripMenuItem");
+            this.sP0256ToolStripMenuItem.Click += new System.EventHandler(this.sP0256ToolStripMenuItem_Click);
             // 
             // toolStripButton1
             // 
@@ -1711,6 +1728,8 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel6;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxPort;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2608;
+        private System.Windows.Forms.ToolStripMenuItem eTCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sP0256ToolStripMenuItem;
     }
 }
 
