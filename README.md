@@ -248,7 +248,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.0.0.0 Added TMS5220 Chip.
+3.0.0.0 Added TMS5220 Chip and preset voices.
 2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
         Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
 2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.

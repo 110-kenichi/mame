@@ -610,7 +610,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 bw = new BitWriter(parentModule);
             }
-
+            
             /// <summary>
             /// 
             /// </summary>
