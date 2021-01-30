@@ -103,7 +103,7 @@ namespace zanac.MAmidiMEmo.Gui
                 }
                 else
                 {
-                    value = ((string)value).Clone();
+                    value = ((string)value + " ").Clone();
                 }
             }
             return value;

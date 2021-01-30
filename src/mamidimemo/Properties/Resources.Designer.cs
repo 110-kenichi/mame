@@ -259,6 +259,27 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   ;;; # CMUdict  --  Major Version: 0.07
+        ///;;; 
+        ///;;; # $HeadURL$
+        ///;;; # $Date::                                                   $:
+        ///;;; # $Id::                                                     $:
+        ///;;; # $Rev::                                                    $: 
+        ///;;; # $Author::                                                 $:
+        ///;;;
+        ///;;; #
+        ///;;; # ========================================================================
+        ///;;; # Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
+        ///;;; #
+        ///;;; # Red [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string cmudict_0_7b {
+            get {
+                return ResourceManager.GetString("cmudict_0_7b", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Connecting to a real chip via SPFM... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ConnectingSPFM {

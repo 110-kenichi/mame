@@ -24,6 +24,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 
 //http://spatula-city.org/~im14u2c/sp0256-al2/Archer_SP0256-AL2.pdf
 
@@ -120,6 +121,123 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 "GG2",
                 "EL",
                 "BB2"
+        };
+
+        private static Dictionary<string, byte> AllophoneDictionary;
+
+        //https://github.com/nmacadam/SP0256-AL2-Lexicon/blob/master/SP0256-AL2 Lexicon/SP0256-AL2 Lexicon/Lexicon.cpp
+        private static readonly string[] CmuTable = new string[]
+        {
+            "OY","OY",
+            "OY0","OY",
+            "OY1","OY",
+            "OY2","OY",
+            "AY","AY",
+            "AY0","AY",
+            "AY1","AY",
+            "AY2","AY",
+            "EH","EY",
+            "EH0","EY",
+            "EH1","EY",
+            "EH2","EY",
+            "K","KK1",
+            //"K","KK3",
+            "P","PP",
+            "JH","JH",
+            "N","NN1",
+            //"N","NN2",
+            "IH","IH",
+            "IH0","IH",
+            "IH1","IH",
+            "IH2","IH",
+            "T","TT1",
+            //"T","TT2",
+            "R","RR1",
+            //"R","RR2",
+            //"R","XR",
+            "AH","AX",
+            "AH0","AX",
+            "AH1","AX",
+            "AH2","AX",
+            "M","MM",
+            "DH","DH1",
+            //"DH","DH2",
+            "IY","IY",
+            "IY0","IY",
+            "IY1","IY",
+            "IY2","IY",
+            "EY","EY",
+            "EY0","EY",
+            "EY1","EY",
+            "EY2","EY",
+            "D","D1",
+            //"D","D2",
+            "UW","UW1",
+            "UW0","UW1",
+            "UW1","UW2",
+            "UW2","UW2",
+            //"UW","UW2",
+            //"UW0","UW2",
+            //"UW1","UW2",
+            //"UW2","UW2",
+            "AO","AO",
+            "AO0","AO",
+            "AO1","AO",
+            "AO2","AO",
+            "AA","AA",
+            "AA0","AA",
+            "AA1","AA",
+            "AA2","AA",
+            "Y","YY1",
+            //"Y","YY2",
+            "AE","AE",
+            "AE0","AE",
+            "AE1","AE",
+            "AE2","AE",
+            "HH","HH1",
+            //"HH","HH2",
+            "B","BB1",
+            //"B","BB2"
+            "TH","TH",
+            "UH","UH",
+            "UH0","UH",
+            "UH1","UH",
+            "UH2","UH",
+            "AW","AW",
+            "AW0","AW",
+            "AW1","AW",
+            "AW2","AW",
+            "G","GG2",
+            //"G","GG2",
+            //"G","GG3",
+            "V","VV",
+            "SH","SH",
+            "ZH","ZH",
+            "F","FF",
+            //"K","KK2",
+            "Z","ZZ",
+            "NG","NG",
+            "L","LL",
+            //"L","EL",
+            "W","WW",
+            //WH
+            "CH","CH",
+            "ER","ER1",
+            "ER0","ER1",
+            "ER1","ER2",
+            "ER2","ER2",
+            //"ER","ER2",
+            //"ER0","ER2",
+            //"ER1","ER2",
+            //"ER2","ER2",
+            "OW","OW",
+            "OW0","OW",
+            "OW1","OW",
+            "OW2","OW",
+            "S","S",
+            //OR
+            //AR
+            //YR
         };
 
         /// <summary>
@@ -447,6 +565,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private static Dictionary<string, string[]> CmuDictionary;
+
+        private static Dictionary<string, string> PhoneDictionary;
+
         /// <summary>
         /// 
         /// </summary>
@@ -472,6 +594,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 sp0256_set_clock = (delegate_sp0256_set_clock)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_sp0256_set_clock));
             }
+
+            AllophoneDictionary = new Dictionary<string, byte>();
+            for (byte i = 0; i < AllophoneTable.Length; i++)
+                AllophoneDictionary.Add(AllophoneTable[i], i);
+
+            PhoneDictionary = new Dictionary<string, string>();
+            for (int i = 0; i < CmuTable.Length / 2; i++)
+                PhoneDictionary.Add(CmuTable[i * 2], CmuTable[i * 2 + 1]);
+
+            CmuDictionary = new Dictionary<string, string[]>();
+            using (StringReader sr = new StringReader(Resources.cmudict_0_7b))
+            {
+                string line;
+                string[] split1 = new string[] { "  " };
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (line.StartsWith(";"))
+                        continue;
+                    string[] word = line.Split(split1, StringSplitOptions.RemoveEmptyEntries);
+                    if (word.Length == 2)
+                        CmuDictionary.Add(word[0], convertAllophones(word[1].Split(' ')));
+                }
+            }
+            CmuDictionary.Add("MAmidiMEmo", new string[] { "MM", "AR", "MM", "IY", "DH1", "IY", "MM", "EH", "MM", "OR" });
+            CmuDictionary.Add("Chiptune", new string[] { "CH", "IH", "PP", "CH", "UW1", "NG" });
+        }
+
+        private static string[] convertAllophones(string[] phones)
+        {
+            for (int i = 0; i < phones.Length; i++)
+                phones[i] = PhoneDictionary[phones[i]];
+            return phones;
         }
 
         private SP0256SoundManager soundManager;
@@ -515,8 +669,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void setPresetInstruments()
         {
-            //investigating
-            Timbres[0].Allophones = "IH IH NN1 VV EH EH SS PA2 PA3 TT2 IH PA1 GG1 EY PA2 TT2 IH NG";
+            Timbres[0].Allophones = "MM AR MM IY DH1 IY MM EH MM OR PA5 CH IH PP CH UW1 NG";
         }
 
         /// <summary>
@@ -717,16 +870,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     StringSplitOptions.RemoveEmptyEntries);
                 foreach (var alp in alps)
                 {
-                    for (int i = 0; i < AllophoneTable.Length; i++)
+                    var ALP = alp.ToUpperInvariant();
+                    if (AllophoneDictionary.ContainsKey(ALP))
                     {
-                        if (AllophoneTable[i].Equals(alp,
-                            StringComparison.OrdinalIgnoreCase))
-                        {
-                            sb.Append(alp);
-                            sb.Append(" ");
-                            data.Add((byte)i);
-                            break;
-                        }
+                        sb.Append(ALP);
+                        sb.Append(" ");
+                        data.Add((byte)AllophoneDictionary[ALP]);
                     }
                 }
 
@@ -762,6 +911,76 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class SP0256Timbre : TimbreBase
         {
+            private string words;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set words to convert to allophones.")]
+            [DefaultValue(null)]
+            public string Words
+            {
+                get
+                {
+                    return words;
+                }
+                set
+                {
+                    if (words != value)
+                    {
+                        if (value != null)
+                        {
+                            value = value.Replace(".", " ").Replace(",", " ").Replace("(", " ").Replace(")", " ").Replace("!", " ").Replace("?", " ");
+                            value = value.Replace("0", "Zero ");
+                            value = value.Replace("1", "One ");
+                            value = value.Replace("2", "Two ");
+                            value = value.Replace("3", "Three ");
+                            value = value.Replace("4", "Four ");
+                            value = value.Replace("5", "Five ");
+                            value = value.Replace("6", "Six ");
+                            value = value.Replace("7", "Seven ");
+                            value = value.Replace("8", "Eight ");
+                            value = value.Replace("9", "Nine ");
+                        }
+                        words = value;
+
+                        if (words != null)
+                        {
+                            var awords = words.Split(new char[] { ' ' },
+                                StringSplitOptions.RemoveEmptyEntries);
+                            List<byte> lpcd = new List<byte>();
+                            foreach (var word in awords)
+                            {
+                                var WORD = word.ToUpperInvariant();
+                                if (CmuDictionary.ContainsKey(WORD))
+                                {
+                                    string[] alps = CmuDictionary[WORD];
+                                    foreach (var alp in alps)
+                                    {
+                                        var ALP = alp.ToUpperInvariant();
+                                        if (AllophoneDictionary.ContainsKey(ALP))
+                                            lpcd.Add((byte)AllophoneDictionary[ALP]);
+                                    }
+                                    lpcd.Add(3);    //PA4
+                                }
+                                else
+                                {
+                                    lpcd.Add(0x37);    //SS
+                                    lpcd.Add(0x37);    //SS
+                                    lpcd.Add(0x37);    //SS
+                                    lpcd.Add(3);    //PA4
+                                }
+                            }
+                            StringBuilder sb = new StringBuilder();
+                            foreach (var lpc in lpcd)
+                            {
+                                sb.Append(AllophoneTable[lpc]);
+                                sb.Append(" ");
+                            }
+                            Allophones = sb.ToString();
+                        }
+                    }
+                }
+            }
 
             private string allophones;
 
@@ -787,16 +1006,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             StringSplitOptions.RemoveEmptyEntries);
                         foreach (var alp in alps)
                         {
-                            for (int i = 0; i < AllophoneTable.Length; i++)
+                            var ALP = alp.ToUpperInvariant();
+                            if (AllophoneDictionary.ContainsKey(ALP))
                             {
-                                if (AllophoneTable[i].Equals(alp,
-                                    StringComparison.OrdinalIgnoreCase))
-                                {
-                                    sb.Append(alp);
-                                    sb.Append(" ");
-                                    data.Add((byte)i);
-                                    break;
-                                }
+                                sb.Append(ALP);
+                                sb.Append(" ");
+                                data.Add(AllophoneDictionary[ALP]);
                             }
                         }
 

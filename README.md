@@ -1,4 +1,4 @@
-MAmidiMEmo 3.1.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.1.1.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -249,6 +249,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
 3.1.0.0 Added SP0256 Chip.
 3.0.0.0 Added TMS5220 Chip and preset voices.
 2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
@@ -459,3 +460,6 @@ https://github.com/ArminJo/Talkie
 
 * SP0256-AL2 ROM Image
 http://spatula-city.org/~im14u2c/sp0256-al2/
+
+* The CMU Pronouncing Dictionary
+http://www.speech.cs.cmu.edu/cgi-bin/cmudict
