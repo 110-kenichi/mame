@@ -34,6 +34,7 @@
 #include "..\devices\sound\262intf.h"
 #include "..\devices\sound\2608intf.h"
 #include "..\devices\sound\tms5220.h"
+#include "..\devices\sound\sp0256.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -1644,6 +1645,93 @@ extern "C"
 		return tms5220_devices[unitNumber]->status_r();
 	}
 
+	sp0256_device* sp0256_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void sp0256_ald_w(unsigned int unitNumber, unsigned char data)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sp0256_device* sp0256 = dynamic_cast<sp0256_device*>(rm->device((std::string("sp0256_") + num).c_str()));
+			if (sp0256 == nullptr)
+				return;
+
+			sp0256_devices[unitNumber] = sp0256;
+		}
+		sp0256_devices[unitNumber]->ald_w(data);
+	}
+
+	DllExport int sp0256_sby_r(unsigned int unitNumber)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return 0;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return 0;
+
+			std::string num = std::to_string(unitNumber);
+			sp0256_device* sp0256 = dynamic_cast<sp0256_device*>(rm->device((std::string("sp0256_") + num).c_str()));
+			if (sp0256 == nullptr)
+				return 0;
+
+			sp0256_devices[unitNumber] = sp0256;
+		}
+		return sp0256_devices[unitNumber]->sby_r();
+	}
+
+	DllExport int sp0256_lrq_r(unsigned int unitNumber)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return 0;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return 0;
+
+			std::string num = std::to_string(unitNumber);
+			sp0256_device* sp0256 = dynamic_cast<sp0256_device*>(rm->device((std::string("sp0256_") + num).c_str()));
+			if (sp0256 == nullptr)
+				return 0;
+
+			sp0256_devices[unitNumber] = sp0256;
+		}
+		return sp0256_devices[unitNumber]->lrq_r();
+	}
+
+	DllExport void sp0256_set_clock(unsigned int unitNumber, int clock)
+	{
+		if (tms5220_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sp0256_device* sp0256 = dynamic_cast<sp0256_device*>(rm->device((std::string("sp0256_") + num).c_str()));
+			if (sp0256 == nullptr)
+				return;
+
+			sp0256_devices[unitNumber] = sp0256;
+		}
+		 sp0256_devices[unitNumber]->set_clock(clock);
+	}
+
 }
+
 
 

@@ -68,7 +68,11 @@ namespace zanac.MAmidiMEmo.Gui
             InitializeComponent();
 
             Size = Settings.Default.LpcEdSize;
+            setPresets();
+        }
 
+        private void setPresets()
+        {
             setPreset(typeof(Vocab_AstroBlaster));
             setPreset(typeof(Vocab_Soundbites));
             setPreset(typeof(Vocab_Special));
@@ -80,11 +84,31 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void setPreset(Type t)
         {
+            string[] schWords = metroTextBoxSearch.Text.Trim().ToUpperInvariant().Split(' ');
             var fis = t.GetFields();
             foreach (var fi in fis)
             {
-                listBox1.Items.
-                    Add(new PresetVoice(fi.DeclaringType.Name + ":" + fi.Name, (byte[])fi.GetValue(null)));
+                string name = fi.DeclaringType.Name + ":" + fi.Name;
+                if (schWords.Length == 0)
+                {
+                    listBox1.Items.Add(new PresetVoice(name, (byte[])fi.GetValue(null)));
+                }
+                else
+                {
+                    bool hitAll = true;
+                    foreach (string schWord in schWords)
+                    {
+                        if (string.IsNullOrWhiteSpace(schWord))
+                            continue;
+                        if (!name.ToUpperInvariant().Contains(schWord))
+                        {
+                            hitAll = false;
+                            break;
+                        }
+                    }
+                    if(hitAll)
+                        listBox1.Items.Add(new PresetVoice(name, (byte[])fi.GetValue(null)));
+                }
             }
         }
 
@@ -172,5 +196,10 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        private void metroTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+            setPresets();
+        }
     }
 }

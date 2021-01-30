@@ -39,7 +39,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         public override string Name => "TMS5220";
 
-        public override string Group => "ETC";
+        public override string Group => "VOICE";
 
         public override InstrumentType InstrumentType => InstrumentType.TMS5220;
 
@@ -94,7 +94,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private const float DEFAULT_GAIN = 1.0f;
+        private const float DEFAULT_GAIN = 0.5f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -374,8 +374,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.Dispose();
         }
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -401,8 +399,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 "0 01 00 09 05 08 08\r\n" +
                 "0 03 00 00 09 11 10\r\n" +
                 "0 02 00 00 07 10 10";
-
-            // Vocab_US_TI99
         }
 
         /// <summary>
@@ -539,7 +535,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                //TODO:
+                parentModule.hardReset();
             }
         }
 

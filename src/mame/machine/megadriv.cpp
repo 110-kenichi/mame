@@ -1077,6 +1077,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		TMS5220(config, *m_tms5220[i], 640000);
 		(*m_tms5220[i])->add_route(0, "lspeaker", 1.00);
 		(*m_tms5220[i])->add_route(1, "rspeaker", 1.00);
+
+		SP0256(config, *m_sp0256[i], 3120000);
+		(*m_sp0256[i])->add_route(0, "lspeaker", 1.00);
+		(*m_sp0256[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

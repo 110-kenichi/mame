@@ -159,6 +159,7 @@
             this.extendBeepToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eTCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sP0256ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extendSP0256AL2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -168,6 +169,7 @@
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
+            this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1208,7 +1210,8 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemAbout});
+            this.toolStripMenuItemAbout,
+            this.helpToolStripMenuItem1});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
             // 
@@ -1487,7 +1490,8 @@
             // eTCToolStripMenuItem
             // 
             this.eTCToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sP0256ToolStripMenuItem});
+            this.sP0256ToolStripMenuItem,
+            this.extendSP0256AL2ToolStripMenuItem});
             this.eTCToolStripMenuItem.Name = "eTCToolStripMenuItem";
             resources.ApplyResources(this.eTCToolStripMenuItem, "eTCToolStripMenuItem");
             // 
@@ -1495,7 +1499,13 @@
             // 
             this.sP0256ToolStripMenuItem.Name = "sP0256ToolStripMenuItem";
             resources.ApplyResources(this.sP0256ToolStripMenuItem, "sP0256ToolStripMenuItem");
-            this.sP0256ToolStripMenuItem.Click += new System.EventHandler(this.sP0256ToolStripMenuItem_Click);
+            this.sP0256ToolStripMenuItem.Click += new System.EventHandler(this.tms5220ToolStripMenuItem_Click);
+            // 
+            // extendSP0256AL2ToolStripMenuItem
+            // 
+            this.extendSP0256AL2ToolStripMenuItem.Name = "extendSP0256AL2ToolStripMenuItem";
+            resources.ApplyResources(this.extendSP0256AL2ToolStripMenuItem, "extendSP0256AL2ToolStripMenuItem");
+            this.extendSP0256AL2ToolStripMenuItem.Click += new System.EventHandler(this.extendSP0256AL2ToolStripMenuItem_Click);
             // 
             // toolStripButton1
             // 
@@ -1554,6 +1564,12 @@
             this.saveFileDialogMAmidi.FileName = "MyEnvAndMidi";
             resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
             this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
+            // 
+            // helpToolStripMenuItem1
+            // 
+            this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
+            resources.ApplyResources(this.helpToolStripMenuItem1, "helpToolStripMenuItem1");
+            this.helpToolStripMenuItem1.Click += new System.EventHandler(this.helpToolStripMenuItem1_Click);
             // 
             // FormMain
             // 
@@ -1730,6 +1746,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2608;
         private System.Windows.Forms.ToolStripMenuItem eTCToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sP0256ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extendSP0256AL2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
     }
 }
 

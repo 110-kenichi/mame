@@ -32,6 +32,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonOk = new MetroFramework.Controls.MetroButton();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.metroTextBoxSearch = new MetroFramework.Controls.MetroTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,13 +55,15 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.listBox1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.listBox1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxSearch, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 60);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(578, 543);
@@ -83,14 +86,47 @@
             this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 12;
-            this.listBox1.Location = new System.Drawing.Point(3, 3);
+            this.listBox1.Location = new System.Drawing.Point(3, 32);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(572, 508);
+            this.listBox1.Size = new System.Drawing.Size(572, 479);
             this.listBox1.TabIndex = 9;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             this.listBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseDown);
             this.listBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseUp);
+            // 
+            // metroTextBoxSearch
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxSearch, 3);
+            // 
+            // 
+            // 
+            this.metroTextBoxSearch.CustomButton.Image = null;
+            this.metroTextBoxSearch.CustomButton.Location = new System.Drawing.Point(469, 1);
+            this.metroTextBoxSearch.CustomButton.Name = "";
+            this.metroTextBoxSearch.CustomButton.Size = new System.Drawing.Size(21, 21);
+            this.metroTextBoxSearch.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxSearch.CustomButton.TabIndex = 1;
+            this.metroTextBoxSearch.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxSearch.CustomButton.UseSelectable = true;
+            this.metroTextBoxSearch.CustomButton.Visible = false;
+            this.metroTextBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroTextBoxSearch.Lines = new string[0];
+            this.metroTextBoxSearch.Location = new System.Drawing.Point(3, 3);
+            this.metroTextBoxSearch.MaxLength = 32767;
+            this.metroTextBoxSearch.Name = "metroTextBoxSearch";
+            this.metroTextBoxSearch.PasswordChar = '\0';
+            this.metroTextBoxSearch.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxSearch.SelectedText = "";
+            this.metroTextBoxSearch.SelectionLength = 0;
+            this.metroTextBoxSearch.SelectionStart = 0;
+            this.metroTextBoxSearch.ShortcutsEnabled = true;
+            this.metroTextBoxSearch.Size = new System.Drawing.Size(572, 23);
+            this.metroTextBoxSearch.TabIndex = 10;
+            this.metroTextBoxSearch.UseSelectable = true;
+            this.metroTextBoxSearch.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxSearch.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            this.metroTextBoxSearch.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
             // 
             // FormLpcEditor
             // 
@@ -119,5 +155,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private MetroFramework.Controls.MetroButton buttonOk;
         private System.Windows.Forms.ListBox listBox1;
+        private MetroFramework.Controls.MetroTextBox metroTextBoxSearch;
     }
 }

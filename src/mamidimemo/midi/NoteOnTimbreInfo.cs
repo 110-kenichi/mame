@@ -33,6 +33,15 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="noteOnEvent"></param>
         public NoteOnTimbreInfo(TimbreBase timbre, int timbreNo)
         {

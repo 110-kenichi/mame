@@ -1,4 +1,4 @@
-MAmidiMEmo 3.0.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.1.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -56,6 +56,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		CM-32P This is an incomplete simulator, not an emulator.
 		       You can mod and add your custom sounds by editing tbl and sound font files.
 		       Please contact me if you can help me to create CM-32P and SN-U110 sound fonts.
+		TMS5220, SP0256
 
    Note: You can add the chip up to 8 per same chip type and MAmidiMEmo eats more CPU power.
 
@@ -248,6 +249,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.1.0.0 Added SP0256 Chip.
 3.0.0.0 Added TMS5220 Chip and preset voices.
 2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
         Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
@@ -454,3 +456,6 @@ https://github.com/coder0xff/FastDelegate.Net
 
 * ArminJo/Talkie
 https://github.com/ArminJo/Talkie
+
+* SP0256-AL2 ROM Image
+http://spatula-city.org/~im14u2c/sp0256-al2/

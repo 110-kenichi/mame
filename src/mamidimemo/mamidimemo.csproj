@@ -424,6 +424,12 @@
     <Compile Include="Gui\FMEditor\FormFmEditor.Designer.cs">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FormAllophonesEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormAllophonesEditor.Designer.cs">
+      <DependentUpon>FormAllophonesEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormProgress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -450,6 +456,7 @@
     <Compile Include="Gui\FormLpcEditor.Designer.cs">
       <DependentUpon>FormLpcEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\AllophonesUITypeEditor.cs" />
     <Compile Include="Gui\OscUtility.cs" />
     <Compile Include="Gui\EnvelopeUITypeEditor.cs" />
     <Compile Include="Gui\EnvelopeEditorAttribute.cs" />
@@ -538,6 +545,7 @@
     <Compile Include="Instruments\Chips\SIDBase.cs" />
     <Compile Include="Instruments\Chips\Beep.cs" />
     <Compile Include="Instruments\Chips\SN76496.cs" />
+    <Compile Include="Instruments\Chips\SP0256.cs" />
     <Compile Include="Instruments\Chips\TMS5220.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
@@ -771,6 +779,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.resx">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormAllophonesEditor.resx">
+      <DependentUpon>FormAllophonesEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormProgress.resx">
       <DependentUpon>FormProgress.cs</DependentUpon>
@@ -1018,6 +1029,7 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />
     <None Include="scci.dll">
