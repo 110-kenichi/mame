@@ -189,7 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
-    <Compile Include="ComponentModel\CacheMemory.cs" />
     <Compile Include="ComponentModel\EmptyTypeConverter.cs" />
     <Compile Include="ComponentModel\EnumTypeEditor.cs" />
     <Compile Include="ComponentModel\EnumConverter.cs" />
