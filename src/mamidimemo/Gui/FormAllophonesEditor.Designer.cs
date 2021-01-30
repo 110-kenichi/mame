@@ -165,12 +165,12 @@
             // 
             // metroTextBoxAllophones
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxAllophones, 4);
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxAllophones, 5);
             // 
             // 
             // 
             this.metroTextBoxAllophones.CustomButton.Image = null;
-            this.metroTextBoxAllophones.CustomButton.Location = new System.Drawing.Point(728, 1);
+            this.metroTextBoxAllophones.CustomButton.Location = new System.Drawing.Point(809, 1);
             this.metroTextBoxAllophones.CustomButton.Name = "";
             this.metroTextBoxAllophones.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.metroTextBoxAllophones.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -189,7 +189,7 @@
             this.metroTextBoxAllophones.SelectionLength = 0;
             this.metroTextBoxAllophones.SelectionStart = 0;
             this.metroTextBoxAllophones.ShortcutsEnabled = true;
-            this.metroTextBoxAllophones.Size = new System.Drawing.Size(750, 23);
+            this.metroTextBoxAllophones.Size = new System.Drawing.Size(831, 23);
             this.metroTextBoxAllophones.TabIndex = 0;
             this.metroTextBoxAllophones.UseSelectable = true;
             this.metroTextBoxAllophones.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
