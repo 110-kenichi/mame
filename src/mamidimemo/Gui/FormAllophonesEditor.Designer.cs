@@ -170,7 +170,7 @@
             // 
             // 
             this.metroTextBoxAllophones.CustomButton.Image = null;
-            this.metroTextBoxAllophones.CustomButton.Location = new System.Drawing.Point(809, 1);
+            this.metroTextBoxAllophones.CustomButton.Location = new System.Drawing.Point(728, 1);
             this.metroTextBoxAllophones.CustomButton.Name = "";
             this.metroTextBoxAllophones.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.metroTextBoxAllophones.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -285,8 +285,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(831, 513);
             this.tableLayoutPanel2.TabIndex = 11;
-            this.tableLayoutPanel2.Click += new System.EventHandler(this.metroButton2_Click);
-            this.tableLayoutPanel2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseDown);
             this.tableLayoutPanel2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseUp);
             // 
             // metroButton65
