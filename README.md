@@ -1,4 +1,4 @@
-MAmidiMEmo 3.2.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.2.0.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -256,7 +256,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.2.0.0 Added the SAM is a TTS software.
+3.2.0.1 Fixed SAM icon.
+3.2.0.0 Added the SAM is a TTS software for consoles of the ATARI and AMIGA.
 3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
 3.1.0.0 Added SP0256 Chip.
 3.0.0.0 Added TMS5220 Chip and preset voices.

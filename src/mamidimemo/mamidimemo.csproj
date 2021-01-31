@@ -1040,6 +1040,7 @@
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
     <None Include="Resources\cmudict-0.7b.txt" />
+    <None Include="Resources\SAM.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

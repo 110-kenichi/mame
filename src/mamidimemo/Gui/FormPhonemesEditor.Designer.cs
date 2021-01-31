@@ -96,9 +96,9 @@
             this.metroButton55 = new MetroFramework.Controls.MetroButton();
             this.metroButton56 = new MetroFramework.Controls.MetroButton();
             this.metroButton57 = new MetroFramework.Controls.MetroButton();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.metroButton22 = new MetroFramework.Controls.MetroButton();
             this.metroButton23 = new MetroFramework.Controls.MetroButton();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -958,7 +958,7 @@
             this.metroButton47.Name = "metroButton47";
             this.metroButton47.Size = new System.Drawing.Size(97, 58);
             this.metroButton47.TabIndex = 43;
-            this.metroButton47.Text = "/H\r\nahead\r\n";
+            this.metroButton47.Text = "/H\r\nahead";
             this.metroButton47.UseSelectable = true;
             this.metroButton47.Click += new System.EventHandler(this.metroButton2_Click);
             this.metroButton47.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseDown);
@@ -1094,17 +1094,6 @@
             this.metroButton57.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseDown);
             this.metroButton57.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseUp);
             // 
-            // metroButton1
-            // 
-            this.metroButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButton1.Location = new System.Drawing.Point(759, 551);
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(75, 23);
-            this.metroButton1.TabIndex = 12;
-            this.metroButton1.Text = "&Help";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
-            // 
             // metroButton22
             // 
             this.metroButton22.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1130,6 +1119,17 @@
             this.metroButton23.Click += new System.EventHandler(this.metroButton2_Click);
             this.metroButton23.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseDown);
             this.metroButton23.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButton2_MouseUp);
+            // 
+            // metroButton1
+            // 
+            this.metroButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroButton1.Location = new System.Drawing.Point(759, 551);
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.Size = new System.Drawing.Size(75, 23);
+            this.metroButton1.TabIndex = 12;
+            this.metroButton1.Text = "&Help";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // FormPhonemesEditor
             // 
