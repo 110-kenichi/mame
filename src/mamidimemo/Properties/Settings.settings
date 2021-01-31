@@ -125,5 +125,8 @@
     <Setting Name="AllophonesEdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
+    <Setting Name="PhonemesEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

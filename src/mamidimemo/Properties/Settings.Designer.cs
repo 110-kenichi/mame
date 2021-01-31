@@ -514,5 +514,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["AllophonesEdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size PhonemesEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["PhonemesEdSize"]));
+            }
+            set {
+                this["PhonemesEdSize"] = value;
+            }
+        }
     }
 }

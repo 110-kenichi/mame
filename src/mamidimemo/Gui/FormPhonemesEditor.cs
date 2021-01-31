@@ -64,7 +64,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             metroTextBoxAllophones.Text = timbre.Phonemes;
 
-            Size = Settings.Default.AllophonesEdSize;
+            Size = Settings.Default.PhonemesEdSize;
         }
 
 
@@ -76,7 +76,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             base.OnClosing(e);
 
-            Settings.Default.AllophonesEdSize = Size;
+            Settings.Default.PhonemesEdSize = Size;
         }
 
         private TaggedNoteOnEvent noteOnEvent;
