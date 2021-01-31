@@ -98,3 +98,7 @@ Release(but Debug .NET)
 /src/LegacyWrapper/LegacyWrapperClient/bin
 /src/ScciInterface/obj
 /src/ScciInterface/bin
+/src/SAM/x64
+/src/SAM/Release
+/src/SAM/Debug
+/src/SAM/SAM.vcxproj.user

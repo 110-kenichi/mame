@@ -275,7 +275,6 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\namco.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\nes_apu.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\nes_defs.h" />
-    <ClInclude Include="..\..\..\..\..\src\devices\sound\okiadpcm.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\pokey.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\samples.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sid.h" />
@@ -350,7 +349,6 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\mt32.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\namco.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\nes_apu.cpp" />
-    <ClCompile Include="..\..\..\..\..\src\devices\sound\okiadpcm.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\pokey.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\samples.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sid.cpp" />

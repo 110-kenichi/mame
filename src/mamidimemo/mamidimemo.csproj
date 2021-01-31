@@ -531,6 +531,7 @@
     <Compile Include="Instruments\Chips\CM32P.cs" />
     <Compile Include="Instruments\Chips\MT32.cs" />
     <Compile Include="Instruments\Chips\POKEY.cs" />
+    <Compile Include="Instruments\Chips\SAM.cs" />
     <Compile Include="Instruments\Chips\SPC700.cs" />
     <Compile Include="Instruments\Chips\C140.cs" />
     <Compile Include="Instruments\Chips\HuC6280.cs" />

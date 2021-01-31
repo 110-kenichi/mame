@@ -282,7 +282,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private const float DEFAULT_GAIN = 0.5f;
+        private const float DEFAULT_GAIN = 1.0f;
 
         public override bool ShouldSerializeGainLeft()
         {
@@ -915,7 +915,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set words to convert to allophones.")]
+            [Description("Set words to convert to allophones.  Base frequency is 440Hz(A4).")]
             [DefaultValue(null)]
             public string Words
             {
@@ -986,7 +986,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set allophones. 440Hz(A4) is a base frequency.")]
+            [Description("Set allophones.  Base frequency is 440Hz(A4).")]
             [DefaultValue(null)]
             [Editor(typeof(AllophonesUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
             public string Allophones

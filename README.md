@@ -56,7 +56,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		CM-32P This is an incomplete simulator, not an emulator.
 		       You can mod and add your custom sounds by editing tbl and sound font files.
 		       Please contact me if you can help me to create CM-32P and SN-U110 sound fonts.
-		TMS5220, SP0256
+		TMS5220, SP0256, SAM
 
    Note: You can add the chip up to 8 per same chip type and MAmidiMEmo eats more CPU power.
 
@@ -149,6 +149,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	TMS5220
 	 https://www.dexsilicium.com/tms5220.pdf
      http://www.stuartconner.me.uk/ti_portable_speech_lab/ti_portable_speech_lab.htm
+
+	SP0256
+	 http://spatula-city.org/~im14u2c/sp0256-al2/Archer_SP0256-AL2.pdf
+
+	SAM
+	 https://github.com/s-macke/SAM
+	 http://www.retrobits.net/atari/sam.shtml
 
    *[Channels]
     Select which MIDI ch messages the chip receives.
@@ -249,6 +256,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.2.0.0 Added the SAM is a TTS software.
 3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
 3.1.0.0 Added SP0256 Chip.
 3.0.0.0 Added TMS5220 Chip and preset voices.
@@ -455,11 +463,14 @@ https://github.com/CodefoundryDE/LegacyWrapper
 * FastDelegate.Net - Copyright (c) 2015 coder0xff
 https://github.com/coder0xff/FastDelegate.Net
 
-* ArminJo/Talkie
+* ArminJo/Talkie - Peter Knight.
 https://github.com/ArminJo/Talkie
 
-* SP0256-AL2 ROM Image
+* SP0256-AL2 ROM Image - Microchip
 http://spatula-city.org/~im14u2c/sp0256-al2/
 
-* The CMU Pronouncing Dictionary
+* The CMU Pronouncing Dictionary - CMU
 http://www.speech.cs.cmu.edu/cgi-bin/cmudict
+
+* SAM - Sebastian Macke
+https://github.com/s-macke/SAM

@@ -34,6 +34,7 @@
 #include "sound/2608intf.h"
 #include "sound/tms5220.h"
 #include "sound/sp0256.h"
+#include "sound/samples.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -188,10 +189,14 @@ public:
 			strcpy(device_names[didx][i], (std::string("sp0256_") + num).c_str());
 			m_sp0256[i] = new optional_device<sp0256_device>(*this, device_names[didx][i]);
 			didx++;
+			//sam
+			strcpy(device_names[didx][i], (std::string("sam_") + num).c_str());
+			m_sam[i] = new optional_device<samples_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 26 ][8][100];
+	char device_names[ 27 ][8][100];
 	optional_device<ym2151_device> *m_ym2151[8];	//1
 	optional_device<ym2612_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -217,6 +222,7 @@ public:
 	optional_device<ym2608_device> *m_ym2608[8];	//23
 	optional_device<tms5220_device> *m_tms5220[8];	//24
 	optional_device<sp0256_device>* m_sp0256[8];	//25
+	optional_device<samples_device>* m_sam[8];	//26
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

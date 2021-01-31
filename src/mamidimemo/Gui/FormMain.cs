@@ -196,6 +196,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("YM2608", Resources.YM2608);
             imageList1.Images.Add("TMS5220", Resources.TMS5220);
             imageList1.Images.Add("SP0256", Resources.SP0256);
+            imageList1.Images.Add("SAM", Resources.Beep);
 
             if (Program.IsVSTiMode())
             {
@@ -642,11 +643,16 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.TMS5220);
         }
 
-
         private void extendSP0256AL2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.SP0256);
         }
+
+        private void extendSAMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.SAM);
+        }
+
 
         /// <summary>
         /// 
@@ -1608,5 +1614,6 @@ namespace zanac.MAmidiMEmo.Gui
         {
             Process.Start("https://github.com/110-kenichi/mame/blob/master/docs/MAmidiMEmo/Manual.pdf");
         }
+
     }
 }

@@ -35,6 +35,7 @@
 #include "..\devices\sound\2608intf.h"
 #include "..\devices\sound\tms5220.h"
 #include "..\devices\sound\sp0256.h"
+#include "..\devices\sound\samples.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -1649,7 +1650,7 @@ extern "C"
 
 	DllExport void sp0256_ald_w(unsigned int unitNumber, unsigned char data)
 	{
-		if (tms5220_devices[unitNumber] == NULL)
+		if (sp0256_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -1670,7 +1671,7 @@ extern "C"
 
 	DllExport int sp0256_sby_r(unsigned int unitNumber)
 	{
-		if (tms5220_devices[unitNumber] == NULL)
+		if (sp0256_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -1691,7 +1692,7 @@ extern "C"
 
 	DllExport int sp0256_lrq_r(unsigned int unitNumber)
 	{
-		if (tms5220_devices[unitNumber] == NULL)
+		if (sp0256_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -1712,7 +1713,7 @@ extern "C"
 
 	DllExport void sp0256_set_clock(unsigned int unitNumber, int clock)
 	{
-		if (tms5220_devices[unitNumber] == NULL)
+		if (sp0256_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -1729,6 +1730,92 @@ extern "C"
 			sp0256_devices[unitNumber] = sp0256;
 		}
 		 sp0256_devices[unitNumber]->set_clock(clock);
+	}
+
+	samples_device* sam_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void sam_start_raw(unsigned int unitNumber, uint8_t channel, const int16_t* sampledata, uint32_t samples, uint32_t frequency, bool loop)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			samples_device* sam = dynamic_cast<samples_device*>(rm->device((std::string("sam_") + num).c_str()));
+			if (sam == nullptr)
+				return;
+
+			sam_devices[unitNumber] = sam;
+		}
+		sam_devices[unitNumber]->start_raw(channel, sampledata,samples, frequency, loop);
+	}
+
+	DllExport void sam_stop(unsigned int unitNumber, uint8_t channel)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			samples_device* sam = dynamic_cast<samples_device*>(rm->device((std::string("sam_") + num).c_str()));
+			if (sam == nullptr)
+				return;
+
+			sam_devices[unitNumber] = sam;
+		}
+		sam_devices[unitNumber]->stop(channel);
+	}
+
+	DllExport void sam_set_frequency(unsigned int unitNumber, uint8_t channel, uint32_t frequency)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			samples_device* sam = dynamic_cast<samples_device*>(rm->device((std::string("sam_") + num).c_str()));
+			if (sam == nullptr)
+				return;
+
+			sam_devices[unitNumber] = sam;
+		}
+		sam_devices[unitNumber]->set_frequency(channel, frequency);
+	}
+
+	DllExport void sam_set_volume(unsigned int unitNumber, uint8_t channel, float volume)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			samples_device* sam = dynamic_cast<samples_device*>(rm->device((std::string("sam_") + num).c_str()));
+			if (sam == nullptr)
+				return;
+
+			sam_devices[unitNumber] = sam;
+		}
+		sam_devices[unitNumber]->set_volume(channel, volume);
 	}
 
 }
