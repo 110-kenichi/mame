@@ -307,6 +307,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DllImport("SAM.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
         static extern int GetBufferLength();
 
+        [DllImport("SAM.dll", SetLastError = true, CallingConvention = CallingConvention.Cdecl)]
+        static extern IntPtr TextToPhonemes(string input);
+
         /// <summary>
         /// 
         /// </summary>
@@ -570,6 +573,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             return;
 
                         len = GetBufferLength() / 50;
+                        if (len == 0)
+                            return;
                         tmpBuf = new byte[len];
                         Marshal.Copy(GetBuffer(), tmpBuf, 0, len);
                     }
@@ -587,6 +592,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 else
                 {
                     var data = timbre.WaveData;
+                    if (data == null || data.Length == 0)
+                        return;
                     lock (lockObject)
                     {
                         bufferPtr = Marshal.AllocHGlobal(data.Length * 2);
@@ -644,8 +651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set natural words (MAX: 255 bytes). Base frequency is 440Hz(A4).\r\n" +
-                "This value is exclusive to the Phonemes property.")]
+            [Description("Set natural words tp convert to Phonemes (MAX: 252 bytes). Base frequency is 440Hz(A4).")]
             [DefaultValue(null)]
             public string Words
             {
@@ -657,10 +663,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (words != value)
                     {
-                        words = value;
-                        phonemes = null;
-
-                        recreateWaveDataq();
+                        var old = words;
+                        if (!string.IsNullOrWhiteSpace(value))
+                        {
+                            string cnv = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(value));
+                            IntPtr ptr = TextToPhonemes(cnv);
+                            if (ptr != IntPtr.Zero)
+                            {
+                                words = value;
+                                var rv = Marshal.PtrToStringAnsi(ptr);
+                                Phonemes = rv.Trim();
+                                words = value;
+                            }
+                        }
+                        else
+                        {
+                            words = null;
+                            Phonemes = null;
+                        }
                     }
                 }
             }
@@ -669,11 +689,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set phonemes (MAX: 255 bytes). Base frequency is 440Hz(A4).\r\n" +
-                "See the http://www.retrobits.net/atari/sam.shtml" +
-                "This value is exclusive to the Words property.")]
+            [Description("Set phonemes (MAX: 252 bytes). Base frequency is 440Hz(A4).\r\n" +
+                "See the http://www.retrobits.net/atari/sam.shtml for more details")]
             [DefaultValue(null)]
-            //TODO: [Editor(typeof(AllophonesUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+            [Editor(typeof(PhonemesUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
             public string Phonemes
             {
                 get
@@ -684,10 +703,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (phonemes != value)
                     {
-                        phonemes = value;
-                        words = null;
-
-                        recreateWaveDataq();
+                        if (createWaveData(value))
+                        {
+                            phonemes = value;
+                            words = null;
+                        }
                     }
                 }
             }
@@ -708,9 +728,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (sing != value)
                     {
+                        var old = sing;
                         sing = value;
-
-                        recreateWaveDataq();
+                        if (!createWaveData(Phonemes))
+                            sing = old;
                     }
                 }
             }
@@ -731,9 +752,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (pitch != value)
                     {
+                        var old = pitch;
                         pitch = value;
-
-                        recreateWaveDataq();
+                        if (!createWaveData(Phonemes))
+                            pitch = old;
                     }
                 }
             }
@@ -754,9 +776,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (speed != value)
                     {
+                        var old = speed;
                         speed = value;
-
-                        recreateWaveDataq();
+                        if (!createWaveData(Phonemes))
+                            speed = old;
                     }
                 }
             }
@@ -777,9 +800,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (mouse != value)
                     {
+                        var old = mouse;
                         mouse = value;
-
-                        recreateWaveDataq();
+                        if (!createWaveData(Phonemes))
+                            mouse = old;
                     }
                 }
             }
@@ -800,9 +824,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (throat != value)
                     {
+                        var old = throat;
                         throat = value;
-
-                        recreateWaveDataq();
+                        if (!createWaveData(Phonemes))
+                            throat = old;
                     }
                 }
             }
@@ -825,28 +850,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
-            private void recreateWaveDataq()
+            private bool createWaveData(string phonemes)
             {
                 int result = -1;
                 byte[] tmpBuf = null;
-                lock (samLockObject)
+                if (!string.IsNullOrWhiteSpace(phonemes))
                 {
-                    if (Words != null)
-                        result = SaySAM(Words, 0, SingMode ? (byte)1 : (byte)0, Pitch, Speed, Mouse, Throat);
-                    else if (Phonemes != null)
-                        result = SaySAM(Phonemes, 1, SingMode ? (byte)1 : (byte)0, Pitch, Speed, Mouse, Throat);
+                    lock (samLockObject)
+                    {
+                        result = SaySAM(phonemes, 1, SingMode ? (byte)1 : (byte)0, Pitch, Speed, Mouse, Throat);
+                        if (result != 0)
+                            return false;
 
-                    if (result != 0)
-                        return;
+                        WaveDataLength = GetBufferLength() / 50;
 
-                    WaveDataLength = GetBufferLength() / 50;
-
-                    tmpBuf = new byte[WaveDataLength];
-                    Marshal.Copy(GetBuffer(), tmpBuf, 0, WaveDataLength);
+                        tmpBuf = new byte[WaveDataLength];
+                        Marshal.Copy(GetBuffer(), tmpBuf, 0, WaveDataLength);
+                    }
+                    WaveData = new short[WaveDataLength];
+                    for (int i = 0; i < WaveDataLength; i++)
+                        WaveData[i] = (short)((tmpBuf[i] ^ 0x80) << 8);
                 }
-                WaveData = new short[WaveDataLength];
-                for (int i = 0; i < WaveDataLength; i++)
-                    WaveData[i] = (short)((tmpBuf[i] ^ 0x80) << 8);
+                else
+                {
+                    WaveData = null;
+                    WaveDataLength = 0;
+                }
+                return true;
             }
 
             /// <summary>

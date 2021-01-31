@@ -42,7 +42,35 @@ unsigned char GetRuleByte(unsigned short mem62, unsigned char Y)
     return rules[address+Y];
 }
 
-int TextToPhonemes(unsigned char *input) // Code36484
+unsigned char input[256];
+
+__declspec(dllexport) unsigned char* TextToPhonemes(unsigned char* input2) // Code36484
+{
+    for (int i = 0; i < 256; i++)
+        input[i] = 0;
+
+    strncat(input, input2, 252);
+    strncat(input, " ", 1);
+
+    for (int i = 0; input[i] != 0; i++)
+        input[i] = toupper((int)input[i]);
+
+    strncat(input, "[", 1);
+
+    if (!TextToPhonemesCore(input))
+        return 0;
+    else
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            if(input[i] == 155)
+                input[i] = 0;
+        }
+        return input;
+    }
+}
+
+int TextToPhonemesCore(unsigned char* input) // Code36484
 {
     //unsigned char *tab39445 = &mem[39445];   //input and output
     //unsigned char mem29;

@@ -3,3 +3,4 @@ EXPORTS
 	SaySAM
 	GetBuffer
 	GetBufferLength
+	TextToPhonemes

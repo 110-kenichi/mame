@@ -151,15 +151,21 @@ void OutputSound() {}
 
 int debug = 0;
 
-__declspec(dllexport) int SaySAM(char* input, unsigned char phonetic, unsigned char singMode, unsigned char pitch, unsigned char speed, unsigned char mouse, unsigned char throat)
+char input[256];
+
+__declspec(dllexport) int SaySAM(char* input2, unsigned char phonetic, unsigned char singMode, unsigned char pitch, unsigned char speed, unsigned char mouse, unsigned char throat)
 {
     int i;
     //int phonetic = 0;
 
     char* wavfilename = NULL;
-    //char input[256];
 
-    //for(i=0; i<256; i++) input[i] = 0;
+    for(i=0; i<256; i++)
+        input[i] = 0;
+
+    strncat(input, input2, 252);
+    strncat(input, " ", 1);
+
 
     //if (argc <= 1)
     //{
@@ -239,9 +245,9 @@ __declspec(dllexport) int SaySAM(char* input, unsigned char phonetic, unsigned c
 
     if (!phonetic)
     {
-        strncat(input, "[", 256);
+        strncat(input, "[", 1);
        
-        if (!TextToPhonemes((unsigned char *)input))
+        if (!TextToPhonemesCore((unsigned char *)input))
             return 1;
 
         //if (debug)
@@ -249,7 +255,7 @@ __declspec(dllexport) int SaySAM(char* input, unsigned char phonetic, unsigned c
     }
     else
     {
-        strncat(input, "\x9b", 256);
+        strncat(input, "\x9b", 1);
     }
 
 #ifdef USESDL

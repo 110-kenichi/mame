@@ -915,7 +915,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Set words to convert to allophones.  Base frequency is 440Hz(A4).")]
+            [Description("Set natural words to convert to allophones.  Base frequency is 440Hz(A4).")]
             [DefaultValue(null)]
             public string Words
             {
@@ -943,7 +943,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         words = value;
 
-                        if (words != null)
+                        if (!string.IsNullOrWhiteSpace(words))
                         {
                             var awords = words.Split(new char[] { ' ' },
                                 StringSplitOptions.RemoveEmptyEntries);
@@ -976,7 +976,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append(AllophoneTable[lpc]);
                                 sb.Append(" ");
                             }
-                            Allophones = sb.ToString();
+                            var t = sb.ToString();
+                            Allophones = t.Trim();
+                            words = t;
                         }
                     }
                 }
@@ -1017,6 +1019,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         allophones = sb.ToString().Trim();
                         RawAllophones = data.ToArray();
+                        words = null;
                     }
                 }
             }

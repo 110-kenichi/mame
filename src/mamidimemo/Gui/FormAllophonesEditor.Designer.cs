@@ -158,7 +158,7 @@
             this.metroButtonPlay.Name = "metroButtonPlay";
             this.metroButtonPlay.Size = new System.Drawing.Size(75, 23);
             this.metroButtonPlay.TabIndex = 1;
-            this.metroButtonPlay.Text = "&Play";
+            this.metroButtonPlay.Text = "Play";
             this.metroButtonPlay.UseSelectable = true;
             this.metroButtonPlay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButtonPlay_MouseDown);
             this.metroButtonPlay.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButtonPlay_MouseUp);

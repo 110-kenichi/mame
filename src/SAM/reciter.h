@@ -3,6 +3,8 @@
 
 //int TextToPhonemes(char *input, char *output);
 
-int TextToPhonemes(unsigned char *input);
+__declspec(dllexport) unsigned char* TextToPhonemes(unsigned char *input);
+
+int TextToPhonemesCore(unsigned char* input);
 
 #endif

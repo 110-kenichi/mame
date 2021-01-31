@@ -196,6 +196,7 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gui\PhonemesUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
     <Compile Include="Gui\ClickThroughToolStrip.cs">
@@ -405,6 +406,12 @@
     <Compile Include="Gui\FMEditor\YMF262UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2612UITypeEditor.cs" />
+    <Compile Include="Gui\FormPhonemesEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormPhonemesEditor.Designer.cs">
+      <DependentUpon>FormPhonemesEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormBase.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -770,6 +777,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormPhonemesEditor.resx">
+      <DependentUpon>FormPhonemesEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormBase.resx">
       <DependentUpon>FormBase.cs</DependentUpon>
