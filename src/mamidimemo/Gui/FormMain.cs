@@ -196,7 +196,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("YM2608", Resources.YM2608);
             imageList1.Images.Add("TMS5220", Resources.TMS5220);
             imageList1.Images.Add("SP0256", Resources.SP0256);
-            imageList1.Images.Add("SAM", Resources.Beep);
+            imageList1.Images.Add("SAM", Resources.SAM);
 
             if (Program.IsVSTiMode())
             {
