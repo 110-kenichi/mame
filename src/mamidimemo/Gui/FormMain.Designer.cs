@@ -171,6 +171,8 @@
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialogMAmidi = new System.Windows.Forms.SaveFileDialog();
+            this.dISCRETEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sN76477ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -246,7 +248,8 @@
             ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups1"))),
             ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups2"))),
             ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups3"))),
-            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups4")))});
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups4"))),
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewIntruments.Groups5")))});
             this.listViewIntruments.HideSelection = false;
             this.listViewIntruments.LargeImageList = this.imageList1;
             this.listViewIntruments.Name = "listViewIntruments";
@@ -1300,7 +1303,8 @@
             this.fMSynthesisToolStripMenuItem,
             this.wSGToolStripMenuItem,
             this.pSGToolStripMenuItem,
-            this.eTCToolStripMenuItem});
+            this.eTCToolStripMenuItem,
+            this.dISCRETEToolStripMenuItem});
             resources.ApplyResources(this.toolStripDropDownButton1, "toolStripDropDownButton1");
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             // 
@@ -1580,6 +1584,19 @@
             resources.ApplyResources(this.saveFileDialogMAmidi, "saveFileDialogMAmidi");
             this.saveFileDialogMAmidi.SupportMultiDottedExtensions = true;
             // 
+            // dISCRETEToolStripMenuItem
+            // 
+            this.dISCRETEToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sN76477ToolStripMenuItem});
+            this.dISCRETEToolStripMenuItem.Name = "dISCRETEToolStripMenuItem";
+            resources.ApplyResources(this.dISCRETEToolStripMenuItem, "dISCRETEToolStripMenuItem");
+            // 
+            // sN76477ToolStripMenuItem
+            // 
+            this.sN76477ToolStripMenuItem.Name = "sN76477ToolStripMenuItem";
+            resources.ApplyResources(this.sN76477ToolStripMenuItem, "sN76477ToolStripMenuItem");
+            this.sN76477ToolStripMenuItem.Click += new System.EventHandler(this.sN76477ToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -1758,6 +1775,8 @@
         private System.Windows.Forms.ToolStripMenuItem extendSP0256AL2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem extendSAMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dISCRETEToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sN76477ToolStripMenuItem;
     }
 }
 

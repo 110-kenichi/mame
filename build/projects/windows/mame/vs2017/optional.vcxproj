@@ -283,6 +283,7 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sidvoice.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sidw6581.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sidw8580.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\sn76477.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sn76496.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\sp0256.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\tms5220.h" />
@@ -354,6 +355,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sid.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sidenvel.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sidvoice.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\sn76477.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sn76496.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sp0256.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\tms5220.cpp" />

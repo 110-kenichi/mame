@@ -38,5 +38,6 @@ namespace zanac.MAmidiMEmo.Instruments
         TMS5220,    //24
         SP0256,    //25
         SAM,    //26
+        SN76477,    //27
     }
 }

@@ -36,6 +36,7 @@
 #include "..\devices\sound\tms5220.h"
 #include "..\devices\sound\sp0256.h"
 #include "..\devices\sound\samples.h"
+#include "..\devices\sound\sn76477.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -1818,6 +1819,189 @@ extern "C"
 		sam_devices[unitNumber]->set_volume(channel, volume);
 	}
 
+	sn76477_device* sn76477_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void sn76477_logic_w(unsigned int unitNumber, uint8_t type, int state)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sn76477_device* sn76477 = dynamic_cast<sn76477_device*>(rm->device((std::string("sn76477_") + num).c_str()));
+			if (sn76477 == nullptr)
+				return;
+
+			sn76477_devices[unitNumber] = sn76477;
+		}
+		switch (type)
+		{
+			case 0:
+				sn76477_devices[unitNumber]->enable_w(state);
+				break;
+			case 1:
+				sn76477_devices[unitNumber]->mixer_a_w(state);
+				break;
+			case 2:
+				sn76477_devices[unitNumber]->mixer_b_w(state);
+				break;
+			case 3:
+				sn76477_devices[unitNumber]->mixer_c_w(state);
+				break;
+			case 4:
+				sn76477_devices[unitNumber]->envelope_1_w(state);
+				break;
+			case 5:
+				sn76477_devices[unitNumber]->envelope_2_w(state);
+				break;
+			case 6:
+				sn76477_devices[unitNumber]->vco_w(state);
+				break;
+			case 7:
+				sn76477_devices[unitNumber]->noise_clock_w(state);
+				break;
+		}
+	}
+
+
+	DllExport void sn76477_res_w(unsigned int unitNumber, uint8_t type, double data)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sn76477_device* sn76477 = dynamic_cast<sn76477_device*>(rm->device((std::string("sn76477_") + num).c_str()));
+			if (sn76477 == nullptr)
+				return;
+
+			sn76477_devices[unitNumber] = sn76477;
+		}
+		switch (type)
+		{
+			case 0:
+				sn76477_devices[unitNumber]->one_shot_res_w(data);
+				break;
+			case 1:
+				sn76477_devices[unitNumber]->slf_res_w(data);
+				break;
+			case 2:
+				sn76477_devices[unitNumber]->vco_res_w(data);
+				break;
+			case 3:
+				sn76477_devices[unitNumber]->noise_clock_res_w(data);  /* = 0 if the noise gen is clocked via noise_clock */
+				break;
+			case 4:
+				sn76477_devices[unitNumber]->noise_filter_res_w(data);
+				break;
+			case 5:
+				sn76477_devices[unitNumber]->decay_res_w(data);
+				break;
+			case 6:
+				sn76477_devices[unitNumber]->attack_res_w(data);
+				break;
+			case 7:
+				sn76477_devices[unitNumber]->amplitude_res_w(data);
+				break;
+			case 8:
+				sn76477_devices[unitNumber]->feedback_res_w(data);
+				break;
+		}
+	}
+
+
+	DllExport void sn76477_cap_w(unsigned int unitNumber, uint8_t type, double data)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sn76477_device* sn76477 = dynamic_cast<sn76477_device*>(rm->device((std::string("sn76477_") + num).c_str()));
+			if (sn76477 == nullptr)
+				return;
+
+			sn76477_devices[unitNumber] = sn76477;
+		}
+		switch (type)
+		{
+			case 0:
+				sn76477_devices[unitNumber]->one_shot_cap_w(data);
+				break;
+			case 1:
+				sn76477_devices[unitNumber]->one_shot_cap_voltage_w(data);
+				break;
+			case 2:
+				sn76477_devices[unitNumber]->slf_cap_w(data);
+				break;
+			case 3:
+				sn76477_devices[unitNumber]->slf_cap_voltage_w(data);
+				break;
+			case 4:
+				sn76477_devices[unitNumber]->vco_cap_w(data);
+				break;
+			case 5:
+				sn76477_devices[unitNumber]->vco_cap_voltage_w(data);
+				break;
+			case 6:
+				sn76477_devices[unitNumber]->noise_filter_cap_w(data);
+				break;
+			case 7:
+				sn76477_devices[unitNumber]->noise_filter_cap_voltage_w(data);
+				break;
+			case 8:
+				sn76477_devices[unitNumber]->attack_decay_cap_w(data);
+				break;
+			case 9:
+				sn76477_devices[unitNumber]->attack_decay_cap_voltage_w(data);
+				break;
+		}
+	}
+
+
+	DllExport void sn76477_voltage_w(unsigned int unitNumber, uint8_t type, double data)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			sn76477_device* sn76477 = dynamic_cast<sn76477_device*>(rm->device((std::string("sn76477_") + num).c_str()));
+			if (sn76477 == nullptr)
+				return;
+
+			sn76477_devices[unitNumber] = sn76477;
+		}
+		switch (type)
+		{
+		case 0:
+			sn76477_devices[unitNumber]->vco_voltage_w(data);
+			break;
+		case 1:
+			sn76477_devices[unitNumber]->pitch_voltage_w(data);
+			break;
+		}
+	}
 }
 
 

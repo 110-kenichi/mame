@@ -1085,6 +1085,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		SAMPLES(config, *m_sam[i], 44100);
 		(*m_sam[i])->add_route(0, "lspeaker", 1.00);
 		(*m_sam[i])->add_route(1, "rspeaker", 1.00);
+
+		SN76477(config, *m_sn76477[i], 0);
+		(*m_sn76477[i])->add_route(0, "lspeaker", 1.00);
+		(*m_sn76477[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

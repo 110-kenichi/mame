@@ -203,7 +203,7 @@ sn76477_device::sn76477_device(const machine_config &mconfig, const char *tag, d
 
 void sn76477_device::device_start()
 {
-	m_channel = machine().sound().stream_alloc(*this, 0, 1, machine().sample_rate());
+	m_channel = machine().sound().stream_alloc(*this, 0, 2, machine().sample_rate());	//mamidimemo 1-> 2
 
 	if (clock() > 0)
 	{
@@ -1721,6 +1721,7 @@ void sn76477_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 	double center_to_peak_voltage_out;
 
 	stream_sample_t *buffer = outputs[0];
+	stream_sample_t *buffer1 = outputs[1];
 
 	/* compute charging values, doing it here ensures that we always use the latest values */
 	one_shot_cap_charging_step = compute_one_shot_cap_charging_rate() / m_our_sample_rate;
@@ -1997,6 +1998,7 @@ void sn76477_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 		              \ Vcen - Vmin    /
 		 */
 		*buffer++ = (((voltage_out - OUT_LOW_CLIP_THRESHOLD) / (OUT_CENTER_LEVEL_VOLTAGE - OUT_LOW_CLIP_THRESHOLD)) - 1) * 32767;
+		*buffer1++ = (((voltage_out - OUT_LOW_CLIP_THRESHOLD) / (OUT_CENTER_LEVEL_VOLTAGE - OUT_LOW_CLIP_THRESHOLD)) - 1) * 32767;
 
 		if (LOG_WAV && (!m_enable || !LOG_WAV_ENABLED_ONLY))
 		{

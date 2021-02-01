@@ -535,6 +535,7 @@
     <Compile Include="Gui\VstUITypeEditor.cs" />
     <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
+    <Compile Include="Instruments\Chips\SN76477.cs" />
     <Compile Include="Instruments\Chips\CM32P.cs" />
     <Compile Include="Instruments\Chips\MT32.cs" />
     <Compile Include="Instruments\Chips\POKEY.cs" />
