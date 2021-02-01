@@ -742,6 +742,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Set pitch.")]
             [DefaultValue((byte)64)]
+            [SlideParametersAttribute(0, 255)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Pitch
             {
                 get
@@ -766,6 +768,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Set speed.")]
             [DefaultValue((byte)72)]
+            [SlideParametersAttribute(0, 255)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Speed
             {
                 get
@@ -790,6 +794,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Set mouse.")]
             [DefaultValue((byte)128)]
+            [SlideParametersAttribute(0, 255)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Mouse
             {
                 get
@@ -814,6 +820,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Set throat.")]
             [DefaultValue((byte)128)]
+            [SlideParametersAttribute(0, 255)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Throat
             {
                 get
