@@ -506,14 +506,14 @@ namespace zanac.MAmidiMEmo.Instruments
                             double len = dattribute.SliderMax - dattribute.SliderMin;
                             double val = len * (double)msbValue / 127d;
                             val += (len / 127d) * lsbValue / 127d;
-                            val += attribute.SliderMin;
+                            val += dattribute.SliderMin;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
                             {
                                 //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                                val = MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString()));
                                 if (val < dattribute.SliderMin)
                                     val = dattribute.SliderMin;
                                 if (val > dattribute.SliderMax)

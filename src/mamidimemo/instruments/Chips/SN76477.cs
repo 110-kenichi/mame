@@ -820,7 +820,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Noise filter Resistor\r\n" +
             "-1:Unconnected\r\n" +
             " 0:Short circuit")]
-        [DoubleSlideParametersAttribute(-1, 10 * 1000, 1000)]
+        [DoubleSlideParametersAttribute(-1, 10 * 1000, 10)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DefaultValue((double)4.7 * 1000)]
         public double NoiseFilt_R
@@ -1499,6 +1499,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
                 processSoundParams();
+
+                if (oneshotTrigger)
+                {
+                    parentModule.Inhibit = 1;
+                    parentModule.Inhibit = 0;
+                }
             }
 
             private void processSoundParams()
@@ -1590,12 +1596,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.Amp_R = timbre.Etc.Amp_R.Value;
                     if (timbre.Etc.Feedback_R.HasValue)
                         parentModule.Feedback_R = timbre.Etc.Feedback_R.Value;
-                }
-
-                if (oneshotTrigger)
-                {
-                    parentModule.Inhibit = 1;
-                    parentModule.Inhibit = 0;
                 }
 
                 OnPitchUpdated();
@@ -2531,7 +2531,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Noise filter Resistor\r\n" +
                 "-1:Unconnected\r\n" +
                 " 0:Short circuit")]
-            [DoubleSlideParametersAttribute(-1, 10 * 1000, 1000)]
+            [DoubleSlideParametersAttribute(-1, 10 * 1000, 10)]
             [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(null)]
             public double? NoiseFilt_R
