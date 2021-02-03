@@ -70,7 +70,8 @@ void spg2xx_device::internal_map(address_map &map)
 {
 	map(0x000000, 0x0027ff).ram();
 	map(0x002800, 0x0028ff).rw(m_spg_video, FUNC(spg2xx_video_device::video_r), FUNC(spg2xx_video_device::video_w));
-	map(0x002900, 0x002aff).ram().share("spgvideo:scrollram");
+	map(0x002900, 0x0029ff).ram().share("spgvideo:scrollram");
+	map(0x002a00, 0x002aff).ram().share("spgvideo:hcompram"); // not all models?
 	map(0x002b00, 0x002bff).ram().share("spgvideo:paletteram");
 	map(0x002c00, 0x002fff).ram().share("spgvideo:spriteram");
 	map(0x003000, 0x0031ff).rw(m_spg_audio, FUNC(spg2xx_audio_device::audio_r), FUNC(spg2xx_audio_device::audio_w));
@@ -111,7 +112,7 @@ void spg2xx_device::device_reset()
 	m_fiq_vector = 0xff;
 }
 
-WRITE8_MEMBER(spg2xx_device::fiq_vector_w)
+void spg2xx_device::fiq_vector_w(uint8_t data)
 {
 	m_fiq_vector = data;
 }
@@ -165,7 +166,7 @@ WRITE_LINE_MEMBER(spg2xx_device::ffreq2_w)
 
 
 
-READ16_MEMBER(spg2xx_device::space_r)
+uint16_t spg2xx_device::space_r(offs_t offset)
 {
 	address_space &cpuspace = this->space(AS_PROGRAM);
 	return cpuspace.read_word(offset);

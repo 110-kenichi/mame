@@ -231,6 +231,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\src\emu\debug\points.h" />
+    <ClInclude Include="..\..\..\..\..\src\emu\dirom.ipp" />
     <ClInclude Include="..\..\..\..\..\src\emu\emu.h" />
     <ClInclude Include="..\..\..\..\..\src\emu\emufwd.h" />
     <ClInclude Include="..\..\..\..\..\src\emu\main.h" />
@@ -342,6 +344,7 @@
     <ClInclude Include="..\..\..\..\..\src\emu\video\rgbvmx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\src\emu\debug\points.cpp" />
     <ClCompile Include="..\..\..\..\..\src\emu\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -393,8 +396,6 @@
     <ClCompile Include="..\..\..\..\..\src\emu\dipalette.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\emu\dipty.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\src\emu\dirom.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\emu\dirtc.cpp">
     </ClCompile>

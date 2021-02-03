@@ -105,7 +105,7 @@ private:
 	DECLARE_READ8_MEMBER(psg1_4015_r);
 	DECLARE_WRITE8_MEMBER(psg1_4015_w);
 	DECLARE_WRITE8_MEMBER(psg1_4017_w);
-	DECLARE_READ8_MEMBER(apu_read_mem);
+	uint8_t apu_read_mem(offs_t offset);
 
 	DECLARE_WRITE_LINE_MEMBER(apu_irq);
 
@@ -432,7 +432,7 @@ WRITE_LINE_MEMBER(nes_sh6578_state::apu_irq)
 	// unimplemented
 }
 
-READ8_MEMBER(nes_sh6578_state::apu_read_mem)
+uint8_t nes_sh6578_state::apu_read_mem(offs_t offset)
 {
 	return m_maincpu->space(AS_PROGRAM).read_byte(offset);
 }
@@ -577,7 +577,7 @@ void nes_sh6578_state::nes_sh6578(machine_config& config)
 	m_screen->set_visarea(0*8, 32*8-1, 0*8, 30*8-1);
 	m_screen->set_screen_update(FUNC(nes_sh6578_state::screen_update));
 
-	TIMER(config, m_timer).configure_periodic(FUNC(nes_sh6578_state::timer_expired), attotime::never);
+	TIMER(config, m_timer).configure_generic(FUNC(nes_sh6578_state::timer_expired));
 
 	/* sound hardware */
 	SPEAKER(config, "mono").front_center();

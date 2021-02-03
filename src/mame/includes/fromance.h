@@ -45,7 +45,7 @@ public:
 
 	void init_common();
 
-	DECLARE_WRITE8_MEMBER(fromance_gga_data_w);
+	void fromance_gga_data_w(offs_t offset, uint8_t data);
 
 protected:
 	required_device<cpu_device> m_maincpu;
@@ -57,7 +57,7 @@ protected:
 	required_device<vsystem_gga_device> m_gga;
 	optional_device<vsystem_spr2_device> m_spr_old; // only used by pipe dream, split this state up and clean things...
 
-	DECLARE_WRITE8_MEMBER(fromance_gfxreg_w);
+	void fromance_gfxreg_w(uint8_t data);
 	DECLARE_READ8_MEMBER(fromance_videoram_r);
 	DECLARE_WRITE8_MEMBER(fromance_videoram_w);
 	DECLARE_WRITE8_MEMBER(fromance_scroll_w);

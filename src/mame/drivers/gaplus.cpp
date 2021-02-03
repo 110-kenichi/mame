@@ -364,7 +364,7 @@ static INPUT_PORTS_START( gaplus )
 	PORT_DIPNAME( 0x08, 0x08, "Round Advance" ) PORT_DIPLOCATION("SW2:5")
 	PORT_DIPSETTING(    0x08, DEF_STR( Off ) )
 	PORT_DIPSETTING(    0x00, DEF_STR( On ) )
-	PORT_DIPNAME( 0x07, 0x00, DEF_STR( Bonus_Life ) ) PORT_DIPLOCATION("SW2:6,7,8")
+	PORT_DIPNAME( 0x07, 0x07, DEF_STR( Bonus_Life ) ) PORT_DIPLOCATION("SW2:6,7,8")
 	PORT_DIPSETTING(    0x00, "30k 70k and every 70k" )
 	PORT_DIPSETTING(    0x01, "30k 100k and every 100k" )
 	PORT_DIPSETTING(    0x02, "30k 100k and every 200k" )
@@ -484,7 +484,7 @@ static const char *const gaplus_sample_names[] =
 
 ***************************************************************************/
 
-WRITE8_MEMBER(gaplus_state::out_lamps0)
+void gaplus_state::out_lamps0(uint8_t data)
 {
 	m_lamps[0] = BIT(data, 0);
 	m_lamps[1] = BIT(data, 1);
@@ -492,7 +492,7 @@ WRITE8_MEMBER(gaplus_state::out_lamps0)
 	machine().bookkeeping().coin_counter_w(0, ~data & 8);
 }
 
-WRITE8_MEMBER(gaplus_state::out_lamps1)
+void gaplus_state::out_lamps1(uint8_t data)
 {
 	machine().bookkeeping().coin_counter_w(1, ~data & 1);
 }

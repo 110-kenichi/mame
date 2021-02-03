@@ -130,7 +130,7 @@ READ8_MEMBER( osborne1_state::opcode_r )
 	}
 
 	// Now that's sorted out we can call the normal read handler
-	return m_mem_cache->read_byte(offset);
+	return m_mem_cache.read_byte(offset);
 }
 
 WRITE8_MEMBER( osborne1_state::bankswitch_w )
@@ -167,7 +167,7 @@ WRITE_LINE_MEMBER( osborne1_state::irqack_w )
 }
 
 
-READ8_MEMBER( osborne1_state::ieee_pia_pb_r )
+uint8_t osborne1_state::ieee_pia_pb_r()
 {
 	/*
 	    bit     description
@@ -191,7 +191,7 @@ READ8_MEMBER( osborne1_state::ieee_pia_pb_r )
 	return data;
 }
 
-WRITE8_MEMBER( osborne1_state::ieee_pia_pb_w )
+void osborne1_state::ieee_pia_pb_w(uint8_t data)
 {
 	/*
 	    bit     description
@@ -218,14 +218,14 @@ WRITE_LINE_MEMBER( osborne1_state::ieee_pia_irq_a_func )
 }
 
 
-WRITE8_MEMBER( osborne1_state::video_pia_port_a_w )
+void osborne1_state::video_pia_port_a_w(uint8_t data)
 {
 	m_scroll_x = data >> 1;
 
 	m_fdc->dden_w(BIT(data, 0));
 }
 
-WRITE8_MEMBER( osborne1_state::video_pia_port_b_w )
+void osborne1_state::video_pia_port_b_w(uint8_t data)
 {
 	m_speaker->level_w((BIT(data, 5) && m_beep_state) ? 1 : 0);
 
@@ -287,7 +287,7 @@ void osborne1_state::machine_start()
 
 	m_acia_rxc_txc_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(osborne1_state::acia_rxc_txc_callback), this));
 
-	m_mem_cache = m_maincpu->space(AS_PROGRAM).cache<0, 0, ENDIANNESS_LITTLE>();
+	m_maincpu->space(AS_PROGRAM).cache(m_mem_cache);
 
 	save_item(NAME(m_acia_rxc_txc_div));
 	save_item(NAME(m_acia_rxc_txc_p_low));

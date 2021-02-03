@@ -219,7 +219,6 @@ isbc202_device::isbc202_device(const machine_config &mconfig, const char *tag, d
 	, m_cpes(*this , "cpe%u" , 0)
 	, m_drives(*this , "floppy%u" , 0)
 	, m_program_config("microprogram" , ENDIANNESS_BIG , 32 , 9 , -2)
-	, m_cache(nullptr)
 	, m_mem_space(nullptr)
 {
 }
@@ -341,7 +340,7 @@ WRITE_LINE_MEMBER(isbc202_device::co_w)
 	m_cpes[ 3 ]->li_w(state);
 }
 
-READ8_MEMBER(isbc202_device::px_r)
+uint8_t isbc202_device::px_r()
 {
 	if (BIT(m_px_s1s0 , 0)) {
 		return m_cmd & 7;
@@ -406,7 +405,7 @@ void isbc202_device::device_start()
 	save_item(NAME(m_amwrt));
 	save_item(NAME(m_dlyd_amwrt));
 
-	m_cache = space(AS_PROGRAM).cache<2 , -2 , ENDIANNESS_BIG>();
+	space(AS_PROGRAM).cache(m_cache);
 	set_icountptr(m_icount);
 	space(AS_PROGRAM).install_rom(0 , 0x1ff , memregion("microcode")->base());
 
@@ -558,7 +557,7 @@ void isbc202_device::execute_run()
 	do {
 		m_microcode_addr = m_mcu->addr_r();
 		debugger_instruction_hook(m_microcode_addr);
-		m_code_word = m_cache->read_dword(m_microcode_addr);
+		m_code_word = m_cache.read_dword(m_microcode_addr);
 
 		// Unpack microcode into fields
 		// Bits     Field

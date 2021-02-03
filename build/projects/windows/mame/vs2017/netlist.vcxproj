@@ -287,7 +287,6 @@
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\solver\nld_ms_direct_lu.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\solver\vector_base.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_2102A.h" />
-    <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_2716.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_tms4800.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_4006.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_4020.h" />
@@ -321,8 +320,6 @@
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_74ls629.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S16.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S115.h" />
-    <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S123.h" />
-    <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S126.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_9310.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_9316.h" />
     <ClInclude Include="..\..\..\..\..\src\lib\netlist\devices\nld_9322.h" />
@@ -396,8 +393,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_2102A.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_2716.cpp">
-    </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_tms4800.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_4006.cpp">
@@ -463,10 +458,6 @@
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S16.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S115.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S123.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_82S126.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\src\lib\netlist\devices\nld_9310.cpp">
     </ClCompile>

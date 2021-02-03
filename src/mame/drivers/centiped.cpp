@@ -419,6 +419,7 @@ each direction to assign the boundries.
 
 #include "cpu/m6502/m6502.h"
 #include "cpu/s2650/s2650.h"
+#include "machine/rescap.h"
 #include "machine/watchdog.h"
 #include "sound/sn76496.h"
 #include "sound/pokey.h"
@@ -615,7 +616,7 @@ READ8_MEMBER(centiped_state::bullsdrt_data_port_r)
  *
  *************************************/
 
-READ8_MEMBER(centiped_state::caterplr_unknown_r)
+uint8_t centiped_state::caterplr_unknown_r()
 {
 	return machine().rand() % 0xff;
 }

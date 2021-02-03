@@ -57,8 +57,7 @@ public:
 		m_p_chargen(*this, "chargen"),
 		m_video_timer(nullptr),
 		m_tilemap(nullptr),
-		m_acia_rxc_txc_timer(nullptr),
-		m_mem_cache(nullptr)
+		m_acia_rxc_txc_timer(nullptr)
 	{
 	}
 
@@ -98,12 +97,12 @@ protected:
 	required_device<pia6821_device>         m_pia1;
 
 private:
-	DECLARE_READ8_MEMBER(ieee_pia_pb_r);
-	DECLARE_WRITE8_MEMBER(ieee_pia_pb_w);
+	uint8_t ieee_pia_pb_r();
+	void ieee_pia_pb_w(uint8_t data);
 	DECLARE_WRITE_LINE_MEMBER(ieee_pia_irq_a_func);
 
-	DECLARE_WRITE8_MEMBER(video_pia_port_a_w);
-	DECLARE_WRITE8_MEMBER(video_pia_port_b_w);
+	void video_pia_port_a_w(uint8_t data);
+	void video_pia_port_b_w(uint8_t data);
 	DECLARE_WRITE_LINE_MEMBER(video_pia_out_cb2_dummy);
 	DECLARE_WRITE_LINE_MEMBER(video_pia_irq_a_func);
 
@@ -166,7 +165,7 @@ private:
 	u8              m_acia_rxc_txc_state;
 	emu_timer       *m_acia_rxc_txc_timer;
 
-	memory_access_cache<0, 0, ENDIANNESS_LITTLE> *m_mem_cache;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_mem_cache;
 };
 
 

@@ -666,22 +666,22 @@ void viper_state::mpc8240_pci_w(int function, int reg, uint32_t data, uint32_t m
 
 READ64_MEMBER(viper_state::pci_config_addr_r)
 {
-	return m_lpci->read_64be(space, 0, 0xffffffff00000000U);
+	return m_lpci->read_64be(0, 0xffffffff00000000U);
 }
 
 WRITE64_MEMBER(viper_state::pci_config_addr_w)
 {
-	m_lpci->write_64be(space, 0, data, 0xffffffff00000000U);
+	m_lpci->write_64be(0, data, 0xffffffff00000000U);
 }
 
 READ64_MEMBER(viper_state::pci_config_data_r)
 {
-	return m_lpci->read_64be(space, 1, 0x00000000ffffffffU) << 32;
+	return m_lpci->read_64be(1, 0x00000000ffffffffU) << 32;
 }
 
 WRITE64_MEMBER(viper_state::pci_config_data_w)
 {
-	m_lpci->write_64be(space, 1, data >> 32, 0x00000000ffffffffU);
+	m_lpci->write_64be(1, data >> 32, 0x00000000ffffffffU);
 }
 
 
@@ -1422,7 +1422,7 @@ READ64_MEMBER(viper_state::cf_card_data_r)
 		{
 			case 0x8:   // Duplicate Even RD Data
 			{
-				r |= m_ata->read_cs0(0, mem_mask >> 16) << 16;
+				r |= m_ata->cs0_r(0, mem_mask >> 16) << 16;
 				break;
 			}
 
@@ -1443,7 +1443,7 @@ WRITE64_MEMBER(viper_state::cf_card_data_w)
 		{
 			case 0x8:   // Duplicate Even RD Data
 			{
-				m_ata->write_cs0(0, data >> 16, mem_mask >> 16);
+				m_ata->cs0_w(0, data >> 16, mem_mask >> 16);
 				break;
 			}
 
@@ -1474,7 +1474,7 @@ READ64_MEMBER(viper_state::cf_card_r)
 				case 0x6:   // Select Card/Head
 				case 0x7:   // Status
 				{
-					r |= m_ata->read_cs0(offset & 7, mem_mask >> 16) << 16;
+					r |= m_ata->cs0_r(offset & 7, mem_mask >> 16) << 16;
 					break;
 				}
 
@@ -1483,13 +1483,13 @@ READ64_MEMBER(viper_state::cf_card_r)
 
 				case 0xd:   // Duplicate Error
 				{
-					r |= m_ata->read_cs0(1, mem_mask >> 16) << 16;
+					r |= m_ata->cs0_r(1, mem_mask >> 16) << 16;
 					break;
 				}
 				case 0xe:   // Alt Status
 				case 0xf:   // Drive Address
 				{
-					r |= m_ata->read_cs1(offset & 7, mem_mask >> 16) << 16;
+					r |= m_ata->cs1_r(offset & 7, mem_mask >> 16) << 16;
 					break;
 				}
 
@@ -1539,7 +1539,7 @@ WRITE64_MEMBER(viper_state::cf_card_w)
 				case 0x6:   // Select Card/Head
 				case 0x7:   // Command
 				{
-					m_ata->write_cs0(offset & 7, data >> 16, mem_mask >> 16);
+					m_ata->cs0_w(offset & 7, data >> 16, mem_mask >> 16);
 					break;
 				}
 
@@ -1548,13 +1548,13 @@ WRITE64_MEMBER(viper_state::cf_card_w)
 
 				case 0xd:   // Duplicate Features
 				{
-					m_ata->write_cs0(1, data >> 16, mem_mask >> 16);
+					m_ata->cs0_w(1, data >> 16, mem_mask >> 16);
 					break;
 				}
 				case 0xe:   // Device Ctl
 				case 0xf:   // Reserved
 				{
-					m_ata->write_cs1(offset & 7, data >> 16, mem_mask >> 16);
+					m_ata->cs1_w(offset & 7, data >> 16, mem_mask >> 16);
 					break;
 				}
 
@@ -1609,10 +1609,10 @@ READ64_MEMBER(viper_state::ata_r)
 		switch(offset & 0x80)
 		{
 		case 0x00:
-			r |= m_ata->read_cs0(reg, mem_mask >> 16) << 16;
+			r |= m_ata->cs0_r(reg, mem_mask >> 16) << 16;
 			break;
 		case 0x80:
-			r |= m_ata->read_cs1(reg, mem_mask >> 16) << 16;
+			r |= m_ata->cs1_r(reg, mem_mask >> 16) << 16;
 			break;
 		}
 	}
@@ -1629,10 +1629,10 @@ WRITE64_MEMBER(viper_state::ata_w)
 		switch(offset & 0x80)
 		{
 		case 0x00:
-			m_ata->write_cs0(reg, data >> 16, mem_mask >> 16);
+			m_ata->cs0_w(reg, data >> 16, mem_mask >> 16);
 			break;
 		case 0x80:
-			m_ata->write_cs1(reg, data >> 16, mem_mask >> 16);
+			m_ata->cs1_w(reg, data >> 16, mem_mask >> 16);
 			break;
 		}
 	}

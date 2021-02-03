@@ -303,9 +303,6 @@ private:
 	int format_last_byte_count;
 	std::string format_description_string;
 
-	static std::string tts(const attotime &t);
-	std::string ttsn();
-
 	void delay_cycles(emu_timer *tm, int cycles);
 
 	// Device timer subfunctions
@@ -358,8 +355,11 @@ private:
 	void live_write_mfm(uint8_t mfm);
 	void live_write_fm(uint8_t fm);
 
-	void drop_drq();
 	void set_drq();
+	void drop_drq();
+
+	void set_hld();
+	void drop_hld();
 
 	void update_sso();
 };
