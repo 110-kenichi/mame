@@ -424,8 +424,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         protected virtual void OnProcessFx()
         {
-            OnPitchUpdated();
-            OnVolumeUpdated();
+            OnSoundParamsUpdated();
         }
 
         private double processAdsr(object state)

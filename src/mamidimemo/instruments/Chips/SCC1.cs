@@ -902,12 +902,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            public bool ShouldSerializeDutyEnvelopes()
+            public bool ShouldSerializeMorphEnvelopesEnvelopes()
             {
                 return !string.IsNullOrEmpty(MorphEnvelopes);
             }
 
-            public void ResetDutyEnvelopes()
+            public void ResetMorphEnvelopesEnvelopes()
             {
                 MorphEnvelopes = null;
             }

@@ -587,6 +587,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private ToneType lastToneType;
 
+            private byte lastLfoTable;
+
             /// <summary>
             /// 
             /// </summary>
@@ -777,6 +779,54 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.FDS:
                         {
+                            //Set WSG
+                            RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x80);
+                            for (int i = 0; i < timbre.FDS.WsgData.Length; i++)
+                                RP2A03WriteData(parentModule.UnitNumber, (uint)(0x40 + i), (byte)(timbre.FDS.WsgData[i]));
+                            RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x03);
+
+                            //Set LFO
+                            if (timbre.FDS.LfoFreq == 0)
+                            {
+                                RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
+                            }
+                            else
+                            {
+                                var eng = FxEngine as NesFxEngine;
+
+                                var no = (byte)(eng.LfoValue.Value & 3);
+                                if (lastLfoTable != no)
+                                {
+                                    RP2A03WriteData(parentModule.UnitNumber, 0x84, (byte)(0x80 | timbre.FDS.LfoGain));
+                                    RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)0x00);
+                                    RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x87);
+
+                                    lastLfoTable = no;
+                                    sbyte[] lfoData;
+                                    switch (no)
+                                    {
+                                        case 1:
+                                            lfoData = timbre.FDS.LfoDataMorph1;
+                                            break;
+                                        case 2:
+                                            lfoData = timbre.FDS.LfoDataMorph2;
+                                            break;
+                                        case 3:
+                                            lfoData = timbre.FDS.LfoDataMorph3;
+                                            break;
+                                        default:
+                                            lfoData = timbre.FDS.LfoData;
+                                            break;
+                                    }
+
+                                    for (int i = 0; i < lfoData.Length; i++)
+                                        RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lfoData[i]));
+
+                                    RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)(timbre.FDS.LfoFreq & 0xff));
+                                    RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)((timbre.FDS.LfoFreq >> 8) & 0xf));
+                                }
+                            }
+
                             //Volume
                             updateFdsVolume();
                             //Freq
@@ -1582,6 +1632,116 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_LfoData = new sbyte[32];
             }
 
+
+            private sbyte[] f_lfodata1 = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(3)]
+            [DataMember]
+            [Category("Sound(FDS)")]
+            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            public sbyte[] LfoDataMorph1
+            {
+                get
+                {
+                    return f_lfodata1;
+                }
+                set
+                {
+                    f_lfodata1 = value;
+                }
+            }
+
+            private sbyte[] f_lfodata2 = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(3)]
+            [DataMember]
+            [Category("Sound(FDS)")]
+            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            public sbyte[] LfoDataMorph2
+            {
+                get
+                {
+                    return f_lfodata2;
+                }
+                set
+                {
+                    f_lfodata2 = value;
+                }
+            }
+
+
+            private sbyte[] f_lfodata3 = new sbyte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(3)]
+            [DataMember]
+            [Category("Sound(FDS)")]
+            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            public sbyte[] LfoDataMorph3
+            {
+                get
+                {
+                    return f_lfodata3;
+                }
+                set
+                {
+                    f_lfodata3 = value;
+                }
+            }
+
+            public bool ShouldSerializeLfoDataMorph1()
+            {
+                foreach (var dt in LfoDataMorph1)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoDataMorph1()
+            {
+                f_lfodata1 = new sbyte[32];
+            }
+
+
+            public bool ShouldSerializeLfoDataMorph2()
+            {
+                foreach (var dt in LfoDataMorph2)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoDataMorph2()
+            {
+                f_lfodata2 = new sbyte[32];
+            }
+
+
+
+            public bool ShouldSerializeLfoDataMorph3()
+            {
+                foreach (var dt in LfoDataMorph3)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoDataMorph3()
+            {
+                f_lfodata3 = new sbyte[32];
+            }
+
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
             typeof(UITypeEditor)), Localizable(false)]
             [Category("Sound(FDS)")]
@@ -1611,7 +1771,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (sbyte.TryParse(val, out v))
                             vs.Add(v);
                     }
-                    for (int i = 0; i < Math.Min(WsgData.Length, vs.Count); i++)
+                    for (int i = 0; i < Math.Min(LfoData.Length, vs.Count); i++)
                     {
                         var val = vs[i];
                         if (val > 3)
@@ -1622,6 +1782,133 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
             }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound(FDS)")]
+            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string LfoDataMorph1SerializeData
+            {
+                get
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < LfoDataMorph1.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        sb.Append(LfoDataMorph1[i].ToString((IFormatProvider)null));
+                    }
+                    return sb.ToString();
+                }
+                set
+                {
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    var vs = new List<sbyte>();
+                    foreach (var val in vals)
+                    {
+                        sbyte v = 0;
+                        if (sbyte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
+                    for (int i = 0; i < Math.Min(LfoDataMorph1.Length, vs.Count); i++)
+                    {
+                        var val = vs[i];
+                        if (val > 3)
+                            val = 3;
+                        else if (val < -4)
+                            val = -4;
+                        LfoDataMorph1[i] = val;
+                    }
+                }
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound(FDS)")]
+            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string LfoDataMorph2SerializeData
+            {
+                get
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < LfoDataMorph2.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        sb.Append(LfoDataMorph2[i].ToString((IFormatProvider)null));
+                    }
+                    return sb.ToString();
+                }
+                set
+                {
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    var vs = new List<sbyte>();
+                    foreach (var val in vals)
+                    {
+                        sbyte v = 0;
+                        if (sbyte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
+                    for (int i = 0; i < Math.Min(LfoDataMorph2.Length, vs.Count); i++)
+                    {
+                        var val = vs[i];
+                        if (val > 3)
+                            val = 3;
+                        else if (val < -4)
+                            val = -4;
+                        LfoDataMorph2[i] = val;
+                    }
+                }
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound(FDS)")]
+            [Description("LFO Table (32 samples, 0-31 levels)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string LfoDataMorph3SerializeData
+            {
+                get
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < LfoDataMorph3.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        sb.Append(LfoDataMorph3[i].ToString((IFormatProvider)null));
+                    }
+                    return sb.ToString();
+                }
+                set
+                {
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    var vs = new List<sbyte>();
+                    foreach (var val in vals)
+                    {
+                        sbyte v = 0;
+                        if (sbyte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
+                    for (int i = 0; i < Math.Min(LfoDataMorph3.Length, vs.Count); i++)
+                    {
+                        var val = vs[i];
+                        if (val > 3)
+                            val = 3;
+                        else if (val < -4)
+                            val = -4;
+                        LfoDataMorph3[i] = val;
+                    }
+                }
+            }
+
 
         }
 
@@ -1764,6 +2051,100 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(-1)]
             public int DutyEnvelopesReleasePoint { get; set; } = -1;
 
+
+            private string f_MorphEnvelopes;
+
+            [DataMember]
+            [Description("Set wave table number by text. Input wave table number and split it with space like the Famitracker.\r\n" +
+                       "0-3(0 is normal table) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 3)]
+            public string MorphEnvelopes
+            {
+                get
+                {
+                    return f_MorphEnvelopes;
+                }
+                set
+                {
+                    if (f_MorphEnvelopes != value)
+                    {
+                        MorphEnvelopesRepeatPoint = -1;
+                        MorphEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            MorphEnvelopesNums = new int[] { };
+                            f_MorphEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_MorphEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                MorphEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                MorphEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 3)
+                                        v = 3;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        MorphEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (MorphEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (MorphEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_MorphEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeMorphEnvelopes()
+            {
+                return !string.IsNullOrEmpty(MorphEnvelopes);
+            }
+
+            public void ResetMorphEnvelopes()
+            {
+                MorphEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] MorphEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesReleasePoint { get; set; } = -1;
+
             /// <summary>
             /// 
             /// </summary>
@@ -1797,6 +2178,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 private set;
             }
+
+
+            private uint f_lfoCounter;
+
+            public byte? LfoValue
+            {
+                get;
+                private set;
+            }
+
 
             protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
             {
@@ -1837,6 +2228,44 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         process = true;
                     }
                 }
+
+
+                LfoValue = null;
+                if (settings.MorphEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.MorphEnvelopesNums.Length;
+                        if (settings.MorphEnvelopesReleasePoint >= 0)
+                            vm = settings.MorphEnvelopesReleasePoint;
+                        if (f_lfoCounter >= vm)
+                        {
+                            if (settings.MorphEnvelopesRepeatPoint >= 0)
+                                f_lfoCounter = (uint)settings.MorphEnvelopesRepeatPoint;
+                            else
+                                f_lfoCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.MorphEnvelopesReleasePoint < 0)
+                            f_lfoCounter = (uint)settings.MorphEnvelopesNums.Length;
+
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
+                    }
+                    if (f_lfoCounter < settings.MorphEnvelopesNums.Length)
+                    {
+                        int vol = settings.MorphEnvelopesNums[f_lfoCounter++];
+
+                        LfoValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
 
                 return process;
             }

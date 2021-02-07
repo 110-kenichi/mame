@@ -1,4 +1,4 @@
-MAmidiMEmo 3.3.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.3.1.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -256,6 +256,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
+        Updated MAME Core.
 3.3.0.0 Added SN76477.
         Fixed double value slider could not set float value properly.
 3.2.0.2 Fixed SAM icon.
@@ -284,7 +286,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.6.7.0 Fixed HOLD1 not working properly.
 2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
 2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).
-2.6.4.0 Supported dynamic wave form changing on the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
+2.6.4.0 Supported dynamic wave form changing for the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
         Removed force dump disabling hack on FM chips.
 2.6.3.0 Fixed RYTHM ch volume calculation on the YM2608 chip.
         Fixed SCCS, GPCS values calculation.
