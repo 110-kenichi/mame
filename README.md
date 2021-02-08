@@ -1,4 +1,4 @@
-MAmidiMEmo 3.3.1.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.3.2.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -256,6 +256,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
 3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
         Updated MAME Core.
 3.3.0.0 Added SN76477.

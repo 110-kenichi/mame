@@ -709,13 +709,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             switch (no)
                             {
                                 case 1:
-                                    lfoData = timbre.LfoDataMorph1;
-                                    break;
                                 case 2:
-                                    lfoData = timbre.LfoDataMorph2;
-                                    break;
                                 case 3:
-                                    lfoData = timbre.LfoDataMorph3;
+                                    lfoData = timbre.LfoMorphData[no - 1].LfoData;
                                     break;
                                 default:
                                     lfoData = timbre.LfoData;
@@ -1159,68 +1155,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
-            private byte[] f_lfodata1 = new byte[32];
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(5)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("LFO Table (32 samples, 0-31 levels)")]
-            public byte[] LfoDataMorph1
-            {
-                get
-                {
-                    return f_lfodata1;
-                }
-                set
-                {
-                    f_lfodata1 = value;
-                }
-            }
-
-
-            private byte[] f_lfodata2 = new byte[32];
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(5)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("LFO Table (32 samples, 0-32 levels)")]
-            public byte[] LfoDataMorph2
-            {
-                get
-                {
-                    return f_lfodata2;
-                }
-                set
-                {
-                    f_lfodata2 = value;
-                }
-            }
-
-            private byte[] f_lfodata3 = new byte[32];
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(5)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("LFO Table (33 samples, 0-33 levels)")]
-            public byte[] LfoDataMorph3
-            {
-                get
-                {
-                    return f_lfodata3;
-                }
-                set
-                {
-                    f_lfodata3 = value;
-                }
-            }
-
             public bool ShouldSerializeLfoData()
             {
                 foreach (var dt in LfoData)
@@ -1234,55 +1168,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void ResetLfoData()
             {
                 f_lfodata = new byte[32];
-            }
-
-
-            public bool ShouldSerializeLfoDataMorph1()
-            {
-                foreach (var dt in LfoDataMorph1)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetLfoDataMorph1()
-            {
-                f_lfodata1 = new byte[32];
-            }
-
-
-            public bool ShouldSerializeLfoDataMorph2()
-            {
-                foreach (var dt in LfoDataMorph2)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetLfoDataMorph2()
-            {
-                f_lfodata2 = new byte[32];
-            }
-
-
-
-            public bool ShouldSerializeLfoDataMorph3()
-            {
-                foreach (var dt in LfoDataMorph3)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetLfoDataMorph3()
-            {
-                f_lfodata3 = new byte[32];
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1319,109 +1204,46 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private HuC6280LfoMorphData[] f_lfoMorphData = new HuC6280LfoMorphData[3] {
+                new HuC6280LfoMorphData(),
+                new HuC6280LfoMorphData(),
+                new HuC6280LfoMorphData()
+            };
 
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
+            [TypeConverter(typeof(ArrayConverter))]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+            [DataMember]
             [Category("Sound")]
-            [Description("LFO Table (32 samples, 0-31 levels)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string LfoDataMorph1SerializeData
+            [Description("LFO Morph Table")]
+            public HuC6280LfoMorphData[] LfoMorphData
             {
                 get
                 {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < LfoDataMorph1.Length; i++)
-                    {
-                        if (sb.Length != 0)
-                            sb.Append(' ');
-                        sb.Append(LfoDataMorph1[i].ToString((IFormatProvider)null));
-                    }
-                    return sb.ToString();
+                    return f_lfoMorphData;
                 }
                 set
                 {
-                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<byte> vs = new List<byte>();
-                    foreach (var val in vals)
-                    {
-                        byte v = 0;
-                        if (byte.TryParse(val, out v))
-                            vs.Add(v);
-                    }
-                    for (int i = 0; i < Math.Min(LfoDataMorph1.Length, vs.Count); i++)
-                        LfoDataMorph1[i] = vs[i] > 31 ? (byte)31 : vs[i];
+                    f_lfoMorphData = value;
                 }
             }
 
-
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
-            [Category("Sound")]
-            [Description("LFO Table (32 samples, 0-31 levels)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string LfoDataMorph2SerializeData
+            public bool ShouldSerializeLfoMorphData()
             {
-                get
+                foreach (var dt in f_lfoMorphData)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < LfoDataMorph2.Length; i++)
-                    {
-                        if (sb.Length != 0)
-                            sb.Append(' ');
-                        sb.Append(LfoDataMorph2[i].ToString((IFormatProvider)null));
-                    }
-                    return sb.ToString();
+                    if (dt != null && dt.ShouldSerializeLfoData())
+                        return true;
                 }
-                set
-                {
-                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<byte> vs = new List<byte>();
-                    foreach (var val in vals)
-                    {
-                        byte v = 0;
-                        if (byte.TryParse(val, out v))
-                            vs.Add(v);
-                    }
-                    for (int i = 0; i < Math.Min(LfoDataMorph2.Length, vs.Count); i++)
-                        LfoDataMorph2[i] = vs[i] > 31 ? (byte)31 : vs[i];
-                }
+                return false;
             }
 
-
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
-            [Category("Sound")]
-            [Description("LFO Table (32 samples, 0-31 levels)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string LfoDataMorph3SerializeData
+            public void ResetLfoMorphData()
             {
-                get
-                {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < LfoDataMorph3.Length; i++)
-                    {
-                        if (sb.Length != 0)
-                            sb.Append(' ');
-                        sb.Append(LfoDataMorph3[i].ToString((IFormatProvider)null));
-                    }
-                    return sb.ToString();
-                }
-                set
-                {
-                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<byte> vs = new List<byte>();
-                    foreach (var val in vals)
-                    {
-                        byte v = 0;
-                        if (byte.TryParse(val, out v))
-                            vs.Add(v);
-                    }
-                    for (int i = 0; i < Math.Min(LfoDataMorph3.Length, vs.Count); i++)
-                        LfoDataMorph3[i] = vs[i] > 31 ? (byte)31 : vs[i];
-                }
+                f_lfoMorphData = new HuC6280LfoMorphData[3] {
+                    new HuC6280LfoMorphData(),
+                    new HuC6280LfoMorphData(),
+                    new HuC6280LfoMorphData()
+                };
             }
 
             /// <summary>
@@ -1457,6 +1279,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280LfoMorphData>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class HuC6280LfoMorphData : ContextBoundObject
+        {
+
+            private byte[] f_lfodata = new byte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(5)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("LFO Table (32 samples, 0-31 levels)")]
+            public byte[] LfoData
+            {
+                get
+                {
+                    return f_lfodata;
+                }
+                set
+                {
+                    f_lfodata = value;
+                }
+            }
+
+
+            public bool ShouldSerializeLfoData()
+            {
+                foreach (var dt in LfoData)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoData()
+            {
+                f_lfodata = new byte[32];
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("LFO Table (32 samples, 0-31 levels)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string LfoDataSerializeData
+            {
+                get
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < LfoData.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        sb.Append(LfoData[i].ToString((IFormatProvider)null));
+                    }
+                    return sb.ToString();
+                }
+                set
+                {
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<byte> vs = new List<byte>();
+                    foreach (var val in vals)
+                    {
+                        byte v = 0;
+                        if (byte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
+                    for (int i = 0; i < Math.Min(LfoData.Length, vs.Count); i++)
+                        LfoData[i] = vs[i] > 31 ? (byte)31 : vs[i];
+                }
+            }
+
+
+        }
 
         [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280FxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]

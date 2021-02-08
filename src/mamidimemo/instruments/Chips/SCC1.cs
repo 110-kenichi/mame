@@ -520,13 +520,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             switch (no)
                             {
                                 case 1:
-                                    wsgData = timbre.WsgDataMorph1;
-                                    break;
                                 case 2:
-                                    wsgData = timbre.WsgDataMorph2;
-                                    break;
                                 case 3:
-                                    wsgData = timbre.WsgDataMorph3;
+                                    wsgData = timbre.WsgMorphData[no - 1].WsgData;
                                     break;
                                 default:
                                     wsgData = timbre.WsgData;
@@ -604,42 +600,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             } = new sbyte[32];
 
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(8)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
-            public sbyte[] WsgDataMorph1
-            {
-                get;
-                set;
-            } = new sbyte[32];
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(8)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 2 (32 samples, 8 bit signed data)")]
-            public sbyte[] WsgDataMorph2
-            {
-                get;
-                set;
-            } = new sbyte[32];
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [WsgBitWideAttribute(8)]
-            [DataMember]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 3 (32 samples, 8 bit signed data)")]
-            public sbyte[] WsgDataMorph3
-            {
-                get;
-                set;
-            } = new sbyte[32];
-
             public bool ShouldSerializeWsgData()
             {
                 foreach (var dt in WsgData)
@@ -673,107 +633,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            public bool ShouldSerializeWsgDataMorph1()
-            {
-                foreach (var dt in WsgDataMorph1)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetWsgDataMorph1()
-            {
-                WsgDataMorph1 = new sbyte[32];
-            }
-
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string WsgDataMorph1SerializeData
-            {
-                get
-                {
-                    return createWsgDataSerializeData(WsgDataMorph1);
-                }
-                set
-                {
-                    applyWsgSerializeData(value, WsgDataMorph1);
-                }
-            }
-
-
-            public bool ShouldSerializeWsgDataMorph2()
-            {
-                foreach (var dt in WsgDataMorph2)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetWsgDataMorph2()
-            {
-                WsgDataMorph2 = new sbyte[32];
-            }
-
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 2 (32 samples, 8 bit signed data)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string WsgDataMorph2SerializeData
-            {
-                get
-                {
-                    return createWsgDataSerializeData(WsgDataMorph2);
-                }
-                set
-                {
-                    applyWsgSerializeData(value, WsgDataMorph2);
-                }
-            }
-
-            public bool ShouldSerializeWsgDataMorph3()
-            {
-                foreach (var dt in WsgDataMorph3)
-                {
-                    if (dt != 0)
-                        return true;
-                }
-                return false;
-            }
-
-            public void ResetWsgDataMorph3()
-            {
-                WsgDataMorph3 = new sbyte[32];
-            }
-
-            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor)), Localizable(false)]
-            [Category("Sound")]
-            [Description("Morphing Wave Table 3 (32 samples, 8 bit signed data)")]
-            [IgnoreDataMember]
-            [JsonIgnore]
-            public string WsgDataMorph3SerializeData
-            {
-                get
-                {
-                    return createWsgDataSerializeData(WsgDataMorph3);
-                }
-                set
-                {
-                    applyWsgSerializeData(value, WsgDataMorph3);
-                }
-            }
-
-
             private static void applyWsgSerializeData(string value, sbyte[] data)
             {
                 string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
@@ -798,6 +657,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     sb.Append(data[i].ToString((IFormatProvider)null));
                 }
                 return sb.ToString();
+            }
+
+
+            private SCCWsgMorphData[] f_WsgMorphData = new SCCWsgMorphData[3] {
+                new SCCWsgMorphData(),
+                new SCCWsgMorphData(),
+                new SCCWsgMorphData()
+            };
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("WSG Morph Table")]
+            public SCCWsgMorphData[] WsgMorphData
+            {
+                get
+                {
+                    return f_WsgMorphData;
+                }
+                set
+                {
+                    f_WsgMorphData = value;
+                }
+            }
+
+            public bool ShouldSerializeWsgMorphData()
+            {
+                foreach (var dt in f_WsgMorphData)
+                {
+                    if (dt != null && dt.ShouldSerializeWsgData())
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetWsgMorphData()
+            {
+                f_WsgMorphData = new SCCWsgMorphData[3] {
+                    new SCCWsgMorphData(),
+                    new SCCWsgMorphData(),
+                    new SCCWsgMorphData()
+                };
             }
 
             public SCC1Timbre()
@@ -827,6 +729,83 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<SCCWsgMorphData>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class SCCWsgMorphData : ContextBoundObject
+        {
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(8)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
+            public sbyte[] WsgData
+            {
+                get;
+                set;
+            } = new sbyte[32];
+
+            public bool ShouldSerializeWsgData()
+            {
+                foreach (var dt in WsgData)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetWsgData()
+            {
+                WsgData = new sbyte[32];
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("Morphing Wave Table (32 samples, 8 bit signed data)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataSerializeData
+            {
+                get
+                {
+                    return createWsgDataSerializeData(WsgData);
+                }
+                set
+                {
+                    applyWsgSerializeData(value, WsgData);
+                }
+            }
+
+            private static void applyWsgSerializeData(string value, sbyte[] data)
+            {
+                string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var vs = new List<sbyte>();
+                foreach (var val in vals)
+                {
+                    sbyte v = 0;
+                    if (sbyte.TryParse(val, out v))
+                        vs.Add(v);
+                }
+                for (int i = 0; i < Math.Min(data.Length, vs.Count); i++)
+                    data[i] = vs[i];
+            }
+
+            private static string createWsgDataSerializeData(sbyte[] data)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(' ');
+                    sb.Append(data[i].ToString((IFormatProvider)null));
+                }
+                return sb.ToString();
+            }
+        }
 
 
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SccFxSettings>))]
