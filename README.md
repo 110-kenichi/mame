@@ -6,6 +6,9 @@ MAmidiMEmo is a virtual chiptune sound MIDI module using a MAME sound engine.
 You can control various chips and make sound via MIDI I/F.
 So, you don't need to use dedicated tracker and so on anymore. You can use your favorite MIDI sequencer to make a chip sound.
 
+See samples
+https://www.youtube.com/channel/UCGYO2bEPPIM2LTNDbBEDaAQ
+
 MAmidiMEmo adopts multi timbre method. That mean you can play multi chords on MIDI 1ch if the chip has multi ch.
 
 e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 8ch with MIDI 16ch like a SC-55 and so on.
