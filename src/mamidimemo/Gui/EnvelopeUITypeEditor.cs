@@ -65,7 +65,7 @@ namespace zanac.MAmidiMEmo.Gui
                 DialogResult dr = editorService.ShowDialog(frm);
                 if (dr == DialogResult.OK)
                     value = frm.EnvelopeValuesText;
-                else
+                else if (value != null)
                     value = String.Copy((string)value);
 
                 return value;

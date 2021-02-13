@@ -1597,9 +1597,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.Etc.Feedback_R.HasValue)
                         parentModule.Feedback_R = timbre.Etc.Feedback_R.Value;
                 }
-
-                OnPitchUpdated();
-                OnVolumeUpdated();
             }
 
             public override void OnSoundParamsUpdated()

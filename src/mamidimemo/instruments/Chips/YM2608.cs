@@ -1722,8 +1722,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
-
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
@@ -1803,25 +1801,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             byte open = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
                             parentModule.YM2608WriteData(unitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(Slot % 3)));
                         }
-
-                        OnPanpotUpdated();
-                        //Volume
-                        OnVolumeUpdated();
                         break;
                     case ToneType.SSG:
-                        OnPitchUpdated();
-                        OnVolumeUpdated();
                         break;
                     case ToneType.RHYTHM:
-                        OnPanpotUpdated();
-                        OnVolumeUpdated();
                         break;
                     case ToneType.ADPCM_B:
-                        OnPitchUpdated();
-                        OnPanpotUpdated();
-                        OnVolumeUpdated();
                         break;
                 }
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>

@@ -732,8 +732,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
-
                 switch (lastToneType)
                 {
                     case ToneType.SQUARE:
@@ -742,29 +740,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 (byte)(timbre.SQSweep.Enable << 7 | timbre.SQSweep.UpdateRate << 4 |
                                 timbre.SQSweep.Direction << 3 | timbre.SQSweep.Range));
 
-                            //Volume
-                            updateSqVolume();
-                            //Freq
-                            updateSqPitch();
-
                             break;
                         }
                     case ToneType.TRIANGLE:
                         {
-                            //Volume
-                            updateTriVolume();
-                            //Freq
-                            updateTriPitch();
-
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            //Volume
-                            updateNoiseVolume();
-                            //Freq
-                            updateNoisePitch();
-
                             break;
                         }
                     case ToneType.DPCM:
@@ -823,21 +806,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 }
                             }
 
-                            //Volume
-                            updateFdsVolume();
-                            //Freq
-                            updateFdsPitch();
                             break;
                         }
                     case ToneType.VRC6_SQ:
-                        updateVrc6SQVolume();
-                        updateVrc6SQPitch();
                         break;
                     case ToneType.VRC6_SAW:
-                        updateVrc6SawVolume();
-                        updateVrc6SawPitch();
                         break;
                 }
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>

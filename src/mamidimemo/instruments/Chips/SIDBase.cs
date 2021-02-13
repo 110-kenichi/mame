@@ -564,8 +564,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
-
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
@@ -582,8 +580,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 SetTimbre();
-                OnVolumeUpdated();
-                OnPitchUpdated();
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>

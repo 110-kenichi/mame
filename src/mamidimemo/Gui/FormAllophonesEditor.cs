@@ -108,11 +108,11 @@ namespace zanac.MAmidiMEmo.Gui
         {
             var mb = (MetroButton)sender;
 
-            string alps = metroTextBoxAllophones.Text;
+            var insertText = mb.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
-            alps += " " + mb.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
-
-            metroTextBoxAllophones.Text = alps.Trim();
+            var selectionIndex = metroTextBoxAllophones.SelectionStart;
+            metroTextBoxAllophones.Text = metroTextBoxAllophones.Text.Insert(selectionIndex, insertText).Trim();
+            metroTextBoxAllophones.SelectionStart = selectionIndex + insertText.Length;
         }
 
         private void metroButton2_MouseDown(object sender, MouseEventArgs e)

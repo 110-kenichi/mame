@@ -1205,7 +1205,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
 
                 uint reg = (uint)(Slot * 16);
                 byte bitPos = (byte)(1 << Slot);
@@ -1247,9 +1246,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.COEF8 = gs.COEF8.Value;
                 }
 
-                OnVolumeUpdated();
-                OnPanpotUpdated();
-                OnPitchUpdated();
+                //OnVolumeUpdated();
+                //OnPanpotUpdated();
+                //OnPitchUpdated();
 
                 //ADSR
                 if (timbre.AdsrEnable)
@@ -1277,6 +1276,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
                 SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>

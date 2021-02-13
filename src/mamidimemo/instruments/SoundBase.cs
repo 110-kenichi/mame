@@ -264,7 +264,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void OnSoundParamsUpdated()
         {
-
+            OnVolumeUpdated();
+            OnPitchUpdated();
+            OnPanpotUpdated();
         }
 
         /// <summary>

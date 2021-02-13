@@ -102,7 +102,7 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     value = frm.Allophones;
                 }
-                else
+                else if (value != null)
                 {
                     value = ((string)value + " ").Clone();
                 }

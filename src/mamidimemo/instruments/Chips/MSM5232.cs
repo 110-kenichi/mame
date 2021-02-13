@@ -574,11 +574,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
-
                 SetTimbre();
-                //Volume
-                OnVolumeUpdated();
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>
