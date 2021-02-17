@@ -215,6 +215,7 @@ public:
 
 	// immediate operations
 	int run(bool quiet);
+	void OnCloseApplication();
 	void pause();
 	void resume();
 	void toggle_pause();

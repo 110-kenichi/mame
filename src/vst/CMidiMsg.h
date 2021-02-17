@@ -4,6 +4,9 @@
 #include <vector>
 #include "audioeffectx.h"
 
+#include "rpc/server.h"
+#include "rpc/client.h"
+
 // ============================================================================================
 // MIDI処理用の定義
 // ============================================================================================
@@ -40,6 +43,6 @@ public:
 	// バッファから最初に取り出せるMIDIメッセージのDeltaFramesを返す
 	virtual VstInt32 getNextDeltaFrames();
 
-	virtual void midiMsgProc();
+	virtual void midiMsgProc(rpc::client* m_rpc_client);
 
 };

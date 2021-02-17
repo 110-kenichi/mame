@@ -12,6 +12,9 @@
 
 #include "CMidiMsg.h"
 
+#include "rpc/server.h"
+#include "rpc/client.h"
+
 // ============================================================================================
 // 設計情報の記入
 // ============================================================================================
@@ -25,47 +28,51 @@
 #define MY_VST_PRESET_NUM    0 //プリセットプログラムの数
 #define MY_VST_PARAMETER_NUM 0 //パラメータの数
 
-typedef void(*STREAM_UPDATE_CALLBACK)(int32_t *buffer, int32_t size);
-extern "C" void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback);
-extern "C" int sample_rate();
-
-int  main(int argc, char *argv[]);
-
-int HasExited();
-void SetVSTiMode();
-int IsStartMAmidiMEmoMainStarted();
-void CloseApplication();
-void  LoadData(byte* data, int length);
-int SaveData(void** saveBuf);
-
 // ============================================================================================
 // VSTの基本となるクラス
 // ============================================================================================
 class MAmiVSTi : public AudioEffectX, public CMidiMsg
 {
 private:
-	static bool initialized;
-	static MAmiVSTi* instance;
-
 	std::mutex mtxBuffer;
 
-	std::vector<int32_t> streamBufferL;
-	std::vector<int32_t> streamBufferR;
-	void streamUpdatedL(int32_t *buffer, int32_t size);
-	void streamUpdatedR(int32_t *buffer, int32_t size);
+	std::vector<int32_t> m_streamBufferL;
+	std::vector<int32_t> m_streamBufferR;
+	void streamUpdatedL(int32_t size);
+	void streamUpdatedR(int32_t size);
 
-	static void StreamUpdatedL(int32_t *buffer, int32_t size);
-	static void StreamUpdatedR(int32_t *buffer, int32_t size);
+	rpc::client* m_rpcClient;
+	rpc::server* m_rpcSrv;
 
-	bool initToFirstRead;
+	bool m_vstCtor;
+	bool m_vstInited;
+	bool m_vstIsClosed;
+	bool m_vstIsSuspend;
+	USHORT m_vstPort;
+	USHORT m_mamiPort;
+	VstInt32 m_lastSampleFrames;
+	char m_mamiPath[MAX_PATH];
+
+	void updateSampleRateCore();
+	int hasExited();
+	void startRpcServer();
+	bool createSharedMemory();
+
+	int32_t* m_tmpBufferL;
+	int32_t* m_tmpBufferR;
+
+	CHAR* m_cpSharedMemory;
+	HANDLE m_hSharedMemory;
+
 protected:
-	bool isClosed;
-	bool isSuspend;
-	int mami_sample_rate;
+	float m_vst_sample_rate;
+	int m_mami_sample_rate;
 	soxr_t soxr;
 	soxr_t soxl;
 public:
 	MAmiVSTi(audioMasterCallback audioMaster);
+
+	void initVst();
 
 	///< Fill \e text with a string identifying the effect
 	virtual bool getEffectName(char* name)

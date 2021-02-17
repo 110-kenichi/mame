@@ -102,3 +102,4 @@ Release(but Debug .NET)
 /src/SAM/Release
 /src/SAM/Debug
 /src/SAM/SAM.vcxproj.user
+/src/vst/x64/Debug

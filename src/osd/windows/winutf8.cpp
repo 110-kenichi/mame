@@ -52,7 +52,11 @@ int win_message_box_utf8(HWND window, const char *text, const char *caption, UIN
 		t_caption = ts_caption.c_str();
 	}
 
+	//mamidimemo MessageBox
+	/*
 	return MessageBox(window, t_text, t_caption, type);
+	*/
+	return 0;
 }
 
 #endif

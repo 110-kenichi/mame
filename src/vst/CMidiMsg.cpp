@@ -38,22 +38,24 @@ VstInt32 CMidiMsg::getNextDeltaFrames()
 	return midiMsgBuf[0]->deltaFrames;
 }
 
-void SendMidiEvent(unsigned char data1, unsigned char data2, unsigned char data3);
-void SendMidiSysEvent(unsigned char *data, int length);
-
-void CMidiMsg::midiMsgProc()
+void CMidiMsg::midiMsgProc(rpc::client* m_rpc_client)
 {
 	VstMidiEventBase* meb = popMidiMsg();
 	switch (meb->type)
 	{
 	case kVstMidiType: {
 		VstMidiEvent * midievent = (VstMidiEvent *)meb;
-		SendMidiEvent(midievent->midiData[0], midievent->midiData[1], midievent->midiData[2]);
+
+		m_rpc_client->async_call("SendMidiEvent",
+			(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
 	}
 		break;
 	case kVstSysExType: {
 		VstMidiSysexEvent * midievent = (VstMidiSysexEvent *)meb;
-		SendMidiSysEvent((unsigned char *)midievent->sysexDump, midievent->dumpBytes);
+
+		std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+
+		m_rpc_client->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
 	}
 		break;
 	}

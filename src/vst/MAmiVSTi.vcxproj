@@ -35,104 +35,15 @@
     <ClInclude Include="pluginterfaces\vst2.x\vstfxstore.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\7z.vcxproj">
-      <Project>{ad573d62-e76a-4b11-ae34-5110a6789a42}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\bgfx.vcxproj">
-      <Project>{d3e7e119-35cf-4f4f-aba0-d3bdcd1b879a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\bimg.vcxproj">
-      <Project>{5603611b-8bf8-4ffd-85bc-76858cd7df39}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\bx.vcxproj">
-      <Project>{238318fe-49f5-4eb4-88be-0618900f5eac}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\emu.vcxproj">
-      <Project>{e6fa15e4-a354-4526-acef-13c8e80fcacf}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\expat.vcxproj">
-      <Project>{f4cd40b1-c37c-452d-9785-640f26f0bf54}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\flac.vcxproj">
-      <Project>{b6fc19e8-073a-4541-bb7b-d24b548d424a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\formats.vcxproj">
-      <Project>{8d4f0fec-f965-0d82-42dd-98a3ae32de09}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\frontend.vcxproj">
-      <Project>{e98e14c4-82a4-4988-ba29-01c90c817ab8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\jpeg.vcxproj">
-      <Project>{447c6800-dcfd-4c48-b72a-a8223bb409ca}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\linenoise.vcxproj">
-      <Project>{7320ffc8-2748-4add-8864-ae29b72a8511}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\lua.vcxproj">
-      <Project>{d9e2eed1-f1ab-4737-a6ac-863700b1a5a9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\lualibs.vcxproj">
-      <Project>{1d84edab-94cf-48fb-83ee-b75bc697660e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\mame_lib.vcxproj">
-      <Project>{c4e46169-3ddf-4080-b3aa-f08d7f98682a}</Project>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\netlist.vcxproj">
-      <Project>{665ef8ac-2a4c-4c3e-a05f-fd1e5db11de9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\ocore_windows.vcxproj">
-      <Project>{678afacb-d34a-7602-9c85-bf7f0805bbde}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\optional.vcxproj">
-      <Project>{f7d1d881-e3b5-99d7-4c16-942a38198459}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\osd_windows.vcxproj">
-      <Project>{d5e1a481-4197-1d77-ca8b-174e3640147b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\portaudio.vcxproj">
-      <Project>{0755c5f5-eccf-47f3-98a9-df67018a94d4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\portmidi.vcxproj">
-      <Project>{587f2da6-3274-4a65-86a2-f13ea315bb98}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\precompile.vcxproj">
-      <Project>{a6fb15d4-b123-4445-acef-13c8e80fcacf}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\qtdbg_windows.vcxproj">
-      <Project>{01d73598-6d97-b1ce-36d2-fa4ba251f6aa}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\segacons.vcxproj">
-      <Project>{4f2f5d6b-3b29-86bd-2496-1cce102fec29}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\softfloat.vcxproj">
-      <Project>{04fbf89e-4761-4cf2-8a12-64500cf0c5c5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\softfloat3.vcxproj">
-      <Project>{9c22fc90-53fd-11e8-b566-0800200c9a66}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\sqlite3.vcxproj">
-      <Project>{5cb3d495-57ed-461c-81e5-80dc0857517d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\utf8proc.vcxproj">
-      <Project>{1f881f09-0395-4483-ac37-2935fb092187}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\utils.vcxproj">
-      <Project>{22489ad0-4cb2-4d91-ad81-24b0d80ca30a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build\projects\windows\mame\vs2017\zlib.vcxproj">
-      <Project>{3d78bd2a-2bd0-4449-8087-42ddfaef7ec9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\FluidLite\fluidlite.vcxproj">
-      <Project>{d3fc572e-8f58-3113-ad3f-2defbb2ee7b2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\munt\mt32emu\mt32emu.vcxproj">
-      <Project>{613aba51-3d44-4fe5-a7e8-5803688fc56f}</Project>
-    </ProjectReference>
+    <None Include="MAmiVSTi.def" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MAmiVSTi.def" />
+    <ProjectReference Include="..\munt\mt32emu\soxr\msvc\libsoxr.vcxproj">
+      <Project>{af9ad75c-4785-4432-bac3-adab1e7f1192}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\rpclib\Build\rpc.vcxproj">
+      <Project>{db4fafb2-a570-3807-a3ea-ce43f3cc11cf}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -193,20 +104,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>..\..\Output\Debug\</OutDir>
+    <OutDir>..\..\Output\Debug\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>..\..\Output\Release\</OutDir>
+    <OutDir>..\..\Output\Release\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\Output\Debug64\</OutDir>
+    <OutDir>..\..\Output\Debug64\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\Output\Release64\</OutDir>
+    <OutDir>..\..\Output\Release64\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -217,8 +128,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -236,8 +146,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -254,8 +163,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
@@ -273,8 +181,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>

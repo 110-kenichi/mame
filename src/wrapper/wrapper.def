@@ -2,6 +2,7 @@ LIBRARY   WRAPPER
 EXPORTS
 	InitializeDotNet
    	HasExited
+	VstStarted
 	SoundUpdating
 	SoundUpdated
 	RestartApplication
