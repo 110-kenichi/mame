@@ -103,3 +103,4 @@ Release(but Debug .NET)
 /src/SAM/Debug
 /src/SAM/SAM.vcxproj.user
 /src/vst/x64/Debug
+/src/rpclib/.vs
