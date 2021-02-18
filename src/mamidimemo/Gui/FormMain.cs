@@ -871,7 +871,7 @@ namespace zanac.MAmidiMEmo.Gui
                     Settings.Default.Save();
                     if (Program.IsVSTiMode())
                     {
-                        MessageBox.Show(this, "Please restart host DAW application.", "Information", MessageBoxButtons.OK);
+                        MessageBox.Show(this, "MAmi sample rate follows DAW sample rate at startup MAmi.", "Information", MessageBoxButtons.OK);
                     }
                     else
                     {
@@ -883,8 +883,8 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                     }
                 }
-                else
-                    Settings.Default.Reload();
+                //else
+                //    Settings.Default.Reload();
             }
         }
 
@@ -1039,51 +1039,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delg_start_recording_to(string wavfile);
-
-        private static delg_start_recording_to start_recording_to;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private static delg_start_recording_to StartRecordingTo
-        {
-            get
-            {
-                if (start_recording_to == null)
-                {
-                    IntPtr funcPtr = MameIF.GetProcAddress("start_recording_to");
-                    if (funcPtr != IntPtr.Zero)
-                        start_recording_to = (delg_start_recording_to)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_start_recording_to));
-                }
-                return start_recording_to;
-            }
-        }
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delg_stop_recording();
-
-        private static delg_stop_recording stop_recording;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private static delg_stop_recording StopRecording
-        {
-            get
-            {
-                if (stop_recording == null)
-                {
-                    IntPtr funcPtr = MameIF.GetProcAddress("stop_recording");
-                    if (funcPtr != IntPtr.Zero)
-                        stop_recording = (delg_stop_recording)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_stop_recording));
-                }
-                return stop_recording;
-            }
-        }
-
         private void toolStripButton20_Click(object sender, EventArgs e)
         {
             toolStripButton20.Checked = !toolStripButton20.Checked;
@@ -1102,11 +1057,11 @@ namespace zanac.MAmidiMEmo.Gui
                 Program.SoundUpdating();
                 if (toolStripButton20.Checked)
                 {
-                    StartRecordingTo(op);
+                    MameIF.StartRecordingTo(op);
                 }
                 else
                 {
-                    StopRecording();
+                    MameIF.StopRecording();
                 }
             }
             finally

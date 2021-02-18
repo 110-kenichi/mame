@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <vector>
-#include <mutex>
+#include <shared_mutex>
 #include "windows.h"
 #include "audioeffectx.h"
 #include "..\..\src\munt\mt32emu\soxr\src\soxr.h"
@@ -34,7 +34,7 @@
 class MAmiVSTi : public AudioEffectX, public CMidiMsg
 {
 private:
-	std::mutex mtxBuffer;
+	std::shared_mutex mtxBuffer;
 
 	std::vector<int32_t> m_streamBufferL;
 	std::vector<int32_t> m_streamBufferR;
@@ -54,9 +54,11 @@ private:
 	char m_mamiPath[MAX_PATH];
 
 	void updateSampleRateCore();
-	int hasExited();
+	int isVstDisabled();
 	void startRpcServer();
 	bool createSharedMemory();
+
+	bool m_streamBufferOverflowed;
 
 	int32_t* m_tmpBufferL;
 	int32_t* m_tmpBufferR;
@@ -129,7 +131,6 @@ public:
 
 	// ‰¹ºM†‚ğˆ—‚·‚éƒƒ“ƒo[ŠÖ”
 	virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames);
-	virtual void processReplacing2(float* inL, float* inR, float* outL, float* outR, VstInt32 sampleFrames);
 
 	///< Called when plug-in is initialized
 	virtual void open();

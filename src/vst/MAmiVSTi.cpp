@@ -54,7 +54,7 @@ USHORT FindUnusedPort(USHORT defaultPort)
 	return port;
 }
 
-int start_MAmi(LPCTSTR lpApplicationName, int port)
+int StartMAmi(LPCTSTR lpApplicationName, int sampleRate, int port)
 {
 	// additional information
 	STARTUPINFO si;
@@ -65,14 +65,10 @@ int start_MAmi(LPCTSTR lpApplicationName, int port)
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
 
-	TCHAR portVal[16] = _T("");
-	_itot_s(port, portVal, 16 * sizeof(TCHAR), 10);
-
 	TCHAR cmdLine[MAX_PATH * 2] = _T("");
 
-	_tcscpy_s(cmdLine, MAX_PATH * 2, lpApplicationName);
-	_tcscat_s(cmdLine, MAX_PATH * 2, _T(" -sound none -http_port "));
-	_tcscat_s(cmdLine, MAX_PATH * 2, portVal);
+	sprintf_s(cmdLine,
+		"%s -audio_latency 0 -samplerate %d -sound none -http_port %d", lpApplicationName, sampleRate, port);
 
 	//https://www.ne.jp/asahi/hishidama/home/tech/c/windows/CreateProcess.html
 
@@ -122,6 +118,7 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	, m_tmpBufferL(NULL)
 	, m_tmpBufferR(NULL)
 	, m_mamiPath("")
+	, m_streamBufferOverflowed(false)
 {
 	//以下の関数を呼び出して入力数、出力数等の情報を設定する。
 	//必ず呼び出さなければならない。
@@ -217,7 +214,7 @@ void MAmiVSTi::startRpcServer()
 	m_rpcSrv->async_run();
 }
 
-int MAmiVSTi::hasExited()
+int MAmiVSTi::isVstDisabled()
 {
 	if (!m_vstInited)
 		return 1;
@@ -234,7 +231,7 @@ int MAmiVSTi::hasExited()
 
 void MAmiVSTi::setSampleRate(float srate)
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
 	sampleRate = srate;
 	m_vst_sample_rate = srate;
@@ -262,13 +259,9 @@ void MAmiVSTi::updateSampleRateCore()
 ///< Host stores plug-in state. Returns the size in bytes of the chunk (plug-in allocates the data array)
 VstInt32 MAmiVSTi::getChunk(void** data, bool isPreset)
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
-	if (!m_vstInited)
-		return 0;
-
-	if (m_rpcClient == NULL ||
-		m_rpcClient->get_connection_state() != rpc::client::connection_state::connected)
+	if (isVstDisabled())
 		return 0;
 
 	auto buff = m_rpcClient->call("SaveData").as<std::vector<unsigned char>>();
@@ -281,13 +274,9 @@ VstInt32 MAmiVSTi::getChunk(void** data, bool isPreset)
 ///< Host restores plug-in state
 VstInt32 MAmiVSTi::setChunk(void* data, VstInt32 byteSize, bool isPreset)
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
-	if (!m_vstInited)
-		return 0;
-
-	if (m_rpcClient == NULL ||
-		m_rpcClient->get_connection_state() != rpc::client::connection_state::connected)
+	if (isVstDisabled())
 		return 0;
 
 	//	LoadData((byte*)data, byteSize);
@@ -306,7 +295,7 @@ void MAmiVSTi::open()
 ///< Called when plug-in will be released
 void MAmiVSTi::close()
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
 	m_vstIsClosed = true;
 
@@ -346,13 +335,7 @@ void MAmiVSTi::close()
 ///< Called when plug-in is switched to off
 void MAmiVSTi::suspend()
 {
-	//std::lock_guard<std::mutex> lock(mtxBuffer);
 
-	//m_vstIsSuspend = true;
-	/*
-	m_streamBufferL.clear();
-	m_streamBufferR.clear();
-	*/
 }
 
 bool MAmiVSTi::createSharedMemory()
@@ -395,14 +378,14 @@ bool MAmiVSTi::createSharedMemory()
 ///< Called when plug-in is switched to on
 void MAmiVSTi::resume()
 {
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
 	if (!m_vstInited)
 	{
 		//Start RPC server
 		startRpcServer();
 
-		if (!start_MAmi(m_mamiPath, m_vstPort))
+		if (!StartMAmi(m_mamiPath, (int)m_vst_sample_rate, m_vstPort))
 		{
 			MessageBox(0, _T("MAmiVST: Failed to launch MAmi.exe."), 0, 0);
 			return;
@@ -420,7 +403,7 @@ void MAmiVSTi::resume()
 
 void MAmiVSTi::streamUpdatedL(int32_t size)
 {
-	if (m_vstIsClosed || hasExited())
+	if (isVstDisabled())
 		return;
 	if (m_cpSharedMemory == NULL)
 		return;
@@ -430,45 +413,54 @@ void MAmiVSTi::streamUpdatedL(int32_t size)
 
 void MAmiVSTi::streamUpdatedR(int32_t size)
 {
-	if (m_vstIsClosed || hasExited())
+	if (isVstDisabled())
 		return;
 	if (m_cpSharedMemory == NULL)
 		return;
 
 	m_tmpBufferR = (int32_t*)m_cpSharedMemory + size;
 
-	int cnvSize = (int)ceil((double)size * ((double)sampleRate / (double)m_mami_sample_rate));
+	if (sampleRate != (double)m_mami_sample_rate)
+	{
+		int cnvSize = (int)ceil((double)size * ((double)sampleRate / (double)m_mami_sample_rate));
+		int32_t* cnvBufferL = new int32_t[cnvSize];
+		int32_t* cnvBufferR = new int32_t[cnvSize];
 
-	int32_t* cnvBufferL = new int32_t[cnvSize];
-	int32_t* cnvBufferR = new int32_t[cnvSize];
+		size_t idone = 0;
+		size_t odone = 0;
+		soxr_process(soxl, m_tmpBufferL, size, &idone, cnvBufferL, cnvSize, &odone);
+		soxr_process(soxr, m_tmpBufferR, size, &idone, cnvBufferR, cnvSize, &odone);
 
-	size_t idone = 0;
-	size_t odone = 0;
-	soxr_process(soxl, m_tmpBufferL, size, &idone, cnvBufferL, cnvSize, &odone);
-	soxr_process(soxr, m_tmpBufferR, size, &idone, cnvBufferR, cnvSize, &odone);
+		size = (int32_t)odone;
+		m_tmpBufferL = cnvBufferL;
+		m_tmpBufferR = cnvBufferR;
+	}
 
-	std::lock_guard<std::mutex> lock(mtxBuffer);
+
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 	//mtxBuffer.lock();	// Lock both L & R buffer
 
 	size_t sz = m_streamBufferL.size();
-	m_streamBufferL.resize(sz + odone);
-	m_streamBufferR.resize(sz + odone);
+	m_streamBufferL.resize(sz + size);
+	m_streamBufferR.resize(sz + size);
 	int* bufL = &m_streamBufferL[sz];
 	int* bufR = &m_streamBufferR[sz];
-	for (size_t i = sz; i < sz + odone; i++)
+	for (size_t i = sz; i < sz + size; i++)
 	{
-		*bufL++ = *cnvBufferL++;
-		*bufR++ = *cnvBufferR++;
+		*bufL++ = *m_tmpBufferL++;
+		*bufR++ = *m_tmpBufferR++;
 	}
 
 	//triple buffer size to reduce sounding lag
-	int max = std::max(m_lastSampleFrames * 3, ((VstInt32)m_vst_sample_rate / 50) * 3);
-	if (m_streamBufferL.size() > max)
+	VstInt32 max = std::max(m_lastSampleFrames * 3, ((VstInt32)m_vst_sample_rate / 50) * 3);
+	if (m_streamBufferL.size() > (size_t)max)
 	{
-		size_t cut = m_streamBufferL.size() - (int)max;
+		size_t cut = std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50));
 
 		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);
 		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + cut);
+
+		m_streamBufferOverflowed = true;
 	}
 
 	//mtxBuffer.unlock();	// Unlock both L & R buffer
@@ -478,68 +470,58 @@ void MAmiVSTi::streamUpdatedR(int32_t size)
 // 音声信号処理部分
 // ============================================================================================
 
-void MAmiVSTi::processReplacing2(float* inL, float* inR, float* outL, float* outR, VstInt32 sampleFrames)
-{
-	std::lock_guard<std::mutex> lock(mtxBuffer);
-	auto size = m_streamBufferL.size();
-	if (size < (size_t)sampleFrames)
-	{
-		for (VstInt32 i = 0; i < sampleFrames; i++)
-		{
-			*(outL++) = *(inL++);
-			*(outR++) = *(inR++);
-		}
-		return;
-	}
-
-	//ここで音声処理を行う。
-	int* bufL = &m_streamBufferL[0];
-	int* bufR = &m_streamBufferR[0];
-	for (VstInt32 i = 0; i < sampleFrames; i++)
-	{
-		*(outL++) = *(inL++) + (float)*(bufL++) / (float)32767;
-		*(outR++) = *(inR++) + (float)*(bufR++) / (float)32767;
-	}
-	m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + sampleFrames);
-	m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + sampleFrames);
-}
-
 void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
 {
-	//m_lastSampleFrames = std::max(m_lastSampleFrames, sampleFrames);
 	m_lastSampleFrames = sampleFrames;
 
 	//入力、出力は2次元配列で渡される。
 	//入力は-1.0f～1.0fの間で渡される。
 	//出力は-1.0f～1.0fの間で書き込む必要がある。
-	//sampleFramesが処理するバッファのサイズ
 	float* inL = inputs[0];  //入力 左用
 	float* inR = inputs[1];  //入力 右用
 	float* outL = outputs[0]; //出力 左用
 	float* outR = outputs[1]; //出力 右用
 
-	// 処理されたフレーム数
-	VstInt32 processedFrames = 0;
+	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
 
-	while (getMidiMessageNum() > 0)
+	if (m_streamBufferOverflowed)
 	{
-		// 処理すべきフレーム数
-		VstInt32 frames = getNextDeltaFrames() - processedFrames;
-		processReplacing2(inL, inR, outL, outR, frames);
+		size_t cut = std::max(m_lastSampleFrames * 1, ((VstInt32)m_vst_sample_rate / 50) * 1);
 
-		// MIDIメッセージの処理を行う
-		midiMsgProc(m_rpcClient);
+		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);
+		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + cut);
 
-		// 処理されたフレーム数を計算
-		// 同時に音声信号バッファのポインタについても進める。
-		processedFrames += frames;
-		inL += frames;
-		inR += frames;
-		outL += frames;
-		outR += frames;
+		m_streamBufferOverflowed = false;
 	}
 
-	processReplacing2(inL, inR, outL, outR, sampleFrames - processedFrames);
+	int* bufL = &m_streamBufferL[0];
+	int* bufR = &m_streamBufferR[0];
+	auto size = m_streamBufferL.size();
+	if (size < (size_t)sampleFrames)
+	{
+		for (VstInt32 i = 0; i < (VstInt32)size; i++)
+		{
+			*(outL++) = *(inL++) + (float)*(bufL++) / (float)32767;
+			*(outR++) = *(inR++) + (float)*(bufR++) / (float)32767;
+		}
+		for (VstInt32 i = (VstInt32)size; i < sampleFrames; i++)
+		{
+			*(outL++) = *(inL++);
+			*(outR++) = *(inR++);
+		}
+		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + size);
+		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + size);
+	}
+	else
+	{
+		for (VstInt32 i = 0; i < sampleFrames; i++)
+		{
+			*(outL++) = *(inL++) + (float)*(bufL++) / (float)32767;
+			*(outR++) = *(inR++) + (float)*(bufR++) / (float)32767;
+		}
+		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + sampleFrames);
+		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + sampleFrames);
+	}
 }
 
 // MIDIメッセージをVSTに保存する。
@@ -554,14 +536,25 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 	// VSTイベントの回数だけループをまわす。
 	for (int i = 0; i < loops; i++)
 	{
-		// 与えられたイベントがMIDIならばmidimsgbufにストックする
-		switch ((events->events[i])->type)
+		VstMidiEventBase* meb = (VstMidiEventBase*)(events->events[i]);
+		switch (meb->type)
 		{
 		case kVstMidiType:
-		case kVstSysExType:
-			VstMidiEventBase* midievent = (VstMidiEventBase*)(events->events[i]);
-			pushMidiMsg(midievent);
+		{
+			VstMidiEvent* midievent = (VstMidiEvent*)meb;
+
+			m_rpcClient->async_call("SendMidiEvent",
+				(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
 			break;
+		}
+		case kVstSysExType:
+		{
+			VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
+			std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+
+			m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
+			break;
+		}
 		}
 	}
 
