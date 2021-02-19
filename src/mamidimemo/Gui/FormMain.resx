@@ -163,31 +163,31 @@
     <value>524, 17</value>
   </metadata>
   <data name="decreaseThisKindOfChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
+    <value>227, 22</value>
   </data>
   <data name="decreaseThisKindOfChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Reduce selected chip type(s)</value>
+    <value>&amp;Remove selected chip type(s)</value>
   </data>
   <data name="cloneSelectedChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
+    <value>227, 22</value>
   </data>
   <data name="cloneSelectedChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Clone selected chip</value>
+    <value>&amp;Duplicate selected chip</value>
   </data>
   <data name="toolStripSepInst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+    <value>224, 6</value>
   </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 22</value>
+    <value>227, 22</value>
   </data>
   <data name="toolStripMenuItem1.Text" xml:space="preserve">
     <value>Clear &amp;all</value>
   </data>
   <data name="toolStripMenuItemSep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 6</value>
+    <value>224, 6</value>
   </data>
   <data name="contextMenuStripInst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 82</value>
+    <value>228, 104</value>
   </data>
   <data name="&gt;&gt;contextMenuStripInst.Name" xml:space="preserve">
     <value>contextMenuStripInst</value>
@@ -2881,7 +2881,7 @@
     <value>&amp;VOICE</value>
   </data>
   <data name="sN76477ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>119, 22</value>
   </data>
   <data name="sN76477ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;SN76477</value>
@@ -2906,10 +2906,10 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripDropDownButton1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>137, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="toolStripDropDownButton1.Text" xml:space="preserve">
-    <value>Extend Instruments</value>
+    <value>Add Instruments</value>
   </data>
   <data name="toolStripButton1.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
@@ -5471,6 +5471,18 @@
   <data name="&gt;&gt;extendSAMToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;dISCRETEToolStripMenuItem.Name" xml:space="preserve">
+    <value>dISCRETEToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;dISCRETEToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;sN76477ToolStripMenuItem.Name" xml:space="preserve">
+    <value>sN76477ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;sN76477ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripButton1.Name" xml:space="preserve">
     <value>toolStripButton1</value>
   </data>
@@ -5524,18 +5536,6 @@
   </data>
   <data name="&gt;&gt;saveFileDialogMAmidi.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dISCRETEToolStripMenuItem.Name" xml:space="preserve">
-    <value>dISCRETEToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;dISCRETEToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;sN76477ToolStripMenuItem.Name" xml:space="preserve">
-    <value>sN76477ToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;sN76477ToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FormMain</value>
