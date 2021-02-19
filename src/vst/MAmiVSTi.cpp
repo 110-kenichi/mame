@@ -455,6 +455,7 @@ void MAmiVSTi::streamUpdatedR(int32_t size)
 	VstInt32 max = std::max(m_lastSampleFrames * 3, ((VstInt32)m_vst_sample_rate / 50) * 3);
 	if (m_streamBufferL.size() > (size_t)max)
 	{
+		//Remove first block buffer
 		size_t cut = std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50));
 
 		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);
@@ -486,6 +487,7 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 
 	if (m_streamBufferOverflowed)
 	{
+		//Remove first block buffer to prevent removing the next block by streamUpdatedR()
 		size_t cut = std::max(m_lastSampleFrames * 1, ((VstInt32)m_vst_sample_rate / 50) * 1);
 
 		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);

@@ -260,7 +260,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 
-3.5.0.0 Supported VSTi plugin. Use the .\VST\MAmiVSTi.dll file. DO NOT USE and trash old .\MAmiVSTi.dll file.
+3.5.0.0 Supported VSTi plugin mode. Use the .\VST\MAmiVSTi.dll file and edit ini file. DO NOT USE old .\MAmiVSTi.dll file. Trash it.
 3.3.2.1 Fixed FxS not working on some chips.
 3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
 3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
