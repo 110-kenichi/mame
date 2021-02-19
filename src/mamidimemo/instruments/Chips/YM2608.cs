@@ -123,7 +123,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.SPFM:
                         spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2608, (SC_CHIP_CLOCK)MasterClock);
-                        MasterClock = (uint)SC_CHIP_CLOCK.SC_CLOCK_7987200;
                         if (spfmPtr != IntPtr.Zero)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;

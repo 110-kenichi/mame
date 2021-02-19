@@ -47,6 +47,9 @@ namespace LegacyWrapperClient.Client
 
             string wrapperName = WrapperNames[targetArchitecture];
             // Pass token and library name to child process
+
+            wrapperName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), wrapperName);
+
             _wrapperProcess = Process.Start(wrapperName, $"{token} {libraryName}");
 
             _pipe = new NamedPipeClientStream(".", token, PipeDirection.InOut);
