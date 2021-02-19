@@ -791,10 +791,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             RMVOL = 127;
             COEF1 = 127;
 
-            readSoundFontForTimbre = new ToolStripMenuItem("Import PCM from SF2 for &Timbre...");
+            readSoundFontForTimbre = new ToolStripMenuItem(Resources.ImportSF2Timbre);
             readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
 
-            readSoundFontForDrumTimbre = new ToolStripMenuItem("Import PCM from SF2 for &DrumTimbre...");
+            readSoundFontForDrumTimbre = new ToolStripMenuItem(Resources.ImportSF2Drum);
             readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
         }
 

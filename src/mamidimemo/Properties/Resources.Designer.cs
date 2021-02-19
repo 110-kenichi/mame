@@ -411,6 +411,24 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   mport PCM from SF2 for &amp;DrumTimbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSF2Drum {
+            get {
+                return ResourceManager.GetString("ImportSF2Drum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import PCM from SF2 for &amp;Timbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSF2Timbre {
+            get {
+                return ResourceManager.GetString("ImportSF2Timbre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap Inst {

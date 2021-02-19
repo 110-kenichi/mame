@@ -660,6 +660,11 @@
     <Compile Include="Midi\TaggedNoteOnEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.ja-JP.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.ja-JP.resx</DependentUpon>
+    </Compile>
     <Compile Include="Scci\ScciManager.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
@@ -779,6 +784,9 @@
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormMain.ja-JP.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormPhonemesEditor.resx">
       <DependentUpon>FormPhonemesEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -794,8 +802,14 @@
     <EmbeddedResource Include="Gui\FormAllophonesEditor.resx">
       <DependentUpon>FormAllophonesEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormProgress.ja-JP.resx">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormProgress.resx">
       <DependentUpon>FormProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormSettings.ja-JP.resx">
+      <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
@@ -836,6 +850,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\PianoControl.resx">
       <DependentUpon>PianoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.ja-JP.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

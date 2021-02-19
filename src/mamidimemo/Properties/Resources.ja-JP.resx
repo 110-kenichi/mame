@@ -296,47 +296,46 @@
     <value>..\Resources\YM2608.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ConnectingSPFM" xml:space="preserve">
-    <value>Connecting to a real chip via SPFM...</value>
+    <value>SPFMで物理音源に接続しています...</value>
   </data>
   <data name="UpdatingADPCM" xml:space="preserve">
-    <value>Updating ADPCM data...</value>
+    <value>ADPCMデータを更新中...</value>
   </data>
   <data name="AdpcmBufferExceeded" xml:space="preserve">
-    <value>ADPCM buffer exceeded.</value>
+    <value>ADPCM バッファが溢れました。</value>
   </data>
   <data name="AdpcmBufferUsed" xml:space="preserve">
-    <value>ADPCM buffer used {0}/256 KB.</value>
+    <value>ADPCM バッファを {0}/256 KB 使っています。</value>
   </data>
   <data name="FailedLoadFile" xml:space="preserve">
-    <value>Failed to load the file.</value>
+    <value>ファイルの読み込みに失敗しました。</value>
   </data>
   <data name="FailedLoadMAmi" xml:space="preserve">
-    <value>Failed to load the MAmi file.</value>
+    <value>MAmiファイルの読み込みに失敗しました。</value>
   </data>
   <data name="FailedLoadMAmidi" xml:space="preserve">
-    <value>Failed to load the MAmidi file.</value>
+    <value>MAmidiファイルの読み込みに失敗しました。</value>
   </data>
   <data name="FailedLoadMidi" xml:space="preserve">
-    <value>Failed to load the MIDI file.</value>
+    <value>MIDIファイルの読み込みに失敗しました。</value>
   </data>
   <data name="FailedMidiIf" xml:space="preserve">
-    <value>Failed to set MIDI I/F.</value>
+    <value>MIDIインターフェースの設定に失敗しました。</value>
   </data>
   <data name="FailedSaveEnv" xml:space="preserve">
-    <value>Failed to save the current env.</value>
+    <value>現在の環境の保存に失敗しました。</value>
   </data>
   <data name="FailedSaveMAmidi" xml:space="preserve">
-    <value>Failed to save the current env and midi into the MAmidi file.</value>
+    <value>現在の環境とMIDIデータのMAmidiファイルへの保存に失敗しました。</value>
   </data>
   <data name="LoadMidiFile" xml:space="preserve">
-    <value>Please load a midi file to save the current env and midi file into the MAmidi file.</value>
+    <value>現在の環境とMIDIデータのMAmidiファイルへの保存するには、MIDIファイルを読み込んでください。</value>
   </data>
   <data name="WanrSPC700SampleLength" xml:space="preserve">
-    <value>Some sample loop length is not a multiple of 16.
-So, sound glitches may occur.</value>
+    <value>いくつかの音のサンプル長が16の倍数でないため、おかしくなる可能性があります。</value>
   </data>
   <data name="FailedLaunch" xml:space="preserve">
-    <value>Failed to launch.</value>
+    <value>起動に失敗しました。</value>
   </data>
   <data name="TMS5220" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TMS5220.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -354,9 +353,9 @@ So, sound glitches may occur.</value>
     <value>..\Resources\SN76477.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ImportSF2Drum" xml:space="preserve">
-    <value>mport PCM from SF2 for &amp;DrumTimbres...</value>
+    <value>SF2ファイルからPCMを&amp;DrumTimbresへインポートする....</value>
   </data>
   <data name="ImportSF2Timbre" xml:space="preserve">
-    <value>Import PCM from SF2 for &amp;Timbres...</value>
+    <value>SF2ファイルからPCMを&amp;Timbresへインポートする....</value>
   </data>
 </root>
