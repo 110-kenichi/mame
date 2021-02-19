@@ -1056,6 +1056,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (slot < 0)
             {
+                List<T> onSnds = new List<T>();
                 List<T> offSnds = new List<T>();
                 List<T> sameChSnds = new List<T>();
                 for (int i = 0; i < onSounds.Count; i++)
@@ -1073,6 +1074,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         continue;
                         */
                     }
+                    onSnds.Add(onSnd);
                     if (newNote.Channel == onSnd.NoteOnEvent.Channel)
                         sameChSnds.Add(onSnd);
                 }
@@ -1089,7 +1091,8 @@ namespace zanac.MAmidiMEmo.Instruments
                             onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
-                            onSounds.Remove(onSnd);
+                            //onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
@@ -1113,7 +1116,8 @@ namespace zanac.MAmidiMEmo.Instruments
                             onSnd.SoundOff();
                             if(!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
-                            onSounds.Remove(onSnd);
+                            //onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
                             /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
@@ -1128,8 +1132,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 //Search unused slot
                 Dictionary<int, bool> usedSlotTable = new Dictionary<int, bool>();
-                for (int i = 0; i < onSounds.Count; i++)
-                    usedSlotTable.Add(onSounds[i].Slot, true);
+                foreach (var onSnd in onSnds)
+                    usedSlotTable.Add(onSnd.Slot, true);
                 foreach (var offSnd in offSnds)
                     usedSlotTable.Add(offSnd.Slot, true);
                 for (int i = 0; i < maxSlot; i++)
@@ -1138,7 +1142,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         return i;
                 }
 
-                List<T> tmpOnSnds = new List<T>(onSounds);
+                List<T> tmpOnSnds = new List<T>(onSnds);
 
                 //Proces Poly mode
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
@@ -1208,7 +1212,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last key off sound ignore Poly Mode
-                foreach (var snd in onSounds)
+                foreach (var snd in onSnds)
                 {
                     if (snd.Slot < maxSlot && snd.IsKeyOff)
                     {
@@ -1220,7 +1224,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last sounding sound ignore Poly Mode
-                foreach (var snd in onSounds)
+                foreach (var snd in onSnds)
                 {
                     if (snd.Slot < maxSlot)
                     {

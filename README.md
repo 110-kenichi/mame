@@ -1,4 +1,4 @@
-MAmidiMEmo 3.3.2.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.5.0.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -259,9 +259,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-
+3.5.0.1 Fixed crashing in POKEY.
 3.5.0.0 Supported VSTi plugin mode. Use the .\VST\MAmiVSTi.dll file and edit ini file. DO NOT USE old .\MAmiVSTi.dll file. Trash it.
-3.3.2.1 Fixed FxS not working on some chips.
+3.3.2.1 Fixed FxS not working in some chips.
 3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
 3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
         Updated MAME Core.
@@ -282,7 +282,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
         Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature needs more CPU power.
 2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
 2.8.1.0 Updated sample sound and fixed some minor issue.
-2.8.0.1 Fixed unexpected error on FM Tone Selector.
+2.8.0.1 Fixed unexpected error in FM Tone Selector.
 2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
         Added Random button & FIR button to the WSG Editor.
 2.7.1.1 Fixed YMF262 FM Synthesis editor error.
@@ -294,20 +294,20 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
 2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).
 2.6.4.0 Supported dynamic wave form changing for the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
-        Removed force dump disabling hack on FM chips.
-2.6.3.0 Fixed RYTHM ch volume calculation on the YM2608 chip.
+        Removed force dump disabling hack in FM chips.
+2.6.3.0 Fixed RYTHM ch volume calculation in the YM2608 chip.
         Fixed SCCS, GPCS values calculation.
 		Improved sound channel assignment algorithm to keep last sounding channel. If you does not like this, please contact me.
-2.6.2.0 Turned off write cache for frequency register on the real YM2608 and YM2515 chip.
-2.6.1.0 Fixed CH mode set 3 instead of 6 on YM2608. Affected only S/W emulation.
+2.6.2.0 Turned off write cache for frequency register in the real YM2608 and YM2515 chip.
+2.6.1.0 Fixed CH mode set 3 instead of 6 in YM2608. Affected only S/W emulation.
 2.6.0.0 Fixed crashing when FM operators was reset.
-		Fixed SSG tone frequency on real YM2608 chip.
+		Fixed SSG tone frequency in real YM2608 chip.
 2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
 2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
-2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
-        Fixed ADPCM-B not sounding unexpectedly on YM2608.
-		Improved ADPCM-B on YM2608 transfer speed via SCCI.
-		Fixed SSG sounding unexpectedly when volume changing on YM2608 and YM2610B
+2.5.7.0 Added "Dumping sound" to RHYTHM sound in YM2608 when key off received.
+        Fixed ADPCM-B not sounding unexpectedly in YM2608.
+		Improved ADPCM-B in YM2608 transfer speed via SCCI.
+		Fixed SSG sounding unexpectedly when volume changing in YM2608 and YM2610B
 		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
 2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
 2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
@@ -318,7 +318,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
         Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
 		Fixed CUS30 Volume calculation.
 		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
-		Supported the SPFM to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
+		Supported the SPFM to sound in real chip for YM2151 and YM2608 chips. *Only 32 bit version*
 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
         Added FM Synthesis register value randomizer to FM Synthesis Editor.
 		Added FM Synthesis global register to FM Synthesis Editor.
@@ -329,11 +329,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.4.0.1 Improved UI.
 		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
 		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
-		Fixed freezing on MT32.
+		Fixed freezing in MT32.
 		Fixed key off behavior of Fx Engine.
 		Updated MSGS.SF for CM32-P.
 2.4.0.0 Added Envelope Editor.
-2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
+2.3.0.2 Fixed key off ignored issue while modulation is active in OPL.
 		Fixed to turn off modulation after key off.
 		Applied Metro Style GUI and improved UI.
 2.3.0.1 Fixed YMF262 sample file and some minor bugs.
@@ -341,13 +341,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Fixed Combined Drum does not sounding properly.
 2.2.5.1 Improved FM Synthesis Editor UI.
 2.2.5.0 Added PCM playback feature to HuC6280.
-		Fixed an error when opening the floating point value slider on some props.
+		Fixed an error when opening the floating point value slider in some props.
 		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
 		Added a FM Synthesis GUI Editor.
 2.2.4.0 Fixed issue of modulation CC.
-		Fixed an error on MSM5232.
-		Improved NOISE ch freqeucncy on SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
-		Improved NOISE ch function on AY8910.
+		Fixed an error in MSM5232.
+		Improved NOISE ch freqeucncy in SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
+		Improved NOISE ch function in AY8910.
 2.2.3.0 Fixed issues related with SID property.
 		Improved sf loader for SPC700 and C140.
 		Added ZoneID remover script.
@@ -374,11 +374,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.0.3.0 Improved sounds output timing accuracy.
         Supported HOLD1 control change message.
 2.0.2.0 Improved MT-32 sounds output timing & latency.
-2.0.1.0 Fixed crashing on some chip...
+2.0.1.0 Fixed crashing in some chip...
 2.0.0.0 Fixed some minor bugs.
 			Panic button sometimes does not work.
 			SerializeData does not work and cause crash.
-			FxS Arp does not work properly on Fixed mode.
+			FxS Arp does not work properly in Fixed mode.
 			Property Reset menu does not work properly.
 			Mono mode does not work properly.
 			RP2A03 Tri channel is stopped by Noise channel.
