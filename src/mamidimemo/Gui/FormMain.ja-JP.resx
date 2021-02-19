@@ -122,31 +122,31 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="decreaseThisKindOfChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="decreaseThisKindOfChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>選択した種別のチップを1つ削除(&amp;R)</value>
+    <value>選択した種別の音源を1つ削除(&amp;R)</value>
   </data>
   <data name="cloneSelectedChipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="cloneSelectedChipToolStripMenuItem.Text" xml:space="preserve">
-    <value>選択したチップを複製(&amp;D)</value>
+    <value>選択した音源を複製(&amp;D)</value>
   </data>
   <data name="toolStripSepInst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 6</value>
+    <value>233, 6</value>
   </data>
   <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="toolStripMenuItem1.Text" xml:space="preserve">
     <value>すべて消去(&amp;A)...</value>
   </data>
   <data name="toolStripMenuItemSep.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 6</value>
+    <value>233, 6</value>
   </data>
   <data name="contextMenuStripInst.Size" type="System.Drawing.Size, System.Drawing">
-    <value>239, 82</value>
+    <value>237, 82</value>
   </data>
   <data name="listViewIntruments.Groups" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
@@ -219,9 +219,6 @@
   </data>
   <data name="tabPage1.Text" xml:space="preserve">
     <value>オシロ</value>
-  </data>
-  <data name="pianoControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 95</value>
   </data>
   <data name="toolStripButton19.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -478,32 +475,8 @@
         TgDQASA1MVpwzwAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 25</value>
-  </data>
-  <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 120</value>
-  </data>
   <data name="tabPage3.Text" xml:space="preserve">
     <value>鍵盤</value>
-  </data>
-  <data name="labelTitle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>590, 39</value>
-  </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>725, 42</value>
-  </data>
-  <data name="labelCpuLoad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>774, 46</value>
-  </data>
-  <data name="panelChDisp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 41</value>
-  </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>841, 91</value>
-  </data>
-  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 95</value>
   </data>
   <data name="toolStripButtonReload.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -520,20 +493,8 @@
         TgDQASA1MVpwzwAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="toolStrip4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 25</value>
-  </data>
-  <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 120</value>
-  </data>
   <data name="tabPage4.Text" xml:space="preserve">
     <value>MIDIプレイヤー</value>
-  </data>
-  <data name="listView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>839, 114</value>
-  </data>
-  <data name="tabPage2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>845, 120</value>
   </data>
   <data name="tabPage2.Text" xml:space="preserve">
     <value>ログ</value>
