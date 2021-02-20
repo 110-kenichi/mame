@@ -164,6 +164,8 @@ void MAmiVSTi::initVst()
 
 	m_mami_sample_rate = m_rpcClient->call("sample_rate").as<int>();
 
+	m_sampleFramesBlock = std::max(m_lastSampleFrames, ((VstInt32)m_mami_sample_rate / 50)) * 2;
+
 	if (m_vst_sample_rate != 0)
 		updateSampleRateCore();
 
@@ -235,6 +237,19 @@ void MAmiVSTi::setSampleRate(float srate)
 
 	if (m_vstInited)
 		updateSampleRateCore();
+}
+
+void MAmiVSTi::setBlockSize(VstInt32 blockSize)
+{
+	AudioEffect::setBlockSize(blockSize);
+
+	std::lock_guard<std::shared_mutex> lock(mtxSoxrBuffer);
+
+	if (m_lastSampleFrames != blockSize)
+	{
+		m_lastSampleFrames = blockSize;
+		m_sampleFramesBlock = std::max(m_lastSampleFrames, ((VstInt32)m_mami_sample_rate / 50)) * 2;
+	}
 }
 
 void MAmiVSTi::updateSampleRateCore()
@@ -416,7 +431,7 @@ void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 	mtxSoxrBuffer.lock();
 	if (sampleRate != (double)m_mami_sample_rate)
 	{
-		size_t cnvSize = (size_t)ceil((double)size1ch * ((double)sampleRate / (double)m_mami_sample_rate));
+		size_t cnvSize = (size_t)round((double)size1ch * ((double)sampleRate / (double)m_mami_sample_rate));
 		int32_t* outBuf2ch = new int32_t[cnvSize * 2];
 
 		size_t idone = 0;
@@ -442,11 +457,10 @@ void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 	}
 
 	//triple buffer size1ch to reduce sounding lag
-	VstInt32 block = std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50)) * 2;
-	if (m_streamBuffer2ch.size() > (size_t)block * 3)
+	if (m_streamBuffer2ch.size() > (size_t)m_sampleFramesBlock * 3)
 	{
 		//Remove first block buffer
-		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + block);
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + m_sampleFramesBlock);
 
 		m_streamBufferOverflowed = true;
 	}
@@ -460,8 +474,6 @@ void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 
 void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames1ch)
 {
-	m_lastSampleFrames = sampleFrames1ch;
-
 	//入力、出力は2次元配列で渡される。
 	//入力は-1.0f～1.0fの間で渡される。
 	//出力は-1.0f～1.0fの間で書き込む必要がある。
@@ -475,8 +487,7 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 	if (m_streamBufferOverflowed)
 	{
 		//Remove first block buffer to prevent removing the next block by streamUpdatedR()
-		size_t block = (size_t)std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50)) * 2;
-		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + block);
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + m_sampleFramesBlock);
 
 		m_streamBufferOverflowed = false;
 	}

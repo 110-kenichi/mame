@@ -59,6 +59,7 @@ private:
 	USHORT m_vstPort;
 	USHORT m_mamiPort;
 	VstInt32 m_lastSampleFrames;
+	VstInt32 m_sampleFramesBlock;
 	char m_mamiPath[MAX_PATH];
 
 	void updateSampleRateCore();
@@ -132,6 +133,9 @@ public:
 
 	///< Called when the sample rate changes (always in a suspend state)
 	virtual void setSampleRate(float sampleRate);
+
+	///< Called when the Maximun block size changes (always in a suspend state). Note that the sampleFrames in Process Calls could be smaller than this block size, but NOT bigger.
+	virtual void setBlockSize(VstInt32 blockSize);
 
 	// ‰¹ºM†‚ðˆ—‚·‚éƒƒ“ƒo[ŠÖ”
 	virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames);
