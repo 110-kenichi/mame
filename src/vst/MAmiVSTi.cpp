@@ -60,7 +60,7 @@ int StartMAmi(LPCTSTR lpApplicationName, int sampleRate, int port)
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
-	// set the size of the structures
+	// set the size1ch of the structures
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
@@ -102,7 +102,6 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	: AudioEffectX(audioMaster, MY_VST_PRESET_NUM, MY_VST_PARAMETER_NUM)
 	, m_vstIsClosed(false)
 	, m_vstIsSuspend(true)
-	, soxl(NULL)
 	, soxr(NULL)
 	, m_mami_sample_rate(48000)
 	, m_vst_sample_rate(0)
@@ -115,8 +114,6 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	, m_lastSampleFrames(0)
 	, m_cpSharedMemory(NULL)
 	, m_hSharedMemory(0)
-	, m_tmpBufferL(NULL)
-	, m_tmpBufferR(NULL)
 	, m_mamiPath("")
 	, m_streamBufferOverflowed(false)
 {
@@ -231,7 +228,7 @@ int MAmiVSTi::isVstDisabled()
 
 void MAmiVSTi::setSampleRate(float srate)
 {
-	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock(mtxSoxrBuffer);
 
 	sampleRate = srate;
 	m_vst_sample_rate = srate;
@@ -247,16 +244,13 @@ void MAmiVSTi::updateSampleRateCore()
 	soxr_io_spec_t iospec = soxr_io_spec(itype, otype);
 	soxr_quality_spec_t qSpec = soxr_quality_spec(SOXR_20_BITQ, 0);
 
-	if (soxl != NULL)
-		soxr_delete(soxl);
 	if (soxr != NULL)
 		soxr_delete(soxr);
 
-	soxl = soxr_create(m_mami_sample_rate, sampleRate, 1, NULL, &iospec, &qSpec, NULL);
-	soxr = soxr_create(m_mami_sample_rate, sampleRate, 1, NULL, &iospec, &qSpec, NULL);
+	soxr = soxr_create(m_mami_sample_rate, sampleRate, 2, NULL, &iospec, &qSpec, NULL);
 }
 
-///< Host stores plug-in state. Returns the size in bytes of the chunk (plug-in allocates the data array)
+///< Host stores plug-in state. Returns the size1ch in bytes of the chunk (plug-in allocates the data array)
 VstInt32 MAmiVSTi::getChunk(void** data, bool isPreset)
 {
 	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
@@ -304,14 +298,11 @@ void MAmiVSTi::close()
 	if (NULL != m_hSharedMemory)
 		::CloseHandle(m_hSharedMemory);
 
-	if (soxl != NULL)
-		soxr_delete(soxl);
 	if (soxr != NULL)
 		soxr_delete(soxr);
 
 	if (m_vstInited)
 	{
-		//CloseApplication();
 		if (m_rpcClient != NULL)
 		{
 			if (m_rpcClient->get_connection_state() == rpc::client::connection_state::connected)
@@ -401,6 +392,7 @@ void MAmiVSTi::resume()
 	m_vstIsSuspend = false;
 }
 
+// does not call from MAmi
 void MAmiVSTi::streamUpdatedL(int32_t size)
 {
 	if (isVstDisabled())
@@ -408,72 +400,67 @@ void MAmiVSTi::streamUpdatedL(int32_t size)
 	if (m_cpSharedMemory == NULL)
 		return;
 
-	m_tmpBufferL = (int32_t*)m_cpSharedMemory;
+	//m_tmpBuffer2ch = (int32_t*)m_cpSharedMemory;
 }
 
-void MAmiVSTi::streamUpdatedR(int32_t size)
+void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 {
 	if (isVstDisabled())
 		return;
 	if (m_cpSharedMemory == NULL)
 		return;
 
-	m_tmpBufferR = (int32_t*)m_cpSharedMemory + size;
+	int32_t* tmpBuf2ch = (int32_t*)m_cpSharedMemory;
 
+	//std::lock_guard<std::shared_mutex> lock1(mtxSoxrBuffer);
+	mtxSoxrBuffer.lock();
 	if (sampleRate != (double)m_mami_sample_rate)
 	{
-		int cnvSize = (int)ceil((double)size * ((double)sampleRate / (double)m_mami_sample_rate));
-		int32_t* cnvBufferL = new int32_t[cnvSize];
-		int32_t* cnvBufferR = new int32_t[cnvSize];
+		size_t cnvSize = (size_t)ceil((double)size1ch * ((double)sampleRate / (double)m_mami_sample_rate));
+		int32_t* outBuf2ch = new int32_t[cnvSize * 2];
 
 		size_t idone = 0;
 		size_t odone = 0;
-		soxr_process(soxl, m_tmpBufferL, size, &idone, cnvBufferL, cnvSize, &odone);
-		soxr_process(soxr, m_tmpBufferR, size, &idone, cnvBufferR, cnvSize, &odone);
+		soxr_process(soxr, tmpBuf2ch, size1ch, &idone, outBuf2ch, cnvSize, &odone);
 
-		size = (int32_t)odone;
-		m_tmpBufferL = cnvBufferL;
-		m_tmpBufferR = cnvBufferR;
+		size1ch = (int32_t)odone;
+		tmpBuf2ch = outBuf2ch;
 	}
+	mtxSoxrBuffer.unlock();
 
+	std::lock_guard<std::shared_mutex> lock2(mtxBuffer);
+	//mtxBuffer.lock();	// Lock buffer
 
-	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
-	//mtxBuffer.lock();	// Lock both L & R buffer
-
-	size_t sz = m_streamBufferL.size();
-	m_streamBufferL.resize(sz + size);
-	m_streamBufferR.resize(sz + size);
-	int* bufL = &m_streamBufferL[sz];
-	int* bufR = &m_streamBufferR[sz];
-	for (size_t i = sz; i < sz + size; i++)
+	size_t sz = m_streamBuffer2ch.size();
+	m_streamBuffer2ch.resize(sz + (size_t)size1ch * 2);
+	int* sbuf = &m_streamBuffer2ch[sz];
+	for (size_t i = sz; i < sz + (size_t)size1ch; i++)
 	{
-		*bufL++ = *m_tmpBufferL++;
-		*bufR++ = *m_tmpBufferR++;
+		//interleave
+		*sbuf++ = *tmpBuf2ch++;
+		*sbuf++ = *tmpBuf2ch++;
 	}
 
-	//triple buffer size to reduce sounding lag
-	VstInt32 max = std::max(m_lastSampleFrames * 3, ((VstInt32)m_vst_sample_rate / 50) * 3);
-	if (m_streamBufferL.size() > (size_t)max)
+	//triple buffer size1ch to reduce sounding lag
+	VstInt32 block = std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50)) * 2;
+	if (m_streamBuffer2ch.size() > (size_t)block * 3)
 	{
 		//Remove first block buffer
-		size_t cut = std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50));
-
-		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);
-		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + cut);
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + block);
 
 		m_streamBufferOverflowed = true;
 	}
 
-	//mtxBuffer.unlock();	// Unlock both L & R buffer
+	//mtxBuffer.unlock();	// Unlock buffer
 }
 
 // ============================================================================================
 // 音声信号処理部分
 // ============================================================================================
 
-void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames)
+void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames1ch)
 {
-	m_lastSampleFrames = sampleFrames;
+	m_lastSampleFrames = sampleFrames1ch;
 
 	//入力、出力は2次元配列で渡される。
 	//入力は-1.0f～1.0fの間で渡される。
@@ -488,41 +475,36 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 	if (m_streamBufferOverflowed)
 	{
 		//Remove first block buffer to prevent removing the next block by streamUpdatedR()
-		size_t cut = std::max(m_lastSampleFrames * 1, ((VstInt32)m_vst_sample_rate / 50) * 1);
-
-		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + cut);
-		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + cut);
+		size_t block = (size_t)std::max(m_lastSampleFrames, ((VstInt32)m_vst_sample_rate / 50)) * 2;
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + block);
 
 		m_streamBufferOverflowed = false;
 	}
 
-	int* bufL = &m_streamBufferL[0];
-	int* bufR = &m_streamBufferR[0];
-	auto size = m_streamBufferL.size();
-	if (size < (size_t)sampleFrames)
+	int* sbuf2ch = &m_streamBuffer2ch[0];
+	auto size1ch = m_streamBuffer2ch.size() / 2;
+	if (size1ch < (size_t)sampleFrames1ch)
 	{
-		for (VstInt32 i = 0; i < (VstInt32)size; i++)
+		for (VstInt32 i = 0; i < (VstInt32)size1ch; i++)
 		{
-			*(outL++) = *(inL++) + (float)*(bufL++) / (float)32767;
-			*(outR++) = *(inR++) + (float)*(bufR++) / (float)32767;
+			*(outL++) = *(inL++) + (float)*(sbuf2ch++) / (float)32767;
+			*(outR++) = *(inR++) + (float)*(sbuf2ch++) / (float)32767;
 		}
-		for (VstInt32 i = (VstInt32)size; i < sampleFrames; i++)
+		for (VstInt32 i = (VstInt32)size1ch; i < sampleFrames1ch; i++)
 		{
 			*(outL++) = *(inL++);
 			*(outR++) = *(inR++);
 		}
-		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + size);
-		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + size);
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + size1ch * 2);
 	}
 	else
 	{
-		for (VstInt32 i = 0; i < sampleFrames; i++)
+		for (VstInt32 i = 0; i < sampleFrames1ch; i++)
 		{
-			*(outL++) = *(inL++) + (float)*(bufL++) / (float)32767;
-			*(outR++) = *(inR++) + (float)*(bufR++) / (float)32767;
+			*(outL++) = *(inL++) + (float)*(sbuf2ch++) / (float)32767;
+			*(outR++) = *(inR++) + (float)*(sbuf2ch++) / (float)32767;
 		}
-		m_streamBufferL.erase(m_streamBufferL.begin(), m_streamBufferL.begin() + sampleFrames);
-		m_streamBufferR.erase(m_streamBufferR.begin(), m_streamBufferR.begin() + sampleFrames);
+		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + (size_t)sampleFrames1ch * 2);
 	}
 }
 
@@ -530,9 +512,6 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 // processReplacing()の前に必ず1度だけ呼び出される。
 VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 {
-	// MIDIのリストを初期化します。
-	clearMidiMsg();
-
 	int loops = (events->numEvents);
 
 	// VSTイベントの回数だけループをまわす。

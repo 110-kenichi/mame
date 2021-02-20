@@ -370,22 +370,30 @@ void StreamUpdatedL(int32_t* buffer, int32_t size)
 	{
 		int* bufL = (int32_t*)m_cpSharedMemory;
 		for (size_t i = 0; i < size; i++)
-			*bufL++ = *buffer++;
-	}
+		{
+			//interleave
+			*bufL = *buffer++;
+			bufL += 2;
+		}
 
-	m_rpcClient->async_call("StreamUpdatedL", size);
+		// does not call to VST
+		//m_rpcClient->async_call("StreamUpdatedL", size);
+	}
 }
 
 void StreamUpdatedR(int32_t* buffer, int32_t size)
 {
 	if (NULL != m_cpSharedMemory)
 	{
-		int* bufR = (int32_t*)m_cpSharedMemory + size;
+		int* bufR = (int32_t*)m_cpSharedMemory + 1;
 		for (size_t i = 0; i < size; i++)
-			*bufR++ = *buffer++;
+		{
+			//interleave
+			*bufR = *buffer++;
+			bufR += 2;
+		}
+		m_rpcClient->async_call("StreamUpdatedR", size);
 	}
-
-	m_rpcClient->async_call("StreamUpdatedR", size);
 }
 
 DWORD WINAPI CloseApplicationProc(LPVOID lpParam)

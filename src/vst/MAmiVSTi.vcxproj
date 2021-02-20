@@ -21,14 +21,12 @@
   <ItemGroup>
     <ClCompile Include="audioeffect.cpp" />
     <ClCompile Include="audioeffectx.cpp" />
-    <ClCompile Include="CMidiMsg.cpp" />
     <ClCompile Include="MAmiVSTi.cpp" />
     <ClCompile Include="vstplugmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioeffect.h" />
     <ClInclude Include="audioeffectx.h" />
-    <ClInclude Include="CMidiMsg.h" />
     <ClInclude Include="MAmiVSTi.h" />
     <ClInclude Include="pluginterfaces\vst2.x\aeffect.h" />
     <ClInclude Include="pluginterfaces\vst2.x\aeffectx.h" />

@@ -1129,7 +1129,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>@rem if exist "$(OutDir)MAmidiMEmo_x86.zip" "$(ProjectDir)UpdateZipContents\UpdateZipContents.exe" "$(OutDir)MAmidiMEmo_x86.zip"
+@rem if exist "$(OutDir)MAmidiMEmo_x64.zip" "$(ProjectDir)UpdateZipContents\UpdateZipContents.exe" "$(OutDir)MAmidiMEmo_x64.zip"
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

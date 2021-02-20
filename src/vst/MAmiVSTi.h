@@ -10,8 +10,6 @@
 #include "audioeffectx.h"
 #include "..\..\src\munt\mt32emu\soxr\src\soxr.h"
 
-#include "CMidiMsg.h"
-
 #include "rpc/server.h"
 #include "rpc/client.h"
 
@@ -28,16 +26,26 @@
 #define MY_VST_PRESET_NUM    0 //プリセットプログラムの数
 #define MY_VST_PARAMETER_NUM 0 //パラメータの数
 
+struct VstMidiEventBase
+{
+	//-------------------------------------------------------------------------------------------------------
+	VstInt32 type;			///< #kVstSysexType or kVstMidiType
+	VstInt32 byteSize;		///< sizeof(VstMidiEventBase)
+	VstInt32 deltaFrames;	///< sample frames related to the current block start sample position
+	VstInt32 flags;			///< none defined yet (should be zero)
+};
+
 // ============================================================================================
 // VSTの基本となるクラス
 // ============================================================================================
-class MAmiVSTi : public AudioEffectX, public CMidiMsg
+class MAmiVSTi : public AudioEffectX
 {
 private:
 	std::shared_mutex mtxBuffer;
+	std::shared_mutex mtxSoxrBuffer;
 
-	std::vector<int32_t> m_streamBufferL;
-	std::vector<int32_t> m_streamBufferR;
+	std::vector<int32_t> m_streamBuffer2ch;
+
 	void streamUpdatedL(int32_t size);
 	void streamUpdatedR(int32_t size);
 
@@ -60,9 +68,6 @@ private:
 
 	bool m_streamBufferOverflowed;
 
-	int32_t* m_tmpBufferL;
-	int32_t* m_tmpBufferR;
-
 	CHAR* m_cpSharedMemory;
 	HANDLE m_hSharedMemory;
 
@@ -70,7 +75,6 @@ protected:
 	float m_vst_sample_rate;
 	int m_mami_sample_rate;
 	soxr_t soxr;
-	soxr_t soxl;
 public:
 	MAmiVSTi(audioMasterCallback audioMaster);
 
