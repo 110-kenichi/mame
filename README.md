@@ -1,4 +1,4 @@
-MAmidiMEmo 3.5.1.2/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.5.1.3/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -259,6 +259,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.5.1.3 Fixed unexpected sounding in Huc6280.
 3.5.1.2 Improved performance (a little) in VST mode.
 3.5.1.1 Fixed unexpected error occurred while enabling SCCI in VST mode.
 3.5.1.0 Supported localization for ja-JP.

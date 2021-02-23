@@ -226,6 +226,14 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void SoundOff()
         {
+            if (!IsKeyOff)
+            {
+                IsKeyOff = true;
+                AdsrEngine?.Gate(false);
+
+                SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            }
+
             IsSoundOff = true;
 
             SoundOffTime = soundOffTimeCounter++;
