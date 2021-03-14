@@ -14,6 +14,7 @@ using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.YMF262;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -124,7 +125,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         if (dr == DialogResult.OK)
                         {
                             if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
-                                MessageBox.Show("You should CNT value to 1 or higher value to sound 4 operator sound.", "Warning", MessageBoxButtons.OK);
+                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
 
                             return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                         }
@@ -141,7 +142,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         if (dr == DialogResult.OK)
                         {
                             if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
-                                MessageBox.Show("You should CNT value to 1 or higher value to sound 4 operator sound.", "Warning", MessageBoxButtons.OK);
+                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
                             return value;
                         }
                         else

@@ -874,6 +874,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateTriVolume()
             {
+                if (IsSoundOff)
+                    return;
+
                 var fv = Math.Round(timbre.Volume * CalcCurrentVolume());
 
                 if (fv < 0.01)

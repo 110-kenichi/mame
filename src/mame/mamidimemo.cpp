@@ -37,6 +37,7 @@
 #include "..\devices\sound\sp0256.h"
 #include "..\devices\sound\samples.h"
 #include "..\devices\sound\sn76477.h"
+#include "..\devices\sound\upd1771.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2001,6 +2002,30 @@ extern "C"
 			sn76477_devices[unitNumber]->pitch_voltage_w(data);
 			break;
 		}
+	}
+
+
+	upd1771c_device* upd1771c_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void uPD1771_write(unsigned int unitNumber, uint8_t data)
+	{
+		if (sam_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			upd1771c_device* upd1771c = dynamic_cast<upd1771c_device*>(rm->device((std::string("upd1771_") + num).c_str()));
+			if (upd1771c == nullptr)
+				return;
+
+			upd1771c_devices[unitNumber] = upd1771c;
+		}
+		upd1771c_devices[unitNumber]->write(data);
 	}
 }
 

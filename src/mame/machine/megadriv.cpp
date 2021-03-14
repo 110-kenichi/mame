@@ -1086,6 +1086,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		SN76477(config, *m_sn76477[i], 0);
 		(*m_sn76477[i])->add_route(0, "lspeaker", 1.00);
 		(*m_sn76477[i])->add_route(1, "rspeaker", 1.00);
+
+		UPD1771C(config, *m_upd1771[i], 6_MHz_XTAL);
+		(*m_upd1771[i])->add_route(0, "lspeaker", 1.00);
+		(*m_upd1771[i])->add_route(1, "rspeaker", 1.00);
 	}
 }
 /*

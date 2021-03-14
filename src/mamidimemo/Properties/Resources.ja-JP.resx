@@ -358,4 +358,20 @@
   <data name="ImportSF2Timbre" xml:space="preserve">
     <value>SF2ファイルからPCMを&amp;Timbresへインポートする....</value>
   </data>
+  <data name="ClearAllInsts" xml:space="preserve">
+    <value>全ての音源をクリアしますか？</value>
+  </data>
+  <data name="CNTWarning" xml:space="preserve">
+    <value>4OPで音を出力する場合、CNTの値を1またはそれ以上にするべきです。</value>
+  </data>
+  <data name="NoMidiPort" xml:space="preserve">
+    <value>MIDI IN デバイスがありません。
+MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまたは loopMIDI アプリをインストールする必要があります。</value>
+  </data>
+  <data name="RestartConfirmation" xml:space="preserve">
+    <value>新しい設定を反映するため再起動しますか？</value>
+  </data>
+  <data name="SampleRate" xml:space="preserve">
+    <value>MAmidiMEmoのサンプリング周波数はMAmidiMEmo起動時のDAWのサンプリング周波数に従います。</value>
+  </data>
 </root>

@@ -535,6 +535,7 @@
     <Compile Include="Gui\VstUITypeEditor.cs" />
     <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
+    <Compile Include="Instruments\Chips\uPD1771C.cs" />
     <Compile Include="Instruments\Chips\SN76477.cs" />
     <Compile Include="Instruments\Chips\CM32P.cs" />
     <Compile Include="Instruments\Chips\MT32.cs" />
@@ -1062,6 +1063,7 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\uPD1771C.png" />
     <None Include="Resources\cmudict-0.7b.txt" />
     <None Include="Resources\SAM.png" />
     <None Include="Resources\SN76477.png" />

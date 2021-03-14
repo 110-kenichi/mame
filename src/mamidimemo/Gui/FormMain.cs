@@ -198,6 +198,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("SP0256", Resources.SP0256);
             imageList1.Images.Add("SAM", Resources.SAM);
             imageList1.Images.Add("SN76477", Resources.SN76477);
+            imageList1.Images.Add("uPD1771C", Resources.uPD1771C);
 
             if (Program.IsVSTiMode())
             {
@@ -228,10 +229,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 if (toolStripComboBoxMidiIfA.Items.Count < 1)
                 {
-                    MessageBox.Show(
-                        "There are no MIDI IN devices.\r\n" +
-                        "Please install at least one MIDI IN device to use the MAmidiMEmo.\r\n" +
-                        "Or, install the loopMIDI to the PC.");
+                    MessageBox.Show(Resources.NoMidiPort, "Warning", MessageBoxButtons.OK);
                 }
             }
             outputListView = listView1;
@@ -658,6 +656,12 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InstrumentManager.AddInstrument(InstrumentType.SN76477);
         }
+
+        private void uPD1771ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.uPD1771C);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -871,11 +875,11 @@ namespace zanac.MAmidiMEmo.Gui
                     Settings.Default.Save();
                     if (Program.IsVSTiMode())
                     {
-                        MessageBox.Show(this, "MAmi sample rate follows DAW sample rate at startup MAmi.", "Information", MessageBoxButtons.OK);
+                        MessageBox.Show(this, Resources.SampleRate, "Information", MessageBoxButtons.OK);
                     }
                     else
                     {
-                        var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
+                        var rdr = MessageBox.Show(this, Resources.RestartConfirmation, "Message", MessageBoxButtons.YesNo);
                         if (rdr == DialogResult.Yes)
                         {
                             Close();
@@ -1180,7 +1184,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var rdr = MessageBox.Show(this, "Do you clear all instruments?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            var rdr = MessageBox.Show(this, Resources.ClearAllInsts, "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (rdr == DialogResult.Yes)
             {
                 InstrumentManager.ClearAllInstruments();

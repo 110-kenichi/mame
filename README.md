@@ -1,4 +1,4 @@
-MAmidiMEmo 3.5.1.3/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.6.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -160,6 +160,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	 https://github.com/s-macke/SAM
 	 http://www.retrobits.net/atari/sam.shtml
 
+	uPD1771
+	 http://takeda-toshiya.my.coocan.jp/scv/scv.pdf
+
    *[Channels]
     Select which MIDI ch messages the chip receives.
 
@@ -259,6 +262,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.6.0.0 Added uPD1771.
 3.5.1.3 Fixed unexpected sounding in Huc6280.
 3.5.1.2 Improved performance (a little) in VST mode.
 3.5.1.1 Fixed unexpected error occurred while enabling SCCI in VST mode.
