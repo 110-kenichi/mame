@@ -434,6 +434,8 @@ attotime device_t::clocks_to_attotime(u64 numclocks) const noexcept
 		return attotime::never;
 	else if (numclocks < m_clock)
 		return attotime(0, numclocks * m_attoseconds_per_clock);
+	else if (numclocks == LONG_MIN && m_clock == -1)
+		return attotime(0, numclocks * m_attoseconds_per_clock);
 	else
 	{
 		u32 remainder;

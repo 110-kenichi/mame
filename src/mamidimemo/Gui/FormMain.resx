@@ -2698,7 +2698,7 @@
     <value>CM-32&amp;P(Simulation)</value>
   </data>
   <data name="lAToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="lAToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MIDI</value>
@@ -2716,7 +2716,7 @@
     <value>&amp;SPC700</value>
   </data>
   <data name="pCMToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="pCMToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;PCM</value>
@@ -2764,7 +2764,7 @@
     <value>YM&amp;F262</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;FM</value>
@@ -2788,67 +2788,67 @@
     <value>&amp;HuC6280</value>
   </data>
   <data name="wSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="wSGToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;WSG</value>
   </data>
   <data name="extendMOS8580ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendMOS8580ToolStripMenuItem.Text" xml:space="preserve">
     <value>MOS&amp;8580</value>
   </data>
   <data name="extendMOS6581ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendMOS6581ToolStripMenuItem.Text" xml:space="preserve">
     <value>MOS&amp;6581</value>
   </data>
   <data name="extendNESAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendNESAPUToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;RP2A03(NES APU)</value>
   </data>
   <data name="extendGBAPUToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendGBAPUToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;GB(DMG-01) APU</value>
   </data>
   <data name="extendPOKEYToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendPOKEYToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;POKEY</value>
   </data>
   <data name="addSN76496ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="addSN76496ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;SN76496</value>
   </data>
   <data name="extendAY38910ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendAY38910ToolStripMenuItem.Text" xml:space="preserve">
     <value>A&amp;Y-3-8910</value>
   </data>
   <data name="uPD1771ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="uPD1771ToolStripMenuItem.Text" xml:space="preserve">
     <value>uPD1771C</value>
   </data>
   <data name="extendMSM5232ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendMSM5232ToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MSM5232+TA7630</value>
   </data>
   <data name="extendBeepToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>172, 22</value>
   </data>
   <data name="extendBeepToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Beep</value>
@@ -2857,7 +2857,7 @@
     <value>False</value>
   </data>
   <data name="pSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="pSGToolStripMenuItem.Text" xml:space="preserve">
     <value>PS&amp;G</value>
@@ -2881,7 +2881,7 @@
     <value>S&amp;AM</value>
   </data>
   <data name="eTCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="eTCToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;VOICE</value>
@@ -2893,7 +2893,7 @@
     <value>&amp;SN76477</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>123, 22</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;DISCRETE</value>
