@@ -209,7 +209,6 @@
             this.metroTextBoxFirWeight.WaterMark = "Set FIR weights like \"1,1,1,1,1\"";
             this.metroTextBoxFirWeight.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.metroTextBoxFirWeight.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            this.metroTextBoxFirWeight.TextChanged += new System.EventHandler(this.textBoxWsgDataText_TextChanged);
             // 
             // metroButtonMax
             // 

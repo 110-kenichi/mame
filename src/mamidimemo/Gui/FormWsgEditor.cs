@@ -1,4 +1,4 @@
-﻿using MetroFramework.Forms;
+﻿ using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -421,7 +421,7 @@ namespace zanac.MAmidiMEmo.Gui
                 input[m] = 0.0;     // 無音とみなす。
             }
             List<byte> orgData = new List<byte>(wsgData);
-            orgData.Add(0);
+            //orgData.Add(0);
             List<byte> firData = new List<byte>();
             for (int k = 0; k < orgData.Count; k++)
             {
@@ -437,10 +437,11 @@ namespace zanac.MAmidiMEmo.Gui
                 firData.Add(fdata);
                 m++;
             }
-            firData.RemoveAt(0);
+            //firData.RemoveAt(0);
             return firData.ToArray();
         }
 
+        //https://mathwords.net/dataseikika
         private void metroButtonMax_Click(object sender, EventArgs e)
         {
             int max = 0;

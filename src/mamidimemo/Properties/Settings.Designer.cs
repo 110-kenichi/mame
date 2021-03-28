@@ -526,5 +526,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["PhonemesEdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(" 1, 1, 1, 1, 1 ")]
+        public string EnvFirWeight {
+            get {
+                return ((string)(this["EnvFirWeight"]));
+            }
+            set {
+                this["EnvFirWeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size EnvEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["EnvEdSize"]));
+            }
+            set {
+                this["EnvEdSize"] = value;
+            }
+        }
     }
 }

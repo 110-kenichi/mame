@@ -50,11 +50,24 @@ namespace zanac.MAmidiMEmo.Gui
 
             updateValue(value);
             suspendTextChange = true;
-            textBoxText.Text = EnvelopeValuesText;
+            textBoxEnvText.Text = EnvelopeValuesText;
             suspendTextChange = false;
 
             updateRepeatBarColor();
             updateReleaseBarColor();
+
+            Size = Settings.Default.EnvEdSize;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Settings.Default.EnvEdSize = Size;
         }
 
         private void chart1_MouseDown(object sender, MouseEventArgs e)
@@ -237,7 +250,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             suspendTextChange = true;
             f_EnvelopeValuesText = sb.ToString();
-            textBoxText.Text = f_EnvelopeValuesText;
+            textBoxEnvText.Text = f_EnvelopeValuesText;
             suspendTextChange = false;
 
             ValueChanged?.Invoke(this, EventArgs.Empty);
@@ -260,7 +273,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (suspendTextChange)
                 return;
 
-            updateValue(textBoxText.Text);
+            updateValue(textBoxEnvText.Text);
         }
 
         private void updateValue(string value)
@@ -512,6 +525,186 @@ namespace zanac.MAmidiMEmo.Gui
             updateText();
         }
 
+        private void metroButtonRand1_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            var rand = new Random(DateTime.Now.GetHashCode());
+
+            try
+            {
+                foreach (var pt in s.Points)
+                {
+                    pt.YValues[0] = rand.Next((int)ca.AxisY.Minimum, (int)ca.AxisY.Maximum);
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonRandom2_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            var rand = new Random(DateTime.Now.GetHashCode());
+
+            int max = (int)(ca.AxisY.Maximum - ca.AxisY.Minimum);
+            int offset = (int)(ca.AxisY.Minimum);
+
+            try
+            {
+                s.Points[0].YValues[0] = rand.Next(max) + offset;
+                int len = rand.Next(s.Points.Count / 2 - 1) + 1;
+                int sign = rand.Next(1);
+                if (sign == 0)
+                    sign = -1;
+                int delta = rand.Next(max / 2);
+                int sy = (int)s.Points[0].YValues[0] - offset;
+                int height = 0;
+                if (sign > 0)
+                    height = rand.Next(max - sy) + 1;
+                else
+                    height = rand.Next(sy) + 1;
+                for (int i = 1; i < s.Points.Count; i++)
+                {
+                    int data = ((int)s.Points[i - 1].YValues[0] - offset) + sign * delta;
+                    if (data > max || (sign > 0 && Math.Abs(data - sy) > height))
+                    {
+                        data = Math.Min(max, sy + height);
+                        delta = rand.Next(max / 2);
+                        len = rand.Next(s.Points.Count / 2 - 1) + 1;
+                        sy = data;
+                        sign = -1;
+                        height = rand.Next(sy) + 1;
+                    }
+                    else if (data < 0 || (sign < 0 && Math.Abs(data - sy) > height))
+                    {
+                        data = Math.Max(0, sy - height);
+                        delta = rand.Next(max / 2);
+                        len = rand.Next(s.Points.Count / 2 - 1) + 1;
+                        sy = data;
+                        sign = 1;
+                        height = rand.Next(max - sy) + 1;
+                    }
+
+                    s.Points[i].YValues[0] = data + offset;
+
+                    len--;
+                    if (len == 0)
+                        len = rand.Next(s.Points.Count - 1) + 1;
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        //https://mathwords.net/dataseikika
+        private void metroButtonMax_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            var max = ca.AxisY.Minimum;
+            var min = ca.AxisY.Maximum;
+            for (int i = 0; i < s.Points.Count; i++)
+            {
+                max = Math.Max(max, s.Points[i].YValues[0]);
+                min = Math.Min(min, s.Points[i].YValues[0]);
+            }
+            for (int i = 0; i < s.Points.Count; i++)
+            {
+                s.Points[i].YValues[0] =
+                    Math.Round(
+                        ((
+                        (s.Points[i].YValues[0] - min) /
+                        (max - min)
+                        ) * (ca.AxisY.Maximum - ca.AxisY.Minimum)) + ca.AxisY.Minimum
+                        );
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonFir1_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            List<double> vals = new List<double>();
+            for (int i = 0; i < s.Points.Count; i++)
+                vals.Add(s.Points[i].YValues[0]);
+
+            var fvals = applyFIR(vals.ToArray(), metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+            for (int i = 0; i < s.Points.Count; i++)
+                s.Points[i].YValues[0] = fvals[i];
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+        //http://home.a00.itscom.net/hatada/asp/fir.html
+        private double[] applyFIR(double[] wsgData, string[] weights)
+        {
+            double[] wei = new double[weights.Length];
+            double[] input = new double[weights.Length];
+            double sumWei = 0.0;
+            for (int n = 0; n < wei.Length; n++)
+            {
+                Double.TryParse(weights[n], out wei[n]);
+                sumWei += wei[n];
+            }
+            for (int n = 0; n < wei.Length; n++)
+            {
+                wei[n] /= sumWei;
+            }
+            int m = 0;
+            for (; m < wei.Length - 1; m++)
+            {
+                input[m] = 0.0;     // 無音とみなす。
+            }
+            List<double> orgData = new List<double>(wsgData);
+            //orgData.Add(0);
+            List<double> firData = new List<double>();
+            for (int k = 0; k < orgData.Count; k++)
+            {
+                input[m % wei.Length] = (double)orgData[k];
+                double val = 0.0;
+                for (int n = 0; n < wei.Length; n++)
+                    val += input[(m - n) % wei.Length] * wei[n];
+                var fdata = Math.Round(val);
+                firData.Add(fdata);
+                m++;
+            }
+            //firData.RemoveAt(0);
+            return firData.ToArray();
+        }
     }
 
 }
