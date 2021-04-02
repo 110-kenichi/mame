@@ -33,6 +33,18 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             get => f_OutputLevel;
         }
 
+
+        private int f_PanShift;
+
+        /// <summary>
+        /// -127:Left
+        /// 127:Right
+        /// </summary>
+        public override int PanShift
+        {
+            get => f_PanShift;
+        }
+
         private int lastArpNoteNumber;
 
         private double f_DeltaNoteNumber;
@@ -80,6 +92,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private uint volumeCounter;
 
         private uint pitchCounter;
+
+        private uint panCounter;
 
         private uint arpCounter;
 
@@ -169,6 +183,43 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     }
 
                     lastPitchValue = pitch;
+                    process = true;
+                }
+            }
+
+            //pan
+            if (settings.PanShiftEnvelopesNums.Length > 0)
+            {
+                if (!isKeyOff)
+                {
+                    var vm = settings.PanShiftEnvelopesNums.Length;
+                    if (settings.PanShiftEnvelopesReleasePoint >= 0)
+                        vm = settings.PanShiftEnvelopesReleasePoint;
+                    if (panCounter >= vm)
+                    {
+                        if (settings.PanShiftEnvelopesRepeatPoint >= 0)
+                            panCounter = (uint)settings.PanShiftEnvelopesRepeatPoint;
+                        else
+                            panCounter = (uint)vm - 1;
+                    }
+                }
+                else
+                {
+                    if (settings.PanShiftEnvelopesReleasePoint < 0)
+                        panCounter = (uint)settings.PanShiftEnvelopesNums.Length;
+
+                    //if (panCounter >= settings.PanEnvelopesNums.Length)
+                    //{
+                    //    if (settings.PanEnvelopesRepeatPoint >= 0)
+                    //        panCounter = (uint)settings.PanEnvelopesRepeatPoint;
+                    //}
+                }
+
+                if (panCounter < settings.PanShiftEnvelopesNums.Length)
+                {
+                    int pan = settings.PanShiftEnvelopesNums[panCounter++];
+
+                    f_PanShift = pan;
                     process = true;
                 }
             }

@@ -357,6 +357,9 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int pan = ParentModule.Panpots[NoteOnEvent.Channel] - 1;
 
+            if (FxEngine != null)
+                pan += FxEngine.PanShift;
+
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                 pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
             else
