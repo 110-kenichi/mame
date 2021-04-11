@@ -2046,8 +2046,18 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         foreach (var (d, a) in deferredWriteData)
                         {
-                            invokeFunction(d, a);
-                            //d.DynamicInvoke(a);
+                            try
+                            {
+                                invokeFunction(d, a);
+                                //d.DynamicInvoke(a);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (ex.GetType() == typeof(Exception))
+                                    throw;
+                                else if (ex.GetType() == typeof(SystemException))
+                                    throw;
+                            }
                         }
                         deferredWriteData.Clear();
                     }

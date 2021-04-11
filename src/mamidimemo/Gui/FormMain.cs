@@ -71,7 +71,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (outputListView == null || outputListView.IsDisposed || !outputListView.IsHandleCreated)
                 return;
 
-            if(inst != null)
+            if (inst != null)
                 log = "[" + inst.Name + "(" + inst.UnitNumber + ")]" + log;
 
             outputListView?.BeginInvoke(new MethodInvoker(() =>
@@ -137,27 +137,57 @@ namespace zanac.MAmidiMEmo.Gui
 
             AppliactionForm = this;
 
-            unsafe
+            try
             {
-                byte[] fontBuf = Properties.Resources.DSEG7ClassicMini_BoldItalic;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.DSEG7ClassicMini_BoldItalic;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
             }
-            unsafe
+            catch (Exception ex)
             {
-                byte[] fontBuf = Properties.Resources.DSEG14ClassicMini_BoldItalic;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
             }
-            unsafe
+            try
             {
-                byte[] fontBuf = Properties.Resources.PixelMplus12_Regular;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.DSEG14ClassicMini_BoldItalic;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
+                labelClock.Font = new Font(privateFonts.Families[1], 18);
+                labelCpuLoad.Font = new Font(privateFonts.Families[1], 18);
             }
-            labelClock.Font = new Font(privateFonts.Families[1], 18);
-            labelCpuLoad.Font = new Font(privateFonts.Families[1], 18);
-            labelTitle.Font = new Font(privateFonts.Families[2], 22);
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            try
+            {
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.PixelMplus12_Regular;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
+                labelTitle.Font = new Font(privateFonts.Families[2], 22);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
 
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 

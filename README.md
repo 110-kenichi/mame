@@ -1,4 +1,4 @@
-MAmidiMEmo 3.6.2.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.6.3.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -262,9 +262,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.6.3.0 Fixed unexpected font error on startup ( Just ignoring... ).
+        Fixed unexpected sound stop (retry)
 3.6.2.0 Added PanShift Envelope property to the FxS.
 3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
-3.6.0.1 Fix unexpected sound stop (maybe)
+3.6.0.1 Fixed unexpected sound stop (maybe)
 3.6.0.0 Added uPD1771.
 3.5.1.3 Fixed unexpected sounding in Huc6280.
 3.5.1.2 Improved performance (a little) in VST mode.
