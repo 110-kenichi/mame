@@ -1,0 +1,9 @@
+syntax: glob
+*.lst
+*.sym
+*.noi
+*.map
+*.inc
+*.lk
+*.ihx
+*.sms
