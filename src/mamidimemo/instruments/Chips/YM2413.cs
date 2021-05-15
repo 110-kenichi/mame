@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Vsif;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
 //http://www.smspower.org/maxim/Documents/YM2413ApplicationManual
@@ -66,6 +67,107 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private string comPort;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set COM port name for VSIF - SMS.")]
+        [DefaultValue(null)]
+        public string COMPort
+        {
+            get
+            {
+                return comPort;
+            }
+            set
+            {
+                if (comPort != value)
+                {
+                    setSoundEngine(SoundEngine);
+                    comPort = value;
+                }
+            }
+        }
+
+        private object vsifLock = new object();
+
+        private VsifClient vsifClient;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports \"Software\" and \"VSIF - SMS\".\r\n" +
+            "Connect SMS PORT2 pin3(Left) and UART TX pin if you use \"VSIF - SMS.\"")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2413))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                    setSoundEngine(value);
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [RefreshProperties(RefreshProperties.All)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+            ClearWrittenDataCache();
+
+            lock (vsifLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_SMS:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, COMPort);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+                updateRhyRegisters();
+            }
+        }
+
         private byte f_RHY;
 
         /// <summary>
@@ -91,19 +193,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_RHY = v;
 
-                    OnControlChangeEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
-
-                    YM2413WriteData(UnitNumber, 0x0e, 0, (byte)(RHY << 5));
-                    if (RHY == 1)
-                    {
-                        YM2413WriteData(UnitNumber, (byte)(0x16), 0, 0x20);
-                        YM2413WriteData(UnitNumber, (byte)(0x17), 0, 0x50);
-                        YM2413WriteData(UnitNumber, (byte)(0x18), 0, 0xc0);
-                        YM2413WriteData(UnitNumber, (byte)(0x26), 0, 0x05);
-                        YM2413WriteData(UnitNumber, (byte)(0x27), 0, 0x05);
-                        YM2413WriteData(UnitNumber, (byte)(0x28), 0, 0x01);
-                    }
+                    updateRhyRegisters();
                 }
+            }
+        }
+
+        private void updateRhyRegisters()
+        {
+            OnControlChangeEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
+
+            YM2413WriteData(UnitNumber, 0x0e, 0, (byte)(RHY << 5));
+            if (RHY == 1)
+            {
+                YM2413WriteData(UnitNumber, (byte)(0x16), 0, 0x20);
+                YM2413WriteData(UnitNumber, (byte)(0x17), 0, 0x50);
+                YM2413WriteData(UnitNumber, (byte)(0x18), 0, 0xc0);
+                YM2413WriteData(UnitNumber, (byte)(0x26), 0, 0x05);
+                YM2413WriteData(UnitNumber, (byte)(0x27), 0, 0x05);
+                YM2413WriteData(UnitNumber, (byte)(0x28), 0, 0x01);
             }
         }
 
@@ -233,10 +340,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void YM2413WriteData(uint unitNumber, byte address, int slot, byte data)
+        /// <param name="unitNumber"></param>
+        /// <param name="address"></param>
+        /// <param name="slot"></param>
+        /// <param name="data"></param>
+        private void YM2413WriteData(uint unitNumber, byte address, int slot, byte data)
         {
-            DeferredWriteData(YM2413_write, unitNumber, (uint)0, (byte)(address + slot));
-            DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
+            YM2413WriteData(unitNumber, address, slot, data, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void YM2413WriteData(uint unitNumber, byte address, int slot, byte data , bool useCache)
+        {
+            address = (byte)(address + slot); 
+            WriteData(address, data, useCache, new Action(() =>
+            {
+                lock (vsifLock)
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_SMS)
+                        vsifClient.WriteData(address, data);
+
+                DeferredWriteData(YM2413_write, unitNumber, (uint)0, address);
+                DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
+            }));
             /*
             try
             {
@@ -288,6 +415,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (vsifLock)
+                if (vsifClient != null)
+                    vsifClient.Dispose();
+
             base.Dispose();
         }
 
@@ -659,14 +791,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (parentModule.RHY == 0)
                 {
                     for (int i = 0; i < 9; i++)
-                        YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
                 }
                 else
                 {
                     for (int i = 0; i < 6; i++)
-                        YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
                     parentModule.lastDrumKeyOn = 0;
-                    YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
                 }
             }
 
@@ -793,10 +925,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (kon != 0)
                     {
                         parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
-                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
 
                         parentModule.lastDrumKeyOn |= (byte)kon;
-                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //on
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //on
                     }
                 }
             }
@@ -830,7 +962,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (eng?.ToneValue != null)
                             tt = (ToneType)(eng.ToneValue.Value & 15);
                     }
-                    YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)tt << 4 | tl));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)tt << 4 | tl));
                 }
                 else if (parentModule.RHY == 1)
                 {
@@ -850,7 +982,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case 75:
                         case 76:
                         case 77:
-                            YM2413WriteData(parentModule.UnitNumber, 0x36, 0, tl);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, tl);
                             break;
                         case 37:    //STICK
                         case 38:    //SD
@@ -862,7 +994,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case 69:
                         case 70:
                             parentModule.lastDrumVolume37 = (byte)(tl | (parentModule.lastDrumVolume37 & 0xf0));
-                            YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
                             break;
                         case 41:    //TOM
                         case 43:    //TOM
@@ -874,7 +1006,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case 71:
                         case 78:
                             parentModule.lastDrumVolume38 = (byte)(tl << 4 | (parentModule.lastDrumVolume38 & 0x0f));
-                            YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
                             break;
                         case 42:    //HH
                         case 44:    //HH
@@ -888,7 +1020,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case 73:
                         case 79:
                             parentModule.lastDrumVolume37 = (byte)(tl << 4 | (parentModule.lastDrumVolume37 & 0x0f));
-                            YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, parentModule.lastDrumVolume37);
                             break;
                         case 49:    //Symbal
                         case 51:    //Symbal
@@ -901,7 +1033,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case 81:    //TRIANGLE
                         case 74:
                             parentModule.lastDrumVolume38 = (byte)(tl | (parentModule.lastDrumVolume38 & 0xf0));
-                            YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, parentModule.lastDrumVolume38);
                             break;
                     }
                 }
@@ -939,8 +1071,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte kon = IsKeyOff ? (byte)0 : (byte)0x10;
                     lastFreqData = (byte)(timbre.SUS << 5 | kon | octave | ((freq >> 8) & 1));
 
-                    YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq));
-                    YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData);
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq), false);
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData, false);
                 }
 
                 base.OnPitchUpdated();
@@ -958,24 +1090,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413Career c = timbre.Career;
 
                 //$00+:
-                YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
-                YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
                 //$02+:
-                YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
-                YM2413WriteData(parentModule.UnitNumber, 0x03, 0, (byte)((c.KSL << 6 | c.DIST << 4 | m.DIST << 3 | timbre.FB)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x03, 0, (byte)((c.KSL << 6 | c.DIST << 4 | m.DIST << 3 | timbre.FB)));
                 //$04+:
-                YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
-                YM2413WriteData(parentModule.UnitNumber, 0x05, 0, (byte)((c.AR << 4 | c.DR)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x05, 0, (byte)((c.AR << 4 | c.DR)));
                 //$06+:
                 if (m.SR.HasValue && m.EG == 0)
-                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.SR.Value));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.SR.Value));
                 else
-                    YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
 
                 if (c.SR.HasValue && c.EG == 0)
-                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.SR.Value));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.SR.Value));
                 else
-                    YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
             }
 
             /// <summary>
@@ -990,16 +1122,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM2413Modulator m = timbre.Modulator;
                     if (m.SR.HasValue && m.EG == 0)
                     {
-                        YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | 1 << 5 | m.KSR << 4 | m.MUL)));
-                        YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | 1 << 5 | m.KSR << 4 | m.MUL)));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x06, 0, (byte)(m.SL << 4 | m.RR));
                     }
                     YM2413Career c = timbre.Career;
                     if (c.SR.HasValue && c.EG == 0)
                     {
-                        YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
-                        YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | 1 << 5 | c.KSR << 4 | c.MUL)));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x07, 0, (byte)(c.SL << 4 | c.RR));
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | 1 << 5 | c.KSR << 4 | c.MUL)));
                     }
-                    YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, (byte)(timbre.SUS << 5 | lastFreqData & 0x0f));
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, (byte)(timbre.SUS << 5 | lastFreqData & 0x0f));
                 }
                 else if (parentModule.RHY == 1)
                 {
@@ -1074,7 +1206,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (kon != 0)
                     {
                         parentModule.lastDrumKeyOn = (byte)(parentModule.lastDrumKeyOn & ~kon);
-                        YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20 | parentModule.lastDrumKeyOn));  //off
                     }
                 }
             }
@@ -2219,6 +2351,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private class EnumConverterSoundEngineTypeYM2413 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_SMS });
+
+                return sc;
+            }
+        }
     }
 
 

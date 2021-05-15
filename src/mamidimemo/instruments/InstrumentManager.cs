@@ -86,6 +86,32 @@ namespace zanac.MAmidiMEmo.Instruments
             sysExData.Add(new List<byte>());
             sysExData.Add(new List<byte>());
 
+            Program.ShuttingDown += Program_ShuttingDown;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Program_ShuttingDown(object sender, EventArgs e)
+        {
+            List<InstrumentBase> insts = new List<InstrumentBase>();
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                foreach (List<InstrumentBase> iss in instruments)
+                {
+                    foreach (var i in iss)
+                        i.Dispose();
+                }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+            StopVgmRecording();
         }
 
         /// <summary>

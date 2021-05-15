@@ -37,10 +37,22 @@ namespace zanac.MAmidiMEmo.ComponentModel
             if (!enumType.IsEnum)
                 throw new InvalidOperationException();
 
+            var converter = context.PropertyDescriptor.Converter;
+            List<object> vs = null;
+            if (converter != null && converter.GetStandardValuesSupported())
+            {
+                vs = new List<object>();
+                var svs = converter.GetStandardValues();
+                foreach (var sv in svs)
+                    vs.Add(sv);
+            }
+
             foreach (FieldInfo fi in enumType.GetFields(BindingFlags.Public | BindingFlags.Static))
             {
                 EnumItem item = new EnumItem();
                 item.Value = fi.GetValue(null);
+                if (vs != null && !vs.Contains(item.Value))
+                    continue;
 
                 object[] atts = fi.GetCustomAttributes(typeof(DescriptionAttribute), true);
                 if (atts != null && atts.Length > 0)

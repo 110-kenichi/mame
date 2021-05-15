@@ -17,6 +17,10 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Software")]
         Software,
         [Description("Real(SPFM)")]
-        SPFM
+        SPFM,
+        [Description("Real(VSIF SMS)")]
+        VSIF_SMS,
+        [Description("Real(VSIF Genesis)")]
+        VSIF_Genesis
     }
 }

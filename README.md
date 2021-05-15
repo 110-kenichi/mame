@@ -262,8 +262,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.6.3.0 Fixed unexpected font error on startup ( Just ignoring... ).
+3.7.0.0 Fixed unexpected font error on startup ( Just ignoring... ).
         Fixed unexpected sound stop (retry)
+		Added VSIF sound engine to play musics through Real SMS, Genesis console.
 3.6.2.0 Added PanShift Envelope property to the FxS.
 3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
 3.6.0.1 Fixed unexpected sound stop (maybe)
