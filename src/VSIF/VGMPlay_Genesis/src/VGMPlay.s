@@ -44,9 +44,7 @@
     NOP                     | 4
     NOP                     | 4
     NOP                     | 4
-    NOP                     | 4
-    NOP                     | 4
-    .endm   | 36
+    .endm   | 28
 
     .macro stop_bit_wait
     |stop_bit_wait_230K
@@ -155,8 +153,9 @@ _VGM_ADDRESS:
 
     sample_bits
     
+    andi.b #0xfc,%d1        | + 8
     move.l (%d1, %a1), %a2  | +16
-    stop_bit_wait           | +36 52
+    stop_bit_wait           | +28 52
     
 _VGM_DATA:
     move.b  (%a0), %d0      | +8
@@ -168,7 +167,10 @@ _VGM_DATA:
     sample_bits
 
     move.b %d1, (%a2)       | +12
-    stop_bit_wait           | +36 52
+    nop                     | + 4 
+    nop                     | + 4 
+    nop                     | + 4 
+    stop_bit_wait           | +28 52
 
     bra _VGM_ADDRESS
 
@@ -244,195 +246,3 @@ ADRESS_TABLE:
     dc.l PSGPORT 		|;4
     dc.l PSGPORT 		|;4
     dc.l PSGPORT 		|;4 64
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 16
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 32
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 48
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 128
-    dc.l PSGPORT 		|;0
-    dc.l PSGPORT 		|;1
-    dc.l PSGPORT 		|;2
-    dc.l PSGPORT 		|;3
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 16
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 32
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 48
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 64
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 16
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 32
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 48
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 256

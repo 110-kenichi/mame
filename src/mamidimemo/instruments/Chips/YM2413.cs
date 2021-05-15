@@ -71,7 +71,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for VSIF - SMS.")]
+        [Description("Set COM port name for \"VSIF - SMS\".\r\n" +
+            "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
+            "     3 --> TX\r\n" +
+            " o o * o o\r\n" +
+            "  o o * o\r\n" +
+            "      8 -> GND")]
         [DefaultValue(null)]
         public string COMPort
         {
@@ -100,8 +105,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports \"Software\" and \"VSIF - SMS\".\r\n" +
-            "Connect SMS PORT2 pin3(Left) and UART TX pin if you use \"VSIF - SMS.\"")]
+            "Supports \"Software\" and \"VSIF - SMS\"")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2413))]
         public SoundEngineType SoundEngine

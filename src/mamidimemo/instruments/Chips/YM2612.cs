@@ -70,7 +70,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for VSIF - Genesis.")]
+        [Description("Set COM port name for \"VSIF - Genesis\".\r\n" +
+            "Connect Genesis PORT2 pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"\r\n" +
+            " 1 ------> TX\r\n" +
+            " * o o o o\r\n" +
+            "  o o * o\r\n" +
+            "      8 -> GND")]
         [DefaultValue(null)]
         public string COMPort
         {
@@ -99,8 +104,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports \"Software\" and \"VSIF - Genesis\".\r\n" +
-            "Connect Genesis PORT2 pin1(Up) and UART TX pin if you use \"VSIF - Genesis.\"")]
+            "Supports \"Software\" and \"VSIF - Genesis\"")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2612))]
         public SoundEngineType SoundEngine

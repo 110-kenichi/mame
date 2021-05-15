@@ -72,7 +72,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for VSIF - SMS.")]
+        [Description("Set COM port name for \"VSIF - SMS\" or \"VSIF - Genesis\".\r\n" +
+            "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
+            "     3 --> TX\r\n" +
+            " o o * o o\r\n" +
+            "  o o * o\r\n" +
+            "      8 -> GND\r\n" +
+            "Connect Genesis PORT2 pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"\r\n" +
+            " 1 ------> TX\r\n" +
+            " * o o o o\r\n" +
+            "  o o * o\r\n" +
+            "      8 -> GND")]
         [DefaultValue(null)]
         public string COMPort
         {
@@ -101,19 +111,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports \"Software\" and \"VSIF - SMS or Genesis\".\r\n" +
-            "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"" +
-            "     3 -> TX\r\n" +
-            " o o * o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND\r\n" +
-            "VSIF - Genesis\".\r\n" +
-            "Connect EXT PORT pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"" +
-            " 1 -> TX\r\n" +
-            " * o o o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND\r\n" +
-            "\r\n")]
+            "Supports \"Software\" and \"VSIF - SMS\" or \"VSIF - Genesis\"")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeSN76496))]
         public SoundEngineType SoundEngine
