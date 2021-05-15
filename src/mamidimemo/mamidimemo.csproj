@@ -560,6 +560,14 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
+    <None Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
+      <Link>VGMPlay_md.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
+      <Link>VGMPlay_sms.sms</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Toms_Diner.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Acorn.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Clock.cs" />
@@ -1014,9 +1022,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="scci.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="VGMPlay_sms.sms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="VST\MAmiVSTi.ini">
