@@ -21,6 +21,8 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Real(VSIF SMS)")]
         VSIF_SMS,
         [Description("Real(VSIF Genesis)")]
-        VSIF_Genesis
+        VSIF_Genesis,
+        [Description("Real(VSIF Genesis(FTDI))")]
+        VSIF_Genesis_FTDI
     }
 }

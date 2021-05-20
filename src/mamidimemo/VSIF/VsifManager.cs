@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FTD2XX_NET;
 using LegacyWrapperClient.Architecture;
 using LegacyWrapperClient.Client;
 using System;
@@ -16,8 +17,9 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.VSIF;
 
-namespace zanac.MAmidiMEmo.Vsif
+namespace zanac.MAmidiMEmo.VSIF
 {
 
     public static class VsifManager
@@ -33,57 +35,106 @@ namespace zanac.MAmidiMEmo.Vsif
         /// <param name="iSoundChipType"></param>
         /// <param name="clock"></param>
         /// <returns></returns>
-        public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, string comPortName)
+        public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, PortId comPort)
         {
             lock (lockObject)
             {
                 foreach (var c in vsifClients)
                 {
-                    if (c.SerialPort.PortName.Equals(comPortName))
+                    if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
+                    {
+                        c.ReferencedCount++;
+                        return c;
+                    }
+                    if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
                     {
                         c.ReferencedCount++;
                         return c;
                     }
                 }
 
-                SerialPort sp = null;
                 try
                 {
-                    sp = new SerialPort(comPortName);
-                    sp.WriteTimeout = 100;
-                    sp.ReadTimeout = 100;
                     switch (soundModule)
                     {
                         case VsifSoundModuleType.SMS:
-                            sp.BaudRate = 115200;
-                            sp.StopBits = StopBits.Two;
-                            //sp.BaudRate = 57600;
-                            //sp.StopBits = StopBits.One;
-                            sp.Parity = Parity.None;
-                            sp.DataBits = 8;
-                            sp.Handshake = Handshake.None;
-                            break;
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 100;
+                                sp.ReadTimeout = 100;
+                                sp.BaudRate = 115200;
+                                sp.StopBits = StopBits.Two;
+                                //sp.BaudRate = 57600;
+                                //sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.None;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriter(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
 
                         case VsifSoundModuleType.Genesis:
-                            //sp.BaudRate = 230400;
-                            sp.BaudRate = 115200;
-                            sp.StopBits = StopBits.One;
-                            sp.Parity = Parity.None;
-                            sp.DataBits = 8;
-                            sp.Handshake = Handshake.None;
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 500;
+                                sp.ReadTimeout = 500;
+                                //sp.BaudRate = 230400;
+                                sp.BaudRate = 163840;
+                                //sp.BaudRate = 115200;
+                                sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriter(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
+                        case VsifSoundModuleType.Genesis_FTDI:
+                            {
+                                var ftdi = new FTD2XX_NET.FTDI();
+                                var stat = ftdi.OpenByIndex((uint)comPort);
+                                if (stat == FTDI.FT_STATUS.FT_OK)
+                                {
+                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    ftdi.SetBaudRate(163840 / 16);
+                                    //ftdi.SetBaudRate(115200 / 16);
+                                    ftdi.SetTimeouts(500, 500);
+                                    ftdi.SetLatency(0);
+                                    byte ps = 0;
+                                    ftdi.GetPinStates(ref ps);
+                                    if ((ps & 1) != 1)
+                                    {
+                                        uint dummy = 0;
+                                        ftdi.Write(new byte[] { 0x01 }, 1, ref dummy);
+                                    }
+
+                                    var client = new VsifClient(soundModule, new PortWriter(ftdi, comPort));
+                                    client.Disposed += Client_Disposed;
+
+                                    //ftdi.Write(new byte[] { (byte)(((0x07 << 1) & 0xe) | 0) }, 1, ref dummy);
+                                    //ftdi.Write(new byte[] { (byte)(((0x38 >> 2) & 0xe) | 1) }, 1, ref dummy);
+                                    //ftdi.Write(new byte[] { (byte)(((0xC0 >> 5) & 0xe) | 0) }, 1, ref dummy);
+                                    //ftdi.Write(new byte[] { 1 }, 1, ref dummy);
+
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                            }
                             break;
                     }
-                    sp.Open();
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
                     //sp.BaseStream.WriteByte((byte)soundModule);
                     //Thread.Sleep(100);
                     //var ret = sp.BaseStream.ReadByte();
                     //if (ret == 0x0F)   //OK
-                    var client = new VsifClient(soundModule, sp);
-                    client.Disposed += Client_Disposed;
-                    vsifClients.Add(client);
-                    return client;
                 }
                 catch (Exception ex)
                 {
@@ -92,7 +143,6 @@ namespace zanac.MAmidiMEmo.Vsif
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
                 }
-                sp?.Dispose();
                 return null;
             }
         }
@@ -117,121 +167,9 @@ namespace zanac.MAmidiMEmo.Vsif
     {
         None,
         SMS,
-        Genesis
+        Genesis,
+        Genesis_FTDI
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class VsifClient : IDisposable
-    {
-        private bool disposedValue;
-
-        private List<(byte address, byte data)> deferredWriteData;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public SerialPort SerialPort
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public VsifSoundModuleType SoundModuleType
-        {
-            get;
-            private set;
-        }
-
-        public event EventHandler Disposed;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        public VsifClient(VsifSoundModuleType type, SerialPort serialPort)
-        {
-            SoundModuleType = type;
-            SerialPort = serialPort;
-
-            deferredWriteData = new List<(byte address, byte data)>();
-
-            ReferencedCount = 1;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int ReferencedCount
-        {
-            get;
-            set;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    //WriteData(0xff, 0x00);
-
-                    //マネージド状態を破棄します (マネージド オブジェクト)
-                    if (SerialPort != null)
-                        SerialPort.Dispose();
-                    SerialPort = null;
-                }
-
-                // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
-                // 大きなフィールドを null に設定します
-                disposedValue = true;
-            }
-        }
-
-        // // 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
-        // ~VsifClient()
-        // {
-        //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            ReferencedCount--;
-            if (ReferencedCount != 0)
-                return;
-
-            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-
-            Disposed?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        public virtual void WriteData(byte address, byte data)
-        {
-            try
-            {
-                SerialPort.Write(new byte[] { address, data }, 0, 2);
-                //Debug.WriteLine(address);
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
-            }
-        }
-    }
 
 }

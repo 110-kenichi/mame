@@ -766,6 +766,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < 8; i++)
                 {
                     parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x08, 0, 0, (byte)(0x00 | i));
+
+                    for (int op = 0; op < 4; op++)
+                        parentModule.Ym2151WriteData(parentModule.UnitNumber, 0x60, op, i, 127);
                 }
             }
         }

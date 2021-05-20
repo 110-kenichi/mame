@@ -453,6 +453,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int i = 0; i < 9; i++)
                 {
                     YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
+
+                    for (int op = 0; op < 2; op++)
+                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, i, 64);
                 }
             }
         }

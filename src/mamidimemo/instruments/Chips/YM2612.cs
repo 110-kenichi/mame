@@ -22,7 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
-using zanac.MAmidiMEmo.Vsif;
+using zanac.MAmidiMEmo.VSIF;
 
 //https://www.plutiedev.com/ym2612-registers
 //http://www.smspower.org/maxim/Documents/YM2612#regb4
@@ -66,29 +66,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private string comPort;
+        private PortId portId = PortId.No1;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for \"VSIF - Genesis\".\r\n" +
+        [Description("Set Port No for \"VSIF - Genesis\".\r\n" +
             "Connect Genesis PORT2 pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"\r\n" +
             " 1 ------> TX\r\n" +
             " * o o o o\r\n" +
             "  o o * o\r\n" +
             "      8 -> GND")]
-        [DefaultValue(null)]
-        public string COMPort
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
         {
             get
             {
-                return comPort;
+                return portId;
             }
             set
             {
-                if (comPort != value)
+                if (portId != value)
                 {
+                    portId = value;
                     setSoundEngine(SoundEngine);
-                    comPort = value;
                 }
             }
         }
@@ -154,7 +154,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SetDevicePassThru(false);
                         break;
                     case SoundEngineType.VSIF_Genesis:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, COMPort);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -375,12 +388,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 uint yreg = (uint)(slot / 3) * 2;
 
                 lock (vsifLock)
-                    if (CurrentSoundEngine == SoundEngineType.VSIF_Genesis)
+                {
+                    switch (CurrentSoundEngine)
                     {
-                        vsifClient.WriteData((byte)((yreg + 0) * 4), (byte)(address + (op * 4) + (slot % 3)));
-                        vsifClient.WriteData((byte)((yreg + 1) * 4), data);
+                        case SoundEngineType.VSIF_Genesis:
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            vsifClient.WriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)));
+                            vsifClient.WriteData((byte)((1 + (yreg + 1)) * 4), data);
+                            break;
                     }
-
+                }
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 1, data);
             }));
@@ -783,10 +800,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     uint reg = (uint)(i / 3) * 2;
                     parentModule.Ym2612WriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(i % 3)));
+
+                    for (int op = 0; op < 4; op++)
+                        parentModule.Ym2612WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
             }
 
@@ -2023,7 +2043,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
-                    SoundEngineType.VSIF_Genesis });
+                    SoundEngineType.VSIF_Genesis,
+                    //SoundEngineType.VSIF_Genesis_FTDI,
+                });
 
                 return sc;
             }

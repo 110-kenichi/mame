@@ -22,7 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
-using zanac.MAmidiMEmo.Vsif;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
 //http://www.smspower.org/maxim/Documents/YM2413ApplicationManual
@@ -67,29 +67,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private string comPort;
+        private PortId portId = PortId.No1;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for \"VSIF - SMS\".\r\n" +
+        [Description("Set Port No for \"VSIF - SMS\".\r\n" +
             "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
             "     3 --> TX\r\n" +
             " o o * o o\r\n" +
             "  o o * o\r\n" +
             "      8 -> GND")]
-        [DefaultValue(null)]
-        public string COMPort
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
         {
             get
             {
-                return comPort;
+                return portId;
             }
             set
             {
-                if (comPort != value)
+                if (portId != value)
                 {
+                    portId = value;
                     setSoundEngine(SoundEngine);
-                    comPort = value;
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SetDevicePassThru(false);
                         break;
                     case SoundEngineType.VSIF_SMS:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, COMPort);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, PortId);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -356,9 +356,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private void YM2413WriteData(uint unitNumber, byte address, int slot, byte data , bool useCache)
+        private void YM2413WriteData(uint unitNumber, byte address, int slot, byte data, bool useCache)
         {
-            address = (byte)(address + slot); 
+            address = (byte)(address + slot);
             WriteData(address, data, useCache, new Action(() =>
             {
                 lock (vsifLock)
@@ -804,6 +804,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     parentModule.lastDrumKeyOn = 0;
                     parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
                 }
+
+                for (int i = 0; i < 9; i++)
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 64);
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, 64);
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, 64);
+                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, 64);
             }
 
         }

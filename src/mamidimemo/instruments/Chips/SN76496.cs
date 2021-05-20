@@ -24,7 +24,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
-using zanac.MAmidiMEmo.Vsif;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://www.smspower.org/Development/SN76489
 //http://www.st.rim.or.jp/~nkomatsu/peripheral/SN76489.html
@@ -68,11 +68,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private string comPort;
+        private PortId portId = PortId.No1;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set COM port name for \"VSIF - SMS\" or \"VSIF - Genesis\".\r\n" +
+        [Description("Set Port No for \"VSIF - SMS\" or \"VSIF - Genesis\".\r\n" +
             "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
             "     3 --> TX\r\n" +
             " o o * o o\r\n" +
@@ -83,19 +83,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             " * o o o o\r\n" +
             "  o o * o\r\n" +
             "      8 -> GND")]
-        [DefaultValue(null)]
-        public string COMPort
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
         {
             get
             {
-                return comPort;
+                return portId;
             }
             set
             {
-                if (comPort != value)
+                if (portId != value)
                 {
+                    portId = value;
                     setSoundEngine(SoundEngine);
-                    comPort = value;
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SetDevicePassThru(false);
                         break;
                     case SoundEngineType.VSIF_SMS:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, COMPort);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, PortId);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -176,7 +176,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                     case SoundEngineType.VSIF_Genesis:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, COMPort);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -284,7 +297,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0xff, data);
                             break;
                         case SoundEngineType.VSIF_Genesis:
-                            vsifClient.WriteData(0x04 * 4, data);
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            vsifClient.WriteData(0x04 * 5, data);
                             break;
                     }
                 }
@@ -802,7 +816,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
                     SoundEngineType.VSIF_Genesis,
-                });
+                    //SoundEngineType.VSIF_Genesis_FTDI,
+               });
 
                 return sc;
             }

@@ -104,3 +104,11 @@ Release(but Debug .NET)
 /src/SAM/SAM.vcxproj.user
 /src/vst/x64/Debug
 /src/rpclib/.vs
+/src/VSIF/VGMPlayer/bin/Debug
+/src/VSIF/VGMPlayer/obj/x86/Release
+/src/VSIF/VGMPlayer/obj/x86/Debug
+/src/VSIF/VGMPlayer/bin/Release/VGMPlayer.pdb
+/src/VSIF/VGMPlayer/VGMPlayer.suo
+/src/VSIF/VGMPlayer/VGMPlayer.csproj.user
+/src/VSIF/VGMPlayer/.vs/VGMPlayer/v16
+/src/VSIF/VGMPlay_Genesis/.hg/cache

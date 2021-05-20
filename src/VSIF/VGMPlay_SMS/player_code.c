@@ -137,7 +137,7 @@ void processPlayer(char vblank) {
         // }
 
         // uart_waitConn();
-        PrintText("MAMI VGM SOUND PLAYER BY ITOKEN", 0, 0);
+        PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
         PrintText("READY TO PLAY.", 0, 1);
 
         PrintText("-PRESS PAUSE BTN TO RESTART.", 0, 3);

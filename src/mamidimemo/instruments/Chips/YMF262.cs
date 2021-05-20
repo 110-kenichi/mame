@@ -271,29 +271,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdating();
 #endif
-                byte chofst = 0;
-                switch (adrL)
-                {
-                    case 0x20:
-                    case 0x40:
-                    case 0x60:
-                    case 0x80:
-                    case 0xe0:
-                        chofst = chAddressOffset[slot];
-                        break;
-                    case 0xa0:
-                    case 0xb0:
-                    case 0xc0:
-                        chofst = (byte)slot;
-                        break;
-                }
+            byte chofst = 0;
+            switch (adrL)
+            {
+                case 0x20:
+                case 0x40:
+                case 0x60:
+                case 0x80:
+                case 0xe0:
+                    chofst = chAddressOffset[slot];
+                    break;
+                case 0xa0:
+                case 0xb0:
+                case 0xc0:
+                    chofst = (byte)slot;
+                    break;
+            }
 
 #if DEBUG
                 YMF262_write(unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
                 YMF262_write(unitNumber, (uint)1, data);
 #else
-                DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
-                DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
+            DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+            DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
 #endif
 
 #if DEBUG
@@ -606,6 +606,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YMF262WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
                 for (int i = 0; i < 9; i++)
                     YMF262WriteData(parentModule.UnitNumber, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
+                for (int i = 0; i < 18; i++)
+                    for (int op = 0; op < 2; op++)
+                        YMF262WriteData(parentModule.UnitNumber, 0x40, op, i, 0, 0, 63);
             }
         }
 
@@ -1446,7 +1449,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_TL;
 
             /// <summary>
-            /// Total Level(0-127)
+            /// Total Level(0-63)
             /// </summary>
             [DataMember]
             [Category("Sound")]

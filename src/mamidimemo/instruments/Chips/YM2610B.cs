@@ -1014,6 +1014,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     uint reg = (uint)(i / 3) * 2;
                     YM2610BWriteData(parentModule.UnitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(i % 3)));
+
+                    for (int op = 0; op < 4; op++)
+                        YM2610BWriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
                 YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0xff);
                 YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)0xff);

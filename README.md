@@ -244,6 +244,12 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    Currently supported chips are YM2151 and YM2608 on SPFM.
    Before using the SPFM, you must setup SCCI by using the scciconfig.exe.
 
+13. VSIF
+
+	You can use a real machine instead of software emulation chip.
+	Please see tha manual.
+	https://github.com/110-kenichi/mame/blob/master/docs/MAmidiMEmo/Manual.pdf
+
 *** Known issues and limitations *** 
 
    1. MT-32 & CM32-P can not store/restore last settings.
@@ -262,9 +268,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.7.1.0 Fixed the Panic button that the FM synthesizer can be stopped completely.
+		Updated VSIF engine and added VSIF VGMPlayer.
 3.7.0.0 Fixed unexpected font error on startup ( Just ignoring... ).
         Fixed unexpected sound stop (retry)
-		Added VSIF sound engine to play musics through Real SMS, Genesis console.
+		Added VSIF sound engine to play music through Real SMS, Genesis console.
 3.6.2.0 Added PanShift Envelope property to the FxS.
 3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
 3.6.0.1 Fixed unexpected sound stop (maybe)

@@ -122,6 +122,9 @@
     <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
+    <Reference Include="FTD2XX_NET, Version=1.0.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FTD2XX.Net.1.0.14\lib\FTD2XX_NET.dll</HintPath>
+    </Reference>
     <Reference Include="Melanchall.DryWetMidi, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.2\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
@@ -559,6 +562,8 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
+    <Compile Include="VSIF\PortWriter.cs" />
+    <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
     <None Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
       <Link>VGMPlay_md.bin</Link>
@@ -1070,6 +1075,7 @@
     <None Include="Resources\Rec.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FTD2XX_NET.XML" />
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
     <None Include="Resources\uPD1771C.png" />
