@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using zanac.VGMPlayer.Properties;
 
 namespace zanac.VGMPlayer
 {
@@ -56,18 +57,8 @@ namespace zanac.VGMPlayer
                 if (ftdiPort != null)
                 {
                     List<byte> sendData = new List<byte>();
-                    {
-                        sendData.Add((byte)(((address << 1) & 0xe) | 0));
-                        sendData.Add((byte)(((address >> 2) & 0xe) | 1));
-                        sendData.Add((byte)(((address >> 5) & 0xe) | 0));
-                        sendData.Add(1);
-                    }
-                    {
-                        sendData.Add((byte)(((data << 1) & 0xe) | 0));
-                        sendData.Add((byte)(((data >> 2) & 0xe) | 1));
-                        sendData.Add((byte)(((data >> 5) & 0xe) | 0));
-                        sendData.Add(1);
-                    }
+                    createPacket(sendData, address);
+                    createPacket(sendData, data);
                     var sd = sendData.ToArray();
                     uint writtenBytes = 0;
                     var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
@@ -86,12 +77,7 @@ namespace zanac.VGMPlayer
                 {
                     List<byte> sendData = new List<byte>();
                     foreach (var dt in data)
-                    {
-                        sendData.Add((byte)(((dt << 1) & 0xe) | 0));
-                        sendData.Add((byte)(((dt >> 2) & 0xe) | 1));
-                        sendData.Add((byte)(((dt >> 5) & 0xe) | 0));
-                        sendData.Add(1);
-                    }
+                        createPacket(sendData, dt);
                     var sd = sendData.ToArray();
                     uint writtenBytes = 0;
                     var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
@@ -99,6 +85,27 @@ namespace zanac.VGMPlayer
                         Debug.WriteLine(stat);
                 }
             }
+        }
+
+        private static void createPacket(List<byte> sendData, byte dt)
+        {
+            //createStopFrame(sendData);
+            createFrame(sendData, (byte)(((dt << 1) & 0xe) | 0));
+            createFrame(sendData, (byte)(((dt >> 2) & 0xe) | 1));
+            createFrame(sendData, (byte)(((dt >> 5) & 0xe) | 0));
+            createStopFrame(sendData);
+        }
+
+        private static void createFrame(List<byte> sendData, byte dt1)
+        {
+            for (int i = 0; i < Settings.Default.BitBangWait; i++)
+                sendData.Add(dt1);
+        }
+
+        private static void createStopFrame(List<byte> sendData)
+        {
+            for (int i = 0; i < Settings.Default.BitBangWait; i++)
+                sendData.Add((byte)((i << 1) | 1));
         }
 
         protected virtual void Dispose(bool disposing)

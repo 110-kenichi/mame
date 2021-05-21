@@ -67,22 +67,28 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
-            this.checkBoxConnDCSG = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnOPLL = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnOPNA2 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.checkBoxLoop = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnOPNA2 = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnOPLL = new System.Windows.Forms.CheckBox();
             this.comboBoxPortYM2612 = new System.Windows.Forms.ComboBox();
             this.comboBoxPortYm2413 = new System.Windows.Forms.ComboBox();
             this.comboBoxOPNA2 = new System.Windows.Forms.ComboBox();
             this.comboBoxOPLL = new System.Windows.Forms.ComboBox();
             this.comboBoxDCSG = new System.Windows.Forms.ComboBox();
             this.comboBoxPortSN76489 = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnDCSG = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelPort.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -180,17 +186,19 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortSN76489, 2, 1);
             this.tableLayoutPanelPort.Controls.Add(this.label8, 3, 0);
             this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnDCSG, 3, 1);
+            this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel3, 1, 5);
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(3);
-            this.tableLayoutPanelPort.RowCount = 5;
+            this.tableLayoutPanelPort.RowCount = 6;
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelPort.Size = new System.Drawing.Size(788, 131);
+            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelPort.Size = new System.Drawing.Size(788, 162);
             this.tableLayoutPanelPort.TabIndex = 1;
             // 
             // label5
@@ -229,7 +237,7 @@ namespace zanac.VGMPlayer
             // 
             // tableLayoutPanelButton
             // 
-            this.tableLayoutPanelButton.ColumnCount = 9;
+            this.tableLayoutPanelButton.ColumnCount = 10;
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -238,7 +246,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 367F));
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.Controls.Add(this.buttonPrev, 0, 0);
             this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoop, 7, 0);
             this.tableLayoutPanelButton.Controls.Add(this.buttonFast, 6, 0);
@@ -249,6 +258,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelButton.Controls.Add(this.numericUpDown1, 7, 1);
             this.tableLayoutPanelButton.Controls.Add(this.buttonStop, 3, 0);
             this.tableLayoutPanelButton.Controls.Add(this.buttonNext, 2, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.button1, 9, 0);
             this.tableLayoutPanelButton.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 399);
             this.tableLayoutPanelButton.Name = "tableLayoutPanelButton";
@@ -288,6 +298,7 @@ namespace zanac.VGMPlayer
             this.imageList2.Images.SetKeyName(6, "Slow.png");
             this.imageList2.Images.SetKeyName(7, "Fast.png");
             this.imageList2.Images.SetKeyName(8, "Loop.png");
+            this.imageList2.Images.SetKeyName(9, "Clear.png");
             // 
             // buttonFast
             // 
@@ -443,12 +454,13 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 155);
+            this.listViewList.Location = new System.Drawing.Point(0, 186);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(788, 218);
+            this.listViewList.Size = new System.Drawing.Size(788, 187);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
+            this.listViewList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewList_ColumnClick);
             this.listViewList.SizeChanged += new System.EventHandler(this.listViewList_SizeChanged);
             this.listViewList.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
             this.listViewList.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
@@ -537,47 +549,68 @@ namespace zanac.VGMPlayer
             this.textBoxTitle.Size = new System.Drawing.Size(733, 19);
             this.textBoxTitle.TabIndex = 1;
             // 
-            // checkBoxConnDCSG
+            // button1
             // 
-            this.checkBoxConnDCSG.AutoSize = true;
-            this.checkBoxConnDCSG.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_Enable;
-            this.checkBoxConnDCSG.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "DCSG_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxConnDCSG.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnDCSG.Location = new System.Drawing.Point(697, 24);
-            this.checkBoxConnDCSG.Name = "checkBoxConnDCSG";
-            this.checkBoxConnDCSG.Size = new System.Drawing.Size(85, 20);
-            this.checkBoxConnDCSG.TabIndex = 3;
-            this.checkBoxConnDCSG.Text = "Connect";
-            this.checkBoxConnDCSG.UseVisualStyleBackColor = true;
-            this.checkBoxConnDCSG.CheckedChanged += new System.EventHandler(this.checkBoxConnDCSG_CheckedChanged);
+            this.button1.AutoSize = true;
+            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ImageIndex = 9;
+            this.button1.ImageList = this.imageList2;
+            this.button1.Location = new System.Drawing.Point(747, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(38, 54);
+            this.button1.TabIndex = 10;
+            this.button1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // checkBoxConnOPLL
+            // tableLayoutPanel3
             // 
-            this.checkBoxConnOPLL.AutoSize = true;
-            this.checkBoxConnOPLL.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_Enable;
-            this.checkBoxConnOPLL.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPLL_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxConnOPLL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnOPLL.Location = new System.Drawing.Point(697, 50);
-            this.checkBoxConnOPLL.Name = "checkBoxConnOPLL";
-            this.checkBoxConnOPLL.Size = new System.Drawing.Size(85, 20);
-            this.checkBoxConnOPLL.TabIndex = 7;
-            this.checkBoxConnOPLL.Text = "Connect";
-            this.checkBoxConnOPLL.UseVisualStyleBackColor = true;
-            this.checkBoxConnOPLL.CheckedChanged += new System.EventHandler(this.checkBoxConnOPLL_CheckedChanged);
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.label9, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.numericUpDown2, 1, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(64, 131);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(435, 25);
+            this.tableLayoutPanel3.TabIndex = 12;
             // 
-            // checkBoxConnOPNA2
+            // label9
             // 
-            this.checkBoxConnOPNA2.AutoSize = true;
-            this.checkBoxConnOPNA2.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_Enable;
-            this.checkBoxConnOPNA2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNA2_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxConnOPNA2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnOPNA2.Location = new System.Drawing.Point(697, 76);
-            this.checkBoxConnOPNA2.Name = "checkBoxConnOPNA2";
-            this.checkBoxConnOPNA2.Size = new System.Drawing.Size(85, 20);
-            this.checkBoxConnOPNA2.TabIndex = 11;
-            this.checkBoxConnOPNA2.Text = "Connect";
-            this.checkBoxConnOPNA2.UseVisualStyleBackColor = true;
-            this.checkBoxConnOPNA2.CheckedChanged += new System.EventHandler(this.checkBoxConnOPNA2_CheckedChanged);
+            this.label9.Location = new System.Drawing.Point(3, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(74, 22);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "BitBang Wait:";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDown2.Location = new System.Drawing.Point(83, 3);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(349, 19);
+            this.numericUpDown2.TabIndex = 1;
+            this.numericUpDown2.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWait;
             // 
             // checkBoxLoop
             // 
@@ -596,6 +629,34 @@ namespace zanac.VGMPlayer
             this.checkBoxLoop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.checkBoxLoop.UseVisualStyleBackColor = true;
             this.checkBoxLoop.CheckedChanged += new System.EventHandler(this.checkBoxLoop_CheckedChanged);
+            // 
+            // checkBoxConnOPNA2
+            // 
+            this.checkBoxConnOPNA2.AutoSize = true;
+            this.checkBoxConnOPNA2.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_Enable;
+            this.checkBoxConnOPNA2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNA2_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnOPNA2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnOPNA2.Location = new System.Drawing.Point(697, 76);
+            this.checkBoxConnOPNA2.Name = "checkBoxConnOPNA2";
+            this.checkBoxConnOPNA2.Size = new System.Drawing.Size(85, 20);
+            this.checkBoxConnOPNA2.TabIndex = 11;
+            this.checkBoxConnOPNA2.Text = "Connect";
+            this.checkBoxConnOPNA2.UseVisualStyleBackColor = true;
+            this.checkBoxConnOPNA2.CheckedChanged += new System.EventHandler(this.checkBoxConnOPNA2_CheckedChanged);
+            // 
+            // checkBoxConnOPLL
+            // 
+            this.checkBoxConnOPLL.AutoSize = true;
+            this.checkBoxConnOPLL.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_Enable;
+            this.checkBoxConnOPLL.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPLL_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnOPLL.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnOPLL.Location = new System.Drawing.Point(697, 50);
+            this.checkBoxConnOPLL.Name = "checkBoxConnOPLL";
+            this.checkBoxConnOPLL.Size = new System.Drawing.Size(85, 20);
+            this.checkBoxConnOPLL.TabIndex = 7;
+            this.checkBoxConnOPLL.Text = "Connect";
+            this.checkBoxConnOPLL.UseVisualStyleBackColor = true;
+            this.checkBoxConnOPLL.CheckedChanged += new System.EventHandler(this.checkBoxConnOPLL_CheckedChanged);
             // 
             // comboBoxPortYM2612
             // 
@@ -864,7 +925,6 @@ namespace zanac.VGMPlayer
             this.comboBoxPortYM2612.Name = "comboBoxPortYM2612";
             this.comboBoxPortYM2612.Size = new System.Drawing.Size(186, 20);
             this.comboBoxPortYM2612.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_Port;
-            this.comboBoxPortYM2612.SelectedIndexChanged += new System.EventHandler(this.comboBoxPortYM2612_SelectedIndexChanged);
             // 
             // comboBoxPortYm2413
             // 
@@ -1133,7 +1193,6 @@ namespace zanac.VGMPlayer
             this.comboBoxPortYm2413.Name = "comboBoxPortYm2413";
             this.comboBoxPortYm2413.Size = new System.Drawing.Size(186, 20);
             this.comboBoxPortYm2413.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_Port;
-            this.comboBoxPortYm2413.SelectedIndexChanged += new System.EventHandler(this.comboBoxPortYm2413_SelectedIndexChanged);
             // 
             // comboBoxOPNA2
             // 
@@ -1148,7 +1207,6 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA2.Name = "comboBoxOPNA2";
             this.comboBoxOPNA2.Size = new System.Drawing.Size(435, 20);
             this.comboBoxOPNA2.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_IF;
-            this.comboBoxOPNA2.SelectedIndexChanged += new System.EventHandler(this.comboBoxOPNA2_SelectedIndexChanged);
             // 
             // comboBoxOPLL
             // 
@@ -1162,7 +1220,6 @@ namespace zanac.VGMPlayer
             this.comboBoxOPLL.Name = "comboBoxOPLL";
             this.comboBoxOPLL.Size = new System.Drawing.Size(435, 20);
             this.comboBoxOPLL.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_IF;
-            this.comboBoxOPLL.SelectedIndexChanged += new System.EventHandler(this.comboBoxOPLL_SelectedIndexChanged);
             // 
             // comboBoxDCSG
             // 
@@ -1178,7 +1235,6 @@ namespace zanac.VGMPlayer
             this.comboBoxDCSG.Name = "comboBoxDCSG";
             this.comboBoxDCSG.Size = new System.Drawing.Size(435, 20);
             this.comboBoxDCSG.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_IF;
-            this.comboBoxDCSG.SelectedIndexChanged += new System.EventHandler(this.comboBoxDCSG_SelectedIndexChanged);
             // 
             // comboBoxPortSN76489
             // 
@@ -1447,7 +1503,20 @@ namespace zanac.VGMPlayer
             this.comboBoxPortSN76489.Name = "comboBoxPortSN76489";
             this.comboBoxPortSN76489.Size = new System.Drawing.Size(186, 20);
             this.comboBoxPortSN76489.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_Port;
-            this.comboBoxPortSN76489.SelectedIndexChanged += new System.EventHandler(this.comboBoxPortSN76489_SelectedIndexChanged);
+            // 
+            // checkBoxConnDCSG
+            // 
+            this.checkBoxConnDCSG.AutoSize = true;
+            this.checkBoxConnDCSG.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_Enable;
+            this.checkBoxConnDCSG.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "DCSG_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnDCSG.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnDCSG.Location = new System.Drawing.Point(697, 24);
+            this.checkBoxConnDCSG.Name = "checkBoxConnDCSG";
+            this.checkBoxConnDCSG.Size = new System.Drawing.Size(85, 20);
+            this.checkBoxConnDCSG.TabIndex = 3;
+            this.checkBoxConnDCSG.Text = "Connect";
+            this.checkBoxConnDCSG.UseVisualStyleBackColor = true;
+            this.checkBoxConnDCSG.CheckedChanged += new System.EventHandler(this.checkBoxConnDCSG_CheckedChanged);
             // 
             // FormMain
             // 
@@ -1476,6 +1545,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1525,5 +1596,9 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.CheckBox checkBoxConnOPNA2;
         private System.Windows.Forms.CheckBox checkBoxConnOPLL;
         private System.Windows.Forms.CheckBox checkBoxConnDCSG;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
     }
 }

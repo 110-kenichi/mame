@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -28,19 +29,31 @@ namespace zanac.VGMPlayer
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
-        }
 
-        private bool isShown;
+            if (Settings.Default.Files != null)
+            {
+                foreach (string fn in Settings.Default.Files)
+                    listViewList.Items.Add(fn);
+            }
+        }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
-            isShown = true;
-
             checkBoxConnDCSG_CheckedChanged(null, null);
             checkBoxConnOPLL_CheckedChanged(null, null);
             checkBoxConnOPNA2_CheckedChanged(null, null);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            StringCollection sc = new StringCollection();
+            foreach (ListViewItem item in listViewList.Items)
+                sc.Add(item.Text);
+            Settings.Default.Files = sc;
         }
 
         private void SetHeight(ListView listView, int height)
@@ -294,19 +307,22 @@ namespace zanac.VGMPlayer
 
         private void stopCurrentSong()
         {
-            currentSongItem.Selected = true;
-            currentSongItem.EnsureVisible();
-            currentSong?.Stop();
+            if (currentSongItem != null)
+            {
+                currentSongItem.Selected = true;
+                currentSongItem.EnsureVisible();
+            }
             if (currentSong != null)
             {
+                currentSong.Stop();
                 currentSong.ProcessLoadOccurred -= CurrentSong_ProcessLoadOccurred;
                 currentSong.PlayStatusChanged -= CurrentSong_PlayStatusChanged;
                 currentSong.SpeedChanged -= CurrentSong_SpeedChanged;
                 currentSong.Finished -= CurrentSong_Finished;
+                currentSong.Dispose();
+                currentSong = null;
                 textBoxTitle.Text = string.Empty;
             }
-            currentSong?.Dispose();
-            currentSong = null;
         }
 
         private void listViewList_KeyDown(object sender, KeyEventArgs e)
@@ -488,9 +504,13 @@ namespace zanac.VGMPlayer
                 }
 
                 checkBoxConnDCSG.Checked = comPortDCSG != null;
+                comboBoxDCSG.Enabled = comPortDCSG == null;
+                comboBoxPortSN76489.Enabled = comPortDCSG == null;
             }
             else
             {
+                comboBoxDCSG.Enabled = true;
+                comboBoxPortSN76489.Enabled = true;
                 comPortDCSG?.Dispose();
             }
         }
@@ -505,9 +525,13 @@ namespace zanac.VGMPlayer
                     (ComPort)Settings.Default.OPLL_Port, false);
 
                 checkBoxConnOPLL.Checked = comPortOPLL != null;
+                comboBoxOPLL.Enabled = comPortOPLL == null;
+                comboBoxPortYm2413.Enabled = comPortOPLL == null;
             }
             else
             {
+                comboBoxOPLL.Enabled = true;
+                comboBoxPortYm2413.Enabled = true;
                 comPortOPLL?.Dispose();
             }
         }
@@ -530,53 +554,28 @@ namespace zanac.VGMPlayer
                         break;
                 }
                 checkBoxConnOPNA2.Checked = comPortOPNA2 != null;
+                comboBoxOPNA2.Enabled = comPortOPNA2 == null;
+                comboBoxPortYM2612.Enabled = comPortOPNA2 == null;
             }
             else
             {
+                comboBoxOPNA2.Enabled = true;
+                comboBoxPortYM2612.Enabled = true;
                 comPortOPNA2?.Dispose();
             }
         }
 
-        private void comboBoxOPNA2_SelectedIndexChanged(object sender, EventArgs e)
+        private void listViewList_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (!isShown)
-                return;
-            checkBoxConnOPNA2.Checked = false;
+            if (listViewList.Sorting != SortOrder.Ascending)
+                listViewList.Sorting = SortOrder.Ascending;
+            else
+                listViewList.Sorting = SortOrder.Descending;
         }
 
-        private void comboBoxOPLL_SelectedIndexChanged(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            if (!isShown)
-                return;
-            checkBoxConnOPLL.Checked = false;
-        }
-
-        private void comboBoxDCSG_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!isShown)
-                return;
-            checkBoxConnDCSG.Checked = false;
-        }
-
-        private void comboBoxPortYM2612_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!isShown)
-                return;
-            checkBoxConnOPNA2.Checked = false;
-        }
-
-        private void comboBoxPortYm2413_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!isShown)
-                return;
-            checkBoxConnOPLL.Checked = false;
-        }
-
-        private void comboBoxPortSN76489_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!isShown)
-                return;
-            checkBoxConnDCSG.Checked = false;
+            listViewList.Items.Clear();
         }
     }
 }

@@ -38,6 +38,15 @@ namespace zanac.MAmidiMEmo.VSIF
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ReferencedCount
+        {
+            get;
+            set;
+        }
+
         public event EventHandler Disposed;
 
         /// <summary>
@@ -51,15 +60,6 @@ namespace zanac.MAmidiMEmo.VSIF
 
             ReferencedCount = 1;
             deferredWriteData = new List<byte>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int ReferencedCount
-        {
-            get;
-            set;
         }
 
         protected virtual void Dispose(bool disposing)

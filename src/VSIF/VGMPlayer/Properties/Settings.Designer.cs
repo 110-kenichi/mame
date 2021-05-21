@@ -142,5 +142,28 @@ namespace zanac.VGMPlayer.Properties {
                 this["DCSG_Enable"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection Files {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Files"]));
+            }
+            set {
+                this["Files"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public decimal BitBangWait {
+            get {
+                return ((decimal)(this["BitBangWait"]));
+            }
+            set {
+                this["BitBangWait"] = value;
+            }
+        }
     }
 }

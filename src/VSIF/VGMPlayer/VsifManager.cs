@@ -11,13 +11,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 
 namespace zanac.VGMPlayer
 {
 
     public static class VsifManager
     {
+        public const int FTDI_BAUDRATE = 163840;
 
         private static object lockObject = new object();
 
@@ -41,21 +42,19 @@ namespace zanac.VGMPlayer
         /// <param name="clock"></param>
         /// <returns></returns>
         public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, ComPort comPort, bool shareOnly)
-            {
+        {
             lock (lockObject)
             {
                 foreach (var c in vsifClients)
                 {
                     if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
                     {
-                        if(!shareOnly)
-                            c.ReferencedCount++;
+                        c.ReferencedCount++;
                         return c;
                     }
                     if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
                     {
-                        if (!shareOnly)
-                            c.ReferencedCount++;
+                        c.ReferencedCount++;
                         return c;
                     }
                 }
@@ -111,8 +110,9 @@ namespace zanac.VGMPlayer
                                 if (stat == FTDI.FT_STATUS.FT_OK)
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
-                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(163840 / 16);
+                                    ftdi.SetBitMode(0x0f, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE);
+                                    //ftdi.SetBaudRate(115200);
                                     //ftdi.SetBaudRate(115200 / 16);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
@@ -125,15 +125,19 @@ namespace zanac.VGMPlayer
                                     }
 
                                     var client = new VsifClient(soundModule, new PortWriter(ftdi, comPort));
-                                    client.Disposed += Client_Disposed;
 
                                     //ftdi.Write(new byte[] { (byte)(((0x07 << 1) & 0xe) | 0) }, 1, ref dummy);
                                     //ftdi.Write(new byte[] { (byte)(((0x38 >> 2) & 0xe) | 1) }, 1, ref dummy);
                                     //ftdi.Write(new byte[] { (byte)(((0xC0 >> 5) & 0xe) | 0) }, 1, ref dummy);
                                     //ftdi.Write(new byte[] { 1 }, 1, ref dummy);
 
+                                    client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
                                     return client;
+                                }
+                                else
+                                {
+                                    MessageBox.Show(stat.ToString());
                                 }
                             }
                             break;
@@ -145,6 +149,8 @@ namespace zanac.VGMPlayer
                         throw;
                     else if (ex.GetType() == typeof(SystemException))
                         throw;
+
+                    MessageBox.Show(ex.ToString());
                 }
                 return null;
             }
@@ -203,6 +209,15 @@ namespace zanac.VGMPlayer
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ReferencedCount
+        {
+            get;
+            set;
+        }
+
         public event EventHandler Disposed;
 
         /// <summary>
@@ -218,15 +233,6 @@ namespace zanac.VGMPlayer
             deferredWriteData = new List<byte>();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public int ReferencedCount
-        {
-            get;
-            set;
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -238,9 +244,6 @@ namespace zanac.VGMPlayer
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // 大きなフィールドを null に設定します
-                if (SerialPort != null)
-                    SerialPort.Dispose();
-                SerialPort = null;
                 disposedValue = true;
             }
         }
@@ -257,6 +260,10 @@ namespace zanac.VGMPlayer
             ReferencedCount--;
             if (ReferencedCount != 0)
                 return;
+
+            if (SerialPort != null)
+                SerialPort.Dispose();
+            SerialPort = null;
 
             // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
             Dispose(disposing: true);
@@ -288,13 +295,16 @@ namespace zanac.VGMPlayer
         {
             lock (lockObject)
             {
-                List<byte> tmpData = null;
-                lock (deferredWriteData)
+                if (deferredWriteData.Count != 0)
                 {
-                    tmpData = new List<byte>(deferredWriteData);
-                    deferredWriteData.Clear();
+                    List<byte> tmpData = null;
+                    lock (deferredWriteData)
+                    {
+                        tmpData = new List<byte>(deferredWriteData);
+                        deferredWriteData.Clear();
+                    }
+                    SerialPort?.Write(tmpData.ToArray());
                 }
-                SerialPort?.Write(tmpData.ToArray());
             }
         }
 
