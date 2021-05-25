@@ -439,7 +439,8 @@ namespace zanac.VGMPlayer
                         GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
                         if (lpSystemTimeAsFileTime > lastTime100ns + wait_100ns)
                         {
-                            Wait = -(long)Math.Round((lpSystemTimeAsFileTime - dueTime) / (22.67573 * 10));
+                            if (Settings.Default.AutoFrameSkip)
+                                Wait = -(long)Math.Round((lpSystemTimeAsFileTime - dueTime) / (22.67573 * 10));
                             lastTime100ns = lpSystemTimeAsFileTime;  // adjust to current time
                             NotifyProcessLoadOccurred();
                         }

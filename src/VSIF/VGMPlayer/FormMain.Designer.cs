@@ -46,6 +46,8 @@ namespace zanac.VGMPlayer
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label9 = new System.Windows.Forms.Label();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
             this.buttonPrev = new System.Windows.Forms.Button();
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
@@ -58,6 +60,7 @@ namespace zanac.VGMPlayer
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonNext = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.listViewList = new System.Windows.Forms.ListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -67,10 +70,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.label9 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBoxLoop = new System.Windows.Forms.CheckBox();
             this.checkBoxConnOPNA2 = new System.Windows.Forms.CheckBox();
             this.checkBoxConnOPLL = new System.Windows.Forms.CheckBox();
@@ -81,13 +81,14 @@ namespace zanac.VGMPlayer
             this.comboBoxDCSG = new System.Windows.Forms.ComboBox();
             this.comboBoxPortSN76489 = new System.Windows.Forms.ComboBox();
             this.checkBoxConnDCSG = new System.Windows.Forms.CheckBox();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelPort.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -187,6 +188,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.label8, 3, 0);
             this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnDCSG, 3, 1);
             this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel3, 1, 5);
+            this.tableLayoutPanelPort.Controls.Add(this.checkBox1, 2, 5);
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
@@ -234,6 +236,34 @@ namespace zanac.VGMPlayer
             this.label8.TabIndex = 2;
             this.label8.Text = "Connect";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.label9, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.numericUpDown2, 1, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(64, 131);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(435, 25);
+            this.tableLayoutPanel3.TabIndex = 12;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label9.Location = new System.Drawing.Point(3, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(92, 25);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "BitBang Wait [%]:";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanelButton
             // 
@@ -444,6 +474,23 @@ namespace zanac.VGMPlayer
             this.buttonNext.UseVisualStyleBackColor = true;
             this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
             // 
+            // button1
+            // 
+            this.button1.AutoSize = true;
+            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ImageIndex = 9;
+            this.button1.ImageList = this.imageList2;
+            this.button1.Location = new System.Drawing.Point(747, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(38, 54);
+            this.button1.TabIndex = 10;
+            this.button1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // listViewList
             // 
             this.listViewList.AllowDrop = true;
@@ -549,68 +596,19 @@ namespace zanac.VGMPlayer
             this.textBoxTitle.Size = new System.Drawing.Size(733, 19);
             this.textBoxTitle.TabIndex = 1;
             // 
-            // button1
+            // checkBox1
             // 
-            this.button1.AutoSize = true;
-            this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.ImageIndex = 9;
-            this.button1.ImageList = this.imageList2;
-            this.button1.Location = new System.Drawing.Point(747, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(38, 54);
-            this.button1.TabIndex = 10;
-            this.button1.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.label9, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.numericUpDown2, 1, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(64, 131);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(435, 25);
-            this.tableLayoutPanel3.TabIndex = 12;
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(3, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(74, 22);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "BitBang Wait:";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // numericUpDown2
-            // 
-            this.numericUpDown2.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDown2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDown2.Location = new System.Drawing.Point(83, 3);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            this.numericUpDown2.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(349, 19);
-            this.numericUpDown2.TabIndex = 1;
-            this.numericUpDown2.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWait;
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.AutoFrameSkip;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "AutoFrameSkip", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBox1.Location = new System.Drawing.Point(505, 131);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(186, 25);
+            this.checkBox1.TabIndex = 13;
+            this.checkBox1.Text = "Auto Frame Skip";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // checkBoxLoop
             // 
@@ -1518,6 +1516,21 @@ namespace zanac.VGMPlayer
             this.checkBoxConnDCSG.UseVisualStyleBackColor = true;
             this.checkBoxConnDCSG.CheckedChanged += new System.EventHandler(this.checkBoxConnDCSG_CheckedChanged);
             // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDown2.Location = new System.Drawing.Point(101, 3);
+            this.numericUpDown2.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(331, 19);
+            this.numericUpDown2.TabIndex = 1;
+            this.numericUpDown2.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWait;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1538,6 +1551,8 @@ namespace zanac.VGMPlayer
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanelPort.ResumeLayout(false);
             this.tableLayoutPanelPort.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanelButton.ResumeLayout(false);
             this.tableLayoutPanelButton.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -1545,7 +1560,6 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.tableLayoutPanel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1600,5 +1614,6 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

@@ -165,5 +165,29 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWait"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int FocusedItem {
+            get {
+                return ((int)(this["FocusedItem"]));
+            }
+            set {
+                this["FocusedItem"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoFrameSkip {
+            get {
+                return ((bool)(this["AutoFrameSkip"]));
+            }
+            set {
+                this["AutoFrameSkip"] = value;
+            }
+        }
     }
 }

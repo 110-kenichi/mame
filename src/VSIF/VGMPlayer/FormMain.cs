@@ -34,6 +34,13 @@ namespace zanac.VGMPlayer
             {
                 foreach (string fn in Settings.Default.Files)
                     listViewList.Items.Add(fn);
+
+                int idx = Settings.Default.FocusedItem;
+                if (0 <= idx && idx < listViewList.Items.Count)
+                {
+                    listViewList.Items[idx].Focused = true;
+                    listViewList.Items[idx].Selected = true;
+                }
             }
         }
 
@@ -54,6 +61,10 @@ namespace zanac.VGMPlayer
             foreach (ListViewItem item in listViewList.Items)
                 sc.Add(item.Text);
             Settings.Default.Files = sc;
+
+            var fi = listViewList.FocusedItem;
+            if (fi != null)
+                Settings.Default.FocusedItem = fi.Index;
         }
 
         private void SetHeight(ListView listView, int height)

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using zanac.VGMPlayer.Properties;
@@ -56,14 +58,11 @@ namespace zanac.VGMPlayer
                 serialPort?.Write(new byte[] { address, data }, 0, 2);
                 if (ftdiPort != null)
                 {
-                    List<byte> sendData = new List<byte>();
-                    createPacket(sendData, address);
-                    createPacket(sendData, data);
-                    var sd = sendData.ToArray();
-                    uint writtenBytes = 0;
-                    var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
-                    if (stat != FTDI.FT_STATUS.FT_OK)
-                        Debug.WriteLine(stat);
+                    var wait = (VsifManager.FTDI_BAUDRATE_MUL * Settings.Default.BitBangWait) / 100;
+
+                    byte[] sd = new byte[2] { address, data };
+                    convertToDataPacket(sd);
+                    sendData(sd);
                 }
             }
         }
@@ -75,37 +74,44 @@ namespace zanac.VGMPlayer
                 serialPort?.Write(data, 0, data.Length);
                 if (ftdiPort != null)
                 {
-                    List<byte> sendData = new List<byte>();
-                    foreach (var dt in data)
-                        createPacket(sendData, dt);
-                    var sd = sendData.ToArray();
-                    uint writtenBytes = 0;
-                    var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
-                    if (stat != FTDI.FT_STATUS.FT_OK)
-                        Debug.WriteLine(stat);
+                    convertToDataPacket(data);
+                    sendData(data);
                 }
             }
         }
 
-        private static void createPacket(List<byte> sendData, byte dt)
+        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
+
+        private void sendData(byte[] sendData)
         {
-            //createStopFrame(sendData);
-            createFrame(sendData, (byte)(((dt << 1) & 0xe) | 0));
-            createFrame(sendData, (byte)(((dt >> 2) & 0xe) | 1));
-            createFrame(sendData, (byte)(((dt >> 5) & 0xe) | 0));
-            createStopFrame(sendData);
+            int wait = (int)(VsifManager.FTDI_BAUDRATE_MUL * Settings.Default.BitBangWait) / 100;
+
+            var osd = sendData.ToArray();
+            byte[] sd = new byte[osd.Length * (int)wait];
+            unsafe
+            {
+                for (int i = 0; i < osd.Length; i++)
+                {
+                    fixed (byte* bp = &sd[i * (int)wait])
+                        MemSet(new IntPtr(bp), osd[i], (int)wait);
+                }
+            }
+            uint writtenBytes = 0;
+            var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
+            if (stat != FTDI.FT_STATUS.FT_OK)
+                Debug.WriteLine(stat);
         }
 
-        private static void createFrame(List<byte> sendData, byte dt1)
+        private void convertToDataPacket(byte[] sendData)
         {
-            for (int i = 0; i < Settings.Default.BitBangWait; i++)
-                sendData.Add(dt1);
-        }
-
-        private static void createStopFrame(List<byte> sendData)
-        {
-            for (int i = 0; i < Settings.Default.BitBangWait; i++)
-                sendData.Add((byte)((i << 1) | 1));
+            for (int i = 0; i < sendData.Length; i += 2)
+            {
+                byte adr = sendData[i + 0];
+                byte dat = sendData[i + 1];
+                sendData[i + 0] = (byte)(adr | (dat & 3));
+                sendData[i + 1] = (byte)((dat >> 2) | 0x40);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
