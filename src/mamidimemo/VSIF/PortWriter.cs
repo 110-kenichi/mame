@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private void sendData(byte[] sendData)
         {
-            int wait = (int)(VsifManager.FTDI_BAUDRATE_MUL * 10) / 100;
+            int wait = (int)(VsifManager.FTDI_BAUDRATE_MUL * 8) / 100;
 
             var osd = sendData.ToArray();
             byte[] sd = new byte[osd.Length * (int)wait];

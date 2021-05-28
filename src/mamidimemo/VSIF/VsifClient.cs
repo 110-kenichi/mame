@@ -119,26 +119,6 @@ namespace zanac.MAmidiMEmo.VSIF
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
-            /*
-                      lock (deferredWriteData)
-                      {
-                          deferredWriteData.Add(address);
-                          deferredWriteData.Add(data);
-                          if (deferredWriteData.Count != 2)
-                              return;
-                      }
-                      void act()
-                      {
-                          List<byte> tmpData = null;
-                          lock (deferredWriteData)
-                          {
-                              tmpData = new List<byte>(deferredWriteData);
-                              deferredWriteData.Clear();
-                          }
-                          SerialPort?.Write(tmpData.ToArray(), 0, tmpData.Count);
-                      }
-                      Task.Factory.StartNew(act);
-            */
         }
 
     }

@@ -2044,7 +2044,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_Genesis,
-                    //SoundEngineType.VSIF_Genesis_FTDI,
+                    SoundEngineType.VSIF_Genesis_FTDI,
                 });
 
                 return sc;

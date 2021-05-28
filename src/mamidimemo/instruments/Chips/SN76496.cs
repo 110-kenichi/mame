@@ -816,7 +816,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
                     SoundEngineType.VSIF_Genesis,
-                    //SoundEngineType.VSIF_Genesis_FTDI,
+                    SoundEngineType.VSIF_Genesis_FTDI,
                });
 
                 return sc;
