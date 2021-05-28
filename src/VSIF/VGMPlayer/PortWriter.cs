@@ -58,8 +58,6 @@ namespace zanac.VGMPlayer
                 serialPort?.Write(new byte[] { address, data }, 0, 2);
                 if (ftdiPort != null)
                 {
-                    var wait = (VsifManager.FTDI_BAUDRATE_MUL * Settings.Default.BitBangWait) / 100;
-
                     byte[] sd = new byte[2] { address, data };
                     convertToDataPacket(sd);
                     sendData(sd);
@@ -109,8 +107,8 @@ namespace zanac.VGMPlayer
             {
                 byte adr = sendData[i + 0];
                 byte dat = sendData[i + 1];
-                sendData[i + 0] = (byte)(adr | (dat & 3));
-                sendData[i + 1] = (byte)((dat >> 2) | 0x40);
+                sendData[i + 0] = (byte)(0x40 | (((dat & 0xc0) | adr) >> 2));
+                sendData[i + 1] = (byte)(0x00 | (dat & 0x3f));
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace zanac.VGMPlayer
 
         protected void NotifyProcessLoadOccurred()
         {
+            HighLoad = true;
             ProcessLoadOccurred?.Invoke(this, EventArgs.Empty);
         }
 
@@ -140,11 +142,18 @@ namespace zanac.VGMPlayer
         {
         }
 
-        public double Wait
+        public bool HighLoad
         {
             get;
             set;
         }
+
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryPerformanceFrequency(out long frequency);
 
     }
 

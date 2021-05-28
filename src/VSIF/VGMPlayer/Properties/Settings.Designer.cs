@@ -180,13 +180,13 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoFrameSkip {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal VGMWait {
             get {
-                return ((bool)(this["AutoFrameSkip"]));
+                return ((decimal)(this["VGMWait"]));
             }
             set {
-                this["AutoFrameSkip"] = value;
+                this["VGMWait"] = value;
             }
         }
     }

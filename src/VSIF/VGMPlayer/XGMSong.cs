@@ -262,12 +262,12 @@ namespace zanac.VGMPlayer
         protected override void StreamSong()
         {
             _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+            double wait = 0;
+            double lastDiff = 0;
             using (SafeWaitHandle handle = CreateWaitableTimer(IntPtr.Zero, false, null))
             {
-
-                long lpSystemTimeAsFileTime;
-                GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                double lastTime100ns = lpSystemTimeAsFileTime;
+                long freq, before, after;
+                QueryPerformanceFrequency(out freq);
 
                 while (true)
                 {
@@ -278,10 +278,10 @@ namespace zanac.VGMPlayer
                     else if (State == SoundState.Paused)
                     {
                         Thread.Sleep(1);
-                        GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                        lastTime100ns = lpSystemTimeAsFileTime;
                         continue;
                     }
+                    QueryPerformanceCounter(out before);
+
                     try
                     {
                         int data = readByte();
@@ -295,10 +295,10 @@ namespace zanac.VGMPlayer
                                         switch (_XGMHead.bytNTSC_PAL & 1)
                                         {
                                             case 0:
-                                                Wait += (1d / 60d) * 1000 * 1000 * 10;
+                                                wait += 735;
                                                 break;
                                             case 1:
-                                                Wait += (1d / 50d) * 1000 * 1000 * 10;
+                                                wait += 882;
                                                 break;
                                         }
                                         flushDeferredWriteData();
@@ -426,24 +426,25 @@ namespace zanac.VGMPlayer
                         _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
-                    double wait_100ns = Wait;
-                    if (wait_100ns / PlaybackSpeed >= Program.MinimumResolution)
-                    {
-                        lastTime100ns += wait_100ns / PlaybackSpeed;
-                        long dueTime = (long)Math.Round(lastTime100ns);
-                        SetWaitableTimer(handle, ref dueTime, 0, IntPtr.Zero, IntPtr.Zero, false);
-                        WaitForSingleObject(handle, WAIT_TIMEOUT);
-                        Wait = 0;
+                    if (wait <= 0)
+                        continue;
 
-                        // Next time is past time?
-                        GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                        if (lpSystemTimeAsFileTime > lastTime100ns + wait_100ns)
-                        {
-                            if (Settings.Default.AutoFrameSkip)
-                                Wait = -(long)Math.Round((lpSystemTimeAsFileTime - dueTime) / (22.67573 * 10));
-                            lastTime100ns = lpSystemTimeAsFileTime;  // adjust to current time
-                            NotifyProcessLoadOccurred();
-                        }
+                    flushDeferredWriteData();
+
+                    QueryPerformanceCounter(out after);
+                    double pwait = (wait / PlaybackSpeed) - lastDiff;
+                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                    {
+                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                        wait = -(lastDiff * 44.1 * 1000);
+                        NotifyProcessLoadOccurred();
+                    }
+                    else
+                    {
+                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                            QueryPerformanceCounter(out after);
+                        wait = 0;
+                        HighLoad = false;
                     }
                 }
             }
@@ -454,9 +455,6 @@ namespace zanac.VGMPlayer
             comPortOPNA2?.FlushDeferredWriteData();
             comPortDCSG?.FlushDeferredWriteData();
         }
-
-        private const int WAIT_TIMEOUT = 120 * 1000;
-
 
         [DllImport("kernel32.dll")]
         public static extern SafeWaitHandle CreateWaitableTimer(IntPtr lpTimerAttributes, bool bManualReset, string lpTimerName);

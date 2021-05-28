@@ -112,3 +112,6 @@ Release(but Debug .NET)
 /src/VSIF/VGMPlayer/VGMPlayer.csproj.user
 /src/VSIF/VGMPlayer/.vs/VGMPlayer/v16
 /src/VSIF/VGMPlay_Genesis/.hg/cache
+/src/VSIF/VGMPlayer/packages
+/src/VSIF/VGMPlayer/bin
+/src/VSIF/VGMPlayer/obj

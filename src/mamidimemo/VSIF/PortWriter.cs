@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,32 +49,59 @@ namespace zanac.MAmidiMEmo.VSIF
 
         public void Write(byte address, byte data)
         {
-            if (serialPort != null)
-            {
-                serialPort.Write(new byte[] { address, data }, 0, 2);
-            }
+            serialPort?.Write(new byte[] { address, data }, 0, 2);
             if (ftdiPort != null)
             {
-                List<byte> sendData = new List<byte>();
-                {
-                    sendData.Add((byte)(((address << 1) & 0xe) | 0));
-                    sendData.Add((byte)(((address >> 2) & 0xe) | 1));
-                    sendData.Add((byte)(((address >> 5) & 0xe) | 0));
-                    sendData.Add(1);
-                }
-                {
-                    sendData.Add((byte)(((data << 1) & 0xe) | 0));
-                    sendData.Add((byte)(((data >> 2) & 0xe) | 1));
-                    sendData.Add((byte)(((data >> 5) & 0xe) | 0));
-                    sendData.Add(1);
-                }
-                var sd = sendData.ToArray();
-                uint writtenBytes = 0;
-                var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
-                if(stat != FTDI.FT_STATUS.FT_OK)
-                    Debug.WriteLine(stat);
+                byte[] sd = new byte[2] { address, data };
+                convertToDataPacket(sd);
+                sendData(sd);
             }
         }
+
+        public void Write(byte[] data)
+        {
+            serialPort?.Write(data, 0, data.Length);
+            if (ftdiPort != null)
+            {
+                convertToDataPacket(data);
+                sendData(data);
+            }
+        }
+
+        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
+
+        private void sendData(byte[] sendData)
+        {
+            int wait = (int)(VsifManager.FTDI_BAUDRATE_MUL * 10) / 100;
+
+            var osd = sendData.ToArray();
+            byte[] sd = new byte[osd.Length * (int)wait];
+            unsafe
+            {
+                for (int i = 0; i < osd.Length; i++)
+                {
+                    fixed (byte* bp = &sd[i * (int)wait])
+                        MemSet(new IntPtr(bp), osd[i], (int)wait);
+                }
+            }
+            uint writtenBytes = 0;
+            var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
+            if (stat != FTDI.FT_STATUS.FT_OK)
+                Debug.WriteLine(stat);
+        }
+
+        private void convertToDataPacket(byte[] sendData)
+        {
+            for (int i = 0; i < sendData.Length; i += 2)
+            {
+                byte adr = sendData[i + 0];
+                byte dat = sendData[i + 1];
+                sendData[i + 0] = (byte)(0x40 | (((dat & 0xc0) | adr) >> 2));
+                sendData[i + 1] = (byte)(0x00 | (dat & 0x3f));
+            }
+        }
+
 
         protected virtual void Dispose(bool disposing)
         {

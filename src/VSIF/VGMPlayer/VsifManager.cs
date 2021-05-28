@@ -18,9 +18,10 @@ namespace zanac.VGMPlayer
 
     public static class VsifManager
     {
-        //public const int FTDI_BAUDRATE = 163840;
-        public const int FTDI_BAUDRATE = 10240;  //TARGET CLOCK is 115200
-        public const int FTDI_BAUDRATE_MUL = 32;
+        //http://analoghome.blogspot.com/2017/08/ftdi-ft232r-usb-to-serial-bridge.html
+        //The maximum BAUD rate for the FT232R chip is 3M BAUD
+        public const int FTDI_BAUDRATE = 7200;
+        public const int FTDI_BAUDRATE_MUL = 100;
 
         private static object lockObject = new object();
 
@@ -49,12 +50,12 @@ namespace zanac.VGMPlayer
             {
                 foreach (var c in vsifClients)
                 {
-                    if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
+                    if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
                     {
                         c.ReferencedCount++;
                         return c;
                     }
-                    if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
+                    if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
                     {
                         c.ReferencedCount++;
                         return c;
@@ -115,13 +116,14 @@ namespace zanac.VGMPlayer
                                     ftdi.SetBitMode(0xFF, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
                                     ftdi.SetBaudRate(FTDI_BAUDRATE * FTDI_BAUDRATE_MUL);
                                     ftdi.SetTimeouts(500, 500);
+                                    //The driver will continue to receive data until the buffer fills or the latency timer times out, then a USB transfer to the upstream program in the PC will take place.
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
                                     ftdi.GetPinStates(ref ps);
-                                    if ((ps & 0x40) == 0)
+                                    if ((ps & 0x40) == 1)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0x00 }, 1, ref dummy);
                                     }
 
                                     var client = new VsifClient(soundModule, new PortWriter(ftdi, comPort));
@@ -194,7 +196,7 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        public PortWriter SerialPort
+        public PortWriter DataWriter
         {
             get;
             private set;
@@ -224,13 +226,14 @@ namespace zanac.VGMPlayer
         /// 
         /// </summary>
         /// <param name="type"></param>
-        public VsifClient(VsifSoundModuleType type, PortWriter serialPort)
+        public VsifClient(VsifSoundModuleType type, PortWriter dataWriter)
         {
             SoundModuleType = type;
-            SerialPort = serialPort;
+            DataWriter = dataWriter;
 
             ReferencedCount = 1;
             deferredWriteAdrAndData = new List<byte>();
+
         }
 
         protected virtual void Dispose(bool disposing)
@@ -261,9 +264,9 @@ namespace zanac.VGMPlayer
             if (ReferencedCount != 0)
                 return;
 
-            if (SerialPort != null)
-                SerialPort.Dispose();
-            SerialPort = null;
+            if (DataWriter != null)
+                DataWriter.Dispose();
+            DataWriter = null;
 
             // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
             Dispose(disposing: true);
@@ -279,10 +282,30 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte address, byte data)
         {
-            lock (lockObject)
+            lock (deferredWriteAdrAndData)
             {
                 deferredWriteAdrAndData.Add(address);
                 deferredWriteAdrAndData.Add(data);
+            }
+        }
+
+        private void deferredWriteDataTask()
+        {
+            lock (lockObject)
+            {
+                Loop:
+                byte[] ad;
+                lock (deferredWriteAdrAndData)
+                {
+                    ad = deferredWriteAdrAndData.ToArray();
+                    deferredWriteAdrAndData.Clear();
+                }
+                DataWriter?.Write(ad);
+                lock (deferredWriteAdrAndData)
+                {
+                    if (deferredWriteAdrAndData.Count != 0)
+                        goto Loop;
+                }
             }
         }
 
@@ -293,19 +316,25 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void FlushDeferredWriteData()
         {
+            if (!Monitor.TryEnter(lockObject))
+                return;
+
+            Task.Run(deferredWriteDataTask);
+
+            Monitor.Exit(lockObject);
+
+            /*
             lock (lockObject)
             {
                 if (deferredWriteAdrAndData.Count != 0)
                 {
-                    List<byte> tmpData = null;
                     lock (deferredWriteAdrAndData)
                     {
-                        tmpData = new List<byte>(deferredWriteAdrAndData);
+                        DataWriter?.Write(deferredWriteAdrAndData.ToArray());
                         deferredWriteAdrAndData.Clear();
                     }
-                    SerialPort?.Write(tmpData.ToArray());
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -320,7 +349,7 @@ namespace zanac.VGMPlayer
                 lock (lockObject)
                 {
                     FlushDeferredWriteData();
-                    SerialPort?.Write(address, data);
+                    DataWriter?.Write(address, data);
                 }
             }
             catch (Exception ex)

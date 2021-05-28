@@ -24,6 +24,10 @@ namespace zanac.MAmidiMEmo.VSIF
 
     public static class VsifManager
     {
+        //http://analoghome.blogspot.com/2017/08/ftdi-ft232r-usb-to-serial-bridge.html
+        //The maximum BAUD rate for the FT232R chip is 3M BAUD
+        public const int FTDI_BAUDRATE = 7200;
+        public const int FTDI_BAUDRATE_MUL = 100;
 
         private static object lockObject = new object();
 
@@ -103,16 +107,15 @@ namespace zanac.MAmidiMEmo.VSIF
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(163840 / 16);
-                                    //ftdi.SetBaudRate(115200 / 16);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE * FTDI_BAUDRATE_MUL);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
                                     ftdi.GetPinStates(ref ps);
-                                    if ((ps & 1) != 1)
+                                    if ((ps & 0x40) == 0)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x01 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
                                     }
 
                                     var client = new VsifClient(soundModule, new PortWriter(ftdi, comPort));

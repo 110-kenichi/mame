@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.VGMPlayer.Properties;
 
@@ -51,6 +53,55 @@ namespace zanac.VGMPlayer
             checkBoxConnDCSG_CheckedChanged(null, null);
             checkBoxConnOPLL_CheckedChanged(null, null);
             checkBoxConnOPNA2_CheckedChanged(null, null);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case NativeConstants.WM_APPCOMMAND:
+                    int cmd = (int)((uint)m.LParam >> 16 & ~0xf000);
+                    switch ((ApplicationCommand)cmd)
+                    {
+                        case ApplicationCommand.MediaFastForward:
+                            buttonFast.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaRewind:
+                            buttonSlow.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPause:
+                            buttonFreeze.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPlay:
+                            buttonPlay.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPlayPause:
+                            buttonPlay.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaNexttrack:
+                            buttonNext.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPrevioustrack:
+                            buttonPrev.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaStop:
+                            buttonStop.PerformClick();
+                            goto default;
+                        case ApplicationCommand.Close:
+                            Close();
+                            goto default;
+                        default:
+                            /* According to MSDN, when handling
+                             * this message, we must return TRUE. */
+                            m.Result = new IntPtr(1);
+                            base.WndProc(ref m);
+                            return;
+                    }
+            }
+
+            /* Other message handlers here… */
+
+            base.WndProc(ref m);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -165,7 +216,7 @@ namespace zanac.VGMPlayer
                 if (Directory.Exists(fileName))
                 {
                     string[] allfiles = Directory.GetFiles(fileName, "*.*", SearchOption.AllDirectories);
-                    return addAllFiles(allfiles, lvi);
+                    lvi = addAllFiles(allfiles, lvi);
                 }
             }
 
@@ -182,7 +233,9 @@ namespace zanac.VGMPlayer
 
         private void buttonPrev_Click(object sender, EventArgs e)
         {
-            int idx = currentSongItem.Index;
+            int idx = 0;
+            if (currentSongItem != null)
+                idx = currentSongItem.Index;
             if (idx < 0 && listViewList.Items.Count != 0)
             {
                 playItem(0);
@@ -198,7 +251,9 @@ namespace zanac.VGMPlayer
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            int idx = currentSongItem.Index;
+            int idx = 0;
+            if (currentSongItem != null)
+                idx = currentSongItem.Index;
             if (idx < 0 && listViewList.Items.Count != 0)
             {
                 playItem(0);
@@ -292,9 +347,9 @@ namespace zanac.VGMPlayer
                 return;
 
             if (currentSong.State != SoundState.Playing)
-                buttonPlay.ImageIndex = 1;
+                buttonPlay.ImageIndex = 0;
             else
-                buttonPlay.ImageIndex = 2;
+                buttonPlay.ImageIndex = 1;
         }
 
         private void CurrentSong_ProcessLoadOccurred(object sender, EventArgs e)
@@ -345,35 +400,7 @@ namespace zanac.VGMPlayer
                 e.KeyData == Keys.Back ||
                 (e.KeyCode == Keys.X && e.Control))
             {
-                try
-                {
-                    //listViewList.BeginUpdate();
-                    int index = 0;
-                    for (int i = 0; i < listViewList.SelectedItems.Count; i++)
-                    {
-                        // 現在選択している行のインデックスを取得
-                        index = listViewList.SelectedItems[0].Index;
-                        if ((0 <= index) && (index < listViewList.Items.Count))
-                        {
-                            listViewList.Items.RemoveAt(index);
-                            i--;
-                        }
-                    }
-                    if (index < listViewList.Items.Count)
-                    {
-                        listViewList.Items[index].Selected = true;
-                        listViewList.Items[index].EnsureVisible();
-                    }
-                    else if (listViewList.Items.Count != 0)
-                    {
-                        listViewList.Items[listViewList.Items.Count - 1].Selected = true;
-                        listViewList.Items[listViewList.Items.Count - 1].EnsureVisible();
-                    }
-                }
-                finally
-                {
-                    //listViewList.EndUpdate();
-                }
+                removeSelectedItem();
             }
             if (e.KeyCode == Keys.Enter)
             {
@@ -414,6 +441,39 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private void removeSelectedItem()
+        {
+            try
+            {
+                listViewList.BeginUpdate();
+                int index = 0;
+                for (int i = 0; i < listViewList.SelectedItems.Count; i++)
+                {
+                    // 現在選択している行のインデックスを取得
+                    index = listViewList.SelectedItems[0].Index;
+                    if ((0 <= index) && (index < listViewList.Items.Count))
+                    {
+                        listViewList.Items.RemoveAt(index);
+                        i--;
+                    }
+                }
+                if (index < listViewList.Items.Count)
+                {
+                    listViewList.Items[index].Selected = true;
+                    listViewList.Items[index].EnsureVisible();
+                }
+                else if (listViewList.Items.Count != 0)
+                {
+                    listViewList.Items[listViewList.Items.Count - 1].Selected = true;
+                    listViewList.Items[listViewList.Items.Count - 1].EnsureVisible();
+                }
+            }
+            finally
+            {
+                listViewList.EndUpdate();
+            }
+        }
+
         private void listViewList_DoubleClick(object sender, EventArgs e)
         {
             playSelectedItem();
@@ -426,7 +486,7 @@ namespace zanac.VGMPlayer
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (currentSong?.Wait < 0 && currentSong?.State == SoundState.Playing)
+            if (currentSong?.HighLoad == true && currentSong?.State == SoundState.Playing)
             {
                 if (progressBarLoad.Value <= 90)
                     addProgressBarLoadValue(10);
@@ -584,9 +644,82 @@ namespace zanac.VGMPlayer
                 listViewList.Sorting = SortOrder.Descending;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonPlay_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void buttonPlay_DragDrop(object sender, DragEventArgs e)
+        {
+            listViewList.Items.Clear();
+
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            ListViewItem lvi = null;
+            try
+            {
+                listViewList.BeginUpdate();
+
+                listViewList.SelectedItems.Clear();
+                lvi = addAllFiles(files, lvi);
+            }
+            finally
+            {
+                listViewList.EndUpdate();
+                lvi?.EnsureVisible();
+            }
+
+            playSelectedItem();
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e)
         {
             listViewList.Items.Clear();
         }
+
+        private void playToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playSelectedItem();
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            removeSelectedItem();
+        }
+
+        private void explorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = listViewList.FocusedItem;
+            if (item != null)
+            {
+                Task.Run(new Action(() =>
+                {
+                    Process.Start("explorer.exe", "/select,\"" + item.Text + "\"");
+                }));
+            }
+        }
+    }
+
+    internal static class NativeConstants
+    {
+        public const int WM_APPCOMMAND = 0x0319;
+    }
+
+    internal enum ApplicationCommand
+    {
+        VolumeMute = 8,
+        VolumeDown = 9,
+        VolumeUp = 10,
+        MediaNexttrack = 11,
+        MediaPrevioustrack = 12,
+        MediaStop = 13,
+        MediaPlayPause = 14,
+        Close = 31,
+        MediaPlay = 46,
+        MediaPause = 47,
+        MediaFastForward = 49,
+        MediaRewind = 50
     }
 }

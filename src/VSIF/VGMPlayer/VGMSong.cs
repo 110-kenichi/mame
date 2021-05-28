@@ -21,6 +21,14 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPLL;
         private VsifClient comPortOPNA2;
 
+        private BinaryReader _vgmReader;
+
+        private byte[] _VGMData;
+        private int _VGMDataOffset;
+
+        private List<byte> _DACData;
+        private int _DACOffset = 0;
+
         /// <summary>
         /// 
         /// </summary>
@@ -28,6 +36,8 @@ namespace zanac.VGMPlayer
         public VGMSong(string fileName) : base(fileName)
         {
             openVGMFile(fileName);
+
+            _DACData = new List<byte>();
         }
 
         protected override void StopAllSounds(bool volumeOff)
@@ -247,12 +257,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private BinaryReader _vgmReader;
-        private byte[] _DACData;
-        private byte[] _VGMData;
-        private int _DACOffset = 0;
-        private int _VGMDataOffset;
-
         /// <summary>
         /// 
         /// </summary>
@@ -315,19 +319,7 @@ namespace zanac.VGMPlayer
                 _vgmReader.ReadBytes(offset);
                 _VGMData = _vgmReader.ReadBytes((int)(FileSize - offset));
 
-
                 _vgmReader = new BinaryReader(new MemoryStream(_VGMData));
-                if ((byte)_vgmReader.PeekChar() == 0x67)
-                {
-                    _vgmReader.ReadByte();
-                    if ((byte)_vgmReader.PeekChar() == 0x66)
-                    {
-                        _vgmReader.ReadByte();
-                        byte type = _vgmReader.ReadByte();
-                        uint size = _vgmReader.ReadUInt32();
-                        _DACData = _vgmReader.ReadBytes((int)size);
-                    }
-                }
             }
             return true;
         }
@@ -346,11 +338,12 @@ namespace zanac.VGMPlayer
         protected override void StreamSong()
         {
             _vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+            double wait = 0;
+            double lastDiff = 0;
             using (SafeWaitHandle handle = CreateWaitableTimer(IntPtr.Zero, false, null))
             {
-                long lpSystemTimeAsFileTime;
-                GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                double lastTime100ns = lpSystemTimeAsFileTime;
+                long freq, before, after;
+                QueryPerformanceFrequency(out freq);
 
                 while (true)
                 {
@@ -361,29 +354,27 @@ namespace zanac.VGMPlayer
                     else if (State == SoundState.Paused)
                     {
                         Thread.Sleep(1);
-                        GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                        lastTime100ns = lpSystemTimeAsFileTime;
                         continue;
                     }
+                    QueryPerformanceCounter(out before);
                     try
                     {
-                        int data = readByte();
-                        int command = data;
-                        if (data != -1)
+                        int command = readByte();
+                        if (command != -1)
                         {
-                            switch (data)
+                            switch (command)
                             {
                                 case 0x4F:
                                     {
-                                        data = readByte();
+                                        var data = readByte();
                                         if (data < 0)
                                             break;
                                     }
                                     break;
 
-                                case 0x50:
+                                case 0x50:  //PSG
                                     {
-                                        data = readByte();
+                                        var data = readByte();
                                         if (data < 0)
                                             break;
                                         switch (comPortDCSG?.SoundModuleType)
@@ -401,54 +392,55 @@ namespace zanac.VGMPlayer
 
                                 case 0x51: //YM2413 Write Port 0
                                     {
-                                        byte aa = _vgmReader.ReadByte();
-                                        byte dd = _vgmReader.ReadByte();
-                                        comPortOPLL?.DeferredWriteData(aa, dd);
+                                        var adrs = readByte();
+                                        if (adrs < 0)
+                                            break;
+                                        var dt = readByte();
+                                        if (dt < 0)
+                                            break;
+                                        comPortOPLL?.DeferredWriteData((byte)adrs, (byte)dt);
                                     }
                                     break;
 
                                 case 0x52: //YM2612 Write Port 0
                                     {
-                                        data = readByte();
-                                        if (data < 0)
+                                        var adrs = readByte();
+                                        if (adrs < 0)
                                             break;
-                                        comPortOPNA2?.DeferredWriteData(0x04, (byte)data);
-                                        data = readByte();
-                                        if (data < 0)
+                                        var dt = readByte();
+                                        if (dt < 0)
                                             break;
-                                        comPortOPNA2?.DeferredWriteData(0x08, (byte)data);
+                                        comPortOPNA2?.DeferredWriteData(0x04, (byte)adrs);
+                                        comPortOPNA2?.DeferredWriteData(0x08, (byte)dt);
                                     }
                                     break;
 
                                 case 0x53: //YM2612 Write Port 1
                                     {
-                                        data = readByte();
-                                        if (data < 0)
+                                        var adrs = readByte();
+                                        if (adrs < 0)
                                             break;
-                                        comPortOPNA2?.DeferredWriteData(0x0C, (byte)data);
-                                        data = readByte();
-                                        if (data < 0)
+                                        var dt = readByte();
+                                        if (dt < 0)
                                             break;
-                                        comPortOPNA2?.DeferredWriteData(0x10, (byte)data);
+                                        comPortOPNA2?.DeferredWriteData(0x0C, (byte)adrs);
+                                        comPortOPNA2?.DeferredWriteData(0x10, (byte)dt);
                                     }
                                     break;
 
                                 case 0x61: //Wait N samples
                                     {
                                         ushort time = _vgmReader.ReadUInt16();
-                                        Wait += time;
-                                        flushDeferredWriteData();
+                                        wait += time;
                                     }
                                     break;
 
                                 case 0x62: //Wait 735 samples
-                                    Wait += 735;
-                                    flushDeferredWriteData();
+                                    wait += 735;
                                     break;
 
                                 case 0x63: //Wait 882 samples
-                                    Wait += 882;
-                                    flushDeferredWriteData();
+                                    wait += 882;
                                     break;
 
                                 case 0xE0: //Seek to offset in PCM databank
@@ -456,17 +448,19 @@ namespace zanac.VGMPlayer
                                     _DACOffset = (int)offset;
                                     break;
 
-                                case 0x67: //Skip VGM Data
+                                case 0x67: //Data Block
                                     {
-                                        data = readByte();
-                                        if (data < 0)
-                                            break;
-                                        //type
-                                        data = readByte();
-                                        if (data < 0)
-                                            break;
+                                        //0x66
+                                        var data = readByte();
+                                        //data type
+                                        var dtype = readByte();
+                                        //data size
                                         uint size = _vgmReader.ReadUInt32();
-                                        _vgmReader.BaseStream.Position += size;
+                                        if (0 < size && size <= Int32.MaxValue)
+                                        {
+                                            _DACData.AddRange(_vgmReader.ReadBytes((int)size));
+                                        }
+                                        //_vgmReader.BaseStream.Position += size;
                                     }
                                     break;
                                 case 0x66:
@@ -485,26 +479,92 @@ namespace zanac.VGMPlayer
                                             _vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                     }
                                     break;
+                                case 0x90: //Setup Stream Control:
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                        //chip type
+                                        var ct = readByte();
+                                        if (ct == 2)
+                                        {
+                                            //port
+                                            var port = readByte();
+                                            //command
+                                            var cmd = readByte();
+                                            if (port == 0x00 && cmd == 0x2a)    //PCM
+                                            {
+                                                comPortOPNA2?.DeferredWriteData(0x04, 0x2b);
+                                                comPortOPNA2?.DeferredWriteData(0x08, 0x80);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 0x91: //Set Stream Data:
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                        //data bank
+                                        var dbank = readByte();
+                                        //step size
+                                        var ssz = readByte();
+                                        //step base
+                                        var sbase = readByte();
+                                    }
+                                    break;
+                                case 0x92: //Set Stream Frequency:
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                        //sample rate
+                                        uint sfreq = _vgmReader.ReadUInt32();
+                                    }
+                                    break;
+                                case 0x93: //Start Stream:
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                        uint ofst = _vgmReader.ReadUInt32();
+                                        var lenMode = readByte();
+                                        uint dataLen = _vgmReader.ReadUInt32();
+                                    }
+                                    break;
+                                case 0x94:  //Stop Stream
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                    }
+                                    break;
+                                case 0x95: //Start Stream:
+                                    {
+                                        //stream id
+                                        var sid = readByte();
+                                        //block id
+                                        var bid = readByte();
+                                        //flags
+                                        var flgs = readByte();
+                                    }
+                                    break;
                             }
                             if (command >= 0x70 && command <= 0x7F)
                             {
-                                Wait += (data & 15) + 1;
-                                flushDeferredWriteData();
+                                var time = (command & 15) + 1;
+                                wait += time;
                             }
                             else if (command >= 0x80 && command <= 0x8F)
                             {
-                                Wait += (data & 15);
+                                var time = (command & 15);
+                                wait += time;
                                 //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
+
                                 comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
                                 comPortOPNA2?.DeferredWriteData(0x08, (byte)_DACData[_DACOffset]);
                                 _DACOffset++;
-                                flushDeferredWriteData();
                             }
 
                             //if (_wait != 0)
                             //    _wait -= 1;
                         }
-                        if ((command == 0x66 || data == -1))
+                        if ((command == 0x66 || command == -1))
                         {
                             flushDeferredWriteData();
                             if (Looped == false || LoopCount == 0)
@@ -529,25 +589,25 @@ namespace zanac.VGMPlayer
                         LoopCount--;
                         _vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
+                    if (wait <= (double)Settings.Default.VGMWait)
+                        continue;
 
-                    double wait_100ns = (22.67573 * 10 * Wait);
-                    if (wait_100ns / PlaybackSpeed >= Program.MinimumResolution)
+                    flushDeferredWriteData();
+
+                    QueryPerformanceCounter(out after);
+                    double pwait = (wait / PlaybackSpeed) - lastDiff;
+                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
-                        lastTime100ns += wait_100ns / PlaybackSpeed;
-                        long dueTime = (long)Math.Round(lastTime100ns);
-                        SetWaitableTimer(handle, ref dueTime, 0, IntPtr.Zero, IntPtr.Zero, false);
-                        WaitForSingleObject(handle, WAIT_TIMEOUT);
-                        Wait = 0;
-
-                        // Next time is past time?
-                        GetSystemTimeAsFileTime(out lpSystemTimeAsFileTime);
-                        if (lpSystemTimeAsFileTime > lastTime100ns)
-                        {
-                            if(Settings.Default.AutoFrameSkip)
-                                Wait = -(long)Math.Round((lpSystemTimeAsFileTime - dueTime) / (22.67573 * 10));
-                            lastTime100ns = lpSystemTimeAsFileTime;  // adjust to current time
-                            NotifyProcessLoadOccurred();
-                        }
+                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                        wait = -(lastDiff * 44.1 * 1000);
+                        NotifyProcessLoadOccurred();
+                    }
+                    else
+                    {
+                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                            QueryPerformanceCounter(out after);
+                        wait = 0;
+                        HighLoad = false;
                     }
                 }
             }
@@ -556,8 +616,8 @@ namespace zanac.VGMPlayer
         private void flushDeferredWriteData()
         {
             comPortOPLL?.FlushDeferredWriteData();
-            comPortOPNA2?.FlushDeferredWriteData();
             comPortDCSG?.FlushDeferredWriteData();
+            comPortOPNA2?.FlushDeferredWriteData();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;

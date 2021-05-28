@@ -240,87 +240,32 @@ Reset_FTDI2XX:
     btst.b  #0,0xA11100
     bne.b   Reset_FTDI2XX
 
-    move.l  #PERIPHERAL_PORT_P2_B, %a0 | 12
-    move.l  #ADRESS_TABLE, %a1         | 12
-    clr.l   %d2                        | for Test Bit 0
-    move.b  #0xfc,%d4                  | for Address Table
-    move.b  #0x0e,%d3                  | 
+    move.l  #PERIPHERAL_PORT_P2_B, %a0 | PORT2 Address
+    move.l  #ADRESS_TABLE, %a1         | Sound Register TABLE(OPNA2(Idx No 1,2,3,5), PSG(Idx No 6))
+    clr.l   %d0                        | for Recv Addr Idx(Lo 4bit)
+    move.b  #0xC0,%d1                  | for And Data(Hi 2bit)
+    move.b  #6,%d2                     | for Check Bit 6
 
 _VGM_ADDRESS_FTDI2XX:
 
-    move.l   %d2,%d1                          | 4      Clr d1
-_VGM_ADDRESS_FTDI2XX_LOOP1S:
-    btst.b  %d2,(%a0)                         | +8 8
-    bne.b   _VGM_ADDRESS_FTDI2XX_LOOP1S       | +8 16 
-    move.b  (%a0),%d0                         |  8 24
-    and.b   %d3,%d0                           | +4 28
-    |00001110 -> 00000111
-    lsr.b   #1,%d0                            | +8 36
-    move.b  %d0,%d1                           | +4 40
+_VGM_ADDRESS_FTDI2XX_LOOP:
+    btst.b  %d2,(%a0)                         | +8 8    Check CLK
+    beq.b   _VGM_ADDRESS_FTDI2XX_LOOP         | +8 16   Wait pullup
+    move.b  (%a0),%d0                         | +8 24   Get Address Idx(Lo 4bit) and Data(Hi 2bit)
+    | Get Write Address
+    | 0CDDAAAA -> DDAAAA00
+    lsl.b   #2,%d0                            |+10 34   Shift Left
+    move.l  (%d0, %a1), %a2                   |+16 50   Get Register Address
 
-_VGM_ADDRESS_FTDI2XX_LOOP2S:
-    btst.b  %d2,(%a0)                         | +8
-    beq.b   _VGM_ADDRESS_FTDI2XX_LOOP2S       | +8 16
-    move.b  (%a0),%d0                         |  8 24
-    and.b   %d3,%d0                           | +4 28
-    |00001110 -> 00111xxx
-    lsl.b   #2,%d0                            |+10 38
-    or.b    %d0,%d1                           | +4 42
+_VGM_DATA_FTDI2XX_LOOP:
+    btst.b  %d2,(%a0)                         | +8 8    Check CLK
+    bne.b   _VGM_DATA_FTDI2XX_LOOP            | +8 16   Wait pulldown
+    and.b   %d1,%d0                           |+ 4 20   
+    or.b    (%a0),%d0                         |  8 28   Get Data(Hi 2bit | Lo 6bit)
+    | Write Data to Address
+    move.b  %d0,(%a2)                         |+12 40   Write DATA to register
 
-_VGM_ADDRESS_FTDI2XX_LOOP3S:
-    btst.b  %d2,(%a0)                         | +8
-    bne.b   _VGM_ADDRESS_FTDI2XX_LOOP3S       | +8 16
-    move.b  (%a0),%d0                         |  8 24
-    and.b   %d3,%d0                           | +4 28
-    |00001110 -> 11xxxxxx
-    ror.b   #3,%d0                            |+12 40
-    or.b    %d0,%d1                           | +4 44
-
-_VGM_ADDRESS_FTDI2XX_LOOP4S:
-    btst.b  %d2,(%a0)                         | +8
-    beq.b   _VGM_ADDRESS_FTDI2XX_LOOP4S       | +8 16
-|Address
-    and.b   %d4,%d1                           | +4 20
-    move.l  (%d1, %a1), %a2                   |+16 36
-
-
-
-
-    move.l   %d2,%d1                          | +4      Clr d1
-_VGM_DATA_FTDI2XX_LOOP1S:
-    btst.b  %d2,(%a0)                         | +8 12
-    bne.b   _VGM_DATA_FTDI2XX_LOOP1S          | +8 20 
-    move.b  (%a0),%d0                         |  8 28
-    and.b   %d3,%d0                           | +4 32
-    |00001110 -> 00000111
-    lsr.b   #1,%d0                            | +8 40
-    move.b  %d0,%d1                           | +4 44
-
-_VGM_DATA_FTDI2XX_LOOP2S:
-    btst.b  %d2,(%a0)                         | +8
-    beq.b   _VGM_DATA_FTDI2XX_LOOP2S          | +8 16
-    move.b  (%a0),%d0                         |  8 24
-    and.b   %d3,%d0                           | +4 28
-    |00001110 -> 00111xxx
-    lsl.b   #2,%d0                            |+10 38
-    or.b    %d0,%d1                           | +4 42
-
-_VGM_DATA_FTDI2XX_LOOP3S:
-    btst.b  %d2,(%a0)                         | +8
-    bne.b   _VGM_DATA_FTDI2XX_LOOP3S          | +8 16
-    move.b  (%a0),%d0                         |  8 24
-    and.b   %d3,%d0                           | +4 28
-    |00001110 -> 11xxxxxx
-    ror.b   #3,%d0                            |+12 40
-    or.b    %d0,%d1                           | +4 44
-
-_VGM_DATA_FTDI2XX_LOOP4S:
-    btst.b  %d2,(%a0)                         | +8
-    beq.b   _VGM_DATA_FTDI2XX_LOOP4S          | +8 16
-|Data
-    move.b  %d1,(%a2)                         |+12 28
-    bra.w _VGM_ADDRESS_FTDI2XX                |+10 38
-
+    bra.w _VGM_ADDRESS_FTDI2XX                |+10 50   Loop
 
 |    move.l #0xC00011, %a6
 |    move.b #0x80,(%a6)
@@ -334,71 +279,71 @@ _VGM_DATA_FTDI2XX_LOOP4S:
     .equ YMPORT2, 0xA04002 |; YM2612 port 2
     .equ YMPORT3, 0xA04003 |; YM2612 port 3
     .equ PSGPORT, 0xC00011 |; PSG port
-    .equ DUMMY,   0xA14000 |; dummy
+    .equ DUMMY,   0xA10006 |; dummy
 
 
 ADRESS_TABLE:	
-    dc.l DUMMY   		|;0
-    dc.l YMPORT0 		|;4
-    dc.l YMPORT1 		|;8
-    dc.l YMPORT2 		|;12
-    dc.l YMPORT3 		|;16
-    dc.l PSGPORT 		|;20
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 16
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 32
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4 48
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l PSGPORT 		|;4
-    dc.l DUMMY   		|;4 252
+    dc.l DUMMY   		|;00
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;20
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;40
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;60
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;80
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;a0
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;c0
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
+    dc.l DUMMY   		|;e0
+    dc.l YMPORT0 		|;04
+    dc.l YMPORT1 		|;08
+    dc.l YMPORT2 		|;0C
+    dc.l YMPORT3 		|;10
+    dc.l PSGPORT 		|;14
+    dc.l PSGPORT 		|;18
+    dc.l PSGPORT 		|;1c
