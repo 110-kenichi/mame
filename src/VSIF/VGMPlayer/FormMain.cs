@@ -31,6 +31,15 @@ namespace zanac.VGMPlayer
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            checkBoxConnDCSG_CheckedChanged(null, null);
+            checkBoxConnOPLL_CheckedChanged(null, null);
+            checkBoxConnOPNA2_CheckedChanged(null, null);
 
             if (Settings.Default.Files != null)
             {
@@ -42,17 +51,9 @@ namespace zanac.VGMPlayer
                 {
                     listViewList.Items[idx].Focused = true;
                     listViewList.Items[idx].Selected = true;
+                    listViewList.Items[idx].EnsureVisible();
                 }
             }
-        }
-
-        protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e);
-
-            checkBoxConnDCSG_CheckedChanged(null, null);
-            checkBoxConnOPLL_CheckedChanged(null, null);
-            checkBoxConnOPNA2_CheckedChanged(null, null);
         }
 
         protected override void WndProc(ref Message m)
@@ -107,6 +108,10 @@ namespace zanac.VGMPlayer
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+
+            comPortDCSG?.Dispose();
+            comPortOPLL?.Dispose();
+            comPortOPNA2?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)

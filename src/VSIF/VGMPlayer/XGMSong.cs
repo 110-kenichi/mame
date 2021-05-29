@@ -413,8 +413,13 @@ namespace zanac.VGMPlayer
                             _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
                         flushDeferredWriteData();
                         if (Looped == false || LoopCount == 0)
                         {

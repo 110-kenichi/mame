@@ -293,7 +293,9 @@ namespace zanac.VGMPlayer
                 uint fccHeader;
                 fccHeader = (uint)_vgmReader.ReadUInt32();
                 if (fccHeader != FCC_VGM)
-                    return false;
+                {
+                    throw new IOException("VGM file error");
+                }
 
                 _VGMDataLen = FileSize;
                 _VGMHead = readVGMHeader(_vgmReader);
@@ -585,8 +587,13 @@ namespace zanac.VGMPlayer
                             _vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
                         flushDeferredWriteData();
                         if (Looped == false || LoopCount == 0)
                         {

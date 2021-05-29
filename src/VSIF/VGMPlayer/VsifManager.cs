@@ -23,7 +23,7 @@ namespace zanac.VGMPlayer
         public const int FTDI_BAUDRATE = 7200;
         public const int FTDI_BAUDRATE_MUL = 100;
 
-        private static object lockObject = new object();
+        private static object managerLockObject = new object();
 
         private static List<VsifClient> vsifClients = new List<VsifClient>();
 
@@ -46,7 +46,7 @@ namespace zanac.VGMPlayer
         /// <returns></returns>
         public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, ComPort comPort, bool shareOnly)
         {
-            lock (lockObject)
+            lock (managerLockObject)
             {
                 foreach (var c in vsifClients)
                 {
@@ -160,7 +160,7 @@ namespace zanac.VGMPlayer
 
         private static void Client_Disposed(object sender, EventArgs e)
         {
-            lock (lockObject)
+            lock (managerLockObject)
             {
                 foreach (var c in vsifClients)
                 {
@@ -192,6 +192,10 @@ namespace zanac.VGMPlayer
         private List<byte> deferredWriteAdrAndData;
 
         private bool disposedValue;
+
+        private Thread writeThread;
+
+        private AutoResetEvent autoResetEvent;
 
         /// <summary>
         /// 
@@ -234,20 +238,30 @@ namespace zanac.VGMPlayer
             ReferencedCount = 1;
             deferredWriteAdrAndData = new List<byte>();
 
+            autoResetEvent = new AutoResetEvent(false);
+            writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
+            writeThread.Priority = ThreadPriority.Highest;
+            writeThread.Start();
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
+                disposedValue = true;
+
                 if (disposing)
                 {
                     //マネージド状態を破棄します (マネージド オブジェクト)
+                    autoResetEvent.Set();
+                    while (writeThread.IsAlive)
+                        Thread.Sleep(0);
+
+                    autoResetEvent.Dispose();
                 }
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // 大きなフィールドを null に設定します
-                disposedValue = true;
             }
         }
 
@@ -282,7 +296,7 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte address, byte data)
         {
-            lock (deferredWriteAdrAndData)
+            lock (lockObject)
             {
                 deferredWriteAdrAndData.Add(address);
                 deferredWriteAdrAndData.Add(data);
@@ -291,21 +305,30 @@ namespace zanac.VGMPlayer
 
         private void deferredWriteDataTask()
         {
-            lock (lockObject)
+            try
             {
-                Loop:
-                byte[] ad;
-                lock (deferredWriteAdrAndData)
+                while (!disposedValue)
                 {
-                    ad = deferredWriteAdrAndData.ToArray();
-                    deferredWriteAdrAndData.Clear();
+                    autoResetEvent.WaitOne();
+
+                    byte[] ad;
+                    lock (lockObject)
+                    {
+                        if (deferredWriteAdrAndData.Count == 0)
+                            continue;
+
+                        ad = deferredWriteAdrAndData.ToArray();
+                        deferredWriteAdrAndData.Clear();
+                    }
+                    DataWriter?.Write(ad);
                 }
-                DataWriter?.Write(ad);
-                lock (deferredWriteAdrAndData)
-                {
-                    if (deferredWriteAdrAndData.Count != 0)
-                        goto Loop;
-                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
             }
         }
 
@@ -316,25 +339,7 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void FlushDeferredWriteData()
         {
-            if (!Monitor.TryEnter(lockObject))
-                return;
-
-            Task.Run(deferredWriteDataTask);
-
-            Monitor.Exit(lockObject);
-
-            /*
-            lock (lockObject)
-            {
-                if (deferredWriteAdrAndData.Count != 0)
-                {
-                    lock (deferredWriteAdrAndData)
-                    {
-                        DataWriter?.Write(deferredWriteAdrAndData.ToArray());
-                        deferredWriteAdrAndData.Clear();
-                    }
-                }
-            }*/
+            autoResetEvent.Set();
         }
 
         /// <summary>
@@ -359,26 +364,6 @@ namespace zanac.VGMPlayer
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
-            /*
-                      lock (deferredWriteData)
-                      {
-                          deferredWriteData.Add(address);
-                          deferredWriteData.Add(data);
-                          if (deferredWriteData.Count != 2)
-                              return;
-                      }
-                      void act()
-                      {
-                          List<byte> tmpData = null;
-                          lock (deferredWriteData)
-                          {
-                              tmpData = new List<byte>(deferredWriteData);
-                              deferredWriteData.Clear();
-                          }
-                          SerialPort?.Write(tmpData.ToArray(), 0, tmpData.Count);
-                      }
-                      Task.Factory.StartNew(act);
-            */
         }
 
     }
