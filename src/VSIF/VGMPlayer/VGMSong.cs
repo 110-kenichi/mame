@@ -390,12 +390,11 @@ namespace zanac.VGMPlayer
                                     }
                                     break;
 
-                                case 0x51: //YM2413 Write Port 0
+                                case 0x51: //YM2413
                                     {
                                         var adrs = readByte();
                                         if (adrs < 0)
-                                            break;
-                                        var dt = readByte();
+                                            break; var dt = readByte();
                                         if (dt < 0)
                                             break;
                                         comPortOPLL?.DeferredWriteData((byte)adrs, (byte)dt);
@@ -409,6 +408,9 @@ namespace zanac.VGMPlayer
                                             break;
                                         var dt = readByte();
                                         if (dt < 0)
+                                            break;
+                                        //ignore test and unknown registers
+                                        if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c <= adrs && adrs < 0x30))
                                             break;
                                         comPortOPNA2?.DeferredWriteData(0x04, (byte)adrs);
                                         comPortOPNA2?.DeferredWriteData(0x08, (byte)dt);
@@ -544,21 +546,27 @@ namespace zanac.VGMPlayer
                                         var flgs = readByte();
                                     }
                                     break;
-                            }
-                            if (command >= 0x70 && command <= 0x7F)
-                            {
-                                var time = (command & 15) + 1;
-                                wait += time;
-                            }
-                            else if (command >= 0x80 && command <= 0x8F)
-                            {
-                                var time = (command & 15);
-                                wait += time;
-                                //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
+                                case int cmd when 0x70 <= cmd && cmd <= 0x7F:
+                                    {
+                                        var time = (cmd & 15) + 1;
+                                        wait += time;
+                                    }
+                                    break;
+                                case int cmd when 0x80 <= cmd && cmd <= 0x8F:
+                                    {
+                                        var time = (command & 15);
+                                        wait += time;
+                                        //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
 
-                                comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
-                                comPortOPNA2?.DeferredWriteData(0x08, (byte)_DACData[_DACOffset]);
-                                _DACOffset++;
+                                        comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
+                                        comPortOPNA2?.DeferredWriteData(0x08, (byte)_DACData[_DACOffset]);
+                                        _DACOffset++;
+                                    }
+
+                                    break;
+                                default:
+
+                                    break;
                             }
 
                             //if (_wait != 0)
