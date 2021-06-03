@@ -31,6 +31,7 @@ namespace zanac.VGMPlayer
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
+            listViewList.ListViewItemSorter = new ListViewIndexComparer(listViewList);
         }
 
         protected override void OnShown(EventArgs e)
@@ -182,9 +183,36 @@ namespace zanac.VGMPlayer
                 currentSong.Looped = checkBoxLoop.Checked;
         }
 
-        private void listView1_DragDrop(object sender, DragEventArgs e)
+        private void listViewList_DragDrop(object sender, DragEventArgs e)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                addFilesToList((string[])e.Data.GetData(DataFormats.FileDrop, false));
+            }
+        }
+
+        private void listView1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void listViewList_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+        }
+
+        private void listViewList_DragLeave(object sender, EventArgs e)
+        {
+        }
+
+        private void listViewList_DragOver(object sender, DragEventArgs e)
+        {
+        }
+
+        private void addFilesToList(string[] files)
+        {
             ListViewItem lvi = null;
             try
             {
@@ -204,36 +232,29 @@ namespace zanac.VGMPlayer
         {
             foreach (var fileName in files)
             {
-                if (File.Exists(fileName))
+                var fp = Path.GetFullPath(fileName);
+                if (File.Exists(fp))
                 {
-                    string ext = Path.GetExtension(fileName);
+                    string ext = Path.GetExtension(fp);
                     switch (ext.ToUpper())
                     {
                         case ".VGM":
                         case ".VGZ":
                         case ".XGM":
-                            lvi = new ListViewItem(fileName);
+                            lvi = new ListViewItem(fp);
                             listViewList.Items.Add(lvi);
                             lvi.Selected = true;
                             break;
                     }
                 }
-                if (Directory.Exists(fileName))
+                if (Directory.Exists(fp))
                 {
-                    string[] allfiles = Directory.GetFiles(fileName, "*.*", SearchOption.AllDirectories);
+                    string[] allfiles = Directory.GetFiles(fp, "*.*", SearchOption.AllDirectories);
                     lvi = addAllFiles(allfiles, lvi);
                 }
             }
 
             return lvi;
-        }
-
-        private void listView1_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.All;
-            else
-                e.Effect = DragDropEffects.None;
         }
 
         private void buttonPrev_Click(object sender, EventArgs e)
@@ -286,6 +307,11 @@ namespace zanac.VGMPlayer
 
         private void playItem(int idx)
         {
+            if (idx >= listViewList.Items.Count)
+                idx = listViewList.Items.Count - 1;
+            if (idx < 0)
+                return;
+
             currentSongItem = listViewList.Items[idx];
             listViewList.SelectedItems.Clear();
 
@@ -324,16 +350,25 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void CurrentSong_Finished(object sender, EventArgs e)
+        private async void CurrentSong_Finished(object sender, EventArgs e)
         {
             if (sender != currentSong)
                 return;
+
+            var cs = currentSong;
+
+            await Task.Delay(500);
 
             if (this.IsDisposed)
                 return;
 
             this.BeginInvoke(new MethodInvoker(() =>
             {
+                if (this.IsDisposed)
+                    return;
+                if (cs != currentSong)
+                    return;
+
                 buttonNext_Click(null, null);
             }));
         }
@@ -643,10 +678,21 @@ namespace zanac.VGMPlayer
 
         private void listViewList_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (listViewList.Sorting != SortOrder.Ascending)
-                listViewList.Sorting = SortOrder.Ascending;
-            else
-                listViewList.Sorting = SortOrder.Descending;
+            switch (listViewList.Sorting)
+            {
+                case SortOrder.Ascending:
+                    listViewList.Sorting = SortOrder.Descending;
+                    listViewList.Columns[0].Text = "File name ▼";
+                    break;
+                case SortOrder.Descending:
+                    listViewList.Sorting = SortOrder.None;
+                    listViewList.Columns[0].Text = "File name";
+                    break;
+                case SortOrder.None:
+                    listViewList.Sorting = SortOrder.Ascending;
+                    listViewList.Columns[0].Text = "File name ▲";
+                    break;
+            }
         }
 
         private void buttonPlay_DragEnter(object sender, DragEventArgs e)
@@ -703,6 +749,46 @@ namespace zanac.VGMPlayer
                 {
                     Process.Start("explorer.exe", "/select,\"" + item.Text + "\"");
                 }));
+            }
+        }
+
+        private void buttonEject_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(openFileDialog.InitialDirectory))
+            {
+                if (String.IsNullOrEmpty(Settings.Default.LastDir) || !Directory.Exists(Settings.Default.LastDir))
+                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                else
+                    openFileDialog.InitialDirectory = Settings.Default.LastDir;
+            }
+
+            //ダイアログを表示する
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                addFilesToList(openFileDialog.FileNames);
+
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+                Settings.Default.LastDir = openFileDialog.InitialDirectory;
+            }
+        }
+
+        private class ListViewIndexComparer : System.Collections.IComparer
+        {
+            private ListView listView;
+
+            public ListViewIndexComparer(ListView listView)
+            {
+                this.listView = listView;
+            }
+
+            public int Compare(object x, object y)
+            {
+                if (listView.Sorting == SortOrder.Ascending)
+                    return ((ListViewItem)x).Text.CompareTo(((ListViewItem)y).Text);
+                else if (listView.Sorting == SortOrder.Descending)
+                    return ((ListViewItem)y).Text.CompareTo(((ListViewItem)x).Text);
+                else
+                    return 0;
             }
         }
     }

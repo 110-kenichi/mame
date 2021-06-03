@@ -298,6 +298,9 @@ namespace zanac.VGMPlayer
         {
             lock (lockObject)
             {
+                if (disposedValue)
+                    return;
+
                 deferredWriteAdrAndData.Add(address);
                 deferredWriteAdrAndData.Add(data);
             }
@@ -342,6 +345,7 @@ namespace zanac.VGMPlayer
             autoResetEvent.Set();
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -353,7 +357,36 @@ namespace zanac.VGMPlayer
             {
                 lock (lockObject)
                 {
+                    if (disposedValue)
+                        return;
+
                     FlushDeferredWriteData();
+                    DataWriter?.Write(address, data);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void WriteThroughData(byte address, byte data)
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    if (disposedValue)
+                        return;
+
                     DataWriter?.Write(address, data);
                 }
             }

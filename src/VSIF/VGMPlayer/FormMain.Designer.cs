@@ -74,8 +74,7 @@ namespace zanac.VGMPlayer
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonNext = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.listViewList = new System.Windows.Forms.ListView();
-            this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.buttonEject = new System.Windows.Forms.Button();
             this.contextMenuStripList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,6 +86,9 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.listViewList = new ListViewInsertionDrag.DraggableListView();
+            this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelPort.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -1186,15 +1188,15 @@ namespace zanac.VGMPlayer
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(238, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(119, 25);
+            this.label10.Size = new System.Drawing.Size(117, 25);
             this.label10.TabIndex = 0;
-            this.label10.Text = "VGM Buffer[Samples]:";
+            this.label10.Text = "Cmd Buffer[Samples]:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // numericUpDown3
             // 
             this.numericUpDown3.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "VGMWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDown3.Location = new System.Drawing.Point(363, 3);
+            this.numericUpDown3.Location = new System.Drawing.Point(361, 3);
             this.numericUpDown3.Name = "numericUpDown3";
             this.numericUpDown3.Size = new System.Drawing.Size(120, 19);
             this.numericUpDown3.TabIndex = 2;
@@ -1202,7 +1204,7 @@ namespace zanac.VGMPlayer
             // 
             // tableLayoutPanelButton
             // 
-            this.tableLayoutPanelButton.ColumnCount = 10;
+            this.tableLayoutPanelButton.ColumnCount = 11;
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -1212,6 +1214,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelButton.Controls.Add(this.buttonPrev, 0, 0);
             this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoop, 7, 0);
@@ -1223,7 +1226,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelButton.Controls.Add(this.numericUpDown1, 7, 1);
             this.tableLayoutPanelButton.Controls.Add(this.buttonStop, 3, 0);
             this.tableLayoutPanelButton.Controls.Add(this.buttonNext, 2, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonClear, 9, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonClear, 10, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonEject, 9, 0);
             this.tableLayoutPanelButton.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 399);
             this.tableLayoutPanelButton.Name = "tableLayoutPanelButton";
@@ -1262,6 +1266,7 @@ namespace zanac.VGMPlayer
             this.imageListSmall.Images.SetKeyName(5, "Fast.png");
             this.imageListSmall.Images.SetKeyName(6, "Loop.png");
             this.imageListSmall.Images.SetKeyName(7, "Clear.png");
+            this.imageListSmall.Images.SetKeyName(8, "Eject.png");
             // 
             // checkBoxLoop
             // 
@@ -1438,34 +1443,22 @@ namespace zanac.VGMPlayer
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
-            // listViewList
+            // buttonEject
             // 
-            this.listViewList.AllowDrop = true;
-            this.listViewList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderFile});
-            this.listViewList.ContextMenuStrip = this.contextMenuStripList;
-            this.listViewList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewList.FullRowSelect = true;
-            this.listViewList.GridLines = true;
-            this.listViewList.HideSelection = false;
-            this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 186);
-            this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(788, 187);
-            this.listViewList.TabIndex = 2;
-            this.listViewList.UseCompatibleStateImageBehavior = false;
-            this.listViewList.View = System.Windows.Forms.View.Details;
-            this.listViewList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewList_ColumnClick);
-            this.listViewList.SizeChanged += new System.EventHandler(this.listViewList_SizeChanged);
-            this.listViewList.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
-            this.listViewList.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
-            this.listViewList.DoubleClick += new System.EventHandler(this.listViewList_DoubleClick);
-            this.listViewList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewList_KeyDown);
-            // 
-            // columnHeaderFile
-            // 
-            this.columnHeaderFile.Text = "File name";
-            this.columnHeaderFile.Width = 325;
+            this.buttonEject.AutoSize = true;
+            this.buttonEject.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonEject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonEject.FlatAppearance.BorderSize = 0;
+            this.buttonEject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEject.ImageIndex = 8;
+            this.buttonEject.ImageList = this.imageListSmall;
+            this.buttonEject.Location = new System.Drawing.Point(703, 3);
+            this.buttonEject.Name = "buttonEject";
+            this.buttonEject.Size = new System.Drawing.Size(38, 54);
+            this.buttonEject.TabIndex = 10;
+            this.buttonEject.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.buttonEject.UseVisualStyleBackColor = true;
+            this.buttonEject.Click += new System.EventHandler(this.buttonEject_Click);
             // 
             // contextMenuStripList
             // 
@@ -1574,6 +1567,45 @@ namespace zanac.VGMPlayer
             this.textBoxTitle.Size = new System.Drawing.Size(733, 19);
             this.textBoxTitle.TabIndex = 1;
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "Video Game Music Files(*.vgm;*.vgz;*.xgm)|*.vgm;*.vgz;*.xgm";
+            this.openFileDialog.Multiselect = true;
+            this.openFileDialog.Title = "Select VGM/XGM files";
+            // 
+            // listViewList
+            // 
+            this.listViewList.AllowDrop = true;
+            this.listViewList.AllowItemDrag = true;
+            this.listViewList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderFile});
+            this.listViewList.ContextMenuStrip = this.contextMenuStripList;
+            this.listViewList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewList.FullRowSelect = true;
+            this.listViewList.GridLines = true;
+            this.listViewList.HideSelection = false;
+            this.listViewList.LabelWrap = false;
+            this.listViewList.Location = new System.Drawing.Point(0, 186);
+            this.listViewList.Name = "listViewList";
+            this.listViewList.Size = new System.Drawing.Size(788, 187);
+            this.listViewList.TabIndex = 2;
+            this.listViewList.UseCompatibleStateImageBehavior = false;
+            this.listViewList.View = System.Windows.Forms.View.Details;
+            this.listViewList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewList_ColumnClick);
+            this.listViewList.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewList_ItemDrag);
+            this.listViewList.SizeChanged += new System.EventHandler(this.listViewList_SizeChanged);
+            this.listViewList.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewList_DragDrop);
+            this.listViewList.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
+            this.listViewList.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewList_DragOver);
+            this.listViewList.DragLeave += new System.EventHandler(this.listViewList_DragLeave);
+            this.listViewList.DoubleClick += new System.EventHandler(this.listViewList_DoubleClick);
+            this.listViewList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewList_KeyDown);
+            // 
+            // columnHeaderFile
+            // 
+            this.columnHeaderFile.Text = "File name";
+            this.columnHeaderFile.Width = 325;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1589,7 +1621,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM Player)";
+            this.Text = "VSIF Checker (VGM/XGM Player) V1.04";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -1630,7 +1662,7 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.Button buttonFast;
         private System.Windows.Forms.Button buttonFreeze;
         private System.Windows.Forms.CheckBox checkBoxLoop;
-        private System.Windows.Forms.ListView listViewList;
+        private ListViewInsertionDrag.DraggableListView listViewList;
         private System.Windows.Forms.ColumnHeader columnHeaderFile;
         private System.Windows.Forms.Button buttonPrev;
         private System.Windows.Forms.Button buttonNext;
@@ -1666,5 +1698,7 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.ToolStripMenuItem playToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem explorerToolStripMenuItem;
+        private System.Windows.Forms.Button buttonEject;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

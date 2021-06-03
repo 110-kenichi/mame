@@ -82,31 +82,31 @@ namespace zanac.VGMPlayer
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2?.WriteData(4, (byte)(0xB4 | i));
-                    comPortOPNA2?.WriteData(8, 0xC0);
-                    comPortOPNA2?.WriteData(12, (byte)(0xB4 | i));
-                    comPortOPNA2?.WriteData(16, 0xC0);
+                    comPortOPNA2.WriteData(4, (byte)(0xB4 | i));
+                    comPortOPNA2.WriteData(8, 0xC0);
+                    comPortOPNA2.WriteData(12, (byte)(0xB4 | i));
+                    comPortOPNA2.WriteData(16, 0xC0);
                 }
 
                 // disable LFO
-                comPortOPNA2?.WriteData(4, 0x22);
-                comPortOPNA2?.WriteData(8, 0x00);
+                comPortOPNA2.WriteData(4, 0x22);
+                comPortOPNA2.WriteData(8, 0x00);
 
                 // disable timer & set channel 6 to normal mode
-                comPortOPNA2?.WriteData(4, 0x27);
-                comPortOPNA2?.WriteData(8, 0x00);
+                comPortOPNA2.WriteData(4, 0x27);
+                comPortOPNA2.WriteData(8, 0x00);
 
                 // ALL KEY OFF
-                comPortOPNA2?.WriteData(4, 0x28);
+                comPortOPNA2.WriteData(4, 0x28);
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2?.WriteData(8, (byte)(0x00 | i));
-                    comPortOPNA2?.WriteData(8, (byte)(0x04 | i));
+                    comPortOPNA2.WriteData(8, (byte)(0x00 | i));
+                    comPortOPNA2.WriteData(8, (byte)(0x04 | i));
                 }
 
                 // disable DAC
-                comPortOPNA2?.WriteData(4, 0x2B);
-                comPortOPNA2?.WriteData(8, 0x00);
+                comPortOPNA2.WriteData(4, 0x2B);
+                comPortOPNA2.WriteData(8, 0x00);
 
                 for (int slot = 0; slot < 6; slot++)
                 {
@@ -263,6 +263,8 @@ namespace zanac.VGMPlayer
         {
             _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
             double wait = 0;
+            double xgmWaitDelta = 0;
+            double streamWaitDelta = 0;
             double lastDiff = 0;
             using (SafeWaitHandle handle = CreateWaitableTimer(IntPtr.Zero, false, null))
             {
@@ -295,10 +297,10 @@ namespace zanac.VGMPlayer
                                         switch (_XGMHead.bytNTSC_PAL & 1)
                                         {
                                             case 0:
-                                                wait += 735;
+                                                xgmWaitDelta += 735;
                                                 break;
                                             case 1:
-                                                wait += 882;
+                                                xgmWaitDelta += 882;
                                                 break;
                                         }
                                         flushDeferredWriteData();
@@ -431,7 +433,36 @@ namespace zanac.VGMPlayer
                         _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
-                    if (wait <= 0)
+                    if (streamWaitDelta < xgmWaitDelta)
+                    {
+                        if (streamWaitDelta <= 0)
+                        {
+                            wait += xgmWaitDelta;
+                            xgmWaitDelta = 0;
+                        }
+                        else
+                        {
+                            wait += streamWaitDelta;
+                            xgmWaitDelta -= streamWaitDelta;
+                            streamWaitDelta = 0;
+                        }
+                    }
+                    else
+                    {
+                        if (xgmWaitDelta <= 0)
+                        {
+                            wait += streamWaitDelta;
+                            streamWaitDelta = 0;
+                        }
+                        else
+                        {
+                            wait += xgmWaitDelta;
+                            streamWaitDelta -= xgmWaitDelta;
+                            xgmWaitDelta = 0;
+                        }
+                    }
+
+                    if (wait <= (double)Settings.Default.VGMWait)
                         continue;
 
                     flushDeferredWriteData();
