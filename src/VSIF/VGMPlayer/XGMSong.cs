@@ -460,14 +460,11 @@ namespace zanac.VGMPlayer
                             bool playDac = false;
                             for (int i = 0; i < currentPlaySamples.Length; i++)
                             {
-                                if (currentPlaySamples[i] != null)
+                                var dt = currentPlaySamples[i]?.GetDacData();
+                                if (dt != null)
                                 {
-                                    var dt = currentPlaySamples[i].GetDacData();
-                                    if (dt != null)
-                                    {
-                                        dacData += dt.Value - sbyte.MinValue;
-                                        playDac = true;
-                                    }
+                                    dacData += dt.Value - sbyte.MinValue;
+                                    playDac = true;
                                 }
                             }
 
@@ -479,7 +476,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
                                 comPortOPNA2?.DeferredWriteData(0x08, (byte)dacData);
 
-                                streamWaitDelta += 44.1d / 14d ;
+                                streamWaitDelta += 44.1d / 14d;
                             }
                         }
                     }
