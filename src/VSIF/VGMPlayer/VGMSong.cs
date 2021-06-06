@@ -388,6 +388,9 @@ namespace zanac.VGMPlayer
                             {
                                 switch (command)
                                 {
+                                    case -1:
+                                        vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                        break;
                                     case 0x4F:
                                         {
                                             var data = readByte();
@@ -637,7 +640,6 @@ namespace zanac.VGMPlayer
                                     break;
                                 }
                                 LoopCount--;
-                                vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                             }
                         }
 

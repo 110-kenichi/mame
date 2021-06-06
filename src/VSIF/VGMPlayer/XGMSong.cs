@@ -23,30 +23,60 @@ namespace zanac.VGMPlayer
 
         private const uint FCC_VGM = 0x204D4758;    // 'XGM '
 
-        private XGM_HEADER _XGMHead;
+        private XGM_HEADER xgmMHead;
 
-        private BinaryReader _xgmReader;
+        private BinaryReader xgmReader;
 
-        private byte[] _DACData;
+        private byte[] dacData;
 
-        private byte[] _VGMData;
+        private byte[] vgmData;
 
-        private SampleData[] Samples = new SampleData[63];
+        private SampleData[] SampleDataTable = new SampleData[63];
 
         private class SampleData
         {
-            public uint Address;
-            public uint Size;
+            public int Address
+            {
+                get;
+                private set;
+            }
+
+            public int Size
+            {
+                get;
+                private set;
+            }
+
+            private XGMSong xgmData;
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(uint adress, uint size)
+            public SampleData(XGMSong xgmData, uint adress, uint size)
             {
-                Address = adress;
-                Size = size;
+                Address = (int)adress;
+                Size = (int)size;
+                this.xgmData = xgmData;
+            }
+
+            private int index;
+
+            public void Restart()
+            {
+                index = 0;
+            }
+
+            public sbyte? GetDacData()
+            {
+                if (index >= Size)
+                    return null;
+
+                sbyte ret = (sbyte)xgmData.dacData[Address + index];
+                index++;
+
+                return ret;
             }
         }
 
@@ -186,36 +216,36 @@ namespace zanac.VGMPlayer
             using (FileStream vgmFile = File.Open(fileName, FileMode.Open))
             {
                 var fileSize = (uint)vgmFile.Length;
-                _xgmReader = new BinaryReader(vgmFile);
+                xgmReader = new BinaryReader(vgmFile);
 
                 uint fccHeader;
-                fccHeader = (uint)_xgmReader.ReadUInt32();
+                fccHeader = (uint)xgmReader.ReadUInt32();
                 if (fccHeader != FCC_VGM)
                     return false;
 
                 for (int i = 0; i < 63; i++)
                 {
-                    ushort adr = _xgmReader.ReadUInt16();
-                    ushort sz = _xgmReader.ReadUInt16();
+                    ushort adr = xgmReader.ReadUInt16();
+                    ushort sz = xgmReader.ReadUInt16();
                     if (adr == 0xffff && sz == 0x1)
-                        Samples[i] = new SampleData(0, 0);
+                        SampleDataTable[i] = new SampleData(this, 0, 0);
                     else
-                        Samples[i] = new SampleData((uint)(adr * 256), (uint)(sz * 256));
+                        SampleDataTable[i] = new SampleData(this, (uint)(adr * 256), (uint)(sz * 256));
                 }
 
-                _XGMHead = readXGMHeader(_xgmReader);
+                xgmMHead = readXGMHeader(xgmReader);
 
                 //read dac
-                _DACData = _xgmReader.ReadBytes(_XGMHead.shtSampleDataBlkSize * 256);
+                dacData = xgmReader.ReadBytes(xgmMHead.shtSampleDataBlkSize * 256);
 
-                uint mlen = _xgmReader.ReadUInt32();
+                uint mlen = xgmReader.ReadUInt32();
                 if (mlen < 0)
                     return false;
 
                 //read vgm
-                _VGMData = _xgmReader.ReadBytes((int)mlen);
+                vgmData = xgmReader.ReadBytes((int)mlen);
 
-                _xgmReader = new BinaryReader(new MemoryStream(_VGMData));
+                xgmReader = new BinaryReader(new MemoryStream(vgmData));
 
                 switch (Settings.Default.DCSG_IF)
                 {
@@ -250,18 +280,18 @@ namespace zanac.VGMPlayer
 
         private int readByte()
         {
-            if (_xgmReader.BaseStream == null)
+            if (xgmReader.BaseStream == null)
                 return -1;
-            if (_xgmReader.BaseStream.Position == _xgmReader.BaseStream.Length)
+            if (xgmReader.BaseStream.Position == xgmReader.BaseStream.Length)
                 return -1;
 
-            byte data = _xgmReader.ReadByte();
+            byte data = xgmReader.ReadByte();
             return data;
         }
 
         protected override void StreamSong()
         {
-            _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+            xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
             double wait = 0;
             double xgmWaitDelta = 0;
             double streamWaitDelta = 0;
@@ -271,8 +301,12 @@ namespace zanac.VGMPlayer
                 long freq, before, after;
                 QueryPerformanceFrequency(out freq);
 
+                SampleData[] currentPlaySamples = new SampleData[4];
+
                 while (true)
                 {
+                    QueryPerformanceCounter(out before);
+
                     if (State == SoundState.Stopped)
                     {
                         break;
@@ -282,137 +316,171 @@ namespace zanac.VGMPlayer
                         Thread.Sleep(1);
                         continue;
                     }
-                    QueryPerformanceCounter(out before);
-
                     try
                     {
-                        int data = readByte();
-                        int command = data;
-                        if (data != -1)
+                        if (xgmWaitDelta <= 0)
                         {
-                            switch (data & 0xf0)
+
+                            int command = readByte();
+                            if (command != -1)
                             {
-                                case 0x0:
-                                    {
-                                        switch (_XGMHead.bytNTSC_PAL & 1)
+                                switch (command)
+                                {
+                                    case int cmd when 0x0 <= cmd && cmd <= 0x0F:
                                         {
-                                            case 0:
-                                                xgmWaitDelta += 735;
-                                                break;
-                                            case 1:
-                                                xgmWaitDelta += 882;
-                                                break;
-                                        }
-                                        flushDeferredWriteData();
-                                        break;
-                                    }
-                                case 0x10:
-                                    {
-                                        int size = data & 0xf;
-                                        for (int i = 0; i <= size; i++)
-                                        {
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            switch (comPortDCSG?.SoundModuleType)
+                                            switch (xgmMHead.bytNTSC_PAL & 1)
                                             {
-                                                case VsifSoundModuleType.Genesis:
-                                                case VsifSoundModuleType.Genesis_FTDI:
-                                                    comPortDCSG?.DeferredWriteData(0x14, (byte)data);
+                                                case 0:
+                                                    xgmWaitDelta += 735;
                                                     break;
-                                                case VsifSoundModuleType.SMS:
-                                                    comPortDCSG?.DeferredWriteData(0xFF, (byte)data);
+                                                case 1:
+                                                    xgmWaitDelta += 882;
                                                     break;
                                             }
-                                        }
-                                    }
-                                    break;
-
-                                case 0x20: //YM2612 Write Port 0
-                                    {
-                                        int size = data & 0xf;
-                                        for (int i = 0; i <= size; i++)
-                                        {
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            comPortOPNA2?.DeferredWriteData(0x04, (byte)data);
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            comPortOPNA2?.DeferredWriteData(0x08, (byte)data);
-                                        }
-                                    }
-                                    break;
-
-                                case 0x30: //YM2612 Write Port 1
-                                    {
-                                        int size = data & 0xf;
-                                        for (int i = 0; i <= size; i++)
-                                        {
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            comPortOPNA2?.DeferredWriteData(0x0C, (byte)data);
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            comPortOPNA2?.DeferredWriteData(0x10, (byte)data);
-                                        }
-                                    }
-                                    break;
-
-                                case 0x40: //YM2612 Write Port 0
-                                    {
-                                        int size = data & 0xf;
-                                        for (int i = 0; i <= size; i++)
-                                        {
-                                            data = readByte();
-                                            if (data < 0)
-                                                break;
-                                            comPortOPNA2?.DeferredWriteData(0x04, 0x28);
-                                            comPortOPNA2?.DeferredWriteData(0x08, (byte)data);
-                                        }
-                                    }
-                                    break;
-
-                                case 0x50:
-                                    {
-                                        //Play PCM
-                                        data = readByte();
-                                        if (data < 0)
+                                            flushDeferredWriteData();
                                             break;
-                                        data = readByte();
-                                        if (data < 0)
-                                            break;
-                                    }
+                                        }
+                                    case int cmd when 0x10 <= cmd && cmd <= 0x1F:
+                                        {
+                                            int size = cmd & 0xf;
+                                            for (int i = 0; i <= size; i++)
+                                            {
+                                                var data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                switch (comPortDCSG?.SoundModuleType)
+                                                {
+                                                    case VsifSoundModuleType.Genesis:
+                                                    case VsifSoundModuleType.Genesis_FTDI:
+                                                        comPortDCSG?.DeferredWriteData(0x14, (byte)data);
+                                                        break;
+                                                    case VsifSoundModuleType.SMS:
+                                                        comPortDCSG?.DeferredWriteData(0xFF, (byte)data);
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        break;
+
+                                    case int cmd when 0x20 <= cmd && cmd <= 0x2F: //YM2612 Write Port 0
+                                        {
+                                            int size = cmd & 0xf;
+                                            for (int i = 0; i <= size; i++)
+                                            {
+                                                var data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                comPortOPNA2?.DeferredWriteData(0x04, (byte)data);
+                                                data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                comPortOPNA2?.DeferredWriteData(0x08, (byte)data);
+                                            }
+                                        }
+                                        break;
+
+                                    case int cmd when 0x30 <= cmd && cmd <= 0x3F: //YM2612 Write Port 1
+                                        {
+                                            int size = cmd & 0xf;
+                                            for (int i = 0; i <= size; i++)
+                                            {
+                                                var data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                comPortOPNA2?.DeferredWriteData(0x0C, (byte)data);
+                                                data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                comPortOPNA2?.DeferredWriteData(0x10, (byte)data);
+                                            }
+                                        }
+                                        break;
+
+                                    case int cmd when 0x40 <= cmd && cmd <= 0x4F: //YM2612 Write Port 0
+                                        {
+                                            int size = cmd & 0xf;
+                                            for (int i = 0; i <= size; i++)
+                                            {
+                                                var data = readByte();
+                                                if (data < 0)
+                                                    break;
+                                                comPortOPNA2?.DeferredWriteData(0x04, 0x28);
+                                                comPortOPNA2?.DeferredWriteData(0x08, (byte)data);
+                                            }
+                                        }
+                                        break;
+
+                                    case int cmd when 0x50 <= cmd && cmd <= 0x5F: //Play PCM
+                                        {
+                                            int ch = cmd & 0x3;
+
+                                            var id = readByte();
+                                            if (id < 0)
+                                                break;
+                                            if (id == 0)
+                                                currentPlaySamples[ch] = null;
+                                            else
+                                            {
+                                                currentPlaySamples[ch] = SampleDataTable[id - 1];
+                                                currentPlaySamples[ch].Restart();
+                                            }
+                                        }
+                                        break;
+                                    case 0x7E:
+                                        flushDeferredWriteData();
+                                        uint ofst = xgmReader.ReadUInt32();
+                                        if (ofst < 0)
+                                            xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                        else
+                                            xgmReader.BaseStream?.Seek((int)ofst, SeekOrigin.Begin);
+                                        break;
+                                    case 0x7F:
+                                        flushDeferredWriteData();
+                                        //End of song
+                                        xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                        break;
+                                }
+                            }
+                            if ((command == 0x7E || command == 0x7F || command == -1))
+                            {
+                                flushDeferredWriteData();
+                                if (Looped == false || LoopCount == 0)
+                                {
+                                    State = SoundState.Stopped;
+                                    NotifyFinished();
                                     break;
-                                case 0x7E:
-                                    flushDeferredWriteData();
-                                    uint ofst = _xgmReader.ReadUInt32();
-                                    if (ofst < 0)
-                                        _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                    else
-                                        _xgmReader.BaseStream?.Seek((int)ofst, SeekOrigin.Begin);
-                                    break;
-                                case 0x7F:
-                                    flushDeferredWriteData();
-                                    //End of song
-                                    _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                    break;
+                                }
+                                LoopCount--;
                             }
                         }
-                        if ((command == 0x7E || command == 0x7F || data == -1))
+
+                        if (streamWaitDelta <= 0)
                         {
-                            flushDeferredWriteData();
-                            if (Looped == false || LoopCount == 0)
+                            int dacData = 0;
+                            bool playDac = false;
+                            for (int i = 0; i < currentPlaySamples.Length; i++)
                             {
-                                State = SoundState.Stopped;
-                                NotifyFinished();
-                                break;
+                                if (currentPlaySamples[i] != null)
+                                {
+                                    var dt = currentPlaySamples[i].GetDacData();
+                                    if (dt != null)
+                                    {
+                                        dacData += dt.Value - sbyte.MinValue;
+                                        playDac = true;
+                                    }
+                                }
                             }
-                            LoopCount--;
-                            _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+
+                            if (playDac)
+                            {
+                                if (dacData > 255)
+                                    dacData = 255;
+
+                                comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
+                                comPortOPNA2?.DeferredWriteData(0x08, (byte)dacData);
+
+                                streamWaitDelta += 44.1d / 14d ;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -430,7 +498,7 @@ namespace zanac.VGMPlayer
                             break;
                         }
                         LoopCount--;
-                        _xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                        xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
                     if (streamWaitDelta < xgmWaitDelta)
@@ -523,7 +591,7 @@ namespace zanac.VGMPlayer
                     StopAllSounds(true);
                 }
 
-                _xgmReader?.Dispose();
+                xgmReader?.Dispose();
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 comPortDCSG?.Dispose();
