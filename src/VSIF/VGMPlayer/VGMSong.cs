@@ -793,6 +793,10 @@ namespace zanac.VGMPlayer
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void flushDeferredWriteData()
         {
             comPortOPLL?.FlushDeferredWriteData();

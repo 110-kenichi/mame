@@ -805,9 +805,9 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPNA2.FormattingEnabled = true;
             this.comboBoxOPNA2.Items.AddRange(new object[] {
-            "VSIF - Genesis(UART 16Kbps)",
+            "VSIF - Genesis(UART 163Kbps)",
             "VSIF - Genesis(FTDI2XX) (for Expert)",
-            "VSIF - Genesis(UART 11Kbps)"});
+            "VSIF - Genesis(UART 115Kbps)"});
             this.comboBoxOPNA2.Location = new System.Drawing.Point(64, 76);
             this.comboBoxOPNA2.Name = "comboBoxOPNA2";
             this.comboBoxOPNA2.Size = new System.Drawing.Size(454, 20);
@@ -820,7 +820,7 @@ namespace zanac.VGMPlayer
             this.comboBoxOPLL.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPLL.FormattingEnabled = true;
             this.comboBoxOPLL.Items.AddRange(new object[] {
-            "VSIF - SMS(UART 11Kbps)"});
+            "VSIF - SMS(UART 115Kbps)"});
             this.comboBoxOPLL.Location = new System.Drawing.Point(64, 50);
             this.comboBoxOPLL.Name = "comboBoxOPLL";
             this.comboBoxOPLL.Size = new System.Drawing.Size(454, 20);
@@ -833,10 +833,10 @@ namespace zanac.VGMPlayer
             this.comboBoxDCSG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDCSG.FormattingEnabled = true;
             this.comboBoxDCSG.Items.AddRange(new object[] {
-            "VSIF - Genesis(UART 16Kbps)",
+            "VSIF - Genesis(UART 163Kbps)",
             "VSIF - Genesis(FTDI2XX)  (for Expert)",
             "VSIF - SMS",
-            "VSIF - Genesis(UART 11Kbps)"});
+            "VSIF - Genesis(UART 115Kbps)"});
             this.comboBoxDCSG.Location = new System.Drawing.Point(64, 24);
             this.comboBoxDCSG.Name = "comboBoxDCSG";
             this.comboBoxDCSG.Size = new System.Drawing.Size(454, 20);

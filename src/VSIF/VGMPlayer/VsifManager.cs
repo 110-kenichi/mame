@@ -337,6 +337,9 @@ namespace zanac.VGMPlayer
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void deferredWriteDataTask()
         {
             try

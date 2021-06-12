@@ -90,6 +90,10 @@
     <Compile Include="VsifManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\MD\VGMPlay\VGMPlay_md.bin">
+      <Link>VGMPlay_md.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\..\..\..\..\SMS\VGMPlay\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -99,9 +103,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="VGMPlay_md.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
