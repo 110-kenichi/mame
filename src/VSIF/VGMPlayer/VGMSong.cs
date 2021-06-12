@@ -526,7 +526,7 @@ namespace zanac.VGMPlayer
                                         else
                                         {
                                             if (vgmHead.lngLoopOffset != 0 && vgmDataOffset < vgmHead.lngLoopOffset)
-                                                vgmReader.BaseStream?.Seek((vgmHead.lngLoopOffset - (vgmDataOffset)) /*+ 0x1C*/, SeekOrigin.Begin);
+                                                vgmReader.BaseStream?.Seek((vgmHead.lngLoopOffset + 0x1c) - (vgmDataOffset), SeekOrigin.Begin);
                                             else
                                                 vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                         }
