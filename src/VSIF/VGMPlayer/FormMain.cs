@@ -612,6 +612,10 @@ namespace zanac.VGMPlayer
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
                             (ComPort)Settings.Default.DCSG_Port, false);
                         break;
+                    case 3:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                            (ComPort)Settings.Default.DCSG_Port, false);
+                        break;
                 }
 
                 checkBoxConnDCSG.Checked = comPortDCSG != null;
@@ -661,6 +665,10 @@ namespace zanac.VGMPlayer
                         break;
                     case 1:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                            (ComPort)Settings.Default.OPNA2_Port, false);
+                        break;
+                    case 2:
+                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
                             (ComPort)Settings.Default.OPNA2_Port, false);
                         break;
                 }

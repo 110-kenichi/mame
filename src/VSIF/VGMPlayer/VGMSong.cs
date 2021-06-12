@@ -62,6 +62,7 @@ namespace zanac.VGMPlayer
                 switch (comPortDCSG?.SoundModuleType)
                 {
                     case VsifSoundModuleType.Genesis:
+                    case VsifSoundModuleType.Genesis_Low:
                     case VsifSoundModuleType.Genesis_FTDI:
                         for (int i = 0; i < 3; i++)
                             comPortDCSG.WriteData(0x14, (byte)(0x80 | i << 5 | 0x1f));
@@ -221,6 +222,10 @@ namespace zanac.VGMPlayer
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
                             (ComPort)Settings.Default.DCSG_Port);
                         break;
+                    case 3:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                            (ComPort)Settings.Default.DCSG_Port);
+                        break;
                 }
             }
             if (curHead.lngHzYM2413 != 0)
@@ -238,6 +243,10 @@ namespace zanac.VGMPlayer
                         break;
                     case 1:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                            (ComPort)Settings.Default.OPNA2_Port);
+                        break;
+                    case 2:
+                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
                             (ComPort)Settings.Default.OPNA2_Port);
                         break;
                 }
@@ -408,6 +417,7 @@ namespace zanac.VGMPlayer
                                             {
                                                 case VsifSoundModuleType.Genesis_FTDI:
                                                 case VsifSoundModuleType.Genesis:
+                                                case VsifSoundModuleType.Genesis_Low:
                                                     comPortDCSG?.DeferredWriteData(0x14, (byte)data);
                                                     break;
                                                 case VsifSoundModuleType.SMS:

@@ -96,7 +96,22 @@ namespace zanac.VGMPlayer
                                 sp.ReadTimeout = 500;
                                 //sp.BaudRate = 230400;
                                 sp.BaudRate = 163840;
-                                //sp.BaudRate = 115200;
+                                sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriter(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
+                        case VsifSoundModuleType.Genesis_Low:
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 500;
+                                sp.ReadTimeout = 500;
+                                sp.BaudRate = 115200;
                                 sp.StopBits = StopBits.One;
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;
@@ -179,7 +194,8 @@ namespace zanac.VGMPlayer
         None,
         SMS,
         Genesis,
-        Genesis_FTDI
+        Genesis_FTDI,
+        Genesis_Low,
     }
 
     /// <summary>
