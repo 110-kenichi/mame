@@ -305,6 +305,22 @@ namespace zanac.VGMPlayer
             Disposed?.Invoke(this, EventArgs.Empty);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void ClearDeferredWriteData()
+        {
+            lock (lockObject)
+            {
+                if (disposedValue)
+                    return;
+                deferredWriteAdrAndData.Clear();
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -316,7 +332,6 @@ namespace zanac.VGMPlayer
             {
                 if (disposedValue)
                     return;
-
                 deferredWriteAdrAndData.Add(address);
                 deferredWriteAdrAndData.Add(data);
             }

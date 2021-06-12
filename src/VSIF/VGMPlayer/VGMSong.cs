@@ -59,6 +59,8 @@ namespace zanac.VGMPlayer
         {
             if (comPortDCSG != null)
             {
+                comPortDCSG.ClearDeferredWriteData();
+
                 switch (comPortDCSG?.SoundModuleType)
                 {
                     case VsifSoundModuleType.Genesis:
@@ -74,55 +76,60 @@ namespace zanac.VGMPlayer
                         comPortDCSG.WriteData(0xFF, (byte)(0x80 | 3 << 5 | 0x1f));
                         break;
                 }
-
+                comPortDCSG.FlushDeferredWriteData();
             }
             if (comPortOPLL != null)
             {
+                comPortOPLL.ClearDeferredWriteData();
+
                 for (int i = 0; i < 9; i++)
                 {
-                    comPortOPLL.WriteData((byte)(0x20 + i), (byte)(0));
+                    comPortOPLL.DeferredWriteData((byte)(0x20 + i), (byte)(0));
                 }
-                comPortOPLL.WriteData(0xe, (byte)(0x20));
+                comPortOPLL.DeferredWriteData(0xe, (byte)(0x20));
 
                 //TL
                 if (volumeOff)
                 {
                     for (int i = 0; i < 9; i++)
-                        comPortOPLL.WriteData((byte)(0x30 + i), 64);
-                    comPortOPLL.WriteData(0x36, 64);
-                    comPortOPLL.WriteData(0x37, 64);
-                    comPortOPLL.WriteData(0x38, 64);
+                        comPortOPLL.DeferredWriteData((byte)(0x30 + i), 64);
+                    comPortOPLL.DeferredWriteData(0x36, 64);
+                    comPortOPLL.DeferredWriteData(0x37, 64);
+                    comPortOPLL.DeferredWriteData(0x38, 64);
                 }
+                comPortOPLL.FlushDeferredWriteData();
             }
             if (comPortOPNA2 != null)
             {
+                comPortOPNA2.ClearDeferredWriteData();
+
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2.WriteData(4, (byte)(0xB4 | i));
-                    comPortOPNA2.WriteData(8, 0xC0);
-                    comPortOPNA2.WriteData(12, (byte)(0xB4 | i));
-                    comPortOPNA2.WriteData(16, 0xC0);
+                    comPortOPNA2.DeferredWriteData(4, (byte)(0xB4 | i));
+                    comPortOPNA2.DeferredWriteData(8, 0xC0);
+                    comPortOPNA2.DeferredWriteData(12, (byte)(0xB4 | i));
+                    comPortOPNA2.DeferredWriteData(16, 0xC0);
                 }
 
                 // disable LFO
-                comPortOPNA2.WriteData(4, 0x22);
-                comPortOPNA2.WriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(4, 0x22);
+                comPortOPNA2.DeferredWriteData(8, 0x00);
 
                 // disable timer & set channel 6 to normal mode
-                comPortOPNA2.WriteData(4, 0x27);
-                comPortOPNA2.WriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(4, 0x27);
+                comPortOPNA2.DeferredWriteData(8, 0x00);
 
                 // ALL KEY OFF
-                comPortOPNA2.WriteData(4, 0x28);
+                comPortOPNA2.DeferredWriteData(4, 0x28);
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2.WriteData(8, (byte)(0x00 | i));
-                    comPortOPNA2.WriteData(8, (byte)(0x04 | i));
+                    comPortOPNA2.DeferredWriteData(8, (byte)(0x00 | i));
+                    comPortOPNA2.DeferredWriteData(8, (byte)(0x04 | i));
                 }
 
                 // disable DAC
-                comPortOPNA2.WriteData(4, 0x2B);
-                comPortOPNA2.WriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(4, 0x2B);
+                comPortOPNA2.DeferredWriteData(8, 0x00);
 
                 for (int slot = 0; slot < 6; slot++)
                 {
@@ -134,6 +141,7 @@ namespace zanac.VGMPlayer
                         for (int op = 0; op < 4; op++)
                             Ym2612WriteData(0x40, op, slot, 127);
                 }
+                comPortOPNA2.FlushDeferredWriteData();
             }
         }
 
@@ -156,8 +164,8 @@ namespace zanac.VGMPlayer
             }
 
             uint yreg = (uint)(0 / 3) * 2;
-            comPortOPNA2?.WriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)));
-            comPortOPNA2?.WriteData((byte)((1 + (yreg + 1)) * 4), data);
+            comPortOPNA2?.DeferredWriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)));
+            comPortOPNA2?.DeferredWriteData((byte)((1 + (yreg + 1)) * 4), data);
         }
 
         private VGM_HEADER readVGMHeader(BinaryReader hFile)
