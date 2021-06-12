@@ -1,4 +1,5 @@
     .globl VGMPlay
+    .globl VGMPlay_Low
     .globl VGMPlay_FTDI2XX
 
     .equ    PERIPHERAL_PORT_P2, 0xA10004   | P2 PORT(Word access)
@@ -16,7 +17,7 @@
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
     .macro  WAIT12
-     move.w  (%SP),(%SP)         | 12    dummy
+     move.w  (%sp),(%sp)         | 12    dummy
     .endm
     .macro  WAIT14
      move.w  (0,%pc,%d2),%d5     | 14    dummy
@@ -28,7 +29,7 @@
      move.l  (0,%pc,%d2),%d5     | 18    dummy
     .endm
     .macro  WAIT20               | 20
-     move.l  (%SP),(%SP)         | 20    dummy
+     move.l  (%sp),(%sp)         | 20    dummy
     .endm
 
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -51,7 +52,7 @@
         start_bit_wait_163K |28
     #endif
     #ifdef T115K
-        start_bit_wait_115K |46
+        start_bit_wait_115K |48
     #endif
     .endm
 
@@ -62,19 +63,19 @@
     .endm   | 12
 
     .macro stop_bit_wait_115K
-    move.l  (SP),(SP)       | 20    dummy
+    move.l  (%sp),(%sp)     | 20    dummy
     NOP                     | 4
     NOP                     | 4
     .endm   | 28
 
     .macro stop_bit_wait
     #ifdef T163K
-        stop_bit_wait_163K
+        stop_bit_wait_163K  | 12
     #endif
     #ifdef T115K
-        stop_bit_wait_115K
+        stop_bit_wait_115K  | 28
     #endif
-    .endm   | 40 4
+    .endm
 
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
@@ -157,14 +158,13 @@
     |115200bps 66.58clk @ 7.670454 MHz (NTSC)
 
     .macro sample_bits_115K
-	sample_bit 		        | 68 +1.5
+	sample_bit_115K 		| 68 +1.5
 	sample_bit_115K_2 		| 66
 	sample_bit_115K_2 		| 66
+	sample_bit_115K 	    | 68
 	sample_bit_115K_2 		| 66
-	sample_bit 	        	| 68
 	sample_bit_115K_2 		| 66
-	sample_bit_115K_2 		| 66
-	sample_bit 	        	| 66
+	sample_bit_115K 	    | 66
     .endm
     
     .macro sample_bits
@@ -222,8 +222,74 @@ _VGM_DATA:
     nop
     nop
     nop                     | +12 12 |        | +12 12 |
-    stop_bit_wait           | +40 40 |  +4    | +12 24 | +0
+    stop_bit_wait           | +28 40 |  +4    | +12 24 | +0
     bra.w _VGM_ADDRESS      | +10 50 | +10 26 | +10 33 | +10
+
+
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+    .macro sample_bits_lo
+    sample_bits_115K
+    .endm
+
+    .macro sample_bit_nowait_lo
+    sample_bit_115K_nowait
+	.endm   | 24
+
+    .macro start_bit_wait_lo
+    start_bit_wait_115K
+    .endm   | 48
+
+    .macro stop_bit_wait_lo
+    stop_bit_wait_115K
+    .endm   | 28
+
+|163840bps 46.82clk @ 7.670454 MHz (NTSC)
+|115200bps 66.58clk @ 7.670454 MHz (NTSC)
+
+VGMPlay_Low:
+    move.b  #1,0xA11200
+    move.b  #1,0xA11100
+Reset_LO:
+    btst.b  #0,0xA11100
+    bne.b   Reset_LO
+
+    move.l  #PERIPHERAL_PORT_P2, %a0   | 12
+    move.l  #ADRESS_TABLE, %a1         | 12
+    clr.l   %d2                        | for Test Bit 0
+    move.l  #1,%d3                     | for Rotate Bit 
+    move.b  #0xfc,%d4                  | for Address Table
+
+_VGM_ADDRESS_LO:
+    btst.b  %d2,(%a0)       | +8
+    bne.b   _VGM_ADDRESS_LO | +8  16
+    NOP                     | +4  20   230K     163K     273K
+    start_bit_wait_lo       | +48 68 | +14 34 | +28 48 | +6 28
+
+    sample_bits_lo
+
+  	sample_bit_nowait_lo    |     24 |     24 |     24 |     24 |
+    and.b  %d4,%d1          | + 4 28 | +4  28 | +4  28 |     28
+    move.l (%d1, %a1), %a2  | +16 44 | +16    | +16 44 | +16   
+    
+    stop_bit_wait_lo        | +28 28 | +4  20 | +12 12 | +0  16
+    
+_VGM_DATA_LO:
+    btst.b  %d2,(%a0)       | +8
+    bne.b   _VGM_DATA_LO    | +8  16
+    NOP                     | +4  20
+    start_bit_wait_lo       | +48 68 | +12 34 | +24 46 | +6 28
+
+    sample_bits_lo
+
+  	sample_bit_nowait_lo    |     24 |     24 |     24 |     24 |
+    move.b %d1, (%a2)       | +12 36 | +12    | +12 36 | +12
+
+    nop
+    nop
+    nop                     | +12 12 |        | +12 12 |
+    stop_bit_wait_lo        | +28 40 |  +4    | +12 24 | +0
+    bra.w _VGM_ADDRESS_LO   | +10 50 | +10 26 | +10 34 | +10
 
 |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 

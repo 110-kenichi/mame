@@ -188,6 +188,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_Genesis_Low:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                     case SoundEngineType.VSIF_Genesis_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId);
                         if (vsifClient != null)
@@ -297,6 +310,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0xff, data);
                             break;
                         case SoundEngineType.VSIF_Genesis:
+                        case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
                             vsifClient.WriteData(0x04 * 5, data);
                             break;
@@ -816,6 +830,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
                     SoundEngineType.VSIF_Genesis,
+                    SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,
                });
 
