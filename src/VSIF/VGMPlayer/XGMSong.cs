@@ -472,22 +472,25 @@ namespace zanac.VGMPlayer
 
                         if (streamWaitDelta <= 0)
                         {
-                            int dacData = 0;
+                            short dacData = 0;
                             bool playDac = false;
                             for (int i = 0; i < currentPlaySamples.Length; i++)
                             {
                                 var dt = currentPlaySamples[i]?.GetDacData();
                                 if (dt != null)
                                 {
-                                    dacData += dt.Value - sbyte.MinValue;
+                                    dacData += (short)dt.Value;
                                     playDac = true;
                                 }
                             }
 
                             if (playDac)
                             {
-                                if (dacData > 255)
-                                    dacData = 255;
+                                if (dacData > sbyte.MaxValue)
+                                    dacData = sbyte.MaxValue;
+                                else if (dacData < sbyte.MinValue)
+                                    dacData = sbyte.MinValue;
+                                dacData += 0x80;
 
                                 comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
                                 comPortOPNA2?.DeferredWriteData(0x08, (byte)dacData);
@@ -549,7 +552,7 @@ namespace zanac.VGMPlayer
                     flushDeferredWriteData();
 
                     QueryPerformanceCounter(out after);
-                    double pwait = (wait / PlaybackSpeed) - lastDiff;
+                    double pwait = (wait / PlaybackSpeed);
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));

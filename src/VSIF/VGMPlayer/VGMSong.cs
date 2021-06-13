@@ -775,7 +775,7 @@ namespace zanac.VGMPlayer
                     flushDeferredWriteData();
 
                     QueryPerformanceCounter(out after);
-                    double pwait = (wait / PlaybackSpeed) - lastDiff;
+                    double pwait = (wait / PlaybackSpeed);
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
