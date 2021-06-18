@@ -96,7 +96,12 @@ namespace zanac.VGMPlayer
                     comPortOPLL.DeferredWriteData(0x36, 64);
                     comPortOPLL.DeferredWriteData(0x37, 64);
                     comPortOPLL.DeferredWriteData(0x38, 64);
+
+                    //RR
+                    comPortOPLL.DeferredWriteData(0x06, 0xFF);
+                    comPortOPLL.DeferredWriteData(0x07, 0xFF);
                 }
+
                 comPortOPLL.FlushDeferredWriteData();
             }
             if (comPortOPNA2 != null)
@@ -141,6 +146,13 @@ namespace zanac.VGMPlayer
                         for (int op = 0; op < 4; op++)
                             Ym2612WriteData(0x40, op, slot, 127);
                 }
+
+                if (volumeOff)
+                    for (int slot = 0; slot < 6; slot++)
+                        for (int op = 0; op < 4; op++)
+                            Ym2612WriteData(0x80, op, slot, 0x0ff);
+
+
                 comPortOPNA2.FlushDeferredWriteData();
             }
         }
@@ -590,6 +602,19 @@ namespace zanac.VGMPlayer
                                             uint ofst = vgmReader.ReadUInt32();
                                             var lenMode = readByte();
                                             uint dataLen = vgmReader.ReadUInt32();
+                                            if (lenMode == 1)
+                                            {
+                                                StreamParam param = new StreamParam();
+                                                param.StreamID = sid;
+                                                param.BlockID = 0;
+                                                param.Offset = (int)ofst;
+                                                param.Length = (int)dataLen;
+                                                if ((lenMode & 0x80) != 0)
+                                                    param.Mode |= StreamModes.Loop;
+                                                else if ((lenMode & 0x10) != 0)
+                                                    param.Mode |= StreamModes.Reverse;
+                                                streamParam = param;
+                                            }
                                         }
                                         break;
                                     case 0x94:  //Stop Stream

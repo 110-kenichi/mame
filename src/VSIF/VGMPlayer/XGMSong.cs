@@ -154,6 +154,12 @@ namespace zanac.VGMPlayer
                         for (int op = 0; op < 4; op++)
                             Ym2612WriteData(0x40, op, slot, 127);
                 }
+
+                if (volumeOff)
+                    for (int slot = 0; slot < 6; slot++)
+                        for (int op = 0; op < 4; op++)
+                            Ym2612WriteData(0x80, op, slot, 0x0ff);
+
                 comPortOPNA2.FlushDeferredWriteData();
             }
         }
