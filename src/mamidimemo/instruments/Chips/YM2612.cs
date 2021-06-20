@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 
 //https://www.plutiedev.com/ym2612-registers
@@ -372,6 +373,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ym2612WriteData(unitNumber, address, op, slot, data, true);
         }
 
+        private int clkWidth = (int)Settings.Default.ClkWidth;
+
         /// <summary>
         /// 
         /// </summary>
@@ -407,8 +410,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_Genesis:
                         case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
-                            vsifClient.WriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)));
-                            vsifClient.WriteData((byte)((1 + (yreg + 1)) * 4), data);
+                            vsifClient.WriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), clkWidth);
+                            vsifClient.WriteData((byte)((1 + (yreg + 1)) * 4), data, clkWidth);
                             break;
                     }
                 }

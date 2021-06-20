@@ -1,0 +1,77 @@
+#include <conio.h>
+#include <nes.h>
+
+extern void VGMPlay_FTDI2XX_DIRECT();
+extern void VGMPlay_FTDI2XX_INDIRECT();
+
+volatile unsigned char *port4016 = (volatile unsigned char *)0x4016;  // Port
+volatile unsigned char *port4017 = (volatile unsigned char *)0x4017;  // Port
+volatile unsigned short *zpg = (volatile unsigned short *)0x80;
+
+int main(void) {
+  int i = 0;
+  clrscr();
+
+  cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
+  if (((*port4016) & 0x02) == 0) {
+    cputsxy(0, 2, "*WAITING FOR VSIF FTDI*");
+    while (((*port4016) & 0x02) == 0)
+      ;
+    clrscr();
+  }
+  cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
+
+  cputsxy(0, 2, "FTDI2XX MODE READY TO PLAY.");
+  cputsxy(0, 3, "*PLEASE RESET AFTER RECONNECTED");
+
+  cputsxy(0, 5, " 1  4567 -> GND,CTS,RTS,RX,TX");
+  cputsxy(0, 6, "___________");
+  cputsxy(0, 7, "\\*oo****o /");
+  cputsxy(0, 8, " \\oooo*oo/ ");
+  cputsxy(0, 9, "  -------  ");
+  cputsxy(0, 10, "     13 ->  DTR");
+  waitvsync();
+
+  while (1) {
+    unsigned char adrs = 0;
+    unsigned char data = 0;
+
+    // while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+    //   ;
+    // adrs = ((*port4017) << 3) & 0xf0;
+
+    // while ((*(volatile unsigned char *)0x4016 & 0x02) == 0)
+    //   ;
+    // adrs |= ((*port4017) >> 1) & 0x0f;
+
+    // while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+    //   ;
+    // data = ((*port4017) << 3) & 0xf0;
+
+    // while ((*(volatile unsigned char *)0x4016 & 0x02) == 0)
+    //   ;
+    // data |= ((*port4017) >> 1) & 0x0f;
+
+    // // adrs = (*port4017);
+    // // data = (*port4016);
+
+    // // cputsxy(0,1,"");
+    // cprintf("%4x = %2x ", 0x4000 + adrs, data);
+
+    VGMPlay_FTDI2XX_DIRECT();
+
+    // unsigned short addrss[] = {
+    //     0x4000, 0x4001, 0x4002, 0x4003, 0x4004, 0x4005, 0x4006, 0x4007,
+    //     0x4008, 0x4009, 0x400a, 0x400b, 0x400c, 0x400d, 0x400e, 0x400f,
+    //     0x4010, 0x4011, 0x4012, 0x4013, 0x4014, 0x4015, 0x0000, 0x0000,
+    //     0x9000, 0x9001, 0x9002, 0x9003, 0xa000, 0xa001, 0xa002, 0xa003,
+    //     0xb000, 0xb001, 0xb002, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    // };
+    // for (i = 0; i < sizeof(addrss); i++) {
+    //   *zpg++ = addrss[i];
+    // }
+    // VGMPlay_FTDI2XX_INDIRECT();
+  }
+
+  return 0;
+}

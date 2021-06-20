@@ -562,13 +562,18 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
-    <Compile Include="VSIF\PortWriterNes.cs" />
+    <Compile Include="VSIF\PortWriterNesDirect.cs" />
+    <Compile Include="VSIF\PortWriterNesIndirect.cs" />
     <Compile Include="VSIF\PortWriterGenesis.cs" />
     <Compile Include="VSIF\PortWriter.cs" />
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
     <None Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
       <Link>VGMPlay_md.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
+      <Link>VGMPlay_nes.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">

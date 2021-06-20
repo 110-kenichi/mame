@@ -149,6 +149,8 @@ namespace zanac.MAmidiMEmo.VSIF
                             }
                             break;
                         case VsifSoundModuleType.NES_FTDI:
+                        case VsifSoundModuleType.NES_FTDI_VRC6:
+                        case VsifSoundModuleType.NES_FTDI_FDS:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
                                 var stat = ftdi.OpenByIndex((uint)comPort);
@@ -161,13 +163,25 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
                                     ftdi.GetPinStates(ref ps);
-                                    if ((ps & 0x40) == 0)
+                                    if ((ps & 0x10) == 0x10)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0x00 }, 1, ref dummy);
                                     }
 
-                                    var client = new VsifClient(soundModule, new PortWriterNes(ftdi, comPort));
+                                    VsifClient client = null;
+                                    switch (soundModule)
+                                    {
+                                        case VsifSoundModuleType.NES_FTDI:
+                                            client = new VsifClient(soundModule, new PortWriterNesDirect(ftdi, comPort));
+                                            break;
+                                        case VsifSoundModuleType.NES_FTDI_VRC6:
+                                            client = new VsifClient(soundModule, new PortWriterNesIndirect(ftdi, comPort));
+                                            break;
+                                        case VsifSoundModuleType.NES_FTDI_FDS:
+                                            client = new VsifClient(soundModule, new PortWriterNesDirect(ftdi, comPort));
+                                            break;
+                                    }
 
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
@@ -217,7 +231,9 @@ namespace zanac.MAmidiMEmo.VSIF
         Genesis,
         Genesis_FTDI,
         Genesis_Low,
-        NES_FTDI
+        NES_FTDI,
+        NES_FTDI_VRC6,
+        NES_FTDI_FDS
     }
 
 

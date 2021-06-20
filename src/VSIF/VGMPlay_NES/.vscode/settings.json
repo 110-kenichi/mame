@@ -1,0 +1,6 @@
+{
+    "ca65.emulatorPath": "C:\\cc65\\bin",
+    "ca65.emulatorPrelaunch": "E:\\Emu\\Mesen\\Mesen.exe",
+    "ca65.cc65": "C:\\cc65\\bin",
+    "ca65.cl65.config": "config.cfg"
+}

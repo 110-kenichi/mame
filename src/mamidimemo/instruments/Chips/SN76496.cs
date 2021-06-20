@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
@@ -295,6 +296,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Sn76496WriteData(unitNumber, data, true);
         }
 
+        private int clkWidth = (int)Settings.Default.ClkWidth;
+
         /// <summary>
         /// 
         /// </summary>
@@ -307,12 +310,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.VSIF_SMS:
-                            vsifClient.WriteData(0xff, data);
+                            vsifClient.WriteData(0xff, data, clkWidth);
                             break;
                         case SoundEngineType.VSIF_Genesis:
                         case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
-                            vsifClient.WriteData(0x04 * 5, data);
+                            vsifClient.WriteData(0x04 * 5, data, clkWidth);
                             break;
                     }
                 }

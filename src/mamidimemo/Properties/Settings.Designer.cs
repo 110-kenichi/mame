@@ -550,5 +550,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["EnvEdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public decimal ClkWidth {
+            get {
+                return ((decimal)(this["ClkWidth"]));
+            }
+            set {
+                this["ClkWidth"] = value;
+            }
+        }
     }
 }

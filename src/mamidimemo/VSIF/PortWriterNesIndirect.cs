@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace zanac.MAmidiMEmo.VSIF
 {
-    public class PortWriterNes : PortWriter
+    public class PortWriterNesIndirect : PortWriter
     {
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serialPort"></param>
-        public PortWriterNes(SerialPort serialPort) : base(serialPort)
+        public PortWriterNesIndirect(SerialPort serialPort) : base(serialPort)
         {
         }
 
@@ -25,35 +25,29 @@ namespace zanac.MAmidiMEmo.VSIF
         /// 
         /// </summary>
         /// <param name="ftdiPort"></param>
-        public PortWriterNes(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
+        public PortWriterNesIndirect(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
         {
         }
 
-        public override void Write(byte address, byte data)
+        public override void Write(byte address, byte data, int wait)
         {
-            SerialPort?.Write(new byte[] { address, data }, 0, 2);
+            //if (SerialPort != null)
+            //{
+            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
+            //}
+            //else
             if (FtdiPort != null)
             {
-                byte[] sd = new byte[2] { address, data };
-                sendData(convertToDataPacket(sd));
-            }
-        }
-
-        public override void Write(byte[] data)
-        {
-            SerialPort?.Write(data, 0, data.Length);
-            if (FtdiPort != null)
-            {
-                sendData(convertToDataPacket(data));
+                sendData(convertToDataPacket(new byte[2] { address, data }), wait);
             }
         }
 
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
 
-        private void sendData(byte[] sendData)
+        private void sendData(byte[] sendData, int wait)
         {
-            int wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * 8) / 100;
+            wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * wait) / 100;
 
             var osd = sendData.ToArray();
             byte[] sd = new byte[osd.Length * (int)wait];
@@ -69,6 +63,7 @@ namespace zanac.MAmidiMEmo.VSIF
             var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
             if (stat != FTDI.FT_STATUS.FT_OK)
                 Debug.WriteLine(stat);
+
         }
 
         private byte[] convertToDataPacket(byte[] sendData)
@@ -77,12 +72,14 @@ namespace zanac.MAmidiMEmo.VSIF
 
             for (int i = 0; i < sendData.Length; i += 2)
             {
-                byte adr = sendData[i + 0];
-                byte dat = sendData[i + 1];
-                sendData[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
-                sendData[(i * 2) + 1] = (byte)(0x00 | adr & 0xf);
-                sendData[(i * 2) + 2] = (byte)(0x10 | dat >> 4);
-                sendData[(i * 2) + 3] = (byte)(0x00 | dat & 0xf);
+                //indirect
+                byte adr = (byte)~(sendData[i + 0] << 1);
+                byte dat = (byte)~sendData[i + 1];
+
+                ret[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
+                ret[(i * 2) + 1] = (byte)(0x00 | adr & 0xf);
+                ret[(i * 2) + 2] = (byte)(0x10 | dat >> 4);
+                ret[(i * 2) + 3] = (byte)(0x00 | dat & 0xf);
             }
 
             return ret;

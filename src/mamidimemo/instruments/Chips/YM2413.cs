@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
@@ -353,6 +354,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2413WriteData(unitNumber, address, slot, data, true);
         }
 
+        private int clkWidth = (int)Settings.Default.ClkWidth;
+
         /// <summary>
         /// 
         /// </summary>
@@ -363,7 +366,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 lock (vsifLock)
                     if (CurrentSoundEngine == SoundEngineType.VSIF_SMS)
-                        vsifClient.WriteData(address, data);
+                        vsifClient.WriteData(address, data, clkWidth);
 
                 DeferredWriteData(YM2413_write, unitNumber, (uint)0, address);
                 DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
