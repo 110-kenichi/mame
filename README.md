@@ -268,7 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.7.3.0 Supported VSIF for NES.
+3.7.3.0 Supported VSIF for Famicom.
 3.7.2.0 Ignored invalid VGM data and improved performance for VGMPlayer.
 		Supported 115200bps for VSIF for Genesis UART mode.
 3.7.1.0 Fixed the Panic button that the FM synthesizer can be stopped completely.

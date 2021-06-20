@@ -115,3 +115,13 @@ Release(but Debug .NET)
 /src/VSIF/VGMPlayer/packages
 /src/VSIF/VGMPlayer/bin
 /src/VSIF/VGMPlayer/obj
+/src/VSIF/VGMPlay_NES/VGMPlay.o
+/src/VSIF/VGMPlay_NES/VGMPlay_nes.nes.map
+/src/VSIF/VGMPlay_NES/VGMPlay_nes_vrc6.nes.map
+/src/VSIF/VGMPlay_NES/header_vrc6.o
+/src/VSIF/VGMPlay_NES/main.o
+/src/VSIF/VGMPlay_NES/main.s
+/src/VSIF/VGMPlay_NES/startup.o
+/src/VSIF/VGMPlay_Genesis/.hg/cur-message.txt
+/src/VSIF/VGMPlay_NES/VGMPlay_nes.nes
+/src/VSIF/VGMPlay_NES/VGMPlay_nes_vrc6.nes
