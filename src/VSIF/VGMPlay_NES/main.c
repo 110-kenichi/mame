@@ -7,6 +7,9 @@ extern void VGMPlay_FTDI2XX_INDIRECT();
 volatile unsigned char *port4016 = (volatile unsigned char *)0x4016;  // Port
 volatile unsigned char *port4017 = (volatile unsigned char *)0x4017;  // Port
 volatile unsigned short *zpg = (volatile unsigned short *)0x80;
+// volatile unsigned char *port9000 = (volatile unsigned char *)0x9000;  // Port
+// volatile unsigned char *port9001 = (volatile unsigned char *)0x9001;  // Port
+// volatile unsigned char *port9002 = (volatile unsigned char *)0x9002;  // Port
 
 int main(void) {
   int i = 0;
@@ -31,6 +34,10 @@ int main(void) {
   cputsxy(0, 9, "  -------  ");
   cputsxy(0, 10, "     13 ->  DTR");
   waitvsync();
+
+  // *port9000 = 0x0f;
+  // *port9001 = 0xff;
+  // *port9002 = 0x01;
 
   while (1) {
     unsigned char adrs = 0;

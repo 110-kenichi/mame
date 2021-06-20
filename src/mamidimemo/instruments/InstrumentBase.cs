@@ -1645,6 +1645,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
+            SetDevicePassThru(false);
 
             GlobalARP = new ArpSettings();
 

@@ -119,7 +119,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void setSoundEngine(SoundEngineType value)
         {
             AllSoundOff();
-            ClearWrittenDataCache();
 
             lock (spfmPtrLock)
             {
@@ -1200,6 +1199,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager?.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>

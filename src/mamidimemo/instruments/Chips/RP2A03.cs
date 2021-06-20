@@ -129,7 +129,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void setSoundEngine(SoundEngineType value)
         {
             AllSoundOff();
-            ClearWrittenDataCache();
 
             lock (vsifLock)
             {
@@ -586,6 +585,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>
@@ -814,7 +814,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             //Volume
                             updateSqVolume();
                             //Freq
-                            updateSqPitch();
+                            updateSqPitch(true);
 
                             break;
                         }
@@ -1174,7 +1174,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (lastToneType)
                 {
                     case ToneType.SQUARE:
-                        updateSqPitch();
+                        updateSqPitch(false);
                         break;
                     case ToneType.TRIANGLE:
                         updateTriPitch();
@@ -1196,25 +1196,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 base.OnPitchUpdated();
             }
 
-            private void updateSqPitch()
+            private void updateSqPitch(bool keyOn)
             {
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 16)) - 1;
-                if (freq > 0x3ff)
-                    freq = 0x3ff;
                 var n = (ushort)freq;
+                if (n > 0x7f0)
+                    n = 0x7f0;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x02), (byte)(n & 0xff), false);
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7), false);
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7), !keyOn);
             }
 
             private void updateTriPitch()
             {
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (freq * 32)) - 1;
-                if (freq > 0x7ff)
-                    freq = 0x7ff;
                 var n = (ushort)freq;
+                if (n > 0x7ff)
+                    n = 0x7ff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x02), (byte)(n & 0xff), false);
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x03), (byte)((timbre.PlayLength << 3) | (n >> 8) & 0x7), false);
@@ -1266,9 +1266,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 double freq = CalcCurrentFrequency();
                 // p = 65536 * f / 1789773d
                 freq = Math.Round(64 * 65536 * freq / (21477272d / 12d));
-                if (freq > 0x7ff)
-                    freq = 0x7ff;
                 var n = (ushort)freq;
+                if (n > 0x7ff)
+                    n = 0x7ff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x82, (byte)(n & 0xff));
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x83, (byte)((n >> 8) & 0x7));
@@ -1278,9 +1278,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round((21477272d / 12d) / (16 * freq)) - 1;
-                if (freq > 0x7ff)
-                    freq = 0x7ff;
                 var n = (ushort)freq;
+                if (n > 0x7ff)
+                    n = 0x7ff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9001 + (Slot << 12)), (byte)(n & 0xff), false);
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (Slot << 12)), (byte)(0x80 | (n >> 8) & 0x7), false);
@@ -1291,9 +1291,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 double freq = CalcCurrentFrequency();
                 //t = (CPU / (14 * f)) - 1
                 freq = Math.Round(((21477272d / 12d) / (14 * freq)) - 1);
-                if (freq > 0x7ff)
-                    freq = 0x7ff;
                 var n = (ushort)freq;
+                if (n > 0x7ff)
+                    n = 0x7ff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB001), (byte)(n & 0xff), false);
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | (n >> 8) & 0x7), false);
@@ -2390,14 +2390,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_Range;
+            private byte f_Range = 7;
 
             [DataMember]
             [Category("Sound(SQ)")]
             [Description("Wave Length (0-7)")]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
+            [DefaultValue((byte)7)]
             public byte Range
             {
                 get
