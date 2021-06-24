@@ -6,13 +6,31 @@ extern void VGMPlay_FTDI2XX_INDIRECT();
 
 volatile unsigned char *port4016 = (volatile unsigned char *)0x4016;  // Port
 volatile unsigned char *port4017 = (volatile unsigned char *)0x4017;  // Port
-volatile unsigned short *zpg = (volatile unsigned short *)0x80;
+
+#ifdef VRC6_ADDRESS
 // volatile unsigned char *port9000 = (volatile unsigned char *)0x9000;  // Port
 // volatile unsigned char *port9001 = (volatile unsigned char *)0x9001;  // Port
 // volatile unsigned char *port9002 = (volatile unsigned char *)0x9002;  // Port
 
+void init_zp_for_vrc6()
+{
+    int i = 0;
+    unsigned short *zpg = (unsigned short *)0x80;
+    unsigned short address[] = {
+        0x4000, 0x4001, 0x4002, 0x4003, 0x4004, 0x4005, 0x4006, 0x4007,
+        0x4008, 0x4009, 0x400a, 0x400b, 0x400c, 0x400d, 0x400e, 0x400f,
+        0x4010, 0x4011, 0x4012, 0x4013, 0x4014, 0x4015, 0x0000, 0x0000,
+        0x9000, 0x9001, 0x9002, 0x9003, 0xa000, 0xa001, 0xa002, 0xa003,
+        0xb000, 0xb001, 0xb002, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    };
+    unsigned short *adr = address;
+    for (i = 0; i < sizeof(address); i++) {
+      *zpg++ = *adr++;
+    }  
+}
+#endif
+
 int main(void) {
-  int i = 0;
   clrscr();
 
   cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
@@ -65,19 +83,14 @@ int main(void) {
     // // cputsxy(0,1,"");
     // cprintf("%4x = %2x ", 0x4000 + adrs, data);
 
+#ifdef DIRECT_ADDRESS
     VGMPlay_FTDI2XX_DIRECT();
+#endif
 
-    // unsigned short addrss[] = {
-    //     0x4000, 0x4001, 0x4002, 0x4003, 0x4004, 0x4005, 0x4006, 0x4007,
-    //     0x4008, 0x4009, 0x400a, 0x400b, 0x400c, 0x400d, 0x400e, 0x400f,
-    //     0x4010, 0x4011, 0x4012, 0x4013, 0x4014, 0x4015, 0x0000, 0x0000,
-    //     0x9000, 0x9001, 0x9002, 0x9003, 0xa000, 0xa001, 0xa002, 0xa003,
-    //     0xb000, 0xb001, 0xb002, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    // };
-    // for (i = 0; i < sizeof(addrss); i++) {
-    //   *zpg++ = addrss[i];
-    // }
-    // VGMPlay_FTDI2XX_INDIRECT();
+#ifdef VRC6_ADDRESS
+    init_zp_for_vrc6();
+    VGMPlay_FTDI2XX_INDIRECT();
+#endif
   }
 
   return 0;
