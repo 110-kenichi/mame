@@ -268,7 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and lator samples.
+3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and later samples.
 3.7.3.1 Improved square wave low frequency range of VSIF - Famicom.
 		Added function that can be cleared write cache data when Panic button pressed.
 3.7.3.0 Supported VSIF for Famicom.
