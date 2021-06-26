@@ -2374,8 +2374,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     if (tn == 128)
                         break;
-
-                    break;
                 }
             }
             if (warningAlign)

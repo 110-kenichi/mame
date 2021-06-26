@@ -576,6 +576,14 @@
       <Link>VGMPlay_nes.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_fds.fds">
+      <Link>VGMPlay_nes_fds.fds</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_vrc6.nes">
+      <Link>VGMPlay_nes_vrc6.nes</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

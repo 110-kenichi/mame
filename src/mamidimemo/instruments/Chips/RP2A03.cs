@@ -354,27 +354,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 switch (CurrentSoundEngine)
                 {
-                    case SoundEngineType.VSIF_NES_FTDI_VRC6:
-                        switch (address)
-                        {
-                            case uint cmd when 0x0 <= address && address <= 0x15:
-                                lock (vsifLock)
-                                    vsifClient.WriteData((byte)address, data, clkWidth);
-                                break;
-                            case uint cmd when 0x9000 <= address && address <= 0x9003:
-                                lock (vsifLock)
-                                    vsifClient.WriteData((byte)(24 + cmd & 0x03), data, clkWidth);
-                                break;
-                            case uint cmd when 0xa000 <= address && address <= 0xa003:
-                                lock (vsifLock)
-                                    vsifClient.WriteData((byte)(28 + cmd & 0x03), data, clkWidth);
-                                break;
-                            case uint cmd when 0xb000 <= address && address <= 0xb003:
-                                lock (vsifLock)
-                                    vsifClient.WriteData((byte)(32 + cmd & 0x03), data, clkWidth);
-                                break;
-                        }
-                        break;
                     case SoundEngineType.VSIF_NES_FTDI:
                         switch (address)
                         {
@@ -390,6 +369,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             case uint cmd when 0x0 <= address && address <= 0xff:
                                 lock (vsifLock)
                                     vsifClient.WriteData((byte)address, data, clkWidth);
+                                break;
+                        }
+                        break;
+                    case SoundEngineType.VSIF_NES_FTDI_VRC6:
+                        switch (address)
+                        {
+                            case uint cmd when 0x0 <= address && address <= 0x15:
+                                lock (vsifLock)
+                                    vsifClient.WriteData((byte)address, data, clkWidth);
+                                break;
+                            case uint cmd when 0x9000 <= address && address <= 0x9003:
+                                lock (vsifLock)
+                                    vsifClient.WriteData((byte)(24 + (cmd & 0x03)), data, clkWidth);
+                                break;
+                            case uint cmd when 0xa000 <= address && address <= 0xa003:
+                                lock (vsifLock)
+                                    vsifClient.WriteData((byte)(28 + (cmd & 0x03)), data, clkWidth);
+                                break;
+                            case uint cmd when 0xb000 <= address && address <= 0xb003:
+                                lock (vsifLock)
+                                    vsifClient.WriteData((byte)(32 + (cmd & 0x03)), data, clkWidth);
                                 break;
                         }
                         break;
@@ -2502,8 +2502,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_NES_FTDI,
-                    //SoundEngineType.VSIF_NES_FTDI_FDS,
-                    //SoundEngineType.VSIF_NES_FTDI_VRC6,
+                    SoundEngineType.VSIF_NES_FTDI_FDS,
+                    SoundEngineType.VSIF_NES_FTDI_VRC6,
                });
 
                 return sc;

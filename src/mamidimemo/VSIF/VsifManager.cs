@@ -173,13 +173,11 @@ namespace zanac.MAmidiMEmo.VSIF
                                     switch (soundModule)
                                     {
                                         case VsifSoundModuleType.NES_FTDI:
+                                        case VsifSoundModuleType.NES_FTDI_FDS:
                                             client = new VsifClient(soundModule, new PortWriterNesDirect(ftdi, comPort));
                                             break;
                                         case VsifSoundModuleType.NES_FTDI_VRC6:
                                             client = new VsifClient(soundModule, new PortWriterNesIndirect(ftdi, comPort));
-                                            break;
-                                        case VsifSoundModuleType.NES_FTDI_FDS:
-                                            client = new VsifClient(soundModule, new PortWriterNesDirect(ftdi, comPort));
                                             break;
                                     }
 

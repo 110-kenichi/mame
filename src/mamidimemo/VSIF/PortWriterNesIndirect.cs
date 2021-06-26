@@ -72,8 +72,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
             for (int i = 0; i < sendData.Length; i += 2)
             {
-                //indirect
-                byte adr = (byte)~(sendData[i + 0] << 1);
+                byte adr = (byte)~(sendData[i + 0] << 1);   //INDIRECT ADDRESS INDEX
                 byte dat = (byte)~sendData[i + 1];
 
                 ret[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
