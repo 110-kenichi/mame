@@ -43,7 +43,7 @@
 ;
 
 BYPASS   = 1    ; bypass the license screen
-WIPE_RAM = 1    ; wipes unused portion of FDS RAM at startup
+WIPE_RAM = 0    ; wipes unused portion of FDS RAM at startup
 
 ; setting the file count 1 higher than files on disk for the license "bypass" technique
 FILE_COUNT = 5 + BYPASS

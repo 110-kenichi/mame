@@ -1,15 +1,24 @@
-;iNESヘッダー（16 Byte)
-.define NES_MIRRORING 0 ;   0:Horizontal/1:Vertical/3:Vertical & WRAM Mirror
-.define NES_MAPPER 24
 
-.segment    "HEADER"
-    .byte   $4e,    $45,    $53,    $1a ;   "NES" Header
-    .byte   2                         ;   PRG-ROMバンク数（16kb x2)
-    .byte   0                         ;   CHR-ROMバンク数（8KB x0）
-    .byte   NES_MIRRORING|((<NES_MAPPER<<4) & $f0)
-	.byte   NES_MAPPER&$f0
-    .byte   0                         ;   PRG-RAMサイズ
-    .byte   0                          ;$00 = NTSC, $01 = PAL
+.include "nes2header.inc"
+nes2mapper 5
+nes2prg 32768
+nes2wram 65536
+nes2chrram 65536
+nes2tv 'N'
+nes2end
+
+;iNESヘッダー（16 Byte)
+;.define NES_MIRRORING 0 ;   0:Horizontal/1:Vertical/3:Vertical & WRAM Mirror
+;.define NES_MAPPER 5
+;
+;.segment    "HEADER"
+;    .byte   $4e,    $45,    $53,    $1a ;   "NES" Header
+;    .byte   2                         ;   PRG-ROMバンク数（16kb x2)
+;    .byte   0                         ;   CHR-ROMバンク数（8KB x0）
+;    .byte   NES_MIRRORING|((<NES_MAPPER<<4) & $f0)
+;  	 .byte   NES_MAPPER&$f0
+;    .byte   0                         ;   PRG-RAMサイズ
+;    .byte   0                          ;$00 = NTSC, $01 = PAL
 
 ; MDFourier for Famicom
 ; Mapper initialization
@@ -581,6 +590,25 @@ mapper_init_n163:
 	cpx #snd_port_address_e - snd_port_address_s
 	bcc :-
 
+	lda #$03
+	sta $5100	;Set PRG mode 3
+	lda	#$02
+	sta	$5102	;Enable Write to RAM
+	lda	#$01
+	sta	$5103	;Enable Write to RAM
+	lda	#0
+	sta	$5116 ;$C000 = RAM
+
+;	lda	#$AA
+;	sta $6000
+;	lda $C000
+;	cmp #$AA
+;	beq	OK
+;	TEST_SOUNDS_ON
+;NG:
+;	jmp	NG
+;OK:
+
   jmp _VGMPlay_FTDI2XX_INDIRECT
 
 snd_port_address_s:
@@ -608,21 +636,21 @@ snd_port_address_s:
 	.word	$4013
 	.word	$4014
 	.word	$4015
-	.word	$0000
-	.word	$0000
+	.word	$0000 ;DPCM TRANSFER
+	.word	$5116 ;BANK SWITCH($00-$07) //($00-$0F)
 
-	.word	$9000
-	.word	$9001
-	.word	$9002
-	.word	$9003
-	.word	$A000
-	.word	$A001
-	.word	$A002
-	.word	$A003
+	.word	$5000
+	.word	$5001
+	.word	$5002
+	.word	$5003
+	.word	$5004
+	.word	$5005
+	.word	$5006
+	.word	$5007
   
-	.word	$B000
-	.word	$B001
-	.word	$B002
+	.word	$5010
+	.word	$5011
+	.word	$0000
 	.word	$0000
 	.word	$0000
 	.word	$0000
