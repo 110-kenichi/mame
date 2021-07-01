@@ -177,7 +177,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip.")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
-        [DefaultValue(MasterClockType.Default)]
         public uint MasterClock
         {
             get
@@ -194,6 +193,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
         }
+
+        public bool ShouldSerializeMasterClock()
+        {
+            return MasterClock != (uint)MasterClockType.Default;
+        }
+
+        public void ResetMasterClock()
+        {
+            MasterClock = (uint)MasterClockType.Default;
+        }
+
 
         private byte f_EnvelopeFrequencyCoarse = 2;
 

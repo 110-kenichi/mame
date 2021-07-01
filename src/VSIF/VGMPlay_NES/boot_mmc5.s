@@ -2,8 +2,9 @@
 .include "nes2header.inc"
 nes2mapper 5
 nes2prg 32768
+nes2chr 0
 nes2wram 65536
-nes2chrram 65536
+nes2chrram 0
 nes2tv 'N'
 nes2end
 
@@ -562,6 +563,46 @@ mapper_init_n163:
 
 .import _VGMPlay_FTDI2XX_INDIRECT
 
+
+.macro TEST_SOUNDS_ON
+.scope
+	lda #%00000001
+	sta $4015
+	lda #%10111111
+	sta $4000
+	lda #$00
+	sta $4001
+	lda #%11010101
+	sta $4002
+	lda #$00
+	sta $4003
+	ldx	#$80
+LoopX:
+	ldy	#0
+LoopY:
+	iny
+	bne	LoopY
+	inx
+	bne	LoopX
+.endscope
+.endmacro
+
+
+.macro TEST_SOUNDS_OFF
+.scope
+	lda #%00000000
+	sta $4015
+	ldx	#$80
+LoopX:
+	ldy	#0
+LoopY:
+	iny
+	bne	LoopY
+	inx
+	bne	LoopX
+.endscope
+.endmacro
+
 .proc main
   lda #$3F
   sta PPUADDR
@@ -599,15 +640,22 @@ mapper_init_n163:
 	lda	#0
 	sta	$5116 ;$C000 = RAM
 
-;	lda	#$AA
-;	sta $6000
-;	lda $C000
-;	cmp #$AA
-;	beq	OK
-;	TEST_SOUNDS_ON
-;NG:
-;	jmp	NG
-;OK:
+  ;RAM TEST
+	lda	#$AA
+	sta $C000
+	lda $C000
+	cmp #$AA
+	beq	OK
+	lda	#$55
+	sta $C000
+	lda $C000
+	cmp #$AA
+	beq	OK
+	TEST_SOUNDS_ON
+  TEST_SOUNDS_OFF
+NG:
+	jmp	NG
+OK:
 
   jmp _VGMPlay_FTDI2XX_INDIRECT
 

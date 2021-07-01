@@ -148,9 +148,8 @@ namespace zanac.MAmidiMEmo.VSIF
                                 }
                             }
                             break;
-                        case VsifSoundModuleType.NES_FTDI:
-                        case VsifSoundModuleType.NES_FTDI_VRC6:
-                        case VsifSoundModuleType.NES_FTDI_FDS:
+                        case VsifSoundModuleType.NES_FTDI_INDIRECT:
+                        case VsifSoundModuleType.NES_FTDI_DIRECT:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
                                 var stat = ftdi.OpenByIndex((uint)comPort);
@@ -172,11 +171,10 @@ namespace zanac.MAmidiMEmo.VSIF
                                     VsifClient client = null;
                                     switch (soundModule)
                                     {
-                                        case VsifSoundModuleType.NES_FTDI:
-                                        case VsifSoundModuleType.NES_FTDI_FDS:
+                                        case VsifSoundModuleType.NES_FTDI_DIRECT:
                                             client = new VsifClient(soundModule, new PortWriterNesDirect(ftdi, comPort));
                                             break;
-                                        case VsifSoundModuleType.NES_FTDI_VRC6:
+                                        case VsifSoundModuleType.NES_FTDI_INDIRECT:
                                             client = new VsifClient(soundModule, new PortWriterNesIndirect(ftdi, comPort));
                                             break;
                                     }
@@ -229,9 +227,8 @@ namespace zanac.MAmidiMEmo.VSIF
         Genesis,
         Genesis_FTDI,
         Genesis_Low,
-        NES_FTDI,
-        NES_FTDI_VRC6,
-        NES_FTDI_FDS
+        NES_FTDI_INDIRECT,
+        NES_FTDI_DIRECT
     }
 
 

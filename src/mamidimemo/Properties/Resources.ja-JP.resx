@@ -374,4 +374,13 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="SampleRate" xml:space="preserve">
     <value>MAmidiMEmoのサンプリング周波数はMAmidiMEmo起動時のDAWのサンプリング周波数に従います。</value>
   </data>
+  <data name="DpcmBufferExceeded" xml:space="preserve">
+    <value>DPCM バッファが溢れました。</value>
+  </data>
+  <data name="DpcmBufferUsed" xml:space="preserve">
+    <value>ADPCM バッファを {0} bytes 使っています。</value>
+  </data>
+  <data name="UpdatingDPCM" xml:space="preserve">
+    <value>DPCMデータを更新中...</value>
+  </data>
 </root>

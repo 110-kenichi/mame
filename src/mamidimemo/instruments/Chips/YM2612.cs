@@ -213,7 +213,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip")]
         [Description("Set Master Clock of this chip.")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
-        [DefaultValue(MasterClockType.NTSC)]
         public uint MasterClock
         {
             get
@@ -229,6 +228,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
         }
+
+        public bool ShouldSerializeMasterClock()
+        {
+            return MasterClock != (uint)MasterClockType.NTSC;
+        }
+
+        public void ResetMasterClock()
+        {
+            MasterClock = (uint)MasterClockType.NTSC;
+        }
+
 
         private byte f_LFOEN;
 

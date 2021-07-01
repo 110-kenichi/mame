@@ -201,6 +201,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        public bool ShouldSerializeMasterClock()
+        {
+            return MasterClock != (uint)MasterClockType.Default;
+        }
+
+        public void ResetMasterClock()
+        {
+            MasterClock = (uint)MasterClockType.Default;
+        }
+
         private byte f_EnvelopeFrequencyCoarse = 2;
 
         /// <summary>

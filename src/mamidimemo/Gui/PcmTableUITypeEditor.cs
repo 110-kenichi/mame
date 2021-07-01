@@ -69,6 +69,9 @@ namespace zanac.MAmidiMEmo.Gui
                 DialogResult dr = editorService.ShowDialog(frm);
                 if (dr == DialogResult.OK)
                 {
+                    s = JsonConvert.SerializeObject(value, Program.JsonAutoSettings);
+                    value = JsonConvert.DeserializeObject(s, value.GetType(), Program.JsonAutoSettings);
+
                     for (int i = 0; i < frm.PcmData.Length; i++)
                         ((PcmTimbreTableBase)value).PcmTimbres[i] = frm.PcmData[i];
                     return value;

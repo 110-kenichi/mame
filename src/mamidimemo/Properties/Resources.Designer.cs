@@ -317,6 +317,24 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   DPCM buffer exceeded. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DpcmBufferExceeded {
+            get {
+                return ResourceManager.GetString("DpcmBufferExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   DPCM buffer used {0} bytes. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DpcmBufferUsed {
+            get {
+                return ResourceManager.GetString("DpcmBufferUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
         internal static byte[] DSEG14ClassicMini_BoldItalic {
@@ -750,6 +768,15 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string UpdatingADPCM {
             get {
                 return ResourceManager.GetString("UpdatingADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updating DPCM data... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UpdatingDPCM {
+            get {
+                return ResourceManager.GetString("UpdatingDPCM", resourceCulture);
             }
         }
         

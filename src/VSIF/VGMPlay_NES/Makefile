@@ -27,7 +27,7 @@ $(PROGRAM_FDS): boot_fds.o VGMPlay.o
 
 $(PROGRAM_MMC5): boot_mmc5.o VGMPlay.o
 	$(LD65)  -m $@.map $^ -o $(PROGRAM_MMC5) --config mmc5.cfg
-#	cmd.exe /C copy_mmc5.bat
+	cmd.exe /C copy_mmc5.bat
 
 .PHONY: run
 run:

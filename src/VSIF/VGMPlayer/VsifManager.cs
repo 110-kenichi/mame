@@ -135,10 +135,10 @@ namespace zanac.VGMPlayer
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
                                     ftdi.GetPinStates(ref ps);
-                                    if ((ps & 0x40) == 1)
+                                    if ((ps & 0x40) == 0)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x00 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
                                     }
 
                                     var client = new VsifClient(soundModule, new PortWriter(ftdi, comPort));
