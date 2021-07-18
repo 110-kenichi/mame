@@ -1,6 +1,4 @@
 ﻿// copyright-holders:K.Ito
-using LegacyWrapperClient.Architecture;
-using LegacyWrapperClient.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,10 +51,11 @@ namespace zanac.MAmidiMEmo.Scci
                 if (!initialized)
                 {
                     // Create configuration
-                    if (Environment.Is64BitProcess)
-                        wrapperClient = new X64toX86BridgeScciWrapper();
-                    else
-                        wrapperClient = new NativeScciWrapper();
+                    //if (Environment.Is64BitProcess)
+                    //    wrapperClient = new X64toX86BridgeScciWrapper();
+                    //else
+                    //    wrapperClient = new NativeScciWrapper();
+                    wrapperClient = new NativeScciWrapper();
 
                     FormProgress.RunDialog(Resources.ConnectingSPFM, new Action<FormProgress>((f) =>
                     {
@@ -148,14 +147,15 @@ namespace zanac.MAmidiMEmo.Scci
                     if (prevData != pData)
                     {
                         wrapperClient.SetRegister(pChip, dAddr, pData);
-
-                        writtenDataCache[pChip][dAddr] = pData;
+                        if (writtenDataCache.ContainsKey(pChip))
+                            writtenDataCache[pChip][dAddr] = pData;
                     }
                 }
                 else
                 {
                     wrapperClient.SetRegister(pChip, dAddr, pData);
-                    writtenDataCache[pChip][dAddr] = pData;
+                    if(writtenDataCache.ContainsKey(pChip))
+                        writtenDataCache[pChip][dAddr] = pData;
                 }
             }
         }

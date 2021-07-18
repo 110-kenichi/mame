@@ -253,22 +253,31 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 if (arpCounter < settings.ArpEnvelopesNums.Length)
                 {
-                    int dnote = settings.ArpEnvelopesNums[arpCounter++];
-
-                    switch (settings.ArpStepType)
+                    int? dnote = settings.ArpEnvelopesNums[arpCounter++];
+                    if (dnote.HasValue)
                     {
-                        case ArpStepType.Absolute:
-                            f_DeltaNoteNumber += -lastArpNoteNumber + dnote;
-                            break;
-                        case ArpStepType.Relative:
-                            f_DeltaNoteNumber += dnote;
-                            break;
-                        case ArpStepType.Fixed:
-                            f_DeltaNoteNumber = -sound.NoteOnEvent.NoteNumber + dnote;
-                            break;
+                        switch (settings.ArpStepType)
+                        {
+                            case ArpStepType.Absolute:
+                                f_DeltaNoteNumber += -lastArpNoteNumber + dnote.Value;
+                                break;
+                            case ArpStepType.Relative:
+                                f_DeltaNoteNumber += dnote.Value;
+                                break;
+                            case ArpStepType.Fixed:
+                                f_DeltaNoteNumber = -sound.NoteOnEvent.NoteNumber + dnote.Value;
+                                break;
+                        }
+                        lastArpNoteNumber = dnote.Value;
+
+                        if (settings.ArpMethod == ArpMethod.KeyOn)
+                        {
+                            sound.SoundOff();
+                            sound.KeyOn();
+                        }
+
+                        process = true;
                     }
-                    lastArpNoteNumber = dnote;
-                    process = true;
                 }
             }
 

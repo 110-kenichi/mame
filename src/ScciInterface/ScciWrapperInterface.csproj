@@ -112,13 +112,6 @@
     <Compile Include="IScciWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NativeScciWrapper.cs" />
-    <Compile Include="X64toX86BridgeScciWrapper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LegacyWrapper\LegacyWrapperClient\LegacyWrapperClient.csproj">
-      <Project>{cbba289f-8e61-4fea-8191-2794402c1333}</Project>
-      <Name>LegacyWrapperClient</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

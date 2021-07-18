@@ -75,6 +75,9 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public static ulong soundOffTimeCounter;
 
+        /// <summary>
+        /// for empty sound slot searching.
+        /// </summary>
         public ulong SoundOffTime
         {
             get;
@@ -138,6 +141,8 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void KeyOn()
         {
             IsSoundingStarted = true;
+            IsKeyOff = false;
+            IsSoundOff = false;
 
             if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
                 ParentModule.Modulations[NoteOnEvent.Channel] > 0)

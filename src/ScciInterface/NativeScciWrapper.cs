@@ -1,6 +1,4 @@
 ﻿// copyright-holders:K.Ito
-using LegacyWrapperClient.Architecture;
-using LegacyWrapperClient.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,7 +32,7 @@ namespace zanac.MAmidiMEmo.Scci
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GetSoundChip", CallingConvention = CallingConvention.Cdecl)]
-        private static extern uint GetSoundChipInternal(uint iSoundChipType, uint clock);
+        private static extern IntPtr GetSoundChipInternal(uint iSoundChipType, uint clock);
 
         public IntPtr GetSoundChip(uint iSoundChipType, uint clock)
         {
@@ -42,11 +40,11 @@ namespace zanac.MAmidiMEmo.Scci
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GetWrittenRegisterData", CallingConvention = CallingConvention.Cdecl)]
-        private static extern uint GetWrittenRegisterDataInternal(uint pChip, uint addr);
+        private static extern uint GetWrittenRegisterDataInternal(IntPtr pChip, uint addr);
 
         public uint GetWrittenRegisterData(IntPtr pChip, uint addr)
         {
-            return GetWrittenRegisterDataInternal((uint)pChip, addr);
+            return GetWrittenRegisterDataInternal(pChip, addr);
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "InitializeScci", CallingConvention = CallingConvention.Cdecl)]
@@ -58,11 +56,11 @@ namespace zanac.MAmidiMEmo.Scci
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "IsBufferEmpty", CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool IsBufferEmptyInternal(uint pChip);
+        private static extern bool IsBufferEmptyInternal(IntPtr pChip);
 
         public bool IsBufferEmpty(IntPtr pChip)
         {
-            return IsBufferEmptyInternal((uint)pChip);
+            return IsBufferEmptyInternal(pChip);
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "ReleaseScci", CallingConvention = CallingConvention.Cdecl)]
@@ -74,19 +72,19 @@ namespace zanac.MAmidiMEmo.Scci
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "ReleaseSoundChip", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void ReleaseSoundChipInternal(uint pSoundChip);
+        private static extern void ReleaseSoundChipInternal(IntPtr pSoundChip);
 
         public void ReleaseSoundChip(IntPtr pSoundChip)
         {
-            ReleaseSoundChipInternal((uint)pSoundChip);
+            ReleaseSoundChipInternal(pSoundChip);
         }
 
         [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "SetRegister", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void SetRegisterInternal(uint pChip, uint dAddr, uint pData);
+        private static extern void SetRegisterInternal(IntPtr pChip, uint dAddr, uint pData);
 
         public void SetRegister(IntPtr pChip, uint dAddr, uint pData)
         {
-            SetRegisterInternal((uint)pChip, dAddr, pData);
+            SetRegisterInternal(pChip, dAddr, pData);
         }
     }
 }

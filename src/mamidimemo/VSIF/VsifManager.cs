@@ -1,7 +1,5 @@
 ﻿// copyright-holders:K.Ito
 using FTD2XX_NET;
-using LegacyWrapperClient.Architecture;
-using LegacyWrapperClient.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

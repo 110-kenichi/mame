@@ -131,16 +131,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LegacyWrapper.Common\LegacyWrapper.Common.csproj">
-      <Project>{B9E346E3-ED4F-4824-B780-825D87BE9D48}</Project>
-      <Name>LegacyWrapper.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LegacyWrapper32\LegacyWrapper32.csproj">
-      <Project>{b7665a68-f19c-4539-9fe1-06b14ba774e3}</Project>
-      <Name>LegacyWrapper32</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

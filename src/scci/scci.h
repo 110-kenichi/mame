@@ -123,9 +123,9 @@ public:
 	// get sound chip type
 	virtual int __stdcall getSoundChipType() = 0;
 	// set Register data
-	virtual BOOL __stdcall setRegister(DWORD dAddr,DWORD dData) = 0;
+	virtual BOOL __stdcall setRegister(DWORD dAddr,LONG_PTR dData) = 0;
 	// get Register data(It may not be supported)
-	virtual DWORD __stdcall getRegister(DWORD dAddr) = 0;
+	virtual LONG_PTR __stdcall getRegister(DWORD dAddr) = 0;
 	// initialize sound chip(clear registers)
 	virtual BOOL __stdcall init() = 0;
 	// get sound chip clock
@@ -150,5 +150,4 @@ typedef struct {
 	int	iL;
 	int	iR;
 } SCCIPCMDATA;
-
 

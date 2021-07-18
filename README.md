@@ -1,4 +1,4 @@
-MAmidiMEmo 3.7.3.2/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.7.4.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.7.4.0 Fixed Master Clock prop crashing when resetting the value to default.
+		Supported DPCM play for Real Famicom.
+		Added ArpMethod property for FxSettings.
+		Supported 64bit version of the SCCI.
 3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and later samples.
 3.7.3.1 Improved square wave low frequency range of VSIF - Famicom.
 		Added function that can be cleared write cache data when Panic button pressed.

@@ -165,12 +165,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LegacyWrapper.Common\LegacyWrapper.Common.csproj">
-      <Project>{B9E346E3-ED4F-4824-B780-825D87BE9D48}</Project>
-      <Name>LegacyWrapper.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
