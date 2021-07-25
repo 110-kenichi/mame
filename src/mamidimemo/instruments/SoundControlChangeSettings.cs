@@ -121,6 +121,20 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        [DataMember]
+        [Description("Sound Control Channel After Touch\r\n" +
+            "Link Channel After Touch value with the Timbre property value\r\n" +
+            "eg 1) \"DutyCycle,Volume\"\r\n" +
+            "... You can change DutyCycle and Volume property values dynamically via MIDI Channel After Touch message.\r\n" +
+            "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
+            "... You can change Operator TL, MUL, D2R values dynamically via MIDI Channel After Touch message.")]
+        [DefaultValue(null)]
+        public string AfterTouchCh
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -154,6 +168,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     return getPropertiesInfo(timbre, SoundControl6);
                 case 10:
                     return getPropertiesInfo(timbre, SoundControl10);
+                case -1:
+                    return getPropertiesInfo(timbre, AfterTouchCh);
             }
 
             return null;

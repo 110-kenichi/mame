@@ -701,11 +701,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
         }
 
         /// <summary>

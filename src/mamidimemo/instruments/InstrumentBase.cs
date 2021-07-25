@@ -808,6 +808,108 @@ namespace zanac.MAmidiMEmo.Instruments
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Scale Tuning -100～0～100 [cent] <MIDI 16ch>\r\n" +
+            "Input scale value of each notes (C C# ... A# B) and split it with space like the FamiTracker.")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
+        [CollectionDefaultValue("0 0 0 0 0 0 0 0 0 0 0 0")]
+        public virtual ScaleTuning[] ScaleTunings
+        {
+            get;
+            set;
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<ScaleTuning>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [MidiHook]
+        [DataContract]
+        public class ScaleTuning
+        {
+            private string f_Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+
+            [Description("Scale Tuning -100～0～100 [cent]\r\n" +
+                "Input scale value of each notes (C C# ... A# B) and split it with space like the FamiTracker.")]
+            [DataMember]
+            [DefaultValue("0 0 0 0 0 0 0 0 0 0 0 0")]
+            public string Scales
+            {
+                get
+                {
+                    return f_Scales;
+                }
+                set
+                {
+                    if (f_Scales != value)
+                    {
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (value == null || vals.Length != 12)
+                        {
+                            ScalesNums = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                            f_Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+                            return;
+                        }
+                        f_Scales = value;
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            int v;
+                            if (int.TryParse(val, out v))
+                            {
+                                if (v < -100)
+                                    v = -100;
+                                else if (v > 100)
+                                    v = 100;
+                                vs.Add(v);
+                            }
+                        }
+                        ScalesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < ScalesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            sb.Append(ScalesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_Scales = sb.ToString();
+                    }
+                }
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] ScalesNums { get; set; } = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public ScaleTuning()
+            {
+            }
+        }
+
+        public bool ShouldSerializeScaleTunings()
+        {
+            for (int i = 0; i < ScaleTunings.Length; i++)
+            {
+                if (ScaleTunings[i].Scales != "0 0 0 0 0 0 0 0 0 0 0 0")
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetScaleTunings()
+        {
+            for (int i = 0; i < ScaleTunings.Length; i++)
+                ScaleTunings[i].Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+        }
+
 
         [DataMember]
         [Category("MIDI")]
@@ -1668,6 +1770,13 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < ProgramAssignments.Length; i++)
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
 
+            ScaleTunings = new ScaleTuning[16]{
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning()
+            };
+
             ChannelTypes = new ChannelType[] {
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
@@ -2159,6 +2268,11 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 switch (midiEvent)
                 {
+                    case ChannelAftertouchEvent caft:
+                        {
+                            OnChannelAfterTouchEvent(caft);
+                            break;
+                        }
                     case NoteOnEvent non:
                         {
                             if (non.Velocity == 0)
@@ -2216,6 +2330,15 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected virtual void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+
         }
 
         /// <summary>

@@ -308,9 +308,10 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
+            var scale = (int)ParentModule.ScaleTunings[NoteOnEvent.Channel].ScalesNums[NoteOnEvent.NoteNumber % 12];
 
             double d1 = ((double)pitch / 8192d) * range;
-            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d);
+            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d) + (scale / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;
@@ -340,7 +341,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            if(!ignoreVelocity)
+            if (!ignoreVelocity)
                 v *= NoteOnEvent.Velocity / 127d;
 
             if (AdsrEngine != null)

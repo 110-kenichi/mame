@@ -299,7 +299,10 @@ namespace zanac.MAmidiMEmo.Instruments
                                 case 75:
                                 case 79:
                                     if (lastDataLsb[dataLsb.Channel] != null)
-                                        processSCCS(dataMsb.Channel, parentModule.NrpnLsb[dataMsb.Channel], lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    {
+                                        int no = parentModule.NrpnLsb[dataMsb.Channel];
+                                        processSCCS(dataMsb.Channel, no, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    }
                                     break;
                                 //GPCS2
                                 case 80:
@@ -326,6 +329,31 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="caft"></param>
+        public virtual void ProcessChannelAftertouch(ChannelAftertouchEvent caft)
+        {
+            int channel = caft.Channel;
+            int msbValue = caft.AftertouchValue;
+            int lsbValue = 0;
+
+            var tim = parentModule.GetLastTimbre(channel);
+            bool process = processSCCSCore(msbValue, lsbValue, -1, tim);
+            if (process)
+            {
+                foreach (var t in AllSounds)
+                {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
+                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                        t.OnSoundParamsUpdated();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         abstract internal void ProcessAllSoundOff();
 
         /// <summary>
@@ -334,9 +362,35 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         private void processSCCS(int channel, int controlNumber, int msbValue, int lsbValue)
         {
+            int cnum = controlNumber - 70 + 1;
+
             var tim = parentModule.GetLastTimbre(channel);
+            bool process = processSCCSCore(msbValue, lsbValue, cnum, tim);
+            if (process)
+            {
+                foreach (var t in AllSounds)
+                {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
+                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                        t.OnSoundParamsUpdated();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msbValue"></param>
+        /// <param name="lsbValue"></param>
+        /// <param name="cnum"></param>
+        /// <param name="tim"></param>
+        /// <returns></returns>
+        private static bool processSCCSCore(int msbValue, int lsbValue, int cnum, TimbreBase tim)
+        {
             bool process = false;
-            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, controlNumber - 70 + 1))
+            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, cnum))
             {
                 if (ipi != null)
                 {
@@ -442,17 +496,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
             }
-            if (process)
-            {
-                foreach (var t in AllSounds)
-                {
-                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
-                        continue;
 
-                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
-                        t.OnSoundParamsUpdated();
-                }
-            }
+            return process;
         }
 
         /// <summary>

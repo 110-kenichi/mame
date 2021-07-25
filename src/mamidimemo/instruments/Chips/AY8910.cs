@@ -600,11 +600,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
         }
 
         /// <summary>
@@ -1013,7 +1029,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_SoundTypeEnvelopes;
 
             [DataMember]
-            [Description("Set dutysound type envelop by text. Input sound type value and split it with space like the Famitracker.\r\n" +
+            [Description("Set dutysound type envelop by text. Input sound type value and split it with space like the FamiTracker.\r\n" +
                        "1:PSG 2:NOISE 4:ENVELOPE \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 7)]

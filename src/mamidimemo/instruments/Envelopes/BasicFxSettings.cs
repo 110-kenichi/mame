@@ -25,7 +25,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private string f_VolumeEnvelopes;
 
         [DataMember]
-        [Description("Set volume envelop by text. Input volume value and split it with space like the Famitracker.\r\n" +
+        [Description("Set volume envelop by text. Input volume value and split it with space like the FamiTracker.\r\n" +
                     "0(0%)-127(100%) \"|\" is repeat point. \"/\" is release point.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(0,127)]
@@ -118,7 +118,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private string f_PitchEnvelopes;
 
         [DataMember]
-        [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the Famitracker.\r\n" +
+        [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the FamiTracker.\r\n" +
                    "-8193 ～ 0 ～ 8192 \"|\" is repeat point. \"/\" is release point.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(-8193, 8192)]
@@ -251,7 +251,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private string f_PanShiftEnvelopes;
 
         [DataMember]
-        [Description("Set pan shift envelop by text. Input pan value and split it with space like the Famitracker.\r\n" +
+        [Description("Set pan shift envelop by text. Input pan value and split it with space like the FamiTracker.\r\n" +
                     "-127(Left)-0-127(Right) \"|\" is repeat point. \"/\" is release point.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(-127, 127)]
@@ -345,7 +345,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private string f_ArpEnvelopes;
 
         [DataMember]
-        [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the Famitracker.\r\n" +
+        [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the FamiTracker.\r\n" +
                    "-128 ～ 0 ～ 127 \"|\" is repeat point. \"/\" is release point.\r\n" +
             "\"-\" is no-operation.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
