@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "SMS",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "C:\\Program Files\\SDCC\\bin\\sdcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x86"
+        }
+    ],
+    "version": 4
+}
