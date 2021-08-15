@@ -68,7 +68,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - NES\".")]
+        [Description("Set Port No for \"VSIF - NES\".\r\n" +
+            "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
         {
@@ -180,6 +181,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             initSounds();
         }
 
+        private int f_ftdiClkWidth = 15;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(15)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
+            }
+        }
 
         private void initSounds()
         {
@@ -370,21 +390,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
                                 {
                                     //Write DPCM
-                                    vsifClient.WriteData((byte)0x16, 0, clkWidth);
+                                    vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
                                     for (int i = 0; i < pcmData.Count; i += 2)
-                                        vsifClient.WriteData(pcmData[i + 0], pcmData[i + 1], clkWidth);
+                                        vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
                                 }
                                 else if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_MMC5)
                                 {
                                     for (int bn = 0; bn < pcmData.Count >> 13; bn++)
                                     {
                                         //Switch bank
-                                        vsifClient.WriteData((byte)0x17, (byte)bn, clkWidth);
+                                        vsifClient.WriteData(0, (byte)0x17, (byte)bn, f_ftdiClkWidth);
 
                                         //Write DPCM
-                                        vsifClient.WriteData((byte)0x16, 0, clkWidth);
+                                        vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
                                         for (int i = bn * 0x2000; i < (bn * 0x2000) + 0x2000; i += 2)
-                                            vsifClient.WriteData(pcmData[i + 0], pcmData[i + 1], clkWidth);
+                                            vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
                                     }
                                 }
                             }
@@ -522,8 +542,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             RP2A03WriteData(unitNumber, address, data, true, false);
         }
 
-        private int clkWidth = (int)((int)Settings.Default.ClkWidth * 1.5);
-
         /// <summary>
         /// 
         /// </summary>
@@ -538,7 +556,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case uint cmd when 0x0 <= address && address <= 0x15:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)address, data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                         }
                         break;
@@ -547,7 +565,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case uint cmd when 0x0 <= address && address <= 0xff:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)address, data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                         }
                         break;
@@ -556,19 +574,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case uint cmd when 0x0 <= address && address <= 0x15:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)address, data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x9000 <= address && address <= 0x9003:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)(24 + (cmd & 0x03)), data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)(24 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0xa000 <= address && address <= 0xa003:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)(28 + (cmd & 0x03)), data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)(28 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0xb000 <= address && address <= 0xb003:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)(32 + (cmd & 0x03)), data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)(32 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                         }
                         break;
@@ -577,15 +595,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case uint cmd when 0x0 <= address && address <= 0x17:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)address, data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x5000 <= address && address <= 0x5007:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)(24 + (cmd & 0x07)), data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)(24 + (cmd & 0x07)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x5010 <= address && address <= 0x5011:
                                 lock (vsifLock)
-                                    vsifClient.WriteData((byte)(28 + (cmd & 0x01)), data, clkWidth);
+                                    vsifClient.WriteData(0, (byte)(28 + (cmd & 0x01)), data, f_ftdiClkWidth);
                                 break;
                         }
                         break;

@@ -72,11 +72,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Set Port No for \"VSIF - Genesis\".\r\n" +
-            "Connect Genesis PORT2 pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"\r\n" +
-            " 1 ------> TX\r\n" +
-            " * o o o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND")]
+            "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
         {
@@ -193,6 +189,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
+            }
+        }
+
+        private int f_ftdiClkWidth = 10;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(10)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
             }
         }
 
@@ -382,8 +398,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ym2612WriteData(unitNumber, address, op, slot, data, true);
         }
 
-        private int clkWidth = (int)Settings.Default.ClkWidth;
-
         /// <summary>
         /// 
         /// </summary>
@@ -419,8 +433,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_Genesis:
                         case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
-                            vsifClient.WriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), clkWidth);
-                            vsifClient.WriteData((byte)((1 + (yreg + 1)) * 4), data, clkWidth);
+                            vsifClient.WriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), f_ftdiClkWidth);
+                            vsifClient.WriteData(0, (byte)((1 + (yreg + 1)) * 4), data, f_ftdiClkWidth);
                             break;
                     }
                 }

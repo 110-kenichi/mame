@@ -73,17 +73,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - SMS\" or \"VSIF - Genesis\".\r\n" +
-            "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
-            "     3 --> TX\r\n" +
-            " o o * o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND\r\n" +
-            "Connect Genesis PORT2 pin1 to UART TX and pin8 to GND when \"VSIF - Genesis.\"\r\n" +
-            " 1 ------> TX\r\n" +
-            " * o o o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND")]
+        [Description("Set Port No for \"VSIF - SMS\" or \"VSIF - Genesis/SMS\".\r\n" +
+            "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
         {
@@ -218,6 +209,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private int f_ftdiClkWidth = 9;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(9)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -295,8 +306,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Sn76496WriteData(unitNumber, data, true);
         }
 
-        private int clkWidth = (int)Settings.Default.ClkWidth;
-
         /// <summary>
         /// 
         /// </summary>
@@ -309,12 +318,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.VSIF_SMS:
-                            vsifClient.WriteData(0xff, data, clkWidth);
+                            vsifClient.WriteData(0, 0xff, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_Genesis:
                         case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
-                            vsifClient.WriteData(0x04 * 5, data, clkWidth);
+                            vsifClient.WriteData(0, 0x04 * 5, data, f_ftdiClkWidth);
                             break;
                     }
                 }

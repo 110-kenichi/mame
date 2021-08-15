@@ -69,7 +69,7 @@ namespace zanac.MAmidiMEmo.VSIF
             PortName = "FTDI_COM" + (int)portNo;
         }
 
-        public abstract void Write(byte address, byte data, int wait);
+        public abstract void Write(byte type, byte address, byte data, int wait);
 
         protected virtual void Dispose(bool disposing)
         {

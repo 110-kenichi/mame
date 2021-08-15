@@ -389,8 +389,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         private static bool processSCCSCore(int msbValue, int lsbValue, int cnum, TimbreBase tim)
         {
+            var pis = tim.SCCS.GetPropertyInfo(tim, cnum);
+
+            return processIntProps(msbValue, lsbValue, pis);
+        }
+
+        private static bool processIntProps(int msbValue, int lsbValue, InstancePropertyInfo[] pis)
+        {
             bool process = false;
-            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, cnum))
+            foreach (var ipi in pis)
             {
                 if (ipi != null)
                 {
@@ -550,7 +557,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             double len = dattribute.SliderMax - dattribute.SliderMin;
                             double val = len * (double)msbValue / 127d;
-                            val += (len / 127d) * lsbValue / 127d;
+                            val += (len / 127d) * (double)lsbValue / 127d;
                             val += dattribute.SliderMin;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
@@ -767,6 +774,17 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="note"></param>
         public virtual void ProcessKeyOn(TaggedNoteOnEvent note)
         {
+            int channel = note.Channel;
+            var tim = parentModule.GetLastTimbre(channel);
+            if (!string.IsNullOrWhiteSpace(tim.VelocityMap))
+            {
+                int msbValue = note.Velocity;
+                int lsbValue = 0;
+
+                var pis = TimbreBase.GetPropertiesInfo(tim, tim.VelocityMap);
+                processIntProps(msbValue, lsbValue, pis);
+            }
+
             if (preProcessArrpegioForKeyOn(note))
                 return;
 
@@ -1159,7 +1177,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
                             onSnd.SoundOff();
-                            if(!offSnds.Contains(onSnd))
+                            if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);

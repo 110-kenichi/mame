@@ -24,11 +24,16 @@ namespace zanac.MAmidiMEmo.VSIF
     {
         //http://analoghome.blogspot.com/2017/08/ftdi-ft232r-usb-to-serial-bridge.html
         //The maximum BAUD rate for the FT232R chip is 3M BAUD
-        public const int FTDI_BAUDRATE_GEN = 7200;
+
+        public const int FTDI_BAUDRATE_GEN = 115200 / 16;
         public const int FTDI_BAUDRATE_GEN_MUL = 100;
 
-        public const int FTDI_BAUDRATE_NES = 3600;
+        public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 100;
+
+        //public const int FTDI_BAUDRATE_MSX = 9600 / 16;
+        public const int FTDI_BAUDRATE_MSX = 38400 / 16;
+        public const int FTDI_BAUDRATE_MSX_MUL = 100;
 
         private static object lockObject = new object();
 
@@ -146,6 +151,30 @@ namespace zanac.MAmidiMEmo.VSIF
                                 }
                             }
                             break;
+                        case VsifSoundModuleType.MSX_FTDI:
+                            {
+                                var ftdi = new FTD2XX_NET.FTDI();
+                                var stat = ftdi.OpenByIndex((uint)comPort);
+                                if (stat == FTDI.FT_STATUS.FT_OK)
+                                {
+                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
+                                    ftdi.SetTimeouts(500, 500);
+                                    ftdi.SetLatency(0);
+                                    {
+                                        uint dummy = 0x00;
+                                        ftdi.Write(new byte[] { (byte)dummy }, 1, ref dummy);
+                                    }
+
+                                    var client = new VsifClient(soundModule, new PortWriterMsx(ftdi, comPort));
+
+                                    client.Disposed += Client_Disposed;
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                            }
+                            break;
                         case VsifSoundModuleType.NES_FTDI_INDIRECT:
                         case VsifSoundModuleType.NES_FTDI_DIRECT:
                             {
@@ -226,7 +255,8 @@ namespace zanac.MAmidiMEmo.VSIF
         Genesis_FTDI,
         Genesis_Low,
         NES_FTDI_INDIRECT,
-        NES_FTDI_DIRECT
+        NES_FTDI_DIRECT,
+        MSX_FTDI,
     }
 
 

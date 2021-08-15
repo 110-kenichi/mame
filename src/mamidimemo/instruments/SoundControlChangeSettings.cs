@@ -155,170 +155,24 @@ namespace zanac.MAmidiMEmo.Instruments
             switch (controlNo)
             {
                 case 1:
-                    return getPropertiesInfo(timbre, SoundControl1);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl1);
                 case 2:
-                    return getPropertiesInfo(timbre, SoundControl2);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl2);
                 case 3:
-                    return getPropertiesInfo(timbre, SoundControl3);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl3);
                 case 4:
-                    return getPropertiesInfo(timbre, SoundControl4);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl4);
                 case 5:
-                    return getPropertiesInfo(timbre, SoundControl5);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl5);
                 case 6:
-                    return getPropertiesInfo(timbre, SoundControl6);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl6);
                 case 10:
-                    return getPropertiesInfo(timbre, SoundControl10);
+                    return TimbreBase.GetPropertiesInfo(timbre, SoundControl10);
                 case -1:
-                    return getPropertiesInfo(timbre, AfterTouchCh);
+                    return TimbreBase.GetPropertiesInfo(timbre, AfterTouchCh);
             }
 
             return null;
-        }
-
-        private static Dictionary<Type, Dictionary<string, InstancePropertyInfo>> propertyInfoTable = new Dictionary<Type, Dictionary<string, InstancePropertyInfo>>();
-
-        private static Regex removeRegex = new Regex(@"[ ()+\-^*/^]|\bsin\b|\bcos\b|\btg\b|\bctg\b|\bsh\b|\bch\b|\bth\b|\bsqrt\b|\bexp\b|\blog\b|\bln\b|\babs\b|\bpi\b|\be\b", RegexOptions.Compiled);
-
-        private static Regex nameRegex = new Regex(@"\ [0-9]*", RegexOptions.Compiled);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="timbre"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        private InstancePropertyInfo[] getPropertiesInfo(TimbreBase timbre, string propertyNames)
-        {
-            List<InstancePropertyInfo> plist = new List<InstancePropertyInfo>();
-            var tt = timbre.GetType();
-
-            if (!string.IsNullOrWhiteSpace(propertyNames))
-            {
-                string[] propNameParts = propertyNames.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var propertyName in propNameParts)
-                {
-                    var fm = " " + propertyName.Trim();
-                    var pn = nameRegex.Replace(removeRegex.Replace(fm, " "), "");
-
-                    if (propertyInfoTable.ContainsKey(tt))
-                    {
-                        if (propertyInfoTable[tt].ContainsKey(pn))
-                        {
-                            var tpi = propertyInfoTable[tt][pn];
-                            plist.Add(new InstancePropertyInfo(tpi.Owner, tpi.Property) { Formula = fm, Symbol = pn });
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        propertyInfoTable.Add(tt, new Dictionary<string, InstancePropertyInfo>());
-                    }
-
-                    var pi = getPropertyInfo(timbre, pn);
-                    if (pi != null)
-                    {
-                        pi.Formula = fm;
-                        pi.Symbol = pn;
-
-                        SlideParametersAttribute attribute =
-                            Attribute.GetCustomAttribute(pi.Property, typeof(SlideParametersAttribute)) as SlideParametersAttribute;
-                        if (attribute != null)
-                        {
-                            plist.Add(pi);
-                            propertyInfoTable[tt][pn] = pi;
-                        }
-                        else
-                        {
-                            DoubleSlideParametersAttribute dattribute =
-                                Attribute.GetCustomAttribute(pi.Property, typeof(DoubleSlideParametersAttribute)) as DoubleSlideParametersAttribute;
-                            if (dattribute != null)
-                            {
-                                plist.Add(pi);
-                                propertyInfoTable[tt][pn] = pi;
-                            }
-                            else
-                            {
-                                if (pi.Property.PropertyType == typeof(bool))
-                                {
-                                    plist.Add(pi);
-                                    propertyInfoTable[tt][pn] = pi;
-                                }
-                                else if (pi.Property.PropertyType.IsEnum)
-                                {
-                                    plist.Add(pi);
-                                    propertyInfoTable[tt][pn] = pi;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return plist.ToArray();
-        }
-
-        private InstancePropertyInfo getPropertyInfo(TimbreBase timbre, string propertyName)
-        {
-            object obj = timbre;
-            object lobj = obj;
-
-            // Split property name to parts (propertyName could be hierarchical, like obj.subobj.subobj.property
-            string[] propertyNameParts = propertyName.Split('.');
-
-            PropertyInfo pi = null;
-            foreach (string propertyNamePart in propertyNameParts)
-            {
-                if (obj == null)
-                    return null;
-
-                // propertyNamePart could contain reference to specific 
-                // element (by index) inside a collection
-                if (!propertyNamePart.Contains("["))
-                {
-                    pi = obj.GetType().GetProperty(propertyNamePart);
-                    if (pi == null)
-                        return null;
-                    lobj = obj;
-                    obj = pi.GetValue(obj, null);
-                }
-                else
-                {   // propertyNamePart is areference to specific element 
-                    // (by index) inside a collection
-                    // like AggregatedCollection[123]
-                    //   get collection name and element index
-                    int indexStart = propertyNamePart.IndexOf("[") + 1;
-                    string collectionPropertyName = propertyNamePart.Substring(0, indexStart - 1);
-                    int collectionElementIndex = Int32.Parse(propertyNamePart.Substring(indexStart, propertyNamePart.Length - indexStart - 1));
-                    //   get collection object
-                    pi = obj.GetType().GetProperty(collectionPropertyName);
-                    if (pi == null)
-                        return null;
-                    object unknownCollection = pi.GetValue(obj, null);
-                    //   try to process the collection as array
-                    if (unknownCollection.GetType().IsArray)
-                    {
-                        object[] collectionAsArray = unknownCollection as object[];
-                        lobj = obj;
-                        obj = collectionAsArray[collectionElementIndex];
-                    }
-                    else
-                    {
-                        //   try to process the collection as IList
-                        System.Collections.IList collectionAsList = unknownCollection as System.Collections.IList;
-                        if (collectionAsList != null)
-                        {
-                            lobj = obj;
-                            obj = collectionAsList[collectionElementIndex];
-                        }
-                        else
-                        {
-                            // ??? Unsupported collection type
-                        }
-                    }
-                }
-            }
-
-            return new InstancePropertyInfo(lobj, pi);
         }
 
         #region Etc

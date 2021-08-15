@@ -72,12 +72,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - SMS\".\r\n" +
-            "Connect SMS PORT2 pin3 to UART TX and pin8 to GND when \"VSIF - SMS.\"\r\n" +
-            "     3 --> TX\r\n" +
-            " o o * o o\r\n" +
-            "  o o * o\r\n" +
-            "      8 -> GND")]
+        [Description("Set Port No for \"VSIF - SMS/MSX\"\r\n" +
+            "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
         {
@@ -167,8 +163,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
                 updateRhyRegisters();
+            }
+        }
+
+        private int f_ftdiClkWidth = 15;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(15)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
             }
         }
 
@@ -353,8 +382,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2413WriteData(unitNumber, address, slot, data, true);
         }
 
-        private int clkWidth = (int)Settings.Default.ClkWidth;
-
         /// <summary>
         /// 
         /// </summary>
@@ -364,9 +391,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             WriteData(address, data, useCache, new Action(() =>
             {
                 lock (vsifLock)
-                    if (CurrentSoundEngine == SoundEngineType.VSIF_SMS)
-                        vsifClient.WriteData(address, data, clkWidth);
-
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_SMS:
+                            vsifClient.WriteData(0, address, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            vsifClient.WriteData(1, address, data, f_ftdiClkWidth);
+                            break;
+                    }
+                }
                 DeferredWriteData(YM2413_write, unitNumber, (uint)0, address);
                 DeferredWriteData(YM2413_write, unitNumber, (uint)1, data);
             }));
@@ -2386,7 +2421,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
-                    SoundEngineType.VSIF_SMS });
+                    SoundEngineType.VSIF_SMS,
+                    SoundEngineType.VSIF_MSX_FTDI});
 
                 return sc;
             }

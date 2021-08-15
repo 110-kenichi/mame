@@ -134,8 +134,5 @@
     <Setting Name="EnvEdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
-    <Setting Name="ClkWidth" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">9</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

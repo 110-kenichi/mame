@@ -1,8 +1,11 @@
-PSGAD = 0xA0
-PSGWR = 0xA1
-PSGRD = 0xA2
+PSGAD = #0xA0
+PSGWR = #0xA1
+PSGRD = #0xA2
 
-CHPUT = 0xA2
+OPLLAD = #0x7C
+OPLLWR = #0x7D
+
+CHPUT = #0xA2
 
 ; ・ボーレート 115200bps（１ビット 30.79clk@3.5466MHz PAL）
 ; ・ボーレート 115200bps（１ビット 31.07clk@3.5793MHz NTSC）
@@ -17,125 +20,112 @@ CHPUT = 0xA2
 _uart_processVgm::
     DI
     LD  A,#15        ; 7
-    OUT (#PSGAD),A   ; 11
+    OUT (PSGAD),A    ; 11
     LD  A,#0xCF      ; 7
-    OUT (#PSGWR),A   ; 11   Select Joy2 Input
+    OUT (PSGWR),A    ; 11   Select Joy2 Input
 
     LD  E,#0x30      ; 7
     XOR L            ; Zero clear
+    LD  C,#14
 
 __VGM_LOOP:
     ; Select PSG REG14
-    LD  A,#14           ;  7  7
-    OUT (#PSGAD),A      ; 11 18
+    LD  A,C             ;  4  4
+    OUT (PSGAD),A       ; 11 15
 
 __VGM_ADRS1:
     ; Read JOY2
-    IN  A,(#PSGRD)      ; 11 29
-    LD  B,A             ;  4 33
-    AND E               ;  4 37
-    ; Check data type
-    CP  #0x10           ;  7 44
-    JP  NZ, __VGM_ADRS1 ; 10 54
-
+    IN  A,(PSGRD)       ; 11 26
+    BIT 4,A             ;  8 34
+    JP  Z, __VGM_ADRS1  ; 10 44
     ; ADDRESS Hi 4bit
-    SLA B               ;  8 62
+    IN  A,(PSGRD)       ; 11 55
+    LD  B,A             ;  4 59
+    SLA B               ;  8 67
+    SLA B               ;  8 75
+;    SLA B               ; exec later X
+;    SLA B               ; exec later X
 
 __VGM_ADRS2:
-    ; Read JOY2
-    IN  A,(#PSGRD)      ; 11 11
-    ; Check data type
+    IN  A,(PSGRD)       ; 11 11
     BIT 4,A             ;  8 19
     JP  NZ, __VGM_ADRS2 ; 10 29
-
     ; ADDRESS Lo 4bit
-    AND #0xf            ;  7 36
-    SLA B               ;  8 44
-    SLA B               ;  8 52
-    SLA B               ;  8 60
+    IN  A,(PSGRD)       ; 11 40
+    AND #0xf            ;  7 47
+    SLA B               ;  8 55 ;X
+    SLA B               ;  8 63 ;X
     ; ADDRESS 8bit
-    OR  B               ;  4 64
-    LD  B, A            ;  4 68
+    OR  B               ;  4 67
+    LD  B, A            ;  4 71
 
 __VGM_DATA1:
-    ; Read JOY2
-    IN  A,(#PSGRD)      ; 11 11
-    LD  D, A            ;  4 15
-    AND E               ;  4 19
-    ; Check data type
-    CP  #0x20           ;  7 26
-    JP  NZ, __VGM_DATA1 ; 10 36
-
+    IN  A,(PSGRD)       ; 11 11
+    BIT 5,A             ;  8 19
+    JP  Z, __VGM_DATA1  ; 10 36
     ; DATA Hi 4bit
-    SLA D               ;  8 44
-    SLA D               ;  8 52
+    IN  A,(PSGRD)       ; 11 47
+    LD  D,A             ;  4 51
+    SLA D               ;  8 59
+    SLA D               ;  8 67
+    SLA D               ;  8 75
+;    SLA D               ; exec later X
 
 __VGM_DATA2:
-    ; Read JOY2
-    IN  A,(#PSGRD)      ; 11 11
-    ; Check data type
+    IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
     JP  NZ, __VGM_DATA2 ; 10 29
-
     ; DATA Lo 4bit
-    AND #0xf            ;  7 36
-    SLA D               ;  8 44
-    SLA D               ;  8 52
-    ; DATA 
-    OR  D               ;  4 56
-    LD  D,A             ;  4 60
+    IN  A,(PSGRD)       ; 11 40
+    AND #0xf            ;  7 47 ;X
+    SLA D               ;  8 55
+    ; DATA 8bit
+    OR  D               ;  4 59
+    LD  D,A             ;  4 63
 
 __VGM_TYPE1:
-    ; Read JOY2
-    IN  A,(#PSGRD)      ; 11 11
-    LD  H, A            ;  4 22
-    AND E               ;  4 26
-    ; Check data type
-    CP  #0x30           ;  7 33
-    JP  NZ, __VGM_TYPE1 ; 10 43
-    LD  A, H
-    AND #0x3F           ;  7 50
-    ADD #0x20           ;  7 57
-    LD  H, A            ;  4 61
-    JP  (HL)            ;  4 65
+    IN  A,(PSGRD)       ; 11 11
+    BIT 5,A             ;  8 19
+    JP  Z, __VGM_TYPE1  ; 10 29
+    IN  A,(PSGRD)       ; 11 40
+    XOR #0xB0           ;  7 47
+    LD  H,A             ;  4 51
+    JP  (HL)            ;  4 55
 
 _END_VGM:
-    EI
-    ret              ; 10
+    EI                  ;  4
+    ret                 ; 10
 
     .area   _HEADER (ABS)
     .ORG 0x5000
-__WRITE_PSG:
-    LD  A,B             ;  4 69
-    OUT (#PSGAD),A      ; 11 80
-    LD  A,D             ;  4 84
-    OUT (#PSGWR),A      ; 11 95
-    JP  __VGM_LOOP      ; 10 105
+__WRITE_PSG_IO:
+    LD  A,B             ;  4 59
+    OUT (PSGAD),A       ; 11 70
+    LD  A,D             ;  4 74
+    OUT (PSGWR),A       ; 11 85
+    JP  __VGM_LOOP      ; 10 95
 
     .ORG 0x5100
-__WRITE_OPLL:
+__WRITE_OPLL_IO:
     LD  A,B
-    OUT (#PSGAD),A
+    OUT (OPLLAD),A
     LD  A,D
-    OUT (#PSGWR),A
+    OUT (OPLLWR),A
     JP  __VGM_LOOP      ; 10 83
 
     .ORG 0x5200
+__WRITE_OPLL_ADR:
+    JP __VGM_LOOP       ; 10 102
+
+    .ORG 0x5300
 __WRITE_SCC1:
     LD  H,#0x80         ;  7 81
     LD  L,B             ;  4 85
     LD  (HL), D         ;  7 92
     JP __VGM_LOOP       ; 10 102
 
-    .ORG 0x5300
-__WRITE_SCC2:
-    LD  H,#0x80         ;  7 81
-    LD  L,B             ;  4 85
-    LD  (HL), D         ;  7 92
-    JP __VGM_LOOP       ; 10 102
-
     .ORG 0x5400
-__WRITE_SCC3:
+__WRITE_SCC2:
     LD  H,#0x80         ;  7 81
     LD  L,B             ;  4 85
     LD  (HL), D         ;  7 92

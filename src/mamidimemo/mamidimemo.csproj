@@ -562,6 +562,7 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
+    <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />
     <Compile Include="VSIF\PortWriterGenesis.cs" />

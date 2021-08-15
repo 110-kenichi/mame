@@ -22,7 +22,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Brush whiteBrush = new SolidBrush(Color.White);
 
-        private Brush blueBrush = new SolidBrush(Color.LightBlue);
+        //private Brush blueBrush = new SolidBrush(Color.LightBlue);
 
         private Brush grayBrush = new SolidBrush(Color.LightGray);
 
@@ -38,7 +38,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Rectangle cr;
 
-        private Dictionary<SoundBase, int> soundKeyOn = new Dictionary<SoundBase, int>();
+        private Dictionary<SoundBase, SoundUpdatedEventArgs> soundKeyOn = new Dictionary<SoundBase, SoundUpdatedEventArgs>();
 
         private Dictionary<int, bool> receiveChs = new Dictionary<int, bool>();
 
@@ -145,13 +145,13 @@ namespace zanac.MAmidiMEmo.Gui
                     return;
 
                 if (!soundKeyOn.ContainsKey(snd))
-                    soundKeyOn.Add(snd, e.NoteNumber);
+                    soundKeyOn.Add(snd, e);
                 else
                 {
-                    Invalidate(new Region(getKeyPath(soundKeyOn[snd], out fill)));
-                    soundKeyOn[snd] = e.NoteNumber;
+                    Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
+                    soundKeyOn[snd] = e;
                 }
-                Invalidate(new Region(getKeyPath(soundKeyOn[snd], out fill)));
+                Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
             }));
         }
 
@@ -169,7 +169,7 @@ namespace zanac.MAmidiMEmo.Gui
                 SoundBase snd = (SoundBase)sender;
                 if (soundKeyOn.ContainsKey(snd))
                 {
-                    Invalidate(new Region(getKeyPath(soundKeyOn[snd], out fill)));
+                    Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
                     soundKeyOn.Remove(snd);
                 }
             }));
@@ -196,13 +196,13 @@ namespace zanac.MAmidiMEmo.Gui
 
                 int nn = (int)Math.Round(e.NoteNumber + e.Pitch);
                 if (!soundKeyOn.ContainsKey(snd))
-                    soundKeyOn.Add(snd, nn);
+                    soundKeyOn.Add(snd, new SoundUpdatedEventArgs(nn, e.Velocity, 0));
                 else
                 {
-                    Invalidate(new Region(getKeyPath(soundKeyOn[snd], out fill)));
-                    soundKeyOn[snd] = nn;
+                    Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
+                    soundKeyOn[snd] = new SoundUpdatedEventArgs(nn, e.Velocity, 0);
                 }
-                Invalidate(new Region(getKeyPath(soundKeyOn[snd], out fill)));
+                Invalidate(new Region(getKeyPath(soundKeyOn[snd].NoteNumber, out fill)));
             }));
         }
 
@@ -218,7 +218,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             onKeys.Clear();
             foreach (var snd in soundKeyOn.Values)
-                onKeys[snd] = 0;
+                onKeys[snd.NoteNumber] = snd.Velocity;
 
             g.FillRectangle(SystemBrushes.Control, 0, 0, wKeyW, Height);
             g.FillPolygon(SystemBrushes.ControlDarkDark, new Point[]{
@@ -242,34 +242,48 @@ namespace zanac.MAmidiMEmo.Gui
                 GraphicsPath path = getKeyPath(keyNum, out black);
                 if (rect.IntersectsWith(path.GetBounds()))
                 {
-                    if (keyNum == 60)
                     {
-                        if (onKeys.ContainsKey(keyNum))
-                            g.FillRegion(blueBrush, new Region(path));
+                        if (keyNum == 60)
+                        {
+                            if (onKeys.ContainsKey(keyNum))
+                            {
+                                var velo = onKeys[keyNum] * 2;
+                                using (Brush blueBrush = new SolidBrush(Color.FromArgb(0, velo, 255)))
+                                    g.FillRegion(blueBrush, new Region(path));
+                            }
+                            else
+                            {
+                                var r = new Region(path);
+                                g.FillRegion(whiteBrush, r);
+                                var b = r.GetBounds(g);
+                                g.FillPie(grayBrush, new Rectangle((int)b.X, (int)b.Bottom - (int)b.Width, (int)b.Width, (int)b.Width), 0, 360);
+                            }
+                            g.DrawPath(blackPen, path);
+                        }
+                        else if (!black)
+                        {
+                            if (onKeys.ContainsKey(keyNum))
+                            {
+                                var velo = onKeys[keyNum] * 2;
+                                using (Brush blueBrush = new SolidBrush(Color.FromArgb(0, velo, 255)))
+                                    g.FillRegion(blueBrush, new Region(path));
+                            }
+                            else
+                                g.FillRegion(whiteBrush, new Region(path));
+                            g.DrawPath(blackPen, path);
+                        }
                         else
                         {
-                            var r = new Region(path);
-                            g.FillRegion(whiteBrush, r);
-                            var b = r.GetBounds(g);
-                            g.FillPie(grayBrush, new Rectangle((int)b.X, (int)b.Bottom - (int)b.Width, (int)b.Width, (int)b.Width), 0, 360);
+                            if (onKeys.ContainsKey(keyNum))
+                            {
+                                var velo = onKeys[keyNum] * 2;
+                                using (Brush blueBrush = new SolidBrush(Color.FromArgb(0, velo, 255)))
+                                    g.FillRegion(blueBrush, new Region(path));
+                            }
+                            else
+                                g.FillRegion(blackBrush, new Region(path));
+                            g.DrawPath(blackPen, path);
                         }
-                        g.DrawPath(blackPen, path);
-                    }
-                    else if (!black)
-                    {
-                        if (onKeys.ContainsKey(keyNum))
-                            g.FillRegion(blueBrush, new Region(path));
-                        else
-                            g.FillRegion(whiteBrush, new Region(path));
-                        g.DrawPath(blackPen, path);
-                    }
-                    else
-                    {
-                        if (onKeys.ContainsKey(keyNum))
-                            g.FillRegion(blueBrush, new Region(path));
-                        else
-                            g.FillRegion(blackBrush, new Region(path));
-                        g.DrawPath(blackPen, path);
                     }
                 }
             }
@@ -398,15 +412,21 @@ namespace zanac.MAmidiMEmo.Gui
                 case 7: //G
                     {
                         var x = wKeyW + (octave * 7 + 4) * wKeyW;
-
                         pts.Add(new Point(x + (bKeyW / 2), 0));
                         pts.Add(new Point(x + (bKeyW / 2), bKeyH));
                         pts.Add(new Point(x, bKeyH));
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
-                        pts.Add(new Point(x + wKeyW, bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        if (keyNum == 127)
+                        {
+                            pts.Add(new Point(x + wKeyW, 0));
+                        }
+                        else
+                        {
+                            pts.Add(new Point(x + wKeyW, bKeyH));
+                            pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
+                            pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        }
                     }
                     break;
                 case 8: //G#
@@ -493,7 +513,13 @@ namespace zanac.MAmidiMEmo.Gui
                         lastKeyOff();
 
                         lastKeyOn = keyNum;
-                        var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                        var rect = path.GetBounds();
+                        var velo = (127 * (e.Y - (Height / 6))) / (Height / 3);
+                        if (velo < 1)
+                            velo = 1;
+                        if (velo > 127)
+                            velo = 127;
+                        var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)velo);
                         NoteOn?.Invoke(this, noe);
                     }
                 }
@@ -544,7 +570,13 @@ namespace zanac.MAmidiMEmo.Gui
                                 lastKeyOff();
 
                                 lastKeyOn = keyNum;
-                                var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)127);
+                                var rect = path.GetBounds();
+                                var velo = (127 * (e.Y - (Height / 6))) / (Height / 3);
+                                if (velo < 1)
+                                    velo = 1;
+                                if (velo > 127)
+                                    velo = 127;
+                                var noe = new TaggedNoteOnEvent((SevenBitNumber)keyNum, (SevenBitNumber)velo);
                                 NoteOn?.Invoke(this, noe);
                             }
                         }

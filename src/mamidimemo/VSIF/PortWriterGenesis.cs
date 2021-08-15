@@ -29,7 +29,7 @@ namespace zanac.MAmidiMEmo.VSIF
         {
         }
 
-        public override void Write(byte address, byte data, int wait)
+        public override void Write(byte type, byte address, byte data, int wait)
         {
             SerialPort?.Write(new byte[] { address, data }, 0, 2);
             if (FtdiPort != null)

@@ -28,7 +28,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 blackBrush?.Dispose();
                 whiteBrush?.Dispose();
-                blueBrush?.Dispose();
+                //blueBrush?.Dispose();
                 blackPen?.Dispose();
 
             }

@@ -106,12 +106,12 @@ namespace zanac.MAmidiMEmo.VSIF
         /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
-        public virtual void WriteData(byte address, byte data, int wait)
+        public virtual void WriteData(byte type, byte address, byte data, int wait)
         {
             try
             {
                 lock (lockObject)
-                    SerialPort?.Write(address, data, wait);
+                    SerialPort?.Write(type, address, data, wait);
             }
             catch (Exception ex)
             {

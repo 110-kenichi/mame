@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace zanac.MAmidiMEmo.VSIF
 {
-    public class PortWriterNesDirect : PortWriter
+    public class PortWriterMsx : PortWriter
     {
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serialPort"></param>
-        public PortWriterNesDirect(SerialPort serialPort) : base(serialPort)
+        public PortWriterMsx(SerialPort serialPort) : base(serialPort)
         {
         }
 
@@ -25,20 +25,20 @@ namespace zanac.MAmidiMEmo.VSIF
         /// 
         /// </summary>
         /// <param name="ftdiPort"></param>
-        public PortWriterNesDirect(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
+        public PortWriterMsx(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
         {
         }
 
         public override void Write(byte type, byte address, byte data, int wait)
         {
-            //if (SerialPort != null)
-            //{
-            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
-            //}
-            //else
             if (FtdiPort != null)
             {
-                sendData(convertToDataPacket(new byte[2] { address, data }), wait);
+                byte[] sd = new byte[5] {
+                    (byte)((address >> 4) | 0x10), (byte)((address & 0x0f) | 0x00),
+                    (byte)((data    >> 4) | 0x20), (byte)((data &    0x0f) | 0x00),
+                    (byte)(type           | 0x20)
+                };
+                sendData(sd, wait);
             }
         }
 
@@ -47,7 +47,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private void sendData(byte[] sendData, int wait)
         {
-            wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * wait) / 100;
+            wait = (int)(VsifManager.FTDI_BAUDRATE_MSX_MUL * wait) / 100;
 
             var osd = sendData.ToArray();
             byte[] sd = new byte[osd.Length * (int)wait];
@@ -63,25 +63,6 @@ namespace zanac.MAmidiMEmo.VSIF
             var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
             if (stat != FTDI.FT_STATUS.FT_OK)
                 Debug.WriteLine(stat);
-
-        }
-
-        private byte[] convertToDataPacket(byte[] sendData)
-        {
-            byte[] ret = new byte[sendData.Length * 2];
-
-            for (int i = 0; i < sendData.Length; i += 2)
-            {
-                byte adr = (byte)~sendData[i + 0];  //DIRECT ADDRESS
-                byte dat = (byte)~sendData[i + 1];
-
-                ret[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
-                ret[(i * 2) + 1] = (byte)(0x00 | adr & 0xf);
-                ret[(i * 2) + 2] = (byte)(0x10 | dat >> 4);
-                ret[(i * 2) + 3] = (byte)(0x00 | dat & 0xf);
-            }
-
-            return ret;
         }
 
     }

@@ -177,7 +177,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (efs != null)
                 ActiveFx = efs.Enable;
 
-            SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
 
             if (DrumTimbre != null)
             {
@@ -208,7 +208,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             TrySoundOff();
 
-            SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
         }
 
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOff;
@@ -236,7 +236,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 IsKeyOff = true;
                 AdsrEngine?.Gate(false);
 
-                SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+                SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
             }
 
             IsSoundOff = true;
@@ -269,7 +269,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void OnPitchUpdated()
         {
-            SoundPitchUpdated?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundPitchUpdated?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
         }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            if (!ignoreVelocity)
+            if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.VelocityMap))
                 v *= NoteOnEvent.Velocity / 127d;
 
             if (AdsrEngine != null)
@@ -740,15 +740,22 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        public int Velocity
+        {
+            get;
+            private set;
+        }
+
         public double Pitch
         {
             get;
             private set;
         }
 
-        public SoundUpdatedEventArgs(int noteNumber, double pitch)
+        public SoundUpdatedEventArgs(int noteNumber, int velocity, double pitch)
         {
             NoteNumber = noteNumber;
+            Velocity = velocity;
             Pitch = pitch;
         }
 

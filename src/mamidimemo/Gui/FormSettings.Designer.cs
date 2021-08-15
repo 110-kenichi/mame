@@ -50,14 +50,11 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.textBox1 = new MetroFramework.Controls.MetroTextBox();
-            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
-            this.numericUpDownClkWidth = new System.Windows.Forms.NumericUpDown();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidth)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -96,8 +93,6 @@
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.label7, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.metroLabel1, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.numericUpDownClkWidth, 1, 5);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // comboBoxAudioLatency
@@ -338,18 +333,6 @@
             this.textBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
-            // metroLabel1
-            // 
-            resources.ApplyResources(this.metroLabel1, "metroLabel1");
-            this.metroLabel1.Name = "metroLabel1";
-            // 
-            // numericUpDownClkWidth
-            // 
-            this.numericUpDownClkWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "ClkWidth", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            resources.ApplyResources(this.numericUpDownClkWidth, "numericUpDownClkWidth");
-            this.numericUpDownClkWidth.Name = "numericUpDownClkWidth";
-            this.numericUpDownClkWidth.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.ClkWidth;
-            // 
             // folderBrowserDialog1
             // 
             resources.ApplyResources(this.folderBrowserDialog1, "folderBrowserDialog1");
@@ -377,7 +360,6 @@
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidth)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -406,7 +388,5 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private MetroFramework.Controls.MetroButton button1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private System.Windows.Forms.NumericUpDown numericUpDownClkWidth;
     }
 }
