@@ -9,6 +9,7 @@ void uart_processVgm();
 
 void processPlayer() {
   
+/*  
     print("*WAITING FOR VSIF FTDI CONNECTION*");
 __asm
     DI
@@ -26,7 +27,7 @@ LOOP:
 
     CALL CLS
 __endasm;
-
+*/
     print("MAMI VGM SOUND DRIVER BY ITOKEN\r\n");
     print("NOTE: PLEASE RESET AFTER RECONNECTED");
     print(" \r\n");

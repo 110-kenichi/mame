@@ -26,67 +26,95 @@ CHPUT = #0xA2
     LD  C,#14           ; 7 14
     .endm
 
-
-    .macro WRITE_SCC_NEXT_BYTE
-    ; GET NEXT BYTE DATA
+    .macro WRITE_SCC_2BYTES
 1$:
+    ; 2ND DATA Hi 4bit
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
-    JP  NZ, 1$  ; 10 36
+    JP  NZ, 1$          ; 10 29
+    IN  A,(PSGRD)       ; 11 40
+    LD  E,A             ;  4 44
+    SLA E               ;  8 52
+    SLA E               ;  8 60
+    SLA E               ;  8 68
+    SLA E               ;  8 76
+2$:
+    ; 2ND DATA Lo 4bit
+    IN  A,(PSGRD)       ; 11 11
+    BIT 5,A             ;  8 19
+    JP  Z, 2$           ; 10 29
+    IN  A,(PSGRD)       ; 11 40
+    AND #0xf            ;  7 47
+    OR  E               ;  4 51
+
+    ;WRITE BOTH BYTE AND NEXT BYTE
+    LD  (HL), D         ;  7 58
+    INC L               ;  4 62
+    LD  (HL), A         ;  7 69
+    LD  E,#0x30         ;  7 76
+    JP  __VGM_LOOP      ; 10 86
+    .endm
+
+    .macro WRITE_SCC_31_BYTES
+    LD  B,#31           ;  7  7
+1$:
     ; DATA Hi 4bit
+    IN  A,(PSGRD)       ; 11 18
+    BIT 5,A             ;  8 26
+    JP  NZ,1$           ; 10 36
     IN  A,(PSGRD)       ; 11 47
     LD  D,A             ;  4 51
     SLA D               ;  8 59
     SLA D               ;  8 67
     SLA D               ;  8 75
+    SLA D               ;  8 83
 2$:
+    ; DATA Lo 4bit
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
-    JP  Z, 2$ ; 10 29
-    ; DATA Lo 4bit
+    JP  Z,2$            ; 10 29
     IN  A,(PSGRD)       ; 11 40
     AND #0xf            ;  7 47
-    SLA D               ;  8 55
-    OR  D               ;  4 59
-    LD  D,A             ;  4 63
+    OR  D               ;  4 51
 
     ;WRITE NEXT BYTE
-    INC L               ;  4 67
-    LD  (HL), D         ;  7 74
-    JP  __VGM_LOOP      ; 10 84
+    INC L               ;  4 55
+    LD  (HL), A         ;  7 62
+    DJNZ 1$             ; 13 75  8 70
+    JP  __VGM_LOOP      ;       10 80
     .endm
-    
+
 _uart_processVgm::
     DI
-    LD  A,#15        ; 7
+    LD  A,#15        ;  7
     OUT (PSGAD),A    ; 11
-    LD  A,#0xCF      ; 7
-    OUT (PSGWR),A    ; 11   Select Joy2 Input
+    LD  A,#0xCF      ;  7
+    OUT (PSGWR),A    ; 11   Set Joy2 Pin Input Mode
 
     INIT_CONST
 
 __VGM_LOOP:
-    ; Select PSG REG14
+    ; JOY2 Pin Read Mode
     LD  A,C             ;  4  4
     OUT (PSGAD),A       ; 11 15
 
-__VGM_ADRS1:
-    ; Read JOY2
+__VGM_ADRS_HI:
     IN  A,(PSGRD)       ; 11 26
     BIT 4,A             ;  8 34
-    JP  Z, __VGM_ADRS1  ; 10 44
-    ; ADDRESS Hi 4bit
+    JP  Z,__VGM_ADRS_HI ; 10 44
     IN  A,(PSGRD)       ; 11 55
-    LD  B,A             ;  4 59
-    SLA B               ;  8 67
+    BIT 5,A             ;  8 63
+    JP  NZ,__VGM_ADRS_HI  ; 10 73
+    LD  B,A             ;  4 77
+    SLA B               ;  8 85
 ;    SLA B               ; exec later X
 ;    SLA B               ; exec later X
 ;    SLA B               ; exec later X
 
-__VGM_ADRS2:
+__VGM_ADRS_LO:
     IN  A,(PSGRD)       ; 11 11
     BIT 4,A             ;  8 19
-    JP  NZ, __VGM_ADRS2 ; 10 29
+    JP  NZ,__VGM_ADRS_LO ; 10 29
     ; ADDRESS Lo 4bit
     IN  A,(PSGRD)       ; 11 40
     AND #0xf            ;  7 47
@@ -97,10 +125,10 @@ __VGM_ADRS2:
     OR  B               ;  4 75
     LD  B, A            ;  4 79
 
-__VGM_DATA1:
+__VGM_DATA_HI:
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
-    JP  Z, __VGM_DATA1  ; 10 36
+    JP  Z, __VGM_DATA_HI ; 10 36
     ; DATA Hi 4bit
     IN  A,(PSGRD)       ; 11 47
     LD  D,A             ;  4 51
@@ -109,10 +137,10 @@ __VGM_DATA1:
     SLA D               ;  8 75
 ;    SLA D               ; exec later X
 
-__VGM_DATA2:
+__VGM_DATA_LO:
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
-    JP  NZ, __VGM_DATA2 ; 10 29
+    JP  NZ,__VGM_DATA_LO ; 10 29
     ; DATA Lo 4bit
     IN  A,(PSGRD)       ; 11 40
     AND #0xf            ;  7 47
@@ -122,10 +150,10 @@ __VGM_DATA2:
     LD  D,A             ;  4 63
 
     LD  L,#0            ;  7 70 Zero clear
-__VGM_TYPE1:
+__VGM_TYPE:
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
-    JP  Z, __VGM_TYPE1  ; 10 29
+    JP  Z, __VGM_TYPE   ; 10 29
     IN  A,(PSGRD)       ; 11 40
     XOR #0xB0           ;  7 47
     LD  H,A             ;  4 51
@@ -222,45 +250,43 @@ __WRITE_SCC_SLOT_END:
 
     .ORG 0x5400
 __WRITE_SCC1:
-    LD  H,#0xB8         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    JP  __VGM_LOOP      ; 10 88
+    LD  H,#0xB8         ;  7 62
+    LD  L,B             ;  4 66
+    LD  (HL), D         ;  7 73
+    JP  __VGM_LOOP      ; 10 83
 
     .ORG 0x5500
-__WRITE_SCC1_COMPAT:
-    LD  H,#0x80         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    JP  __VGM_LOOP      ; 10 88
+__WRITE_SCC:
+    LD  H,#0x98         ;  7 62
+    LD  L,B             ;  4 66
+    LD  (HL), D         ;  7 73
+    JP  __VGM_LOOP      ; 10 83
 
     .ORG 0x5600
-__WRITE_SCC:
-    LD  H,#0x80         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    JP  __VGM_LOOP      ; 10 88
+__WRITE_SCC1_2BYTES:
+    LD  H,#0xB8         ;  7 62
+    LD  L,B             ;  4 66
+    WRITE_SCC_2BYTES
 
     .ORG 0x5700
-__WRITE_SCC1_2:
-    LD  H,#0xB8         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    WRITE_SCC_NEXT_BYTE
+__WRITE_SCC_2BYTES:
+    LD  H,#0x98         ;  7 62
+    LD  L,B             ;  4 66
+    WRITE_SCC_2BYTES
 
     .ORG 0x5800
-__WRITE_SCC1_COMPAT_2:
-    LD  H,#0x80         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    WRITE_SCC_NEXT_BYTE
+__WRITE_SCC1_32_BYTES:
+    LD  H,#0xB8         ;  7 62
+    LD  L,B             ;  4 66
+    LD  (HL), D         ;  7 73
+    WRITE_SCC_31_BYTES
 
     .ORG 0x5900
-__WRITE_SCC_2:
-    LD  H,#0x80         ;  7 67
-    LD  L,B             ;  4 71
-    LD  (HL), D         ;  7 78
-    WRITE_SCC_NEXT_BYTE
+__WRITE_SCC_32_BYTES:
+    LD  H,#0x98         ;  7 62
+    LD  L,B             ;  4 66
+    LD  (HL), D         ;  7 73
+    WRITE_SCC_31_BYTES
 
     .ORG 0x5A00
     JP __VGM_LOOP       ; 10 98
