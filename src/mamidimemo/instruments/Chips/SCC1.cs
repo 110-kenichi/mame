@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -22,6 +23,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://bifi.msxnet.org/msxnet/tech/scc.html
 
@@ -61,6 +63,191 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return 7;
+            }
+        }
+
+
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set Port No for \"VSIF - SMS/MSX\"\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        private object vsifLock = new object();
+
+        private VsifClient vsifClient;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports \"Software\" and \"VSIF - MSX\"")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSCC))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                    setSoundEngine(value);
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [RefreshProperties(RefreshProperties.All)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (vsifLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            enableScc(SCCChipType, ExtSCCSlot);
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private SCCSlotNo f_extSCCSlot = SCCSlotNo.None;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [DefaultValue(SCCSlotNo.None)]
+        [Description("Specify the external SCC/SCC-I slot number.\r\n" +
+            "*WANRING* Be sure to specify a valid slot to avoid crashing.")]
+        public SCCSlotNo ExtSCCSlot
+        {
+            get
+            {
+                return f_extSCCSlot;
+            }
+            set
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        enableScc(f_sccType, value);
+                        break;
+                }
+                f_extSCCSlot = value;
+            }
+        }
+
+        private SCCType f_sccType = SCCType.SCC1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select SCC chip type.\r\n" +
+            "SCC1(SCC-I) can outputs 5ch sounds." +
+            "Others can outputs 4ch sounds only.")]
+        [DefaultValue(SCCType.SCC1)]
+        public SCCType SCCChipType
+        {
+            get
+            {
+                return f_sccType;
+            }
+            set
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        enableScc(value, f_extSCCSlot);
+                        break;
+                }
+                f_sccType = value;
+            }
+        }
+
+        private void enableScc(SCCType type, SCCSlotNo slot)
+        {
+            if (slot != SCCSlotNo.None)
+            {
+                lock (vsifClient.LockObject)
+                {
+                    vsifClient.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
+                    vsifClient.Sleep(16);
+                }
+            }
+            ClearWrittenDataCache();
+        }
+
+        private int f_ftdiClkWidth = 15;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(15)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
             }
         }
 
@@ -122,9 +309,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void Scc1VolumeWriteData(uint unitNumber, uint address, byte data)
+        private void Scc1VolumeWriteData(uint unitNumber, uint offset, byte data)
         {
-            DeferredWriteData(SCC1_volume_w, unitNumber, address, data);
+            byte address = 0;
+            byte type = 0;
+            lock (vsifLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        switch (SCCChipType)
+                        {
+                            case SCCType.SCC1:
+                                type = 4;
+                                address = (byte)(0xaa + offset);
+                                break;
+                            case SCCType.SCC1_Compat:
+                            case SCCType.SCC:
+                                type = 5;
+                                address = (byte)(0x8a + offset);
+                                break;
+                        }
+                        break;
+                }
+            }
+            WriteData(address, data, true, new Action(() =>
+            {
+                lock (vsifLock)
+                {
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                        vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
+                }
+                DeferredWriteData(SCC1_volume_w, unitNumber, offset, data);
+            }));
             /*
             try
             {
@@ -140,9 +357,51 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void Scc1FrequencyWriteData(uint unitNumber, uint address, byte data)
+        private void Scc1FrequencyWriteData(uint unitNumber, uint offset, uint freq)
         {
-            DeferredWriteData(SCC1_frequency_w, unitNumber, address, data);
+            byte address = 0;
+            byte type = 0;
+            lock (vsifLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        switch (SCCChipType)
+                        {
+                            case SCCType.SCC1:
+                                type = 6;
+                                address = (byte)(0xa0 + offset);
+                                break;
+                            case SCCType.SCC1_Compat:
+                            case SCCType.SCC:
+                                type = 7;
+                                address = (byte)(0x80 + offset);
+                                break;
+                        }
+                        break;
+                }
+            }
+            WriteData(address, freq, true, new Action(() =>
+            {
+                lock (vsifLock)
+                {
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                    {
+                        lock (vsifClient.LockObject)
+                        {
+                            vsifClient.WriteData(type, address, (byte)(freq & 0xff), f_ftdiClkWidth);
+
+                            byte freq_h = (byte)((freq >> 8) & 0xf);
+                            vsifClient.RawWriteData(new byte[] {
+                                (byte)((freq_h    >> 4) | 0x00),
+                                (byte)((freq_h &  0x0f) | 0x20),
+                            }, f_ftdiClkWidth);
+                        }
+                    }
+                }
+                DeferredWriteData(SCC1_frequency_w, unitNumber, offset + 0, (byte)(freq & 0xff));
+                DeferredWriteData(SCC1_frequency_w, unitNumber, offset + 1, (byte)((freq >> 8) & 0xf));
+            }));
             /*
             try
             {
@@ -158,9 +417,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void Scc1KeyOnOffWriteData(uint unitNumber, byte data)
+        private void Scc1KeyOnOffWriteData(uint unitNumber, byte data)
         {
-            DeferredWriteData(SCC1_keyonoff_w, unitNumber, (uint)0, data);
+            byte address = 0;
+            byte type = 0;
+            lock (vsifLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        switch (SCCChipType)
+                        {
+                            case SCCType.SCC1:
+                                type = 4;
+                                address = (byte)(0xaf);
+                                break;
+                            case SCCType.SCC1_Compat:
+                            case SCCType.SCC:
+                                type = 5;
+                                address = (byte)(0x8f);
+                                break;
+                        }
+                        break;
+                }
+            }
+            WriteData(address, data, true, new Action(() =>
+            {
+                lock (vsifLock)
+                {
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                        vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
+                }
+                DeferredWriteData(SCC1_keyonoff_w, unitNumber, (uint)0, data);
+            }));
             /*
             try
             {
@@ -194,9 +483,47 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void Scc1WriteWaveData(uint unitNumber, uint address, sbyte[] data)
+        private void Scc1WriteWaveData(uint unitNumber, uint offset, sbyte[] data, int hashCode)
         {
-            DeferredWriteData(SCC1_waveform_w, unitNumber, address, data, data.Length);
+            lock (vsifLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        {
+                            byte type = 0;
+                            switch (SCCChipType)
+                            {
+                                case SCCType.SCC1:
+                                    type = 8;
+                                    break;
+                                case SCCType.SCC1_Compat:
+                                case SCCType.SCC:
+                                    type = 9;
+                                    break;
+                            }
+                            if (type != 0)
+                            {
+                                    WriteData(offset, (uint)hashCode, true, new Action(() =>
+                                    {
+                                        byte address = (byte)(0x00 + offset);
+                                        vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
+
+                                        for (int i = 1; i < data.Length; i++)
+                                        {
+                                            var dt = (byte)data[i];
+                                            vsifClient.RawWriteData(new byte[] {
+                                                (byte)((dt    >> 4) | 0x00),
+                                                (byte)((dt &  0x0f) | 0x20),
+                                            }, f_ftdiClkWidth);
+                                        }
+                                    }));
+                            }
+                        }
+                        break;
+                }
+            }
+            DeferredWriteData(SCC1_waveform_w, unitNumber, offset, data, data.Length);
 
             /*
             try
@@ -356,6 +683,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>
@@ -432,7 +760,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <returns></returns>
             private (SCC1 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, sccOnSounds, note, 5);
+                if (parentModule.SCCChipType == SCCType.SCC1)
+                    return SearchEmptySlotAndOffForLeader(parentModule, sccOnSounds, note, 5);
+                else
+                    return SearchEmptySlotAndOffForLeader(parentModule, sccOnSounds, note, 4);
             }
 
             internal override void ProcessAllSoundOff()
@@ -441,7 +772,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ProcessControlChange(me);
 
                 for (int i = 0; i < 5; i++)
-                    Scc1KeyOnOffWriteData(parentModule.UnitNumber, 0);
+                    parentModule.Scc1KeyOnOffWriteData(parentModule.UnitNumber, 0);
             }
         }
 
@@ -486,7 +817,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 byte data = Scc1KeyOnOffReadData(parentModule.UnitNumber);
                 data |= (byte)(1 << Slot);
-                Scc1KeyOnOffWriteData(parentModule.UnitNumber, data);
+                parentModule.Scc1KeyOnOffWriteData(parentModule.UnitNumber, data);
             }
 
             /// <summary>
@@ -494,7 +825,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), timbre.WsgData);
+                parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), timbre.WsgData, timbre.GetWsgDataHashCode());
             }
 
             /// <summary>
@@ -533,18 +864,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             lastWaveTable = no;
                             sbyte[] wsgData;
+                            int hashCode = 0;
                             switch (no)
                             {
                                 case 1:
                                 case 2:
                                 case 3:
                                     wsgData = timbre.WsgMorphData[no - 1].WsgData;
+                                    hashCode = timbre.WsgMorphData[no - 1].GetWsgDataHashCode();
                                     break;
                                 default:
                                     wsgData = timbre.WsgData;
+                                    hashCode = timbre.GetWsgDataHashCode();
                                     break;
                             }
-                            Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData);
+                            parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData, hashCode);
                         }
                     }
                 }
@@ -557,7 +891,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 byte fv = (byte)((int)Math.Round(15 * CalcCurrentVolume()) & 0xf);
 
-                Scc1VolumeWriteData(parentModule.UnitNumber, (uint)Slot, fv);
+                parentModule.Scc1VolumeWriteData(parentModule.UnitNumber, (uint)Slot, fv);
             }
 
             /// <summary>
@@ -579,10 +913,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 freq = Math.Round((3579545 / (32 * freq)) - 1);
                 if (freq > 0xfff)
                     freq = 0xfff;
+                else if (freq < 0x8)
+                    freq = 0x8;
                 uint n = (uint)freq;
-                Scc1FrequencyWriteData(parentModule.UnitNumber, (uint)((Slot << 1)) + 0, (byte)(n & 0xff));
-                Scc1FrequencyWriteData(parentModule.UnitNumber, (uint)((Slot << 1)) + 1, (byte)((n >> 8) & 0xf));
-
+                parentModule.Scc1FrequencyWriteData(parentModule.UnitNumber, (uint)((Slot << 1)), n);
                 base.OnPitchUpdated();
             }
 
@@ -592,7 +926,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 byte data = Scc1KeyOnOffReadData(parentModule.UnitNumber);
                 data &= (byte)~(1 << Slot);
-                Scc1KeyOnOffWriteData(parentModule.UnitNumber, data);
+                parentModule.Scc1KeyOnOffWriteData(parentModule.UnitNumber, data);
             }
         }
 
@@ -603,6 +937,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class SCC1Timbre : TimbreBase
         {
+            private sbyte[] wsgData = new sbyte[32];
 
             [TypeConverter(typeof(ArrayConverter))]
             [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -612,9 +947,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Wave Table (32 samples, 8 bit signed data)")]
             public sbyte[] WsgData
             {
-                get;
-                set;
-            } = new sbyte[32];
+                get
+                {
+                    return wsgData;
+                }
+                set
+                {
+                    wsgData = value;
+                    calcWsgDataHashCode();
+                }
+            }
+
+            private int wsgDataHashCode;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public int GetWsgDataHashCode()
+            {
+                if (wsgDataHashCode == 0)
+                    calcWsgDataHashCode();
+                return wsgDataHashCode;
+            }
+
+            private void calcWsgDataHashCode()
+            {
+                wsgDataHashCode = WsgData.Length;
+                foreach (int val in WsgData)
+                    wsgDataHashCode = unchecked(wsgDataHashCode * 314159 + val);
+            }
 
             public bool ShouldSerializeWsgData()
             {
@@ -646,10 +1008,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     applyWsgSerializeData(value, WsgData);
+                    calcWsgDataHashCode();
                 }
             }
 
-            private static void applyWsgSerializeData(string value, sbyte[] data)
+            private void applyWsgSerializeData(string value, sbyte[] data)
             {
                 string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 var vs = new List<sbyte>();
@@ -722,7 +1085,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 this.SDS.FxS = new SccFxSettings();
 
-
+                calcWsgDataHashCode();
             }
 
             public override void RestoreFrom(string serializeData)
@@ -731,6 +1094,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     var obj = JsonConvert.DeserializeObject<SCC1Timbre>(serializeData);
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    calcWsgDataHashCode();
                 }
                 catch (Exception ex)
                 {
@@ -751,6 +1115,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [MidiHook]
         public class SCCWsgMorphData : ContextBoundObject
         {
+            private sbyte[] wsgData = new sbyte[32];
+
             [TypeConverter(typeof(ArrayConverter))]
             [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [WsgBitWideAttribute(8)]
@@ -759,9 +1125,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Morphing Wave Table 1 (32 samples, 8 bit signed data)")]
             public sbyte[] WsgData
             {
-                get;
-                set;
-            } = new sbyte[32];
+                get
+                {
+                    return wsgData;
+                }
+                set
+                {
+                    wsgData = value;
+                    calcWsgDataHashCode();
+                }
+            }
+
+            private int wsgDataHashCode;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public int GetWsgDataHashCode()
+            {
+                if (wsgDataHashCode == 0)
+                    calcWsgDataHashCode();
+                return wsgDataHashCode;
+            }
+
+            private void calcWsgDataHashCode()
+            {
+                wsgDataHashCode = WsgData.Length;
+                foreach (int val in WsgData)
+                    wsgDataHashCode = unchecked(wsgDataHashCode * 314159 + val);
+            }
 
             public bool ShouldSerializeWsgData()
             {
@@ -793,6 +1186,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     applyWsgSerializeData(value, WsgData);
+                    calcWsgDataHashCode();
                 }
             }
 
@@ -1001,5 +1395,59 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return process;
             }
         }
+
+        private class EnumConverterSoundEngineTypeSCC : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_MSX_FTDI});
+
+                return sc;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum SCCType
+        {
+            SCC1 = 1,
+            SCC1_Compat = 2,
+            SCC = 3,
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum SCCSlotNo
+        {
+            None = 0xff,
+            Slot0_Basic = 0b0000_0000,
+            Slot0_Ext0 = 0b1000_0000,
+            Slot0_Ext1 = 0b1000_0100,
+            Slot0_Ext2 = 0b1000_1000,
+            Slot0_Ext3 = 0b1000_1100,
+
+            Slot1_Basic = 0b0000_0001,
+            Slot1_Ext0 = 0b1000_0001,
+            Slot1_Ext1 = 0b1000_0101,
+            Slot1_Ext2 = 0b1000_1001,
+            Slot1_Ext3 = 0b1000_1101,
+
+            Slot2_Basic = 0b0000_0010,
+            Slot2_Ext0 = 0b1000_0010,
+            Slot2_Ext1 = 0b1000_0110,
+            Slot2_Ext2 = 0b1000_1010,
+            Slot2_Ext3 = 0b1000_1110,
+
+            Slot3_Basic = 0b0000_0011,
+            Slot3_Ext0 = 0b1000_0011,
+            Slot3_Ext1 = 0b1000_0111,
+            Slot3_Ext2 = 0b1000_1011,
+            Slot3_Ext3 = 0b1000_1111,
+        }
+
     }
 }

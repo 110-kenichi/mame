@@ -71,6 +71,8 @@ namespace zanac.MAmidiMEmo.VSIF
 
         public abstract void Write(byte type, byte address, byte data, int wait);
 
+        public abstract void RawWrite(byte[] data, int wait);
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

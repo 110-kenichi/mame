@@ -23,6 +23,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
@@ -63,6 +64,143 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return 22;
+            }
+        }
+
+
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set Port No for \"VSIF - MSX\".\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        private VsifClient vsifClient;
+
+        private object sndEnginePtrLock = new object();
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports Software and SPFM and VSIF - MSX.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeYMF262))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value &&
+                    (value == SoundEngineType.Software ||
+                    value == SoundEngineType.VSIF_MSX_FTDI))
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeYMF262 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_MSX_FTDI,
+                });
+
+                return sc;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private int f_ftdiClkWidth = 15;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(15)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+
+            {
+                f_ftdiClkWidth = value;
             }
         }
 
@@ -227,10 +365,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             { 06, 07, 08, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
         };
 
+        private void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data)
+        {
+            YMF262WriteData(unitNumber, address, op, slot, opmode, consel, data, true);
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        private static void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data)
+        private void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data, bool useCache)
         {
             var adrL = address & 0xff;
             var adrH = (address & 0x100) >> 7;  // 0 or 2
@@ -271,30 +414,54 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Program.SoundUpdating();
 #endif
-            byte chofst = 0;
-            switch (adrL)
-            {
-                case 0x20:
-                case 0x40:
-                case 0x60:
-                case 0x80:
-                case 0xe0:
-                    chofst = chAddressOffset[slot];
-                    break;
-                case 0xa0:
-                case 0xb0:
-                case 0xc0:
-                    chofst = (byte)slot;
-                    break;
-            }
+                byte chofst = 0;
+                switch (adrL)
+                {
+                    case 0x20:
+                    case 0x40:
+                    case 0x60:
+                    case 0x80:
+                    case 0xe0:
+                        chofst = chAddressOffset[slot];
+                        break;
+                    case 0xa0:
+                    case 0xb0:
+                    case 0xc0:
+                        chofst = (byte)slot;
+                        break;
+                }
 
+                var adr = (byte)(adrL + (op * 3) + chofst);
+                address = adrH | adr;
+
+                WriteData(address, data, useCache, new Action(() =>
+                {
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.VSIF_MSX_FTDI:
+                                switch (adrH)
+                                {
+                                    case 0:
+                                        vsifClient.WriteData(10, adr, data, f_ftdiClkWidth);
+                                        break;
+                                    case 2:
+                                        vsifClient.WriteData(11, adr, data, f_ftdiClkWidth);
+                                        break;
+                                }
+                                break;
+                        }
+                    }
 #if DEBUG
-                YMF262_write(unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
-                YMF262_write(unitNumber, (uint)1, data);
+                    YMF262_write(unitNumber, (uint)adrH, adr);
+                    YMF262_write(unitNumber, (uint)1, data);
 #else
-            DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
-            DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
+                    DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+                    DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
 #endif
+                }));
+
 
 #if DEBUG
             }
@@ -619,12 +786,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ProcessControlChange(me);
 
                 for (int i = 0; i < 9; i++)
-                    YMF262WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
                 for (int i = 0; i < 9; i++)
-                    YMF262WriteData(parentModule.UnitNumber, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
                 for (int i = 0; i < 18; i++)
                     for (int op = 0; op < 2; op++)
-                        YMF262WriteData(parentModule.UnitNumber, 0x40, op, i, 0, 0, 63);
+                        parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, i, 0, 0, 63);
             }
         }
 
@@ -718,9 +885,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (lastALG <= 1)
                     {
                         if (timbre.ALG == 1 || op == 1)
-                            YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                            parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                         else
-                            YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                            parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                     }
                     else
                     {
@@ -728,27 +895,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case 2:
                                 if (op == 1)
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                                 else
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 3:
                                 if (op == 1 || op == 3)
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                                 else
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 4:
                                 if (op == 0 || op == 3)
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                                 else
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 5:
                                 if (op == 0 || op == 2 || op == 3)
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
                                 else
-                                    YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                         }
                     }
@@ -769,11 +936,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     pan = 0x3;
 
                 if (lastALG <= 1)
-                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | lastALG));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | lastALG));
                 else
                 {
-                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | ((lastALG - 2) & 1)));
-                    YMF262WriteData(parentModule.UnitNumber, 0xc0, 1, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB2 << 1 | (((lastALG - 2) >> 1) & 1)));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0xc0, 0, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB << 1 | ((lastALG - 2) & 1)));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0xc0, 1, Slot, lastALG, lastConsel, (byte)(pan << 6 | pan << 4 | timbre.FB2 << 1 | (((lastALG - 2) >> 1) & 1)));
                 }
             }
 
@@ -816,8 +983,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte kon = IsKeyOff ? (byte)0 : (byte)0x20;
                 lastFreqData = (byte)(kon | octave | ((freq >> 8) & 3));
 
-                YMF262WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, lastALG, lastConsel, (byte)(0xff & freq));
-                YMF262WriteData(parentModule.UnitNumber, 0xb0, 0, Slot, lastALG, lastConsel, lastFreqData);
+                parentModule.YMF262WriteData(parentModule.UnitNumber, 0xa0, 0, Slot, lastALG, lastConsel, (byte)(0xff & freq), false);
+                parentModule.YMF262WriteData(parentModule.UnitNumber, 0xb0, 0, Slot, lastALG, lastConsel, lastFreqData, false);
 
                 base.OnPitchUpdated();
             }
@@ -830,17 +997,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int op = 0; op < (lastALG <= 1 ? 2 : 4); op++)
                 {
                     YMF262Operator o = timbre.Ops[op];
-                    YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
                     //$60+: Attack Rate / Decay Rate
-                    YMF262WriteData(parentModule.UnitNumber, 0x60, op, Slot, lastALG, lastConsel, (byte)(o.AR << 4 | o.DR));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x60, op, Slot, lastALG, lastConsel, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
                     if (o.SR.HasValue && o.EG == 0)
-                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.SR.Value));
+                        parentModule.YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.SR.Value));
                     else
-                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
+                        parentModule.YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
 
                     //$e0+: Waveform Select
-                    YMF262WriteData(parentModule.UnitNumber, 0xe0, op, Slot, lastALG, lastConsel, (byte)(o.WS));
+                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0xe0, op, Slot, lastALG, lastConsel, (byte)(o.WS));
                 }
 
                 //$C0+: algorithm and feedback & PAN
@@ -859,12 +1026,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YMF262Operator o = timbre.Ops[op];
                     if (o.SR.HasValue && o.EG == 0)
                     {
-                        YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
-                        YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
+                        parentModule.YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
+                        parentModule.YMF262WriteData(parentModule.UnitNumber, 0x80, op, Slot, lastALG, lastConsel, (byte)(o.SL << 4 | o.RR));
                     }
                 }
 
-                YMF262WriteData(parentModule.UnitNumber, 0xB0, 0, Slot, lastALG, lastConsel, (byte)(lastFreqData & 0x1f));
+                parentModule.YMF262WriteData(parentModule.UnitNumber, 0xB0, 0, Slot, lastALG, lastConsel, (byte)(lastFreqData & 0x1f));
             }
 
             private ushort[] freqTable = new ushort[] {

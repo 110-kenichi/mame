@@ -29,6 +29,13 @@ namespace zanac.MAmidiMEmo.VSIF
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
         public override void Write(byte type, byte address, byte data, int wait)
         {
             //if (SerialPort != null)
@@ -39,6 +46,26 @@ namespace zanac.MAmidiMEmo.VSIF
             if (FtdiPort != null)
             {
                 sendData(convertToDataPacket(new byte[2] { address, data }), wait);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void RawWrite(byte[] data, int wait)
+        {
+            //if (SerialPort != null)
+            //{
+            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
+            //}
+            //else
+            if (FtdiPort != null)
+            {
+                sendData(data, wait);
             }
         }
 

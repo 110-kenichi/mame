@@ -42,6 +42,19 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        public override void RawWrite(byte[] data, int wait)
+        {
+            //if (SerialPort != null)
+            //{
+            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
+            //}
+            //else
+            if (FtdiPort != null)
+            {
+                sendData(data, wait);
+            }
+        }
+
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
 

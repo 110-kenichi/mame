@@ -162,10 +162,10 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
-                                    {
-                                        uint dummy = 0x00;
-                                        ftdi.Write(new byte[] { (byte)dummy }, 1, ref dummy);
-                                    }
+                                    //{
+                                    //    uint dummy = 0x00;
+                                    //    ftdi.Write(new byte[] { (byte)dummy }, 1, ref dummy);
+                                    //}
 
                                     var client = new VsifClient(soundModule, new PortWriterMsx(ftdi, comPort));
 

@@ -29,6 +29,13 @@ namespace zanac.MAmidiMEmo.VSIF
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
         public override void Write(byte type, byte address, byte data, int wait)
         {
             if (FtdiPort != null)
@@ -39,6 +46,19 @@ namespace zanac.MAmidiMEmo.VSIF
                     (byte)(type           | 0x20)
                 };
                 sendData(sd, wait);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void RawWrite(byte[] data, int wait)
+        {
+            if (FtdiPort != null)
+            {
+                sendData(data, wait);
             }
         }
 

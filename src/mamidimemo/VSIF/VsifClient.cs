@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.VSIF;
 
@@ -16,6 +17,26 @@ namespace zanac.MAmidiMEmo.VSIF
     {
 
         private object lockObject = new object();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public object LockObject
+        {
+            get
+            {
+                return lockObject;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="millisecondsTimeout"></param>
+        public void Sleep(int millisecondsTimeout)
+        {
+            Thread.Sleep(millisecondsTimeout);
+        }
 
         private List<byte> deferredWriteData;
 
@@ -112,6 +133,28 @@ namespace zanac.MAmidiMEmo.VSIF
             {
                 lock (lockObject)
                     SerialPort?.Write(type, address, data, wait);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void RawWriteData(byte[] data, int wait)
+        {
+            try
+            {
+                lock (lockObject)
+                    SerialPort?.RawWrite(data, wait);
             }
             catch (Exception ex)
             {

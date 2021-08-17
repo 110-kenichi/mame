@@ -5,6 +5,10 @@ PSGRD = #0xA2
 OPLLAD = #0x7C
 OPLLWR = #0x7D
 
+OPL3AD1 = #0xC4
+OPL3WR  = #0xC5
+OPL3AD2 = #0xC6
+
 WRSLT = #0x14
 RDSLT = #0x0c
 ENASLT = #0x24
@@ -289,10 +293,20 @@ __WRITE_SCC_32_BYTES:
     WRITE_SCC_31_BYTES
 
     .ORG 0x5A00
-    JP __VGM_LOOP       ; 10 98
+__WRITE_OPL3_IO1:
+    LD  A,B
+    OUT (OPL3AD1),A
+    LD  A,D
+    OUT (OPL3WR),A
+    JP  __VGM_LOOP      ; 10 95
 
     .ORG 0x5B00
-    JP __VGM_LOOP       ; 10 98
+__WRITE_OPL3_IO2:
+    LD  A,B
+    OUT (OPL3AD2),A
+    LD  A,D
+    OUT (OPL3WR),A
+    JP  __VGM_LOOP      ; 10 95
 
     .ORG 0x5C00
     JP __VGM_LOOP       ; 10 98
