@@ -51,7 +51,7 @@ CHPUT = #0xA2
     AND #0xf            ;  7 47
     OR  E               ;  4 51
 
-    ;WRITE BOTH BYTE AND NEXT BYTE
+    ;WRITE BOTH 1st BYTE AND 2nd BYTE
     LD  (HL), D         ;  7 58
     INC L               ;  4 62
     LD  (HL), A         ;  7 69
@@ -197,7 +197,6 @@ __WRITE_OPLL_ENA:
     LD      A,D            ; SLOT #
     LD      HL,#0x7FF6     ; Address  for EXT OPLL ENA FLAG 
     CALL    WRSLT
-
     INIT_CONST
     JP  __VGM_LOOP
 
@@ -220,7 +219,7 @@ __WRITE_SCC_SLOT:
     CP      #0x03
     JP      Z,__ENA_SCC
 
-    JP      __WRITE_SCC_SLOT_END
+    JP      __VGM_LOOP
 
 __ENA_SCC1:
     LD      HL,#0xBFFE
@@ -230,25 +229,17 @@ __ENA_SCC1:
     LD      HL,#0xB000
     LD      A,#0x80
     LD      (HL),A
-    JP      __WRITE_SCC_SLOT_END
+    INIT_CONST
+    JP  __VGM_LOOP
 
 __ENA_SCC1_COMPAT:
     LD      HL,#0xBFFE
     LD      A,#0x00
     LD      (HL),A
-
-    LD      HL,#0x9000
-    LD      A,#0x3F
-    LD      (HL),A
-    JP      __WRITE_SCC_SLOT_END
-
 __ENA_SCC:
     LD      HL,#0x9000
     LD      A,#0x3F
     LD      (HL),A
-    JP      __WRITE_SCC_SLOT_END
-
-__WRITE_SCC_SLOT_END:
     INIT_CONST
     JP  __VGM_LOOP
 

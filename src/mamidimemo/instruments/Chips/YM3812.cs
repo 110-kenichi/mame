@@ -72,7 +72,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// AM Depth (0-1)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("AM depth (0:1dB 1:4.8dB)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -100,7 +100,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// Vibrato depth (0:7 cent 1:14 cent)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Vibrato depth (0:7 cent 1:14 cent)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]

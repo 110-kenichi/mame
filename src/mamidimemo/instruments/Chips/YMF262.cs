@@ -209,7 +209,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Max number of 4 op mode sound")]
         [SlideParametersAttribute(0, 6)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -239,7 +239,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// AM Depth (0-1)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("AM depth (0:1dB 1:4.8dB)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -267,7 +267,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// Vibrato depth (0:7 cent 1:14 cent)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Vibrato depth (0:7 cent 1:14 cent)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -443,6 +443,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             case SoundEngineType.VSIF_MSX_FTDI:
                                 switch (adrH)
                                 {
+                                    //https://w.atwiki.jp/msx-sdcc/pages/65.html
                                     case 0:
                                         vsifClient.WriteData(10, adr, data, f_ftdiClkWidth);
                                         break;

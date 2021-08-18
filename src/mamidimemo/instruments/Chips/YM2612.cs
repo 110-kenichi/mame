@@ -226,7 +226,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Set Master Clock of this chip.")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
         public uint MasterClock
@@ -262,7 +262,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// LFRQ (0-255)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("LFO Enable (0:Off 1:Enable)")]
         [SlideParametersAttribute(0, 1)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -290,7 +290,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// LFRQ (0-7)
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("LFO Freq (0-7)\r\n" +
             "0:	3.82 Hz\r\n" +
             "1: 5.33 Hz\r\n" +

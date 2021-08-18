@@ -251,7 +251,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// Rhythm mode
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Rhythm mode (0:Off(9ch) 1:On(6ch))\r\n" +
             "Set DrumSet to ToneType in Timbre to output drum sound")]
         [SlideParametersAttribute(0, 1)]
@@ -295,7 +295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// FrequencyCalculationMode
         /// </summary>
         [DataMember]
-        [Category("Chip")]
+        [Category("Chip(Global)")]
         [Description("Select Frequency Accuracy Mode (False:3.6MHz mode(Not accurate) True:3.579545MHz mode(Accurate)")]
         [DefaultValue(false)]
         public bool FrequencyAccuracyMode

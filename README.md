@@ -1,4 +1,4 @@
-MAmidiMEmo 3.7.5.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.8.0.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -269,6 +269,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 3.8.0.0 Added Velocity Mapping feature.
+		Supported VSIF for MSX. You can drive PSG, OPLL, SCC, OPL3 sound chip on the real MSX.
 3.7.5.0 Supported Scale Tuning. You can set it on ScaleTuning property to the MIDI(Dedicated) category.
 		Supported Channel After Touch MIDI event. You can set the effect on the SCCS property on a Timbre property.
 3.7.4.0 Fixed Master Clock prop crashing when resetting the value to default.
