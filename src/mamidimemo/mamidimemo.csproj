@@ -573,6 +573,14 @@
       <Link>VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.bin">
+      <Link>VGMPlay_msx.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
+      <Link>VGMPlay_msx.rom</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
       <Link>VGMPlay_nes.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
