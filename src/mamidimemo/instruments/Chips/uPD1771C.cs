@@ -326,13 +326,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (uPD1771Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    uPD1771Sound snd = new uPD1771Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    uPD1771Sound snd = new uPD1771Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
@@ -391,7 +393,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public uPD1771Sound(uPD1771C parentModule, uPD1771SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public uPD1771Sound(uPD1771C parentModule, uPD1771SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (uPD1771Timbre)timbre;

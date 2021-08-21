@@ -621,13 +621,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (MT32Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     int emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot < 0)
                         continue;
 
-                    MT32Sound snd = new MT32Sound(parentModule, this, timbre, note, emptySlot);
+                    MT32Sound snd = new MT32Sound(parentModule, this, timbre, tindex - 1, note, emptySlot);
                     instOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
@@ -689,7 +691,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public MT32Sound(MT32 parentModule, MT32SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public MT32Sound(MT32 parentModule, MT32SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];

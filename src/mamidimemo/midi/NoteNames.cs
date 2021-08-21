@@ -26,6 +26,8 @@ namespace zanac.MAmidiMEmo.Midi
         E_1,
         [Description("F-1")]
         F_1,
+        [Description("F#-1")]
+        FS_1,
         [Description("G-1")]
         G_1,
         [Description("G#-1")]
@@ -49,6 +51,8 @@ namespace zanac.MAmidiMEmo.Midi
         E0,
         [Description("F0")]
         F0,
+        [Description("F#0")]
+        FS0,
         [Description("G0")]
         G0,
         [Description("G#0")]
@@ -72,6 +76,8 @@ namespace zanac.MAmidiMEmo.Midi
         E1,
         [Description("F1")]
         F1,
+        [Description("F#1")]
+        FS1,
         [Description("G1")]
         G1,
         [Description("G#1")]
@@ -95,6 +101,8 @@ namespace zanac.MAmidiMEmo.Midi
         E2,
         [Description("F2")]
         F2,
+        [Description("F#2")]
+        FS2,
         [Description("G2")]
         G2,
         [Description("G#2")]
@@ -118,6 +126,8 @@ namespace zanac.MAmidiMEmo.Midi
         E3,
         [Description("F3")]
         F3,
+        [Description("F#3")]
+        FS3,
         [Description("G3")]
         G3,
         [Description("G#3")]
@@ -141,6 +151,8 @@ namespace zanac.MAmidiMEmo.Midi
         E4,
         [Description("F4")]
         F4,
+        [Description("F#4")]
+        FS4,
         [Description("G4")]
         G4,
         [Description("G#4")]
@@ -165,6 +177,8 @@ namespace zanac.MAmidiMEmo.Midi
         E5,
         [Description("F5")]
         F5,
+        [Description("F#5")]
+        FS5,
         [Description("G5")]
         G5,
         [Description("G#5")]
@@ -188,6 +202,8 @@ namespace zanac.MAmidiMEmo.Midi
         E6,
         [Description("F6")]
         F6,
+        [Description("F#6")]
+        FS6,
         [Description("G6")]
         G6,
         [Description("G#6")]
@@ -211,6 +227,8 @@ namespace zanac.MAmidiMEmo.Midi
         E7,
         [Description("F7")]
         F7,
+        [Description("F#7")]
+        FS7,
         [Description("G7")]
         G7,
         [Description("G#7")]
@@ -234,6 +252,8 @@ namespace zanac.MAmidiMEmo.Midi
         E8,
         [Description("F8")]
         F8,
+        [Description("F#8")]
+        FS8,
         [Description("G8")]
         G8,
         [Description("G#8")]
@@ -257,6 +277,8 @@ namespace zanac.MAmidiMEmo.Midi
         E9,
         [Description("F9")]
         F9,
+        [Description("F#8")]
+        FS9,
         [Description("G9")]
         G9,
     }

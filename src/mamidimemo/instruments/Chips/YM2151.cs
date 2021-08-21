@@ -745,13 +745,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (YM2151Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    YM2151Sound snd = new YM2151Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    YM2151Sound snd = new YM2151Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     fmOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
@@ -817,7 +819,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2151Sound(YM2151 parentModule, YM2151SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2151Sound(YM2151 parentModule, YM2151SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (YM2151Timbre)timbre;

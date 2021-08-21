@@ -438,13 +438,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (GBAPUTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    GbSound snd = new GbSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    GbSound snd = new GbSound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     switch (timbre.SoundType)
                     {
                         case SoundType.SPSG:
@@ -553,7 +555,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public GbSound(GB_APU parentModule, GBSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public GbSound(GB_APU parentModule, GBSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (GBAPUTimbre)timbre;

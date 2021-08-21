@@ -26,6 +26,7 @@ namespace zanac.MAmidiMEmo.Instruments
     public class CombinedTimbre : TimbreBase
     {
         [IgnoreDataMember]
+        [JsonIgnore]
         [Browsable(false)]
         public new bool IgnoreKeyOff
         {
@@ -34,6 +35,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [IgnoreDataMember]
+        [JsonIgnore]
         [Browsable(false)]
         public new int KeyShift
         {
@@ -42,6 +44,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [IgnoreDataMember]
+        [JsonIgnore]
         [Browsable(false)]
         public new int PitchShift
         {
@@ -49,30 +52,71 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        [Editor(typeof(DummyEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DataMember]
-        [Description("Set the timbre numbers to bind this Combibed Timbre.")]
-        public ProgramAssignmentTimbreNumber?[] BindTimbres { get; set; } = new ProgramAssignmentTimbreNumber?[4] {
-            null,
-            null,
-            null,
-            null
-        };
 
-        public bool ShouldSerializeBindTimbres()
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
+        public new int PanShift
         {
-            for (int i = 0; i < BindTimbres.Length; i++)
-            {
-                if (BindTimbres[i] != null)
-                    return true;
-            }
-            return false;
+            get;
+            set;
         }
 
-        public void ResetBindTimbres()
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
+        public new string VelocityMap
         {
-            for (int i = 0; i < BindTimbres.Length; i++)
-                BindTimbres[i] = null;
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        [DataMember]
+        [DefaultValue(null)]
+        [Obsolete]
+        public ProgramAssignmentTimbreNumber?[] BindTimbres {
+            get
+            {
+                return null;
+            }
+            set
+            {
+                // for compatibility
+                if (value != null)
+                {
+                    foreach (var i in value)
+                    {
+                        if (i != null)
+                        {
+                            var cts = new CombinedTimbreSettings();
+                            cts.TimbreNumber = i.Value;
+                            Timbres.Add(cts);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Description("Set the timbre to bind this Combined Timbre.")]
+        public CombinedTimbreSettingsCollection Timbres
+        {
+            get;
+            set;
+        } = new CombinedTimbreSettingsCollection();
+
+        public bool ShouldSerializeTimbres()
+        {
+            return Timbres.Count != 0;
+        }
+
+        public void ResetTimbres()
+        {
+            Timbres.Clear();
         }
 
         [Browsable(false)]

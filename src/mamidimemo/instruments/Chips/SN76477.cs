@@ -1428,13 +1428,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (SN76477Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    SN76477Sound snd = new SN76477Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    SN76477Sound snd = new SN76477Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
@@ -1494,7 +1496,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SN76477Sound(SN76477 parentModule, SN76477SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SN76477Sound(SN76477 parentModule, SN76477SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (SN76477Timbre)timbre;

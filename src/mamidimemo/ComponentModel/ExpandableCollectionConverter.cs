@@ -47,15 +47,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
                         (NumberFormatInfo.InvariantInfo).Length, null));
                     switch (o)
                     {
+                        case ProgramAssignmentNumber pan:
+                            break;
+                        case CombinedTimbreSettings cts:
+                            name += " " + cts.TimbreNumber;
+                            break;
                         case CombinedTimbre ctim:
-                            if(ctim.BindTimbres[0] != null)
-                                name += " " + ctim.BindTimbres[0].Value;
-                            if (ctim.BindTimbres[1] != null)
-                                name += " " + ctim.BindTimbres[1].Value;
-                            if (ctim.BindTimbres[2] != null)
-                                name += " " + ctim.BindTimbres[2].Value;
-                            if (ctim.BindTimbres[3] != null)
-                                name += " " + ctim.BindTimbres[3].Value;
+                            name += " " + ctim.TimbreName;
                             break;
                         case TimbreBase tim:
                             name += " " + tim.TimbreName;

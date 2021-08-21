@@ -504,20 +504,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             if (type != 0)
                             {
-                                    WriteData(offset, (uint)hashCode, true, new Action(() =>
-                                    {
-                                        byte address = (byte)(0x00 + offset);
-                                        vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
+                                WriteData(offset, (uint)hashCode, true, new Action(() =>
+                                {
+                                    byte address = (byte)(0x00 + offset);
+                                    vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
 
-                                        for (int i = 1; i < data.Length; i++)
-                                        {
-                                            var dt = (byte)data[i];
-                                            vsifClient.RawWriteData(new byte[] {
+                                    for (int i = 1; i < data.Length; i++)
+                                    {
+                                        var dt = (byte)data[i];
+                                        vsifClient.RawWriteData(new byte[] {
                                                 (byte)((dt    >> 4) | 0x00),
                                                 (byte)((dt &  0x0f) | 0x20),
-                                            }, f_ftdiClkWidth);
-                                        }
-                                    }));
+                                        }, f_ftdiClkWidth);
+                                    }
+                                }));
                             }
                         }
                         break;
@@ -725,13 +725,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (SCC1Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    SCC1Sound snd = new SCC1Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    SCC1Sound snd = new SCC1Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     sccOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn SCC ch" + emptySlot + " " + note.ToString());
@@ -796,7 +798,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SCC1Sound(SCC1 parentModule, SCC1SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SCC1Sound(SCC1 parentModule, SCC1SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (SCC1Timbre)timbre;
@@ -865,18 +867,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             lastWaveTable = no;
                             sbyte[] wsgData;
                             int hashCode = 0;
-                            switch (no)
+                            if (no != 0 && no - 1 < timbre.WsgDataMorphs.Count)
                             {
-                                case 1:
-                                case 2:
-                                case 3:
-                                    wsgData = timbre.WsgMorphData[no - 1].WsgData;
-                                    hashCode = timbre.WsgMorphData[no - 1].GetWsgDataHashCode();
-                                    break;
-                                default:
-                                    wsgData = timbre.WsgData;
-                                    hashCode = timbre.GetWsgDataHashCode();
-                                    break;
+                                wsgData = timbre.WsgDataMorphs[no - 1].WsgData;
+                                hashCode = timbre.WsgDataMorphs[no - 1].GetWsgDataHashCode();
+                            }
+                            else
+                            {
+                                wsgData = timbre.WsgData;
+                                hashCode = timbre.GetWsgDataHashCode();
                             }
                             parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData, hashCode);
                         }
@@ -1038,48 +1037,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return sb.ToString();
             }
 
-
-            private SCCWsgMorphData[] f_WsgMorphData = new SCCWsgMorphData[3] {
-                new SCCWsgMorphData(),
-                new SCCWsgMorphData(),
-                new SCCWsgMorphData()
-            };
-
-            [TypeConverter(typeof(ArrayConverter))]
-            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+            [Browsable(false)]
             [DataMember]
-            [Category("Sound")]
-            [Description("WSG Morph Table")]
-            public SCCWsgMorphData[] WsgMorphData
+            [DefaultValue(null)]
+            [Obsolete]
+            public SCCWsgMorphData[] WsgMorphData2
             {
                 get
                 {
-                    return f_WsgMorphData;
+                    return null;
                 }
                 set
                 {
-                    f_WsgMorphData = value;
+                    // for compatibility
+                    if (value != null)
+                    {
+                        foreach (var i in value)
+                        {
+                            if (i != null)
+                                WsgDataMorphs.Add(i);
+                        }
+                    }
                 }
             }
 
-            public bool ShouldSerializeWsgMorphData()
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("WSG Morph Table")]
+            public SCCWsgMorphDataCollection WsgDataMorphs
             {
-                foreach (var dt in f_WsgMorphData)
-                {
-                    if (dt != null && dt.ShouldSerializeWsgData())
-                        return true;
-                }
-                return false;
+                get;
+                set;
+            } = new SCCWsgMorphDataCollection();
+
+            public bool ShouldSerializeWsgDataMorphs()
+            {
+                return WsgDataMorphs.Count != 0;
             }
 
-            public void ResetWsgMorphData()
+            public void ResetWsgDataMorphs()
             {
-                f_WsgMorphData = new SCCWsgMorphData[3] {
-                    new SCCWsgMorphData(),
-                    new SCCWsgMorphData(),
-                    new SCCWsgMorphData()
-                };
+                WsgDataMorphs.Clear();
             }
+
+
 
             public SCC1Timbre()
             {
@@ -1107,6 +1111,183 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     System.Windows.Forms.MessageBox.Show(ex.ToString());
                 }
             }
+        }
+
+        [Editor(typeof(RefreshingCollectionEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        [RefreshProperties(RefreshProperties.All)]
+        public class SCCWsgMorphDataCollection : IList<SCCWsgMorphData>, IList
+        {
+            private List<SCCWsgMorphData> f_list = new List<SCCWsgMorphData>();
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public SCCWsgMorphDataCollection()
+            {
+            }
+
+
+            public int IndexOf(SCCWsgMorphData item)
+            {
+                return f_list.IndexOf(item);
+            }
+
+            public void Insert(int index, SCCWsgMorphData item)
+            {
+                lock (InstrumentBase.VstPluginContextLockObject)
+                    f_list.Insert(index, item);
+            }
+
+            public void RemoveAt(int index)
+            {
+                lock (InstrumentBase.VstPluginContextLockObject)
+                    f_list.RemoveAt(index);
+            }
+
+            public SCCWsgMorphData this[int index]
+            {
+                get
+                {
+                    return f_list[index];
+                }
+                set
+                {
+                    f_list[index] = value;
+                }
+            }
+
+            public void Add(SCCWsgMorphData item)
+            {
+                lock (InstrumentBase.VstPluginContextLockObject)
+                    f_list.Add(item);
+            }
+
+            public void Clear()
+            {
+                lock (InstrumentBase.VstPluginContextLockObject)
+                    f_list.Clear();
+            }
+
+            public bool Contains(SCCWsgMorphData item)
+            {
+                return f_list.Contains(item);
+            }
+
+            public void CopyTo(SCCWsgMorphData[] array, int arrayIndex)
+            {
+                f_list.CopyTo(array, arrayIndex);
+            }
+
+            public int Count
+            {
+                get
+                {
+                    return f_list.Count;
+                }
+            }
+
+            public bool IsReadOnly
+            {
+                get
+                {
+                    return ((IList)f_list).IsReadOnly;
+                }
+            }
+
+            public bool Remove(SCCWsgMorphData item)
+            {
+                lock (InstrumentBase.VstPluginContextLockObject)
+                    return f_list.Remove(item);
+            }
+
+            public IEnumerator<SCCWsgMorphData> GetEnumerator()
+            {
+                return f_list.GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            int IList.Add(object value)
+            {
+                int index = Count;
+                Add((SCCWsgMorphData)value);
+                return index;
+            }
+
+            bool IList.Contains(object value)
+            {
+                return Contains((SCCWsgMorphData)value);
+            }
+
+            int IList.IndexOf(object value)
+            {
+                return IndexOf((SCCWsgMorphData)value);
+            }
+
+            void IList.Insert(int index, object value)
+            {
+                Insert(index, (SCCWsgMorphData)value);
+            }
+
+            bool IList.IsFixedSize
+            {
+                get
+                {
+                    return ((IList)f_list).IsFixedSize;
+                }
+            }
+
+            bool IList.IsReadOnly
+            {
+                get
+                {
+                    return ((IList)f_list).IsReadOnly;
+                }
+            }
+
+            void IList.Remove(object value)
+            {
+                Remove((SCCWsgMorphData)value);
+            }
+
+            object IList.this[int index]
+            {
+                get
+                {
+                    return this[index];
+                }
+                set
+                {
+                    this[index] = (SCCWsgMorphData)value;
+                }
+            }
+
+            void ICollection.CopyTo(Array array, int index)
+            {
+                if (array is SCCWsgMorphData[])
+                    CopyTo((SCCWsgMorphData[])array, index);
+            }
+
+            bool ICollection.IsSynchronized
+            {
+                get
+                {
+                    return ((ICollection)f_list).IsSynchronized;
+                }
+            }
+
+            object ICollection.SyncRoot
+            {
+                get
+                {
+                    return ((ICollection)f_list).SyncRoot;
+                }
+            }
+
         }
 
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SCCWsgMorphData>))]

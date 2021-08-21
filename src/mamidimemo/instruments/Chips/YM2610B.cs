@@ -929,15 +929,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 var bts = parentModule.GetBaseTimbres(note);
                 var ids = parentModule.GetBaseTimbreIndexes(note);
+                int tindex = 0;
                 for (int i = 0; i < bts.Length; i++)
                 {
                     YM2610BTimbre timbre = (YM2610BTimbre)bts[i];
 
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    YM2610BSound snd = new YM2610BSound(emptySlot.inst, this, timbre, note, emptySlot.slot, ids[i]);
+                    YM2610BSound snd = new YM2610BSound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot, ids[i]);
                     switch (timbre.ToneType)
                     {
                         case ToneType.FM:
@@ -1068,7 +1070,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, int timbreIndex) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YM2610BSound(YM2610B parentModule, YM2610BSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot, int timbreIndex) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbreIndex = timbreIndex;

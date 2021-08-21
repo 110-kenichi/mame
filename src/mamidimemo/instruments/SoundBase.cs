@@ -43,6 +43,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        public int BaseTimbreIndex
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public DrumTimbre DrumTimbre
         {
             get;
@@ -106,13 +115,14 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="slot">チップ上の物理的なチャンネル(MIDI chと区別するためスロットとする)</param>
-        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot)
+        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, int baseTimbreIndex, TaggedNoteOnEvent noteOnEvent, int slot)
         {
             NoteOnEvent = noteOnEvent;
             Slot = slot;
             ParentModule = parentModule;
             ParentManager = manager;
             Timbre = timbre;
+            BaseTimbreIndex = baseTimbreIndex;
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                 DrumTimbre = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber];
         }
@@ -310,8 +320,14 @@ namespace zanac.MAmidiMEmo.Instruments
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
             var scale = (int)ParentModule.ScaleTunings[NoteOnEvent.Channel].ScalesNums[NoteOnEvent.NoteNumber % 12];
 
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
+            int pKeyShift = parent != null ? parent.KeyShift : 0;
+            int pPitchShift = parent != null ? parent.PitchShift : 0;
+
             double d1 = ((double)pitch / 8192d) * range;
-            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d) + (scale / 100d);
+            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber +
+                pKeyShift + Timbre.KeyShift +
+                ((pPitchShift + Timbre.PitchShift) / 100d) + (scale / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;
@@ -344,6 +360,8 @@ namespace zanac.MAmidiMEmo.Instruments
             if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.VelocityMap))
                 v *= NoteOnEvent.Velocity / 127d;
 
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
+
             if (AdsrEngine != null)
                 v *= AdsrEngine.OutputLevel;
 
@@ -351,6 +369,13 @@ namespace zanac.MAmidiMEmo.Instruments
                 v *= FxEngine.OutputLevel;
 
             v *= ArpeggiateLevel;
+
+            if (parent != null)
+                v += parent.VolumeOffest;
+            if (v > 1.0)
+                v = 1.0;
+            else if (v < 0.0)
+                v = 0.0;
 
             return v;
         }
@@ -370,6 +395,10 @@ namespace zanac.MAmidiMEmo.Instruments
                 pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
             else
                 pan += Timbre.PanShift;
+
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
+            if (parent != null)
+                pan += parent.PanShift;
 
             if (pan < 0)
                 pan = 0;

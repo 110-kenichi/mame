@@ -471,13 +471,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (MSM5232Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    MSM5232Sound snd = new MSM5232Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    MSM5232Sound snd = new MSM5232Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     switch (timbre.SoundGroup)
                     {
                         case SoundGroup.Group1:
@@ -567,7 +569,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public MSM5232Sound(MSM5232 parentModule, MSM5232SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public MSM5232Sound(MSM5232 parentModule, MSM5232SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (MSM5232Timbre)timbre;

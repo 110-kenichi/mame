@@ -454,15 +454,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                     }
+                }));
 #if DEBUG
-                    YMF262_write(unitNumber, (uint)adrH, adr);
-                    YMF262_write(unitNumber, (uint)1, data);
+                YMF262_write(unitNumber, (uint)adrH, adr);
+                YMF262_write(unitNumber, (uint)1, data);
 #else
                     DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
                     DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
 #endif
-                }));
-
 
 #if DEBUG
             }
@@ -719,13 +718,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (YMF262Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(timbre, note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    YMF262Sound snd = new YMF262Sound(emptySlot.inst, this, timbre, note, emptySlot.slot, parentModule.CONSEL);
+                    YMF262Sound snd = new YMF262Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot, parentModule.CONSEL);
                     switch (timbre.ALG)
                     {
                         case 0:
@@ -820,7 +821,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public YMF262Sound(YMF262 parentModule, YMF262SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot, byte consel) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public YMF262Sound(YMF262 parentModule, YMF262SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot, byte consel) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (YMF262Timbre)timbre;

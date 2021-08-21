@@ -571,13 +571,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (PokeyTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     int emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot < 0)
                         continue;
 
-                    PokeySound snd = new PokeySound(parentModule, this, timbre, note, emptySlot);
+                    PokeySound snd = new PokeySound(parentModule, this, timbre, tindex - 1, note, emptySlot);
                     switch (((PokeyTimbre)timbre).Channel)
                     {
                         case ChannelType.CH1:
@@ -672,7 +674,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public PokeySound(POKEY parentModule, PokeySoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public PokeySound(POKEY parentModule, PokeySoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (PokeyTimbre)timbre;

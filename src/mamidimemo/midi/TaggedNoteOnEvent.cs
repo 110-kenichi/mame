@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.Midi
 {
@@ -67,6 +68,24 @@ namespace zanac.MAmidiMEmo.Midi
         /// 
         /// </summary>
         public object Tag
+        {
+            get;
+            set;
+        }
+
+        public CombinedTimbreSettings[] CombinedTimbreSettings
+        {
+            get;
+            set;
+        }
+
+        public TimbreBase[] BaseTimbres
+        {
+            get;
+            set;
+        }
+
+        public int[] BaseTimbreIndexes
         {
             get;
             set;

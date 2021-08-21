@@ -87,7 +87,6 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-
         [DataMember]
         [Description("Define custom velocity map\r\n" +
             "Link with Velocity value with the Timbre property value\r\n" +

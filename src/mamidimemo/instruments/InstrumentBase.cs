@@ -424,11 +424,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (ptidx >= CombinedTimbres.Length)
                     ptidx = CombinedTimbres.Length - 1;
                 var pts = CombinedTimbres[ptidx];
-                for (int i = 0; i < pts.BindTimbres.Length; i++)
-                {
-                    if (pts.BindTimbres[i] != null) //if Timbre assigned
-                        return CombinedTimbres[ptidx];
-                }
+                if (pts.Timbres.Count != 0) //if Timbre assigned
+                    return CombinedTimbres[ptidx];
             }
 
             int btidx = pn & 0xffff;
@@ -437,13 +434,27 @@ namespace zanac.MAmidiMEmo.Instruments
             return BaseTimbres[btidx];
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
+        public CombinedTimbreSettings TryGetBaseTimbreSettings(TaggedNoteOnEvent ev, TimbreBase timbre, int baseTimbreIndex)
+        {
+            if (ev.CombinedTimbreSettings != null && 0 <= baseTimbreIndex && baseTimbreIndex < ev.CombinedTimbreSettings.Length)
+                return ev.CombinedTimbreSettings[baseTimbreIndex];
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
         {
             List<TimbreBase> ts = new List<TimbreBase>();
+            List<CombinedTimbreSettings> cts = new List<CombinedTimbreSettings>();
+            List<int> tis = new List<int>();
 
             var tb = ev.Tag as NoteOnTimbreInfo;
             if (tb != null)
@@ -451,17 +462,29 @@ namespace zanac.MAmidiMEmo.Instruments
                 CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
                 if (ctb != null)
                 {
-                    foreach (int? tn in ctb.BindTimbres)
+                    foreach (var tn in ctb.Timbres)
                     {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add(BaseTimbres[tn.Value]);
+                        if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                        {
+                            if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                            {
+                                ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                tis.Add((int)tn.TimbreNumber);
+                                cts.Add(tn);
+                            }
+                        }
                     }
                 }
                 else
                 {
                     ts.Add(tb.Timbre);
+                    tis.Add(tb.TimbreNo);
+                    cts.Add(null);
                 }
-                return ts.ToArray();
+                ev.BaseTimbreIndexes = tis.ToArray();
+                ev.BaseTimbres = ts.ToArray();
+                ev.CombinedTimbreSettings = cts.ToArray();
+                return ev.BaseTimbres;
             }
 
             switch (ChannelTypes[ev.Channel])
@@ -474,19 +497,30 @@ namespace zanac.MAmidiMEmo.Instruments
                             int ptidx = pn & 0xffff;
                             if (ptidx >= CombinedTimbres.Length)
                                 ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            foreach (var tn in CombinedTimbres[ptidx].Timbres)
                             {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add(BaseTimbres[tn.Value]);
+                                if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                                {
+                                    if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                                    {
+                                        ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                        tis.Add((int)tn.TimbreNumber);
+                                        cts.Add(tn);
+                                    }
+                                }
                             }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
+                            ev.BaseTimbreIndexes = tis.ToArray();
+                            ev.BaseTimbres = ts.ToArray();
+                            ev.CombinedTimbreSettings = cts.ToArray();
+                            return ev.BaseTimbres;
                         }
 
                         int btidx = pn & 0xffff;
                         if (btidx >= BaseTimbres.Length)
                             btidx = BaseTimbres.Length - 1;
                         ts.Add(BaseTimbres[btidx]);
+                        tis.Add(btidx);
+                        cts.Add(null);
                         break;
                     }
                 case ChannelType.Drum:
@@ -500,25 +534,39 @@ namespace zanac.MAmidiMEmo.Instruments
                                 int ptidx = pn & 0xffff;
                                 if (ptidx >= CombinedTimbres.Length)
                                     ptidx = CombinedTimbres.Length - 1;
-                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                foreach (var tn in CombinedTimbres[ptidx].Timbres)
                                 {
-                                    if (tn != null && tn.Value < BaseTimbres.Length)
-                                        ts.Add(BaseTimbres[tn.Value]);
+                                    if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                                    {
+                                        if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                                        {
+                                            ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                            tis.Add((int)tn.TimbreNumber);
+                                            cts.Add(tn);
+                                        }
+                                    }
                                 }
-                                if (ts.Count != 0)
-                                    return ts.ToArray();
+                                ev.BaseTimbreIndexes = tis.ToArray();
+                                ev.BaseTimbres = ts.ToArray();
+                                ev.CombinedTimbreSettings = cts.ToArray();
+                                return ev.BaseTimbres;
                             }
 
                             int btidx = pn & 0xffff;
                             if (btidx >= BaseTimbres.Length)
                                 btidx = BaseTimbres.Length - 1;
                             ts.Add(BaseTimbres[btidx]);
+                            tis.Add(btidx);
+                            cts.Add(null);
                         }
                         break;
                     }
             }
 
-            return ts.ToArray();
+            ev.BaseTimbreIndexes = tis.ToArray();
+            ev.BaseTimbres = ts.ToArray();
+            ev.CombinedTimbreSettings = cts.ToArray();
+            return ev.BaseTimbres;
         }
 
 
@@ -528,81 +576,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         public virtual int[] GetBaseTimbreIndexes(TaggedNoteOnEvent ev)
         {
-            List<int> ts = new List<int>();
-
-            NoteOnTimbreInfo tb = ev.Tag as NoteOnTimbreInfo;
-            if (tb != null)
-            {
-                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
-                if (ctb != null)
-                {
-                    foreach (int? tn in ctb.BindTimbres)
-                    {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add((int)tn);
-                    }
-                }
-                else
-                {
-                    ts.Add(tb.TimbreNo);
-                }
-                return ts.ToArray();
-            }
-
-            switch (ChannelTypes[ev.Channel])
-            {
-                case ChannelType.Normal:
-                    {
-                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
-                        if ((pn & 0xffff0000) != 0)
-                        {
-                            int ptidx = pn & 0xffff;
-                            if (ptidx >= CombinedTimbres.Length)
-                                ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
-                            {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add((int)tn);
-                            }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
-                        }
-
-                        int btidx = pn & 0xffff;
-                        if (btidx >= BaseTimbres.Length)
-                            btidx = BaseTimbres.Length - 1;
-                        ts.Add(btidx);
-                        break;
-                    }
-                case ChannelType.Drum:
-                    {
-                        var dt = DrumTimbres[ev.NoteNumber];
-                        if (dt != null && dt.TimbreNumber != null)
-                        {
-                            int pn = (int)dt.TimbreNumber;
-                            if ((pn & 0xffff0000) != 0)
-                            {
-                                int ptidx = pn & 0xffff;
-                                if (ptidx >= CombinedTimbres.Length)
-                                    ptidx = CombinedTimbres.Length - 1;
-                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
-                                {
-                                    if (tn != null && tn.Value < BaseTimbres.Length)
-                                        ts.Add((int)tn);
-                                }
-                                if (ts.Count != 0)
-                                    return ts.ToArray();
-                            }
-
-                            int btidx = pn & 0xffff;
-                            if (btidx >= BaseTimbres.Length)
-                                btidx = BaseTimbres.Length - 1;
-                            ts.Add(btidx);
-                        }
-                        break;
-                    }
-            }
-            return ts.ToArray();
+            return ev.BaseTimbreIndexes;
         }
 
         /// <summary>
