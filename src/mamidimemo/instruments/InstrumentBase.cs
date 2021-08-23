@@ -466,7 +466,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         if ((int)tn.TimbreNumber < BaseTimbres.Length)
                         {
-                            if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                            if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
                             {
                                 ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
                                 tis.Add((int)tn.TimbreNumber);
@@ -501,7 +502,8 @@ namespace zanac.MAmidiMEmo.Instruments
                             {
                                 if ((int)tn.TimbreNumber < BaseTimbres.Length)
                                 {
-                                    if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                                    if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                        tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
                                     {
                                         ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
                                         tis.Add((int)tn.TimbreNumber);
@@ -538,7 +540,8 @@ namespace zanac.MAmidiMEmo.Instruments
                                 {
                                     if ((int)tn.TimbreNumber < BaseTimbres.Length)
                                     {
-                                        if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh)
+                                        if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                            tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
                                         {
                                             ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
                                             tis.Add((int)tn.TimbreNumber);

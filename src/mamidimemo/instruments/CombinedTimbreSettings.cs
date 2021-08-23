@@ -101,7 +101,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private NoteNames f_KeyRangeLow = NoteNames.C_1;
 
         [DataMember]
-        [Description("Lower Key Range")]
+        [Description("Lower key range")]
         [DefaultValue(NoteNames.C_1)]
         public NoteNames KeyRangeLow
         {
@@ -112,12 +112,52 @@ namespace zanac.MAmidiMEmo.Instruments
         private NoteNames f_KeyRangeHigh = NoteNames.G9;
 
         [DataMember]
-        [Description("Lower Key Range")]
+        [Description("Higher key range")]
         [DefaultValue(NoteNames.G9)]
         public NoteNames KeyRangeHigh
         {
             get => f_KeyRangeHigh;
             set => f_KeyRangeHigh = value;
+        }
+
+        private int f_VelocityRangeLow;
+
+        [DataMember]
+        [Description("Lower velocity range")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int VelocityRangeLow
+        {
+            get => f_VelocityRangeLow;
+            set
+            {
+                f_VelocityRangeLow = value;
+                if (f_VelocityRangeLow < 0)
+                    f_VelocityRangeLow = 0;
+                else if (f_VelocityRangeLow > 127)
+                    f_VelocityRangeLow = 127;
+            }
+        }
+
+        private int f_VelocityRangeHigh = 127;
+
+        [DataMember]
+        [Description("Higher velocity range")]
+        [DefaultValue(127)]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int VelocityRangeHigh
+        {
+            get => f_VelocityRangeHigh;
+            set
+            {
+                f_VelocityRangeHigh = value;
+                if (f_VelocityRangeHigh < 0)
+                    f_VelocityRangeHigh = 0;
+                else if (f_VelocityRangeHigh > 127)
+                    f_VelocityRangeHigh = 127;
+            }
         }
 
         [DataMember]
@@ -128,7 +168,6 @@ namespace zanac.MAmidiMEmo.Instruments
             get;
             set;
         } = ProgramAssignmentTimbreNumber.Timbre0;
-
 
         [DataMember]
         [Description("Memo")]
