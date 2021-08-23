@@ -107,13 +107,13 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">rpc</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">E:\mame_src\mami_dev\mame\src\rpclib\Build\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">..\Build\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">rpc.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">rpc</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">rpc</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">E:\mame_src\mami_dev\mame\src\rpclib\Build\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">..\Build\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">rpc.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">rpc</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">rpc</TargetName>
@@ -140,10 +140,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -174,10 +174,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -208,10 +208,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -242,10 +242,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -276,10 +276,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -310,10 +310,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -343,10 +343,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -376,10 +376,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;VC_EXTRALEAN;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WIN32_WINNT=0x0501;_GNU_SOURCE;ASIO_HAS_STD_ADDRESSOF;ASIO_HAS_STD_ARRAY;ASIO_HAS_CSTDINT;ASIO_HAS_STD_SHARED_PTR;ASIO_HAS_STD_TYPE_TRAITS;ASIO_STANDALONE;RPCLIB_ASIO=clmdep_asio;RPCLIB_FMT=clmdep_fmt;RPCLIB_WIN32;RPCLIB_MSGPACK=clmdep_msgpack;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\mame_src\mami_dev\mame\src\rpclib\include;E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\dependencies\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -391,198 +391,198 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\dispatcher.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\server.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\client.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\this_handler.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\this_session.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\this_server.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\rpc_error.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\detail\server_session.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\detail\response.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\detail\client_error.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\lib\rpc\nonstd\optional.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\src\format.cc" />
-    <ClCompile Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\src\posix.cc" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include\format.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include\gmock\gmock.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include\gtest\gtest.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\dependencies\include\posix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\client.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\compatibility.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\config.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\all.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\any.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\async_writer.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\bool.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\call.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\client_error.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\constant.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\dev_utils.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\func_tools.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\func_traits.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\if.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\invoke.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\is_specialization_of.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\log.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\make_unique.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\not.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\pimpl.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\response.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\server_session.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\thread_group.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\detail\util.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\dispatcher.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\fbuffer.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\gcc_atomic.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\object.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\pack.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\pack_define.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\pack_template.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\alpha.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\arm.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\blackfin.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\convex.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\ia64.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\m68k.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\mips.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\parisc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\ppc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\pyramid.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\rs6k.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\sparc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\superh.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\sys370.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\sys390.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\x86.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\x86\32.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\x86\64.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\architecture\z.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\borland.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\clang.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\comeau.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\compaq.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\diab.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\digitalmars.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\dignus.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\edg.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\ekopath.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\gcc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\gcc_xml.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\greenhills.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\hp_acc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\iar.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\ibm.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\intel.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\kai.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\llvm.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\metaware.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\metrowerks.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\microtec.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\mpw.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\palm.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\pgi.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\sgi_mipspro.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\sunpro.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\tendra.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\visualc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\compiler\watcom.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\_cassert.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\_exception.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\comp_detected.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\endian_compat.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\os_detected.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\platform_detected.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\test.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\detail\test_def.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\arm.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\arm\versions.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\ppc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\ppc\versions.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\x86.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\x86\versions.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\x86_amd.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\hardware\simd\x86_amd\versions.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\language.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\language\objc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\language\stdc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\language\stdcpp.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c\_prefix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c\gnu.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c\uc.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c\vms.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\c\zos.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\_prefix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\cxx.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\dinkumware.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\libcomo.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\modena.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\msl.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\roguewave.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\sgi.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\stdcpp3.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\stlport.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\library\std\vacpp.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\make.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\aix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\amigaos.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\android.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\beos.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd\bsdi.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd\dragonfly.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd\free.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd\net.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\bsd\open.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\cygwin.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\haiku.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\hpux.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\ios.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\irix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\linux.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\macos.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\os400.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\qnxnto.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\solaris.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\unix.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\vms.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\os\windows.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\other.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\other\endian.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform\mingw.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform\windows_desktop.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform\windows_phone.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform\windows_runtime.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\platform\windows_store.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\version.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\predef\version_number.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\sbuffer.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\sysdep.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\unpack.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\unpack_define.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\unpack_template.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\util.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\version.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\version_master.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\vrefbuffer.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\zbuffer.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\msgpack\zone.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\rpc_error.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\server.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\this_handler.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\this_server.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\this_session.h" />
-    <ClInclude Include="E:\mame_src\mami_dev\mame\src\rpclib\include\rpc\version.h" />
+    <ClCompile Include="..\lib\rpc\dispatcher.cc" />
+    <ClCompile Include="..\lib\rpc\server.cc" />
+    <ClCompile Include="..\lib\rpc\client.cc" />
+    <ClCompile Include="..\lib\rpc\this_handler.cc" />
+    <ClCompile Include="..\lib\rpc\this_session.cc" />
+    <ClCompile Include="..\lib\rpc\this_server.cc" />
+    <ClCompile Include="..\lib\rpc\rpc_error.cc" />
+    <ClCompile Include="..\lib\rpc\detail\server_session.cc" />
+    <ClCompile Include="..\lib\rpc\detail\response.cc" />
+    <ClCompile Include="..\lib\rpc\detail\client_error.cc" />
+    <ClCompile Include="..\lib\rpc\nonstd\optional.cc" />
+    <ClCompile Include="..\dependencies\src\format.cc" />
+    <ClCompile Include="..\dependencies\src\posix.cc" />
+    <ClInclude Include="..\dependencies\include\format.h" />
+    <ClInclude Include="..\dependencies\include\gmock\gmock.h" />
+    <ClInclude Include="..\dependencies\include\gtest\gtest.h" />
+    <ClInclude Include="..\dependencies\include\posix.h" />
+    <ClInclude Include="..\include\rpc\client.h" />
+    <ClInclude Include="..\include\rpc\compatibility.h" />
+    <ClInclude Include="..\include\rpc\config.h" />
+    <ClInclude Include="..\include\rpc\detail\all.h" />
+    <ClInclude Include="..\include\rpc\detail\any.h" />
+    <ClInclude Include="..\include\rpc\detail\async_writer.h" />
+    <ClInclude Include="..\include\rpc\detail\bool.h" />
+    <ClInclude Include="..\include\rpc\detail\call.h" />
+    <ClInclude Include="..\include\rpc\detail\client_error.h" />
+    <ClInclude Include="..\include\rpc\detail\constant.h" />
+    <ClInclude Include="..\include\rpc\detail\dev_utils.h" />
+    <ClInclude Include="..\include\rpc\detail\func_tools.h" />
+    <ClInclude Include="..\include\rpc\detail\func_traits.h" />
+    <ClInclude Include="..\include\rpc\detail\if.h" />
+    <ClInclude Include="..\include\rpc\detail\invoke.h" />
+    <ClInclude Include="..\include\rpc\detail\is_specialization_of.h" />
+    <ClInclude Include="..\include\rpc\detail\log.h" />
+    <ClInclude Include="..\include\rpc\detail\make_unique.h" />
+    <ClInclude Include="..\include\rpc\detail\not.h" />
+    <ClInclude Include="..\include\rpc\detail\pimpl.h" />
+    <ClInclude Include="..\include\rpc\detail\response.h" />
+    <ClInclude Include="..\include\rpc\detail\server_session.h" />
+    <ClInclude Include="..\include\rpc\detail\thread_group.h" />
+    <ClInclude Include="..\include\rpc\detail\util.h" />
+    <ClInclude Include="..\include\rpc\dispatcher.h" />
+    <ClInclude Include="..\include\rpc\msgpack\fbuffer.h" />
+    <ClInclude Include="..\include\rpc\msgpack\gcc_atomic.h" />
+    <ClInclude Include="..\include\rpc\msgpack\object.h" />
+    <ClInclude Include="..\include\rpc\msgpack\pack.h" />
+    <ClInclude Include="..\include\rpc\msgpack\pack_define.h" />
+    <ClInclude Include="..\include\rpc\msgpack\pack_template.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\alpha.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\arm.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\blackfin.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\convex.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\ia64.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\m68k.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\mips.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\parisc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\ppc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\pyramid.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\rs6k.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\sparc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\superh.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\sys370.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\sys390.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\x86.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\x86\32.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\x86\64.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\architecture\z.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\borland.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\clang.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\comeau.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\compaq.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\diab.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\digitalmars.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\dignus.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\edg.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\ekopath.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\gcc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\gcc_xml.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\greenhills.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\hp_acc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\iar.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\ibm.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\intel.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\kai.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\llvm.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\metaware.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\metrowerks.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\microtec.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\mpw.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\palm.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\pgi.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\sgi_mipspro.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\sunpro.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\tendra.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\visualc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\compiler\watcom.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\_cassert.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\_exception.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\comp_detected.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\endian_compat.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\os_detected.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\platform_detected.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\test.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\detail\test_def.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\arm.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\arm\versions.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\ppc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\ppc\versions.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\x86.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\x86\versions.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\x86_amd.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\hardware\simd\x86_amd\versions.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\language.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\language\objc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\language\stdc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\language\stdcpp.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c\_prefix.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c\gnu.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c\uc.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c\vms.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\c\zos.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\_prefix.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\cxx.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\dinkumware.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\libcomo.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\modena.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\msl.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\roguewave.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\sgi.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\stdcpp3.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\stlport.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\library\std\vacpp.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\make.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\aix.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\amigaos.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\android.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\beos.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd\bsdi.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd\dragonfly.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd\free.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd\net.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\bsd\open.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\cygwin.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\haiku.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\hpux.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\ios.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\irix.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\linux.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\macos.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\os400.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\qnxnto.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\solaris.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\unix.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\vms.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\os\windows.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\other.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\other\endian.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform\mingw.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform\windows_desktop.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform\windows_phone.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform\windows_runtime.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\platform\windows_store.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\version.h" />
+    <ClInclude Include="..\include\rpc\msgpack\predef\version_number.h" />
+    <ClInclude Include="..\include\rpc\msgpack\sbuffer.h" />
+    <ClInclude Include="..\include\rpc\msgpack\sysdep.h" />
+    <ClInclude Include="..\include\rpc\msgpack\unpack.h" />
+    <ClInclude Include="..\include\rpc\msgpack\unpack_define.h" />
+    <ClInclude Include="..\include\rpc\msgpack\unpack_template.h" />
+    <ClInclude Include="..\include\rpc\msgpack\util.h" />
+    <ClInclude Include="..\include\rpc\msgpack\version.h" />
+    <ClInclude Include="..\include\rpc\msgpack\version_master.h" />
+    <ClInclude Include="..\include\rpc\msgpack\vrefbuffer.h" />
+    <ClInclude Include="..\include\rpc\msgpack\zbuffer.h" />
+    <ClInclude Include="..\include\rpc\msgpack\zone.h" />
+    <ClInclude Include="..\include\rpc\rpc_error.h" />
+    <ClInclude Include="..\include\rpc\server.h" />
+    <ClInclude Include="..\include\rpc\this_handler.h" />
+    <ClInclude Include="..\include\rpc\this_server.h" />
+    <ClInclude Include="..\include\rpc\this_session.h" />
+    <ClInclude Include="..\include\rpc\version.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
