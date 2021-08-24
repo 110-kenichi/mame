@@ -27,6 +27,8 @@ namespace zanac.VGMPlayer
         private VsifClient comPortDCSG;
         private VsifClient comPortOPLL;
         private VsifClient comPortOPNA2;
+        private VsifClient comPortSCC;
+        private VsifClient comPortY8910;
 
         private BinaryReader vgmReader;
 
@@ -67,39 +69,40 @@ namespace zanac.VGMPlayer
                     case VsifSoundModuleType.Genesis_Low:
                     case VsifSoundModuleType.Genesis_FTDI:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0x14, (byte)(0x80 | i << 5 | 0x1f));
-                        comPortDCSG.WriteData(0x14, (byte)(0x80 | 3 << 5 | 0x1f));
+                            comPortDCSG.WriteData(0, 0x14, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                     case VsifSoundModuleType.SMS:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0xFF, (byte)(0x80 | i << 5 | 0x1f));
-                        comPortDCSG.WriteData(0xFF, (byte)(0x80 | 3 << 5 | 0x1f));
+                            comPortDCSG.WriteData(0, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.WriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                 }
                 comPortDCSG.FlushDeferredWriteData();
             }
             if (comPortOPLL != null)
             {
+                byte type = comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_FTDI ? (byte)1 : (byte)0;  //type OPLL for MSX
                 comPortOPLL.ClearDeferredWriteData();
 
                 for (int i = 0; i < 9; i++)
                 {
-                    comPortOPLL.DeferredWriteData((byte)(0x20 + i), (byte)(0));
+                    comPortOPLL.DeferredWriteData(type, (byte)(0x20 + i), (byte)(0), (int)Settings.Default.BitBangWaitOPLL);
                 }
-                comPortOPLL.DeferredWriteData(0xe, (byte)(0x20));
+                comPortOPLL.DeferredWriteData(type, 0xe, (byte)(0x20), (int)Settings.Default.BitBangWaitOPLL);
 
                 //TL
                 if (volumeOff)
                 {
                     for (int i = 0; i < 9; i++)
-                        comPortOPLL.DeferredWriteData((byte)(0x30 + i), 64);
-                    comPortOPLL.DeferredWriteData(0x36, 64);
-                    comPortOPLL.DeferredWriteData(0x37, 64);
-                    comPortOPLL.DeferredWriteData(0x38, 64);
+                        comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
 
                     //RR
-                    comPortOPLL.DeferredWriteData(0x06, 0xFF);
-                    comPortOPLL.DeferredWriteData(0x07, 0xFF);
+                    comPortOPLL.DeferredWriteData(type, 0x06, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x07, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
                 }
 
                 comPortOPLL.FlushDeferredWriteData();
@@ -110,31 +113,31 @@ namespace zanac.VGMPlayer
 
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2.DeferredWriteData(4, (byte)(0xB4 | i));
-                    comPortOPNA2.DeferredWriteData(8, 0xC0);
-                    comPortOPNA2.DeferredWriteData(12, (byte)(0xB4 | i));
-                    comPortOPNA2.DeferredWriteData(16, 0xC0);
+                    comPortOPNA2.DeferredWriteData(0, 4, (byte)(0xB4 | i), (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, 8, 0xC0, (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, 12, (byte)(0xB4 | i), (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, 16, 0xC0, (int)Settings.Default.BitBangWaitOPNA2);
                 }
 
                 // disable LFO
-                comPortOPNA2.DeferredWriteData(4, 0x22);
-                comPortOPNA2.DeferredWriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(0, 4, 0x22, (int)Settings.Default.BitBangWaitOPNA2);
+                comPortOPNA2.DeferredWriteData(0, 8, 0x00, (int)Settings.Default.BitBangWaitOPNA2);
 
                 // disable timer & set channel 6 to normal mode
-                comPortOPNA2.DeferredWriteData(4, 0x27);
-                comPortOPNA2.DeferredWriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(0, 4, 0x27, (int)Settings.Default.BitBangWaitOPNA2);
+                comPortOPNA2.DeferredWriteData(0, 8, 0x00, (int)Settings.Default.BitBangWaitOPNA2);
 
                 // ALL KEY OFF
-                comPortOPNA2.DeferredWriteData(4, 0x28);
+                comPortOPNA2.DeferredWriteData(0, 4, 0x28, (int)Settings.Default.BitBangWaitOPNA2);
                 for (int i = 0; i < 3; i++)
                 {
-                    comPortOPNA2.DeferredWriteData(8, (byte)(0x00 | i));
-                    comPortOPNA2.DeferredWriteData(8, (byte)(0x04 | i));
+                    comPortOPNA2.DeferredWriteData(0, 8, (byte)(0x00 | i), (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, 8, (byte)(0x04 | i), (int)Settings.Default.BitBangWaitOPNA2);
                 }
 
                 // disable DAC
-                comPortOPNA2.DeferredWriteData(4, 0x2B);
-                comPortOPNA2.DeferredWriteData(8, 0x00);
+                comPortOPNA2.DeferredWriteData(0, 4, 0x2B, (int)Settings.Default.BitBangWaitOPNA2);
+                comPortOPNA2.DeferredWriteData(0, 8, 0x00, (int)Settings.Default.BitBangWaitOPNA2);
 
                 for (int slot = 0; slot < 6; slot++)
                 {
@@ -155,6 +158,13 @@ namespace zanac.VGMPlayer
 
                 comPortOPNA2.FlushDeferredWriteData();
             }
+            //SCC
+            comPortSCC?.DeferredWriteData(4, (byte)0xaf, (byte)00, (int)Settings.Default.BitBangWaitSCC);
+            comPortSCC?.FlushDeferredWriteData();
+
+            //Y8910
+            comPortY8910.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+            comPortY8910?.FlushDeferredWriteData();
         }
 
         private void Ym2612WriteData(byte address, int op, int slot, byte data)
@@ -176,8 +186,8 @@ namespace zanac.VGMPlayer
             }
 
             uint yreg = (uint)(0 / 3) * 2;
-            comPortOPNA2?.DeferredWriteData((byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)));
-            comPortOPNA2?.DeferredWriteData((byte)((1 + (yreg + 1)) * 4), data);
+            comPortOPNA2?.DeferredWriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), (int)Settings.Default.BitBangWaitOPNA2);
+            comPortOPNA2?.DeferredWriteData(0, (byte)((1 + (yreg + 1)) * 4), data, (int)Settings.Default.BitBangWaitOPNA2);
         }
 
         private VGM_HEADER readVGMHeader(BinaryReader hFile)
@@ -232,26 +242,35 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (ComPort)Settings.Default.DCSG_Port);
+                            (PortId)Settings.Default.DCSG_Port);
                         break;
                     case 1:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (ComPort)Settings.Default.DCSG_Port);
+                            (PortId)Settings.Default.DCSG_Port);
                         break;
                     case 2:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                            (ComPort)Settings.Default.DCSG_Port);
+                            (PortId)Settings.Default.DCSG_Port);
                         break;
                     case 3:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (ComPort)Settings.Default.DCSG_Port);
+                            (PortId)Settings.Default.DCSG_Port);
                         break;
                 }
             }
             if (curHead.lngHzYM2413 != 0)
             {
-                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                    (ComPort)Settings.Default.OPLL_Port);
+                switch (Settings.Default.OPLL_IF)
+                {
+                    case 0:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                            (PortId)Settings.Default.DCSG_Port);
+                        break;
+                    case 1:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.DCSG_Port);
+                        break;
+                }
             }
             if (curHead.lngHzYM2612 != 0)
             {
@@ -259,15 +278,35 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (ComPort)Settings.Default.OPNA2_Port);
+                            (PortId)Settings.Default.OPNA2_Port);
                         break;
                     case 1:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (ComPort)Settings.Default.OPNA2_Port);
+                            (PortId)Settings.Default.OPNA2_Port);
                         break;
                     case 2:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (ComPort)Settings.Default.OPNA2_Port);
+                            (PortId)Settings.Default.OPNA2_Port);
+                        break;
+                }
+            }
+            if (curHead.lngHzK051649 != 0)
+            {
+                switch (Settings.Default.SCC_IF)
+                {
+                    case 0:
+                        comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.SCC_Port);
+                        break;
+                }
+            }
+            if (curHead.lngHzAY8910 != 0)
+            {
+                switch (Settings.Default.Y8910_IF)
+                {
+                    case 0:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.Y8910_Port);
                         break;
                 }
             }
@@ -438,10 +477,66 @@ namespace zanac.VGMPlayer
                                                 case VsifSoundModuleType.Genesis_FTDI:
                                                 case VsifSoundModuleType.Genesis:
                                                 case VsifSoundModuleType.Genesis_Low:
-                                                    comPortDCSG?.DeferredWriteData(0x14, (byte)data);
+                                                    comPortDCSG?.DeferredWriteData(0, 0x14, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                                                     break;
                                                 case VsifSoundModuleType.SMS:
-                                                    comPortDCSG?.DeferredWriteData(0xFF, (byte)data);
+                                                    comPortDCSG?.DeferredWriteData(0, 0xFF, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+
+                                    case 0xA0:  //Y8910
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                            switch (comPortY8910?.SoundModuleType)
+                                            {
+                                                case VsifSoundModuleType.MSX_FTDI:
+                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+
+                                    case 0xD2:  //SCC1
+                                        {
+                                            var pp = readByte();
+                                            if (pp < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                            switch (comPortSCC?.SoundModuleType)
+                                            {
+                                                case VsifSoundModuleType.MSX_FTDI:
+                                                    {
+                                                        switch (pp)
+                                                        {
+                                                            case 1: //Freq
+                                                                aa += 0xa0;
+                                                                break;
+                                                            case 2: //Vol
+                                                                aa += 0xaa;
+                                                                break;
+                                                            case 3: //Ena
+                                                                aa = 0xaf;
+                                                                break;
+                                                            case 5: //
+                                                                aa += 0xe0;
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                        comPortSCC?.DeferredWriteData(4, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
+                                                    }
                                                     break;
                                             }
                                         }
@@ -454,7 +549,8 @@ namespace zanac.VGMPlayer
                                                 break; var dt = readByte();
                                             if (dt < 0)
                                                 break;
-                                            comPortOPLL?.DeferredWriteData((byte)adrs, (byte)dt);
+                                            byte type = comPortOPLL?.SoundModuleType == VsifSoundModuleType.MSX_FTDI ? (byte)1 : (byte)0;  //type OPLL for MSX
+                                            comPortOPLL?.DeferredWriteData(type, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPLL);
                                         }
                                         break;
 
@@ -469,8 +565,8 @@ namespace zanac.VGMPlayer
                                             //ignore test and unknown registers
                                             if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c <= adrs && adrs < 0x30))
                                                 break;
-                                            comPortOPNA2?.DeferredWriteData(0x04, (byte)adrs);
-                                            comPortOPNA2?.DeferredWriteData(0x08, (byte)dt);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
                                         }
                                         break;
 
@@ -482,8 +578,8 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
-                                            comPortOPNA2?.DeferredWriteData(0x0C, (byte)adrs);
-                                            comPortOPNA2?.DeferredWriteData(0x10, (byte)dt);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
                                         }
                                         break;
 
@@ -557,8 +653,8 @@ namespace zanac.VGMPlayer
                                                 var cmd = readByte();
                                                 if (port == 0x00 && cmd == 0x2a)    //PCM
                                                 {
-                                                    comPortOPNA2?.DeferredWriteData(0x04, 0x2b);
-                                                    comPortOPNA2?.DeferredWriteData(0x08, 0x80);
+                                                    comPortOPNA2?.DeferredWriteData(0, 0x04, 0x2b, (int)Settings.Default.BitBangWaitOPNA2);
+                                                    comPortOPNA2?.DeferredWriteData(0, 0x08, 0x80, (int)Settings.Default.BitBangWaitOPNA2);
 
                                                     if (!streamTable.ContainsKey(sid))
                                                         streamTable.Add(sid, new StreamData(sid));
@@ -658,8 +754,8 @@ namespace zanac.VGMPlayer
                                             vgmWaitDelta += time;
                                             //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
 
-                                            comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
-                                            comPortOPNA2?.DeferredWriteData(0x08, (byte)dacData[dacOffset]);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
+                                            comPortOPNA2?.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPNA2);
                                             dacOffset++;
                                         }
 
@@ -739,8 +835,8 @@ namespace zanac.VGMPlayer
                                     byte data = dacData[currentStreamIdx];
                                     currentStreamIdx += currentStreamIdxDir;
 
-                                    comPortOPNA2?.DeferredWriteData(0x04, (byte)0x2a);
-                                    comPortOPNA2?.DeferredWriteData(0x08, data);
+                                    comPortOPNA2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
+                                    comPortOPNA2?.DeferredWriteData(0, 0x08, data, (int)Settings.Default.BitBangWaitOPNA2);
 
                                     streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
                                 }
@@ -827,6 +923,8 @@ namespace zanac.VGMPlayer
             comPortOPLL?.FlushDeferredWriteData();
             comPortDCSG?.FlushDeferredWriteData();
             comPortOPNA2?.FlushDeferredWriteData();
+            comPortSCC?.FlushDeferredWriteData();
+            comPortY8910?.FlushDeferredWriteData();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -868,6 +966,10 @@ namespace zanac.VGMPlayer
                 comPortOPLL = null;
                 comPortOPNA2?.Dispose();
                 comPortOPNA2 = null;
+                comPortSCC?.Dispose();
+                comPortSCC = null;
+                comPortY8910?.Dispose();
+                comPortY8910 = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

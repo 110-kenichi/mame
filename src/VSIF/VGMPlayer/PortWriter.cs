@@ -4,21 +4,41 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using zanac.VGMPlayer.Properties;
 
 namespace zanac.VGMPlayer
 {
-    public class PortWriter : IDisposable
+    public abstract class PortWriter : IDisposable
     {
         private bool disposedValue;
 
         private SerialPort serialPort;
 
-        private object lockObject = new object();
+        /// <summary>
+        /// 
+        /// </summary>
+        protected SerialPort SerialPort
+        {
+            get
+            {
+                return serialPort;
+            }
+        }
+
+        private FTDI ftdiPort;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected FTDI FtdiPort
+        {
+            get
+            {
+                return ftdiPort;
+            }
+        }
 
         /// <summary>
         /// 
@@ -39,78 +59,19 @@ namespace zanac.VGMPlayer
             PortName = serialPort.PortName;
         }
 
-        private FTDI ftdiPort;
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ftdiPort"></param>
-        public PortWriter(FTDI ftdiPort, ComPort portNo)
+        public PortWriter(FTDI ftdiPort, PortId portNo)
         {
             this.ftdiPort = ftdiPort;
             PortName = "FTDI_COM" + (int)portNo;
         }
 
-        public void Write(byte address, byte data)
-        {
-            lock (lockObject)
-            {
-                serialPort?.Write(new byte[] { address, data }, 0, 2);
-                if (ftdiPort != null)
-                {
-                    byte[] sd = new byte[2] { address, data };
-                    convertToDataPacket(sd);
-                    sendData(sd);
-                }
-            }
-        }
+        public abstract void Write(byte type, byte address, byte data, int wait);
 
-        public void Write(byte[] data)
-        {
-            lock (lockObject)
-            {
-                serialPort?.Write(data, 0, data.Length);
-                if (ftdiPort != null)
-                {
-                    convertToDataPacket(data);
-                    sendData(data);
-                }
-            }
-        }
-
-        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
-
-        private void sendData(byte[] sendData)
-        {
-            int wait = (int)(VsifManager.FTDI_BAUDRATE_MUL * Settings.Default.BitBangWait) / 100;
-
-            var osd = sendData.ToArray();
-            byte[] sd = new byte[osd.Length * (int)wait];
-            unsafe
-            {
-                for (int i = 0; i < osd.Length; i++)
-                {
-                    fixed (byte* bp = &sd[i * (int)wait])
-                        MemSet(new IntPtr(bp), osd[i], (int)wait);
-                }
-            }
-            uint writtenBytes = 0;
-            var stat = ftdiPort.Write(sd, sd.Length, ref writtenBytes);
-            if (stat != FTDI.FT_STATUS.FT_OK)
-                Debug.WriteLine(stat);
-        }
-
-        private void convertToDataPacket(byte[] sendData)
-        {
-            for (int i = 0; i < sendData.Length; i += 2)
-            {
-                byte adr = sendData[i + 0];
-                byte dat = sendData[i + 1];
-                sendData[i + 0] = (byte)(0x40 | (((dat & 0xc0) | adr) >> 2));
-                sendData[i + 1] = (byte)(0x00 | (dat & 0x3f));
-            }
-        }
+        public abstract void RawWrite(byte[] data, int wait);
 
         protected virtual void Dispose(bool disposing)
         {
@@ -120,16 +81,13 @@ namespace zanac.VGMPlayer
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
                 }
-                lock (lockObject)
-                {
-                    serialPort?.Dispose();
-                    serialPort = null;
-                    //uint dummy = 0;
-                    //ftdiPort?.Write(new byte[] { 0xFF }, 1, ref dummy);
-                    ftdiPort?.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
-                    ftdiPort?.Close();
-                    ftdiPort = null;
-                }
+
+                serialPort?.Dispose();
+                //uint dummy = 0;
+                //ftdiPort?.Write(new byte[] { 0xFF }, 1, ref dummy);
+                ftdiPort?.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                ftdiPort?.Close();
+
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // TODO: 大きなフィールドを null に設定します
                 disposedValue = true;
@@ -150,4 +108,5 @@ namespace zanac.VGMPlayer
             GC.SuppressFinalize(this);
         }
     }
+
 }

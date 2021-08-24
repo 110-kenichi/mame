@@ -26,8 +26,11 @@ namespace zanac.VGMPlayer
         {
             InitializeComponent();
 
+            comboBoxDCSG.SelectedIndex = 0;
             comboBoxOPLL.SelectedIndex = 0;
             comboBoxOPNA2.SelectedIndex = 0;
+            comboBoxSCC.SelectedIndex = 0;
+            comboBoxY8910.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -41,6 +44,8 @@ namespace zanac.VGMPlayer
             checkBoxConnDCSG_CheckedChanged(null, null);
             checkBoxConnOPLL_CheckedChanged(null, null);
             checkBoxConnOPNA2_CheckedChanged(null, null);
+            checkBoxConnSCC_CheckedChanged(null, null);
+            checkBoxConnY8910_CheckedChanged(null, null);
 
             if (Settings.Default.Files != null)
             {
@@ -113,6 +118,8 @@ namespace zanac.VGMPlayer
             comPortDCSG?.Dispose();
             comPortOPLL?.Dispose();
             comPortOPNA2?.Dispose();
+            comPortSCC?.Dispose();
+            comPortY8910?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -602,19 +609,19 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (ComPort)Settings.Default.DCSG_Port, false);
+                            (PortId)Settings.Default.DCSG_Port, false);
                         break;
                     case 1:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (ComPort)Settings.Default.DCSG_Port, false);
+                            (PortId)Settings.Default.DCSG_Port, false);
                         break;
                     case 2:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                            (ComPort)Settings.Default.DCSG_Port, false);
+                            (PortId)Settings.Default.DCSG_Port, false);
                         break;
                     case 3:
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (ComPort)Settings.Default.DCSG_Port, false);
+                            (PortId)Settings.Default.DCSG_Port, false);
                         break;
                 }
 
@@ -636,8 +643,17 @@ namespace zanac.VGMPlayer
         {
             if (checkBoxConnOPLL.Checked)
             {
-                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                    (ComPort)Settings.Default.OPLL_Port, false);
+                switch (Settings.Default.OPLL_IF)
+                {
+                    case 0:
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                            (PortId)Settings.Default.OPLL_Port, false);
+                        break;
+                    case 1:
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPLL_Port, false);
+                        break;
+                }
 
                 checkBoxConnOPLL.Checked = comPortOPLL != null;
                 comboBoxOPLL.Enabled = comPortOPLL == null;
@@ -661,15 +677,15 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (ComPort)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                     case 1:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (ComPort)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                     case 2:
                         comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (ComPort)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                 }
                 checkBoxConnOPNA2.Checked = comPortOPNA2 != null;
@@ -681,6 +697,102 @@ namespace zanac.VGMPlayer
                 comboBoxOPNA2.Enabled = true;
                 comboBoxPortYM2612.Enabled = true;
                 comPortOPNA2?.Dispose();
+            }
+        }
+
+        private VsifClient comPortSCC;
+
+        private void checkBoxConnSCC_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnSCC.Checked)
+            {
+                switch (Settings.Default.SCC_IF)
+                {
+                    case 0:
+                        comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.SCC_Port, false);
+                        if(comPortSCC != null)
+                            enableScc(SCCType.SCC1, SCCSlotNo[comboBoxSccSlot.SelectedIndex]);
+                        break;
+                }
+                checkBoxConnSCC.Checked = comPortSCC != null;
+                comboBoxSCC.Enabled = comPortSCC == null;
+                comboBoxPortSCC.Enabled = comPortSCC == null;
+            }
+            else
+            {
+                comboBoxSCC.Enabled = true;
+                comboBoxPortSCC.Enabled = true;
+                comPortSCC?.Dispose();
+            }
+        }
+
+        private byte[] SCCSlotNo = new byte[]
+        {
+            0b0000_0000,
+            0b1000_0000,
+            0b1000_0100,
+            0b1000_1000,
+            0b1000_1100,
+
+            0b0000_0001,
+            0b1000_0001,
+            0b1000_0101,
+            0b1000_1001,
+            0b1000_1101,
+
+            0b0000_0010,
+            0b1000_0010,
+            0b1000_0110,
+            0b1000_1010,
+            0b1000_1110,
+
+            0b0000_0011,
+            0b1000_0011,
+            0b1000_0111,
+            0b1000_1011,
+            0b1000_1111,
+        };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum SCCType
+        {
+            SCC1 = 1,
+            SCC1_Compat = 2,
+            SCC = 3,
+        }
+
+        private void enableScc(SCCType type, int slot)
+        {
+            comPortSCC.WriteData(3, (byte)(type), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
+            comPortSCC.Sleep(16);
+        }
+
+
+        private VsifClient comPortY8910;
+
+        private void checkBoxConnY8910_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnY8910.Checked)
+            {
+                switch (Settings.Default.Y8910_IF)
+                {
+                    case 0:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.Y8910_Port, false);
+                        break;
+                }
+                checkBoxConnY8910.Checked = comPortY8910 != null;
+                comboBoxY8910.Enabled = comPortY8910 == null;
+                comboBoxPortY8910.Enabled = comPortY8910 == null;
+            }
+            else
+            {
+                comboBoxY8910.Enabled = true;
+                comboBoxPortY8910.Enabled = true;
+                comPortY8910?.Dispose();
             }
         }
 

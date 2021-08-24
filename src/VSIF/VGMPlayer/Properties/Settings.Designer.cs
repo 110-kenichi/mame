@@ -12,7 +12,7 @@ namespace zanac.VGMPlayer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -157,12 +157,12 @@ namespace zanac.VGMPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("8")]
-        public decimal BitBangWait {
+        public decimal BitBangWaitDCSG {
             get {
-                return ((decimal)(this["BitBangWait"]));
+                return ((decimal)(this["BitBangWaitDCSG"]));
             }
             set {
-                this["BitBangWait"] = value;
+                this["BitBangWaitDCSG"] = value;
             }
         }
         
@@ -199,6 +199,138 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["LastDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SCC_IF {
+            get {
+                return ((int)(this["SCC_IF"]));
+            }
+            set {
+                this["SCC_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SCC_Enable {
+            get {
+                return ((bool)(this["SCC_Enable"]));
+            }
+            set {
+                this["SCC_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public decimal BitBangWaitOPNA2 {
+            get {
+                return ((decimal)(this["BitBangWaitOPNA2"]));
+            }
+            set {
+                this["BitBangWaitOPNA2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public decimal BitBangWaitOPLL {
+            get {
+                return ((decimal)(this["BitBangWaitOPLL"]));
+            }
+            set {
+                this["BitBangWaitOPLL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public decimal BitBangWaitSCC {
+            get {
+                return ((decimal)(this["BitBangWaitSCC"]));
+            }
+            set {
+                this["BitBangWaitSCC"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public decimal BitBangWaitAY8910 {
+            get {
+                return ((decimal)(this["BitBangWaitAY8910"]));
+            }
+            set {
+                this["BitBangWaitAY8910"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8910_IF {
+            get {
+                return ((int)(this["Y8910_IF"]));
+            }
+            set {
+                this["Y8910_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Y8910_Enable {
+            get {
+                return ((bool)(this["Y8910_Enable"]));
+            }
+            set {
+                this["Y8910_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SCC_Port {
+            get {
+                return ((int)(this["SCC_Port"]));
+            }
+            set {
+                this["SCC_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8910_Port {
+            get {
+                return ((int)(this["Y8910_Port"]));
+            }
+            set {
+                this["Y8910_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SCC_Slot {
+            get {
+                return ((int)(this["SCC_Slot"]));
+            }
+            set {
+                this["SCC_Slot"] = value;
             }
         }
     }
