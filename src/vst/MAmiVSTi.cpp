@@ -68,7 +68,7 @@ int StartMAmi(LPCTSTR lpApplicationName, int sampleRate, int port)
 	TCHAR cmdLine[MAX_PATH * 2] = _T("");
 
 	sprintf_s(cmdLine,
-		"%s -audio_latency 0 -samplerate %d -sound none -http_port %d", lpApplicationName, sampleRate, port);
+		"\"%s\" -audio_latency 0 -samplerate %d -sound none -http_port %d", lpApplicationName, sampleRate, port);
 
 	//https://www.ne.jp/asahi/hishidama/home/tech/c/windows/CreateProcess.html
 

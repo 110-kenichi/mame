@@ -47,6 +47,17 @@ namespace zanac.MAmidiMEmo.VSIF
         /// <returns></returns>
         public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, PortId comPort)
         {
+            return TryToConnectVSIF(soundModule, comPort, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, PortId comPort, bool shareOnly)
+        {
             lock (lockObject)
             {
                 foreach (var c in vsifClients)
@@ -62,6 +73,8 @@ namespace zanac.MAmidiMEmo.VSIF
                         return c;
                     }
                 }
+                if (shareOnly)
+                    return null;
 
                 try
                 {

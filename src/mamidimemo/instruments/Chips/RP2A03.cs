@@ -150,7 +150,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.VSIF_NES_FTDI:
                     case SoundEngineType.VSIF_NES_FTDI_FDS:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT, PortId);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT, PortId, false);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -164,7 +164,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.VSIF_NES_FTDI_VRC6:
                     case SoundEngineType.VSIF_NES_FTDI_MMC5:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_INDIRECT, PortId);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_INDIRECT, PortId, false);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;

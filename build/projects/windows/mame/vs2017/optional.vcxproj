@@ -219,7 +219,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\..\mami_master\mame\src\devices\sound\upd1771.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\upd1771.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\bus\generic\carts.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\bus\generic\rom.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\bus\generic\slot.h" />
@@ -297,7 +297,6 @@
     <ClInclude Include="..\..\..\..\..\src\mame\audio\snes_snd.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\mami_master\mame\src\devices\sound\upd1771.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\bus\generic\carts.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\bus\generic\grom.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\bus\generic\slot.cpp" />
@@ -361,6 +360,7 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sn76496.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sp0256.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\tms5220.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\upd1771.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ym2151.cpp">
       <ObjectFileName>$(IntDir)src\devices\sound\</ObjectFileName>
     </ClCompile>

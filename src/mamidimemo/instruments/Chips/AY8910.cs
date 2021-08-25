@@ -180,7 +180,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                     case SoundEngineType.VSIF_MSX_FTDI:
-                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId);
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
