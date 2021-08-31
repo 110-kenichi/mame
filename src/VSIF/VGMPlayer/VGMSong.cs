@@ -15,7 +15,7 @@ using zanac.VGMPlayer;
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
 {
-    class VGMSong : SongBase
+    public class VGMSong : SongBase
     {
         private const uint FCC_VGM = 0x206D6756;    // 'Vgm '
 
@@ -46,7 +46,14 @@ namespace zanac.VGMPlayer
         /// <param name="fileName"></param>
         public VGMSong(string fileName) : base(fileName)
         {
-            openVGMFile(fileName);
+            string ext = Path.GetExtension(fileName);
+            switch (ext.ToUpper())
+            {
+                case ".VGM":
+                case ".VGZ":
+                    OpenVGMFile(fileName);
+                    break;
+            }
 
             dacData = new List<byte>();
             dacDataOffset = new List<int>();
@@ -85,20 +92,20 @@ namespace zanac.VGMPlayer
                 byte type = comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_FTDI ? (byte)1 : (byte)0;  //type OPLL for MSX
                 comPortOPLL.ClearDeferredWriteData();
 
+                //KOFF
                 for (int i = 0; i < 9; i++)
-                {
                     comPortOPLL.DeferredWriteData(type, (byte)(0x20 + i), (byte)(0), (int)Settings.Default.BitBangWaitOPLL);
-                }
-                comPortOPLL.DeferredWriteData(type, 0xe, (byte)(0x20), (int)Settings.Default.BitBangWaitOPLL);
+
+                //comPortOPLL.DeferredWriteData(type, 0xe, (byte)(0x20), (int)Settings.Default.BitBangWaitOPLL);
 
                 //TL
                 if (volumeOff)
                 {
                     for (int i = 0; i < 9; i++)
-                        comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 64, (int)Settings.Default.BitBangWaitOPLL);
-                    comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
+                        comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 0, (int)Settings.Default.BitBangWaitOPLL);
+                    //comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    //comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    //comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
 
                     //RR
                     comPortOPLL.DeferredWriteData(type, 0x06, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
@@ -163,7 +170,7 @@ namespace zanac.VGMPlayer
             comPortSCC?.FlushDeferredWriteData();
 
             //Y8910
-            comPortY8910.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+            comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
             comPortY8910?.FlushDeferredWriteData();
         }
 
@@ -263,12 +270,12 @@ namespace zanac.VGMPlayer
                 switch (Settings.Default.OPLL_IF)
                 {
                     case 0:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                            (PortId)Settings.Default.DCSG_Port);
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                            (PortId)Settings.Default.OPLL_Port);
                         break;
                     case 1:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                            (PortId)Settings.Default.DCSG_Port);
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPLL_Port);
                         break;
                 }
             }
@@ -341,68 +348,82 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        bool openVGMFile(string fileName)
+        protected bool OpenVGMFile(string fileName)
         {
             bool zipped = checkIfZip(fileName, 3, "1F-8B-08");
 
             //Read size
-            uint FileSize = 0;
-            int offset = 0;
-            using (FileStream vgmFile = File.Open(fileName, FileMode.Open))
+            using (Stream vgmFile = File.Open(fileName, FileMode.Open))
             {
-                if (zipped)
-                {
-                    vgmFile.Position = vgmFile.Length - 4;
-                    byte[] b = new byte[4];
-                    vgmFile.Read(b, 0, 4);
-                    uint fileSize = BitConverter.ToUInt32(b, 0);
-                    FileSize = fileSize;
-                    vgmFile.Position = 0;
-
-                    GZipStream stream = new GZipStream(vgmFile, CompressionMode.Decompress);
-                    vgmReader = new BinaryReader(stream);
-                    zipped = true;
-                }
-                else
-                {
-                    FileSize = (uint)vgmFile.Length;
-                    vgmReader = new BinaryReader(vgmFile);
-                }
-
-                uint fccHeader;
-                fccHeader = (uint)vgmReader.ReadUInt32();
-                if (fccHeader != FCC_VGM)
-                {
-                    throw new IOException("VGM file error");
-                }
-
-                vgmDataLen = FileSize;
-                vgmHead = readVGMHeader(vgmReader);
-
-                //Figure out header offset
-                offset = (int)vgmHead.lngDataOffset;
-                if (offset == 0 || offset == 0x0000000C)
-                    offset = 0x40;
-                vgmDataOffset = offset;
-            }
-            using (FileStream vgmFile = File.Open(fileName, FileMode.Open))
-            {
-                if (zipped)
-                {
-                    GZipStream stream = new GZipStream(vgmFile, CompressionMode.Decompress);
-                    vgmReader = new BinaryReader(stream);
-                }
-                else
-                {
-                    vgmReader = new BinaryReader(vgmFile);
-                    vgmReader.BaseStream.Seek(0, SeekOrigin.Begin);
-                }
-                vgmReader.ReadBytes(offset);
-                vgmData = vgmReader.ReadBytes((int)(FileSize - offset));
-
-                vgmReader = new BinaryReader(new MemoryStream(vgmData));
+                zipped = ReadVgmFile(zipped, vgmFile);
             }
             return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="zipped"></param>
+        /// <param name="vgmFile"></param>
+        /// <returns></returns>
+        protected bool ReadVgmFile(bool zipped, Stream vgmFile)
+        {
+            uint fileSize = 0;
+            int offset = 0;
+
+            if (zipped)
+            {
+                vgmFile.Position = vgmFile.Length - 4;
+                byte[] b = new byte[4];
+                vgmFile.Read(b, 0, 4);
+                fileSize = BitConverter.ToUInt32(b, 0);
+                vgmFile.Position = 0;
+
+                GZipStream stream = new GZipStream(vgmFile, CompressionMode.Decompress);
+                vgmReader = new BinaryReader(stream);
+                zipped = true;
+            }
+            else
+            {
+                fileSize = (uint)vgmFile.Length;
+                vgmReader = new BinaryReader(vgmFile);
+            }
+
+            uint fccHeader;
+            fccHeader = (uint)vgmReader.ReadUInt32();
+            if (fccHeader != FCC_VGM)
+            {
+                throw new IOException("VGM file error");
+            }
+
+            vgmDataLen = fileSize;
+            vgmHead = readVGMHeader(vgmReader);
+
+            //Figure out header offset
+            offset = (int)vgmHead.lngDataOffset;
+            if (offset == 0 || offset == 0x0000000C)
+                offset = 0x40;
+            vgmDataOffset = offset;
+
+            //}
+            //using (FileStream vgmFile = File.Open(fileName, FileMode.Open))
+            //{
+            vgmFile.Seek(0, SeekOrigin.Begin);
+            if (zipped)
+            {
+                GZipStream stream = new GZipStream(vgmFile, CompressionMode.Decompress);
+                vgmReader = new BinaryReader(stream);
+            }
+            else
+            {
+                vgmReader = new BinaryReader(vgmFile);
+                vgmReader.BaseStream.Seek(0, SeekOrigin.Begin);
+            }
+            vgmReader.ReadBytes(offset);
+            vgmData = vgmReader.ReadBytes((int)(fileSize - offset));
+
+            vgmReader = new BinaryReader(new MemoryStream(vgmData));
+            return zipped;
         }
 
         private int readByte()

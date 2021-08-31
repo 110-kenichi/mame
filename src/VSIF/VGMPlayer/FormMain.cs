@@ -248,6 +248,8 @@ namespace zanac.VGMPlayer
                         case ".VGM":
                         case ".VGZ":
                         case ".XGM":
+                        case ".MGS":
+                        case ".KSS":
                             lvi = new ListViewItem(fp);
                             listViewList.Items.Add(lvi);
                             lvi.Selected = true;
@@ -339,6 +341,10 @@ namespace zanac.VGMPlayer
                         break;
                     case ".XGM":
                         currentSong = new XGMSong(fileName);
+                        break;
+                    case ".MGS":
+                    case ".KSS":
+                        currentSong = new KSSSong(fileName);
                         break;
                 }
                 currentSong.Looped = checkBoxLoop.Checked;
@@ -718,11 +724,14 @@ namespace zanac.VGMPlayer
                 checkBoxConnSCC.Checked = comPortSCC != null;
                 comboBoxSCC.Enabled = comPortSCC == null;
                 comboBoxPortSCC.Enabled = comPortSCC == null;
+                comboBoxSccSlot.Enabled = comPortSCC == null;
             }
             else
             {
                 comboBoxSCC.Enabled = true;
                 comboBoxPortSCC.Enabled = true;
+                comboBoxSccSlot.Enabled = true;
+
                 comPortSCC?.Dispose();
             }
         }
@@ -910,6 +919,13 @@ namespace zanac.VGMPlayer
                 else
                     return 0;
             }
+        }
+
+        private void aBOUTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAbout ab = new FormAbout();
+            ab.Text = this.Text;
+            ab.ShowDialog();
         }
     }
 

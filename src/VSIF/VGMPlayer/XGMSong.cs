@@ -15,7 +15,7 @@ using zanac.VGMPlayer;
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
 {
-    class XGMSong : SongBase
+    public class XGMSong : SongBase
     {
         private VsifClient comPortDCSG;
 

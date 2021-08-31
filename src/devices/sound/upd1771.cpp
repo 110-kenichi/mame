@@ -253,9 +253,10 @@ void upd1771c_device::device_start()
 	/* resolve callbacks */
 	m_ack_handler.resolve_safe();
 
-	m_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(upd1771c_device::ack_callback),this));
+	//mamidimemo
+	//m_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(upd1771c_device::ack_callback),this));
 
-	m_channel = machine().sound().stream_alloc(*this, 0, 1, clock() / 4);
+	m_channel = machine().sound().stream_alloc(*this, 0, 2, clock() / 4);
 
 	save_item(NAME(m_packet));
 	save_item(NAME(m_index));
@@ -408,8 +409,9 @@ void upd1771c_device::write(uint8_t data)
 
 				//logerror( "upd1771_w: ----------------noise state reset\n");
 			}
-			else
-				m_timer->adjust(attotime::from_ticks(512, clock()));
+			//mamidimemo
+			//else
+			//	m_timer->adjust(attotime::from_ticks(512, clock()));
 			break;
 
 		case 2:
@@ -427,8 +429,9 @@ void upd1771c_device::write(uint8_t data)
 				m_state = STATE_TONE;
 				m_index = 0;
 			}
-			else
-				m_timer->adjust(attotime::from_ticks(512, clock()));
+			//mamidimemo
+			//else
+			//	m_timer->adjust(attotime::from_ticks(512, clock()));
 			break;
 
 		case 0x1f:
@@ -442,8 +445,9 @@ void upd1771c_device::write(uint8_t data)
 				m_packet[0] = 0;
 				m_state = STATE_ADPCM;
 			}
-			else
-				m_timer->adjust(attotime::from_ticks(512, clock()));
+			//mamidimemo
+			//else
+			//	m_timer->adjust(attotime::from_ticks(512, clock()));
 			break;
 
 		//garbage: wipe stack
@@ -482,6 +486,7 @@ TIMER_CALLBACK_MEMBER( upd1771c_device::ack_callback )
 void upd1771c_device::sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
 	stream_sample_t *buffer = outputs[0];
+	stream_sample_t *buffer1 = outputs[1];
 
 	switch (m_state)
 	{
@@ -492,6 +497,7 @@ void upd1771c_device::sound_stream_update(sound_stream &stream, stream_sample_t 
 			while (--samples >= 0)
 			{
 				*buffer++ = (WAVEFORMS[m_t_timbre][m_t_tpos]) * m_t_volume * 2;
+				*buffer1++ = (WAVEFORMS[m_t_timbre][m_t_tpos]) * m_t_volume * 2;
 
 				m_t_ppos++;
 				if (m_t_ppos >= m_t_period)
@@ -509,6 +515,7 @@ void upd1771c_device::sound_stream_update(sound_stream &stream, stream_sample_t 
 			while (--samples >= 0)
 			{
 				*buffer = 0;
+				*buffer1 = 0;
 
 				//"wavetable-LFSR" component
 				int wlfsr_val = ((int)noise_tbl[m_nw_tpos]) - 127;//data too wide
@@ -541,8 +548,15 @@ void upd1771c_device::sound_stream_update(sound_stream &stream, stream_sample_t 
 							(res[1] * m_n_volume[1]) |
 							(res[2] * m_n_volume[2])
 							) ;
+				*buffer1+= (
+							(wlfsr_val * m_nw_volume) |
+							(res[0] * m_n_volume[0]) |
+							(res[1] * m_n_volume[1]) |
+							(res[2] * m_n_volume[2])
+							);
 
 				buffer++;
+				buffer1++;
 			}
 			break;
 
@@ -551,6 +565,7 @@ void upd1771c_device::sound_stream_update(sound_stream &stream, stream_sample_t 
 			while (--samples >= 0)
 			{
 				*buffer++ = 0;
+				*buffer1++ = 0;
 			}
 			break;
 	}
