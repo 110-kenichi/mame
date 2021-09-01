@@ -32,9 +32,9 @@ namespace zanac.VGMPlayer
 
         private BinaryReader vgmReader;
 
-        private List<byte> dacData;
-        private List<int> dacDataOffset;
-        private List<int> dacDataLength;
+        private List<byte> dacData = new List<byte>();
+        private List<int> dacDataOffset = new List<int>();
+        private List<int> dacDataLength = new List<int>();
 
         private int dacOffset = 0;
 
@@ -46,18 +46,7 @@ namespace zanac.VGMPlayer
         /// <param name="fileName"></param>
         public VGMSong(string fileName) : base(fileName)
         {
-            string ext = Path.GetExtension(fileName);
-            switch (ext.ToUpper())
-            {
-                case ".VGM":
-                case ".VGZ":
-                    OpenVGMFile(fileName);
-                    break;
-            }
-
-            dacData = new List<byte>();
-            dacDataOffset = new List<int>();
-            dacDataLength = new List<int>();
+            OpenFile(fileName);
 
             //streamingThread = new Thread(new ThreadStart(playStream));
             //streamingThread.Priority = ThreadPriority.AboveNormal;
@@ -157,10 +146,10 @@ namespace zanac.VGMPlayer
                             Ym2612WriteData(0x40, op, slot, 127);
                 }
 
-                if (volumeOff)
-                    for (int slot = 0; slot < 6; slot++)
-                        for (int op = 0; op < 4; op++)
-                            Ym2612WriteData(0x80, op, slot, 0x0ff);
+                //if (volumeOff)
+                //    for (int slot = 0; slot < 6; slot++)
+                //        for (int op = 0; op < 4; op++)
+                //            Ym2612WriteData(0x80, op, slot, 0x0ff);
 
 
                 comPortOPNA2.FlushDeferredWriteData();
@@ -170,8 +159,13 @@ namespace zanac.VGMPlayer
             comPortSCC?.FlushDeferredWriteData();
 
             //Y8910
-            comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+            //comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+            comPortY8910?.DeferredWriteData(0, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+            comPortY8910?.DeferredWriteData(0, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+            comPortY8910?.DeferredWriteData(0, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
             comPortY8910?.FlushDeferredWriteData();
+
+            Thread.Sleep(50);
         }
 
         private void Ym2612WriteData(byte address, int op, int slot, byte data)
@@ -213,9 +207,9 @@ namespace zanac.VGMPlayer
                     ushort val = hFile.ReadUInt16();
                     field.SetValue(curHead, val);
                 }
-                else if (field.FieldType == typeof(char))
+                else if (field.FieldType == typeof(sbyte))
                 {
-                    char val = hFile.ReadChar();
+                    sbyte val = hFile.ReadSByte();
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(byte))
@@ -245,24 +239,27 @@ namespace zanac.VGMPlayer
                 if (curHead.bytPSG_SRWidth == 0)
                     curHead.bytPSG_SRWidth = 0x10;
 
-                switch (Settings.Default.DCSG_IF)
+                if (Settings.Default.DCSG_Enable)
                 {
-                    case 0:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 1:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 2:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 3:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
+                    switch (Settings.Default.DCSG_IF)
+                    {
+                        case 0:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 1:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 2:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 3:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                    }
                 }
             }
             if (curHead.lngHzYM2413 != 0)
@@ -348,16 +345,15 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        protected bool OpenVGMFile(string fileName)
+        protected virtual void OpenFile(string fileName)
         {
             bool zipped = checkIfZip(fileName, 3, "1F-8B-08");
 
             //Read size
             using (Stream vgmFile = File.Open(fileName, FileMode.Open))
             {
-                zipped = ReadVgmFile(zipped, vgmFile);
+                ReadVgmFile(zipped, vgmFile);
             }
-            return true;
         }
 
         /// <summary>
@@ -366,7 +362,7 @@ namespace zanac.VGMPlayer
         /// <param name="zipped"></param>
         /// <param name="vgmFile"></param>
         /// <returns></returns>
-        protected bool ReadVgmFile(bool zipped, Stream vgmFile)
+        protected void ReadVgmFile(bool zipped, Stream vgmFile)
         {
             uint fileSize = 0;
             int offset = 0;
@@ -423,7 +419,6 @@ namespace zanac.VGMPlayer
             vgmData = vgmReader.ReadBytes((int)(fileSize - offset));
 
             vgmReader = new BinaryReader(new MemoryStream(vgmData));
-            return zipped;
         }
 
         private int readByte()
@@ -975,7 +970,7 @@ namespace zanac.VGMPlayer
                 if (disposing)
                 {
                     // マネージド状態を破棄します (マネージド オブジェクト)
-                    StopAllSounds(true);
+                    Stop();
                 }
 
                 vgmReader?.Dispose();
@@ -1134,7 +1129,7 @@ namespace zanac.VGMPlayer
         public byte bytAYFlagYM2608;
         public byte bytVolumeModifier;
         public byte bytReserved2;
-        public char bytLoopBase;
+        public sbyte bytLoopBase;
         public byte bytLoopModifier;
         public uint lngHzGBDMG;
         public uint lngHzNESAPU;

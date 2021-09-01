@@ -240,7 +240,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public decimal BitBangWaitOPLL {
             get {
                 return ((decimal)(this["BitBangWaitOPLL"]));
@@ -252,7 +252,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public decimal BitBangWaitSCC {
             get {
                 return ((decimal)(this["BitBangWaitSCC"]));
@@ -264,7 +264,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
         public decimal BitBangWaitAY8910 {
             get {
                 return ((decimal)(this["BitBangWaitAY8910"]));
@@ -331,6 +331,18 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["SCC_Slot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public decimal KSS_Max {
+            get {
+                return ((decimal)(this["KSS_Max"]));
+            }
+            set {
+                this["KSS_Max"] = value;
             }
         }
     }

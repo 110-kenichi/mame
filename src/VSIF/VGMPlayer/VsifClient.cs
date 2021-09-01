@@ -142,14 +142,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private class WritingData
-        {
-            public byte Type;
-            public byte Address;
-            public byte Data;
-            public int Wait;
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -261,6 +253,18 @@ namespace zanac.VGMPlayer
                     throw;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class WritingData
+        {
+            public byte Type;
+            public byte Address;
+            public byte Data;
+            public int Wait;
+        }
+
 
     }
 

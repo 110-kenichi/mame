@@ -58,15 +58,18 @@ namespace zanac.VGMPlayer
             {
                 foreach (var c in vsifClients)
                 {
-                    if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
+                    if (c.SoundModuleType == soundModule)
                     {
-                        c.ReferencedCount++;
-                        return c;
-                    }
-                    if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
-                    {
-                        c.ReferencedCount++;
-                        return c;
+                        if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
+                        {
+                            c.ReferencedCount++;
+                            return c;
+                        }
+                        if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
+                        {
+                            c.ReferencedCount++;
+                            return c;
+                        }
                     }
                 }
                 if (shareOnly)

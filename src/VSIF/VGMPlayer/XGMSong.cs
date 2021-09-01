@@ -155,13 +155,15 @@ namespace zanac.VGMPlayer
                             Ym2612WriteData(0x40, op, slot, 127);
                 }
 
-                if (volumeOff)
-                    for (int slot = 0; slot < 6; slot++)
-                        for (int op = 0; op < 4; op++)
-                            Ym2612WriteData(0x80, op, slot, 0x0ff);
+                //if (volumeOff)
+                //    for (int slot = 0; slot < 6; slot++)
+                //        for (int op = 0; op < 4; op++)
+                //            Ym2612WriteData(0x80, op, slot, 0x0ff);
 
                 comPortOPNA2.FlushDeferredWriteData();
             }
+
+            Thread.Sleep(50);
         }
 
         private void Ym2612WriteData(byte address, int op, int slot, byte data)
@@ -610,7 +612,7 @@ namespace zanac.VGMPlayer
                 if (disposing)
                 {
                     // マネージド状態を破棄します (マネージド オブジェクト)
-                    StopAllSounds(true);
+                    Stop();
                 }
 
                 xgmReader?.Dispose();

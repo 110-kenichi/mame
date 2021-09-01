@@ -76,7 +76,7 @@
     <Compile Include="DraggableListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="KSSSong.cs" />
+    <Compile Include="MGSSong.cs" />
     <Compile Include="ListViewItemDragEventArgs.cs" />
     <Compile Include="PortWriter.cs" />
     <Compile Include="PortWriterGenesis.cs" />

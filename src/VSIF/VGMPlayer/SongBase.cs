@@ -32,7 +32,10 @@ namespace zanac.VGMPlayer
 
         private SoundState state = SoundState.Stopped;
 
-        public SoundState State
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual SoundState State
         {
             get
             {
@@ -48,14 +51,19 @@ namespace zanac.VGMPlayer
             }
         }
 
-        public bool Looped
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool Looped
         {
             get;
             set;
         }
 
-
-        public int LoopCount
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual int LoopCount
         {
             get;
             set;
@@ -63,7 +71,10 @@ namespace zanac.VGMPlayer
 
         private double _playbackSpeed = 1.0f;
 
-        public double PlaybackSpeed
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual double PlaybackSpeed
         {
             get
             {
@@ -76,6 +87,9 @@ namespace zanac.VGMPlayer
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string FileName
         {
             get;
@@ -91,7 +105,9 @@ namespace zanac.VGMPlayer
             FileName = fileName;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void Play()
         {
             if (State == SoundState.Playing)
@@ -104,23 +120,35 @@ namespace zanac.VGMPlayer
             t.Start();
         }
 
-        public void Pause()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Pause()
         {
             State = SoundState.Paused;
             StopAllSounds(false);
         }
 
-        public void Freeze()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Freeze()
         {
             State = SoundState.Paused;
         }
 
-        public void Resume()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Resume()
         {
             State = SoundState.Playing;
         }
 
-        public void Stop()
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Stop()
         {
             State = SoundState.Stopped;
             StopAllSounds(true);
@@ -161,6 +189,9 @@ namespace zanac.VGMPlayer
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum SoundState
     {
         Playing,

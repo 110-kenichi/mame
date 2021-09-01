@@ -537,3 +537,6 @@ https://github.com/bbbradsmith/NES-ca65-example/tree/fds
 
 * MDFourier - Artemio
 https://github.com/ArtemioUrbina/MDFourier
+
+* kss2vgm - Mitsutaka Okazaki (kss2vgm is used only by VGMPlayer)
+https://github.com/digital-sound-antiques/kss2vgm/blob/master/LICENSE

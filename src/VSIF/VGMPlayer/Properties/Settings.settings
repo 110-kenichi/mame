@@ -57,13 +57,13 @@
       <Value Profile="(Default)">8</Value>
     </Setting>
     <Setting Name="BitBangWaitOPLL" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">15</Value>
+      <Value Profile="(Default)">16</Value>
     </Setting>
     <Setting Name="BitBangWaitSCC" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">15</Value>
+      <Value Profile="(Default)">16</Value>
     </Setting>
     <Setting Name="BitBangWaitAY8910" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">15</Value>
+      <Value Profile="(Default)">16</Value>
     </Setting>
     <Setting Name="Y8910_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -79,6 +79,9 @@
     </Setting>
     <Setting Name="SCC_Slot" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="KSS_Max" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">300</Value>
     </Setting>
   </Settings>
 </SettingsFile>

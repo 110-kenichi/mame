@@ -41,11 +41,17 @@ namespace zanac.VGMPlayer
         {
             base.OnShown(e);
 
-            checkBoxConnDCSG_CheckedChanged(null, null);
-            checkBoxConnOPLL_CheckedChanged(null, null);
-            checkBoxConnOPNA2_CheckedChanged(null, null);
-            checkBoxConnSCC_CheckedChanged(null, null);
-            checkBoxConnY8910_CheckedChanged(null, null);
+            checkBoxConnDCSG.Checked = false;
+            checkBoxConnOPLL.Checked = false;
+            checkBoxConnOPNA2.Checked = false;
+            checkBoxConnSCC.Checked = false;
+            checkBoxConnY8910.Checked = false;
+
+            //checkBoxConnDCSG_CheckedChanged(null, null);
+            //checkBoxConnOPLL_CheckedChanged(null, null);
+            //checkBoxConnOPNA2_CheckedChanged(null, null);
+            //checkBoxConnSCC_CheckedChanged(null, null);
+            //checkBoxConnY8910_CheckedChanged(null, null);
 
             if (Settings.Default.Files != null)
             {
@@ -248,8 +254,8 @@ namespace zanac.VGMPlayer
                         case ".VGM":
                         case ".VGZ":
                         case ".XGM":
-                        case ".MGS":
                         case ".KSS":
+                        case ".MGS":
                             lvi = new ListViewItem(fp);
                             listViewList.Items.Add(lvi);
                             lvi.Selected = true;
@@ -342,9 +348,9 @@ namespace zanac.VGMPlayer
                     case ".XGM":
                         currentSong = new XGMSong(fileName);
                         break;
-                    case ".MGS":
                     case ".KSS":
-                        currentSong = new KSSSong(fileName);
+                    case ".MGS":
+                        currentSong = new MGSSong(fileName, checkBoxLoop.Checked ? (int)numericUpDown1.Value : 0);
                         break;
                 }
                 currentSong.Looped = checkBoxLoop.Checked;
@@ -717,7 +723,7 @@ namespace zanac.VGMPlayer
                     case 0:
                         comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.SCC_Port, false);
-                        if(comPortSCC != null)
+                        if (comPortSCC != null)
                             enableScc(SCCType.SCC1, SCCSlotNo[comboBoxSccSlot.SelectedIndex]);
                         break;
                 }

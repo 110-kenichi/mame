@@ -29,7 +29,6 @@ namespace zanac.VGMPlayer
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout));
             this.buttonOK = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -38,7 +37,7 @@ namespace zanac.VGMPlayer
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonOK.Location = new System.Drawing.Point(315, 178);
+            this.buttonOK.Location = new System.Drawing.Point(315, 66);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 0;
@@ -55,9 +54,9 @@ namespace zanac.VGMPlayer
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(378, 160);
+            this.textBox1.Size = new System.Drawing.Size(378, 48);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Text = resources.GetString("textBox1.Text");
+            this.textBox1.Text = "{0}\r\n\r\nItoken (c)2021 / GPL-2.0";
             // 
             // FormAbout
             // 
@@ -65,7 +64,7 @@ namespace zanac.VGMPlayer
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonOK;
-            this.ClientSize = new System.Drawing.Size(402, 213);
+            this.ClientSize = new System.Drawing.Size(402, 101);
             this.ControlBox = false;
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonOK);
