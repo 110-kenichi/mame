@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.2.0/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.2.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.2.1 Improved VGMPlayer & VSIF for MSX.
 3.9.2.0 Updated VGMPlayer to support MSX.
 		Fixed Mami path parsing for reading the VSTI ini file.
 3.9.1.0 Improved CombinedTimbre feature.

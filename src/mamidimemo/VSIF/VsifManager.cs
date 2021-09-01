@@ -62,15 +62,18 @@ namespace zanac.MAmidiMEmo.VSIF
             {
                 foreach (var c in vsifClients)
                 {
-                    if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
+                    if (c.SoundModuleType == soundModule)
                     {
-                        c.ReferencedCount++;
-                        return c;
-                    }
-                    if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
-                    {
-                        c.ReferencedCount++;
-                        return c;
+                        if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
+                        {
+                            c.ReferencedCount++;
+                            return c;
+                        }
+                        if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
+                        {
+                            c.ReferencedCount++;
+                            return c;
+                        }
                     }
                 }
                 if (shareOnly)
