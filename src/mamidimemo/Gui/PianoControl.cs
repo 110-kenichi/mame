@@ -36,6 +36,9 @@ namespace zanac.MAmidiMEmo.Gui
 
         private int bKeyW;
 
+        private int bKeyWOfst;
+
+
         private Rectangle cr;
 
         private Dictionary<SoundBase, SoundUpdatedEventArgs> soundKeyOn = new Dictionary<SoundBase, SoundUpdatedEventArgs>();
@@ -124,6 +127,7 @@ namespace zanac.MAmidiMEmo.Gui
             bKeyW = (wKeyW * 11) / 23;
             if (bKeyW % 2 == 1)
                 bKeyW++;
+            bKeyWOfst = bKeyW / 5;
 
             base.OnClientSizeChanged(e);
         }
@@ -331,13 +335,13 @@ namespace zanac.MAmidiMEmo.Gui
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) - bKeyWOfst, bKeyH));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) - bKeyWOfst, 0));
                     }
                     break;
                 case 1: //C#
                     {
-                        var x = wKeyW + (octave * 7 + 1) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 1) * wKeyW - (bKeyW / 2) - bKeyWOfst;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -351,19 +355,19 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         var x = wKeyW + (octave * 7 + 1) * wKeyW;
 
-                        pts.Add(new Point(x + (bKeyW / 2), 0));
-                        pts.Add(new Point(x + (bKeyW / 2), bKeyH));
+                        pts.Add(new Point(x + (bKeyW / 2) - bKeyWOfst, 0));
+                        pts.Add(new Point(x + (bKeyW / 2) - bKeyWOfst, bKeyH));
                         pts.Add(new Point(x, bKeyH));
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) + bKeyWOfst, bKeyH));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) + bKeyWOfst, 0));
                     }
                     break;
                 case 3: //D#
                     {
-                        var x = wKeyW + (octave * 7 + 2) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 2) * wKeyW - (bKeyW / 2) + bKeyWOfst;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -377,8 +381,8 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         var x = wKeyW + (octave * 7 + 2) * wKeyW;
 
-                        pts.Add(new Point(x + (bKeyW / 2), 0));
-                        pts.Add(new Point(x + (bKeyW / 2), bKeyH));
+                        pts.Add(new Point(x + (bKeyW / 2) + bKeyWOfst, 0));
+                        pts.Add(new Point(x + (bKeyW / 2) + bKeyWOfst, bKeyH));
                         pts.Add(new Point(x, bKeyH));
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
@@ -393,13 +397,13 @@ namespace zanac.MAmidiMEmo.Gui
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) - bKeyWOfst, bKeyH));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) - bKeyWOfst, 0));
                     }
                     break;
                 case 6: //F#
                     {
-                        var x = wKeyW + (octave * 7 + 4) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 4) * wKeyW - (bKeyW / 2) - bKeyWOfst;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -412,8 +416,8 @@ namespace zanac.MAmidiMEmo.Gui
                 case 7: //G
                     {
                         var x = wKeyW + (octave * 7 + 4) * wKeyW;
-                        pts.Add(new Point(x + (bKeyW / 2), 0));
-                        pts.Add(new Point(x + (bKeyW / 2), bKeyH));
+                        pts.Add(new Point(x + (bKeyW / 2) - bKeyWOfst, 0));
+                        pts.Add(new Point(x + (bKeyW / 2) - bKeyWOfst, bKeyH));
                         pts.Add(new Point(x, bKeyH));
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
@@ -451,13 +455,13 @@ namespace zanac.MAmidiMEmo.Gui
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), bKeyH));
-                        pts.Add(new Point(x + wKeyW - (bKeyW / 2), 0));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) + bKeyWOfst, bKeyH));
+                        pts.Add(new Point(x + wKeyW - (bKeyW / 2) + bKeyWOfst, 0));
                     }
                     break;
                 case 10: //A#
                     {
-                        var x = wKeyW + (octave * 7 + 6) * wKeyW - (bKeyW / 2);
+                        var x = wKeyW + (octave * 7 + 6) * wKeyW - (bKeyW / 2) + bKeyWOfst;
 
                         pts.Add(new Point(x, 0));
                         pts.Add(new Point(x, bKeyH));
@@ -471,8 +475,8 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         var x = wKeyW + (octave * 7 + 6) * wKeyW;
 
-                        pts.Add(new Point(x + (bKeyW / 2), 0));
-                        pts.Add(new Point(x + (bKeyW / 2), bKeyH));
+                        pts.Add(new Point(x + (bKeyW / 2) + bKeyWOfst, 0));
+                        pts.Add(new Point(x + (bKeyW / 2) + bKeyWOfst, bKeyH));
                         pts.Add(new Point(x, bKeyH));
                         pts.Add(new Point(x, wKeyH - 1));
                         pts.Add(new Point(x + wKeyW, wKeyH - 1));
