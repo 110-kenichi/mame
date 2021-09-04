@@ -29,29 +29,38 @@ namespace zanac.VGMPlayer
         {
         }
 
-        public override void Write(byte type, byte address, byte data, int wait)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void Write(PortWriteData[] data)
         {
-            //if (SerialPort != null)
-            //{
-            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
-            //}
-            //else
-            if (FtdiPort != null)
+            List<byte> ds = new List<byte>();
+            foreach (var dt in data)
             {
-                sendData(convertToDataPacket(new byte[2] { address, data }), wait);
+                ds.Add(dt.Address);
+                ds.Add(dt.Data);
+            }
+            byte[] dsa = ds.ToArray();
+
+            lock (LockObject)
+            {
+                if (FtdiPort != null)
+                    sendData(convertToDataPacket(dsa), data[0].Wait);
             }
         }
 
         public override void RawWrite(byte[] data, int wait)
         {
-            //if (SerialPort != null)
-            //{
-            //    SerialPort.Write(new byte[] { (byte)~address, (byte)~data }, 0, 2);
-            //}
-            //else
-            if (FtdiPort != null)
+            lock (LockObject)
             {
-                sendData(data, wait);
+                if (FtdiPort != null)
+                {
+                    sendData(data, wait);
+                }
             }
         }
 

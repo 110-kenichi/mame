@@ -88,6 +88,8 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             if (!disposedValue)
             {
+                disposedValue = true;
+
                 if (disposing)
                 {
                     //マネージド状態を破棄します (マネージド オブジェクト)
@@ -98,7 +100,6 @@ namespace zanac.MAmidiMEmo.VSIF
                 if (SerialPort != null)
                     SerialPort.Dispose();
                 SerialPort = null;
-                disposedValue = true;
             }
         }
 
@@ -131,8 +132,10 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             try
             {
+                if (disposedValue)
+                    return;
                 lock (lockObject)
-                    SerialPort?.Write(type, address, data, wait);
+                    SerialPort?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
             }
             catch (Exception ex)
             {
@@ -153,6 +156,8 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             try
             {
+                if (disposedValue)
+                    return;
                 lock (lockObject)
                     SerialPort?.RawWrite(data, wait);
             }

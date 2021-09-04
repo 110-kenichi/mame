@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+		Improved "Piano" control graphics.
 3.9.2.1 Improved VGMPlayer & VSIF for MSX.
 3.9.2.0 Updated VGMPlayer to support MSX.
 		Fixed Mami path parsing for reading the VSTI ini file.

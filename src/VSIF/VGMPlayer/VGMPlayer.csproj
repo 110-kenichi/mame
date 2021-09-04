@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="MGSSong.cs" />
     <Compile Include="ListViewItemDragEventArgs.cs" />
+    <Compile Include="PortWriteData.cs" />
     <Compile Include="PortWriter.cs" />
     <Compile Include="PortWriterGenesis.cs" />
     <Compile Include="PortWriterMsx.cs" />

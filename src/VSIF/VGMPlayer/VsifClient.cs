@@ -17,7 +17,7 @@ namespace zanac.VGMPlayer
     {
         private object lockObject = new object();
 
-        private List<WritingData> deferredWriteAdrAndData;
+        private List<PortWriteData> deferredWriteAdrAndData;
 
         private bool disposedValue;
 
@@ -64,7 +64,7 @@ namespace zanac.VGMPlayer
             DataWriter = dataWriter;
 
             ReferencedCount = 1;
-            deferredWriteAdrAndData = new List<WritingData>();
+            deferredWriteAdrAndData = new List<PortWriteData>();
 
             autoResetEvent = new AutoResetEvent(false);
             writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
@@ -153,7 +153,7 @@ namespace zanac.VGMPlayer
             {
                 if (disposedValue)
                     return;
-                deferredWriteAdrAndData.Add(new VsifClient.WritingData() { Type = type, Address = address, Data = data, Wait = wait });
+                deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
             }
         }
 
@@ -168,7 +168,7 @@ namespace zanac.VGMPlayer
                 {
                     autoResetEvent.WaitOne();
 
-                    WritingData[] dd;
+                    PortWriteData[] dd;
                     lock (lockObject)
                     {
                         if (deferredWriteAdrAndData.Count == 0)
@@ -177,8 +177,8 @@ namespace zanac.VGMPlayer
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
                     }
-                    foreach (var d in dd)
-                        DataWriter?.Write(d.Type, d.Address, d.Data, d.Wait);
+                    if(dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
@@ -216,7 +216,7 @@ namespace zanac.VGMPlayer
                         return;
 
                     FlushDeferredWriteData();
-                    DataWriter?.Write(type, address, data, wait);
+                    DataWriter?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
                 }
             }
             catch (Exception ex)
@@ -242,7 +242,7 @@ namespace zanac.VGMPlayer
                     if (disposedValue)
                         return;
 
-                    DataWriter?.Write(type, address, data, wait);
+                    DataWriter?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
                 }
             }
             catch (Exception ex)
@@ -254,16 +254,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private class WritingData
-        {
-            public byte Type;
-            public byte Address;
-            public byte Data;
-            public int Wait;
-        }
 
 
     }

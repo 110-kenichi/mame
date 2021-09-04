@@ -564,6 +564,7 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
     <Compile Include="Instruments\CombinedTimbreSettings.cs" />
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
+    <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />

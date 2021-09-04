@@ -16,8 +16,10 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private SerialPort serialPort;
 
+        protected object LockObject = new object();
+
         /// <summary>
-        /// 
+        /// Need lock by LockObject to use this object
         /// </summary>
         protected SerialPort SerialPort
         {
@@ -30,7 +32,7 @@ namespace zanac.MAmidiMEmo.VSIF
         private FTDI ftdiPort;
 
         /// <summary>
-        /// 
+        /// Need lock by LockObject to use this object
         /// </summary>
         protected FTDI FtdiPort
         {
@@ -69,7 +71,7 @@ namespace zanac.MAmidiMEmo.VSIF
             PortName = "FTDI_COM" + (int)portNo;
         }
 
-        public abstract void Write(byte type, byte address, byte data, int wait);
+        public abstract void Write(PortWriteData[] data);
 
         public abstract void RawWrite(byte[] data, int wait);
 
@@ -81,13 +83,14 @@ namespace zanac.MAmidiMEmo.VSIF
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
                 }
-
-                serialPort?.Dispose();
-                //uint dummy = 0;
-                //ftdiPort?.Write(new byte[] { 0xFF }, 1, ref dummy);
-                ftdiPort?.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
-                ftdiPort?.Close();
-
+                lock (LockObject)
+                {
+                    serialPort?.Dispose();
+                    //uint dummy = 0;
+                    //ftdiPort?.Write(new byte[] { 0xFF }, 1, ref dummy);
+                    ftdiPort?.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                    ftdiPort?.Close();
+                }
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // TODO: 大きなフィールドを null に設定します
                 disposedValue = true;
