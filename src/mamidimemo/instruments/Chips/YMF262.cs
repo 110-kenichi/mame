@@ -539,7 +539,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.Dispose();
         }
 
-        private short ReadInt16Big(BinaryReader reader)
+        public static short ReadInt16Big(BinaryReader reader)
         {
             ushort valH = reader.ReadByte();
             ushort valL = reader.ReadByte();

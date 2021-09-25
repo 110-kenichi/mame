@@ -58,11 +58,13 @@ namespace FM_SoundConvertor
         public string Name;
         public int Number;
         public int FB;
+        public int FB2;
         public int AL;
         public int CNT = -1;
         public Op[] aOp;
 
-
+        public int KeyShift;
+        public int PitchShift;
 
         public Tone()
         {
