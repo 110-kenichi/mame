@@ -18,11 +18,11 @@ namespace zanac.MAmidiMEmo.Instruments
         Software,
         [Description("Real(SPFM)")]
         SPFM,
-        [Description("Real(VSIF SMS)")]
+        [Description("Real(VSIF SMS(UART 115200bps)")]
         VSIF_SMS,
         [Description("Real(VSIF Genesis(UART 163840bps)")]
         VSIF_Genesis,
-        [Description("Real(VSIF Genesis(UART 1152000bps)")]
+        [Description("Real(VSIF Genesis(UART 115200bps)")]
         VSIF_Genesis_Low,
         [Description("Real(VSIF Genesis(FTDI))")]
         VSIF_Genesis_FTDI,

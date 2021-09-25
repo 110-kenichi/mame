@@ -1786,7 +1786,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound(DPCM)")]
-            [Description("DPCM Sample Bit Rate (0:4KHz-15:32KHz)")]
+            [Description("DPCM Sample Bit Rate\r\n" +
+                "0: 4181.71 Hz C-8 -1.78c\r\n" +
+                "1: 4709.93 Hz D - 8 + 4.16c\r\n" +
+                "2: 5264.04 Hz E - 8 - 3.29c\r\n" +
+                "3: 5593.04 Hz F - 8 + 1.67c\r\n" +
+                "4: 6257.95 Hz G - 8 - 3.86c\r\n" +
+                "5: 7046.35 Hz A - 8 + 1.56c\r\n" +
+                "6: 7919.35 Hz B - 8 + 3.77c\r\n" +
+                "7: 8363.42 Hz C - 9 - 1.78c\r\n" +
+                "8: 9419.86 Hz D - 9 + 4.16c\r\n" +
+                "9: 11186.1 Hz F - 9 + 1.67c\r\n" +
+                "10: 12604.0 Hz G - 9 + 8.29c\r\n" +
+                "11: 13982.6 Hz A - 9 - 12.0c\r\n" +
+                "12: 16884.6 Hz C - 10 + 14.5\r\n" +
+                "13: 21306.8 Hz E - 10 + 17.2\r\n" +
+                "14: 24858.0 Hz G - 10 - 15.9\r\n" +
+                "15: 33143.9 Hz C - 11 - 17.9")]
             [DefaultValue((byte)15)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
