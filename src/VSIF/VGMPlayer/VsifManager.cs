@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using zanac.VGMPlayer.Properties;
 
 namespace zanac.VGMPlayer
 {
@@ -79,6 +79,23 @@ namespace zanac.VGMPlayer
                 {
                     switch (soundModule)
                     {
+                        case VsifSoundModuleType.Generic_UART:
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 100;
+                                sp.ReadTimeout = 100;
+                                sp.BaudRate = 115200;
+                                sp.BaudRate = 1200 * (int)Settings.Default.BitBangWaitAY8910;
+                                sp.StopBits = StopBits.One;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.None;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriterGenericUart(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                         case VsifSoundModuleType.SMS:
                             {
                                 SerialPort sp = null;
@@ -269,6 +286,7 @@ namespace zanac.VGMPlayer
         NES_FTDI_INDIRECT,
         NES_FTDI_DIRECT,
         MSX_FTDI,
+        Generic_UART,
     }
 
 

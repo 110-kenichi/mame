@@ -798,6 +798,10 @@ namespace zanac.VGMPlayer
                         comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.Y8910_Port, false);
                         break;
+                    case 1:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
+                            (PortId)Settings.Default.Y8910_Port, false);
+                        break;
                 }
                 checkBoxConnY8910.Checked = comPortY8910 != null;
                 comboBoxY8910.Enabled = comPortY8910 == null;

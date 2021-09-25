@@ -1325,7 +1325,8 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxY8910.FormattingEnabled = true;
             this.comboBoxY8910.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX) (for Expert)"});
+            "VSIF - MSX(FTDI2XX) (for Expert)",
+            "VSIF - Generic(UART 115Kbps)"});
             this.comboBoxY8910.Location = new System.Drawing.Point(148, 128);
             this.comboBoxY8910.Name = "comboBoxY8910";
             this.comboBoxY8910.Size = new System.Drawing.Size(300, 20);

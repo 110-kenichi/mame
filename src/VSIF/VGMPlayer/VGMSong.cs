@@ -312,6 +312,10 @@ namespace zanac.VGMPlayer
                         comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.Y8910_Port);
                         break;
+                    case 1:
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
+                            (PortId)Settings.Default.Y8910_Port);
+                        break;
                 }
             }
             return curHead;
@@ -513,6 +517,9 @@ namespace zanac.VGMPlayer
                                             switch (comPortY8910?.SoundModuleType)
                                             {
                                                 case VsifSoundModuleType.MSX_FTDI:
+                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
+                                                    break;
+                                                case VsifSoundModuleType.Generic_UART:
                                                     comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
                                                     break;
                                             }
