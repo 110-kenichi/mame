@@ -57,7 +57,10 @@ namespace zanac.MAmidiMEmo.Gui
             for (int i = 0; i < inst.BaseTimbres.Length; i++)
             {
                 if (inst.BaseTimbres[i] == timbre)
+                {
                     timbreNo = i;
+                    break;
+                }
             }
 
             InitializeComponent();

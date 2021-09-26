@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.2.1/ Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.3.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,12 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.3.0	Added Key On/Off delay time property to a Timbre property.
+		Supported importing a WOPL file to YMF262 Tone Editor.
+		Supported importing a OPL file to YM3812 Tone Editor.
+		Improved YM2413 drum sounds. You can specify custom F-Num value and added enhanced drum set.
+		Supported Generic UART for AY-3-8910 for VGMPlayer.
+3.9.2.2 Fixed performance hit for VSIF
 		Improved "Piano" control graphics.
 3.9.2.1 Improved VGMPlayer & VSIF for MSX.
 3.9.2.0 Updated VGMPlayer to support MSX.
