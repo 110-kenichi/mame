@@ -65,6 +65,8 @@ namespace FM_SoundConvertor
 
         public int KeyShift;
         public int PitchShift;
+        public int KeyOnDelay;
+        public int KeyOffDelay;
 
         public Tone()
         {

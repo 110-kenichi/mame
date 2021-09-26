@@ -814,6 +814,32 @@ namespace zanac.MAmidiMEmo.Instruments
             return null;
         }
 
+        protected void ProcessKeyOn(SoundBase sound)
+        {
+            int delay = sound.Timbre.KeyOnDelay;
+            CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(sound.NoteOnEvent, sound.Timbre, sound.BaseTimbreIndex);
+            if (parent != null)
+                delay += parent.KeyOnDelayOffset;
+
+            if (delay != 0)
+            {
+                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processDelayKeyOnCore), delay, sound, true);
+            }
+            else
+            {
+                sound.KeyOn();
+            }
+        }
+
+        private double processDelayKeyOnCore(object state)
+        {
+            SoundBase sound = state as SoundBase;
+            if (!sound.IsDisposed && !sound.IsSoundOff && !sound.IsKeyOff)
+                sound.KeyOn();
+
+            return -1;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -855,12 +881,31 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (offsnd.NoteOnEvent.NoteNumber == note.NoteNumber)
                     {
                         if (!offsnd.Timbre.IgnoreKeyOff)
-                            offsnd.KeyOff();
+                        {
+                            int delay = offsnd.Timbre.KeyOffDelay;
+                            CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(offsnd.NoteOnEvent, offsnd.Timbre, offsnd.BaseTimbreIndex);
+                            if (parent != null)
+                                delay += parent.KeyOffDelayOffset;
+                            if (delay != 0)
+                                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processDelayKeyOffCore), delay, offsnd, true);
+                            else
+                                offsnd.KeyOff();
+                        }
                         //break;
                     }
                 }
             }
         }
+
+        private double processDelayKeyOffCore(object state)
+        {
+            SoundBase sound = state as SoundBase;
+            if (!sound.IsDisposed)
+                sound.KeyOff();
+
+            return -1;
+        }
+
 
         #region アルペジオ関係
 

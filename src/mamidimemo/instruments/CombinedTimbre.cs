@@ -52,11 +52,19 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-
         [IgnoreDataMember]
         [JsonIgnore]
         [Browsable(false)]
         public new int PanShift
+        {
+            get;
+            set;
+        }
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
+        public new int KeyOnDelay
         {
             get;
             set;

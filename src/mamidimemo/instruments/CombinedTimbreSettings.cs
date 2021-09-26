@@ -98,6 +98,42 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private int f_KeyOnDelayOffset;
+
+        [DataMember]
+        [Description("Key Off Delay Offset [ms]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 1000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int KeyOnDelayOffset
+        {
+            get => f_KeyOnDelayOffset;
+            set
+            {
+                f_KeyOnDelayOffset = value;
+                if (f_KeyOnDelayOffset < 0)
+                    f_KeyOnDelayOffset = 0;
+            }
+        }
+
+        private int f_KeyOffDelayOffset;
+
+        [DataMember]
+        [Description("Key Off Delay [ms]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 1000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int KeyOffDelayOffset
+        {
+            get => f_KeyOffDelayOffset;
+            set
+            {
+                f_KeyOffDelayOffset = value;
+                if (f_KeyOffDelayOffset < 0)
+                    f_KeyOffDelayOffset = 0;
+            }
+        }
+
         private NoteNames f_KeyRangeLow = NoteNames.C_1;
 
         [DataMember]
@@ -213,7 +249,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                var obj = JsonConvert.DeserializeObject<CombinedTimbre>(serializeData);
+                var obj = JsonConvert.DeserializeObject<CombinedTimbreSettings>(serializeData);
                 this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
             }
             catch (Exception ex)

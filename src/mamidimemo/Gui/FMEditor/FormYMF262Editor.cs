@@ -163,7 +163,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                                     //1
                                     file.ReadByte();    //MIDI Velocity offset
-                                                        //1
+                                    //1
                                     tone2.PitchShift = file.ReadSByte();
 
                                     //1
@@ -232,9 +232,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                                     //1
                                     file.ReadByte();    //MIDI Velocity offset
-                                                        //1
-                                    tone1.PitchShift = file.ReadSByte();
-                                    tone2.PitchShift *= 2;
+                                    //1
+                                    tone2.PitchShift = file.ReadSByte();
 
                                     //1
                                     //TODO: Drum
@@ -372,10 +371,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     op.WS = (byte)((reg >> 0) & 0x07);
                 }
             }
-            //2
-            ReadInt16Big(file);
-            //2
-            ReadInt16Big(file);
+            if (tim2 != null)
+            {
+                //2
+                tim2.KeyOnDelay = ReadInt16Big(file);
+                //2
+                tim2.KeyOffDelay = ReadInt16Big(file);
+            }
         }
 
         protected override void ApplyTone(Tone tone)

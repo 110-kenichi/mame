@@ -87,6 +87,43 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private int f_KeyOnDelay;
+
+        [DataMember]
+        [Description("Key On Delay [ms]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 1000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int KeyOnDelay
+        {
+            get => f_KeyOnDelay;
+            set
+            {
+                f_KeyOnDelay = value;
+                if (f_KeyOnDelay < 0)
+                    f_KeyOnDelay = 0;
+            }
+        }
+
+
+        private int f_KeyOffDelay;
+
+        [DataMember]
+        [Description("Key Off Delay [ms]")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 1000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int KeyOffDelay
+        {
+            get => f_KeyOffDelay;
+            set
+            {
+                f_KeyOffDelay = value;
+                if (f_KeyOffDelay < 0)
+                    f_KeyOffDelay = 0;
+            }
+        }
+
         [DataMember]
         [Description("Define custom velocity map\r\n" +
             "Link with Velocity value with the Timbre property value\r\n" +

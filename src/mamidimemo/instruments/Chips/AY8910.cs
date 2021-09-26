@@ -782,7 +782,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
