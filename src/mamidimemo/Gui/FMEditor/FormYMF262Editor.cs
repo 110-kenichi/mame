@@ -112,8 +112,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get
             {
-                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, WOPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.wopl";
+                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, WOPL, OPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.wopl;*.opl";
             }
+        }
+
+        class Head
+        {
+            public byte Patch;
+            public byte Bank;
+            public uint Offset;
         }
 
         public override IEnumerable<Tone> ImportToneFile(string fileName)
@@ -274,6 +281,108 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
 
 
+                        }
+                        break;
+                    case ".OPL":
+                        {
+                            List<Head> list = new List<Head>();
+                            byte maxBankNumber = 0;
+
+                            using (var file = new System.IO.BinaryReader(new System.IO.FileStream(fileName, System.IO.FileMode.Open)))
+                            {
+                                while (true)
+                                {
+                                    //read head
+                                    Head p = new Head();
+                                    p.Patch = file.ReadByte();
+                                    p.Bank = file.ReadByte();
+                                    p.Offset = file.ReadUInt32();
+
+                                    if (p.Patch == 0xff && p.Bank == 0xff)
+                                        break;
+
+                                    if ((p.Bank != 0x7F) && (p.Bank > maxBankNumber))
+                                        maxBankNumber = p.Bank;
+
+                                    list.Add(p);
+                                };
+
+                                for (int i = 0; i < list.Count; i++)
+                                {
+                                    var p = list[i];
+                                    file.BaseStream.Seek(p.Offset, System.IO.SeekOrigin.Begin);
+
+                                    bool isPerc = (p.Bank == 0x7F);
+                                    int gmPatchId = isPerc ? p.Patch : (p.Patch + (p.Bank * 128));
+
+                                    ushort insLen = file.ReadUInt16();
+                                    insLen -= 2;
+
+                                    byte[] idata = new byte[24];
+                                    if (insLen < 24)
+                                    {
+                                        idata = file.ReadBytes(insLen);
+                                    }
+                                    else
+                                    {
+                                        idata = file.ReadBytes(24);
+                                        file.BaseStream.Seek(insLen - 24, System.IO.SeekOrigin.Current);
+                                    }
+
+                                    //var tim = Timbres[p.Patch + (isPerc ? 128 : 0)];
+                                    Tone tone = new Tone();
+                                    tone.Number = i;
+                                    tone.Name = i.ToString();
+
+                                    //ins.percNoteNum = (isPerc) ? idata[0] : 0;
+                                    //ins.note_offset1 = (isPerc) ? 0 : idata[0];
+                                    //if (isPerc)
+                                    //{
+                                    //    var t = DrumTimbres[p.Patch];
+                                    //    t.BaseNote = (NoteNames)idata[0];
+                                    //    t.TimbreNumber = (ProgramAssignmentNumber)(p.Patch + 128);
+                                    //}
+
+                                    tone.aOp[0].AM = (byte)((idata[1] >> 7) & 0x1);
+                                    tone.aOp[0].VIB = (byte)((idata[1] >> 6) & 0x1);
+                                    tone.aOp[0].EG = (byte)((idata[1] >> 5) & 0x1);
+                                    tone.aOp[0].KSR = (byte)((idata[1] >> 4) & 0x1);
+                                    tone.aOp[0].ML = (byte)((idata[1]) & 0xf);
+
+                                    tone.aOp[0].KS = (byte)((idata[2] >> 6) & 0x03);
+                                    tone.aOp[0].TL = (byte)((idata[2]) & 0x3f);
+
+                                    tone.aOp[0].AR = (byte)((idata[3] >> 4) & 0x0f);
+                                    tone.aOp[0].DR = (byte)((idata[3]) & 0x0f);
+
+                                    tone.aOp[0].SL = (byte)((idata[4] >> 4) & 0x0f);
+                                    tone.aOp[0].RR = (byte)((idata[4]) & 0x0f);
+
+                                    tone.aOp[0].WS = (byte)((idata[5]) & 0x07);
+
+                                    tone.aOp[1].AM = (byte)((idata[7] >> 7) & 0x1);
+                                    tone.aOp[1].VIB = (byte)((idata[7] >> 6) & 0x1);
+                                    tone.aOp[1].EG = (byte)((idata[7] >> 5) & 0x1);
+                                    tone.aOp[1].KSR = (byte)((idata[7] >> 4) & 0x1);
+                                    tone.aOp[1].ML = (byte)((idata[7]) & 0xf);
+
+                                    tone.aOp[1].KS = (byte)((idata[8] >> 6) & 0x03);
+                                    tone.aOp[1].TL = (byte)((idata[8]) & 0x3f);
+
+                                    tone.aOp[1].AR = (byte)((idata[9] >> 4) & 0x0f);
+                                    tone.aOp[1].DR = (byte)((idata[9]) & 0x0f);
+
+                                    tone.aOp[1].SL = (byte)((idata[10] >> 4) & 0x0f);
+                                    tone.aOp[1].RR = (byte)((idata[10]) & 0x0f);
+
+                                    tone.aOp[1].WS = (byte)((idata[11]) & 0x07);
+
+                                    tone.CNT = (byte)((idata[6]) & 0x01);
+                                    tone.FB = (byte)((idata[6] >> 1) & 0x07);
+
+                                    tones.Add(tone);
+                                }
+                            }
                         }
                         break;
                     default:

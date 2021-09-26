@@ -1787,22 +1787,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(DPCM)")]
             [Description("DPCM Sample Bit Rate\r\n" +
-                "0: 4181.71 Hz C-8 -1.78c\r\n" +
-                "1: 4709.93 Hz D - 8 + 4.16c\r\n" +
-                "2: 5264.04 Hz E - 8 - 3.29c\r\n" +
-                "3: 5593.04 Hz F - 8 + 1.67c\r\n" +
-                "4: 6257.95 Hz G - 8 - 3.86c\r\n" +
-                "5: 7046.35 Hz A - 8 + 1.56c\r\n" +
-                "6: 7919.35 Hz B - 8 + 3.77c\r\n" +
-                "7: 8363.42 Hz C - 9 - 1.78c\r\n" +
-                "8: 9419.86 Hz D - 9 + 4.16c\r\n" +
-                "9: 11186.1 Hz F - 9 + 1.67c\r\n" +
-                "10: 12604.0 Hz G - 9 + 8.29c\r\n" +
-                "11: 13982.6 Hz A - 9 - 12.0c\r\n" +
-                "12: 16884.6 Hz C - 10 + 14.5\r\n" +
-                "13: 21306.8 Hz E - 10 + 17.2\r\n" +
-                "14: 24858.0 Hz G - 10 - 15.9\r\n" +
-                "15: 33143.9 Hz C - 11 - 17.9")]
+                "00:  4181.71 Hz C-8  -1.78c\r\n" +
+                "01:  4709.93 Hz D-8  +4.16c\r\n" +
+                "02:  5264.04 Hz E-8  -3.29c\r\n" +
+                "03:  5593.04 Hz F-8  +1.67c\r\n" +
+                "04:  6257.95 Hz G-8  -3.86c\r\n" +
+                "05:  7046.35 Hz A-8  +1.56c\r\n" +
+                "06:  7919.35 Hz B-8  +3.77c\r\n" +
+                "07:  8363.42 Hz C-9  -1.78c\r\n" +
+                "08:  9419.86 Hz D-9  +4.16c\r\n" +
+                "09: 11186.10 Hz F-9  +1.67c\r\n" +
+                "10: 12604.00 Hz G-9  +8.29c\r\n" +
+                "11: 13982.60 Hz A-9  -12.0c\r\n" +
+                "12: 16884.60 Hz C-10 +14.5c\r\n" +
+                "13: 21306.80 Hz E-10 +17.2c\r\n" +
+                "14: 24858.00 Hz G-10 -15.9c\r\n" +
+                "15: 33143.90 Hz C-11 -17.9c")]
             [DefaultValue((byte)15)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2791,4 +2791,5 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
     }
+
 }

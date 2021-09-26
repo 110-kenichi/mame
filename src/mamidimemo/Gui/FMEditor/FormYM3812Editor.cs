@@ -223,7 +223,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     tone.aOp[1].WS = (byte)((idata[11]) & 0x07);
 
                                     tone.CNT = (byte)((idata[6]) & 0x01);
-                                    tone.FB2 = (byte)((idata[6] >> 1) & 0x07);
+                                    tone.FB = (byte)((idata[6] >> 1) & 0x07);
 
                                     tones.Add(tone);
                                 }
