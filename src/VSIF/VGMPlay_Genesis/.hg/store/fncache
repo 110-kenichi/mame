@@ -1,0 +1,12 @@
+data/src/main.c.i
+data/.vscode/extensions.json.i
+data/src/VGMPlay.s.i
+data/res/resources.h.i
+data/.hgignore.i
+data/res/resources.res.i
+data/src/VGMPlayZ80.z80.i
+data/src/boot/rom_head.c.i
+data/VGMPlay_md.bin.i
+data/src/boot/sega.s.i
+data/src/VGMPlayZ80.h.i
+data/make.bat.i

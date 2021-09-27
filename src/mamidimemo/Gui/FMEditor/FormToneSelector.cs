@@ -46,7 +46,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void listBoxTones_DoubleClick(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
+            if(listBoxTones.SelectedItem != null)
+                DialogResult = DialogResult.OK;
         }
 
 

@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             public override string ToString()
             {
-                return "No " + Number.ToString() + " " + Timbre.Memo;
+                return "No " + Number.ToString() + " " + Timbre.TimbreName;
             }
         }
 
@@ -653,21 +653,27 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private void metroButtonImport_Click(object sender, EventArgs e)
         {
+            openFileDialogTone.Filter = SupportedExtensionsFilter;
             DialogResult dr = openFileDialogTone.ShowDialog(this);
             if (dr != DialogResult.OK)
                 return;
 
-            importFile(openFileDialogTone.FileName, false);
+            ImportAndApplyToneFile(openFileDialogTone.FileName, false);
         }
 
-        private void importFile(string file, bool setAll)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public virtual IEnumerable<Tone> ImportToneFile(string file)
         {
             string ext = System.IO.Path.GetExtension(file);
-            string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
             var Option = new Option();
+            IEnumerable<Tone> tones = null;
             try
             {
-                IEnumerable<Tone> tones = null;
+                string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
                 switch (ext.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case ".MUC":
@@ -685,7 +691,29 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     case ".FXB":
                         tones = Vopm.Reader(importFile, Option);
                         break;
+                    case ".GWI":
+                        tones = Gwi.Reader(importFile, Option);
+                        break;
                 }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+            }
+            return tones;
+        }
+
+        protected virtual void ImportAndApplyToneFile(string file, bool setAll)
+        {
+            string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
+            try
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
 
                 if (tones != null && tones.Count() > 0)
                 {
@@ -843,7 +871,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         this.BeginInvoke(new MethodInvoker(() =>
                         {
                             if (!this.IsDisposed)
-                                importFile(drags[0], false);
+                                ImportAndApplyToneFile(drags[0], false);
                         }));
                     }
                 }
@@ -855,13 +883,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         /// <param name="ext"></param>
         /// <returns></returns>
-        public static bool IsSupportedExtension(String ext)
+        public virtual bool IsSupportedExtension(String ext)
         {
             if (ext.Equals(".MUC", StringComparison.OrdinalIgnoreCase) ||
                 ext.Equals(".DAT", StringComparison.OrdinalIgnoreCase) ||
                 ext.Equals(".MWI", StringComparison.OrdinalIgnoreCase) ||
                 ext.Equals(".MML", StringComparison.OrdinalIgnoreCase) ||
-                ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase)
+                ext.Equals(".FXB", StringComparison.OrdinalIgnoreCase) ||
+                ext.Equals(".GWI", StringComparison.OrdinalIgnoreCase)
                )
                 return true;
             else
@@ -907,7 +936,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         this.BeginInvoke(new MethodInvoker(() =>
                         {
                             if (!this.IsDisposed)
-                                importFile(drags[0], true);
+                                ImportAndApplyToneFile(drags[0], true);
                         }));
                     }
                 }
@@ -930,13 +959,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual string SupportedExtensionsFilter
+        {
+            get
+            {
+                return openFileDialogTone.Filter;
+            }
+        }
+
         private void metroButtonImportAll_Click(object sender, EventArgs e)
         {
+            openFileDialogTone.Filter = SupportedExtensionsFilter;
             DialogResult dr = openFileDialogTone.ShowDialog(this);
             if (dr != DialogResult.OK)
                 return;
 
-            importFile(openFileDialogTone.FileName, true);
+            ImportAndApplyToneFile(openFileDialogTone.FileName, true);
         }
 
         private void metroButtonImportGit_Click(object sender, EventArgs ea)
@@ -946,7 +987,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             foreach (var c in controls.Values)
                 ses.Add(c.SerializeData);
 
-            using (var f = new FormDownloadTone(false))
+            using (var f = new FormDownloadTone(this, false))
             {
                 f.SelectedToneChanged += (s, e) => { tryApplyTone(f.SelectedTone); };
 
@@ -954,7 +995,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 try
                 {
                     ignorePlayingFlag++;
-                    if (dr == DialogResult.OK)
+                    if (dr == DialogResult.OK && f.SelectedTone != null)
                     {
                         ApplyTone(f.SelectedTone);
                     }
@@ -980,7 +1021,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             foreach (var c in controls.Values)
                 ses.Add(c.SerializeData);
 
-            using (var f = new FormDownloadTone(true))
+            using (var f = new FormDownloadTone(this, true))
             {
                 f.SelectedToneChanged += (s, e) => { tryApplyTone(f.SelectedTone); };
 

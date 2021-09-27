@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FastDelegate.Net;
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
@@ -423,11 +424,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (ptidx >= CombinedTimbres.Length)
                     ptidx = CombinedTimbres.Length - 1;
                 var pts = CombinedTimbres[ptidx];
-                for (int i = 0; i < pts.BindTimbres.Length; i++)
-                {
-                    if (pts.BindTimbres[i] != null) //if Timbre assigned
-                        return CombinedTimbres[ptidx];
-                }
+                if (pts.Timbres.Count != 0) //if Timbre assigned
+                    return CombinedTimbres[ptidx];
             }
 
             int btidx = pn & 0xffff;
@@ -436,13 +434,27 @@ namespace zanac.MAmidiMEmo.Instruments
             return BaseTimbres[btidx];
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
+        public CombinedTimbreSettings TryGetBaseTimbreSettings(TaggedNoteOnEvent ev, TimbreBase timbre, int baseTimbreIndex)
+        {
+            if (ev.CombinedTimbreSettings != null && 0 <= baseTimbreIndex && baseTimbreIndex < ev.CombinedTimbreSettings.Length)
+                return ev.CombinedTimbreSettings[baseTimbreIndex];
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase[] GetBaseTimbres(TaggedNoteOnEvent ev)
         {
             List<TimbreBase> ts = new List<TimbreBase>();
+            List<CombinedTimbreSettings> cts = new List<CombinedTimbreSettings>();
+            List<int> tis = new List<int>();
 
             var tb = ev.Tag as NoteOnTimbreInfo;
             if (tb != null)
@@ -450,17 +462,30 @@ namespace zanac.MAmidiMEmo.Instruments
                 CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
                 if (ctb != null)
                 {
-                    foreach (int? tn in ctb.BindTimbres)
+                    foreach (var tn in ctb.Timbres)
                     {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add(BaseTimbres[tn.Value]);
+                        if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                        {
+                            if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
+                            {
+                                ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                tis.Add((int)tn.TimbreNumber);
+                                cts.Add(tn);
+                            }
+                        }
                     }
                 }
                 else
                 {
                     ts.Add(tb.Timbre);
+                    tis.Add(tb.TimbreNo);
+                    cts.Add(null);
                 }
-                return ts.ToArray();
+                ev.BaseTimbreIndexes = tis.ToArray();
+                ev.BaseTimbres = ts.ToArray();
+                ev.CombinedTimbreSettings = cts.ToArray();
+                return ev.BaseTimbres;
             }
 
             switch (ChannelTypes[ev.Channel])
@@ -473,19 +498,31 @@ namespace zanac.MAmidiMEmo.Instruments
                             int ptidx = pn & 0xffff;
                             if (ptidx >= CombinedTimbres.Length)
                                 ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                            foreach (var tn in CombinedTimbres[ptidx].Timbres)
                             {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add(BaseTimbres[tn.Value]);
+                                if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                                {
+                                    if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                        tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
+                                    {
+                                        ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                        tis.Add((int)tn.TimbreNumber);
+                                        cts.Add(tn);
+                                    }
+                                }
                             }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
+                            ev.BaseTimbreIndexes = tis.ToArray();
+                            ev.BaseTimbres = ts.ToArray();
+                            ev.CombinedTimbreSettings = cts.ToArray();
+                            return ev.BaseTimbres;
                         }
 
                         int btidx = pn & 0xffff;
                         if (btidx >= BaseTimbres.Length)
                             btidx = BaseTimbres.Length - 1;
                         ts.Add(BaseTimbres[btidx]);
+                        tis.Add(btidx);
+                        cts.Add(null);
                         break;
                     }
                 case ChannelType.Drum:
@@ -499,25 +536,40 @@ namespace zanac.MAmidiMEmo.Instruments
                                 int ptidx = pn & 0xffff;
                                 if (ptidx >= CombinedTimbres.Length)
                                     ptidx = CombinedTimbres.Length - 1;
-                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
+                                foreach (var tn in CombinedTimbres[ptidx].Timbres)
                                 {
-                                    if (tn != null && tn.Value < BaseTimbres.Length)
-                                        ts.Add(BaseTimbres[tn.Value]);
+                                    if ((int)tn.TimbreNumber < BaseTimbres.Length)
+                                    {
+                                        if ((int)tn.KeyRangeLow <= ev.NoteNumber && ev.NoteNumber <= (int)tn.KeyRangeHigh &&
+                                            tn.VelocityRangeLow <= ev.Velocity && ev.Velocity <= tn.VelocityRangeHigh)
+                                        {
+                                            ts.Add(BaseTimbres[(int)tn.TimbreNumber]);
+                                            tis.Add((int)tn.TimbreNumber);
+                                            cts.Add(tn);
+                                        }
+                                    }
                                 }
-                                if (ts.Count != 0)
-                                    return ts.ToArray();
+                                ev.BaseTimbreIndexes = tis.ToArray();
+                                ev.BaseTimbres = ts.ToArray();
+                                ev.CombinedTimbreSettings = cts.ToArray();
+                                return ev.BaseTimbres;
                             }
 
                             int btidx = pn & 0xffff;
                             if (btidx >= BaseTimbres.Length)
                                 btidx = BaseTimbres.Length - 1;
                             ts.Add(BaseTimbres[btidx]);
+                            tis.Add(btidx);
+                            cts.Add(null);
                         }
                         break;
                     }
             }
 
-            return ts.ToArray();
+            ev.BaseTimbreIndexes = tis.ToArray();
+            ev.BaseTimbres = ts.ToArray();
+            ev.CombinedTimbreSettings = cts.ToArray();
+            return ev.BaseTimbres;
         }
 
 
@@ -527,81 +579,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         public virtual int[] GetBaseTimbreIndexes(TaggedNoteOnEvent ev)
         {
-            List<int> ts = new List<int>();
-
-            NoteOnTimbreInfo tb = ev.Tag as NoteOnTimbreInfo;
-            if (tb != null)
-            {
-                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
-                if (ctb != null)
-                {
-                    foreach (int? tn in ctb.BindTimbres)
-                    {
-                        if (tn != null && tn.Value < BaseTimbres.Length)
-                            ts.Add((int)tn);
-                    }
-                }
-                else
-                {
-                    ts.Add(tb.TimbreNo);
-                }
-                return ts.ToArray();
-            }
-
-            switch (ChannelTypes[ev.Channel])
-            {
-                case ChannelType.Normal:
-                    {
-                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
-                        if ((pn & 0xffff0000) != 0)
-                        {
-                            int ptidx = pn & 0xffff;
-                            if (ptidx >= CombinedTimbres.Length)
-                                ptidx = CombinedTimbres.Length - 1;
-                            foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
-                            {
-                                if (tn != null && tn.Value < BaseTimbres.Length)
-                                    ts.Add((int)tn);
-                            }
-                            if (ts.Count != 0)
-                                return ts.ToArray();
-                        }
-
-                        int btidx = pn & 0xffff;
-                        if (btidx >= BaseTimbres.Length)
-                            btidx = BaseTimbres.Length - 1;
-                        ts.Add(btidx);
-                        break;
-                    }
-                case ChannelType.Drum:
-                    {
-                        var dt = DrumTimbres[ev.NoteNumber];
-                        if (dt != null && dt.TimbreNumber != null)
-                        {
-                            int pn = (int)dt.TimbreNumber;
-                            if ((pn & 0xffff0000) != 0)
-                            {
-                                int ptidx = pn & 0xffff;
-                                if (ptidx >= CombinedTimbres.Length)
-                                    ptidx = CombinedTimbres.Length - 1;
-                                foreach (int? tn in CombinedTimbres[ptidx].BindTimbres)
-                                {
-                                    if (tn != null && tn.Value < BaseTimbres.Length)
-                                        ts.Add((int)tn);
-                                }
-                                if (ts.Count != 0)
-                                    return ts.ToArray();
-                            }
-
-                            int btidx = pn & 0xffff;
-                            if (btidx >= BaseTimbres.Length)
-                                btidx = BaseTimbres.Length - 1;
-                            ts.Add(btidx);
-                        }
-                        break;
-                    }
-            }
-            return ts.ToArray();
+            return ev.BaseTimbreIndexes;
         }
 
         /// <summary>
@@ -805,6 +783,108 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             for (int i = 0; i < ProgramAssignments.Length; i++)
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Scale Tuning -100～0～100 [cent] <MIDI 16ch>\r\n" +
+            "Input scale value of each notes (C C# ... A# B) and split it with space like the FamiTracker.")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
+        [CollectionDefaultValue("0 0 0 0 0 0 0 0 0 0 0 0")]
+        public virtual ScaleTuning[] ScaleTunings
+        {
+            get;
+            set;
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<ScaleTuning>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [MidiHook]
+        [DataContract]
+        public class ScaleTuning
+        {
+            private string f_Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+
+            [Description("Scale Tuning -100～0～100 [cent]\r\n" +
+                "Input scale value of each notes (C C# ... A# B) and split it with space like the FamiTracker.")]
+            [DataMember]
+            [DefaultValue("0 0 0 0 0 0 0 0 0 0 0 0")]
+            public string Scales
+            {
+                get
+                {
+                    return f_Scales;
+                }
+                set
+                {
+                    if (f_Scales != value)
+                    {
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (value == null || vals.Length != 12)
+                        {
+                            ScalesNums = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                            f_Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+                            return;
+                        }
+                        f_Scales = value;
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            int v;
+                            if (int.TryParse(val, out v))
+                            {
+                                if (v < -100)
+                                    v = -100;
+                                else if (v > 100)
+                                    v = 100;
+                                vs.Add(v);
+                            }
+                        }
+                        ScalesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < ScalesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            sb.Append(ScalesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_Scales = sb.ToString();
+                    }
+                }
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] ScalesNums { get; set; } = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public ScaleTuning()
+            {
+            }
+        }
+
+        public bool ShouldSerializeScaleTunings()
+        {
+            for (int i = 0; i < ScaleTunings.Length; i++)
+            {
+                if (ScaleTunings[i].Scales != "0 0 0 0 0 0 0 0 0 0 0 0")
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetScaleTunings()
+        {
+            for (int i = 0; i < ScaleTunings.Length; i++)
+                ScaleTunings[i].Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
         }
 
 
@@ -1408,9 +1488,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="address"></param>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_device_reset(uint unitNumber, string tagName);
+        public delegate void delegate_device_reset(uint unitNumber, string tagName);
 
-        private static delegate_device_reset device_reset;
+        public static delegate_device_reset DeviceReset;
 
         /// <summary>
         /// 
@@ -1610,7 +1690,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             funcPtr = MameIF.GetProcAddress("device_reset");
             if (funcPtr != IntPtr.Zero)
-                device_reset = Marshal.GetDelegateForFunctionPointer<delegate_device_reset>(funcPtr);
+                DeviceReset = Marshal.GetDelegateForFunctionPointer<delegate_device_reset>(funcPtr);
 
             funcPtr = MameIF.GetProcAddress("set_filter");
             if (funcPtr != IntPtr.Zero)
@@ -1625,6 +1705,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 set_vst_fx_callback = Marshal.GetDelegateForFunctionPointer<delegate_set_vst_fx_callback>(funcPtr);
 
             deferredWriteData = new List<(Delegate, object[])>();
+
+            cachedWriteFunc = new Dictionary<Delegate, Func<object, object[], object>>();
         }
 
         public const int DEFAULT_MAX_TIMBRES = 256;
@@ -1634,12 +1716,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public InstrumentBase(uint unitNumber)
         {
+            writtenDataCache = new Dictionary<uint, uint>();
+
             UnitNumber = unitNumber;
 
-            device_reset(UnitNumber, SoundInterfaceTagNamePrefix);
+            DeviceReset(UnitNumber, SoundInterfaceTagNamePrefix);
 
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 0, GainLeft);
             SetOutputGain(UnitNumber, SoundInterfaceTagNamePrefix, 1, GainRight);
+            SetDevicePassThru(false);
 
             GlobalARP = new ArpSettings();
 
@@ -1661,6 +1746,13 @@ namespace zanac.MAmidiMEmo.Instruments
             ProgramAssignments = new ProgramAssignmentNumber[128];
             for (int i = 0; i < ProgramAssignments.Length; i++)
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+
+            ScaleTunings = new ScaleTuning[16]{
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),
+                new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning()
+            };
 
             ChannelTypes = new ChannelType[] {
                     ChannelType.Normal, ChannelType.Normal, ChannelType.Normal,
@@ -1933,6 +2025,78 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private static List<(Delegate, object[])> deferredWriteData;
 
+        private static Dictionary<Delegate, Func<Object, Object[], Object>> cachedWriteFunc;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="delg"></param>
+        protected static void RemoveCachedDelegate(Delegate delg)
+        {
+            try
+            {
+                Program.SoundUpdating();
+                if (cachedWriteFunc.ContainsKey(delg))
+                    cachedWriteFunc.Remove(delg);
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+        }
+
+        private Dictionary<uint, uint> writtenDataCache;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void ClearWrittenDataCache()
+        {
+            lock (writtenDataCache)
+                writtenDataCache.Clear();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        protected UInt32? GetCachedWrittenData(uint address)
+        {
+            lock (writtenDataCache)
+                if (writtenDataCache.ContainsKey(address))
+                    return writtenDataCache[address];
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="useCache"></param>
+        /// <param name="wtiteAction"></param>
+        protected void WriteData(uint address, uint data, bool useCache, Action wtiteAction)
+        {
+            if (useCache)
+            {
+                var cacheData = GetCachedWrittenData(address);
+                if (cacheData == null || cacheData.Value != data)
+                {
+                    wtiteAction();
+                    lock (writtenDataCache)
+                        writtenDataCache[address] = data;
+                }
+            }
+            else
+            {
+                wtiteAction();
+                lock (writtenDataCache)
+                    writtenDataCache[address] = data;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1945,7 +2109,8 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 Program.SoundUpdating();
-                delg.DynamicInvoke(args);
+                invokeFunction(delg, args);
+                //delg.DynamicInvoke(args);
             }
             finally
             {
@@ -1967,7 +2132,20 @@ namespace zanac.MAmidiMEmo.Instruments
                     lock (deferredWriteData)
                     {
                         foreach (var (d, a) in deferredWriteData)
-                            d.DynamicInvoke(a);
+                        {
+                            try
+                            {
+                                invokeFunction(d, a);
+                                //d.DynamicInvoke(a);
+                            }
+                            catch (Exception ex)
+                            {
+                                if (ex.GetType() == typeof(Exception))
+                                    throw;
+                                else if (ex.GetType() == typeof(SystemException))
+                                    throw;
+                            }
+                        }
                         deferredWriteData.Clear();
                     }
                 }
@@ -1978,6 +2156,19 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             Task.Factory.StartNew(act);
 #endif
+        }
+
+        private static void invokeFunction(Delegate d, object[] a)
+        {
+            Func<Object, Object[], Object> func = null;
+            if (cachedWriteFunc.ContainsKey(d))
+                func = cachedWriteFunc[d];
+            else
+            {
+                func = d.Method.Bind();
+                cachedWriteFunc.Add(d, func);
+            }
+            func.Invoke(d, a);
         }
 
         /// <summary>
@@ -1997,7 +2188,10 @@ namespace zanac.MAmidiMEmo.Instruments
                 lock (deferredWriteData)
                 {
                     foreach (var (d, a) in deferredWriteData)
-                        d.DynamicInvoke(a);
+                    {
+                        invokeFunction(d, a);
+                        //d.DynamicInvoke(a);
+                    }
                     deferredWriteData.Clear();
                 }
             }
@@ -2051,6 +2245,11 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 switch (midiEvent)
                 {
+                    case ChannelAftertouchEvent caft:
+                        {
+                            OnChannelAfterTouchEvent(caft);
+                            break;
+                        }
                     case NoteOnEvent non:
                         {
                             if (non.Velocity == 0)
@@ -2108,6 +2307,15 @@ namespace zanac.MAmidiMEmo.Instruments
                         }
                 }
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected virtual void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+
         }
 
         /// <summary>

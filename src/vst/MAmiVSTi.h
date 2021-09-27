@@ -5,12 +5,13 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <vector>
-#include <mutex>
+#include <shared_mutex>
 #include "windows.h"
 #include "audioeffectx.h"
 #include "..\..\src\munt\mt32emu\soxr\src\soxr.h"
 
-#include "CMidiMsg.h"
+#include "rpc/server.h"
+#include "rpc/client.h"
 
 // ============================================================================================
 // 設計情報の記入
@@ -25,47 +26,60 @@
 #define MY_VST_PRESET_NUM    0 //プリセットプログラムの数
 #define MY_VST_PARAMETER_NUM 0 //パラメータの数
 
-typedef void(*STREAM_UPDATE_CALLBACK)(int32_t *buffer, int32_t size);
-extern "C" void set_stream_update_callback(char* name, STREAM_UPDATE_CALLBACK callback);
-extern "C" int sample_rate();
-
-int  main(int argc, char *argv[]);
-
-int HasExited();
-void SetVSTiMode();
-int IsStartMAmidiMEmoMainStarted();
-void CloseApplication();
-void  LoadData(byte* data, int length);
-int SaveData(void** saveBuf);
+struct VstMidiEventBase
+{
+	//-------------------------------------------------------------------------------------------------------
+	VstInt32 type;			///< #kVstSysexType or kVstMidiType
+	VstInt32 byteSize;		///< sizeof(VstMidiEventBase)
+	VstInt32 deltaFrames;	///< sample frames related to the current block start sample position
+	VstInt32 flags;			///< none defined yet (should be zero)
+};
 
 // ============================================================================================
 // VSTの基本となるクラス
 // ============================================================================================
-class MAmiVSTi : public AudioEffectX, public CMidiMsg
+class MAmiVSTi : public AudioEffectX
 {
 private:
-	static bool initialized;
-	static MAmiVSTi* instance;
+	std::shared_mutex mtxBuffer;
+	std::shared_mutex mtxSoxrBuffer;
 
-	std::mutex mtxBuffer;
+	std::vector<int32_t> m_streamBuffer2ch;
 
-	std::vector<int32_t> streamBufferL;
-	std::vector<int32_t> streamBufferR;
-	void streamUpdatedL(int32_t *buffer, int32_t size);
-	void streamUpdatedR(int32_t *buffer, int32_t size);
+	void streamUpdatedL(int32_t size);
+	void streamUpdatedR(int32_t size);
 
-	static void StreamUpdatedL(int32_t *buffer, int32_t size);
-	static void StreamUpdatedR(int32_t *buffer, int32_t size);
+	rpc::client* m_rpcClient;
+	rpc::server* m_rpcSrv;
 
-	bool initToFirstRead;
+	bool m_vstCtor;
+	bool m_vstInited;
+	bool m_vstIsClosed;
+	bool m_vstIsSuspend;
+	USHORT m_vstPort;
+	USHORT m_mamiPort;
+	VstInt32 m_lastSampleFrames;
+	VstInt32 m_sampleFramesBlock;
+	char m_mamiPath[MAX_PATH];
+
+	void updateSampleRateCore();
+	int isVstDisabled();
+	void startRpcServer();
+	bool createSharedMemory();
+
+	bool m_streamBufferOverflowed;
+
+	CHAR* m_cpSharedMemory;
+	HANDLE m_hSharedMemory;
+
 protected:
-	bool isClosed;
-	bool isSuspend;
-	int mami_sample_rate;
+	float m_vst_sample_rate;
+	int m_mami_sample_rate;
 	soxr_t soxr;
-	soxr_t soxl;
 public:
 	MAmiVSTi(audioMasterCallback audioMaster);
+
+	void initVst();
 
 	///< Fill \e text with a string identifying the effect
 	virtual bool getEffectName(char* name)
@@ -120,9 +134,11 @@ public:
 	///< Called when the sample rate changes (always in a suspend state)
 	virtual void setSampleRate(float sampleRate);
 
+	///< Called when the Maximun block size changes (always in a suspend state). Note that the sampleFrames in Process Calls could be smaller than this block size, but NOT bigger.
+	virtual void setBlockSize(VstInt32 blockSize);
+
 	// 音声信号を処理するメンバー関数
 	virtual void processReplacing(float** inputs, float** outputs, VstInt32 sampleFrames);
-	virtual void processReplacing2(float* inL, float* inR, float* outL, float* outR, VstInt32 sampleFrames);
 
 	///< Called when plug-in is initialized
 	virtual void open();

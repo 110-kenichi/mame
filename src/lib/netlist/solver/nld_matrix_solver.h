@@ -12,6 +12,7 @@
 #include "netlist/nl_errstr.h"
 #include "netlist/plib/mat_cr.h"
 #include "netlist/plib/palloc.h"
+#include "netlist/plib/penum.h"
 #include "netlist/plib/pmatrix2d.h"
 #include "netlist/plib/putil.h"
 #include "netlist/plib/vector_ops.h"
@@ -29,7 +30,7 @@ namespace solver
 		CXX_STATIC
 	};
 
-	P_ENUM(matrix_sort_type_e,
+	PENUM(matrix_sort_type_e,
 		NOSORT,
 		ASCENDING,
 		DESCENDING,
@@ -37,7 +38,7 @@ namespace solver
 		PREFER_BAND_MATRIX
 	)
 
-	P_ENUM(matrix_type_e,
+	PENUM(matrix_type_e,
 		SOR_MAT,
 		MAT_CR,
 		MAT,
@@ -47,7 +48,7 @@ namespace solver
 		GMRES
 	)
 
-	P_ENUM(matrix_fp_type_e,
+	PENUM(matrix_fp_type_e,
 		  FLOAT
 		, DOUBLE
 		, LONGDOUBLE
@@ -226,13 +227,27 @@ namespace solver
 		{
 			// We only need to update the net first if this is a time stepping net
 			if (timestep_device_count() > 0)
-				solve_now();
+			{
+				const netlist_time new_timestep = solve(exec().time());
+				plib::unused_var(new_timestep);
+				update_inputs();
+			}
 			f();
 			m_Q_sync.net().toggle_and_push_to_queue(delay);
 		}
 
 		// netdevice functions
-		NETLIB_UPDATEI();
+		NETLIB_UPDATEI()
+		{
+			const netlist_time new_timestep = solve(exec().time());
+			update_inputs();
+
+			if (m_params.m_dynamic_ts && (timestep_device_count() != 0) && new_timestep > netlist_time::zero())
+			{
+				m_Q_sync.net().toggle_and_push_to_queue(new_timestep);
+			}
+		}
+
 		NETLIB_RESETI();
 
 		virtual void log_stats();
@@ -290,7 +305,7 @@ namespace solver
 		std::size_t m_ops;
 
 		// base setup - called from constructor
-		void setup_base(const analog_net_t::list_t &nets) noexcept(false);
+		void setup_base(setup_t &setup, const analog_net_t::list_t &nets) noexcept(false);
 
 		void sort_terms(matrix_sort_type_e sort);
 
@@ -315,7 +330,6 @@ namespace solver
 	template <typename FT, int SIZE>
 	class matrix_solver_ext_t: public matrix_solver_t
 	{
-		friend class matrix_solver_t;
 	public:
 
 		using float_type = FT;
@@ -488,14 +502,13 @@ namespace solver
 				m_last_V[k] = v;
 				const nl_fptype hn = cur_ts;
 
-				//printf("%g %g %g %g\n", DD_n, hn, t.m_DD_n_m_1, t.m_h_n_m_1);
 				nl_fptype DD2 = (DD_n / hn - m_DD_n_m_1[k] / m_h_n_m_1[k]) / (hn + m_h_n_m_1[k]);
 				nl_fptype new_net_timestep(0);
 
 				m_h_n_m_1[k] = hn;
 				m_DD_n_m_1[k] = DD_n;
 				if (plib::abs(DD2) > fp_constants<nl_fptype>::TIMESTEP_MINDIV()) // avoid div-by-zero
-					new_net_timestep = plib::sqrt(m_params.m_dynamic_lte / plib::abs(nlconst::magic(0.5)*DD2));
+					new_net_timestep = plib::sqrt(m_params.m_dynamic_lte / plib::abs(nlconst::half()*DD2));
 				else
 					new_net_timestep = m_params.m_max_timestep;
 

@@ -22,6 +22,10 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.Util;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://www.smspower.org/Development/SN76489
 //http://www.st.rim.or.jp/~nkomatsu/peripheral/SN76489.html
@@ -64,6 +68,167 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return 3;
             }
         }
+
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set Port No for \"VSIF - SMS\" or \"VSIF - Genesis/SMS\".\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        private object vsifLock = new object();
+
+        private VsifClient vsifClient;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports \"Software\" and \"VSIF - SMS\" or \"VSIF - Genesis\"")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSN76496))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [RefreshProperties(RefreshProperties.All)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (vsifLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_SMS:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_Genesis:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_Genesis_Low:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private int f_ftdiClkWidth = 9;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(9)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -133,13 +298,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void Sn76496WriteData(uint unitNumber, byte data)
+        {
+            Sn76496WriteData(unitNumber, data, true);
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        private static void Sn76496WriteData(uint unitNumber, byte data)
+        private void Sn76496WriteData(uint unitNumber, byte data, bool useCache)
         {
-            DeferredWriteData(Sn76496_write, unitNumber, data);
+            WriteData(0, data, useCache, new Action(() =>
+            {
+                lock (vsifLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_SMS:
+                            vsifClient.WriteData(0, 0xff, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_Genesis:
+                        case SoundEngineType.VSIF_Genesis_Low:
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            vsifClient.WriteData(0, 0x04 * 5, data, f_ftdiClkWidth);
+                            break;
+                    }
+                }
+
+                DeferredWriteData(Sn76496_write, unitNumber, data);
+            }));
+
             /*
             try
             {
@@ -210,6 +401,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (vsifLock)
+                if (vsifClient != null)
+                    vsifClient.Dispose();
+
             base.Dispose();
         }
 
@@ -250,11 +446,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
         }
 
         /// <summary>
@@ -271,6 +483,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>
@@ -314,13 +527,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (SN76496Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    SN76496Sound snd = new SN76496Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    SN76496Sound snd = new SN76496Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     switch (((SN76496Timbre)timbre).SoundType)
                     {
                         case SoundType.PSG:
@@ -339,7 +554,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
@@ -381,8 +596,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ProcessControlChange(me);
 
                 for (int i = 0; i < 3; i++)
-                    Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | i << 5 | 0x1f));
-                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | 3 << 5 | 0x1f));
+                    parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | i << 5 | 0x1f));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | 3 << 5 | 0x1f));
             }
 
         }
@@ -407,7 +622,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SN76496Sound(SN76496 parentModule, SN76496SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SN76496Sound(SN76496 parentModule, SN76496SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (SN76496Timbre)timbre;
@@ -422,18 +637,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
-                OnVolumeUpdated();
-
                 OnPitchUpdated();
-            }
-
-            public override void OnSoundParamsUpdated()
-            {
-                base.OnSoundParamsUpdated();
 
                 OnVolumeUpdated();
-
-                OnPitchUpdated();
             }
 
             /// <summary>
@@ -462,7 +668,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 byte fv = (byte)((14 - (int)Math.Round(14 * CalcCurrentVolume())) & 0xf);
 
-                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x10 | fv));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x10 | fv));
             }
 
             /// <summary>
@@ -478,7 +684,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 //byte fv = (byte)((14 - (int)Math.Round(14 * vol * vel * exp)) & 0xf);
 
-                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | 0x10 | fv));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | 0x10 | fv));
             }
 
             /// <summary>
@@ -510,8 +716,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x3ff)
                     freq = 0x3ff;
                 var n = (ushort)freq;
-                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | n & 0xf));
-                Sn76496WriteData(parentModule.UnitNumber, (byte)((n >> 4) & 0x3f));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | n & 0xf));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)((n >> 4) & 0x3f));
             }
 
 
@@ -544,7 +750,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 int v = noteNum % 4;
 
-                Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
+                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
             }
 
 
@@ -559,12 +765,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundType.PSG:
                         {
-                            Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x1f));
+                            parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x1f));
                             break;
                         }
                     case SoundType.NOISE:
                         {
-                            Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | 0x1f));
+                            parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | 0x1f));
                             break;
                         }
                 }
@@ -646,5 +852,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             NOISE,
         }
 
+        private class EnumConverterSoundEngineTypeSN76496 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_SMS,
+                    SoundEngineType.VSIF_Genesis,
+                    SoundEngineType.VSIF_Genesis_Low,
+                    SoundEngineType.VSIF_Genesis_FTDI,
+               });
+
+                return sc;
+            }
+        }
+
     }
+
 }

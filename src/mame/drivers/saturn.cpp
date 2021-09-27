@@ -476,17 +476,17 @@ private:
 	DECLARE_MACHINE_START(saturn);
 	DECLARE_MACHINE_RESET(saturn);
 
-	DECLARE_READ8_MEMBER(saturn_cart_type_r);
-	DECLARE_READ32_MEMBER(abus_dummy_r);
+	uint8_t saturn_cart_type_r();
+	uint32_t abus_dummy_r(offs_t offset);
 
-	DECLARE_READ32_MEMBER(saturn_null_ram_r);
-	DECLARE_WRITE32_MEMBER(saturn_null_ram_w);
+	uint32_t saturn_null_ram_r();
+	void saturn_null_ram_w(uint32_t data);
 
 	void saturn_init_driver(int rgn);
-	DECLARE_READ8_MEMBER(saturn_pdr1_direct_r);
-	DECLARE_READ8_MEMBER(saturn_pdr2_direct_r);
-	DECLARE_WRITE8_MEMBER(saturn_pdr1_direct_w);
-	DECLARE_WRITE8_MEMBER(saturn_pdr2_direct_w);
+	uint8_t saturn_pdr1_direct_r();
+	uint8_t saturn_pdr2_direct_r();
+	void saturn_pdr1_direct_w(uint8_t data);
+	void saturn_pdr2_direct_w(uint8_t data);
 	uint8_t m_direct_mux[2];
 	uint8_t saturn_direct_port_read(bool which);
 	uint8_t smpc_direct_mode(uint16_t in_value, bool which);
@@ -507,7 +507,7 @@ private:
 };
 
 
-READ8_MEMBER(sat_console_state::saturn_cart_type_r)
+uint8_t sat_console_state::saturn_cart_type_r()
 {
 	if (m_exp)
 		return m_exp->get_cart_type();
@@ -516,7 +516,7 @@ READ8_MEMBER(sat_console_state::saturn_cart_type_r)
 }
 
 /* TODO: Bug! accesses this one, if returning 0 the SH-2 hard-crashes. Might be an actual bug with the CD block. */
-READ32_MEMBER( sat_console_state::abus_dummy_r )
+uint32_t sat_console_state::abus_dummy_r(offs_t offset)
 {
 	logerror("A-Bus Dummy access %08x\n",offset*4);
 	return -1;
@@ -606,8 +606,8 @@ void sat_console_state::nvram_init(nvram_device &nvram, void *data, size_t size)
 
 MACHINE_START_MEMBER(sat_console_state, saturn)
 {
-	m_maincpu->space(AS_PROGRAM).install_readwrite_handler(0x02400000, 0x027fffff, read32_delegate(*this, FUNC(sat_console_state::saturn_null_ram_r)), write32_delegate(*this, FUNC(sat_console_state::saturn_null_ram_w)));
-	m_slave->space(AS_PROGRAM).install_readwrite_handler(0x02400000, 0x027fffff, read32_delegate(*this, FUNC(sat_console_state::saturn_null_ram_r)), write32_delegate(*this, FUNC(sat_console_state::saturn_null_ram_w)));
+	m_maincpu->space(AS_PROGRAM).install_readwrite_handler(0x02400000, 0x027fffff, read32smo_delegate(*this, FUNC(sat_console_state::saturn_null_ram_r)), write32smo_delegate(*this, FUNC(sat_console_state::saturn_null_ram_w)));
+	m_slave->space(AS_PROGRAM).install_readwrite_handler(0x02400000, 0x027fffff, read32smo_delegate(*this, FUNC(sat_console_state::saturn_null_ram_r)), write32smo_delegate(*this, FUNC(sat_console_state::saturn_null_ram_w)));
 
 	m_maincpu->space(AS_PROGRAM).nop_readwrite(0x04000000, 0x047fffff);
 	m_slave->space(AS_PROGRAM).nop_readwrite(0x04000000, 0x047fffff);
@@ -670,12 +670,12 @@ MACHINE_START_MEMBER(sat_console_state, saturn)
 }
 
 /* Die Hard Trilogy tests RAM address 0x25e7ffe bit 2 with Slave during FRT minit irq, in-development tool for breaking execution of it? */
-READ32_MEMBER(sat_console_state::saturn_null_ram_r)
+uint32_t sat_console_state::saturn_null_ram_r()
 {
 	return 0xffffffff;
 }
 
-WRITE32_MEMBER(sat_console_state::saturn_null_ram_w)
+void sat_console_state::saturn_null_ram_w(uint32_t data)
 {
 }
 
@@ -699,22 +699,22 @@ MACHINE_RESET_MEMBER(sat_console_state,saturn)
 	m_vdp2.old_tvmd = -1;
 }
 
-READ8_MEMBER( sat_console_state::saturn_pdr1_direct_r )
+uint8_t sat_console_state::saturn_pdr1_direct_r()
 {
 	return saturn_direct_port_read(false);
 }
 
-READ8_MEMBER( sat_console_state::saturn_pdr2_direct_r )
+uint8_t sat_console_state::saturn_pdr2_direct_r()
 {
 	return saturn_direct_port_read(true);
 }
 
-WRITE8_MEMBER( sat_console_state::saturn_pdr1_direct_w )
+void sat_console_state::saturn_pdr1_direct_w(uint8_t data)
 {
 	m_direct_mux[0] = data;
 }
 
-WRITE8_MEMBER( sat_console_state::saturn_pdr2_direct_w )
+void sat_console_state::saturn_pdr2_direct_w(uint8_t data)
 {
 	m_direct_mux[1] = data;
 }

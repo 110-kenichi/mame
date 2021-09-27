@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "cmath": "c",
+        "*.tcc": "c",
+        "title_tile.h": "c",
+        "smslib.h": "c",
+        "bg.h": "c",
+        "sound.h": "c",
+        "xev_tile.h": "c",
+        "font.h": "c",
+        "type_traits": "c"
+    }
+}

@@ -238,6 +238,7 @@ DEFINE_DEVICE_TYPE(I87C51, i87c51_device, "i87c51", "Intel 87C51")
 DEFINE_DEVICE_TYPE(I80C32, i80c32_device, "i80c32", "Intel 80C32")
 DEFINE_DEVICE_TYPE(I80C52, i80c52_device, "i80c52", "Intel 80C52")
 DEFINE_DEVICE_TYPE(I87C52, i87c52_device, "i87c52", "Intel 87C52")
+DEFINE_DEVICE_TYPE(I87C51FA, i87c51fa_device, "i87c51fa", "Intel 87C51FA")
 DEFINE_DEVICE_TYPE(I80C51GB, i80c51gb_device, "i80c51gb", "Intel 80C51GB")
 DEFINE_DEVICE_TYPE(AT89C52, at89c52_device, "at89c52", "Atmel AT89C52")
 DEFINE_DEVICE_TYPE(AT89S52, at89s52_device, "at89s52", "Atmel AT89S52")
@@ -375,8 +376,18 @@ i87c52_device::i87c52_device(const machine_config &mconfig, const char *tag, dev
 {
 }
 
+i87c51fa_device::i87c51fa_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock, int program_width, int data_width, uint8_t features)
+	: i80c52_device(mconfig, type, tag, owner, clock, program_width, data_width, features)
+{
+}
+
+i87c51fa_device::i87c51fa_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock)
+	: i87c51fa_device(mconfig, I87C51FA, tag, owner, clock, 13, 8)
+{
+}
+
 i80c51gb_device::i80c51gb_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock)
-	: i80c52_device(mconfig, I80C51GB, tag, owner, clock, 0, 8)
+	: i87c51fa_device(mconfig, I80C51GB, tag, owner, clock, 0, 8)
 {
 }
 
@@ -418,15 +429,15 @@ device_memory_interface::space_config_vector mcs51_cpu_device::memory_space_conf
 ***************************************************************************/
 
 /* Read Opcode/Opcode Arguments from Program Code */
-#define ROP(pc)         m_cache->read_byte(pc)
-#define ROP_ARG(pc)     m_cache->read_byte(pc)
+#define ROP(pc)         m_program.read_byte(pc)
+#define ROP_ARG(pc)     m_program.read_byte(pc)
 
 /* Read a byte from External Code Memory (Usually Program Rom(s) Space) */
-#define CODEMEM_R(a)    (uint8_t)m_program->read_byte(a)
+#define CODEMEM_R(a)    (uint8_t)m_program.read_byte(a)
 
 /* Read/Write a byte from/to External Data Memory (Usually RAM or other I/O) */
-#define DATAMEM_R(a)    (uint8_t)m_io->read_byte(a)
-#define DATAMEM_W(a,v)  m_io->write_byte(a, v)
+#define DATAMEM_R(a)    (uint8_t)m_io.read_byte(a)
+#define DATAMEM_W(a,v)  m_io.write_byte(a, v)
 
 /* Read/Write a byte from/to the Internal RAM */
 
@@ -435,8 +446,8 @@ device_memory_interface::space_config_vector mcs51_cpu_device::memory_space_conf
 
 /* Read/Write a byte from/to the Internal RAM indirectly */
 /* (called from indirect addressing)                     */
-uint8_t mcs51_cpu_device::iram_iread(offs_t a) { return (a <= m_ram_mask) ? m_data->read_byte(a) : 0xff; }
-void mcs51_cpu_device::iram_iwrite(offs_t a, uint8_t d) { if (a <= m_ram_mask) m_data->write_byte(a, d); }
+uint8_t mcs51_cpu_device::iram_iread(offs_t a) { return (a <= m_ram_mask) ? m_data.read_byte(a) : 0xff; }
+void mcs51_cpu_device::iram_iwrite(offs_t a, uint8_t d) { if (a <= m_ram_mask) m_data.write_byte(a, d); }
 
 #define IRAM_IR(a)      iram_iread(a)
 #define IRAM_IW(a, d)   iram_iwrite(a, d)
@@ -829,13 +840,13 @@ offs_t mcs51_cpu_device::external_ram_iaddr(offs_t offset, offs_t mem_mask)
 
 uint8_t mcs51_cpu_device::iram_read(size_t offset)
 {
-	return (((offset) < 0x80) ? m_data->read_byte(offset) : sfr_read(offset));
+	return (((offset) < 0x80) ? m_data.read_byte(offset) : sfr_read(offset));
 }
 
 void mcs51_cpu_device::iram_write(size_t offset, uint8_t data)
 {
 	if ((offset) < 0x80)
-		m_data->write_byte(offset, data);
+		m_data.write_byte(offset, data);
 	else
 		sfr_write(offset, data);
 }
@@ -1000,7 +1011,7 @@ void mcs51_cpu_device::transmit_receive(int source)
 			m_uart.bits_to_send--;
 			if(m_uart.bits_to_send == 0) {
 				//Call the callback function
-				m_serial_tx_cb(*m_io, 0, m_uart.data_out, 0xff);
+				m_serial_tx_cb(0, m_uart.data_out, 0xff);
 				//Set Interrupt Flag
 				SET_TI(1);
 			}
@@ -1018,7 +1029,7 @@ void mcs51_cpu_device::transmit_receive(int source)
 			{
 				int data = 0;
 				//Call our callball function to retrieve the data
-				data = m_serial_rx_cb(*m_io, 0, 0xff);
+				data = m_serial_rx_cb(0, 0xff);
 				LOG(("RX Deliver %d\n", data));
 				SET_SBUF(data);
 				//Flag the IRQ
@@ -2012,7 +2023,7 @@ void mcs51_cpu_device::execute_run()
 		/* Read next opcode */
 		PPC = PC;
 		debugger_instruction_hook(PC);
-		op = m_cache->read_byte(PC++);
+		op = m_program.read_byte(PC++);
 
 		/* process opcode and count cycles */
 		m_inst_cycles = mcs51_cycles[op];
@@ -2079,7 +2090,7 @@ void mcs51_cpu_device::sfr_write(size_t offset, uint8_t data)
 			/* no write in this case according to manual */
 			return;
 	}
-	m_data->write_byte((size_t)offset | 0x100, data);
+	m_data.write_byte((size_t)offset | 0x100, data);
 }
 
 uint8_t mcs51_cpu_device::sfr_read(size_t offset)
@@ -2114,7 +2125,7 @@ uint8_t mcs51_cpu_device::sfr_read(size_t offset)
 		case ADDR_SBUF:
 		case ADDR_IE:
 		case ADDR_IP:
-			return m_data->read_byte((size_t) offset | 0x100);
+			return m_data.read_byte((size_t) offset | 0x100);
 		/* Illegal or non-implemented sfr */
 		default:
 			LOG(("mcs51 '%s': attemping to read an invalid/non-implemented SFR address: %x at 0x%04x\n", tag(), (uint32_t)offset,PC));
@@ -2126,10 +2137,9 @@ uint8_t mcs51_cpu_device::sfr_read(size_t offset)
 
 void mcs51_cpu_device::device_start()
 {
-	m_program = &space(AS_PROGRAM);
-	m_cache = m_program->cache<0, 0, ENDIANNESS_LITTLE>();
-	m_data = &space(AS_DATA);
-	m_io = &space(AS_IO);
+	space(AS_PROGRAM).cache(m_program);
+	space(AS_DATA).specific(m_data);
+	space(AS_IO).specific(m_io);
 
 	m_port_in_cb.resolve_all_safe(0xff);
 	m_port_out_cb.resolve_all_safe();
@@ -2321,7 +2331,7 @@ void i8052_device::sfr_write(size_t offset, uint8_t data)
 		case ADDR_RCAP2H:
 		case ADDR_TL2:
 		case ADDR_TH2:
-			m_data->write_byte((size_t) offset | 0x100, data);
+			m_data.write_byte((size_t) offset | 0x100, data);
 			break;
 
 		default:
@@ -2339,7 +2349,7 @@ uint8_t i8052_device::sfr_read(size_t offset)
 		case ADDR_RCAP2H:
 		case ADDR_TL2:
 		case ADDR_TH2:
-			return m_data->read_byte((size_t) offset | 0x100);
+			return m_data.read_byte((size_t) offset | 0x100);
 		default:
 			return mcs51_cpu_device::sfr_read(offset);
 	}
@@ -2369,7 +2379,7 @@ void i80c52_device::sfr_write(size_t offset, uint8_t data)
 			i8052_device::sfr_write(offset, data);
 			return;
 	}
-	m_data->write_byte((size_t) offset | 0x100, data);
+	m_data.write_byte((size_t) offset | 0x100, data);
 }
 
 uint8_t i80c52_device::sfr_read(size_t offset)
@@ -2380,7 +2390,7 @@ uint8_t i80c52_device::sfr_read(size_t offset)
 		case ADDR_IPH:
 		case ADDR_SADDR:
 		case ADDR_SADEN:
-			return m_data->read_byte((size_t) offset | 0x100);
+			return m_data.read_byte((size_t) offset | 0x100);
 		default:
 			return i8052_device::sfr_read(offset);
 	}
@@ -2434,7 +2444,7 @@ void ds5002fp_device::sfr_write(size_t offset, uint8_t data)
 			mcs51_cpu_device::sfr_write(offset, data);
 			return;
 	}
-	m_data->write_byte((size_t) offset | 0x100, data);
+	m_data.write_byte((size_t) offset | 0x100, data);
 }
 
 uint8_t ds5002fp_device::sfr_read(size_t offset)
@@ -2455,7 +2465,7 @@ uint8_t ds5002fp_device::sfr_read(size_t offset)
 		default:
 			return mcs51_cpu_device::sfr_read(offset);
 	}
-	return m_data->read_byte((size_t) offset | 0x100);
+	return m_data.read_byte((size_t) offset | 0x100);
 }
 
 /*
@@ -2525,6 +2535,11 @@ std::unique_ptr<util::disasm_interface> i80c51_device::create_disassembler()
 std::unique_ptr<util::disasm_interface> i80c52_device::create_disassembler()
 {
 	return std::make_unique<i80c52_disassembler>();
+}
+
+std::unique_ptr<util::disasm_interface> i87c51fa_device::create_disassembler()
+{
+	return std::make_unique<i8xc51fx_disassembler>();
 }
 
 std::unique_ptr<util::disasm_interface> i80c51gb_device::create_disassembler()

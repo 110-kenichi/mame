@@ -116,5 +116,23 @@
     <Setting Name="WsgEdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">640, 480</Value>
     </Setting>
+    <Setting Name="WsgFirWeight" Type="System.String" Scope="User">
+      <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
+    </Setting>
+    <Setting Name="LpcEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
+    <Setting Name="AllophonesEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
+    <Setting Name="PhonemesEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
+    <Setting Name="EnvFirWeight" Type="System.String" Scope="User">
+      <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
+    </Setting>
+    <Setting Name="EnvEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">640, 480</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -43,6 +43,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        public int BaseTimbreIndex
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public DrumTimbre DrumTimbre
         {
             get;
@@ -61,13 +70,24 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        public virtual bool IsSoundOn
+        public virtual bool IsSoundingStarted
         {
             get;
             private set;
         }
 
         public virtual bool IsSoundOff
+        {
+            get;
+            private set;
+        }
+
+        public static ulong soundOffTimeCounter;
+
+        /// <summary>
+        /// for empty sound slot searching.
+        /// </summary>
+        public ulong SoundOffTime
         {
             get;
             private set;
@@ -95,13 +115,14 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <param name="slot">チップ上の物理的なチャンネル(MIDI chと区別するためスロットとする)</param>
-        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot)
+        protected SoundBase(InstrumentBase parentModule, SoundManagerBase manager, TimbreBase timbre, int baseTimbreIndex, TaggedNoteOnEvent noteOnEvent, int slot)
         {
             NoteOnEvent = noteOnEvent;
             Slot = slot;
             ParentModule = parentModule;
             ParentManager = manager;
             Timbre = timbre;
+            BaseTimbreIndex = baseTimbreIndex;
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                 DrumTimbre = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber];
         }
@@ -129,7 +150,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void KeyOn()
         {
-            IsSoundOn = true;
+            IsSoundingStarted = true;
+            IsKeyOff = false;
+            IsSoundOff = false;
 
             if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
                 ParentModule.Modulations[NoteOnEvent.Channel] > 0)
@@ -164,7 +187,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (efs != null)
                 ActiveFx = efs.Enable;
 
-            SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
 
             if (DrumTimbre != null)
             {
@@ -195,7 +218,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             TrySoundOff();
 
-            SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
         }
 
         public static event EventHandler<SoundUpdatedEventArgs> SoundKeyOff;
@@ -218,7 +241,17 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void SoundOff()
         {
+            if (!IsKeyOff)
+            {
+                IsKeyOff = true;
+                AdsrEngine?.Gate(false);
+
+                SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
+            }
+
             IsSoundOff = true;
+
+            SoundOffTime = soundOffTimeCounter++;
 
             SoundSoundOff?.Invoke(this, EventArgs.Empty);
         }
@@ -246,7 +279,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void OnPitchUpdated()
         {
-            SoundPitchUpdated?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, lastPitch));
+            SoundPitchUpdated?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
         }
 
         /// <summary>
@@ -254,7 +287,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public virtual void OnSoundParamsUpdated()
         {
-
+            OnVolumeUpdated();
+            OnPitchUpdated();
+            OnPanpotUpdated();
         }
 
         /// <summary>
@@ -283,9 +318,16 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
             var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
+            var scale = (int)ParentModule.ScaleTunings[NoteOnEvent.Channel].ScalesNums[NoteOnEvent.NoteNumber % 12];
+
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
+            int pKeyShift = parent != null ? parent.KeyShift : 0;
+            int pPitchShift = parent != null ? parent.PitchShift : 0;
 
             double d1 = ((double)pitch / 8192d) * range;
-            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber + Timbre.KeyShift + (Timbre.PitchShift / 100d);
+            double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber +
+                pKeyShift + Timbre.KeyShift +
+                ((pPitchShift + Timbre.PitchShift) / 100d) + (scale / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;
@@ -315,8 +357,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            if(!ignoreVelocity)
+            if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.VelocityMap))
                 v *= NoteOnEvent.Velocity / 127d;
+
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
 
             if (AdsrEngine != null)
                 v *= AdsrEngine.OutputLevel;
@@ -325,6 +369,13 @@ namespace zanac.MAmidiMEmo.Instruments
                 v *= FxEngine.OutputLevel;
 
             v *= ArpeggiateLevel;
+
+            if (parent != null)
+                v += parent.VolumeOffest;
+            if (v > 1.0)
+                v = 1.0;
+            else if (v < 0.0)
+                v = 0.0;
 
             return v;
         }
@@ -337,10 +388,17 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int pan = ParentModule.Panpots[NoteOnEvent.Channel] - 1;
 
+            if (FxEngine != null)
+                pan += FxEngine.PanShift;
+
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                 pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
             else
                 pan += Timbre.PanShift;
+
+            CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
+            if (parent != null)
+                pan += parent.PanShift;
 
             if (pan < 0)
                 pan = 0;
@@ -414,8 +472,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         protected virtual void OnProcessFx()
         {
-            OnPitchUpdated();
-            OnVolumeUpdated();
+            OnSoundParamsUpdated();
         }
 
         private double processAdsr(object state)
@@ -712,15 +769,22 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        public int Velocity
+        {
+            get;
+            private set;
+        }
+
         public double Pitch
         {
             get;
             private set;
         }
 
-        public SoundUpdatedEventArgs(int noteNumber, double pitch)
+        public SoundUpdatedEventArgs(int noteNumber, int velocity, double pitch)
         {
             NoteNumber = noteNumber;
+            Velocity = velocity;
             Pitch = pitch;
         }
 

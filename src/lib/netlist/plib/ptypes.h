@@ -69,6 +69,10 @@ namespace plib
 
 	template<typename T> struct is_floating_point : public std::is_floating_point<T> { };
 
+	template< class T >
+	struct is_arithmetic : std::integral_constant<bool,
+		plib::is_integral<T>::value || plib::is_floating_point<T>::value> {};
+
 #if PUSE_FLOAT128
 	template<> struct is_floating_point<FLOAT128> { static constexpr bool value = true; };
 	template<> struct numeric_limits<FLOAT128>
@@ -83,6 +87,54 @@ namespace plib
 		}
 	};
 #endif
+
+	template<unsigned bits>
+	struct size_for_bits
+	{
+		enum { value =
+			bits <= 8       ?   1 :
+			bits <= 16      ?   2 :
+			bits <= 32      ?   4 :
+#if (PHAS_INT128)
+			bits <= 64      ?   8 :
+							   16
+#else
+								8
+#endif
+		};
+	};
+
+	template<unsigned N> struct least_type_for_size;
+	template<> struct least_type_for_size<1> { using type = uint_least8_t; };
+	template<> struct least_type_for_size<2> { using type = uint_least16_t; };
+	template<> struct least_type_for_size<4> { using type = uint_least32_t; };
+	template<> struct least_type_for_size<8> { using type = uint_least64_t; };
+#if (PHAS_INT128)
+	template<> struct least_type_for_size<16> { using type = UINT128; };
+#endif
+
+	// This is different to the standard library. Mappings provided in stdint
+	// are not always fastest.
+	template<unsigned N> struct fast_type_for_size;
+	template<> struct fast_type_for_size<1> { using type = uint32_t; };
+	template<> struct fast_type_for_size<2> { using type = uint32_t; };
+	template<> struct fast_type_for_size<4> { using type = uint32_t; };
+	template<> struct fast_type_for_size<8> { using type = uint_fast64_t; };
+#if (PHAS_INT128)
+	template<> struct fast_type_for_size<16> { using type = UINT128; };
+#endif
+
+	template<unsigned bits>
+	struct least_type_for_bits
+	{
+		using type = typename least_type_for_size<size_for_bits<bits>::value>::type;
+	};
+
+	template<unsigned bits>
+	struct fast_type_for_bits
+	{
+		using type = typename fast_type_for_size<size_for_bits<bits>::value>::type;
+	};
 
 	//============================================================
 	// Avoid unused variable warnings

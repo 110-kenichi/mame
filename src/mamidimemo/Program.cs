@@ -34,10 +34,10 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "2.6.4.0";
+        public const string FILE_VERSION = "3.9.3.1";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
-Copyright(C) 2019, 2020 Itoken.All rights reserved.";
+Copyright(C) 2019, 2021 Itoken.All rights reserved.";
 
         public static ISerializationBinder SerializationBinder = new KnownTypesBinder();
 
@@ -159,10 +159,19 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                 using (var fs = new FormSplash())
                 {
                     fs.Show();
-                    while (fs.Opacity != 1)
+                    if (!IsVSTiMode())
                     {
-                        fs.Opacity += 0.1;
-                        Thread.Sleep(50);
+                        while (fs.Opacity != 1)
+                        {
+                            fs.Opacity += 0.1;
+                            Thread.Sleep(50);
+                            fs.Refresh();
+                        }
+                    }
+                    else
+                    {
+                        formSplash = fs;
+                        fs.Opacity += 1;
                         fs.Refresh();
                     }
 
@@ -171,7 +180,8 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
                         var fm = new FormMain();
                         fm.Shown += (_, __) =>
                         {
-                            fm.BeginInvoke(new MethodInvoker(() => { fs.Close(); }));
+                            if (!IsVSTiMode())
+                                fm.BeginInvoke(new MethodInvoker(() => { fs.Close(); }));
 
                             if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
                             {
@@ -345,6 +355,24 @@ Copyright(C) 2019, 2020 Itoken.All rights reserved.";
         {
             var ret = mainThread.IsAlive ? 0 : 1;
             return ret;
+        }
+
+        public static FormSplash formSplash;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static void VstStarted()
+        {
+            formSplash?.BeginInvoke(new MethodInvoker(()
+                =>
+            {
+                if (formSplash.IsDisposed)
+                    return;
+
+                formSplash.Close();
+            }));
         }
 
         private static ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);

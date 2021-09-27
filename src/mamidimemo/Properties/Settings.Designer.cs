@@ -12,7 +12,7 @@ namespace zanac.MAmidiMEmo.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -476,6 +476,78 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["WsgEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(" 1, 1, 1, 1, 1 ")]
+        public string WsgFirWeight {
+            get {
+                return ((string)(this["WsgFirWeight"]));
+            }
+            set {
+                this["WsgFirWeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size LpcEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["LpcEdSize"]));
+            }
+            set {
+                this["LpcEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size AllophonesEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["AllophonesEdSize"]));
+            }
+            set {
+                this["AllophonesEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size PhonemesEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["PhonemesEdSize"]));
+            }
+            set {
+                this["PhonemesEdSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(" 1, 1, 1, 1, 1 ")]
+        public string EnvFirWeight {
+            get {
+                return ((string)(this["EnvFirWeight"]));
+            }
+            set {
+                this["EnvFirWeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        public global::System.Drawing.Size EnvEdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["EnvEdSize"]));
+            }
+            set {
+                this["EnvEdSize"] = value;
             }
         }
     }

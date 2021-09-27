@@ -2,7 +2,7 @@
 // copyright-holders:Couriersud
 
 #include "putil.h"
-#include "plists.h"
+#include "penum.h"
 #include "pstrutil.h"
 #include "ptypes.h"
 
@@ -168,7 +168,7 @@ namespace plib
 		return -1;
 	}
 
-	std::string penum_base::nthstr(int n, const pstring &str)
+	pstring penum_base::nthstr(int n, const pstring &str)
 	{
 		return psplit(str, ",", false)[static_cast<std::size_t>(n)];
 	}

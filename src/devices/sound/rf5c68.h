@@ -36,6 +36,7 @@ public:
 	u8 rf5c68_mem_r(offs_t offset);
 	void rf5c68_mem_w(offs_t offset, u8 data);
 
+	void map(address_map &map);
 protected:
 	rf5c68_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, u32 clock);
 
@@ -50,6 +51,7 @@ protected:
 	virtual space_config_vector memory_space_config() const override;
 
 	address_space_config m_data_config;
+
 private:
 	static constexpr unsigned NUM_CHANNELS = 8;
 
@@ -66,13 +68,12 @@ private:
 		uint16_t      loopst = 0;
 	};
 
-	address_space                                *m_data;
-	memory_access_cache<0, 0, ENDIANNESS_LITTLE> *m_cache;
-	sound_stream*                                 m_stream;
-	pcm_channel                                   m_chan[NUM_CHANNELS];
-	uint8_t                                       m_cbank;
-	uint16_t                                      m_wbank;
-	uint8_t                                       m_enable;
+	memory_access<16, 0, 0, ENDIANNESS_LITTLE>::cache m_cache;
+	sound_stream*                                     m_stream;
+	pcm_channel                                       m_chan[NUM_CHANNELS];
+	uint8_t                                           m_cbank;
+	uint16_t                                          m_wbank;
+	uint8_t                                           m_enable;
 
 	sample_end_cb_delegate m_sample_end_cb;
 };

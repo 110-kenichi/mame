@@ -86,6 +86,32 @@ namespace zanac.MAmidiMEmo.Instruments
             sysExData.Add(new List<byte>());
             sysExData.Add(new List<byte>());
 
+            Program.ShuttingDown += Program_ShuttingDown;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Program_ShuttingDown(object sender, EventArgs e)
+        {
+            List<InstrumentBase> insts = new List<InstrumentBase>();
+            try
+            {
+                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+
+                foreach (List<InstrumentBase> iss in instruments)
+                {
+                    foreach (var i in iss)
+                        i.Dispose();
+                }
+            }
+            finally
+            {
+                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+            }
+            StopVgmRecording();
         }
 
         /// <summary>
@@ -141,6 +167,21 @@ namespace zanac.MAmidiMEmo.Instruments
                 });
             }
             return inst;
+        }
+
+
+        public static int FindInstrumentIndex(InstrumentBase instrument, TimbreBase timbre)
+        {
+            var index = -1;
+            Parallel.ForEach(instrument.BaseTimbres, (tim, state, idx) =>
+            {
+                if (tim == timbre)
+                {
+                    index = (int)idx;
+                    return;
+                }
+            });
+            return index;
         }
 
         /// <summary>
@@ -434,12 +475,42 @@ namespace zanac.MAmidiMEmo.Instruments
                 //lock (ExclusiveLockObject)
                 ProcessCC(MidiPort.PortA, e);
 
+                /* set GM inst name
+
+                Dictionary<int, string> dnames = new Dictionary<int, string>();
+                for (int idx = 0; idx < drumNames.Length; idx++)
+                {
+                    dnames.Add((int)drumNames[idx + 1], (string)drumNames[idx]);
+                    idx++;
+                }
+                */
+
                 foreach (var i in instruments)
                     i.ForEach((dev) =>
                     {
                         if (dev.MidiPort == Midi.MidiPort.PortAB ||
                             dev.MidiPort == Midi.MidiPort.PortA)
                             dev.NotifyMidiEvent(e);
+
+                        /*
+                        foreach (var ti in i)
+                        {
+                            for (int idx = 0; idx < 128; idx++)
+                            {
+                                ti.BaseTimbres[idx].TimbreName = gsInstName[idx];
+
+                                //ti.BaseTimbres[idx].TimbreName = gsInstName[idx] + " A";
+                                //ti.BaseTimbres[idx + 128].TimbreName = gsInstName[idx] + " B";
+                            }
+                            for (int idx = 0; idx < 128; idx++)
+                            {
+                                if (ti.DrumTimbres[idx].TimbreNumber != null)
+                                {
+                                    if (dnames.ContainsKey(idx))
+                                        ti.DrumTimbres[idx].TimbreName = dnames[idx];
+                                }
+                            }
+                        }*/
                     });
             }
             finally
@@ -448,6 +519,188 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        /*
+        private static string[] gsInstName = new string[]
+        {
+            "Piano 1",
+            "Piano 2",
+            "Piano 3",
+            "Honky-tonk",
+            "E.Piano 1",
+            "E.Piano 2",
+            "Harpsichord",
+            "Clav.",
+            "Celesta",
+            "Glockenspiel",
+            "Music Box",
+            "Vibraphone",
+            "Marimba",
+            "Xylophone",
+            "Tubular-bell",
+            "Santur",
+            "Organ 1",
+            "Organ 2",
+            "Organ 3",
+            "Church Org.1",
+            "Reed Organ",
+            "Accordion Fr",
+            "Harmonica",
+            "Bandneon",
+            "Nylon-str.Gt",
+            "Steel-str.Gt",
+            "Jazz Gt.",
+            "Clean Gt.",
+            "Muted Gt.",
+            "Overdrive Gt",
+            "DistortionGt",
+            "Gt.Harmonics",
+            "Acoustic Bs.",
+            "Fingered Bs.",
+            "Picked Bs.",
+            "Fretless Bs.",
+            "Slap Bass 1",
+            "Slap Bass 2",
+            "Synth Bass 1",
+            "Synth Bass 2",
+            "Violin",
+            "Viola",
+            "Cello",
+            "Contrabass",
+            "Tremolo Str",
+            "PizzicatoStr",
+            "Harp",
+            "Timpani",
+            "Strings",
+            "Slow Strings",
+            "Syn.Strings1",
+            "Syn.Strings2",
+            "Choir Aahs",
+            "Voice Oohs",
+            "SynVox",
+            "OrchestraHit",
+            "Trumpet",
+            "Trombone",
+            "Tuba",
+            "MutedTrumpet",
+            "French Horn",
+            "Brass 1",
+            "Synth Brass1",
+            "Synth Brass2",
+            "Soprano Sax",
+            "Alto Sax",
+            "Tenor Sax",
+            "Baritone Sax",
+            "Oboe",
+            "English Horn",
+            "Bassoon",
+            "Clarinet",
+            "Piccolo",
+            "Flute",
+            "Recorder",
+            "Pan Flute",
+            "Bottle Blow",
+            "Shakuhachi",
+            "Whistle",
+            "Ocarina",
+            "Square Wave",
+            "Saw Wave",
+            "Syn.Calliope",
+            "Chiffer Lead",
+            "Charang",
+            "Solo Vox",
+            "5th Saw Wave",
+            "Bass & Lead",
+            "Fantasia",
+            "Warm Pad",
+            "Polysynth",
+            "Space Voice",
+            "Bowed Glass",
+            "Metal Pad",
+            "Halo Pad",
+            "Sweep Pad",
+            "Ice Rain",
+            "Soundtrack",
+            "Crystal",
+            "Atmosphere",
+            "Brightness",
+            "Goblin",
+            "Echo Drops",
+            "Star Theme",
+            "Sitar",
+            "Banjo",
+            "Shamisen",
+            "Koto",
+            "Kalimba",
+            "Bag Pipe",
+            "Fiddle",
+            "Shanai",
+            "Tinkle Bell",
+            "Agogo",
+            "Steel Drums",
+            "Woodblock",
+            "Taiko",
+            "Melo. Tom 1",
+            "Synth Drum",
+            "Reverse Cym.",
+            "Gt.FretNoise",
+            "Breath Noise",
+            "Seashore",
+            "Bird",
+            "Telephone 1",
+            "Helicopter",
+            "Applause",
+            "Gun Shot"
+        };
+
+        private static object[] drumNames = new object[]
+        {
+            "Acou BD", 35,
+            "Bass Drum", 36,
+            "Rim Shot", 37,
+            "Acou SD", 38,
+            "Hand Clap", 39,
+            "Elec SD", 40,
+            "AcouLowTom", 41,
+            "Clsd HiHat", 42,
+            "HighFloorTom", 43,
+            "OpenHiHat2", 44,
+            "AcouMidTom", 45,
+            "OpenHiHat1", 46,
+            "LowMidTom", 47,
+            "Acou HiTom", 48,
+            "Crash Sym", 49,
+            "HiTom", 50,
+            "Ride sym", 51,
+            "Chinese Sym", 52,
+            "Ride Bell", 53,
+            "Tambourine", 54,
+            "Splash Sym", 55,
+            "Cowbell", 56,
+            "Crash Sym2", 57,
+            "Vibraslap", 58,
+            "Ride sym2", 59,
+            "High Bongo", 60,
+            "Low Bongo", 61,
+            "Mt HiConga", 62,
+            "High Conga", 63,
+            "Low Conga", 64,
+            "Hi Timbale", 65,
+            "LowTimbale", 66,
+            "High Agogo", 67,
+            "Low Agogo", 68,
+            "Cabasa", 69,
+            "Maracas", 70,
+            "SmbaWhis S", 71,
+            "SmbaWhis L", 72,
+            "ShortQuijada", 73,
+            "LongQuijada", 74,
+            "Claves", 75,
+            "HWoodBlock", 76,
+            "LWoodBlock", 77,
+            "Close Cuica", 78,
+            "Open Cuica", 79,
+        };
+        */
 
         /// <summary>
         /// 

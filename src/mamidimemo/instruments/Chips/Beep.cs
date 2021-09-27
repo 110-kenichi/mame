@@ -249,12 +249,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
+        }
+
 
         /// <summary>
         /// 
@@ -311,13 +328,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (BeepTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    BeepSound snd = new BeepSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    BeepSound snd = new BeepSound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
@@ -328,7 +347,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
@@ -376,7 +395,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public BeepSound(Beep parentModule, BeepSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public BeepSound(Beep parentModule, BeepSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (BeepTimbre)timbre;
@@ -399,7 +418,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double freq = CalcCurrentFrequency();
 
-                BeepSetClock(parentModule.UnitNumber, IsSoundOff ? 0 : 1, (uint)freq);
+                BeepSetClock(parentModule.UnitNumber, IsSoundOff ? 0 : 1, (uint)Math.Round(freq));
 
                 base.OnPitchUpdated();
             }

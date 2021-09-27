@@ -292,8 +292,8 @@ uint32_t S3C24_CLASS_NAME::s3c24xx_lcd_dma_read()
 	uint8_t data[4];
 	for (int i = 0; i < 2; i++)
 	{
-		data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur + 0);
-		data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur + 1);
+		data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur + 0);
+		data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur + 1);
 		m_lcd.vramaddr_cur += 2;
 		m_lcd.pagewidth_cur++;
 		if (m_lcd.pagewidth_cur >= m_lcd.pagewidth_max)
@@ -338,39 +338,39 @@ uint32_t S3C24_CLASS_NAME::s3c24xx_lcd_dma_read()
 			{
 				if ((m_lcd.vramaddr_cur & 2) == 0)
 				{
-					data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur + 3);
-					data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur + 2);
+					data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur + 3);
+					data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur + 2);
 				}
 				else
 				{
-					data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur - 1);
-					data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur - 2);
+					data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur - 1);
+					data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur - 2);
 				}
 			}
 			else
 			{
-				data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur + 0);
-				data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur + 1);
+				data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur + 0);
+				data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur + 1);
 			}
 		}
 		else
 		{
 			if (m_lcd.bswp == 0)
 			{
-				data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur + 1);
-				data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur + 0);
+				data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur + 1);
+				data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur + 0);
 			}
 			else
 			{
 				if ((m_lcd.vramaddr_cur & 2) == 0)
 				{
-					data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur + 2);
-					data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur + 3);
+					data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur + 2);
+					data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur + 3);
 				}
 				else
 				{
-					data[i*2+0] = m_cache->read_byte(m_lcd.vramaddr_cur - 2);
-					data[i*2+1] = m_cache->read_byte(m_lcd.vramaddr_cur - 1);
+					data[i*2+0] = m_cache.read_byte(m_lcd.vramaddr_cur - 2);
+					data[i*2+1] = m_cache.read_byte(m_lcd.vramaddr_cur - 1);
 				}
 			}
 		}
@@ -744,7 +744,7 @@ void S3C24_CLASS_NAME::s3c24xx_video_start()
 	m_lcd.bitmap[0] = std::make_unique<bitmap_rgb32>(m_screen->width(), m_screen->height());
 	m_lcd.bitmap[1] = std::make_unique<bitmap_rgb32>(m_screen->width(), m_screen->height());
 
-	m_cache = m_cpu->space(AS_PROGRAM).cache<2, 0, ENDIANNESS_LITTLE>();
+	m_cpu->space(AS_PROGRAM).cache(m_cache);
 }
 
 void S3C24_CLASS_NAME::bitmap_blend( bitmap_rgb32 &bitmap_dst, bitmap_rgb32 &bitmap_src_1, bitmap_rgb32 &bitmap_src_2)
@@ -791,7 +791,7 @@ uint32_t S3C24_CLASS_NAME::s3c24xx_video_update(screen_device &screen, bitmap_rg
 }
 
 
-READ32_MEMBER( S3C24_CLASS_NAME::s3c24xx_lcd_r )
+uint32_t S3C24_CLASS_NAME::s3c24xx_lcd_r(offs_t offset, uint32_t mem_mask)
 {
 	uint32_t data = ((uint32_t*)&m_lcd.regs)[offset];
 	switch (offset)
@@ -953,7 +953,7 @@ void S3C24_CLASS_NAME::s3c24xx_lcd_recalc()
 	}
 }
 
-WRITE32_MEMBER( S3C24_CLASS_NAME::s3c24xx_lcd_w )
+void S3C24_CLASS_NAME::s3c24xx_lcd_w(offs_t offset, uint32_t data, uint32_t mem_mask)
 {
 	uint32_t old_value = ((uint32_t*)&m_lcd.regs)[offset];
 	LOGMASKED(LOG_LCD_REGS, "%s: lcd write: %08X = %08X & %08x\n", machine().describe_context(), S3C24XX_BASE_LCD + (offset << 2), data, mem_mask);

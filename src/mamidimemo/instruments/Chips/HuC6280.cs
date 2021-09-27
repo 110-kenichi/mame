@@ -427,11 +427,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
         }
 
         /// <summary>
@@ -493,13 +509,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (HuC6280Timbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    Hu6280Sound snd = new Hu6280Sound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    Hu6280Sound snd = new Hu6280Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     switch (timbre.SoundType)
                     {
                         case SoundType.WSGLFO:
@@ -523,7 +541,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
@@ -606,6 +624,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SoundType lastSoundType;
 
+            private byte lastLfoTable;
+
             /// <summary>
             /// 
             /// </summary>
@@ -613,7 +633,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public Hu6280Sound(HuC6280 parentModule, Hu6280SoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public Hu6280Sound(HuC6280 parentModule, Hu6280SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex,  noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (HuC6280Timbre)timbre;
@@ -681,13 +701,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
+                updateWsgData();
+
                 base.OnSoundParamsUpdated();
+            }
 
-                OnPanpotUpdated();
+            private void updateWsgData()
+            {
+                if (FxEngine != null && FxEngine.Active)
+                {
+                    var eng = FxEngine as HuC6280FxEngine;
+                    if (eng?.LfoValue != null)
+                    {
+                        var no = (byte)(eng.LfoValue.Value & 3);
+                        if (lastLfoTable != no)
+                        {
+                            lastLfoTable = no;
+                            byte[] lfoData;
+                            switch (no)
+                            {
+                                case 1:
+                                case 2:
+                                case 3:
+                                    lfoData = timbre.LfoMorphData[no - 1].LfoData;
+                                    break;
+                                default:
+                                    lfoData = timbre.LfoData;
+                                    break;
+                            }
 
-                OnPitchUpdated();
+                            //ch1 LFO
+                            C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 1));
+                            foreach (var d in lfoData)
+                                C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
-                OnVolumeUpdated();
+                            C6280WriteData(parentModule.UnitNumber, 0x808, null, timbre.LfoFreq);
+                            C6280WriteData(parentModule.UnitNumber, 0x809, null, (byte)((timbre.LfoEnable ? 0x00 : 0x80) | timbre.LfoMode));
+                        }
+                    }
+                }
             }
 
             /// <summary>
@@ -695,6 +747,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
+                if (IsSoundOff)
+                    return;
+
                 var vol = CalcCurrentVolume();
                 byte wvol = 31;
                 for (int i = volumeTable.Length - 1; i >= 0; i--)
@@ -737,6 +792,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
+                if (IsSoundOff)
+                    return;
+
                 double freq = CalcCurrentFrequency();
 
                 //Freq
@@ -770,6 +828,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnPanpotUpdated()
             {
+                if (IsSoundOff)
+                    return;
+
                 //Pan
                 int pan = CalcCurrentPanpot();
 
@@ -1164,13 +1225,54 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private HuC6280LfoMorphData[] f_lfoMorphData = new HuC6280LfoMorphData[3] {
+                new HuC6280LfoMorphData(),
+                new HuC6280LfoMorphData(),
+                new HuC6280LfoMorphData()
+            };
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("LFO Morph Table")]
+            public HuC6280LfoMorphData[] LfoMorphData
+            {
+                get
+                {
+                    return f_lfoMorphData;
+                }
+                set
+                {
+                    f_lfoMorphData = value;
+                }
+            }
+
+            public bool ShouldSerializeLfoMorphData()
+            {
+                foreach (var dt in f_lfoMorphData)
+                {
+                    if (dt != null && dt.ShouldSerializeLfoData())
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoMorphData()
+            {
+                f_lfoMorphData = new HuC6280LfoMorphData[3] {
+                    new HuC6280LfoMorphData(),
+                    new HuC6280LfoMorphData(),
+                    new HuC6280LfoMorphData()
+                };
+            }
 
             /// <summary>
             /// 
             /// </summary>
             public HuC6280Timbre()
             {
-                SDS.FxS = new BasicFxSettings();
+                SDS.FxS = new HuC6280FxSettings();
             }
 
 
@@ -1195,6 +1297,265 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     System.Windows.Forms.MessageBox.Show(ex.ToString());
                 }
+            }
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280LfoMorphData>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class HuC6280LfoMorphData : ContextBoundObject
+        {
+
+            private byte[] f_lfodata = new byte[32];
+
+            [TypeConverter(typeof(ArrayConverter))]
+            [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [WsgBitWideAttribute(5)]
+            [DataMember]
+            [Category("Sound")]
+            [Description("LFO Table (32 samples, 0-31 levels)")]
+            public byte[] LfoData
+            {
+                get
+                {
+                    return f_lfodata;
+                }
+                set
+                {
+                    f_lfodata = value;
+                }
+            }
+
+
+            public bool ShouldSerializeLfoData()
+            {
+                foreach (var dt in LfoData)
+                {
+                    if (dt != 0)
+                        return true;
+                }
+                return false;
+            }
+
+            public void ResetLfoData()
+            {
+                f_lfodata = new byte[32];
+            }
+
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("LFO Table (32 samples, 0-31 levels)")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string LfoDataSerializeData
+            {
+                get
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < LfoData.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        sb.Append(LfoData[i].ToString((IFormatProvider)null));
+                    }
+                    return sb.ToString();
+                }
+                set
+                {
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<byte> vs = new List<byte>();
+                    foreach (var val in vals)
+                    {
+                        byte v = 0;
+                        if (byte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
+                    for (int i = 0; i < Math.Min(LfoData.Length, vs.Count); i++)
+                        LfoData[i] = vs[i] > 31 ? (byte)31 : vs[i];
+                }
+            }
+
+
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280FxSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [MidiHook]
+        public class HuC6280FxSettings : BasicFxSettings
+        {
+
+            private string f_MorphEnvelopes;
+
+            [DataMember]
+            [Description("Set wave table number by text. Input wave table number and split it with space like the FamiTracker.\r\n" +
+                       "0-3(0 is normal table) \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(0, 3)]
+            public string MorphEnvelopes
+            {
+                get
+                {
+                    return f_MorphEnvelopes;
+                }
+                set
+                {
+                    if (f_MorphEnvelopes != value)
+                    {
+                        MorphEnvelopesRepeatPoint = -1;
+                        MorphEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            MorphEnvelopesNums = new int[] { };
+                            f_MorphEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_MorphEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                MorphEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                MorphEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 0;
+                                    else if (v > 3)
+                                        v = 3;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        MorphEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (MorphEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (MorphEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_MorphEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeMorphEnvelopes()
+            {
+                return !string.IsNullOrEmpty(MorphEnvelopes);
+            }
+
+            public void ResetMorphEnvelopes()
+            {
+                MorphEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] MorphEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int MorphEnvelopesReleasePoint { get; set; } = -1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override AbstractFxEngine CreateEngine()
+            {
+                return new HuC6280FxEngine(this);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public class HuC6280FxEngine : BasicFxEngine
+        {
+            private HuC6280FxSettings settings;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public HuC6280FxEngine(HuC6280FxSettings settings) : base(settings)
+            {
+                this.settings = settings;
+            }
+
+            private uint f_lfoCounter;
+
+            public byte? LfoValue
+            {
+                get;
+                private set;
+            }
+
+            protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
+            {
+                bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
+
+                LfoValue = null;
+                if (settings.MorphEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.MorphEnvelopesNums.Length;
+                        if (settings.MorphEnvelopesReleasePoint >= 0)
+                            vm = settings.MorphEnvelopesReleasePoint;
+                        if (f_lfoCounter >= vm)
+                        {
+                            if (settings.MorphEnvelopesRepeatPoint >= 0)
+                                f_lfoCounter = (uint)settings.MorphEnvelopesRepeatPoint;
+                            else
+                                f_lfoCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.MorphEnvelopesReleasePoint < 0)
+                            f_lfoCounter = (uint)settings.MorphEnvelopesNums.Length;
+
+                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        //{
+                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
+                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
+                        //}
+                    }
+                    if (f_lfoCounter < settings.MorphEnvelopesNums.Length)
+                    {
+                        int vol = settings.MorphEnvelopesNums[f_lfoCounter++];
+
+                        LfoValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                return process;
             }
         }
 

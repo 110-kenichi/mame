@@ -433,13 +433,13 @@ Donkey Kong Notes
  *
  *************************************/
 
-READ8_MEMBER(dkong_state::memory_read_byte)
+uint8_t dkong_state::memory_read_byte(offs_t offset)
 {
 	address_space& prog_space = m_maincpu->space(AS_PROGRAM);
 	return prog_space.read_byte(offset);
 }
 
-WRITE8_MEMBER(dkong_state::memory_write_byte)
+void dkong_state::memory_write_byte(offs_t offset, uint8_t data)
 {
 	address_space& prog_space = m_maincpu->space(AS_PROGRAM);
 	prog_space.write_byte(offset, data);
@@ -564,7 +564,7 @@ MACHINE_RESET_MEMBER(dkong_state,drakton)
  *
  *************************************/
 
-READ8_MEMBER(dkong_state::hb_dma_read_byte)
+uint8_t dkong_state::hb_dma_read_byte(offs_t offset)
 {
 	int   bucket = m_rev_map[(offset>>10) & 0x1ff];
 	int   addr;
@@ -577,7 +577,7 @@ READ8_MEMBER(dkong_state::hb_dma_read_byte)
 	return prog_space.read_byte(addr);
 }
 
-WRITE8_MEMBER(dkong_state::hb_dma_write_byte)
+void dkong_state::hb_dma_write_byte(offs_t offset, uint8_t data)
 {
 	int   bucket = m_rev_map[(offset>>10) & 0x1ff];
 	int   addr;
@@ -590,12 +590,12 @@ WRITE8_MEMBER(dkong_state::hb_dma_write_byte)
 	prog_space.write_byte(addr, data);
 }
 
-READ8_MEMBER(dkong_state::p8257_ctl_r)
+uint8_t dkong_state::p8257_ctl_r()
 {
 	return m_dma_latch;
 }
 
-WRITE8_MEMBER(dkong_state::p8257_ctl_w)
+void dkong_state::p8257_ctl_w(uint8_t data)
 {
 	m_dma_latch = data;
 }
@@ -631,17 +631,6 @@ READ8_MEMBER(dkong_state::dkong_in2_r)
 	if (ioport("SERVICE1")->read() & 1)
 		r |= 0x80; /* service ==> coin */
 	return r;
-}
-
-READ8_MEMBER(dkong_state::s2650_mirror_r)
-{
-	return space.read_byte(0x1000 + offset);
-}
-
-
-WRITE8_MEMBER(dkong_state::s2650_mirror_w)
-{
-	space.write_byte(0x1000 + offset, data);
 }
 
 
@@ -892,28 +881,25 @@ void dkong_state::epos_readport(address_map &map)
 void dkong_state::s2650_map(address_map &map)
 {
 	map(0x0000, 0x0fff).rom();
-	map(0x1000, 0x13ff).ram().share("sprite_ram");  /* 0x7000 */
-	map(0x1400, 0x1400).mirror(0x007f).portr("IN0").w("ls175.3d", FUNC(latch8_device::write));
-	map(0x1480, 0x1480).portr("IN1");
-	map(0x1500, 0x1500).mirror(0x007f).r(FUNC(dkong_state::dkong_in2_r));                                 /* IN2 */
-	map(0x1500, 0x1507).w(m_dev_6h, FUNC(latch8_device::bit0_w));       /* Sound signals */
-	map(0x1580, 0x1580).portr("DSW0").w(FUNC(dkong_state::dkong_audio_irq_w));     /* DSW0 */
-	map(0x1582, 0x1582).w(FUNC(dkong_state::dkong_flipscreen_w));
-	map(0x1583, 0x1583).w(FUNC(dkong_state::dkong_spritebank_w));                         /* 2 PSL Signal */
-	map(0x1584, 0x1584).noprw();                                               /* Possibly still interrupt enable */
-	map(0x1585, 0x1585).w(FUNC(dkong_state::p8257_drq_w));          /* P8257 ==> /DRQ0 /DRQ1 */
-	map(0x1586, 0x1587).w(FUNC(dkong_state::dkong_palettebank_w));
-	map(0x1600, 0x17ff).ram();                                               /* 0x6400  spriteram location */
-	map(0x1800, 0x1bff).ram().w(FUNC(dkong_state::dkong_videoram_w)).share("video_ram");        /* 0x7400 */
-	map(0x1C00, 0x1f7f).ram();                                               /* 0x6000 */
-	map(0x1f80, 0x1f8f).rw(m_dma8257, FUNC(i8257_device::read), FUNC(i8257_device::write));   /* P8257 control registers */
+	map(0x1000, 0x13ff).mirror(0x6000).ram().share("sprite_ram");  /* 0x7000 */
+	map(0x1400, 0x1400).mirror(0x607f).portr("IN0").w("ls175.3d", FUNC(latch8_device::write));
+	map(0x1480, 0x1480).mirror(0x6000).portr("IN1");
+	map(0x1500, 0x1500).mirror(0x607f).r(FUNC(dkong_state::dkong_in2_r));                                 /* IN2 */
+	map(0x1500, 0x1507).mirror(0x6000).w(m_dev_6h, FUNC(latch8_device::bit0_w));       /* Sound signals */
+	map(0x1580, 0x1580).mirror(0x6000).portr("DSW0").w(FUNC(dkong_state::dkong_audio_irq_w));     /* DSW0 */
+	map(0x1582, 0x1582).mirror(0x6000).w(FUNC(dkong_state::dkong_flipscreen_w));
+	map(0x1583, 0x1583).mirror(0x6000).w(FUNC(dkong_state::dkong_spritebank_w));                         /* 2 PSL Signal */
+	map(0x1584, 0x1584).mirror(0x6000).noprw();                                               /* Possibly still interrupt enable */
+	map(0x1585, 0x1585).mirror(0x6000).w(FUNC(dkong_state::p8257_drq_w));          /* P8257 ==> /DRQ0 /DRQ1 */
+	map(0x1586, 0x1587).mirror(0x6000).w(FUNC(dkong_state::dkong_palettebank_w));
+	map(0x1600, 0x17ff).mirror(0x6000).ram();                                               /* 0x6400  spriteram location */
+	map(0x1800, 0x1bff).mirror(0x6000).ram().w(FUNC(dkong_state::dkong_videoram_w)).share("video_ram");        /* 0x7400 */
+	map(0x1C00, 0x1f7f).mirror(0x6000).ram();                                               /* 0x6000 */
+	map(0x1f80, 0x1f8f).mirror(0x6000).rw(m_dma8257, FUNC(i8257_device::read), FUNC(i8257_device::write));   /* P8257 control registers */
 	/* 0x6800 not remapped */
 	map(0x2000, 0x2fff).rom();
-	map(0x3000, 0x3fff).rw(FUNC(dkong_state::s2650_mirror_r), FUNC(dkong_state::s2650_mirror_w));
 	map(0x4000, 0x4fff).rom();
-	map(0x5000, 0x5fff).rw(FUNC(dkong_state::s2650_mirror_r), FUNC(dkong_state::s2650_mirror_w));
 	map(0x6000, 0x6fff).rom();
-	map(0x7000, 0x7fff).rw(FUNC(dkong_state::s2650_mirror_r), FUNC(dkong_state::s2650_mirror_w));
 }
 
 void dkong_state::s2650_io_map(address_map &map)
@@ -1180,10 +1166,10 @@ static INPUT_PORTS_START( dkong3 )
 	PORT_DIPSETTING(    0x20, "50000" )
 	PORT_DIPSETTING(    0x30, DEF_STR( None ) )
 	PORT_DIPNAME( 0xc0, 0x00, DEF_STR( Difficulty ) )       PORT_DIPLOCATION("SW1:!7,!8")
-	PORT_DIPSETTING(    0x00, DEF_STR( Easy ) )
-	PORT_DIPSETTING(    0x40, DEF_STR( Medium ) )
-	PORT_DIPSETTING(    0x80, DEF_STR( Hard ) )
-	PORT_DIPSETTING(    0xc0, DEF_STR( Hardest ) )
+	PORT_DIPSETTING(    0x00, "1" )
+	PORT_DIPSETTING(    0x40, "2" )
+	PORT_DIPSETTING(    0x80, "3" )
+	PORT_DIPSETTING(    0xc0, "4" )
 INPUT_PORTS_END
 
 static INPUT_PORTS_START( dkong3b )

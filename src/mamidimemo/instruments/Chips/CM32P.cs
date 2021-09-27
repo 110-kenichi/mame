@@ -170,7 +170,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                for (int i = 0;i < value.Length; i++)
+                for (int i = 0; i < value.Length; i++)
                 {
                     if (value[i] > 16)
                         value[i] = 16;
@@ -1089,13 +1089,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (CM32PTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     int emptySlot = searchEmptySlot(note);
                     if (emptySlot < 0)
                         continue;
 
-                    CM32PSound snd = new CM32PSound(parentModule, this, timbre, note, emptySlot);
+                    CM32PSound snd = new CM32PSound(parentModule, this, timbre, tindex - 1, note, emptySlot);
                     instOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn ch" + emptySlot + " " + note.ToString());
@@ -1106,7 +1108,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
@@ -1156,7 +1158,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public CM32PSound(CM32P parentModule, CM32PSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public CM32PSound(CM32P parentModule, CM32PSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.programNumber = (SevenBitNumber)parentModule.ProgramNumbers[noteOnEvent.Channel];

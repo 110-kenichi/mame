@@ -4,7 +4,7 @@
 
     tms32031.h
 
-    TMS32031/2 emulator
+    TMS320C3x family 32-bit floating point DSP emulator
 
 ***************************************************************************/
 
@@ -768,8 +768,10 @@ protected:
 	int                 m_icount;
 
 	uint32_t            m_iotemp;
-	address_space *     m_program;
-	memory_access_cache<2, -2, ENDIANNESS_LITTLE> *m_cache;
+	memory_access<24, 2, -2, ENDIANNESS_LITTLE>::cache m_cache;
+	memory_access<24, 2, -2, ENDIANNESS_LITTLE>::specific m_program;
+
+	optional_memory_region m_internal_rom;
 
 	bool                m_mcbl_mode;
 	bool                m_hold_state;

@@ -22,10 +22,10 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [DataContract]
     public class BasicFxSettings : AbstractFxSettingsBase
     {
-        public string f_VolumeEnvelopes;
+        private string f_VolumeEnvelopes;
 
         [DataMember]
-        [Description("Set volume envelop by text. Input volume value and split it with space like the Famitracker.\r\n" +
+        [Description("Set volume envelop by text. Input volume value and split it with space like the FamiTracker.\r\n" +
                     "0(0%)-127(100%) \"|\" is repeat point. \"/\" is release point.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(0,127)]
@@ -118,7 +118,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private string f_PitchEnvelopes;
 
         [DataMember]
-        [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the Famitracker.\r\n" +
+        [Description("Set pitch envelop by text. Input pitch relative value and split it with space like the FamiTracker.\r\n" +
                    "-8193 ～ 0 ～ 8192 \"|\" is repeat point. \"/\" is release point.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(-8193, 8192)]
@@ -246,12 +246,108 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     f_PitchEnvelopeRange = value;
             }
         }
-        
+
+
+        private string f_PanShiftEnvelopes;
+
+        [DataMember]
+        [Description("Set pan shift envelop by text. Input pan value and split it with space like the FamiTracker.\r\n" +
+                    "-127(Left)-0-127(Right) \"|\" is repeat point. \"/\" is release point.")]
+        [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [EnvelopeEditorAttribute(-127, 127)]
+        public string PanShiftEnvelopes
+        {
+            get
+            {
+                return f_PanShiftEnvelopes;
+            }
+            set
+            {
+                if (f_PanShiftEnvelopes != value)
+                {
+                    PanShiftEnvelopesRepeatPoint = -1;
+                    PanShiftEnvelopesReleasePoint = -1;
+                    if (value == null)
+                    {
+                        PanShiftEnvelopesNums = new int[] { };
+                        f_PanShiftEnvelopes = string.Empty;
+                        return;
+                    }
+                    f_PanShiftEnvelopes = value;
+                    string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<int> vs = new List<int>();
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        string val = vals[i];
+                        if (val.Equals("|", StringComparison.Ordinal))
+                            PanShiftEnvelopesRepeatPoint = vs.Count;
+                        else if (val.Equals("/", StringComparison.Ordinal))
+                            PanShiftEnvelopesReleasePoint = vs.Count;
+                        else
+                        {
+                            int pan;
+                            if (int.TryParse(val, out pan))
+                            {
+                                if (pan < -127)
+                                    pan = -127;
+                                else if (pan > 127)
+                                    pan = 127;
+                                vs.Add(pan);
+                            }
+                        }
+                    }
+                    PanShiftEnvelopesNums = vs.ToArray();
+
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < PanShiftEnvelopesNums.Length; i++)
+                    {
+                        if (sb.Length != 0)
+                            sb.Append(' ');
+                        if (PanShiftEnvelopesRepeatPoint == i)
+                            sb.Append("| ");
+                        if (PanShiftEnvelopesReleasePoint == i)
+                            sb.Append("/ ");
+                        sb.Append(PanShiftEnvelopesNums[i].ToString((IFormatProvider)null));
+                    }
+                    f_PanShiftEnvelopes = sb.ToString();
+                }
+            }
+        }
+
+        public bool ShouldSerializePanShiftEnvelopes()
+        {
+            return !string.IsNullOrEmpty(PanShiftEnvelopes);
+        }
+
+        public void ResetPanShiftEnvelopes()
+        {
+            PanShiftEnvelopes = null;
+        }
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public int[] PanShiftEnvelopesNums { get; set; } = new int[] { };
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        [DefaultValue(-1)]
+        public int PanShiftEnvelopesRepeatPoint { get; set; } = -1;
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        [DefaultValue(-1)]
+        public int PanShiftEnvelopesReleasePoint { get; set; } = -1;
+
+
         private string f_ArpEnvelopes;
 
         [DataMember]
-        [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the Famitracker.\r\n" +
-                   "-128 ～ 0 ～ 127 \"|\" is repeat point. \"/\" is release point.")]
+        [Description("Set static arpeggio envelop by text. Input relative or absolute note number and split it with space like the FamiTracker.\r\n" +
+                   "-128 ～ 0 ～ 127 \"|\" is repeat point. \"/\" is release point.\r\n" +
+            "\"-\" is no-operation.")]
         [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [EnvelopeEditorAttribute(-128, 127)]
         public string ArpEnvelopes
@@ -268,13 +364,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     ArpEnvelopesReleasePoint = -1;
                     if (value == null)
                     {
-                        ArpEnvelopesNums = new int[] { };
+                        ArpEnvelopesNums = new int?[] { };
                         f_ArpEnvelopes = string.Empty;
                         return;
                     }
                     f_ArpEnvelopes = value;
                     string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                    List<int> vs = new List<int>();
+                    List<int?> vs = new List<int?>();
                     for (int i = 0; i < vals.Length; i++)
                     {
                         string val = vals[i];
@@ -282,6 +378,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             ArpEnvelopesRepeatPoint = vs.Count;
                         else if (val.Equals("/", StringComparison.Ordinal))
                             ArpEnvelopesReleasePoint = vs.Count;
+                        else if (val.Equals("-", StringComparison.Ordinal))
+                            vs.Add(null);
                         else
                         {
                             int v;
@@ -306,7 +404,10 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             sb.Append("| ");
                         if (ArpEnvelopesReleasePoint == i)
                             sb.Append("/ ");
-                        sb.Append(ArpEnvelopesNums[i].ToString((IFormatProvider)null));
+                        if(ArpEnvelopesNums[i] == null)
+                            sb.Append("-");
+                        else
+                            sb.Append(ArpEnvelopesNums[i].Value.ToString((IFormatProvider)null));
                     }
                     f_ArpEnvelopes = sb.ToString();
                 }
@@ -326,7 +427,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         [Browsable(false)]
         [JsonIgnore]
         [IgnoreDataMember]
-        public int[] ArpEnvelopesNums { get; set; } = new int[] { };
+        public int?[] ArpEnvelopesNums { get; set; } = new int?[] { };
 
         [Browsable(false)]
         [JsonIgnore]
@@ -358,6 +459,26 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 if (f_ArpStepType != value)
                 {
                     f_ArpStepType = value;
+                }
+            }
+        }
+
+        private ArpMethod f_ArpMethod = ArpMethod.PitchChange;
+
+        [DataMember]
+        [Description("Set arpeggio method (Note On or Pitch Change)")]
+        [DefaultValue(ArpMethod.PitchChange)]
+        public ArpMethod ArpMethod
+        {
+            get
+            {
+                return f_ArpMethod;
+            }
+            set
+            {
+                if (f_ArpMethod != value)
+                {
+                    f_ArpMethod = value;
                 }
             }
         }

@@ -820,7 +820,7 @@ INTERRUPT_GEN_MEMBER(segas32_state::start_of_vblank_int)
  *************************************/
 
 
-WRITE8_MEMBER(segas32_state::misc_output_0_w)
+void segas32_state::misc_output_0_w(uint8_t data)
 {
 	if (m_sw1_output)
 		(this->*m_sw1_output)(0, data);
@@ -832,7 +832,7 @@ WRITE8_MEMBER(segas32_state::misc_output_0_w)
 }
 
 
-WRITE8_MEMBER(segas32_state::misc_output_1_w)
+void segas32_state::misc_output_1_w(uint8_t data)
 {
 	if (m_sw1_output)
 		(this->*m_sw1_output)(1, data);
@@ -844,21 +844,21 @@ WRITE8_MEMBER(segas32_state::misc_output_1_w)
 }
 
 
-WRITE8_MEMBER(segas32_state::sw2_output_0_w)
+void segas32_state::sw2_output_0_w(uint8_t data)
 {
 	if (m_sw2_output)
 		(this->*m_sw2_output)(0, data);
 }
 
 
-WRITE8_MEMBER(segas32_state::sw2_output_1_w)
+void segas32_state::sw2_output_1_w(uint8_t data)
 {
 	if (m_sw2_output)
 		(this->*m_sw2_output)(1, data);
 }
 
 
-WRITE8_MEMBER(segas32_state::tilebank_external_w)
+void segas32_state::tilebank_external_w(uint8_t data)
 {
 	m_system32_tilebank_external = data;
 }
@@ -1216,8 +1216,7 @@ void segas32_state::system32_sound_map(address_map &map)
 {
 	map(0x0000, 0x9fff).rom().region("soundcpu", 0);
 	map(0xa000, 0xbfff).bankr("soundbank");
-	map(0xc000, 0xc00f).mirror(0x0ff0).w("rfsnd", FUNC(rf5c68_device::rf5c68_w));
-	map(0xd000, 0xdfff).rw("rfsnd", FUNC(rf5c68_device::rf5c68_mem_r), FUNC(rf5c68_device::rf5c68_mem_w));
+	map(0xc000, 0xdfff).m("rfsnd", FUNC(rf5c68_device::map));
 	map(0xe000, 0xffff).ram().share("z80_shared_ram");
 }
 
@@ -2486,13 +2485,13 @@ segas32_upd7725_state::segas32_upd7725_state(const machine_config &mconfig, cons
 
 
 
-WRITE8_MEMBER(segas32_cd_state::lamps1_w)
+void segas32_cd_state::lamps1_w(uint8_t data)
 {
 	for (int i = 0; i < 8; i++)
 		m_lamps[i] = BIT(data, i);
 }
 
-WRITE8_MEMBER(segas32_cd_state::lamps2_w)
+void segas32_cd_state::lamps2_w(uint8_t data)
 {
 	for (int i = 0; i < 8; i++)
 		m_lamps[8 + i] = BIT(data, i);
@@ -2775,10 +2774,10 @@ private:
 	optional_device<segas32_state> m_slavepcb;
 
 	std::unique_ptr<uint16_t[]> m_dual_pcb_comms;
-	DECLARE_WRITE16_MEMBER(dual_pcb_comms_w);
-	DECLARE_READ16_MEMBER(dual_pcb_comms_r);
-	DECLARE_READ16_MEMBER(dual_pcb_masterslave);
-	DECLARE_READ16_MEMBER(dual_pcb_slave);
+	void dual_pcb_comms_w(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
+	uint16_t dual_pcb_comms_r(offs_t offset);
+	uint16_t dual_pcb_masterslave();
+	uint16_t dual_pcb_slave();
 };
 
 
@@ -5609,12 +5608,12 @@ void segas32_state::scross_sw2_output( int which, uint16_t data )
  *
  *************************************/
 
-WRITE16_MEMBER(segas32_new_state::dual_pcb_comms_w)
+void segas32_new_state::dual_pcb_comms_w(offs_t offset, uint16_t data, uint16_t mem_mask)
 {
 	COMBINE_DATA(&m_dual_pcb_comms[offset]);
 }
 
-READ16_MEMBER(segas32_new_state::dual_pcb_comms_r)
+uint16_t segas32_new_state::dual_pcb_comms_r(offs_t offset)
 {
 	return m_dual_pcb_comms[offset];
 }
@@ -5624,12 +5623,12 @@ READ16_MEMBER(segas32_new_state::dual_pcb_comms_r)
    Probably not a dip/solder link/trace cut, but maybe
    just whichever way the cables are plugged in?
    Both f1en and arescue master units try to set bit 1... */
-READ16_MEMBER(segas32_new_state::dual_pcb_masterslave)
+uint16_t segas32_new_state::dual_pcb_masterslave()
 {
 	return 0; // 0/1 master/slave
 }
 
-READ16_MEMBER(segas32_new_state::dual_pcb_slave)
+uint16_t segas32_new_state::dual_pcb_slave()
 {
 	return 1; // 0/1 master/slave
 }
@@ -5664,11 +5663,13 @@ void segas32_new_state::init_arescue()
 	m_slavepcb->init_arescue(0);
 
 	m_dual_pcb_comms = std::make_unique<uint16_t[]>(0x1000/2);
-	m_mainpcb->maincpu()->space(AS_PROGRAM).install_readwrite_handler(0x810000, 0x810fff, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)), write16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
-	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_masterslave)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x810000, 0x810fff, read16sm_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_write_handler(0x810000, 0x810fff, write16s_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16smo_delegate(*this, FUNC(segas32_new_state::dual_pcb_masterslave)));
 
-	m_slavepcb->maincpu()->space(AS_PROGRAM).install_readwrite_handler(0x810000, 0x810fff, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)), write16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
-	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_slave)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x810000, 0x810fff, read16sm_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_write_handler(0x810000, 0x810fff, write16s_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16smo_delegate(*this, FUNC(segas32_new_state::dual_pcb_slave)));
 }
 
 void segas32_new_state::init_f1en() {
@@ -5678,11 +5679,13 @@ void segas32_new_state::init_f1en() {
 	m_dual_pcb_comms = std::make_unique<uint16_t[]>(0x1000/2);
 	memset(m_dual_pcb_comms.get(), 0xff, 0x1000 / 2);
 
-	m_mainpcb->maincpu()->space(AS_PROGRAM).install_readwrite_handler(0x810000, 0x810fff, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)), write16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
-	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_masterslave)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x810000, 0x810fff, read16sm_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_write_handler(0x810000, 0x810fff, write16s_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
+	m_mainpcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16smo_delegate(*this, FUNC(segas32_new_state::dual_pcb_masterslave)));
 
-	m_slavepcb->maincpu()->space(AS_PROGRAM).install_readwrite_handler(0x810000, 0x810fff, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)), write16_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
-	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16_delegate(*this, FUNC(segas32_new_state::dual_pcb_slave)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x810000, 0x810fff, read16sm_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_r)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_write_handler(0x810000, 0x810fff, write16s_delegate(*this, FUNC(segas32_new_state::dual_pcb_comms_w)));
+	m_slavepcb->maincpu()->space(AS_PROGRAM).install_read_handler(0x818000, 0x818003, read16smo_delegate(*this, FUNC(segas32_new_state::dual_pcb_slave)));
 }
 
 void segas32_new_state::init_f1lap()

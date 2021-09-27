@@ -1,6 +1,7 @@
 ﻿// copyright-holders:K.Ito
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,6 +11,7 @@ using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Scci
 {
+
     public static class ScciManager
     {
 
@@ -27,10 +29,7 @@ namespace zanac.MAmidiMEmo.Scci
 
         private static object lockObject = new object();
 
-        private const string SCCI_WRAPPER_DLL_NAME = "ScciWrapper";
-
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true)]
-        private static extern UInt32 InitializeScci();
+        private static IScciWrapper wrapperClient;
 
         private static bool initialized;
 
@@ -47,37 +46,39 @@ namespace zanac.MAmidiMEmo.Scci
 
         private static void TryInitializeScci()
         {
-            if (Environment.Is64BitProcess)
-                return;
-
             lock (lockObject)
             {
                 if (!initialized)
                 {
+                    // Create configuration
+                    //if (Environment.Is64BitProcess)
+                    //    wrapperClient = new X64toX86BridgeScciWrapper();
+                    //else
+                    //    wrapperClient = new NativeScciWrapper();
+                    wrapperClient = new NativeScciWrapper();
+
                     FormProgress.RunDialog(Resources.ConnectingSPFM, new Action<FormProgress>((f) =>
                     {
                         f.Percentage = -1;
-                        initialized = InitializeScci() == 0 ? true : false;
+
+                        initialized = wrapperClient.InitializeScci() == 0 ? true : false;
+                        if (initialized && writtenDataCache == null)
+                            writtenDataCache = new Dictionary<IntPtr, Dictionary<uint, uint>>();
                     }));
                 }
             }
         }
 
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "ReleaseScci")]
-        private static extern void ReleaseScciInternal();
-
         public static void TryReleaseScci()
         {
-            if (Environment.Is64BitProcess)
-                return;
-
             if (initialized)
                 lock (lockObject)
-                    ReleaseScciInternal();
-        }
+                {
+                    wrapperClient.ReleaseScci();
 
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GetSoundChip")]
-        private static extern IntPtr GetSoundChipInternal(SoundChipType iSoundChipType, SC_CHIP_CLOCK clock);
+                    writtenDataCache.Clear();
+                }
+        }
 
         /// <summary>
         /// 
@@ -87,17 +88,18 @@ namespace zanac.MAmidiMEmo.Scci
         /// <returns></returns>
         public static IntPtr TryGetSoundChip(SoundChipType iSoundChipType, SC_CHIP_CLOCK clock)
         {
-            if (Environment.Is64BitProcess)
-                return IntPtr.Zero;
-
             TryInitializeScci();
 
             lock (lockObject)
-                return GetSoundChipInternal(iSoundChipType, clock);
-        }
+            {
+                IntPtr rv = wrapperClient.GetSoundChip((uint)iSoundChipType, (uint)clock);
 
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "ReleaseSoundChip")]
-        private static extern bool ReleaseSoundChipInternal(IntPtr pSoundChip);
+                if (rv != IntPtr.Zero)
+                    writtenDataCache.Add(rv, new Dictionary<uint, uint>());
+
+                return rv;
+            }
+        }
 
         /// <summary>
         /// 
@@ -105,17 +107,18 @@ namespace zanac.MAmidiMEmo.Scci
         /// <param name="iSoundChipType"></param>
         /// <param name="clock"></param>
         /// <returns></returns>
-        public static bool ReleaseSoundChip(IntPtr pSoundChip)
+        public static void ReleaseSoundChip(IntPtr pSoundChip)
         {
-            if (Environment.Is64BitProcess)
-                return true;
-
             lock (lockObject)
-                return ReleaseSoundChipInternal(pSoundChip);
+            {
+                if (writtenDataCache.ContainsKey(pSoundChip))
+                    writtenDataCache.Remove(pSoundChip);
+
+                wrapperClient.ReleaseSoundChip(pSoundChip);
+            }
         }
 
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "SetRegister")]
-        private static extern bool SetRegisterInternal(IntPtr pChip, uint dAddr, uint pData);
+        private static Dictionary<IntPtr, Dictionary<uint, uint>> writtenDataCache;
 
         /// <summary>
         /// 
@@ -123,9 +126,9 @@ namespace zanac.MAmidiMEmo.Scci
         /// <param name="iSoundChipType"></param>
         /// <param name="clock"></param>
         /// <returns></returns>
-        public static bool SetRegister(IntPtr pChip, uint dAddr, uint pData)
+        public static void SetRegister(IntPtr pChip, uint dAddr, uint pData)
         {
-            return SetRegister(pChip, dAddr, pData, true);
+            SetRegister(pChip, dAddr, pData, true);
         }
 
         /// <summary>
@@ -134,30 +137,28 @@ namespace zanac.MAmidiMEmo.Scci
         /// <param name="iSoundChipType"></param>
         /// <param name="clock"></param>
         /// <returns></returns>
-        public static bool SetRegister(IntPtr pChip, uint dAddr, uint pData, bool useCache)
+        public static void SetRegister(IntPtr pChip, uint dAddr, uint pData, bool useCache)
         {
-            if (Environment.Is64BitProcess)
-                return false;
-
             lock (lockObject)
             {
                 if (useCache)
                 {
                     var prevData = GetWrittenRegisterData(pChip, dAddr);
                     if (prevData != pData)
-                        return SetRegisterInternal(pChip, dAddr, pData);
-                    else
-                        return true;
+                    {
+                        wrapperClient.SetRegister(pChip, dAddr, pData);
+                        if (writtenDataCache.ContainsKey(pChip))
+                            writtenDataCache[pChip][dAddr] = pData;
+                    }
                 }
                 else
                 {
-                    return SetRegisterInternal(pChip, dAddr, pData);
+                    wrapperClient.SetRegister(pChip, dAddr, pData);
+                    if(writtenDataCache.ContainsKey(pChip))
+                        writtenDataCache[pChip][dAddr] = pData;
                 }
             }
         }
-
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GetWrittenRegisterData")]
-        private static extern UInt32 GetWrittenRegisterDataInternal(IntPtr pChip, uint addr);
 
         /// <summary>
         /// 
@@ -167,15 +168,16 @@ namespace zanac.MAmidiMEmo.Scci
         /// <returns></returns>
         public static UInt32 GetWrittenRegisterData(IntPtr pChip, uint addr)
         {
-            if (Environment.Is64BitProcess)
-                return 0;
-
             lock (lockObject)
-                return GetWrittenRegisterDataInternal(pChip, addr);
-        }
+            {
+                if (writtenDataCache.ContainsKey(pChip))
+                    if (writtenDataCache[pChip].ContainsKey(addr))
+                        return writtenDataCache[pChip][addr];
+            }
+            return 0;
 
-        [DllImport(SCCI_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "IsBufferEmpty")]
-        private static extern bool IsBufferEmptyInternal(IntPtr pChip);
+            //return wrapperClient.GetWrittenRegisterData(pChip, addr);
+        }
 
         /// <summary>
         /// 
@@ -185,12 +187,11 @@ namespace zanac.MAmidiMEmo.Scci
         /// <returns></returns>
         public static bool IsBufferEmpty(IntPtr pChip)
         {
-            if (Environment.Is64BitProcess)
-                return true;
-
             lock (lockObject)
-                return IsBufferEmptyInternal(pChip);
+                return wrapperClient.IsBufferEmpty(pChip);
         }
+
+
 
     }
 
@@ -250,7 +251,7 @@ namespace zanac.MAmidiMEmo.Scci
         // 実験ハード用
         SC_TYPE_OTHER = 1000,   // その他デバイス用、アドレスがA0-A3で動作する
         SC_TYPE_UNKNOWN,        // 開発デバイス向け
-        SC_TYPE_YMF825,			// YMF825（暫定）
+        SC_TYPE_YMF825,         // YMF825（暫定）
     }
 
     public enum SC_CHIP_CLOCK : uint
@@ -282,5 +283,6 @@ namespace zanac.MAmidiMEmo.Scci
         SC_LOCATION_RIGHT = 2,
         SC_LOCATION_STEREO = 3
     };
+
 
 }

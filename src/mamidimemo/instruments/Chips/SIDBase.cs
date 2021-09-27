@@ -308,6 +308,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public override void Dispose()
         {
+            if(Sid_write != null)
+                InstrumentBase.RemoveCachedDelegate(Sid_write);
             soundManager?.Dispose();
             base.Dispose();
         }
@@ -375,11 +377,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessControlChange(midiEvent);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataMsb"></param>
+        /// <param name="dataLsb"></param>
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="caft"></param>
+        protected override void OnChannelAfterTouchEvent(ChannelAftertouchEvent caft)
+        {
+            base.OnChannelAfterTouchEvent(caft);
+
+            soundManager.ProcessChannelAftertouch(caft);
         }
 
         /// <summary>
@@ -437,13 +455,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 List<SoundBase> rv = new List<SoundBase>();
 
+                int tindex = 0;
                 foreach (SIDTimbre timbre in parentModule.GetBaseTimbres(note))
                 {
+                    tindex++;
                     var emptySlot = searchEmptySlot(note, timbre);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, note, emptySlot.slot);
+                    SIDSound snd = new SIDSound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
                     psgOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn PSG ch" + emptySlot + " " + note.ToString());
@@ -454,7 +474,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var snd = rv[i];
                     if (!snd.IsDisposed)
                     {
-                        snd.KeyOn();
+                        ProcessKeyOn(snd);
                     }
                     else
                     {
@@ -524,7 +544,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public SIDSound(SIDBase parentModule, SIDSoundManager manager, TimbreBase timbre, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, noteOnEvent, slot)
+            public SIDSound(SIDBase parentModule, SIDSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbre = (SIDTimbre)timbre;
@@ -562,8 +582,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public override void OnSoundParamsUpdated()
             {
-                base.OnSoundParamsUpdated();
-
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
@@ -580,8 +598,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 SetTimbre();
-                OnVolumeUpdated();
-                OnPitchUpdated();
+
+                base.OnSoundParamsUpdated();
             }
 
             /// <summary>
@@ -1314,7 +1332,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_DutyEnvelopes;
 
             [DataMember]
-            [Description("Set duty envelop by text. Input duty value and split it with space like the Famitracker.\r\n" +
+            [Description("Set duty envelop by text. Input duty value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 4095 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 4095)]
@@ -1408,7 +1426,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_ResonanceEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
+            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 15 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 15)]
@@ -1502,7 +1520,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_CutOffEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
+            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 2047 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 2047)]
@@ -1595,7 +1613,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_WaveFormEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the Famitracker.\r\n" +
+            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
                        "1 ～ 8(Tri:1 Saw:2 Pulse:4 Noise:8) \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(1, 8)]

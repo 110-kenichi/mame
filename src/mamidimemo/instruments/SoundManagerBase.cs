@@ -206,7 +206,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             if (t.IsSoundOff)
                                 continue;
-                            if (t.NoteOnEvent.Channel == midiEvent.Channel)
+                            if (t.IsKeyOff && t.NoteOnEvent.Channel == midiEvent.Channel)
                                 ProcessKeyOff(new NoteOffEvent(t.NoteOnEvent.NoteNumber, (SevenBitNumber)0) { Channel = t.NoteOnEvent.Channel });
                         }
                     }
@@ -299,7 +299,10 @@ namespace zanac.MAmidiMEmo.Instruments
                                 case 75:
                                 case 79:
                                     if (lastDataLsb[dataLsb.Channel] != null)
-                                        processSCCS(dataMsb.Channel, parentModule.NrpnLsb[dataMsb.Channel], lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    {
+                                        int no = parentModule.NrpnLsb[dataMsb.Channel];
+                                        processSCCS(dataMsb.Channel, no, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                                    }
                                     break;
                                 //GPCS2
                                 case 80:
@@ -326,6 +329,31 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="caft"></param>
+        public virtual void ProcessChannelAftertouch(ChannelAftertouchEvent caft)
+        {
+            int channel = caft.Channel;
+            int msbValue = caft.AftertouchValue;
+            int lsbValue = 0;
+
+            var tim = parentModule.GetLastTimbre(channel);
+            bool process = processSCCSCore(msbValue, lsbValue, -1, tim);
+            if (process)
+            {
+                foreach (var t in AllSounds)
+                {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
+                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                        t.OnSoundParamsUpdated();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         abstract internal void ProcessAllSoundOff();
 
         /// <summary>
@@ -334,9 +362,42 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="midiEvent"></param>
         private void processSCCS(int channel, int controlNumber, int msbValue, int lsbValue)
         {
+            int cnum = controlNumber - 70 + 1;
+
             var tim = parentModule.GetLastTimbre(channel);
+            bool process = processSCCSCore(msbValue, lsbValue, cnum, tim);
+            if (process)
+            {
+                foreach (var t in AllSounds)
+                {
+                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                        continue;
+
+                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                        t.OnSoundParamsUpdated();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msbValue"></param>
+        /// <param name="lsbValue"></param>
+        /// <param name="cnum"></param>
+        /// <param name="tim"></param>
+        /// <returns></returns>
+        private static bool processSCCSCore(int msbValue, int lsbValue, int cnum, TimbreBase tim)
+        {
+            var pis = tim.SCCS.GetPropertyInfo(tim, cnum);
+
+            return processIntProps(msbValue, lsbValue, pis);
+        }
+
+        private static bool processIntProps(int msbValue, int lsbValue, InstancePropertyInfo[] pis)
+        {
             bool process = false;
-            foreach (var ipi in tim.SCCS.GetPropertyInfo(tim, controlNumber - 70 + 1))
+            foreach (var ipi in pis)
             {
                 if (ipi != null)
                 {
@@ -442,17 +503,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
             }
-            if (process)
-            {
-                foreach (var t in AllSounds)
-                {
-                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
-                        continue;
 
-                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
-                        t.OnSoundParamsUpdated();
-                }
-            }
+            return process;
         }
 
         /// <summary>
@@ -505,15 +557,15 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             double len = dattribute.SliderMax - dattribute.SliderMin;
                             double val = len * (double)msbValue / 127d;
-                            val += (len / 127d) * lsbValue / 127d;
-                            val += attribute.SliderMin;
+                            val += (len / 127d) * (double)lsbValue / 127d;
+                            val += dattribute.SliderMin;
 
                             var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
                             try
                             {
                                 //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
 
-                                val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                                val = MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString()));
                                 if (val < dattribute.SliderMin)
                                     val = dattribute.SliderMin;
                                 if (val > dattribute.SliderMax)
@@ -722,6 +774,17 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="note"></param>
         public virtual void ProcessKeyOn(TaggedNoteOnEvent note)
         {
+            int channel = note.Channel;
+            var tim = parentModule.GetLastTimbre(channel);
+            if (!string.IsNullOrWhiteSpace(tim.VelocityMap))
+            {
+                int msbValue = note.Velocity;
+                int lsbValue = 0;
+
+                var pis = TimbreBase.GetPropertiesInfo(tim, tim.VelocityMap);
+                processIntProps(msbValue, lsbValue, pis);
+            }
+
             if (preProcessArrpegioForKeyOn(note))
                 return;
 
@@ -749,6 +812,32 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual SoundBase[] SoundOn(TaggedNoteOnEvent note)
         {
             return null;
+        }
+
+        protected void ProcessKeyOn(SoundBase sound)
+        {
+            int delay = sound.Timbre.KeyOnDelay;
+            CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(sound.NoteOnEvent, sound.Timbre, sound.BaseTimbreIndex);
+            if (parent != null)
+                delay += parent.KeyOnDelayOffset;
+
+            if (delay != 0)
+            {
+                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processDelayKeyOnCore), delay, sound, true);
+            }
+            else
+            {
+                sound.KeyOn();
+            }
+        }
+
+        private double processDelayKeyOnCore(object state)
+        {
+            SoundBase sound = state as SoundBase;
+            if (!sound.IsDisposed && !sound.IsSoundOff && !sound.IsKeyOff)
+                sound.KeyOn();
+
+            return -1;
         }
 
         /// <summary>
@@ -792,12 +881,31 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (offsnd.NoteOnEvent.NoteNumber == note.NoteNumber)
                     {
                         if (!offsnd.Timbre.IgnoreKeyOff)
-                            offsnd.KeyOff();
+                        {
+                            int delay = offsnd.Timbre.KeyOffDelay;
+                            CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(offsnd.NoteOnEvent, offsnd.Timbre, offsnd.BaseTimbreIndex);
+                            if (parent != null)
+                                delay += parent.KeyOffDelayOffset;
+                            if (delay != 0)
+                                HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processDelayKeyOffCore), delay, offsnd, true);
+                            else
+                                offsnd.KeyOff();
+                        }
                         //break;
                     }
                 }
             }
         }
+
+        private double processDelayKeyOffCore(object state)
+        {
+            SoundBase sound = state as SoundBase;
+            if (!sound.IsDisposed)
+                sound.KeyOff();
+
+            return -1;
+        }
+
 
         #region アルペジオ関係
 
@@ -1056,6 +1164,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (slot < 0)
             {
+                List<T> onSnds = new List<T>();
                 List<T> offSnds = new List<T>();
                 List<T> sameChSnds = new List<T>();
                 for (int i = 0; i < onSounds.Count; i++)
@@ -1073,6 +1182,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         continue;
                         */
                     }
+                    onSnds.Add(onSnd);
                     if (newNote.Channel == onSnd.NoteOnEvent.Channel)
                         sameChSnds.Add(onSnd);
                 }
@@ -1084,14 +1194,21 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundOn)
+                        if (onSnd.IsSoundingStarted)
                         {
+                            onSnd.SoundOff();
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
+                            //onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
+                            /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
 
                             sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
+                            */
                         }
                     }
                 }
@@ -1102,22 +1219,29 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count; i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundOn && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                        if (onSnd.IsSoundingStarted && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
+                            onSnd.SoundOff();
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
+                            //onSounds.Remove(onSnd);
+                            onSnds.Remove(onSnd);
+                            /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
 
                             sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
+                            */
                         }
                     }
                 }
 
                 //Search unused slot
                 Dictionary<int, bool> usedSlotTable = new Dictionary<int, bool>();
-                for (int i = 0; i < onSounds.Count; i++)
-                    usedSlotTable.Add(onSounds[i].Slot, true);
+                foreach (var onSnd in onSnds)
+                    usedSlotTable.Add(onSnd.Slot, true);
                 foreach (var offSnd in offSnds)
                     usedSlotTable.Add(offSnd.Slot, true);
                 for (int i = 0; i < maxSlot; i++)
@@ -1126,21 +1250,30 @@ namespace zanac.MAmidiMEmo.Instruments
                         return i;
                 }
 
-                List<T> onSndsRemoved = new List<T>(onSounds);
+                List<T> tmpOnSnds = new List<T>(onSnds);
 
                 //Proces Poly mode
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
-                for (int i = onSndsRemoved.Count - 1; i >= 0; i--)
+                for (int i = tmpOnSnds.Count - 1; i >= 0; i--)
                 {
-                    var onSnd = onSndsRemoved[i];
+                    var onSnd = tmpOnSnds[i];
                     if (polyList[onSnd.NoteOnEvent.Channel] > 0)
                     {
-                        onSndsRemoved.RemoveAt(i);
+                        tmpOnSnds.RemoveAt(i);
                         polyList[onSnd.NoteOnEvent.Channel]--;
                     }
                 }
 
                 //Search last sound off sound
+                offSnds.Sort(new Comparison<SoundBase>((x, y) =>
+                {
+                    if (x.SoundOffTime < y.SoundOffTime)
+                        return -1;
+                    else if (x.SoundOffTime > y.SoundOffTime)
+                        return 1;
+                    else
+                        return 0;
+                }));
                 foreach (var snd in offSnds)
                 {
                     if (snd.Slot < maxSlot && snd.IsSoundOff)
@@ -1151,7 +1284,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         return snd.Slot;
                     }
                 }
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (snd.Slot < maxSlot && snd.IsSoundOff)
                     {
@@ -1163,7 +1296,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last key off sound
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (snd.Slot < maxSlot && snd.IsKeyOff)
                     {
@@ -1175,7 +1308,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last key on sound
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (snd.Slot < maxSlot)
                     {
@@ -1186,8 +1319,20 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Search last sounding sound
-                foreach (var snd in onSounds)
+                //Search last key off sound ignore Poly Mode
+                foreach (var snd in onSnds)
+                {
+                    if (snd.Slot < maxSlot && snd.IsKeyOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return snd.Slot;
+                    }
+                }
+
+                //Search last sounding sound ignore Poly Mode
+                foreach (var snd in onSnds)
                 {
                     if (snd.Slot < maxSlot)
                     {
@@ -1288,8 +1433,13 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundOn)
+                        if (onSnd.IsSoundingStarted)
                         {
+                            onSnd.SoundOff();
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
+                            onSnds.Remove(onSnd);
+                            /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
 
@@ -1297,6 +1447,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
+                            */
                         }
                     }
                 }
@@ -1307,8 +1458,13 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count; i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundOn && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
+                        if (onSnd.IsSoundingStarted && onSnd.NoteOnEvent.NoteNumber == newNote.NoteNumber)
                         {
+                            onSnd.SoundOff();
+                            if (!offSnds.Contains(onSnd))
+                                offSnds.Add(onSnd);
+                            onSnds.Remove(onSnd);
+                            /*
                             AllSounds.Remove(onSnd);
                             onSounds.Remove(onSnd);
 
@@ -1316,6 +1472,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             sameChSnds.RemoveAt(i);
                             onSnd.Dispose();
                             i--;
+                            */
                         }
                     }
                 }
@@ -1334,21 +1491,30 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                List<T> onSndsRemoved = new List<T>(onSnds);
+                List<T> tmpOnSnds = new List<T>(onSnds);
 
                 //Process Poly mode
                 List<byte> polyList = new List<byte>(parentModule.PolyMode);
-                for (int i = onSndsRemoved.Count - 1; i >= 0; i--)
+                for (int i = tmpOnSnds.Count - 1; i >= 0; i--)
                 {
-                    var onSnd = onSndsRemoved[i];
+                    var onSnd = tmpOnSnds[i];
                     if (polyList[onSnd.NoteOnEvent.Channel] > 0)
                     {
-                        onSndsRemoved.RemoveAt(i);
+                        tmpOnSnds.RemoveAt(i);
                         polyList[onSnd.NoteOnEvent.Channel]--;
                     }
                 }
 
                 //Search last sound off sound
+                offSnds.Sort(new Comparison<SoundBase>((x, y) =>
+                {
+                    if (x.SoundOffTime < y.SoundOffTime)
+                        return -1;
+                    else if (x.SoundOffTime > y.SoundOffTime)
+                        return 1;
+                    else
+                        return 0;
+                }));
                 foreach (var snd in offSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
@@ -1359,7 +1525,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         return ((I)snd.ParentModule, snd.Slot);
                     }
                 }
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff)
                     {
@@ -1371,7 +1537,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last key off sound
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
                     {
@@ -1383,7 +1549,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Search last key on sound
-                foreach (var snd in onSndsRemoved)
+                foreach (var snd in tmpOnSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
@@ -1394,7 +1560,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Search last sounding sound
+                //Search last key off sound ignore Poly Mode
+                foreach (var snd in onSnds)
+                {
+                    if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
+                    {
+                        AllSounds.Remove(snd);
+                        onSounds.Remove(snd);
+                        snd.Dispose();
+                        return ((I)snd.ParentModule, snd.Slot);
+                    }
+                }
+
+                //Search last sounding sound ignore Poly Mode
                 foreach (var snd in onSnds)
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)

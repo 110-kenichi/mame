@@ -14,6 +14,7 @@ using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.YMF262;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -89,6 +90,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
                         nameof(tim.FB),
+                        nameof(tim.FB2),
                         "GlobalSettings.EN",
                         "GlobalSettings.DAM",
                         "GlobalSettings.DVB"
@@ -121,9 +123,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
                         if (dr == DialogResult.OK)
-                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                        {
+                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
+
+                            return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        }
                         else
-                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                            return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                     }
                     else
                     {
@@ -133,7 +140,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
                         if (dr == DialogResult.OK)
+                        {
+                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
                             return value;
+                        }
                         else
                             return JsonConvert.DeserializeObject<YMF262Timbre[]>(org);
                     }

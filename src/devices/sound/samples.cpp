@@ -55,7 +55,7 @@ samples_device::samples_device(const machine_config &mconfig, const char *tag, d
 samples_device::samples_device(const machine_config &mconfig, device_type type, const char *tag, device_t *owner, uint32_t clock)
 	: device_t(mconfig, type, tag, owner, clock)
 	, device_sound_interface(mconfig, *this)
-	, m_channels(0)
+	, m_channels(1)		//mamidimemo 1 -> 2
 	, m_names(nullptr)
 	, m_samples_start_cb(*this)
 {
@@ -245,7 +245,7 @@ void samples_device::device_start()
 	{
 		// initialize channel
 		channel_t &chan = m_channel[channel];
-		chan.stream = stream_alloc(0, 1, machine().sample_rate());
+		chan.stream = stream_alloc(0, 2, machine().sample_rate());	//mamidimemo 1 -> 2
 		chan.source = nullptr;
 		chan.source_num = -1;
 		chan.step = 0;
@@ -328,6 +328,7 @@ void samples_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 		{
 			channel_t &chan = m_channel[channel];
 			stream_sample_t *buffer = outputs[0];
+			stream_sample_t* buffer1 = outputs[1];
 
 			// process if we still have a source and we're not paused
 			if (chan.source != nullptr && !chan.paused)
@@ -346,6 +347,7 @@ void samples_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 					int32_t sample2 = sample[(pos + 1) % sample_length];
 					int32_t fracmult = frac >> (FRAC_BITS - 14);
 					*buffer++ = ((0x4000 - fracmult) * sample1 + fracmult * sample2) >> 14;
+					*buffer1++ = ((0x4000 - fracmult) * sample1 + fracmult * sample2) >> 14;
 
 					// advance
 					frac += step;
@@ -362,7 +364,10 @@ void samples_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 							chan.source = nullptr;
 							chan.source_num = -1;
 							if (samples > 0)
+							{
 								memset(buffer, 0, samples * sizeof(*buffer));
+								memset(buffer1, 0, samples * sizeof(*buffer1));
+							}
 							break;
 						}
 					}
@@ -371,9 +376,11 @@ void samples_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 				// push position back out
 				chan.pos = pos;
 				chan.frac = frac;
-			}
-			else
+			}else
+			{
 				memset(buffer, 0, samples * sizeof(*buffer));
+				memset(buffer1, 0, samples * sizeof(*buffer1));
+			}
 			break;
 		}
 }

@@ -71,7 +71,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (outputListView == null || outputListView.IsDisposed || !outputListView.IsHandleCreated)
                 return;
 
-            if(inst != null)
+            if (inst != null)
                 log = "[" + inst.Name + "(" + inst.UnitNumber + ")]" + log;
 
             outputListView?.BeginInvoke(new MethodInvoker(() =>
@@ -137,27 +137,57 @@ namespace zanac.MAmidiMEmo.Gui
 
             AppliactionForm = this;
 
-            unsafe
+            try
             {
-                byte[] fontBuf = Properties.Resources.DSEG7ClassicMini_BoldItalic;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.DSEG7ClassicMini_BoldItalic;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
             }
-            unsafe
+            catch (Exception ex)
             {
-                byte[] fontBuf = Properties.Resources.DSEG14ClassicMini_BoldItalic;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
             }
-            unsafe
+            try
             {
-                byte[] fontBuf = Properties.Resources.PixelMplus12_Regular;
-                fixed (byte* pFontBuf = fontBuf)
-                    privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.DSEG14ClassicMini_BoldItalic;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
+                labelClock.Font = new Font(privateFonts.Families[1], 18);
+                labelCpuLoad.Font = new Font(privateFonts.Families[1], 18);
             }
-            labelClock.Font = new Font(privateFonts.Families[1], 18);
-            labelCpuLoad.Font = new Font(privateFonts.Families[1], 18);
-            labelTitle.Font = new Font(privateFonts.Families[2], 22);
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            try
+            {
+                unsafe
+                {
+                    byte[] fontBuf = Properties.Resources.PixelMplus12_Regular;
+                    fixed (byte* pFontBuf = fontBuf)
+                        privateFonts.AddMemoryFont((IntPtr)pFontBuf, fontBuf.Length);
+                }
+                labelTitle.Font = new Font(privateFonts.Families[2], 22);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
 
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 
@@ -194,6 +224,11 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("CM32P", Resources.CM32P);
             imageList1.Images.Add("YMF262", Resources.YMF262);
             imageList1.Images.Add("YM2608", Resources.YM2608);
+            imageList1.Images.Add("TMS5220", Resources.TMS5220);
+            imageList1.Images.Add("SP0256", Resources.SP0256);
+            imageList1.Images.Add("SAM", Resources.SAM);
+            imageList1.Images.Add("SN76477", Resources.SN76477);
+            imageList1.Images.Add("uPD1771C", Resources.uPD1771C);
 
             if (Program.IsVSTiMode())
             {
@@ -224,10 +259,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 if (toolStripComboBoxMidiIfA.Items.Count < 1)
                 {
-                    MessageBox.Show(
-                        "There are no MIDI IN devices.\r\n" +
-                        "Please install at least one MIDI IN device to use the MAmidiMEmo.\r\n" +
-                        "Or, install the loopMIDI to the PC.");
+                    MessageBox.Show(Resources.NoMidiPort, "Warning", MessageBoxButtons.OK);
                 }
             }
             outputListView = listView1;
@@ -635,6 +667,31 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.YM2608);
         }
 
+        private void tms5220ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.TMS5220);
+        }
+
+        private void extendSP0256AL2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.SP0256);
+        }
+
+        private void extendSAMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.SAM);
+        }
+
+        private void sN76477ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.SN76477);
+        }
+
+        private void uPD1771ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.uPD1771C);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -848,11 +905,11 @@ namespace zanac.MAmidiMEmo.Gui
                     Settings.Default.Save();
                     if (Program.IsVSTiMode())
                     {
-                        MessageBox.Show(this, "Please restart host DAW application.", "Information", MessageBoxButtons.OK);
+                        MessageBox.Show(this, Resources.SampleRate, "Information", MessageBoxButtons.OK);
                     }
                     else
                     {
-                        var rdr = MessageBox.Show(this, "Do you restart to apply new settings?", "Message", MessageBoxButtons.YesNo);
+                        var rdr = MessageBox.Show(this, Resources.RestartConfirmation, "Message", MessageBoxButtons.YesNo);
                         if (rdr == DialogResult.Yes)
                         {
                             Close();
@@ -860,8 +917,8 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                     }
                 }
-                else
-                    Settings.Default.Reload();
+                //else
+                //    Settings.Default.Reload();
             }
         }
 
@@ -1016,51 +1073,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delg_start_recording_to(string wavfile);
-
-        private static delg_start_recording_to start_recording_to;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private static delg_start_recording_to StartRecordingTo
-        {
-            get
-            {
-                if (start_recording_to == null)
-                {
-                    IntPtr funcPtr = MameIF.GetProcAddress("start_recording_to");
-                    if (funcPtr != IntPtr.Zero)
-                        start_recording_to = (delg_start_recording_to)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_start_recording_to));
-                }
-                return start_recording_to;
-            }
-        }
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delg_stop_recording();
-
-        private static delg_stop_recording stop_recording;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private static delg_stop_recording StopRecording
-        {
-            get
-            {
-                if (stop_recording == null)
-                {
-                    IntPtr funcPtr = MameIF.GetProcAddress("stop_recording");
-                    if (funcPtr != IntPtr.Zero)
-                        stop_recording = (delg_stop_recording)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_stop_recording));
-                }
-                return stop_recording;
-            }
-        }
-
         private void toolStripButton20_Click(object sender, EventArgs e)
         {
             toolStripButton20.Checked = !toolStripButton20.Checked;
@@ -1079,11 +1091,11 @@ namespace zanac.MAmidiMEmo.Gui
                 Program.SoundUpdating();
                 if (toolStripButton20.Checked)
                 {
-                    StartRecordingTo(op);
+                    MameIF.StartRecordingTo(op);
                 }
                 else
                 {
-                    StopRecording();
+                    MameIF.StopRecording();
                 }
             }
             finally
@@ -1202,7 +1214,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var rdr = MessageBox.Show(this, "Do you clear all instruments?", "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            var rdr = MessageBox.Show(this, Resources.ClearAllInsts, "Message", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (rdr == DialogResult.Yes)
             {
                 InstrumentManager.ClearAllInstruments();
@@ -1539,7 +1551,16 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 if (!labelTitle.IsDisposed && labelTitle.Tag != null)
                 {
-                    labelTitle.SetText(text.Replace((char)0, (char)' ').Trim());
+                    List<byte> data = new List<byte>();
+                    foreach (char ch in text)
+                    {
+                        if (ch == 0)
+                            break;
+                        data.Add((byte)ch);
+                    }
+                    text = Encoding.Default.GetString(data.ToArray());
+
+                    labelTitle.SetText(text);
                     labelTitle.Tag = null;
                 }
             }));
@@ -1580,6 +1601,11 @@ namespace zanac.MAmidiMEmo.Gui
                     vel = 0;
                 chNoteOnDataA[i] = vel;
             }
+        }
+
+        private void helpToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/110-kenichi/mame/blob/master/docs/MAmidiMEmo/Manual.pdf");
         }
 
     }

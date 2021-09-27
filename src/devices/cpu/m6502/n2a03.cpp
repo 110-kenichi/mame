@@ -70,9 +70,9 @@ WRITE_LINE_MEMBER(n2a03_device::apu_irq)
 	set_input_line(N2A03_APU_IRQ_LINE, state ? ASSERT_LINE : CLEAR_LINE);
 }
 
-READ8_MEMBER(n2a03_device::apu_read_mem)
+uint8_t n2a03_device::apu_read_mem(offs_t offset)
 {
-	return mintf->program->read_byte(offset);
+	return mintf->program.read_byte(offset);
 }
 
 void n2a03_device::device_add_mconfig(machine_config &config)

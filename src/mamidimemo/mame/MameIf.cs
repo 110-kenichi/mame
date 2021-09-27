@@ -46,5 +46,74 @@ namespace zanac.MAmidiMEmo.Mame
         {
             ParentModule = parentModule;
         }
+
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int delg_sample_rate();
+
+        private static delg_sample_rate sample_rate;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static delg_sample_rate SampleRate
+        {
+            get
+            {
+                if (sample_rate == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("sample_rate");
+                    if (funcPtr != IntPtr.Zero)
+                        sample_rate = (delg_sample_rate)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_sample_rate));
+                }
+                return sample_rate;
+            }
+        }
+
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void delg_start_recording_to(string wavfile);
+
+        private static delg_start_recording_to start_recording_to;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static delg_start_recording_to StartRecordingTo
+        {
+            get
+            {
+                if (start_recording_to == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("start_recording_to");
+                    if (funcPtr != IntPtr.Zero)
+                        start_recording_to = (delg_start_recording_to)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_start_recording_to));
+                }
+                return start_recording_to;
+            }
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void delg_stop_recording();
+
+        private static delg_stop_recording stop_recording;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static delg_stop_recording StopRecording
+        {
+            get
+            {
+                if (stop_recording == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("stop_recording");
+                    if (funcPtr != IntPtr.Zero)
+                        stop_recording = (delg_stop_recording)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_stop_recording));
+                }
+                return stop_recording;
+            }
+        }
+
     }
 }

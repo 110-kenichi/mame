@@ -1,0 +1,24 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "SDCC",
+            "type": "shell",
+            "command": "bash -c make",
+            // "command": "C:/Program Files/SDCC/bin/sdcc.exe",
+            // "args": [
+            //     "-c",
+            //     "-mz80",
+            //     "--std-c2x",
+            //     "${file}"
+            // ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

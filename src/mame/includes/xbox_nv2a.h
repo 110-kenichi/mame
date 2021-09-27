@@ -195,7 +195,16 @@ offset in ramht+4 contains in the lower 16 bits the offset in RAMIN divided by 1
 objects have methods used to do drawing
 most methods set parameters, others actually draw
 */
-class nv2a_renderer : public poly_manager<double, nvidia_object_data, 13, 8192>
+
+class nv2a_rasterizer : public poly_manager<double, nvidia_object_data, 13, 8192>
+{
+public:
+	nv2a_rasterizer(running_machine& machine) : poly_manager<double, nvidia_object_data, 13, 8192>(machine)
+	{
+	}
+};
+
+class nv2a_renderer
 {
 public:
 	enum class VERTEX_PARAMETER {
@@ -384,12 +393,14 @@ public:
 		INVALID = -1
 	};
 
-	struct nv2avertex_t : public vertex_t
+	struct nv2avertex_t : public nv2a_rasterizer::vertex_t
 	{
 		double w;
 	};
 
-	nv2a_renderer(running_machine &machine) : poly_manager<double, nvidia_object_data, 13, 8192>(machine)
+	nv2a_renderer(running_machine &machine)
+		: rasterizer(machine)
+		, mach(machine)
 	{
 		memset(channel, 0, sizeof(channel));
 		memset(pfifo, 0, sizeof(pfifo));
@@ -398,10 +409,9 @@ public:
 		memset(pgraph, 0, sizeof(pgraph));
 		memset(ramin, 0, sizeof(ramin));
 		computedilated();
-		objectdata = &(object_data_alloc());
+		objectdata = &(rasterizer.object_data_alloc());
 		objectdata->data = this;
 		combiner.used = 0;
-		enabled_vertex_attributes = 0;
 		primitives_total_count = 0;
 		indexesleft_count = 0;
 		triangles_bfculled = 0;
@@ -458,12 +468,12 @@ public:
 		debug_grab_textfile = nullptr;
 		enable_waitvblank = true;
 		enable_clipping_w = false;
-		memset(vertex_attribute_words, 0, sizeof(vertex_attribute_words));
-		memset(vertex_attribute_offset, 0, sizeof(vertex_attribute_offset));
+		memset(&vertexbuffer, 0, sizeof(vertexbuffer));
 		memset(&persistvertexattr, 0, sizeof(persistvertexattr));
 		for (int n = 0; n < 16; n++)
 			persistvertexattr.attribute[n].fv[3] = 1;
 	}
+	running_machine &machine() { return mach; }
 	DECLARE_READ32_MEMBER(geforce_r);
 	DECLARE_WRITE32_MEMBER(geforce_w);
 	DECLARE_WRITE_LINE_MEMBER(vblank_callback);
@@ -471,9 +481,9 @@ public:
 	bool update_interrupts();
 	void set_irq_callbaclk(std::function<void(int state)> callback) { irq_callback = callback; }
 
-	void render_texture_simple(int32_t scanline, const extent_t &extent, const nvidia_object_data &extradata, int threadid);
-	void render_color(int32_t scanline, const extent_t &extent, const nvidia_object_data &extradata, int threadid);
-	void render_register_combiners(int32_t scanline, const extent_t &extent, const nvidia_object_data &objectdata, int threadid);
+	void render_texture_simple(int32_t scanline, const nv2a_rasterizer::extent_t &extent, const nvidia_object_data &extradata, int threadid);
+	void render_color(int32_t scanline, const nv2a_rasterizer::extent_t &extent, const nvidia_object_data &extradata, int threadid);
+	void render_register_combiners(int32_t scanline, const nv2a_rasterizer::extent_t &extent, const nvidia_object_data &objectdata, int threadid);
 
 	COMMAND geforce_commandkind(uint32_t word);
 	uint32_t geforce_object_offset(uint32_t handle);
@@ -529,16 +539,18 @@ public:
 	int read_vertices_0x180x(address_space & space, vertex_nv *destination, uint32_t address, int limit);
 	int read_vertices_0x1810(address_space & space, vertex_nv *destination, int offset, int limit);
 	int read_vertices_0x1818(address_space & space, vertex_nv *destination, uint32_t address, int limit);
-	void convert_vertices_poly(vertex_nv *source, nv2avertex_t *destination, int count);
-	void assemble_primitive(vertex_nv *source, int count, render_delegate &renderspans);
+	void convert_vertices(vertex_nv *source, nv2avertex_t *destination, int count);
+	void assemble_primitive(vertex_nv *source, int count);
 	int clip_triangle_w(nv2avertex_t *vi[3], nv2avertex_t *vo);
-	uint32_t render_triangle_clipping(const rectangle &cliprect, render_delegate callback, int paramcount, nv2avertex_t &_v1, nv2avertex_t &_v2, nv2avertex_t &_v3);
-	uint32_t render_triangle_culling(const rectangle &cliprect, render_delegate callback, int paramcount, nv2avertex_t &_v1, nv2avertex_t &_v2, nv2avertex_t &_v3);
+	uint32_t render_triangle_clipping(const rectangle &cliprect, int paramcount, nv2avertex_t &_v1, nv2avertex_t &_v2, nv2avertex_t &_v3);
+	uint32_t render_triangle_culling(const rectangle &cliprect, int paramcount, nv2avertex_t &_v1, nv2avertex_t &_v2, nv2avertex_t &_v3);
 	void clear_render_target(int what, uint32_t value);
 	void clear_depth_buffer(int what, uint32_t value);
 	inline uint8_t *direct_access_ptr(offs_t address);
 	TIMER_CALLBACK_MEMBER(puller_timer_work);
 
+	nv2a_rasterizer rasterizer;
+	running_machine &mach;
 	struct {
 		uint32_t regs[0x80 / 4];
 		struct {
@@ -578,10 +590,16 @@ public:
 	uint32_t *rendertarget;
 	uint32_t *depthbuffer;
 	uint32_t *displayedtarget;
-	uint32_t vertexbuffer_address[16];
-	int vertexbuffer_stride[16];
-	NV2A_VTXBUF_TYPE vertexbuffer_kind[16];
-	int vertexbuffer_size[16];
+	struct {
+		uint32_t address[16];
+		int type[16];
+		int stride[16];
+		NV2A_VTXBUF_TYPE kind[16];
+		int size[16];
+		int words[16];
+		int offset[16];
+		int enabled; // bitmask
+	} vertexbuffer;
 	struct {
 		int enabled;
 		int sizeu;
@@ -619,7 +637,7 @@ public:
 	vertex_nv vertex_software[1024+2]; // vertex attributes sent by the software to the 3d accelerator
 	nv2avertex_t vertex_xy[1024+2]; // vertex attributes computed by the 3d accelerator
 	vertex_nv persistvertexattr; // persistent vertex attributes
-	render_delegate render_spans_callback;
+	nv2a_rasterizer::render_delegate render_spans_callback;
 
 	struct {
 		float variable_A[4]; // 0=R 1=G 2=B 3=A
@@ -766,9 +784,6 @@ public:
 		int upload_parameter_component;
 	} vertexprogram;
 	int vertex_pipeline;
-	int enabled_vertex_attributes;
-	int vertex_attribute_words[16];
-	int vertex_attribute_offset[16];
 
 	struct {
 		int format;

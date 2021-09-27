@@ -1649,7 +1649,7 @@ void tms5220_device::device_start()
 	m_data_cb.resolve();
 
 	/* initialize a stream */
-	m_stream = machine().sound().stream_alloc(*this, 0, 1, clock() / 80);
+	m_stream = machine().sound().stream_alloc(*this, 0, 2, clock() / 80);	//mamidimemo 1 -> 2
 
 	m_timer_io_ready = timer_alloc(0);
 
@@ -2059,6 +2059,7 @@ void tms5220_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 {
 	int16_t sample_data[MAX_SAMPLE_CHUNK];
 	stream_sample_t *buffer = outputs[0];
+	stream_sample_t* buffer1 = outputs[1];	//mamidimemo
 
 	/* loop while we still have samples to generate */
 	while (samples)
@@ -2068,8 +2069,10 @@ void tms5220_device::sound_stream_update(sound_stream &stream, stream_sample_t *
 
 		/* generate the samples and copy to the target buffer */
 		process(sample_data, length);
-		for (index = 0; index < length; index++)
+		for (index = 0; index < length; index++) {
 			*buffer++ = sample_data[index];
+			*buffer1++ = sample_data[index];
+		}
 
 		/* account for the samples */
 		samples -= length;

@@ -170,6 +170,7 @@
             // 
             // 
             this.textBoxPaLatency.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
+            this.textBoxPaLatency.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode")));
             this.textBoxPaLatency.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location")));
             this.textBoxPaLatency.CustomButton.Name = "";
             this.textBoxPaLatency.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size")));
@@ -208,6 +209,7 @@
             // 
             // 
             this.textBoxPaDevice.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
+            this.textBoxPaDevice.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode1")));
             this.textBoxPaDevice.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location1")));
             this.textBoxPaDevice.CustomButton.Name = "";
             this.textBoxPaDevice.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size1")));
@@ -252,6 +254,7 @@
             // 
             // 
             this.textBoxPaApi.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image2")));
+            this.textBoxPaApi.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode2")));
             this.textBoxPaApi.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location2")));
             this.textBoxPaApi.CustomButton.Name = "";
             this.textBoxPaApi.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size2")));
@@ -304,6 +307,7 @@
             // 
             // 
             this.textBox1.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image3")));
+            this.textBox1.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode3")));
             this.textBox1.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location3")));
             this.textBox1.CustomButton.Name = "";
             this.textBox1.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size3")));

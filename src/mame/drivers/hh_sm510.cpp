@@ -31,7 +31,7 @@ TODO:
   playing back all melody data and reconstructing it to ROM. Visual(decap)
   verification is wanted for: gnw_bfightn, gnw_bjack, gnw_bsweep, gnw_climbern,
   gnw_dkcirc, gnw_dkjrp, gnw_gcliff, gnw_mariocmt, gnw_mariotj, gnw_mbaway,
-  gnw_mmousep, gnw_pinball, gnw_sbuster, gnw_snoopyp, gnw_zelda
+  gnw_mmousep, gnw_pinball, gnw_popeyep, gnw_sbuster, gnw_snoopyp, gnw_zelda
 
 ****************************************************************************
 
@@ -87,7 +87,7 @@ CM-72     tt   SM511   Mario's Cement Factory
 SM-73*    tt   SM511?  Snoopy
 PG-74*    tt   SM511?  Popeye
 SM-91     p    SM511   Snoopy (assume same ROM & LCD as tabletop version)
-PG-92*    p    SM511?  Popeye          "
+PG-92     p    SM511   Popeye          "
 CJ-93     p    SM511   Donkey Kong Jr. "
 TB-94     p    SM511   Mario's Bombs Away
 DC-95     p    SM511   Mickey Mouse
@@ -243,13 +243,13 @@ void hh_sm510_state::set_display_size(u8 x, u8 y, u8 z)
 	m_display_z_len = z;
 }
 
-WRITE16_MEMBER(hh_sm510_state::sm510_lcd_segment_w)
+void hh_sm510_state::sm510_lcd_segment_w(offs_t offset, u16 data)
 {
 	set_display_size(2, 16, 2);
 	m_display_state[offset] = data;
 }
 
-WRITE16_MEMBER(hh_sm510_state::sm500_lcd_segment_w)
+void hh_sm510_state::sm500_lcd_segment_w(offs_t offset, u16 data)
 {
 	set_display_size(4, 4, 1);
 	m_display_state[offset] = data;
@@ -287,7 +287,7 @@ INPUT_CHANGED_MEMBER(hh_sm510_state::input_changed)
 	update_k_line();
 }
 
-WRITE8_MEMBER(hh_sm510_state::input_w)
+void hh_sm510_state::input_w(u8 data)
 {
 	m_inp_mux = data;
 	update_k_line();
@@ -307,38 +307,38 @@ INPUT_CHANGED_MEMBER(hh_sm510_state::acl_button)
 
 // other generic output handlers
 
-WRITE8_MEMBER(hh_sm510_state::piezo_r1_w)
+void hh_sm510_state::piezo_r1_w(u8 data)
 {
 	// R1 to piezo (SM511 R pin is melody output)
 	m_speaker->level_w(data & 1);
 }
 
-WRITE8_MEMBER(hh_sm510_state::piezo_r2_w)
+void hh_sm510_state::piezo_r2_w(u8 data)
 {
 	// R2 to piezo
 	m_speaker->level_w(data >> 1 & 1);
 }
 
-WRITE8_MEMBER(hh_sm510_state::piezo_input_w)
+void hh_sm510_state::piezo_input_w(u8 data)
 {
 	// R1 to piezo, other to input mux
-	piezo_r1_w(space, 0, data & 1);
-	input_w(space, 0, data >> 1);
+	piezo_r1_w(data & 1);
+	input_w(data >> 1);
 }
 
-WRITE8_MEMBER(hh_sm510_state::piezo2bit_r1_w)
+void hh_sm510_state::piezo2bit_r1_w(u8 data)
 {
 	// R1(+S1) to piezo
 	m_speaker_data = (m_speaker_data & ~1) | (data & 1);
 	m_speaker->level_w(m_speaker_data);
 }
 
-WRITE8_MEMBER(hh_sm510_state::piezo2bit_input_w)
+void hh_sm510_state::piezo2bit_input_w(u8 data)
 {
 	// S1(+R1) to piezo, other to input mux
 	m_speaker_data = (m_speaker_data & ~2) | (data << 1 & 2);
 	m_speaker->level_w(m_speaker_data);
-	input_w(space, 0, data >> 1);
+	input_w(data >> 1);
 }
 
 
@@ -3007,6 +3007,83 @@ ROM_END
 
 /***************************************************************************
 
+  Nintendo Game & Watch: Popeye (model PG-92)
+  * PCB labels: PG-92 M (main board), SM-91C (controller board)
+  * Sharp SM511 label PG-92 538A (no decap)
+  * inverted lcd screen with custom segments, 1-bit sound
+
+  This is the panorama version. There's also a tabletop version which is
+  assumed to use the same ROM/LCD, and a new wide screen version which is
+  a different game.
+
+  The PCB design for the controller board is shared with the panorama version
+  of Snoopy (SM-91).
+
+***************************************************************************/
+
+class gnw_popeyep_state : public hh_sm510_state
+{
+public:
+	gnw_popeyep_state(const machine_config &mconfig, device_type type, const char *tag) :
+		hh_sm510_state(mconfig, type, tag)
+	{ }
+
+	void gnw_popeyep(machine_config &config);
+};
+
+// config
+
+static INPUT_PORTS_START( gnw_popeyep )
+	PORT_START("IN.0") // S1
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_BUTTON1 ) PORT_CHANGED_CB(input_changed) // Punch
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_JOYSTICK_RIGHT ) PORT_CHANGED_CB(input_changed)
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_JOYSTICK_LEFT ) PORT_CHANGED_CB(input_changed)
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_UNUSED )
+
+	PORT_START("IN.1") // S2
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_SELECT ) PORT_CHANGED_CB(input_changed) PORT_NAME("Time")
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, IPT_START2 ) PORT_CHANGED_CB(input_changed) PORT_NAME("Game B")
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, IPT_START1 ) PORT_CHANGED_CB(input_changed) PORT_NAME("Game A")
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, IPT_SERVICE2 ) PORT_CHANGED_CB(input_changed) PORT_NAME("Alarm")
+
+	PORT_START("ACL")
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, IPT_SERVICE1 ) PORT_CHANGED_CB(acl_button) PORT_NAME("ACL")
+
+	PORT_START("BA")
+	PORT_CONFNAME( 0x01, 0x01, "Increase Score (Cheat)") // factory test, unpopulated on PCB
+	PORT_CONFSETTING(    0x01, DEF_STR( Off ) )
+	PORT_CONFSETTING(    0x00, DEF_STR( On ) )
+
+	PORT_START("B")
+	PORT_CONFNAME( 0x01, 0x01, "Infinite Lives and Stronger Punch (Cheat)") // "
+	PORT_CONFSETTING(    0x01, DEF_STR( Off ) )
+	PORT_CONFSETTING(    0x00, DEF_STR( On ) )
+INPUT_PORTS_END
+
+void gnw_popeyep_state::gnw_popeyep(machine_config &config)
+{
+	sm511_common(config, 1920, 1043);
+}
+
+// roms
+
+ROM_START( gnw_popeyep )
+	ROM_REGION( 0x1000, "maincpu", 0 )
+	ROM_LOAD( "pg-92.program", 0x0000, 0x1000, CRC(f9a2f181) SHA1(f97969abe63285964ef9585660e82590014bbece) )
+
+	ROM_REGION( 0x100, "maincpu:melody", 0 )
+	ROM_LOAD( "pg-92.melody", 0x000, 0x100, BAD_DUMP CRC(ce2a0e03) SHA1(cb7e4c64639579349aa944e4bfff7b05cf49ce0e) ) // decap needed for verification
+
+	ROM_REGION( 541218, "screen", 0)
+	ROM_LOAD( "gnw_popeyep.svg", 0, 541218, CRC(ad93aa24) SHA1(b02c1fec1d8388878b5f21887f19aa5007b8ae43) )
+ROM_END
+
+
+
+
+
+/***************************************************************************
+
   Nintendo Game & Watch: Donkey Kong Jr. (model CJ-93)
   * PCB labels: CJ-93 M (main board), CJ-93C (controller board)
   * Sharp SM511 label CJ-93 539D (no decap)
@@ -5188,7 +5265,7 @@ public:
 	}
 
 	// R2 connects to a single LED behind the screen
-	DECLARE_WRITE8_MEMBER(led_w) { m_led_out = data >> 1 & 1; }
+	void led_w(u8 data) { m_led_out = data >> 1 & 1; }
 	output_finder<> m_led_out;
 
 	void tgaiden(machine_config &config);
@@ -7673,16 +7750,16 @@ public:
 		inp_fixed_last();
 	}
 
-	virtual DECLARE_WRITE8_MEMBER(input_w) override;
+	virtual void input_w(u8 data) override;
 	void tnmarebc(machine_config &config);
 };
 
 // handlers
 
-WRITE8_MEMBER(tnmarebc_state::input_w)
+void tnmarebc_state::input_w(u8 data)
 {
 	// S5 and S6 tied together
-	hh_sm510_state::input_w(space, 0, (data & 0x1f) | (data >> 1 & 0x10));
+	hh_sm510_state::input_w((data & 0x1f) | (data >> 1 & 0x10));
 }
 
 // config
@@ -9125,6 +9202,7 @@ CONS( 1991, gnw_mariotj, 0,          0, gnw_mariotj, gnw_mariotj, gnw_mariotj_st
 // Nintendo G&W: Table Top / Panorama Screen
 CONS( 1983, gnw_mariocmt,0,          0, gnw_mariocmt,gnw_mariocmt,gnw_mariocmt_state,empty_init, "Nintendo", "Game & Watch: Mario's Cement Factory (Table Top)", MACHINE_SUPPORTS_SAVE )
 CONS( 1983, gnw_snoopyp, 0,          0, gnw_snoopyp, gnw_snoopyp, gnw_snoopyp_state, empty_init, "Nintendo", "Game & Watch: Snoopy (Panorama Screen)", MACHINE_SUPPORTS_SAVE )
+CONS( 1983, gnw_popeyep, 0,          0, gnw_popeyep, gnw_popeyep, gnw_popeyep_state, empty_init, "Nintendo", "Game & Watch: Popeye (Panorama Screen)", MACHINE_SUPPORTS_SAVE )
 CONS( 1983, gnw_dkjrp,   0,          0, gnw_dkjrp,   gnw_dkjrp,   gnw_dkjrp_state,   empty_init, "Nintendo", "Game & Watch: Donkey Kong Jr. (Panorama Screen)", MACHINE_SUPPORTS_SAVE )
 CONS( 1983, gnw_mbaway,  0,          0, gnw_mbaway,  gnw_mbaway,  gnw_mbaway_state,  empty_init, "Nintendo", "Game & Watch: Mario's Bombs Away", MACHINE_SUPPORTS_SAVE )
 CONS( 1984, gnw_mmousep, 0,          0, gnw_mmousep, gnw_mmousep, gnw_mmousep_state, empty_init, "Nintendo", "Game & Watch: Mickey Mouse (Panorama Screen)", MACHINE_SUPPORTS_SAVE )

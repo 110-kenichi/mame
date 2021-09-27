@@ -1,4 +1,4 @@
-﻿using MetroFramework.Forms;
+﻿ using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -72,6 +72,7 @@ namespace zanac.MAmidiMEmo.Gui
             InitializeComponent();
 
             Size = Settings.Default.WsgEdSize;
+            graphControl.Editor = this;
         }
 
         /// <summary>
@@ -90,6 +91,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         private class GraphControl : UserControl
         {
+            public FormWsgEditor Editor
+            {
+                get;
+                set;
+            }
 
             private byte[] f_ResultOfWsgData;
 
@@ -108,7 +114,8 @@ namespace zanac.MAmidiMEmo.Gui
                     f_ResultOfWsgData = new byte[value.Length];
                     Array.Copy(value, f_ResultOfWsgData, value.Length);
                     wsgLen = f_ResultOfWsgData.Length;
-                    updateText();
+
+                    Editor.updateText();
                 }
             }
 
@@ -130,26 +137,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
 
             private int f_WsgMaxValue = 15;
-
-            private void updateText()
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < ResultOfWsgData.Length; i++)
-                {
-                    if (sb.Length != 0)
-                        sb.Append(' ');
-                    sb.Append(ResultOfWsgData[i].ToString((IFormatProvider)null));
-                }
-                try
-                {
-                    ((FormWsgEditor)Parent).suspendWsgDataTextChange = true;
-                    ((FormWsgEditor)Parent).textBoxWsgDataText.Text = sb.ToString();
-                }
-                finally
-                {
-                    ((FormWsgEditor)Parent).suspendWsgDataTextChange = false;
-                }
-            }
 
             /// <summary>
             /// 
@@ -287,9 +274,9 @@ namespace zanac.MAmidiMEmo.Gui
                                 dotSz.Width - 1, (ResultOfWsgData[wxv.X] - f_WsgMaxValue / 2) * dotSz.Height));
                         }
 
-                        updateText();
+                        Editor.updateText();
 
-                        ((FormWsgEditor)Parent).ValueChanged?.Invoke(Parent, EventArgs.Empty);
+                        Editor.ValueChanged?.Invoke(Editor, EventArgs.Empty);
                     }
                 }
             }
@@ -315,6 +302,165 @@ namespace zanac.MAmidiMEmo.Gui
                 ByteWsgData[i] = vs[i] > f_WsgMaxValue ? (byte)f_WsgMaxValue : vs[i];
 
             graphControl.Invalidate();
+        }
+
+        private void updateText()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < graphControl.ResultOfWsgData.Length; i++)
+            {
+                if (sb.Length != 0)
+                    sb.Append(' ');
+                sb.Append(graphControl.ResultOfWsgData[i].ToString((IFormatProvider)null));
+            }
+            try
+            {
+                suspendWsgDataTextChange = true;
+                textBoxWsgDataText.Text = sb.ToString();
+            }
+            finally
+            {
+                suspendWsgDataTextChange = false;
+            }
+        }
+
+        private void metroButtonRand1_Click(object sender, EventArgs e)
+        {
+            var rand = new Random(DateTime.Now.GetHashCode());
+            for (int i = 0; i < ByteWsgData.Length; i++)
+                ByteWsgData[i] = (byte)rand.Next(f_WsgMaxValue);
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonRandom2_Click(object sender, EventArgs e)
+        {
+            var rand = new Random(DateTime.Now.GetHashCode());
+
+            ByteWsgData[0] = (byte)rand.Next(f_WsgMaxValue);
+            int len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+            int sign = rand.Next(1);
+            if (sign == 0)
+                sign = -1;
+            int delta = rand.Next(f_WsgMaxValue / 2);
+            int sy = ByteWsgData[0];
+            int height = 0;
+            if (sign > 0)
+                height = rand.Next(f_WsgMaxValue - sy) + 1;
+            else
+                height = rand.Next(sy) + 1;
+            for (int i = 1; i < ByteWsgData.Length; i++)
+            {
+                int data = ByteWsgData[i - 1] + sign * delta;
+                if (data > f_WsgMaxValue || (sign > 0 && Math.Abs(data - sy) > height))
+                {
+                    data = Math.Min(f_WsgMaxValue, sy + height);
+                    delta = rand.Next(f_WsgMaxValue / 2);
+                    len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sy = data;
+                    sign = -1;
+                    height = rand.Next(sy) + 1;
+                }
+                else if (data < 0 || (sign < 0 && Math.Abs(data - sy) > height))
+                {
+                    data = Math.Max(0, sy - height);
+                    delta = rand.Next(f_WsgMaxValue / 2);
+                    len = rand.Next(ByteWsgData.Length / 2 - 1) + 1;
+                    sy = data;
+                    sign = 1;
+                    height = rand.Next(f_WsgMaxValue - sy) + 1;
+                }
+
+                ByteWsgData[i] = (byte)data;
+
+                len--;
+                if (len == 0)
+                    len = rand.Next(ByteWsgData.Length - 1) + 1;
+            }
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonFir1_Click(object sender, EventArgs e)
+        {
+            ByteWsgData = applyFIR(ByteWsgData, metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        //http://home.a00.itscom.net/hatada/asp/fir.html
+        private byte[] applyFIR(byte[] wsgData, string[] weights)
+        {
+            double[] wei = new double[weights.Length];
+            double[] input = new double[weights.Length];
+            double sumWei = 0.0;
+            for (int n = 0; n < wei.Length; n++)
+            {
+                Double.TryParse(weights[n], out wei[n]);
+                sumWei += wei[n];
+            }
+            for (int n = 0; n < wei.Length; n++)
+            {
+                wei[n] /= sumWei;
+            }
+            int m = 0;
+            for (; m < wei.Length - 1; m++)
+            {
+                input[m] = 0.0;     // 無音とみなす。
+            }
+            List<byte> orgData = new List<byte>(wsgData);
+            //orgData.Add(0);
+            List<byte> firData = new List<byte>();
+            for (int k = 0; k < orgData.Count; k++)
+            {
+                input[m % wei.Length] = (double)orgData[k] - (f_WsgMaxValue / 2);
+                double val = 0.0;
+                for (int n = 0; n < wei.Length; n++)
+                    val += input[(m - n) % wei.Length] * wei[n];
+                byte fdata = (byte)Math.Round(val + (f_WsgMaxValue / 2));
+                if (fdata > f_WsgMaxValue)
+                    fdata = (byte)f_WsgMaxValue;
+                else if (fdata < 0)
+                    fdata = 0;
+                firData.Add(fdata);
+                m++;
+            }
+            //firData.RemoveAt(0);
+            return firData.ToArray();
+        }
+
+        //https://mathwords.net/dataseikika
+        private void metroButtonMax_Click(object sender, EventArgs e)
+        {
+            int max = 0;
+            int min = f_WsgMaxValue;
+            for (int i = 0; i < ByteWsgData.Length; i++)
+            {
+                max = Math.Max(max, ByteWsgData[i]);
+                min = Math.Min(min, ByteWsgData[i]);
+            }
+            for (int i = 0; i < ByteWsgData.Length; i++)
+            {
+                ByteWsgData[i] = (byte)Math.Round((((double)ByteWsgData[i] - (double)min) / ((double)max - (double)min)) * (double)f_WsgMaxValue);
+            }
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

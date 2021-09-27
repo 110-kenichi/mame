@@ -251,6 +251,7 @@ end
 		"wdlfft",
 		ext_lib("jpeg"),
 		"7z",
+		"asmjit",
 	}
 if (STANDALONE~=true) then
 	links {

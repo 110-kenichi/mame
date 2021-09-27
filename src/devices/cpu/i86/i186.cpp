@@ -3,6 +3,10 @@
 // Peripheral code from rmnimbus driver by Phill Harvey-Smith which is
 // based on the Leland sound driver by Aaron Giles and Paul Leaman
 
+// Note: the X1 input (typically an XTAL) is divided by 2 internally.
+// The device clock should therefore be twice the desired operating
+// frequency (and twice the speed rating suffixed to the part number).
+
 #include "emu.h"
 #include "i186.h"
 #include "debugger.h"
@@ -586,7 +590,7 @@ void i80186_cpu_device::device_start()
 	state_add( I8086_VECTOR, "V", m_int_vector).formatstr("%02X");
 
 	state_add( I8086_PC, "PC", m_pc ).callimport().formatstr("%05X");
-	state_add( STATE_GENPCBASE, "CURPC", m_pc ).callimport().formatstr("%05X").noshow();
+	state_add<uint32_t>( STATE_GENPCBASE, "CURPC", [this] { return (m_sregs[CS] << 4) + m_prev_ip; }).mask(0xfffff).noshow();
 	state_add( I8086_HALT, "HALT", m_halt ).mask(1);
 
 	// Most of these mnemonics are borrowed from the Intel 80C186EA/80C188EA User's Manual.
@@ -677,6 +681,7 @@ void i80186_cpu_device::device_start()
 	memset(&m_intr, 0, sizeof(intr_state));
 	memset(&m_mem, 0, sizeof(mem_state));
 	m_reloc = 0;
+	m_last_dma = 0;
 
 	m_timer[0].int_timer = timer_alloc(TIMER_INT0);
 	m_timer[1].int_timer = timer_alloc(TIMER_INT1);

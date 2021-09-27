@@ -33,6 +33,18 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             get => f_OutputLevel;
         }
 
+
+        private int f_PanShift;
+
+        /// <summary>
+        /// -127:Left
+        /// 127:Right
+        /// </summary>
+        public override int PanShift
+        {
+            get => f_PanShift;
+        }
+
         private int lastArpNoteNumber;
 
         private double f_DeltaNoteNumber;
@@ -80,6 +92,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         private uint volumeCounter;
 
         private uint pitchCounter;
+
+        private uint panCounter;
 
         private uint arpCounter;
 
@@ -173,6 +187,43 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
             }
 
+            //pan
+            if (settings.PanShiftEnvelopesNums.Length > 0)
+            {
+                if (!isKeyOff)
+                {
+                    var vm = settings.PanShiftEnvelopesNums.Length;
+                    if (settings.PanShiftEnvelopesReleasePoint >= 0)
+                        vm = settings.PanShiftEnvelopesReleasePoint;
+                    if (panCounter >= vm)
+                    {
+                        if (settings.PanShiftEnvelopesRepeatPoint >= 0)
+                            panCounter = (uint)settings.PanShiftEnvelopesRepeatPoint;
+                        else
+                            panCounter = (uint)vm - 1;
+                    }
+                }
+                else
+                {
+                    if (settings.PanShiftEnvelopesReleasePoint < 0)
+                        panCounter = (uint)settings.PanShiftEnvelopesNums.Length;
+
+                    //if (panCounter >= settings.PanEnvelopesNums.Length)
+                    //{
+                    //    if (settings.PanEnvelopesRepeatPoint >= 0)
+                    //        panCounter = (uint)settings.PanEnvelopesRepeatPoint;
+                    //}
+                }
+
+                if (panCounter < settings.PanShiftEnvelopesNums.Length)
+                {
+                    int pan = settings.PanShiftEnvelopesNums[panCounter++];
+
+                    f_PanShift = pan;
+                    process = true;
+                }
+            }
+
             //arpeggio
             if (settings.ArpEnvelopesNums.Length > 0)
             {
@@ -202,22 +253,31 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 if (arpCounter < settings.ArpEnvelopesNums.Length)
                 {
-                    int dnote = settings.ArpEnvelopesNums[arpCounter++];
-
-                    switch (settings.ArpStepType)
+                    int? dnote = settings.ArpEnvelopesNums[arpCounter++];
+                    if (dnote.HasValue)
                     {
-                        case ArpStepType.Absolute:
-                            f_DeltaNoteNumber += -lastArpNoteNumber + dnote;
-                            break;
-                        case ArpStepType.Relative:
-                            f_DeltaNoteNumber += dnote;
-                            break;
-                        case ArpStepType.Fixed:
-                            f_DeltaNoteNumber = -sound.NoteOnEvent.NoteNumber + dnote;
-                            break;
+                        switch (settings.ArpStepType)
+                        {
+                            case ArpStepType.Absolute:
+                                f_DeltaNoteNumber += -lastArpNoteNumber + dnote.Value;
+                                break;
+                            case ArpStepType.Relative:
+                                f_DeltaNoteNumber += dnote.Value;
+                                break;
+                            case ArpStepType.Fixed:
+                                f_DeltaNoteNumber = -sound.NoteOnEvent.NoteNumber + dnote.Value;
+                                break;
+                        }
+                        lastArpNoteNumber = dnote.Value;
+
+                        if (settings.ArpMethod == ArpMethod.KeyOn)
+                        {
+                            sound.SoundOff();
+                            sound.KeyOn();
+                        }
+
+                        process = true;
                     }
-                    lastArpNoteNumber = dnote;
-                    process = true;
                 }
             }
 

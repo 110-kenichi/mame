@@ -54,7 +54,9 @@ DEFINE_DEVICE_TYPE(SP0256, sp0256_device, "sp0256", "GI SP0256 Narrator Speech P
 sp0256_device::sp0256_device(const machine_config &mconfig, const char *tag, device_t *owner, uint32_t clock)
 	: device_t(mconfig, SP0256, tag, owner, clock)
 	, device_sound_interface(mconfig, *this)
-	, m_rom(*this, DEVICE_SELF)
+	/*
+	, m_rom(*this, DEVICE_SELF) mamidimemo
+	*/
 	, m_stream(nullptr)
 	, m_drq_cb(*this)
 	, m_sby_cb(*this)
@@ -74,7 +76,7 @@ void sp0256_device::device_start()
 	m_drq_cb(1);
 	m_sby_cb(1);
 
-	m_stream = machine().sound().stream_alloc(*this, 0, 1, clock() / CLOCK_DIVIDER);
+	m_stream = machine().sound().stream_alloc(*this, 0, 2, clock() / CLOCK_DIVIDER);	//mamidimemo 1 -> 2
 
 	/* -------------------------------------------------------------------- */
 	/*  Configure our internal variables.                                   */
@@ -104,7 +106,7 @@ void sp0256_device::device_start()
 	// the rom is not supposed to be reversed first; according to Joe Zbiciak.
 	// see http://forums.bannister.org/ubbthreads.php?ubb=showflat&Number=72385#Post72385
 	// TODO: because of this, check if the bitrev functions are even used anywhere else
-	// bitrevbuff(m_rom, 0, 0xffff);
+	bitrevbuff(m_rom, 0, 0xffff);
 
 	m_lrq_timer = machine().scheduler().timer_alloc(timer_expired_delegate(FUNC(sp0256_device::set_lrq_timer_proc),this));
 
@@ -166,7 +168,9 @@ void sp0256_device::device_reset()
 	SET_SBY(1);
 
 	m_lrq = 0;
+	/* mamidimemo prevent crash
 	m_lrq_timer->adjust(attotime::from_ticks(50, m_clock));
+	*/
 }
 
 
@@ -1266,6 +1270,7 @@ TIMER_CALLBACK_MEMBER(sp0256_device::set_lrq_timer_proc)
 void sp0256_device::sound_stream_update(sound_stream &stream, stream_sample_t **inputs, stream_sample_t **outputs, int samples)
 {
 	stream_sample_t *output = outputs[0];
+	stream_sample_t *output1 = outputs[1];
 	int output_index = 0;
 	int length, did_samp/*, old_idx*/;
 
@@ -1278,7 +1283,13 @@ void sp0256_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 
 		while (m_sc_tail != m_sc_head)
 		{
+			int idx = output_index++;
+			int16_t data = m_scratch[m_sc_tail++ & SCBUF_MASK];
+			/*
 			output[output_index++] = m_scratch[m_sc_tail++ & SCBUF_MASK];
+			*/
+			output[idx] = data;
+			output1[idx] = data;
 			m_sc_tail &= SCBUF_MASK;
 
 			if (output_index > samples)

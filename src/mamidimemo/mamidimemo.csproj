@@ -4,6 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <ProjectGuid>{60192987-27BB-4ADC-AC5A-03EA2846A569}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>zanac.MAmidiMEmo</RootNamespace>
@@ -121,8 +122,11 @@
     <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="Melanchall.DryWetMidi, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.1\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
+    <Reference Include="FTD2XX_NET, Version=1.0.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\FTD2XX.Net.1.0.14\lib\FTD2XX_NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Melanchall.DryWetMidi, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\build\projects\windows\mame\vs2017\packages\Melanchall.DryWetMidi.5.1.2\lib\net45\Melanchall.DryWetMidi.dll</HintPath>
     </Reference>
     <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
@@ -140,6 +144,8 @@
       <HintPath>..\..\build\projects\windows\mame\vs2017\packages\ValueInjecter.3.2.0\lib\net45\Omu.ValueInjecter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.IO.Compression" />
@@ -186,7 +192,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
-    <Compile Include="ComponentModel\CacheMemory.cs" />
     <Compile Include="ComponentModel\EmptyTypeConverter.cs" />
     <Compile Include="ComponentModel\EnumTypeEditor.cs" />
     <Compile Include="ComponentModel\EnumConverter.cs" />
@@ -194,6 +199,7 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gui\PhonemesUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
     <Compile Include="Gui\ClickThroughToolStrip.cs">
@@ -403,6 +409,12 @@
     <Compile Include="Gui\FMEditor\YMF262UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM3812UITypeEditor.cs" />
     <Compile Include="Gui\FMEditor\YM2612UITypeEditor.cs" />
+    <Compile Include="Gui\FormPhonemesEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormPhonemesEditor.Designer.cs">
+      <DependentUpon>FormPhonemesEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormBase.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -420,6 +432,12 @@
     </Compile>
     <Compile Include="Gui\FMEditor\FormFmEditor.Designer.cs">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormAllophonesEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormAllophonesEditor.Designer.cs">
+      <DependentUpon>FormAllophonesEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FormProgress.cs">
       <SubType>Form</SubType>
@@ -441,6 +459,13 @@
     <Compile Include="Gui\FormEnvelopeEditor.Designer.cs">
       <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FormLpcEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormLpcEditor.Designer.cs">
+      <DependentUpon>FormLpcEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\AllophonesUITypeEditor.cs" />
     <Compile Include="Gui\OscUtility.cs" />
     <Compile Include="Gui\EnvelopeUITypeEditor.cs" />
     <Compile Include="Gui\EnvelopeEditorAttribute.cs" />
@@ -511,10 +536,14 @@
       <DependentUpon>PianoControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\VstUITypeEditor.cs" />
+    <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
+    <Compile Include="Instruments\Chips\uPD1771C.cs" />
+    <Compile Include="Instruments\Chips\SN76477.cs" />
     <Compile Include="Instruments\Chips\CM32P.cs" />
     <Compile Include="Instruments\Chips\MT32.cs" />
     <Compile Include="Instruments\Chips\POKEY.cs" />
+    <Compile Include="Instruments\Chips\SAM.cs" />
     <Compile Include="Instruments\Chips\SPC700.cs" />
     <Compile Include="Instruments\Chips\C140.cs" />
     <Compile Include="Instruments\Chips\HuC6280.cs" />
@@ -528,6 +557,58 @@
     <Compile Include="Instruments\Chips\SIDBase.cs" />
     <Compile Include="Instruments\Chips\Beep.cs" />
     <Compile Include="Instruments\Chips\SN76496.cs" />
+    <Compile Include="Instruments\Chips\SP0256.cs" />
+    <Compile Include="Instruments\Chips\TMS5220.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
+    <Compile Include="Instruments\CombinedTimbreSettings.cs" />
+    <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
+    <Compile Include="VSIF\PortWriteData.cs" />
+    <Compile Include="VSIF\PortWriterMsx.cs" />
+    <Compile Include="VSIF\PortWriterNesDirect.cs" />
+    <Compile Include="VSIF\PortWriterNesIndirect.cs" />
+    <Compile Include="VSIF\PortWriterGenesis.cs" />
+    <Compile Include="VSIF\PortWriter.cs" />
+    <Compile Include="VSIF\VsifClient.cs" />
+    <Compile Include="VSIF\VsifManager.cs" />
+    <None Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
+      <Link>VGMPlay_md.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.bin">
+      <Link>VGMPlay_msx.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
+      <Link>VGMPlay_msx.rom</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
+      <Link>VGMPlay_nes.nes</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_fds.fds">
+      <Link>VGMPlay_nes_fds.fds</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_mmc5.nes">
+      <Link>VGMPlay_nes_mmc5.nes</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_vrc6.nes">
+      <Link>VGMPlay_nes_vrc6.nes</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
+      <Link>VGMPlay_sms.sms</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Toms_Diner.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Acorn.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Clock.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_Large.cs" />
+    <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_US_TI99.cs" />
     <Compile Include="Instruments\Chips\YM2151.cs" />
     <Compile Include="Instruments\Chips\YM2413.cs" />
     <Compile Include="Instruments\Chips\YM2608.cs" />
@@ -625,6 +706,11 @@
     <Compile Include="Midi\TaggedNoteOnEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.ja-JP.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.ja-JP.resx</DependentUpon>
+    </Compile>
     <Compile Include="Scci\ScciManager.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2.cs" />
     <Compile Include="SoundFont2\SoundFont2\SF2Chunks.cs" />
@@ -636,6 +722,7 @@
     <Compile Include="Util\FM-SoundConvertor\File.cs" />
     <Compile Include="Util\FM-SoundConvertor\Fmp.cs" />
     <Compile Include="Util\FM-SoundConvertor\Main.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Gwi.cs" />
     <Compile Include="Util\FM-SoundConvertor\Muc.cs" />
     <Compile Include="Util\FM-SoundConvertor\Option.cs" />
     <Compile Include="Util\FM-SoundConvertor\Path.cs" />
@@ -743,6 +830,12 @@
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormMain.ja-JP.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormPhonemesEditor.resx">
+      <DependentUpon>FormPhonemesEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormBase.resx">
       <DependentUpon>FormBase.cs</DependentUpon>
     </EmbeddedResource>
@@ -752,8 +845,17 @@
     <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.resx">
       <DependentUpon>FormFmEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormAllophonesEditor.resx">
+      <DependentUpon>FormAllophonesEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormProgress.ja-JP.resx">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormProgress.resx">
       <DependentUpon>FormProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormSettings.ja-JP.resx">
+      <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
@@ -763,6 +865,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormEnvelopeEditor.resx">
       <DependentUpon>FormEnvelopeEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormLpcEditor.resx">
+      <DependentUpon>FormLpcEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\TextEditorControl.resx">
       <DependentUpon>TextEditorControl.cs</DependentUpon>
@@ -791,6 +896,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\PianoControl.resx">
       <DependentUpon>PianoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.ja-JP.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -866,6 +976,9 @@
     <None Include="Samples\2608_rhythm\top.pcma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Samples\AY-3-8910_GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\HuC6280_GM x8.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -914,6 +1027,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Samples\SCC1 GM.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Samples\YM2151_GM%28from OPNA%29.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -942,6 +1058,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="scci.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="VST\MAmiVSTi.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -987,8 +1106,15 @@
     <None Include="Resources\Rec.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FTD2XX_NET.XML" />
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\uPD1771C.png" />
+    <None Include="Resources\cmudict-0.7b.txt" />
+    <None Include="Resources\SAM.png" />
+    <None Include="Resources\SN76477.png" />
+    <Content Include="Resources\SP0256.png" />
+    <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />
     <None Include="scci.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1021,14 +1147,22 @@
     <None Include="Resources\WS2.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\scci\scci.vcxproj">
-      <Project>{dce05c04-33c4-4929-9076-d75d78725613}</Project>
-      <Name>scci</Name>
+    <ProjectReference Include="..\FastDelegate.Net\FastDelegate.Net\FastDelegate.Net.csproj">
+      <Project>{fa0a043b-f264-43bc-83b8-28000c7f7b08}</Project>
+      <Name>FastDelegate.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ScciInterface\ScciWrapperInterface.csproj">
+      <Project>{26c36b22-d243-4cb4-9ab2-4895634d9a47}</Project>
+      <Name>ScciWrapperInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Instruments\Chips\SP0256_Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>@rem if exist "$(OutDir)MAmidiMEmo_x86.zip" "$(ProjectDir)UpdateZipContents\UpdateZipContents.exe" "$(OutDir)MAmidiMEmo_x86.zip"
+@rem if exist "$(OutDir)MAmidiMEmo_x64.zip" "$(ProjectDir)UpdateZipContents\UpdateZipContents.exe" "$(OutDir)MAmidiMEmo_x64.zip"
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

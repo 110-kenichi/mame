@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="donate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\donate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GB_APU" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GB_APU.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Inst" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Inst.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MSM5232" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MSM5232.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NAMCO_CUS30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NAMCO_CUS30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RP2A03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RP2A03.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SCC1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SCC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SN76496" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SN76496.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Title" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Title.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM2151" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2151.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM2413" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2413.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM2612" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2612.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM3812" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM3812.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Panic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Panic.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Rst" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Rst.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AY_3_8910" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AY-3-8910.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MOS6581" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MOS6581.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MOS8580" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MOS8580.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Beep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Beep.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="C140" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\C140.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AtoZ" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AtoZ.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Cat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cat.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Popup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Popup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HuC6280" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HuC6280.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SPC700" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SPC700.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="POKEY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\POKEY.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM2610B" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2610B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MT32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MT32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CM32P" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CM32P.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Rec" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Rec.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\alg9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YMF262" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YMF262.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG12.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS5.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS6.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS7.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DSEG7ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DSEG7ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PixelMplus12_Regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PixelMplus12-Regular.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="DSEG14ClassicMini_BoldItalic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DSEG14ClassicMini-BoldItalic.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="YM2608" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2608.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConnectingSPFM" xml:space="preserve">
+    <value>SPFMで物理音源に接続しています...</value>
+  </data>
+  <data name="UpdatingADPCM" xml:space="preserve">
+    <value>ADPCMデータを更新中...</value>
+  </data>
+  <data name="AdpcmBufferExceeded" xml:space="preserve">
+    <value>ADPCM バッファが溢れました。</value>
+  </data>
+  <data name="AdpcmBufferUsed" xml:space="preserve">
+    <value>ADPCM バッファを {0}/256 KB 使っています。</value>
+  </data>
+  <data name="FailedLoadFile" xml:space="preserve">
+    <value>ファイルの読み込みに失敗しました。</value>
+  </data>
+  <data name="FailedLoadMAmi" xml:space="preserve">
+    <value>MAmiファイルの読み込みに失敗しました。</value>
+  </data>
+  <data name="FailedLoadMAmidi" xml:space="preserve">
+    <value>MAmidiファイルの読み込みに失敗しました。</value>
+  </data>
+  <data name="FailedLoadMidi" xml:space="preserve">
+    <value>MIDIファイルの読み込みに失敗しました。</value>
+  </data>
+  <data name="FailedMidiIf" xml:space="preserve">
+    <value>MIDIインターフェースの設定に失敗しました。</value>
+  </data>
+  <data name="FailedSaveEnv" xml:space="preserve">
+    <value>現在の環境の保存に失敗しました。</value>
+  </data>
+  <data name="FailedSaveMAmidi" xml:space="preserve">
+    <value>現在の環境とMIDIデータのMAmidiファイルへの保存に失敗しました。</value>
+  </data>
+  <data name="LoadMidiFile" xml:space="preserve">
+    <value>現在の環境とMIDIデータのMAmidiファイルへの保存するには、MIDIファイルを読み込んでください。</value>
+  </data>
+  <data name="WanrSPC700SampleLength" xml:space="preserve">
+    <value>いくつかの音のサンプル長が16の倍数でないため、おかしくなる可能性があります。</value>
+  </data>
+  <data name="FailedLaunch" xml:space="preserve">
+    <value>起動に失敗しました。</value>
+  </data>
+  <data name="TMS5220" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TMS5220.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SP0256" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SP0256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cmudict_0_7b" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cmudict-0.7b.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;shift_jis</value>
+  </data>
+  <data name="SAM" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SAM.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SN76477" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SN76477.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImportSF2Drum" xml:space="preserve">
+    <value>SF2ファイルからPCMを&amp;DrumTimbresへインポートする....</value>
+  </data>
+  <data name="ImportSF2Timbre" xml:space="preserve">
+    <value>SF2ファイルからPCMを&amp;Timbresへインポートする....</value>
+  </data>
+  <data name="ClearAllInsts" xml:space="preserve">
+    <value>全ての音源をクリアしますか？</value>
+  </data>
+  <data name="CNTWarning" xml:space="preserve">
+    <value>4OPで音を出力する場合、CNTの値を1またはそれ以上にするべきです。</value>
+  </data>
+  <data name="NoMidiPort" xml:space="preserve">
+    <value>MIDI IN デバイスがありません。
+MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまたは loopMIDI アプリをインストールする必要があります。</value>
+  </data>
+  <data name="RestartConfirmation" xml:space="preserve">
+    <value>新しい設定を反映するため再起動しますか？</value>
+  </data>
+  <data name="SampleRate" xml:space="preserve">
+    <value>MAmidiMEmoのサンプリング周波数はMAmidiMEmo起動時のDAWのサンプリング周波数に従います。</value>
+  </data>
+  <data name="DpcmBufferExceeded" xml:space="preserve">
+    <value>DPCM バッファが溢れました。</value>
+  </data>
+  <data name="DpcmBufferUsed" xml:space="preserve">
+    <value>ADPCM バッファを {0} bytes 使っています。</value>
+  </data>
+  <data name="UpdatingDPCM" xml:space="preserve">
+    <value>DPCMデータを更新中...</value>
+  </data>
+</root>

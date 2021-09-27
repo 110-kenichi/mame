@@ -376,15 +376,15 @@ namespace MathParserTK
                 }
 
             }
-            else if (Char.IsDigit(token[0]) || token[0] == decimalSeparator)
+            else if (isDigitOrPeriod(token[0]) || token[0] == decimalSeparator)
             {
                 // Read number
 
                 // Read the whole part of number
-                if (Char.IsDigit(token[0]))
+                if (isDigitOrPeriod(token[0]))
                 {
                     while (++pos < expression.Length
-                    && Char.IsDigit(expression[pos]))
+                    && isDigitOrPeriod(expression[pos]))
                     {
                         token.Append(expression[pos]);
                     }
@@ -405,7 +405,7 @@ namespace MathParserTK
                         .NumberFormat.NumberDecimalSeparator);
 
                     while (++pos < expression.Length
-                    && Char.IsDigit(expression[pos]))
+                    && isDigitOrPeriod(expression[pos]))
                     {
                         token.Append(expression[pos]);
                     }
@@ -413,11 +413,11 @@ namespace MathParserTK
 
                 // Read scientific notation (suffix)
                 if (pos + 1 < expression.Length && expression[pos] == 'e'
-                    && (Char.IsDigit(expression[pos + 1])
+                    && (isDigitOrPeriod(expression[pos + 1])
                         || (pos + 2 < expression.Length
                             && (expression[pos + 1] == '+'
                                 || expression[pos + 1] == '-')
-                            && Char.IsDigit(expression[pos + 2]))))
+                            && isDigitOrPeriod(expression[pos + 2]))))
                 {
                     token.Append(expression[pos++]); // e
 
@@ -425,7 +425,7 @@ namespace MathParserTK
                         token.Append(expression[pos++]); // sign
 
                     while (pos < expression.Length
-                        && Char.IsDigit(expression[pos]))
+                        && isDigitOrPeriod(expression[pos]))
                     {
                         token.Append(expression[pos++]); // power
                     }
@@ -441,6 +441,17 @@ namespace MathParserTK
                 throw new ArgumentException("Unknown token in expression");
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns></returns>
+        private static bool isDigitOrPeriod(Char ch)
+        {
+            return Char.IsDigit(ch) || ch == '.';
+        }
+
 
         /// <summary>
         /// Syntax analysis of infix notation

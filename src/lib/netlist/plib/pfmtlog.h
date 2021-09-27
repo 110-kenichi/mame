@@ -8,6 +8,7 @@
 #ifndef PFMT_H_
 #define PFMT_H_
 
+#include "penum.h"
 #include "pstring.h"
 #include "ptypes.h"
 #include "putil.h"
@@ -21,12 +22,12 @@
 	{ \
 		template<typename... Args> explicit name(Args&&... args) \
 		: plib::perrmsg(str, std::forward<Args>(args)...) \
-		{ static_assert(narg == sizeof...(args), "Argument count mismatch"); } \
+		{ static_assert((narg) == sizeof...(args), "Argument count mismatch"); } \
 	};
 
 namespace plib {
 
-	P_ENUM(plog_level,
+	PENUM(plog_level,
 		DEBUG,
 		VERBOSE,
 		INFO,

@@ -77,6 +77,7 @@
             this.metroListViewDir.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroListViewDir.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.metroListViewDir.FullRowSelect = true;
+            this.metroListViewDir.HideSelection = false;
             this.metroListViewDir.LargeImageList = this.imageList1;
             this.metroListViewDir.Location = new System.Drawing.Point(0, 19);
             this.metroListViewDir.MultiSelect = false;
@@ -299,7 +300,7 @@
             this.KeyPreview = true;
             this.Name = "FormDownloadTone";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Dowload a tone";
+            this.Text = "Download a tone";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

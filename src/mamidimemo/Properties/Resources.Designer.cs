@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -47,7 +47,7 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+        ///   すべてについて、現在のスレッドの CurrentUICulture プロパティをオーバーライドします
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -249,12 +249,51 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Do you clear all instruments? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ClearAllInsts {
+            get {
+                return ResourceManager.GetString("ClearAllInsts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap CM32P {
             get {
                 object obj = ResourceManager.GetObject("CM32P", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   ;;; # CMUdict  --  Major Version: 0.07
+        ///;;; 
+        ///;;; # $HeadURL$
+        ///;;; # $Date::                                                   $:
+        ///;;; # $Id::                                                     $:
+        ///;;; # $Rev::                                                    $: 
+        ///;;; # $Author::                                                 $:
+        ///;;;
+        ///;;; #
+        ///;;; # ========================================================================
+        ///;;; # Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
+        ///;;; #
+        ///;;; # Red [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string cmudict_0_7b {
+            get {
+                return ResourceManager.GetString("cmudict_0_7b", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   You should CNT value to 1 or higher value to sound 4 operator sound. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CNTWarning {
+            get {
+                return ResourceManager.GetString("CNTWarning", resourceCulture);
             }
         }
         
@@ -274,6 +313,24 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("donate", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   DPCM buffer exceeded. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DpcmBufferExceeded {
+            get {
+                return ResourceManager.GetString("DpcmBufferExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   DPCM buffer used {0} bytes. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DpcmBufferUsed {
+            get {
+                return ResourceManager.GetString("DpcmBufferUsed", resourceCulture);
             }
         }
         
@@ -390,6 +447,24 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   mport PCM from SF2 for &amp;DrumTimbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSF2Drum {
+            get {
+                return ResourceManager.GetString("ImportSF2Drum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import PCM from SF2 for &amp;Timbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSF2Timbre {
+            get {
+                return ResourceManager.GetString("ImportSF2Timbre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap Inst {
@@ -455,6 +530,17 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("NAMCO_CUS30", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   There are no MIDI IN devices.
+        ///Please install at least one MIDI IN device to use the MAmidiMEmo all functions.
+        ///Or, install the loopMIDI application to the PC. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string NoMidiPort {
+            get {
+                return ResourceManager.GetString("NoMidiPort", resourceCulture);
             }
         }
         
@@ -539,6 +625,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Do you restart to apply new settings? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string RestartConfirmation {
+            get {
+                return ResourceManager.GetString("RestartConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap RP2A03 {
@@ -561,6 +656,25 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap SAM {
+            get {
+                object obj = ResourceManager.GetObject("SAM", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   MAmi sample rate follows DAW sample rate at startup MAmi. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SampleRate {
+            get {
+                return ResourceManager.GetString("SampleRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap SCC1 {
             get {
                 object obj = ResourceManager.GetObject("SCC1", resourceCulture);
@@ -571,9 +685,29 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap SN76477 {
+            get {
+                object obj = ResourceManager.GetObject("SN76477", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap SN76496 {
             get {
                 object obj = ResourceManager.GetObject("SN76496", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap SP0256 {
+            get {
+                object obj = ResourceManager.GetObject("SP0256", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -609,11 +743,40 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap TMS5220 {
+            get {
+                object obj = ResourceManager.GetObject("TMS5220", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap uPD1771C {
+            get {
+                object obj = ResourceManager.GetObject("uPD1771C", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Updating ADPCM data... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string UpdatingADPCM {
             get {
                 return ResourceManager.GetString("UpdatingADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updating DPCM data... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string UpdatingDPCM {
+            get {
+                return ResourceManager.GetString("UpdatingDPCM", resourceCulture);
             }
         }
         

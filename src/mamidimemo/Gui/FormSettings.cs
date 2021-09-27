@@ -32,9 +32,12 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 using (var t = new StreamWriter(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "mame.ini"), false, new UTF8Encoding(true)))
                 {
+                    int lidx = comboBoxAudioLatency.SelectedIndex;
+                    if (lidx < 0)
+                        lidx = 1;
                     t.WriteLine("sound " + SoundTypes[comboBoxSoundType.SelectedIndex]);
                     t.WriteLine("samplerate " + comboBoxSampleRate.Text);
-                    t.WriteLine("audio_latency " + AudioLatency[comboBoxAudioLatency.SelectedIndex]);
+                    t.WriteLine("audio_latency " + AudioLatency[lidx]);
                     t.WriteLine("volume 0");
                     t.WriteLine("pa_api " + textBoxPaApi.Text);
                     t.WriteLine("pa_device " + textBoxPaDevice.Text);

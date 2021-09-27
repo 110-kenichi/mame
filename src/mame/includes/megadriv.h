@@ -32,6 +32,11 @@
 #include "sound/cm32p.h"
 #include "sound/262intf.h"
 #include "sound/2608intf.h"
+#include "sound/tms5220.h"
+#include "sound/sp0256.h"
+#include "sound/samples.h"
+#include "sound/sn76477.h"
+#include "sound/upd1771.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -45,7 +50,7 @@
 #define MD_CPU_REGION_SIZE 0x800000
 
 
-/*----------- defined in machine/megadriv.c -----------*/
+/*----------- defined in machine/megadriv.cpp -----------*/
 
 INPUT_PORTS_EXTERN(md_common);
 INPUT_PORTS_EXTERN(megadriv);
@@ -178,10 +183,30 @@ public:
 			strcpy(device_names[didx][i], (std::string("ym2608_") + num).c_str());
 			m_ym2608[i] = new optional_device<ym2608_device>(*this, device_names[didx][i]);
 			didx++;
+			//tms5220
+			strcpy(device_names[didx][i], (std::string("tms5220_") + num).c_str());
+			m_tms5220[i] = new optional_device<tms5220_device>(*this, device_names[didx][i]);
+			didx++;
+			//sp0256
+			strcpy(device_names[didx][i], (std::string("sp0256_") + num).c_str());
+			m_sp0256[i] = new optional_device<sp0256_device>(*this, device_names[didx][i]);
+			didx++;
+			//sam
+			strcpy(device_names[didx][i], (std::string("sam_") + num).c_str());
+			m_sam[i] = new optional_device<samples_device>(*this, device_names[didx][i]);
+			didx++;
+			//sn76477
+			strcpy(device_names[didx][i], (std::string("sn76477_") + num).c_str());
+			m_sn76477[i] = new optional_device<sn76477_device>(*this, device_names[didx][i]);
+			didx++;
+			//upd1771
+			strcpy(device_names[didx][i], (std::string("upd1771_") + num).c_str());
+			m_upd1771[i] = new optional_device<upd1771c_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 24 ][8][100];
+	char device_names[ 29 ][8][100];
 	optional_device<ym2151_device> *m_ym2151[8];	//1
 	optional_device<ym2612_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -205,6 +230,11 @@ public:
 	optional_device<cm32p_device> *m_cm32p[8];	//21
 	optional_device<ymf262_device> *m_ymf262[8];	//22
 	optional_device<ym2608_device> *m_ym2608[8];	//23
+	optional_device<tms5220_device> *m_tms5220[8];	//24
+	optional_device<sp0256_device>* m_sp0256[8];	//25
+	optional_device<samples_device>* m_sam[8];	//26
+	optional_device<sn76477_device>* m_sn76477[8];	//27
+	optional_device<upd1771c_device>* m_upd1771[8];	//28
 
 	required_device<m68000_base_device> m_maincpu;
 	/*
@@ -227,26 +257,26 @@ public:
 	void init_megadriv();
 	void init_megadrij();
 
-	DECLARE_READ8_MEMBER(megadriv_68k_YM2612_read);
-	DECLARE_WRITE8_MEMBER(megadriv_68k_YM2612_write);
+	uint8_t megadriv_68k_YM2612_read(offs_t offset, uint8_t mem_mask = ~0);
+	void megadriv_68k_YM2612_write(offs_t offset, uint8_t data, uint8_t mem_mask = ~0);
 	IRQ_CALLBACK_MEMBER(genesis_int_callback);
 	void megadriv_init_common();
 
 	void megadriv_z80_bank_w(uint16_t data);
-	DECLARE_WRITE16_MEMBER(megadriv_68k_z80_bank_write);
-	DECLARE_WRITE8_MEMBER(megadriv_z80_z80_bank_w);
-	DECLARE_READ16_MEMBER(megadriv_68k_io_read);
-	DECLARE_WRITE16_MEMBER(megadriv_68k_io_write);
-	DECLARE_READ16_MEMBER(megadriv_68k_read_z80_ram);
-	DECLARE_WRITE16_MEMBER(megadriv_68k_write_z80_ram);
-	DECLARE_READ16_MEMBER(megadriv_68k_check_z80_bus);
-	DECLARE_WRITE16_MEMBER(megadriv_68k_req_z80_bus);
-	DECLARE_WRITE16_MEMBER(megadriv_68k_req_z80_reset);
-	DECLARE_READ8_MEMBER(z80_read_68k_banked_data);
-	DECLARE_WRITE8_MEMBER(z80_write_68k_banked_data);
-	DECLARE_WRITE8_MEMBER(megadriv_z80_vdp_write);
-	DECLARE_READ8_MEMBER(megadriv_z80_vdp_read);
-	DECLARE_READ8_MEMBER(megadriv_z80_unmapped_read);
+	void megadriv_68k_z80_bank_write(uint16_t data);
+	void megadriv_z80_z80_bank_w(uint8_t data);
+	uint16_t megadriv_68k_io_read(offs_t offset);
+	void megadriv_68k_io_write(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
+	uint16_t megadriv_68k_read_z80_ram(offs_t offset, uint16_t mem_mask = ~0);
+	void megadriv_68k_write_z80_ram(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
+	uint16_t megadriv_68k_check_z80_bus(offs_t offset, uint16_t mem_mask = ~0);
+	void megadriv_68k_req_z80_bus(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
+	void megadriv_68k_req_z80_reset(offs_t offset, uint16_t data, uint16_t mem_mask = ~0);
+	uint8_t z80_read_68k_banked_data(offs_t offset);
+	void z80_write_68k_banked_data(offs_t offset, uint8_t data);
+	void megadriv_z80_vdp_write(offs_t offset, uint8_t data);
+	uint8_t megadriv_z80_vdp_read(offs_t offset);
+	uint8_t megadriv_z80_unmapped_read();
 	TIMER_CALLBACK_MEMBER(megadriv_z80_run_state);
 
 	/* Megadrive / Genesis has 3 I/O ports */
@@ -255,8 +285,8 @@ public:
 	uint8_t m_megadrive_io_data_regs[3];
 	uint8_t m_megadrive_io_ctrl_regs[3];
 	uint8_t m_megadrive_io_tx_regs[3];
-	read8_delegate m_megadrive_io_read_data_port_ptr;
-	write16_delegate m_megadrive_io_write_data_port_ptr;
+	read8sm_delegate m_megadrive_io_read_data_port_ptr;
+	write16sm_delegate m_megadrive_io_write_data_port_ptr;
 
 	WRITE_LINE_MEMBER(vdp_sndirqline_callback_genesis_z80);
 	WRITE_LINE_MEMBER(vdp_lv6irqline_callback_genesis_68k);
@@ -264,15 +294,15 @@ public:
 
 	TIMER_CALLBACK_MEMBER(io_timeout_timer_callback);
 	void megadrive_reset_io();
-	DECLARE_READ8_MEMBER(megadrive_io_read_data_port_6button);
-	DECLARE_READ8_MEMBER(megadrive_io_read_data_port_3button);
+	uint8_t megadrive_io_read_data_port_6button(offs_t offset);
+	uint8_t megadrive_io_read_data_port_3button(offs_t offset);
 	uint8_t megadrive_io_read_ctrl_port(int portnum);
 	uint8_t megadrive_io_read_tx_port(int portnum);
 	uint8_t megadrive_io_read_rx_port(int portnum);
 	uint8_t megadrive_io_read_sctrl_port(int portnum);
 
-	DECLARE_WRITE16_MEMBER(megadrive_io_write_data_port_3button);
-	DECLARE_WRITE16_MEMBER(megadrive_io_write_data_port_6button);
+	void megadrive_io_write_data_port_3button(offs_t offset, uint16_t data);
+	void megadrive_io_write_data_port_6button(offs_t offset, uint16_t data);
 	void megadrive_io_write_ctrl_port(int portnum, uint16_t data);
 	void megadrive_io_write_tx_port(int portnum, uint16_t data);
 	void megadrive_io_write_rx_port(int portnum, uint16_t data);
@@ -286,7 +316,7 @@ public:
 	uint32_t screen_update_megadriv(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect);
 	DECLARE_WRITE_LINE_MEMBER(screen_vblank_megadriv);
 
-	DECLARE_WRITE8_MEMBER(megadriv_tas_callback);
+	void megadriv_tas_callback(offs_t offset, uint8_t data);
 
 	void megadriv_timers(machine_config &config);
 	void md_ntsc(machine_config &config);
@@ -324,8 +354,8 @@ public:
 	void init_md_eur();
 	void init_md_jpn();
 
-	READ8_MEMBER(mess_md_io_read_data_port);
-	WRITE16_MEMBER(mess_md_io_write_data_port);
+	uint8_t mess_md_io_read_data_port(offs_t offset);
+	void mess_md_io_write_data_port(offs_t offset, uint16_t data);
 
 	DECLARE_MACHINE_START(md_common);     // setup ioport_port
 	DECLARE_MACHINE_START(ms_megadriv);   // setup ioport_port + install cartslot handlers
@@ -342,8 +372,8 @@ public:
 
 	void install_cartslot();
 	void install_tmss();
-	DECLARE_READ16_MEMBER(tmss_r);
-	DECLARE_WRITE16_MEMBER(tmss_swap_w);
+	uint16_t tmss_r(offs_t offset);
+	void tmss_swap_w(uint16_t data);
 	void genesis_32x_scd(machine_config &config);
 	void mdj_32x_scd(machine_config &config);
 	void ms_megadpal(machine_config &config);

@@ -16,6 +16,14 @@ DEFINE_DEVICE_TYPE(RF5C68, rf5c68_device, "rf5c68", "Ricoh RF5C68")
 DEFINE_DEVICE_TYPE(RF5C164, rf5c164_device, "rf5c164", "Ricoh RF5C164")
 
 
+void rf5c68_device::map(address_map &map)
+{
+	// TODO: Mirroring is sega arcade boards only?
+	map(0x0000, 0x0008).mirror(0x0ff0).w(FUNC(rf5c68_device::rf5c68_w)); // A12 = 0 : Register
+	map(0x1000, 0x1fff).rw(FUNC(rf5c68_device::rf5c68_mem_r), FUNC(rf5c68_device::rf5c68_mem_w)); // A12 = 1 : Waveform data
+}
+
+
 //**************************************************************************
 //  LIVE DEVICE
 //**************************************************************************
@@ -59,24 +67,21 @@ rf5c164_device::rf5c164_device(const machine_config &mconfig, const char *tag, d
 
 void rf5c68_device::device_start()
 {
-	m_data = &space(0);
 	// Find our direct access
-	m_cache = space().cache<0, 0, ENDIANNESS_LITTLE>();
+	space(0).cache(m_cache);
 	m_sample_end_cb.resolve();
 
 	/* allocate the stream */
 	m_stream = stream_alloc(0, 2, clock() / 384);
 
-	for (int ch = 0; ch < NUM_CHANNELS; ch++)
-	{
-		save_item(NAME(m_chan[ch].enable), ch);
-		save_item(NAME(m_chan[ch].env), ch);
-		save_item(NAME(m_chan[ch].pan), ch);
-		save_item(NAME(m_chan[ch].start), ch);
-		save_item(NAME(m_chan[ch].addr), ch);
-		save_item(NAME(m_chan[ch].step), ch);
-		save_item(NAME(m_chan[ch].loopst), ch);
-	}
+	save_item(STRUCT_MEMBER(m_chan, enable), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, env), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, pan), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, start), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, addr), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, step), NUM_CHANNELS);
+	save_item(STRUCT_MEMBER(m_chan, loopst), NUM_CHANNELS);
+
 	save_item(NAME(m_cbank));
 	save_item(NAME(m_wbank));
 	save_item(NAME(m_enable));
@@ -140,11 +145,11 @@ void rf5c68_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 				}
 
 				/* fetch the sample and handle looping */
-				sample = m_cache->read_byte((chan.addr >> 11) & 0xffff);
+				sample = m_cache.read_byte((chan.addr >> 11) & 0xffff);
 				if (sample == 0xff)
 				{
 					chan.addr = chan.loopst << 11;
-					sample = m_cache->read_byte((chan.addr >> 11) & 0xffff);
+					sample = m_cache.read_byte((chan.addr >> 11) & 0xffff);
 
 					/* if we loop to a loop point, we're effectively dead */
 					if (sample == 0xff)
@@ -190,6 +195,7 @@ void rf5c68_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 //    RF5C68 write register
 //-------------------------------------------------
 
+// TODO: RF5C164 only?
 u8 rf5c68_device::rf5c68_r(offs_t offset)
 {
 	uint8_t shift;
@@ -269,7 +275,7 @@ void rf5c68_device::rf5c68_w(offs_t offset, u8 data)
 
 u8 rf5c68_device::rf5c68_mem_r(offs_t offset)
 {
-	return m_cache->read_byte(m_wbank | offset);
+	return m_cache.read_byte(m_wbank | offset);
 }
 
 
@@ -279,5 +285,5 @@ u8 rf5c68_device::rf5c68_mem_r(offs_t offset)
 
 void rf5c68_device::rf5c68_mem_w(offs_t offset, u8 data)
 {
-	m_data->write_byte(m_wbank | offset, data);
+	m_cache.write_byte(m_wbank | offset, data);
 }

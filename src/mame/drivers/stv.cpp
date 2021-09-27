@@ -825,8 +825,8 @@ READ32_MEMBER(stv_state::decathlt_prot_r)
 	}
 
 	uint32 ret = 0;
-	if (mem_mask & 0xffff0000) ret |= (m_5838crypt->data_r(space, offset, mem_mask)<<16);
-	if (mem_mask & 0x0000ffff) ret |= m_5838crypt->data_r(space, offset, mem_mask);
+	if (mem_mask & 0xffff0000) ret |= (m_5838crypt->data_r()<<16);
+	if (mem_mask & 0x0000ffff) ret |= m_5838crypt->data_r();
 	return ret;
 }
 
@@ -840,11 +840,11 @@ WRITE32_MEMBER(stv_state::decathlt_prot_srcaddr_w)
 
 	if ((offs & 0x7fffff) == 0x7FFFF0)
 	{
-		m_5838crypt->srcaddr_w(space, offset, data, mem_mask);
+		m_5838crypt->srcaddr_w(offs, data, mem_mask);
 	}
 	else if ((offs & 0x7fffff) == 0x7FFFF4)
 	{
-		m_5838crypt->data_w(space, offset, data, mem_mask);
+		m_5838crypt->data_w(offs, data, mem_mask);
 	}
 }
 
@@ -971,19 +971,19 @@ void stv_state::stv_select_game(int gameno)
 	}
 }
 
-READ8_MEMBER( stv_state::pdr1_input_r )
+uint8_t stv_state::pdr1_input_r()
 {
 	return (ioport("PDR1")->read() & 0x40) | 0x3f;
 }
 
 
-READ8_MEMBER( stv_state::pdr2_input_r )
+uint8_t stv_state::pdr2_input_r()
 {
 	return (ioport("PDR2")->read() & ~0x19) | 0x18 | (m_eeprom->do_read()<<0);
 }
 
 
-WRITE8_MEMBER( stv_state::pdr1_output_w )
+void stv_state::pdr1_output_w(uint8_t data)
 {
 	m_eeprom->clk_write((data & 0x08) ? ASSERT_LINE : CLEAR_LINE);
 	m_eeprom->di_write((data >> 4) & 1);
@@ -992,7 +992,7 @@ WRITE8_MEMBER( stv_state::pdr1_output_w )
 	stv_select_game(data & 3);
 }
 
-WRITE8_MEMBER( stv_state::pdr2_output_w )
+void stv_state::pdr2_output_w(uint8_t data)
 {
 	m_audiocpu->set_input_line(INPUT_LINE_RESET, (data & 0x10) ? ASSERT_LINE : CLEAR_LINE);
 	m_en_68k = ((data & 0x10) >> 4) ^ 1;

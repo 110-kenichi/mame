@@ -2,7 +2,7 @@
 // copyright-holders:Aaron Giles
 /***************************************************************************
 
-    device.c
+    device.cpp
 
     Device interface functions.
 
@@ -95,6 +95,8 @@ device_t::device_t(const machine_config &mconfig, device_type type, const char *
 
 	, m_machine_config(mconfig)
 	, m_input_defaults(nullptr)
+	, m_system_bios(0)
+	, m_default_bios(0)
 	, m_default_bios_tag("")
 
 	, m_machine(nullptr)
@@ -199,8 +201,8 @@ ioport_port *device_t::ioport(std::string tag) const
 
 
 //-------------------------------------------------
-//  ioport - return a pointer to the I/O port
-//  object for a given port name
+//  parameter - return a pointer to a given
+//  parameter
 //-------------------------------------------------
 
 std::string device_t::parameter(const char *tag) const
@@ -431,6 +433,8 @@ attotime device_t::clocks_to_attotime(u64 numclocks) const noexcept
 	if (m_clock == 0)
 		return attotime::never;
 	else if (numclocks < m_clock)
+		return attotime(0, numclocks * m_attoseconds_per_clock);
+	else if ((s64)numclocks == LLONG_MIN && (s32)m_clock == -1)
 		return attotime(0, numclocks * m_attoseconds_per_clock);
 	else
 	{
@@ -1095,7 +1099,7 @@ void device_interface::interface_pre_save()
 //-------------------------------------------------
 //  interface_post_load - called after the loading a
 //  saved state, so that registered variables can
-//  be expaneded as necessary
+//  be expanded as necessary
 //-------------------------------------------------
 
 void device_interface::interface_post_load()

@@ -17,21 +17,15 @@ namespace FM_SoundConvertor
         public int DT2;
         public int AM;
 
+        public int KSR;
+        public int VIB;
+        public int EG;
+        public int WS;
+        public int SSG;
 
 
         public Op()
         {
-            AR = 0;
-            DR = 0;
-            SR = 0;
-            RR = 0;
-            SL = 0;
-            TL = 0;
-            KS = 0;
-            ML = 0;
-            DT = 0;
-            DT2 = 0;
-            AM = 0;
         }
 
 
@@ -48,6 +42,12 @@ namespace FM_SoundConvertor
             DT = op.DT;
             DT2 = op.DT2;
             AM = op.AM;
+
+            KSR = op.KSR;
+            VIB = op.VIB;
+            EG = op.EG;
+            WS = op.WS;
+            SSG = op.SSG;
         }
     }
 
@@ -58,17 +58,20 @@ namespace FM_SoundConvertor
         public string Name;
         public int Number;
         public int FB;
+        public int FB2;
         public int AL;
+        public int CNT = -1;
         public Op[] aOp;
 
-
+        public int KeyShift;
+        public int PitchShift;
+        public int KeyOnDelay;
+        public int KeyOffDelay;
 
         public Tone()
         {
             Name = "";
             Number = -1;
-            FB = 0;
-            AL = 0;
             aOp = new Op[4];
             aOp[0] = new Op();
             aOp[1] = new Op();
@@ -82,6 +85,7 @@ namespace FM_SoundConvertor
             Number = tone.Number;
             FB = tone.FB;
             AL = tone.AL;
+            CNT = tone.CNT;
             aOp = new Op[4];
             aOp[0] = new Op(tone.aOp[0]);
             aOp[1] = new Op(tone.aOp[1]);
@@ -92,6 +96,11 @@ namespace FM_SoundConvertor
         public bool IsValid()
         {
             return (Number >= 0x00 && Number <= 0xff && aOp[0].AR > 0 && aOp[1].AR > 0 && aOp[2].AR > 0 && aOp[3].AR > 0);
+        }
+
+        public bool IsValid2Op()
+        {
+            return (Number >= 0x00 && Number <= 0xff && aOp[0].AR > 0 && aOp[1].AR > 0);
         }
 
         public override string ToString()

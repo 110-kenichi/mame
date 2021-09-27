@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,35 +105,428 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Settings.Default.YMF262EdSize = Size;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override string SupportedExtensionsFilter
+        {
+            get
+            {
+                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, WOPL, OPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.wopl;*.opl";
+            }
+        }
+
+        class Head
+        {
+            public byte Patch;
+            public byte Bank;
+            public uint Offset;
+        }
+
+        public override IEnumerable<Tone> ImportToneFile(string fileName)
+        {
+            string ext = System.IO.Path.GetExtension(fileName);
+            var Option = new Option();
+            List<Tone> tones = new List<Tone>();
+            try
+            {
+                switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                {
+                    case ".WOPL":
+                        {
+                            using (var file = new System.IO.BinaryReader(new System.IO.FileStream(fileName, System.IO.FileMode.Open)))
+                            {
+                                file.BaseStream.Seek(0x11, System.IO.SeekOrigin.Begin);
+                                {
+                                    var val = file.ReadByte();
+                                    //if ((val & 1) != 0)
+                                    //    tone.AMD = 1;
+                                    //if ((val & 2) != 0)
+                                    //    tone.VIB = 1;
+                                }
+
+                                file.BaseStream.Seek(0x57, System.IO.SeekOrigin.Begin);
+                                for (int i = 0; i < 128; i++)
+                                {
+                                    Tone tone1 = new Tone();
+                                    Tone tone2 = new Tone();
+                                    tone1.Number = i * 2;
+                                    tone2.Number = i * 2 + 1;
+
+                                    //32
+                                    var name = Encoding.ASCII.GetString(file.ReadBytes(32));
+                                    var nidx = name.IndexOf('\0');
+                                    if (nidx >= 0)
+                                        name = name.Substring(0, nidx);
+                                    if (name != null && name.Length != 0)
+                                    {
+                                        tone1.Name = name;
+                                        tone2.Name = name + "(2nd)";
+                                    }
+                                    //2
+                                    tone1.KeyShift = YMF262.ReadInt16Big(file);
+                                    //2
+                                    tone2.KeyShift = YMF262.ReadInt16Big(file);
+
+                                    //1
+                                    file.ReadByte();    //MIDI Velocity offset
+                                    //1
+                                    tone2.PitchShift = file.ReadSByte();
+
+                                    //1
+                                    //DrumTimbres[i].BaseNote = (NoteNames)file.ReadByte();
+                                    file.ReadByte();
+                                    //1
+                                    var opmode = file.ReadByte();
+
+                                    if (opmode == 0)        //2OP
+                                    {
+                                        setRegisters(file, tone1, null);
+                                        tones.Add(tone1);
+                                    }
+                                    else if (opmode == 1)   //4OP
+                                    {
+                                        setRegisters(file, tone1, tone2);
+                                        tone1.CNT = (tone1.CNT << 1 | tone2.CNT) + 2;
+                                        tone1.FB2 = tone2.FB;
+                                        tone1.aOp[2] = tone2.aOp[0];
+                                        tone1.aOp[3] = tone2.aOp[1];
+                                        tones.Add(tone1);
+                                    }
+                                    else if (opmode == 3)
+                                    {
+                                        setRegisters(file, tone1, tone2);
+                                        tones.Add(tone1);
+                                        tones.Add(tone2);
+                                    }
+                                    else if ((opmode & 4) == 4)
+                                    {
+                                        //empty
+                                    }
+                                    else
+                                    {
+                                        // System.Windows.Forms.MessageBox.Show("Unsupported op mode " + opmode);
+                                    }
+                                }
+
+                                for (int i = 0; i < 128; i++)
+                                {
+                                    Tone tone1 = new Tone();
+                                    Tone tone2 = new Tone();
+                                    tone1.Number = i * 2 + 256;
+                                    tone2.Number = i * 2 + 256 + 1;
+
+                                    //32
+                                    var name = Encoding.ASCII.GetString(file.ReadBytes(32));
+                                    var nidx = name.IndexOf('\0');
+                                    if (nidx >= 0)
+                                        name = name.Substring(0, nidx);
+                                    if (name != null && name.Length != 0)
+                                    {
+                                        tone1.Name = name;
+                                        tone2.Name = name + "(2nd)";
+                                    }
+                                    else
+                                    {
+                                        tone1.Name = tone1.Number.ToString();
+                                        tone2.Name = tone2.Number.ToString();
+                                    }
+
+                                    //2
+                                    tone1.KeyShift = ReadInt16Big(file);
+                                    //2
+                                    tone2.KeyShift = ReadInt16Big(file);
+
+                                    //1
+                                    file.ReadByte();    //MIDI Velocity offset
+                                    //1
+                                    tone2.PitchShift = file.ReadSByte();
+
+                                    //1
+                                    //TODO: Drum
+                                    //DrumTimbres[i].BaseNote = (NoteNames)file.ReadByte();
+                                    file.ReadByte();
+                                    //1
+                                    var opmode = file.ReadByte();
+
+                                    if (opmode == 0)        //2OP
+                                    {
+                                        setRegisters(file, tone1, null);
+                                        tones.Add(tone1);
+                                    }
+                                    else if (opmode == 1)   //4OP
+                                    {
+                                        setRegisters(file, tone1, tone2);
+                                        tone1.CNT = (tone1.CNT << 1 | tone2.CNT) + 2;
+                                        tone1.aOp[2] = tone2.aOp[0];
+                                        tone1.aOp[3] = tone2.aOp[1];
+                                        tones.Add(tone1);
+                                    }
+                                    else if (opmode == 3)
+                                    {
+                                        setRegisters(file, tone1, tone2);
+                                        tones.Add(tone1);
+                                        tones.Add(tone2);
+                                    }
+                                    else if ((opmode & 4) == 4)
+                                    {
+                                        //empty
+                                    }
+                                    else
+                                    {
+                                        // System.Windows.Forms.MessageBox.Show("Unsupported op mode " + opmode);
+                                    }
+                                }
+
+                            }
+
+
+                        }
+                        break;
+                    case ".OPL":
+                        {
+                            List<Head> list = new List<Head>();
+                            byte maxBankNumber = 0;
+
+                            using (var file = new System.IO.BinaryReader(new System.IO.FileStream(fileName, System.IO.FileMode.Open)))
+                            {
+                                while (true)
+                                {
+                                    //read head
+                                    Head p = new Head();
+                                    p.Patch = file.ReadByte();
+                                    p.Bank = file.ReadByte();
+                                    p.Offset = file.ReadUInt32();
+
+                                    if (p.Patch == 0xff && p.Bank == 0xff)
+                                        break;
+
+                                    if ((p.Bank != 0x7F) && (p.Bank > maxBankNumber))
+                                        maxBankNumber = p.Bank;
+
+                                    list.Add(p);
+                                };
+
+                                for (int i = 0; i < list.Count; i++)
+                                {
+                                    var p = list[i];
+                                    file.BaseStream.Seek(p.Offset, System.IO.SeekOrigin.Begin);
+
+                                    bool isPerc = (p.Bank == 0x7F);
+                                    int gmPatchId = isPerc ? p.Patch : (p.Patch + (p.Bank * 128));
+
+                                    ushort insLen = file.ReadUInt16();
+                                    insLen -= 2;
+
+                                    byte[] idata = new byte[24];
+                                    if (insLen < 24)
+                                    {
+                                        idata = file.ReadBytes(insLen);
+                                    }
+                                    else
+                                    {
+                                        idata = file.ReadBytes(24);
+                                        file.BaseStream.Seek(insLen - 24, System.IO.SeekOrigin.Current);
+                                    }
+
+                                    //var tim = Timbres[p.Patch + (isPerc ? 128 : 0)];
+                                    Tone tone = new Tone();
+                                    tone.Number = i;
+                                    tone.Name = i.ToString();
+
+                                    //ins.percNoteNum = (isPerc) ? idata[0] : 0;
+                                    //ins.note_offset1 = (isPerc) ? 0 : idata[0];
+                                    //if (isPerc)
+                                    //{
+                                    //    var t = DrumTimbres[p.Patch];
+                                    //    t.BaseNote = (NoteNames)idata[0];
+                                    //    t.TimbreNumber = (ProgramAssignmentNumber)(p.Patch + 128);
+                                    //}
+
+                                    tone.aOp[0].AM = (byte)((idata[1] >> 7) & 0x1);
+                                    tone.aOp[0].VIB = (byte)((idata[1] >> 6) & 0x1);
+                                    tone.aOp[0].EG = (byte)((idata[1] >> 5) & 0x1);
+                                    tone.aOp[0].KSR = (byte)((idata[1] >> 4) & 0x1);
+                                    tone.aOp[0].ML = (byte)((idata[1]) & 0xf);
+
+                                    tone.aOp[0].KS = (byte)((idata[2] >> 6) & 0x03);
+                                    tone.aOp[0].TL = (byte)((idata[2]) & 0x3f);
+
+                                    tone.aOp[0].AR = (byte)((idata[3] >> 4) & 0x0f);
+                                    tone.aOp[0].DR = (byte)((idata[3]) & 0x0f);
+
+                                    tone.aOp[0].SL = (byte)((idata[4] >> 4) & 0x0f);
+                                    tone.aOp[0].RR = (byte)((idata[4]) & 0x0f);
+
+                                    tone.aOp[0].WS = (byte)((idata[5]) & 0x07);
+
+                                    tone.aOp[1].AM = (byte)((idata[7] >> 7) & 0x1);
+                                    tone.aOp[1].VIB = (byte)((idata[7] >> 6) & 0x1);
+                                    tone.aOp[1].EG = (byte)((idata[7] >> 5) & 0x1);
+                                    tone.aOp[1].KSR = (byte)((idata[7] >> 4) & 0x1);
+                                    tone.aOp[1].ML = (byte)((idata[7]) & 0xf);
+
+                                    tone.aOp[1].KS = (byte)((idata[8] >> 6) & 0x03);
+                                    tone.aOp[1].TL = (byte)((idata[8]) & 0x3f);
+
+                                    tone.aOp[1].AR = (byte)((idata[9] >> 4) & 0x0f);
+                                    tone.aOp[1].DR = (byte)((idata[9]) & 0x0f);
+
+                                    tone.aOp[1].SL = (byte)((idata[10] >> 4) & 0x0f);
+                                    tone.aOp[1].RR = (byte)((idata[10]) & 0x0f);
+
+                                    tone.aOp[1].WS = (byte)((idata[11]) & 0x07);
+
+                                    tone.CNT = (byte)((idata[6]) & 0x01);
+                                    tone.FB = (byte)((idata[6] >> 1) & 0x07);
+
+                                    tones.Add(tone);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        return base.ImportToneFile(fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+            }
+            return tones;
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="tim1"></param>
+        /// <param name="tim2"></param>
+        private void setRegisters(BinaryReader file, Tone tim1, Tone tim2)
+        {
+            //1
+            var reg = file.ReadByte();
+            tim1.CNT = (byte)(reg & 1);
+            tim1.FB = (byte)((reg >> 1) & 7);
+            //1
+            reg = file.ReadByte();
+            if (tim2 != null)
+            {
+                tim2.CNT = (byte)(reg & 1);
+                tim2.FB = (byte)((reg >> 1) & 7);
+            }
+            for (int opi = 0; opi < 4; opi++)
+            {
+                Op op = null;
+                switch (opi)
+                {
+                    case 0:
+                        op = tim1.aOp[1];
+                        break;
+                    case 1:
+                        op = tim1.aOp[0];
+                        break;
+                    case 2:
+                        if (tim2 != null)
+                            op = tim2.aOp[1];
+                        break;
+                    case 3:
+                        if (tim2 != null)
+                            op = tim2.aOp[0];
+                        break;
+                }
+
+                //1
+                reg = file.ReadByte();
+                if (op != null)
+                {
+                    op.AM = (byte)((reg >> 7) & 0x01);
+                    op.VIB = (byte)((reg >> 6) & 0x01);
+                    op.EG = (byte)((reg >> 5) & 0x01);
+                    op.KSR = (byte)((reg >> 4) & 0x01);
+                    op.ML = (byte)((reg >> 0) & 0x0f);
+                }
+                //1
+                reg = file.ReadByte();
+                if (op != null)
+                {
+                    op.KS = (byte)((reg >> 6) & 0x03);
+                    op.TL = (byte)((reg >> 0) & 0x3f);
+                }
+                //1
+                reg = file.ReadByte();
+                if (op != null)
+                {
+                    op.AR = (byte)((reg >> 4) & 0x0f);
+                    op.DR = (byte)((reg >> 0) & 0x0f);
+                }
+                //1
+                reg = file.ReadByte();
+                if (op != null)
+                {
+                    op.SL = (byte)((reg >> 4) & 0x0f);
+                    op.RR = (byte)((reg >> 0) & 0x0f);
+                }
+                //1
+                reg = file.ReadByte();
+                if (op != null)
+                {
+                    op.WS = (byte)((reg >> 0) & 0x07);
+                }
+            }
+            if (tim2 != null)
+            {
+                //2
+                tim2.KeyOnDelay = ReadInt16Big(file);
+                //2
+                tim2.KeyOffDelay = ReadInt16Big(file);
+            }
+        }
+
         protected override void ApplyTone(Tone tone)
         {
             int alg = 0;
-            switch (tone.AL)
+            bool native = false;
+            if (tone.CNT == -1)
             {
-                case 0:
-                    alg = 2;
-                    break;
-                case 1:
-                    alg = 4;    //?
-                    break;
-                case 2:
-                    alg = 4;    //?
-                    break;
-                case 3:
-                    alg = 3;    //?
-                    break;
-                case 4:
-                    alg = 3;
-                    break;
-                case 5:
-                    alg = 5;    //?
-                    break;
-                case 6:
-                    alg = 5;    //?
-                    break;
-                case 7:
-                    alg = 5;
-                    break;
+                switch (tone.AL)
+                {
+                    case 0:
+                        alg = 2;
+                        break;
+                    case 1:
+                        alg = 4;    //?
+                        break;
+                    case 2:
+                        alg = 4;    //?
+                        break;
+                    case 3:
+                        alg = 3;    //?
+                        break;
+                    case 4:
+                        alg = 3;
+                        break;
+                    case 5:
+                        alg = 5;    //?
+                        break;
+                    case 6:
+                        alg = 5;    //?
+                        break;
+                    case 7:
+                        alg = 5;
+                        break;
+                }
+            }
+            else
+            {
+                alg = tone.CNT;
+                native = true;
             }
             ((RegisterValue)this["General"]["ALG"]).Value = alg;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
@@ -142,21 +537,34 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             for (int i = 0; i < 4; i++)
             {
-                ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR / 2;
-                ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR / 2;
+                if (!native)
+                {
+                    ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR / 2;
+                    ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR / 2;
+                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
+                    ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
+                }
+                else
+                {
+                    ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
+                }
                 ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
                 ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
-                ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
-                ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
                 ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
-                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tone.aOp[i].KSR;
                 ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = 0;
-                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = 0;
+                ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = tone.aOp[i].VIB;
+                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tone.aOp[i].EG;
+                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
             }
-            timbre.Memo = tone.Name;
+
+            timbre.KeyShift = tone.KeyShift;
+            timbre.PitchShift = tone.PitchShift;
+            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>
@@ -167,30 +575,81 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             YMF262Timbre tim = (YMF262Timbre)timbre;
 
-            tim.ALG = (byte)tone.AL;
+            int alg = 0;
+            bool native = false;
+            if (tone.CNT == -1)
+            {
+                switch (tone.AL)
+                {
+                    case 0:
+                        alg = 2;
+                        break;
+                    case 1:
+                        alg = 4;    //?
+                        break;
+                    case 2:
+                        alg = 4;    //?
+                        break;
+                    case 3:
+                        alg = 3;    //?
+                        break;
+                    case 4:
+                        alg = 3;
+                        break;
+                    case 5:
+                        alg = 5;    //?
+                        break;
+                    case 6:
+                        alg = 5;    //?
+                        break;
+                    case 7:
+                        alg = 5;
+                        break;
+                }
+            }
+            else
+            {
+                alg = tone.CNT;
+                native = true;
+            }
+
+            tim.ALG = (byte)alg;
             tim.FB = (byte)tone.FB;
-            tim.FB2 = (byte)tone.FB;
+            tim.FB2 = (byte)tone.FB2;
             tim.GlobalSettings.Enable = false;
             tim.GlobalSettings.DAM = null;
             tim.GlobalSettings.DVB = null;
 
             for (int i = 0; i < 3; i++)
             {
-                tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
-                tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
+                if (!native)
+                {
+                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
+                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
+                    tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
+                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
+                }
+                else
+                {
+                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
+                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
+                    tim.Ops[i].SR = (byte)(tone.aOp[i].SR);
+                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
+                }
                 tim.Ops[i].RR = (byte)tone.aOp[i].RR;
                 tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
-                tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
                 tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
-                tim.Ops[i].KSR = 0;
+                tim.Ops[i].KSR = (byte)tone.aOp[i].KSR;
                 tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
                 tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].VIB = 0;
-                tim.Ops[i].EG = 0;
-                tim.Ops[i].WS = 0;
+                tim.Ops[i].VIB = (byte)tone.aOp[i].VIB;
+                tim.Ops[i].EG = (byte)tone.aOp[i].EG;
+                tim.Ops[i].WS = (byte)tone.aOp[i].WS;
             }
-            timbre.Memo = tone.Name;
+
+            tim.KeyShift = tone.KeyShift;
+            tim.PitchShift = tone.PitchShift;
+            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>

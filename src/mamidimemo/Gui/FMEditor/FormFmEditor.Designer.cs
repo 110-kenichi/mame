@@ -517,10 +517,10 @@
             // 
             // openFileDialogTone
             // 
-            this.openFileDialogTone.DefaultExt = "*.mid";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM)|*.muc;*.dat;*.mwi;*.mml;*.fxb";
+            this.openFileDialogTone.DefaultExt = "*.muc";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi";
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
-            this.openFileDialogTone.Title = "Load MIDI file";
+            this.openFileDialogTone.Title = "Load tone file";
             // 
             // metroLabel1
             // 

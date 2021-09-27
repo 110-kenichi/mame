@@ -1,10 +1,13 @@
-MAmidiMEmo V2.6.4.0 / Itoken (c)2019, 2020 / GPL-2.0
+MAmidiMEmo 3.9.3.1 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
 MAmidiMEmo is a virtual chiptune sound MIDI module using a MAME sound engine.
 You can control various chips and make sound via MIDI I/F.
 So, you don't need to use dedicated tracker and so on anymore. You can use your favorite MIDI sequencer to make a chip sound.
+
+See samples
+https://www.youtube.com/channel/UCGYO2bEPPIM2LTNDbBEDaAQ
 
 MAmidiMEmo adopts multi timbre method. That mean you can play multi chords on MIDI 1ch if the chip has multi ch.
 
@@ -56,6 +59,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		CM-32P This is an incomplete simulator, not an emulator.
 		       You can mod and add your custom sounds by editing tbl and sound font files.
 		       Please contact me if you can help me to create CM-32P and SN-U110 sound fonts.
+		TMS5220, SP0256, SAM
 
    Note: You can add the chip up to 8 per same chip type and MAmidiMEmo eats more CPU power.
 
@@ -145,6 +149,19 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	YM2608:
      https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
+	TMS5220
+	 https://www.dexsilicium.com/tms5220.pdf
+     http://www.stuartconner.me.uk/ti_portable_speech_lab/ti_portable_speech_lab.htm
+
+	SP0256
+	 http://spatula-city.org/~im14u2c/sp0256-al2/Archer_SP0256-AL2.pdf
+
+	SAM
+	 https://github.com/s-macke/SAM
+	 http://www.retrobits.net/atari/sam.shtml
+
+	uPD1771
+	 http://takeda-toshiya.my.coocan.jp/scv/scv.pdf
 
    *[Channels]
     Select which MIDI ch messages the chip receives.
@@ -223,9 +240,15 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 12. SPFM
 
-   You can use a real sound chip instead of software emulation chip on 32bit version.
+   You can use a real sound chip instead of software emulation chip.
    Currently supported chips are YM2151 and YM2608 on SPFM.
    Before using the SPFM, you must setup SCCI by using the scciconfig.exe.
+
+13. VSIF
+
+	You can use a real machine instead of software emulation chip.
+	Please see tha manual.
+	https://github.com/110-kenichi/mame/blob/master/docs/MAmidiMEmo/Manual.pdf
 
 *** Known issues and limitations *** 
 
@@ -234,7 +257,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    
 *** How to create build environment ***
 
-   1. Install Visual Studio 2017 version 15.7.6. w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
+   1. Install *LATEST* Visual Studio 2019 w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
    2. Install Windows 8.1 SDK and 10 SDK
    3. Install MinGW Development Environment(https://www.mamedev.org/tools/)
    4. Install vcpkg
@@ -245,21 +268,97 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-2.6.4.0 Supported dynamic wave form changing  on the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
-        Removed force dump disabling hack on FM chips.
-2.6.3.0 Fixed RYTHM ch volume calculation on the YM2608 chip.
+3.9.3.1	Supported importing a OPL file to YMF262 Tone Editor.
+3.9.3.0	Added Key On/Off delay time property to a Timbre property.
+		Supported importing a WOPL file to YMF262 Tone Editor.
+		Supported importing a OPL file to YM3812 Tone Editor.
+		Improved YM2413 drum sounds. You can specify custom F-Num value and added enhanced drum set.
+		Supported Generic UART for AY-3-8910 for VGMPlayer.
+3.9.2.2 Fixed performance hit for VSIF
+		Improved "Piano" control graphics.
+3.9.2.1 Improved VGMPlayer & VSIF for MSX.
+3.9.2.0 Updated VGMPlayer to support MSX.
+		Fixed Mami path parsing for reading the VSTI ini file.
+3.9.1.0 Improved CombinedTimbre feature.
+3.9.0.0 Improved CombinedTimbre feature.
+		Fixed some minor bug.
+3.8.0.1 Fixed note name F# does not exist on the DrumTimbre.BaseNote property. ;-< ★You need to re-configure old save data if you use it.★
+3.8.0.0 Added Velocity Mapping feature.
+		Supported VSIF for MSX. You can drive PSG, OPLL, SCC, OPL3 sound chip on the real MSX.
+3.7.5.0 Supported Scale Tuning. You can set it on ScaleTuning property to the MIDI(Dedicated) category.
+		Supported Channel After Touch MIDI event. You can set the effect on the SCCS property on a Timbre property.
+3.7.4.0 Fixed Master Clock prop crashing when resetting the value to default.
+		Supported DPCM play for Real Famicom.
+		Added ArpMethod property for FxSettings.
+		Supported 64bit version of the SCCI.
+3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and later samples.
+3.7.3.1 Improved square wave low frequency range of VSIF - Famicom.
+		Added function that can be cleared write cache data when Panic button pressed.
+3.7.3.0 Supported VSIF for Famicom.
+3.7.2.0 Ignored invalid VGM data and improved performance for VGMPlayer.
+		Supported 115200bps for VSIF for Genesis UART mode.
+3.7.1.0 Fixed the Panic button that the FM synthesizer can be stopped completely.
+		Updated VSIF engine and added VSIF VGMPlayer.
+3.7.0.0 Fixed unexpected font error on startup ( Just ignoring... ).
+        Fixed unexpected sound stop (retry)
+		Added VSIF sound engine to play music through Real SMS, Genesis console.
+3.6.2.0 Added PanShift Envelope property to the FxS.
+3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
+3.6.0.1 Fixed unexpected sound stop (maybe)
+3.6.0.0 Added uPD1771.
+3.5.1.3 Fixed unexpected sounding in Huc6280.
+3.5.1.2 Improved performance (a little) in VST mode.
+3.5.1.1 Fixed unexpected error occurred while enabling SCCI in VST mode.
+3.5.1.0 Supported localization for ja-JP.
+3.5.0.1 Fixed crashing in POKEY.
+3.5.0.0 Supported VSTi plugin mode. Use the .\VST\MAmiVSTi.dll file and edit ini file. DO NOT USE old .\MAmiVSTi.dll file. Trash it.
+3.3.2.1 Fixed FxS not working in some chips.
+3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
+3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
+        Updated MAME Core.
+3.3.0.0 Added SN76477.
+        Fixed double value slider could not set float value properly.
+3.2.0.2 Fixed SAM icon.
+3.2.0.0 Added the SAM is a TTS software for consoles of the ATARI and AMIGA.
+3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
+3.1.0.0 Added SP0256 Chip.
+3.0.0.0 Added TMS5220 Chip and preset voices.
+2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
+        Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
+2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
+2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
+        Breaking changed OPNA SSG sound type property.
+2.9.0.1 Fixed unexpected exception while sounding.
+2.9.0.0 Added Master Clock property to YM2151, YM2608, YM2610B, YM2612.
+        Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature needs more CPU power.
+2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
+2.8.1.0 Updated sample sound and fixed some minor issue.
+2.8.0.1 Fixed unexpected error in FM Tone Selector.
+2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
+        Added Random button & FIR button to the WSG Editor.
+2.7.1.1 Fixed YMF262 FM Synthesis editor error.
+2.7.1.0 Fixed YMF262 FM Synthesis editor error.
+2.7.0.0 Fixed unexpected sounding when volume changing on CUS30.
+2.6.9.0 Improved new sound channel assignment algorithm.
+2.6.8.0 Fixed new sound channel assignment algorithm for the Drum ch.
+2.6.7.0 Fixed HOLD1 not working properly.
+2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
+2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).
+2.6.4.0 Supported dynamic wave form changing for the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
+        Removed force dump disabling hack in FM chips.
+2.6.3.0 Fixed RYTHM ch volume calculation in the YM2608 chip.
         Fixed SCCS, GPCS values calculation.
 		Improved sound channel assignment algorithm to keep last sounding channel. If you does not like this, please contact me.
-2.6.2.0 Turned off write cache for frequency register on the real YM2608 and YM2515 chip.
-2.6.1.0 Fixed CH mode set 3 instead of 6 on YM2608. Affected only S/W emulation.
+2.6.2.0 Turned off write cache for frequency register in the real YM2608 and YM2515 chip.
+2.6.1.0 Fixed CH mode set 3 instead of 6 in YM2608. Affected only S/W emulation.
 2.6.0.0 Fixed crashing when FM operators was reset.
-		Fixed SSG tone frequency on real YM2608 chip.
+		Fixed SSG tone frequency in real YM2608 chip.
 2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
 2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
-2.5.7.0 Added "Dumping sound" to RHYTHM sound on YM2608 when key off received.
-        Fixed ADPCM-B not sounding unexpectedly on YM2608.
-		Improved ADPCM-B on YM2608 transfer speed via SCCI.
-		Fixed SSG sounding unexpectedly when volume changing on YM2608 and YM2610B
+2.5.7.0 Added "Dumping sound" to RHYTHM sound in YM2608 when key off received.
+        Fixed ADPCM-B not sounding unexpectedly in YM2608.
+		Improved ADPCM-B in YM2608 transfer speed via SCCI.
+		Fixed SSG sounding unexpectedly when volume changing in YM2608 and YM2610B
 		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
 2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
 2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
@@ -270,7 +369,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
         Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
 		Fixed CUS30 Volume calculation.
 		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
-		Supported the SPFM to sound on real chip for YM2151 and YM2608 chips. *Only 32 bit version*
+		Supported the SPFM to sound in real chip for YM2151 and YM2608 chips. *Only 32 bit version*
 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
         Added FM Synthesis register value randomizer to FM Synthesis Editor.
 		Added FM Synthesis global register to FM Synthesis Editor.
@@ -281,11 +380,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.4.0.1 Improved UI.
 		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
 		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
-		Fixed freezing on MT32.
+		Fixed freezing in MT32.
 		Fixed key off behavior of Fx Engine.
 		Updated MSGS.SF for CM32-P.
 2.4.0.0 Added Envelope Editor.
-2.3.0.2 Fixed key off ignored issue while modulation is active on OPL.
+2.3.0.2 Fixed key off ignored issue while modulation is active in OPL.
 		Fixed to turn off modulation after key off.
 		Applied Metro Style GUI and improved UI.
 2.3.0.1 Fixed YMF262 sample file and some minor bugs.
@@ -293,13 +392,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Fixed Combined Drum does not sounding properly.
 2.2.5.1 Improved FM Synthesis Editor UI.
 2.2.5.0 Added PCM playback feature to HuC6280.
-		Fixed an error when opening the floating point value slider on some props.
+		Fixed an error when opening the floating point value slider in some props.
 		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
 		Added a FM Synthesis GUI Editor.
 2.2.4.0 Fixed issue of modulation CC.
-		Fixed an error on MSM5232.
-		Improved NOISE ch freqeucncy on SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
-		Improved NOISE ch function on AY8910.
+		Fixed an error in MSM5232.
+		Improved NOISE ch freqeucncy in SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
+		Improved NOISE ch function in AY8910.
 2.2.3.0 Fixed issues related with SID property.
 		Improved sf loader for SPC700 and C140.
 		Added ZoneID remover script.
@@ -326,11 +425,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 2.0.3.0 Improved sounds output timing accuracy.
         Supported HOLD1 control change message.
 2.0.2.0 Improved MT-32 sounds output timing & latency.
-2.0.1.0 Fixed crashing on some chip...
+2.0.1.0 Fixed crashing in some chip...
 2.0.0.0 Fixed some minor bugs.
 			Panic button sometimes does not work.
 			SerializeData does not work and cause crash.
-			FxS Arp does not work properly on Fixed mode.
+			FxS Arp does not work properly in Fixed mode.
 			Property Reset menu does not work properly.
 			Mono mode does not work properly.
 			RP2A03 Tri channel is stopped by Noise channel.
@@ -420,3 +519,33 @@ https://github.com/obiwanjacobi/vst.net
 
 * FM-SoundConvertor - Copyright (c) 2020 D.M.88
 https://github.com/DM-88/FM-SoundConvertor
+
+* LegacyWrapper - Copyright (c) 2019 Franz Wimmer
+https://github.com/CodefoundryDE/LegacyWrapper
+
+* FastDelegate.Net - Copyright (c) 2015 coder0xff
+https://github.com/coder0xff/FastDelegate.Net
+
+* ArminJo/Talkie - Peter Knight.
+https://github.com/ArminJo/Talkie
+
+* SP0256-AL2 ROM Image - Microchip
+http://spatula-city.org/~im14u2c/sp0256-al2/
+
+* The CMU Pronouncing Dictionary - CMU
+http://www.speech.cs.cmu.edu/cgi-bin/cmudict
+
+* SAM - Sebastian Macke
+https://github.com/s-macke/SAM
+
+* rpclib - Copyright (c) 2015-2017, Tamás Szelei
+https://github.com/rpclib/rpclib
+
+* Minimal NES example using ca65 - Brad Smith
+https://github.com/bbbradsmith/NES-ca65-example/tree/fds
+
+* MDFourier - Artemio
+https://github.com/ArtemioUrbina/MDFourier
+
+* kss2vgm - Mitsutaka Okazaki (kss2vgm is used only by VGMPlayer)
+https://github.com/digital-sound-antiques/kss2vgm/blob/master/LICENSE

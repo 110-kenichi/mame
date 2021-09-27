@@ -121,6 +121,8 @@ blw700i.cpp
 bmjr.cpp
 bml3.cpp
 bob85.cpp
+boss_se70.cpp
+boss_sx700.cpp
 bpmmicro.cpp
 br8641.cpp
 bullet.cpp
@@ -182,6 +184,7 @@ comx35.cpp
 concept.cpp
 conchess.cpp
 conic_cchess2.cpp
+consola_emt.cpp
 controlid.cpp
 cortex.cpp
 cosmicos.cpp
@@ -256,6 +259,7 @@ emu3.cpp
 enmirage.cpp
 ep64.cpp
 epic14e.cpp
+ergo201.cpp
 esprit.cpp
 esq1.cpp
 esq5505.cpp
@@ -293,6 +297,7 @@ fidel_desdis.cpp
 fidel_eag68k.cpp
 fidel_elite.cpp
 fidel_excel.cpp
+fidel_msc.cpp
 fidel_phantom.cpp
 fidel_sc12.cpp
 fidel_sc6.cpp
@@ -320,6 +325,12 @@ gamemachine.cpp
 gamepock.cpp
 gb.cpp
 gba.cpp
+generalplus_gpl16250.cpp
+generalplus_gpl16250_mobigo.cpp
+generalplus_gpl16250_nand.cpp
+generalplus_gpl16250_rom.cpp
+generalplus_gpl16250_romram.cpp
+generalplus_gpl16250_spi.cpp
 generalplus_gpl32612.cpp
 geneve.cpp
 geniusiq.cpp
@@ -336,6 +347,10 @@ gp2x.cpp
 gp32.cpp
 grfd2301.cpp
 gridcomp.cpp
+gs6502.cpp
+gs6809.cpp
+gscpm.cpp
+gsz80.cpp
 h01x.cpp
 h19.cpp
 h8.cpp
@@ -451,6 +466,7 @@ kim1.cpp
 konin.cpp
 korgds8.cpp
 korgdss1.cpp
+korgdvp1.cpp
 korgdw8k.cpp
 korgm1.cpp
 korgz3.cpp
@@ -504,6 +520,7 @@ mc8030.cpp
 mcb216.cpp
 mccpm.cpp
 mdisk.cpp
+mdt60.cpp
 megadriv.cpp
 megadriv_rad.cpp
 mekd1.cpp
@@ -619,7 +636,7 @@ notetaker.cpp
 novag_cforte.cpp
 novag_const.cpp
 novag_diablo.cpp
-novag_presto.cpp
+novag_micro2.cpp
 novag_savant.cpp
 novag_sexpert.cpp
 novag_supremo.cpp
@@ -779,6 +796,7 @@ roland_sc88.cpp
 roland_tb303.cpp
 roland_tr606.cpp
 roland_tr707.cpp
+roland_tr909.cpp
 roland_u20.cpp
 rt1715.cpp
 rvoice.cpp
@@ -795,10 +813,12 @@ saitek_delta1.cpp
 saitek_exchess.cpp
 saitek_leonardo.cpp
 saitek_mark5.cpp
+saitek_minichess.cpp
 saitek_prschess.cpp
 saitek_renaissance.cpp
 saitek_risc2500.cpp
 saitek_schess.cpp
+saitek_simultano.cpp
 saitek_ssystem3.cpp
 saitek_stratos.cpp
 saitek_superstar.cpp
@@ -887,8 +907,6 @@ sun2.cpp
 sun3.cpp
 sun3x.cpp
 sun4.cpp
-sunplus_unsp20soc.cpp
-sunplus_unsp20soc_mobigo.cpp
 super6.cpp
 super80.cpp
 superga2.cpp
@@ -1064,9 +1082,11 @@ x1twin.cpp
 x68k.cpp
 xavix.cpp
 xavix2.cpp
+xbase09.cpp
 xbox.cpp
 xerox820.cpp
 xor100.cpp
+ymdx11.cpp
 ymmu100.cpp
 ymmu50.cpp
 ymmu80.cpp
@@ -1074,6 +1094,7 @@ ymtx81z.cpp
 ymvl70.cpp
 z100.cpp
 z1013.cpp
+z22.cpp
 z29.cpp
 z80dev.cpp
 z80ne.cpp

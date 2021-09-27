@@ -8,6 +8,7 @@ typedef void(CALLBACK* MainWrapperProc)(HMODULE);
 
 typedef int(CALLBACK* InitializeDotNetProc)();
 typedef int(CALLBACK* HasExitedProc)();
+typedef void(CALLBACK* VstStartedProc)();
 typedef void(CALLBACK* SoundUpdatingProc)();
 typedef void(CALLBACK* SoundUpdatedProc)();
 typedef void(CALLBACK* RestartApplicationProc)();
@@ -16,12 +17,13 @@ typedef int(CALLBACK* IsVSTiModeProc)();
 typedef void(CALLBACK* SendMidiEventProc)(unsigned char data1, unsigned char data2, unsigned char data3);
 typedef void(CALLBACK* SendMidiSysEventProc)(unsigned char *data, int length);
 typedef int(CALLBACK* CloseApplicationProc)();
-typedef void(CALLBACK*  LoadDataProc)(byte* data, int length);
+typedef void(CALLBACK*  LoadDataProc)(unsigned char* data, int length);
 typedef int(CALLBACK* SaveDataProc)(void** saveBuf);
 typedef void(CALLBACK* SoundTimerCallbackProc)();
 
 InitializeDotNetProc initializeDotNet = 0;
 HasExitedProc hasExited = 0;
+VstStartedProc vstStarted = 0;
 SoundUpdatingProc soundUpdating = 0;
 SoundUpdatedProc soundUpdated = 0;
 RestartApplicationProc restartApplication = 0;
@@ -37,11 +39,14 @@ SoundTimerCallbackProc soundTimerCallback = 0;
 DWORD WINAPI StartMAmidiMEmoMainThread(LPVOID lpParam)
 {
 	HMODULE hModule = LoadLibrary("wrapper.dll");
-	FARPROC proc = GetProcAddress(hModule, "_MainWarpper@4");
-	if (proc != NULL)
+	if (hModule != NULL)
 	{
-		MainWrapperProc main = reinterpret_cast<MainWrapperProc>(proc);
-		main(GetModuleHandle(NULL));
+		FARPROC proc = GetProcAddress(hModule, "_MainWarpper@4");
+		if (proc != NULL)
+		{
+			MainWrapperProc main = reinterpret_cast<MainWrapperProc>(proc);
+			main(GetModuleHandle(NULL));
+		}
 	}
 	return 0;
 }
@@ -76,6 +81,9 @@ void StartMAmidiMEmoMain()
 	proc = GetProcAddress(hModule, "HasExited");
 	if (proc != NULL)
 		hasExited = reinterpret_cast<HasExitedProc>(proc);
+	proc = GetProcAddress(hModule, "VstStarted");
+	if (proc != NULL)
+		vstStarted = reinterpret_cast<VstStartedProc>(proc);
 	proc = GetProcAddress(hModule, "SoundUpdating");
 	if (proc != NULL)
 		soundUpdating = reinterpret_cast<SoundUpdatingProc>(proc);
@@ -140,6 +148,11 @@ int HasExited()
 	return hasExited();
 }
 
+void VstStarted()
+{
+	vstStarted();
+}
+
 void SoundUpdating()
 {
 	return soundUpdating();
@@ -193,7 +206,7 @@ void CloseApplication()
 	closeApplication();
 }
 
-void  LoadData(byte * data, int length)
+void  LoadData(unsigned char* data, int length)
 {
 	loadData(data, length);
 }

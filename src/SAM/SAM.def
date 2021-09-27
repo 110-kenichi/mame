@@ -1,0 +1,6 @@
+LIBRARY   SAM
+EXPORTS
+	SaySAM
+	GetBuffer
+	GetBufferLength
+	TextToPhonemes

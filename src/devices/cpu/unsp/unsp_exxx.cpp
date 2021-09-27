@@ -49,14 +49,15 @@ void unsp_12_device::execute_exxx_group(uint16_t op)
 	else if (((op & 0xf1c0) == 0xe040))
 	{
 		// Register BITOP  BITOP Rd,offset
-		uint8_t bitop =  (op & 0x0030) >> 4;
-		uint8_t rd =     (op & 0x0e00) >> 9;
-		uint8_t offset = (op & 0x000f) >> 0;
+		const uint8_t bitop =  (op & 0x0030) >> 4;
+		const uint8_t rd =     (op & 0x0e00) >> 9;
+		const uint8_t offset = (op & 0x000f) >> 0;
+		m_core->m_r[REG_SR] &= ~UNSP_Z;
+		m_core->m_r[REG_SR] |= BIT(m_core->m_r[rd], offset) ? 0 : UNSP_Z;
 
 		switch (bitop)
 		{
-		case 0x00:
-			fatalerror("UNSP: unknown opcode tstb Rd,offset (%04x) at %04x\n", op, UNSP_LPC);
+		case 0x00: // tstb
 			return;
 
 		case 0x01: // setb
@@ -76,92 +77,152 @@ void unsp_12_device::execute_exxx_group(uint16_t op)
 	else if (((op & 0xf1c0) == 0xe180))
 	{
 		// Memory BITOP    BITOP [Rd], offset
-		uint8_t bitop =  (op & 0x0030) >> 4;
-		uint8_t rd =     (op & 0x0e00) >> 9;
-		uint8_t offset = (op & 0x000f) >> 0;
-		logerror("%s [%s],%d\n", bitops[bitop], regs[rd], offset);
-		unimplemented_opcode(op);
+		const uint8_t bitop =  (op & 0x0030) >> 4;
+		const uint8_t rd =     (op & 0x0e00) >> 9;
+		const uint8_t offset = (op & 0x000f) >> 0;
+		const uint16_t addr =  m_core->m_r[rd];
+		const uint16_t orig =  read16(addr);
+		m_core->m_r[REG_SR] &= ~UNSP_Z;
+		m_core->m_r[REG_SR] |= BIT(orig, offset) ? 0 : UNSP_Z;
+
+		switch (bitop)
+		{
+		case 0x00: // tstb
+			return;
+
+		case 0x01: // setb
+			write16(addr, orig | (1 << offset));
+			return;
+
+		case 0x02: // clrb
+			write16(addr, orig & ~(1 << offset));
+			return;
+
+		case 0x03:
+			write16(addr, orig ^ (1 << offset));
+			return;
+		}
 		return;
 	}
 	else if (((op & 0xf1c0) == 0xe1c0))
 	{
 		// Memory BITOP    BITOP ds:[Rd], offset
-		uint8_t bitop =  (op & 0x0030) >> 4;
-		uint8_t rd =     (op & 0x0e00) >> 9;
-		uint8_t offset = (op & 0x000f) >> 0;
-		logerror("%s ds:[%s],%d\n", bitops[bitop], regs[rd], offset);
-		unimplemented_opcode(op);
+		const uint8_t bitop =  (op & 0x0030) >> 4;
+		const uint8_t rd =     (op & 0x0e00) >> 9;
+		const uint8_t offset = (op & 0x000f) >> 0;
+		const uint32_t addr =  m_core->m_r[rd] | (get_ds() << 16);
+		const uint16_t orig =  read16(addr);
+		m_core->m_r[REG_SR] &= ~UNSP_Z;
+		m_core->m_r[REG_SR] |= BIT(orig, offset) ? 0 : UNSP_Z;
+
+		switch (bitop)
+		{
+		case 0x00: // tstb
+			return;
+
+		case 0x01: // setb
+			write16(addr, orig | (1 << offset));
+			return;
+
+		case 0x02: // clrb
+			write16(addr, orig & ~(1 << offset));
+			return;
+
+		case 0x03:
+			write16(addr, orig ^ (1 << offset));
+			return;
+		}
 		return;
 	}
 	else if (((op & 0xf1c8) == 0xe100))
 	{
 		// Memory BITOP    BITOP [Rd], Rs
-		uint8_t bitop = (op & 0x0030) >> 4;
-		uint8_t rd =    (op & 0x0e00) >> 9;
-		uint8_t rs =    (op & 0x0007) >> 0;
-		logerror("%s [%s],%s\n", bitops[bitop], regs[rd], regs[rs]);
-		unimplemented_opcode(op);
+		const uint8_t bitop =  (op & 0x0030) >> 4;
+		const uint8_t rd =     (op & 0x0e00) >> 9;
+		const uint8_t rs =     (op & 0x0007) >> 0;
+		const uint8_t offset = (1 << (m_core->m_r[rs] & 0xf));
+		const uint16_t addr =  m_core->m_r[rd];
+		const uint16_t orig =  read16(addr);
+		m_core->m_r[REG_SR] &= ~UNSP_Z;
+		m_core->m_r[REG_SR] |= BIT(orig, offset) ? 0 : UNSP_Z;
+
+		switch (bitop)
+		{
+		case 0x00: // tstb
+			return;
+
+		case 0x01: // setb
+			write16(addr, orig | (1 << offset));
+			return;
+
+		case 0x02: // clrb
+			write16(addr, orig & ~(1 << offset));
+			return;
+
+		case 0x03:
+			write16(addr, orig ^ (1 << offset));
+			return;
+		}
 		return;
 	}
 	else if (((op & 0xf1c8) == 0xe140))
 	{
 		// Memory BITOP    BITOP ds:[Rd], Rs
-		uint8_t bitop = (op & 0x0030) >> 4;
-		uint8_t rd =    (op & 0x0e00) >> 9;
-		uint8_t rs =    (op & 0x0007) >> 0;
-		logerror("%s ds:[%s],%s\n", bitops[bitop], regs[rd], regs[rs]);
-		unimplemented_opcode(op);
+		const uint8_t bitop =  (op & 0x0030) >> 4;
+		const uint8_t rd =     (op & 0x0e00) >> 9;
+		const uint8_t rs =     (op & 0x0007) >> 0;
+		const uint8_t offset = (1 << m_core->m_r[rs]);
+		const uint32_t addr =  m_core->m_r[rd] | (get_ds() << 16);
+		const uint16_t orig =  read16(addr);
+		m_core->m_r[REG_SR] &= ~UNSP_Z;
+		m_core->m_r[REG_SR] |= BIT(m_core->m_r[rd], offset) ? 0 : UNSP_Z;
+
+		switch (bitop)
+		{
+		case 0x00: // tstb
+			return;
+
+		case 0x01: // setb
+			write16(addr, orig | (1 << offset));
+			return;
+
+		case 0x02: // clrb
+			write16(addr, orig & ~(1 << offset));
+			return;
+
+		case 0x03:
+			write16(addr, orig ^ (1 << offset));
+			return;
+		}
 		return;
 	}
-	else if (((op & 0xf0f8) == 0xe008))
+	else if (((op & 0xf1f8) == 0xe008))
 	{
 		// MUL operations
 		// MUL      1 1 1 0*  r r r S*  0 0 0 0   1 r r r     (* = sign bit, fixed here)
 		/*
-		print_mul(stream, op); // MUL uu or MUL su
+		print_mul(stream, op); // MUL uu
 		*/
+		// only valid if S is 1, otherwise falls through to shifter
 
-		if (op & 0x0100)
-		{
-			// MUL su ( unsigned * signed )
-			const uint16_t opa = (op >> 9) & 7;
-			const uint16_t opb = op & 7;
-			m_core->m_icount -= 12;
+		// MUL uu (unsigned * unsigned)
+		uint32_t lres = 0;
+		const uint16_t opa = (op >> 9) & 7;
+		const uint16_t opb = op & 7;
 
-			LOGMASKED(LOG_UNSP_MULS, "%s: MUL su with %04x (signed) * %04x (unsigned) (fra:%d) :\n", machine().describe_context(), m_core->m_r[opa], m_core->m_r[opb], m_core->m_fra);
-
-			uint32_t lres = m_core->m_r[opa] * m_core->m_r[opb];
-			if (m_core->m_r[opa] & 0x8000)
-			{
-				lres -= m_core->m_r[opb] << 16;
-			}
-			m_core->m_r[REG_R4] = lres >> 16;
-			m_core->m_r[REG_R3] = (uint16_t)lres;
-
-			LOGMASKED(LOG_UNSP_MULS, "result was : %08x\n", lres);
-
-			return;
-		}
-		else
-		{
-			// MUL uu (unsigned * unsigned)
-			uint32_t lres = 0;
-			const uint16_t opa = (op >> 9) & 7;
-			const uint16_t opb = op & 7;
-
-			m_core->m_icount -= 12; // unknown
-			lres = m_core->m_r[opa] * m_core->m_r[opb];
-			m_core->m_r[REG_R4] = lres >> 16;
-			m_core->m_r[REG_R3] = (uint16_t)lres;
-			return;
-		}
+		m_core->m_icount -= 12; // unknown
+		lres = m_core->m_r[opa] * m_core->m_r[opb];
+		m_core->m_r[REG_R4] = lres >> 16;
+		m_core->m_r[REG_R3] = (uint16_t)lres;
 		return;
-	}
-	else if (((op & 0xf080) == 0xe080))
+			}
+	else if (((op & 0xf180) == 0xe080))
 	{
 		// MULS     1 1 1 0*  r r r S*  1 s s s   s r r r    (* = sign bit, fixed here)
 		/*
-		// MULS uu or MULS su (invalid?)
+		// MULS uu
+		// only valid if S is 1? otherwise falls through to shifter
+
 		print_muls(stream, op);
 		*/
 		LOGMASKED(LOG_UNSP_MULS, "MULS uu or su\n");

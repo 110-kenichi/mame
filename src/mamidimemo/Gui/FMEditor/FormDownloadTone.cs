@@ -24,11 +24,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
     public partial class FormDownloadTone : FormBase
     {
 
-        private Stack<string> accessedContentsUrlStack = new Stack<string>();
+        private static Stack<string> accessedContentsUrlStack = new Stack<string>();
 
-        private Stack<string> accessedContentsDirNameStack = new Stack<string>();
+        private static Stack<string> accessedContentsDirNameStack = new Stack<string>();
 
-        private string lastAccessedContentsUrl;
+        private static string lastAccessedContentsUrl;
 
         public event EventHandler SelectedToneChanged;
 
@@ -74,16 +74,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private bool selectAll;
 
+        private FormFmEditor editor;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="selectAll"></param>
-        public FormDownloadTone(bool selectAll)
+        public FormDownloadTone(FormFmEditor editor, bool selectAll)
         {
             InitializeComponent();
 
             buttonOK.Enabled = false;
 
+            this.editor = editor;
             this.selectAll = selectAll;
         }
 
@@ -95,10 +98,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             base.OnShown(e);
 
-            var contentsUrl = $"https://api.github.com/repos/110-kenichi/ToneLibrary/contents";
-            accessedContentsUrlStack.Push(contentsUrl);
-            accessedContentsDirNameStack.Push("./");
-            await updateDirList(contentsUrl);
+            if (lastAccessedContentsUrl == null)
+            {
+                var contentsUrl = $"https://api.github.com/repos/110-kenichi/ToneLibrary/contents";
+                accessedContentsUrlStack.Push(contentsUrl);
+                accessedContentsDirNameStack.Push("./");
+                await updateDirList(contentsUrl);
+            }
+            else
+            {
+                await updateDirList(lastAccessedContentsUrl);
+            }
         }
 
         /// <summary>
@@ -183,14 +193,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     {
                                         var fn = (string)file["name"];
                                         var ext = System.IO.Path.GetExtension(fn);
-                                        if (FormFmEditor.IsSupportedExtension(ext))
+                                        if (editor.IsSupportedExtension(ext))
                                         {
                                             var item = new ListViewItem(fn, "SOUND");
                                             item.Tag = file;
                                             metroListViewDir.Items.Add(item);
                                         }
                                         else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
-                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase)
+                                            || fn.Equals("LICENSE", StringComparison.OrdinalIgnoreCase)
+                                            )
                                         {
                                             var item = new ListViewItem(fn, "TXT");
                                             item.Tag = file;
@@ -309,32 +321,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             if (this.IsDisposed)
                                                 return;
                                         }
-                                        if (FormFmEditor.IsSupportedExtension(ext))
+                                        if (editor.IsSupportedExtension(ext))
                                         {
                                             listBoxTones.Items.Clear();
 
                                             //Import tone file
-                                            IEnumerable<Tone> tones = null;
-                                            var Option = new Option();
-                                            string[] importFile = { dlDestFilePath.ToLower(CultureInfo.InvariantCulture) };
-                                            switch (ext.ToUpper(CultureInfo.InvariantCulture))
-                                            {
-                                                case ".MUC":
-                                                    tones = Muc.Reader(importFile, Option);
-                                                    break;
-                                                case ".DAT":
-                                                    tones = Dat.Reader(importFile, Option);
-                                                    break;
-                                                case ".MWI":
-                                                    tones = Fmp.Reader(importFile, Option);
-                                                    break;
-                                                case ".MML":
-                                                    tones = Pmd.Reader(importFile, Option);
-                                                    break;
-                                                case ".FXB":
-                                                    tones = Vopm.Reader(importFile, Option);
-                                                    break;
-                                            }
+                                            IEnumerable<Tone> tones = editor.ImportToneFile(dlDestFilePath);
 
                                             //Listing tones
                                             if (tones != null && tones.Count() > 0)
@@ -347,7 +339,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             SelectedTones = tones;
                                         }
                                         else if (ext.Equals(".txt", StringComparison.OrdinalIgnoreCase)
-                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase))
+                                            || ext.Equals(".md", StringComparison.OrdinalIgnoreCase)
+                                            || fn.Equals("LICENSE", StringComparison.OrdinalIgnoreCase))
                                         {
                                             Process.Start(dlDestFilePath);
                                         }

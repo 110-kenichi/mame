@@ -41,9 +41,9 @@ protected:
 	virtual void machine_start() override;
 	virtual void machine_reset() override;
 
-	virtual DECLARE_READ8_MEMBER(in0_r);
-	virtual DECLARE_READ8_MEMBER(in1_r);
-	virtual DECLARE_WRITE8_MEMBER(in0_w);
+	virtual uint8_t in0_r();
+	virtual uint8_t in1_r();
+	virtual void in0_w(uint8_t data);
 
 	void nes_vt_map(address_map& map);
 
@@ -72,18 +72,18 @@ protected:
 
 	void configure_soc(nes_vt_soc_device* soc);
 
-	DECLARE_READ8_MEMBER(upper_412c_r);
-	DECLARE_READ8_MEMBER(upper_412d_r);
-	DECLARE_WRITE8_MEMBER(upper_412c_w);
+	uint8_t upper_412c_r();
+	uint8_t upper_412d_r();
+	void upper_412c_w(uint8_t data);
 
 private:
 	/* APU handling */
 
 	/* Extra IO */
-	DECLARE_READ8_MEMBER(extrain_0_r);
-	DECLARE_READ8_MEMBER(extrain_1_r);
-	DECLARE_READ8_MEMBER(extrain_2_r);
-	DECLARE_READ8_MEMBER(extrain_3_r);
+	uint8_t extrain_0_r();
+	uint8_t extrain_1_r();
+	uint8_t extrain_2_r();
+	uint8_t extrain_3_r();
 
 };
 
@@ -215,8 +215,8 @@ public:
 	void nes_vt_2mb_ablping(machine_config& config);
 
 private:
-	DECLARE_READ8_MEMBER(ablping_extraio_r);
-	DECLARE_WRITE8_MEMBER(ablping_extraio_w);
+	uint8_t ablping_extraio_r();
+	void ablping_extraio_w(uint8_t data);
 };
 
 class nes_vt_cy_state : public nes_vt_state
@@ -240,7 +240,7 @@ private:
 	void nes_vt_cy_map(address_map& map);
 	void nes_vt_bt_map(address_map& map);
 
-	DECLARE_WRITE8_MEMBER(bittboy_412c_w);
+	void bittboy_412c_w(uint8_t data);
 
 	DECLARE_READ8_MEMBER(vt_rom_banked_r);
 };
@@ -256,9 +256,9 @@ public:
 	{ }
 
 protected:
-	virtual DECLARE_READ8_MEMBER(in0_r) override;
-	virtual DECLARE_READ8_MEMBER(in1_r) override;
-	virtual DECLARE_WRITE8_MEMBER(in0_w) override;
+	virtual uint8_t in0_r() override;
+	virtual uint8_t in1_r() override;
+	virtual void in0_w(uint8_t data) override;
 
 private:
 	int m_previous_port0;
@@ -291,8 +291,8 @@ private:
 	void nes_vt_dg_baddma_map(address_map& map);
 	void nes_vt_fa_map(address_map& map);
 
-	DECLARE_READ8_MEMBER(fapocket_412c_r);
-	DECLARE_WRITE8_MEMBER(fapocket_412c_w);
+	uint8_t fapocket_412c_r();
+	void fapocket_412c_w(uint8_t data);
 
 };
 
@@ -343,8 +343,8 @@ private:
 
 	void nes_vt_fp_map(address_map& map);
 
-	DECLARE_READ8_MEMBER(fcpocket_412d_r);
-	DECLARE_WRITE8_MEMBER(fcpocket_412c_w);
+	uint8_t fcpocket_412d_r();
+	void fcpocket_412c_w(uint8_t data);
 };
 
 class nes_vt_ablpinb_state : public nes_vt_state
@@ -361,9 +361,9 @@ protected:
 	virtual void machine_reset() override;
 
 private:
-	virtual DECLARE_READ8_MEMBER(in0_r) override;
-	virtual DECLARE_READ8_MEMBER(in1_r) override;
-	virtual DECLARE_WRITE8_MEMBER(in0_w) override;
+	virtual uint8_t in0_r() override;
+	virtual uint8_t in1_r() override;
+	virtual void in0_w(uint8_t data) override;
 
 	uint8_t m_ablpinb_in0_val;
 
@@ -385,9 +385,9 @@ public:
 	void nes_vt_sudoku_512kb(machine_config& config);
 
 private:
-	virtual DECLARE_READ8_MEMBER(in0_r) override;
-	virtual DECLARE_READ8_MEMBER(in1_r) override;
-	virtual DECLARE_WRITE8_MEMBER(in0_w) override;
+	virtual uint8_t in0_r() override;
+	virtual uint8_t in1_r() override;
+	virtual void in0_w(uint8_t data) override;
 };
 
 class nes_vt_vg_1mb_majgnc_state : public nes_vt_state
@@ -486,7 +486,7 @@ void nes_vt_hh_state::vt_external_space_map_fp_2x32mbyte(address_map &map)
 	map(0x0000000, 0x1ffffff).rw(FUNC(nes_vt_hh_state::vt_rom_banked_r), FUNC(nes_vt_hh_state::vt03_8000_mapper_w));
 }
 
-READ8_MEMBER(nes_vt_base_state::extrain_0_r)
+uint8_t nes_vt_base_state::extrain_0_r()
 {
 	if (m_exin0)
 		return m_exin0->read();
@@ -497,7 +497,7 @@ READ8_MEMBER(nes_vt_base_state::extrain_0_r)
 	return 0x00;
 }
 
-READ8_MEMBER(nes_vt_base_state::extrain_1_r)
+uint8_t nes_vt_base_state::extrain_1_r()
 {
 	if (m_exin1)
 		return m_exin1->read();
@@ -508,7 +508,7 @@ READ8_MEMBER(nes_vt_base_state::extrain_1_r)
 	return 0x00;
 }
 
-READ8_MEMBER(nes_vt_base_state::extrain_2_r)
+uint8_t nes_vt_base_state::extrain_2_r()
 {
 	if (m_exin2)
 		return m_exin2->read();
@@ -519,7 +519,7 @@ READ8_MEMBER(nes_vt_base_state::extrain_2_r)
 	return 0x00;
 }
 
-READ8_MEMBER(nes_vt_base_state::extrain_3_r)
+uint8_t nes_vt_base_state::extrain_3_r()
 {
 	if (m_exin3)
 		return m_exin3->read();
@@ -532,7 +532,7 @@ READ8_MEMBER(nes_vt_base_state::extrain_3_r)
 
 /* Standard I/O handlers (NES Controller clone) */
 
-READ8_MEMBER(nes_vt_base_state::in0_r)
+uint8_t nes_vt_base_state::in0_r()
 {
 	//logerror("%s: in0_r\n", machine().describe_context());
 	uint8_t ret = 0x40;
@@ -541,7 +541,7 @@ READ8_MEMBER(nes_vt_base_state::in0_r)
 	return ret;
 }
 
-READ8_MEMBER(nes_vt_base_state::in1_r)
+uint8_t nes_vt_base_state::in1_r()
 {
 	//logerror("%s: in1_r\n", machine().describe_context());
 	uint8_t ret = 0x40;
@@ -550,7 +550,7 @@ READ8_MEMBER(nes_vt_base_state::in1_r)
 	return ret;
 }
 
-WRITE8_MEMBER(nes_vt_base_state::in0_w)
+void nes_vt_base_state::in0_w(uint8_t data)
 {
 	//logerror("%s: in0_w %02x\n", machine().describe_context(), data);
 	if (data & 0x01)
@@ -562,21 +562,21 @@ WRITE8_MEMBER(nes_vt_base_state::in0_w)
 
 /* Lexibook I/O handlers */
 
-READ8_MEMBER(nes_vt_cy_lexibook_state::in0_r)
+uint8_t nes_vt_cy_lexibook_state::in0_r()
 {
 	//logerror("%s: in0_r\n", machine().describe_context());
 	uint8_t ret = m_latch0_bit;
 	return ret;
 }
 
-READ8_MEMBER(nes_vt_cy_lexibook_state::in1_r)
+uint8_t nes_vt_cy_lexibook_state::in1_r()
 {
 	//logerror("%s: in1_r\n", machine().describe_context());
 	uint8_t ret = m_latch1_bit;
 	return ret;
 }
 
-WRITE8_MEMBER(nes_vt_cy_lexibook_state::in0_w)
+void nes_vt_cy_lexibook_state::in0_w(uint8_t data)
 {
 	//logerror("%s: in0_w %02x\n", machine().describe_context(), data);
 	if ((!(data & 0x01)) && (m_previous_port0 & 0x01)) // 0x03 -> 0x02 transition
@@ -600,13 +600,13 @@ WRITE8_MEMBER(nes_vt_cy_lexibook_state::in0_w)
 
 // ablping polls this (also writes here) what is it? 4-bit DAC? PCM? (inputs only start responding once it finishes writing data on startup but takes longer than a sample should)
 // (this is the extended IO port on VT)
-READ8_MEMBER(nes_vt_ablping_state::ablping_extraio_r)
+uint8_t nes_vt_ablping_state::ablping_extraio_r()
 {
 	// needs to change at least
 	return machine().rand()&0xf;
 };
 
-WRITE8_MEMBER(nes_vt_ablping_state::ablping_extraio_w)
+void nes_vt_ablping_state::ablping_extraio_w(uint8_t data)
 {
 	popmessage("ablping_extraio_w %02x", data);
 };
@@ -652,7 +652,7 @@ void nes_vt_ablpinb_state::machine_reset()
 }
 
 
-READ8_MEMBER(nes_vt_ablpinb_state::in0_r)
+uint8_t nes_vt_ablpinb_state::in0_r()
 {
 	if (m_plunger_off)
 	{
@@ -681,7 +681,7 @@ READ8_MEMBER(nes_vt_ablpinb_state::in0_r)
 }
 
 
-READ8_MEMBER(nes_vt_ablpinb_state::in1_r)
+uint8_t nes_vt_ablpinb_state::in1_r()
 {
 	uint8_t i = machine().rand() & 0x10;
 
@@ -693,7 +693,7 @@ READ8_MEMBER(nes_vt_ablpinb_state::in1_r)
 	return i | ret;
 }
 
-WRITE8_MEMBER(nes_vt_ablpinb_state::in0_w)
+void nes_vt_ablpinb_state::in0_w(uint8_t data)
 {
 	// write 0x04 to 0x4016 sets bit 0x08 in 0x4017
 	// write 0x00 to 0x4016 clears bit 0x08 in 0x4017
@@ -703,17 +703,17 @@ WRITE8_MEMBER(nes_vt_ablpinb_state::in0_w)
 	logerror("in0_w %02x\n", data);
 }
 
-READ8_MEMBER(nes_vt_sudoku_state::in0_r)
+uint8_t nes_vt_sudoku_state::in0_r()
 {
 	return machine().rand();
 }
 
-READ8_MEMBER(nes_vt_sudoku_state::in1_r)
+uint8_t nes_vt_sudoku_state::in1_r()
 {
 	return machine().rand();
 }
 
-WRITE8_MEMBER(nes_vt_sudoku_state::in0_w)
+void nes_vt_sudoku_state::in0_w(uint8_t data)
 {
 }
 
@@ -926,19 +926,19 @@ void nes_vt_ablping_state::nes_vt_2mb_ablping(machine_config &config)
 	GFXDECODE(config, "gfxdecode", "soc:ppu", vt03_gfx_helper);
 }
 
-READ8_MEMBER(nes_vt_base_state::upper_412c_r)
+uint8_t nes_vt_base_state::upper_412c_r()
 {
 	logerror("%s: upper_412c_r\n", machine().describe_context());
 	return 0x00;
 }
 
-READ8_MEMBER(nes_vt_base_state::upper_412d_r)
+uint8_t nes_vt_base_state::upper_412d_r()
 {
 	logerror("%s: upper_412d_r\n", machine().describe_context());
 	return 0x00;
 }
 
-WRITE8_MEMBER(nes_vt_base_state::upper_412c_w)
+void nes_vt_base_state::upper_412c_w(uint8_t data)
 {
 	logerror("%s: upper_412c_w %02x\n", machine().describe_context(), data);
 }
@@ -991,7 +991,7 @@ void nes_vt_cy_state::nes_vt_bt(machine_config &config)
 }
 
 
-WRITE8_MEMBER(nes_vt_cy_state::bittboy_412c_w)
+void nes_vt_cy_state::bittboy_412c_w(uint8_t data)
 {
 	//bittboy (ok), mc_pg150 (not working)
 	logerror("%s: vt03_412c_extbank_w %02x\n", machine().describe_context(),  data);
@@ -1170,7 +1170,7 @@ static INPUT_PORTS_START( dbdancem )
 INPUT_PORTS_END
 
 
-READ8_MEMBER(nes_vt_hh_state::fcpocket_412d_r)
+uint8_t nes_vt_hh_state::fcpocket_412d_r()
 {
 	if (m_cartsel)
 		return m_cartsel->read();
@@ -1178,7 +1178,7 @@ READ8_MEMBER(nes_vt_hh_state::fcpocket_412d_r)
 		return 0;
 }
 
-WRITE8_MEMBER(nes_vt_hh_state::fcpocket_412c_w)
+void nes_vt_hh_state::fcpocket_412c_w(uint8_t data)
 {
 	// fcpocket
 	logerror("%s: vtfp_412c_extbank_w %02x\n", machine().describe_context(), data);
@@ -1255,7 +1255,7 @@ void nes_vt_dg_state::nes_vt_fa(machine_config& config)
 }
 
 
-READ8_MEMBER(nes_vt_dg_state::fapocket_412c_r)
+uint8_t nes_vt_dg_state::fapocket_412c_r()
 {
 	if (m_cartsel)
 		return m_cartsel->read();
@@ -1263,7 +1263,7 @@ READ8_MEMBER(nes_vt_dg_state::fapocket_412c_r)
 		return 0;
 }
 
-WRITE8_MEMBER(nes_vt_dg_state::fapocket_412c_w)
+void nes_vt_dg_state::fapocket_412c_w(uint8_t data)
 {
 	// fapocket (ok?) (also uses bank from config switch for fake cartridge slot)
 	logerror("%s: vtfa_412c_extbank_w %02x\n", machine().describe_context(), data);
@@ -1574,6 +1574,12 @@ ROM_START( lxcmcydp )
 	ROM_LOAD( "cyberarcade-disneyprincess.bin", 0x00000, 0x4000000, CRC(05946f81) SHA1(33eea2b70f5427e7613c836b8a08148731fac231) )
 ROM_END
 
+ROM_START( lxcmcysp )
+	ROM_REGION( 0x4000000, "mainrom", 0 )
+	// sub-board was marked for 2GB capacity (A0-A26 address lines), but only address lines A0-A24 are connected to the chip
+	ROM_LOAD( "lexibookspiderman.bin", 0x00000, 0x4000000, CRC(ef6e8847) SHA1(0012df193c52fd48595d85886fd431619c5d5e3e) )
+ROM_END
+
 ROM_START( lxcmc250 )
 	ROM_REGION( 0x4000000, "mainrom", 0 )
 	// sub-board was marked for 2GB capacity (A0-A26 address lines), but only address lines A0-A24 are connected to the chip
@@ -1788,9 +1794,20 @@ ROM_START( ablping )
 	ROM_LOAD( "abl_pingpong.bin", 0x00000, 0x200000, CRC(b31de1fb) SHA1(94e8afb2315ba1fa0892191c8e1832391e401c70) )
 ROM_END
 
-ROM_START( dgun2573 )
+ROM_START( dgun2573 ) // bad ROM inside unit
 	ROM_REGION( 0x2000000, "mainrom", 0 )
 	ROM_LOAD( "dgun2573.bin", 0x00000, 0x2000000, BAD_DUMP CRC(cde71a53) SHA1(d0d4c1965876291861781ecde46b1142b062f1f3) )
+ROM_END
+
+/* From a different unit, but also a bad ROM inside, some of the same areas appear to be corrupt.  The first 128KByte still has some incorrect / corrupt images for menu)
+   For example, "13. Backstroke" image is corrupt.  That's stored in the 0xc000 - 0xffff region of the ROM.  Using the data from rminitv instead fixes it
+   however things get more confusing with "25. Freestyle Stroke" which is stored in the 0x10000 - 0x1ffff area.  This area is already a match for 'rminitv' so would
+   appear to not be a bad dump, however the image in this section of ROM and 'rminitv' references it elsewhere.  This suggests the chip might have been reprogrammed
+   from something else, and the process failed to erase / replace one of the old blocks? */
+
+ROM_START( dgun2573a ) 
+	ROM_REGION( 0x2000000, "mainrom", 0 )
+	ROM_LOAD( "gamer.bin", 0x00000, 0x2000000, BAD_DUMP CRC(abe72c09) SHA1(b81ab3adf6905367c2e52f0d8bf71fb73c2b697f))
 ROM_END
 
 ROM_START( bittboy )
@@ -1967,7 +1984,7 @@ CONS( 2005, vgpocket,  0,  0,  nes_vt_vg_4mb, nes_vt, nes_vt_hh_state, empty_ini
 CONS( 200?, vgpmini,   0,  0,  nes_vt_vg_4mb, nes_vt, nes_vt_hh_state, empty_init, "Performance Designed Products", "VG Pocket Mini (VG-1500)", MACHINE_WRONG_COLORS | MACHINE_IMPERFECT_GRAPHICS )
 // VG Pocket Max (VG-2500) (blue case, 75 games)
 // VG Pocket Max (VG-3000) (white case, 75 games) (does the game selection differ, or only the case?)
-// VG Pocket Caplet is likely SunPlus hardware instead. (has common SunPlus games)
+// VG Pocket Caplet is SunPlus hardware instead, see spg2xx_lexibook.cpp
 
 // Runs fine, non-sport 121 in 1 games perfect, but minor graphical issues in
 // sport games, also no sound in menu or sport games due to missing PCM
@@ -1983,6 +2000,7 @@ CONS( 200?, lxcmc250,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_stat
 CONS( 200?, lxcmcysw,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_state, empty_init, "Lexibook", "Lexibook Compact Cyber Arcade - Star Wars Rebels", MACHINE_NOT_WORKING ) // 64Mbyte ROM, must be externally banked, or different addressing scheme
 CONS( 200?, lxcmcyfz,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_state, empty_init, "Lexibook", "Lexibook Compact Cyber Arcade - Frozen", MACHINE_NOT_WORKING ) // 64Mbyte ROM, must be externally banked, or different addressing scheme
 CONS( 200?, lxcmcydp,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_state, empty_init, "Lexibook", "Lexibook Compact Cyber Arcade - Disney Princess", MACHINE_NOT_WORKING ) // 64Mbyte ROM, must be externally banked, or different addressing scheme
+CONS( 200?, lxcmcysp,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_state, empty_init, "Lexibook", "Lexibook Compact Cyber Arcade - Marvel Ultimate Spider-Man", MACHINE_NOT_WORKING ) // 64Mbyte ROM, must be externally banked, or different addressing scheme
 
 // GB-NO13-Main-VT389-2 on PCBs
 CONS( 2016, rtvgc300,  0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_state, empty_init, "Lexibook", "Lexibook Retro TV Game Console - 300 Games", MACHINE_NOT_WORKING )  // 64Mbyte ROM, must be externally banked, or different addressing scheme
@@ -2006,6 +2024,7 @@ CONS( 2017, rtvgc300fz,0,  0,  nes_vt_cy_bigger, nes_vt, nes_vt_cy_lexibook_stat
 
     (units for use with TV)
     Lexibook Retro TV Game Console (300 Games) - Cars
+	Lexibook Retro TV Game Console (300 Games) - PJ Masks
 
     (more?)
 */
@@ -2128,10 +2147,10 @@ CONS( 2016, mog_m320,   0,        0,  nes_vt_hh_8mb, nes_vt, nes_vt_hh_state, em
 
 
 // similar menus to above, but with opcode scrambling
-// palette issues in some games because they actually use the old VT style palette
-// but no way to switch?
-// some menu gfx broken, probably because this is a bad dump
-CONS( 2015, dgun2573,  0,  0,  nes_vt_fp_32mb,     nes_vt, nes_vt_hh_state, empty_init, "dreamGEAR", "My Arcade Gamer V Portable Gaming System (DGUN-2573)",  MACHINE_WRONG_COLORS | MACHINE_IMPERFECT_GRAPHICS | MACHINE_IMPERFECT_SOUND )
+// some menu gfx broken, both units contained bad ROM, seems to be common issue?
+CONS( 2015, dgun2573,  0,         0,  nes_vt_fp_32mb,     nes_vt, nes_vt_hh_state, empty_init, "dreamGEAR", "My Arcade Gamer V Portable Gaming System (DGUN-2573) (set 1)",  MACHINE_WRONG_COLORS | MACHINE_IMPERFECT_GRAPHICS | MACHINE_IMPERFECT_SOUND )
+CONS( 2015, dgun2573a, 0,         0,  nes_vt_fp_32mb,     nes_vt, nes_vt_hh_state, empty_init, "dreamGEAR", "My Arcade Gamer V Portable Gaming System (DGUN-2573) (set 2)",  MACHINE_WRONG_COLORS | MACHINE_IMPERFECT_GRAPHICS | MACHINE_IMPERFECT_SOUND )
+
 CONS( 2015, rminitv,   0,  0,  nes_vt_fp_pal_32mb, nes_vt, nes_vt_hh_state, empty_init, "Orb Gaming", "Retro 'Mini TV' Console 300-in-1", MACHINE_IMPERFECT_GRAPHICS ) // single 32Mbyte bank!
 // New platform with scrambled opcodes, same as DGUN-2561. Runs fine with minor GFX and sound issues in menu
 // Use DIP switch to select console or cartridge, as cartridge is fake and just toggles a GPIO

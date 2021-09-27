@@ -36,6 +36,15 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         }
 
         /// <summary>
+        /// -127:Left
+        /// 127:Right
+        /// </summary>
+        public abstract int PanShift
+        {
+            get;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         public abstract double DeltaNoteNumber

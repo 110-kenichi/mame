@@ -186,11 +186,11 @@ namespace zanac.MAmidiMEmo.Gui
                                 {
                                     case YM2608Timbre tim:
                                         tim.BaseFreqency = 440d * 55000d / (double)data.SampleRate;
-                                        tim.Memo = Path.GetFileNameWithoutExtension(fn);
+                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                         break;
                                     case YM2610BTimbre tim:
                                         tim.BaseFreqency = 440d * 55000d / (double)data.SampleRate;
-                                        tim.Memo = Path.GetFileNameWithoutExtension(fn);
+                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                         break;
                                 }
 
