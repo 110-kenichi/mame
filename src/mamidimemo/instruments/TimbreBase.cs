@@ -22,7 +22,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public abstract class TimbreBase : ContextBoundObject
     {
 

@@ -1773,7 +1773,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SPC700GlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SPC700GlobalSettings : ContextBoundObject
         {
             [DataMember]

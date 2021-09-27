@@ -20,7 +20,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<SoundControlChangeSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class SoundControlChangeSettings : ContextBoundObject
     {
 

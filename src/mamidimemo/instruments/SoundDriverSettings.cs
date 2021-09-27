@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<SoundDriverSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class SoundDriverSettings : ContextBoundObject
     {
         /// <summary>

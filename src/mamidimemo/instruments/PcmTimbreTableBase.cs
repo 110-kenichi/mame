@@ -10,7 +10,7 @@ namespace zanac.MAmidiMEmo.Instruments
     /// 
     /// </summary>
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class PcmTimbreTableBase : ContextBoundObject
     {
         /// <summary>

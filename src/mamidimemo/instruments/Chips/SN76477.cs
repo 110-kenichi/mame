@@ -1839,7 +1839,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477GenalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477GenalSettings : ContextBoundObject
         {
             [DataMember]
@@ -2050,7 +2050,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477VcoSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477VcoSettings : ContextBoundObject
         {
             [DataMember]
@@ -2224,7 +2224,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477SlfSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477SlfSettings : ContextBoundObject
         {
             [DataMember]
@@ -2320,7 +2320,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477OneShotSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477OneShotSettings : ContextBoundObject
         {
             [DataMember]
@@ -2416,7 +2416,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477NoiseSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477NoiseSettings : ContextBoundObject
         {
             [DataMember]
@@ -2564,7 +2564,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477AtkDcySettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477AtkDcySettings : ContextBoundObject
         {
             [DataMember]
@@ -2687,7 +2687,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477EtcSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SN76477EtcSettings : ContextBoundObject
         {
             [DataMember]

@@ -14,6 +14,11 @@
             Constructor for the FTDI class.
             </summary>
         </member>
+        <member name="M:FTD2XX_NET.FTDI.#ctor(System.String)">
+            <summary>
+            Non default constructor allowing passing of string for dll handle.
+            </summary>
+        </member>
         <member name="M:FTD2XX_NET.FTDI.Finalize">
             <summary>
             Destructor for the FTDI class.
@@ -574,6 +579,18 @@
             <returns>FT_STATUS value from FT_GetComPortNumber in FTD2XX.DLL</returns>
             <param name="ComPortName">The COM port name corresponding to the current device.  If no COM port is installed, an empty string is passed back.</param>
         </member>
+        <member name="M:FTD2XX_NET.FTDI.VendorCmdGet(System.UInt16,System.Byte[],System.UInt16)">
+            <summary>
+            Get data from the FT4222 using the vendor command interface.
+            </summary>
+            <returns>FT_STATUS value from FT_VendorCmdSet in FTD2XX.DLL</returns>
+        </member>
+        <member name="M:FTD2XX_NET.FTDI.VendorCmdSet(System.UInt16,System.Byte[],System.UInt16)">
+            <summary>
+            Set data from the FT4222 using the vendor command interface.
+            </summary>
+            <returns>FT_STATUS value from FT_VendorCmdSet in FTD2XX.DLL</returns>
+        </member>
         <member name="M:FTD2XX_NET.FTDI.ErrorHandler(FTD2XX_NET.FTDI.FT_STATUS,FTD2XX_NET.FTDI.FT_ERROR)">
             <summary>
             Method to check ftStatus and ftErrorCondition values for error conditions and throw exceptions accordingly.
@@ -1001,7 +1018,7 @@
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_232H_CBUS_OPTIONS.FT_CBUS_PWREN">
             <summary>
-            FT232H CBUS EEPROM options - Power Enable
+            FT232H CBUS EEPROM options - Power Enable#
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_232H_CBUS_OPTIONS.FT_CBUS_SLEEP">
@@ -1066,7 +1083,7 @@
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_XSERIES_CBUS_OPTIONS.FT_CBUS_TXRXLED">
             <summary>
-            FT X-Series CBUS EEPROM options - TxRxLED
+            FT X-Series CBUS EEPROM options - TxRxLED#
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_XSERIES_CBUS_OPTIONS.FT_CBUS_PWREN">
@@ -1215,6 +1232,7 @@
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_100AX">
+            1 
             <summary>
             FT8U100AX device
             </summary>
@@ -1235,23 +1253,117 @@
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_2232H">
+            5
             <summary>
             FT2232H device
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4232H">
+            6
             <summary>
             FT4232H device
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232H">
+            7
             <summary>
             FT232H device
             </summary>
         </member>
         <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_X_SERIES">
+            8
             <summary>
-            FT232X device
+            FT X-Series device
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4222H_0">
+            9
+            <summary>
+            FT4222 hi-speed device Mode 0 - 2 interfaces
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4222H_1_2">
+            10
+            <summary>
+            FT4222 hi-speed device Mode 1 or 2 - 4 interfaces
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4222H_3">
+            11
+            <summary>
+            FT4222 hi-speed device Mode 3 - 1 interface
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4222_PROG">
+            12
+            <summary>
+            OTP programmer board for the FT4222.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_FT900">
+            13
+            <summary>
+            OTP programmer board for the FT900.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_FT930">
+            14
+            <summary>
+            OTP programmer board for the FT930.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_UMFTPD3A">
+            15
+            <summary>
+            Flash programmer board for the UMFTPD3A.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_2233HP">
+            16
+            <summary>
+            FT2233HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4233HP">
+            17
+            <summary>
+            FT4233HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_2232HP">
+            18
+            <summary>
+            FT2233HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4232HP">
+            19
+            <summary>
+            FT4233HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_233HP">
+            20
+            <summary>
+            FT233HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232HP">
+            21
+            <summary>
+            FT232HP hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_2232HA">
+            22
+            <summary>
+            FT2233HA hi-speed device.
+            </summary>
+        </member>
+        <member name="F:FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_4232HA">
+            23
+            <summary>
+            FT4233HA hi-speed device.
             </summary>
         </member>
         <member name="T:FTD2XX_NET.FTDI.FT_DEVICE_INFO_NODE">

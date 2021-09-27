@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<CombinedTimbreSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class CombinedTimbreSettings : ContextBoundObject
     {
 

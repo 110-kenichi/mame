@@ -645,8 +645,8 @@
     <Compile Include="ComponentModel\StringCompressionUtility.cs" />
     <Compile Include="ComponentModel\DummyEditor.cs" />
     <Compile Include="ComponentModel\EnvironmentSettings.cs" />
-    <Compile Include="ComponentModel\MidiHookAttribute.cs" />
-    <Compile Include="ComponentModel\MidiHookProxy.cs" />
+    <Compile Include="ComponentModel\InstLockAttribute.cs" />
+    <Compile Include="ComponentModel\InstLockProxy.cs" />
     <Compile Include="ComponentModel\NoTypeConverterJsonConverter.cs" />
     <Compile Include="ComponentModel\ValueTypeTypeConverter.cs" />
     <Compile Include="Gui\FormAbout.cs">
@@ -871,6 +871,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\TextEditorControl.resx">
       <DependentUpon>TextEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormVstEditorFrame.resx">
       <DependentUpon>FormVstEditorFrame.cs</DependentUpon>
@@ -890,6 +891,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormTextEditor.resx">
       <DependentUpon>FormTextEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormWsgEditor.resx">
       <DependentUpon>FormWsgEditor.cs</DependentUpon>
@@ -951,6 +953,7 @@
     <None Include="DelZoneID.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\DataSources\zanac.MAmidiMEmo.Gui.Data.datasource" />
     <None Include="Resources\ArcadeClassic.ttf" />
     <None Include="Resources\DSEG14Classic-Regular.ttf" />
@@ -1017,7 +1020,6 @@
     <None Include="mame.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

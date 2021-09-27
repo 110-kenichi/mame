@@ -1108,7 +1108,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<AyFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class AyFxSettings : BasicFxSettings
         {
 
@@ -1286,7 +1286,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<AY8910GlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class AY8910GlobalSettings : ContextBoundObject
         {
             [DataMember]

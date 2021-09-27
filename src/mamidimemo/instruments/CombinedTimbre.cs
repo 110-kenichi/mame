@@ -22,7 +22,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<CombinedTimbre>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class CombinedTimbre : TimbreBase
     {
         [IgnoreDataMember]
@@ -65,6 +65,15 @@ namespace zanac.MAmidiMEmo.Instruments
         [JsonIgnore]
         [Browsable(false)]
         public new int KeyOnDelay
+        {
+            get;
+            set;
+        }
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
+        public new int KeyOffDelay
         {
             get;
             set;

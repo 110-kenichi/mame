@@ -920,7 +920,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SIDGlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SIDGlobalSettings : ContextBoundObject
         {
             [DataMember]
@@ -1325,7 +1325,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SidFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SidFxSettings : BasicFxSettings
         {
 
