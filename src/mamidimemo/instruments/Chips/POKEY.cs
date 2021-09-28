@@ -1103,7 +1103,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<PokeyFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class PokeyFxSettings : BasicFxSettings
         {
 
@@ -1282,7 +1282,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<PokeyGlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class PokeyGlobalSettings : ContextBoundObject
         {
             [DataMember]

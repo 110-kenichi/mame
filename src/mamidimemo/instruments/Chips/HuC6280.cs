@@ -1303,7 +1303,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280LfoMorphData>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class HuC6280LfoMorphData : ContextBoundObject
         {
 
@@ -1384,7 +1384,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280FxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class HuC6280FxSettings : BasicFxSettings
         {
 

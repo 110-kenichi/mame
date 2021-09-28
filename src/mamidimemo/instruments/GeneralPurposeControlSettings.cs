@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<GeneralPurposeControlSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class GeneralPurposeControlSettings : ContextBoundObject
     {
 

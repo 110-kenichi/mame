@@ -14,8 +14,6 @@ using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using zanac.MAmidiMEmo.Mame;
 using Melanchall.DryWetMidi.Core;
-using System.Runtime.Remoting.Proxies;
-using System.Runtime.Remoting;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Gui;
 using Melanchall.DryWetMidi.Common;
@@ -29,7 +27,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// Exclusive control for Instrument objects;
         /// </summary>
-        public static ReaderWriterLockSlim ExclusiveLockObject = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        public static ReaderWriterLockSlim InstExclusiveLockObject = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         private static List<List<InstrumentBase>> instruments = new List<List<InstrumentBase>>();
 
@@ -99,7 +97,7 @@ namespace zanac.MAmidiMEmo.Instruments
             List<InstrumentBase> insts = new List<InstrumentBase>();
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 foreach (List<InstrumentBase> iss in instruments)
                 {
@@ -109,7 +107,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             StopVgmRecording();
         }
@@ -123,14 +121,14 @@ namespace zanac.MAmidiMEmo.Instruments
             List<InstrumentBase> insts = new List<InstrumentBase>();
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 foreach (List<InstrumentBase> i in instruments)
                     insts.AddRange(i);
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             return insts.AsEnumerable();
         }
@@ -143,13 +141,13 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 return instruments[(int)deviceId - 1];
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
         }
 
@@ -194,7 +192,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
 
                 for (int i = instruments.Count - 1; i >= 0; i--)
                 {
@@ -208,7 +206,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
 
             return insts.AsEnumerable();
@@ -221,7 +219,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
 
                 if (settings.Instruments != null)
                 {
@@ -261,7 +259,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
         }
 
@@ -297,7 +295,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
 
                 if (instruments[(int)instrumentType].Count < 8)
                 {
@@ -317,7 +315,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
             return null;
         }
@@ -399,7 +397,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
 
                 var list = instruments[(int)instrumentType];
                 list[list.Count - 1].Dispose();
@@ -408,7 +406,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
         }
 
@@ -1011,12 +1009,12 @@ namespace zanac.MAmidiMEmo.Instruments
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
                 cnt = instruments.Count;
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             uint did = inst == null ? uint.MaxValue : inst.DeviceID;
             uint un = inst == null ? uint.MaxValue : inst.UnitNumber;

@@ -16,7 +16,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<DrumTimbre>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class DrumTimbre : ContextBoundObject
     {
         /// <summary>

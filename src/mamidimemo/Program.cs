@@ -241,7 +241,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
             var es = new EnvironmentSettings();
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 InstrumentManager.SaveSettings(es);
             }
@@ -256,7 +256,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             return es;
         }
@@ -280,7 +280,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
 
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
                 Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
@@ -288,7 +288,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
         }
 
@@ -298,7 +298,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
         {
             try
             {
-                InstrumentManager.ExclusiveLockObject.EnterReadLock();
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
                 var es = Program.SaveEnvironmentSettings();
                 string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
@@ -322,7 +322,7 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
             }
             finally
             {
-                InstrumentManager.ExclusiveLockObject.ExitReadLock();
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             return 0;
         }

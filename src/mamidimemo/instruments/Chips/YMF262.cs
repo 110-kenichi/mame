@@ -1509,7 +1509,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Operator>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YMF262Operator : ContextBoundObject
         {
 
@@ -1913,7 +1913,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262GlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YMF262GlobalSettings : ContextBoundObject
         {
             [DataMember]

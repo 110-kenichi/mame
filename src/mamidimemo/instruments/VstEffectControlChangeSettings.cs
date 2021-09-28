@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<VstEffectControlChangeSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class VstEffectControlChangeSettings : ContextBoundObject
     {
 

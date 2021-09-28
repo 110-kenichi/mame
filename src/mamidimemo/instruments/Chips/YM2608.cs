@@ -2793,7 +2793,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608FxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2608FxSettings : BasicFxSettings
         {
 
@@ -2975,7 +2975,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608Operator>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2608Operator : ContextBoundObject
         {
             private byte f_Enable = 1;
@@ -3378,7 +3378,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608GlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2608GlobalSettings : ContextBoundObject
         {
             [DataMember]

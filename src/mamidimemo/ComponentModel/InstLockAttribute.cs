@@ -11,7 +11,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
     /// <summary>
     /// 
     /// </summary>
-    public class MidiHookAttribute : ProxyAttribute
+    public class InstLockAttribute : ProxyAttribute
     {
         /// <summary>
         /// 
