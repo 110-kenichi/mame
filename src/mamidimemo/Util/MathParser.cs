@@ -202,29 +202,29 @@ namespace MathParserTK
             {
                 return Calculate(ConvertToRPN(FormatString(expression)));
             }
-            catch (DivideByZeroException e)
+            catch (DivideByZeroException)
             {
-                throw e;
+                throw;
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
-                throw e;
+                throw;
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
-                throw e;
+                throw;
             }
-            catch (ArgumentOutOfRangeException e)
+            catch (ArgumentOutOfRangeException)
             {
-                throw e;
+                throw;
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
-                throw e;
+                throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw;
             }
 
         }
