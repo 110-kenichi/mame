@@ -18,7 +18,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [JsonConverter(typeof(NoTypeConverterJsonConverter<AbstractFxSettingsBase>))]
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public abstract class AbstractFxSettingsBase : ContextBoundObject
     {
         private bool f_Enable;

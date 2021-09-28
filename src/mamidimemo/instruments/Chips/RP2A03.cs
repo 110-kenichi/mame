@@ -1896,7 +1896,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<FdsSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class FdsSettings : ContextBoundObject
         {
 
@@ -2141,7 +2141,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<Vrc6Settings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class Vrc6Settings : ContextBoundObject
         {
 
@@ -2178,7 +2178,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<NesLfoMorphData>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class NesLfoMorphData : ContextBoundObject
         {
 
@@ -2263,7 +2263,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<NesFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class NesFxSettings : BasicFxSettings
         {
 
@@ -2583,7 +2583,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SQSweepSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class SQSweepSettings : ContextBoundObject
         {
 

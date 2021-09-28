@@ -17,7 +17,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<ArpSettings>))]
     [DataContract]
-    [MidiHook]
+    [InstLock]
     public class ArpSettings : ContextBoundObject
     {
         private bool f_Enable;

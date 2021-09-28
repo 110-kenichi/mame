@@ -840,7 +840,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<MsmFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class MsmFxSettings : BasicFxSettings
         {
 

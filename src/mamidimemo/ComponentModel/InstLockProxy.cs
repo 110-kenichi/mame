@@ -15,7 +15,7 @@ using zanac.MAmidiMEmo.Instruments;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
-    public class MidiHookProxy : RealProxy
+    public class InstLockProxy : RealProxy
     {
         private MarshalByRefObject f_Target;
 
@@ -24,7 +24,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         /// </summary>
         /// <param name="target"></param>
         /// <param name="t"></param>
-        public MidiHookProxy(MarshalByRefObject target, Type t) : base(t)
+        public InstLockProxy(MarshalByRefObject target, Type t) : base(t)
         {
             this.f_Target = target;
         }
@@ -52,13 +52,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 {
                     try
                     {
-                        InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+                        InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
 
                         return RemotingServices.ExecuteMessage(this.f_Target, mcm) as ReturnMessage;
                     }
                     finally
                     {
-                        InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                        InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
                     }
                 }
                 else

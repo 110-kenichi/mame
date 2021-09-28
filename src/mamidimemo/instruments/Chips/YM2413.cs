@@ -1907,7 +1907,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413GlobalSettings>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2413GlobalSettings : ContextBoundObject
         {
             [DataMember]
@@ -1998,7 +1998,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Operator>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2413Operator : ContextBoundObject
         {
 
@@ -2521,7 +2521,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413DrumFNum>))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2413DrumFNum : ContextBoundObject
         {
 
@@ -2595,7 +2595,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413FxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
-        [MidiHook]
+        [InstLock]
         public class YM2413FxSettings : BasicFxSettings
         {
 
