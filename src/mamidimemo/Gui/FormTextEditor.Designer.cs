@@ -95,7 +95,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.RightBracket = ')';
             this.textBoxWsgDataText.RightBracket2 = '}';
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
             this.textBoxWsgDataText.ShowFoldingLines = true;
             this.textBoxWsgDataText.Size = new System.Drawing.Size(707, 419);
             this.textBoxWsgDataText.TabIndex = 0;

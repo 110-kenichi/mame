@@ -31,6 +31,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class CM32P : InstrumentBase
     {
 
@@ -1171,6 +1172,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<CM32PTimbre>))]
         [DataContract]
+        [InstLock]
         public class CM32PTimbre : TimbreBase
         {
             /// <summary>

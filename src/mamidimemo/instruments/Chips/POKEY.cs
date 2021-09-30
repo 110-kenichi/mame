@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class POKEY : InstrumentBase
     {
 
@@ -954,6 +955,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<PokeyTimbre>))]
         [DataContract]
+        [InstLock]
         public class PokeyTimbre : TimbreBase
         {
             [DataMember]
@@ -1283,7 +1285,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<PokeyGlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class PokeyGlobalSettings : ContextBoundObject
+        public class PokeyGlobalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip")]

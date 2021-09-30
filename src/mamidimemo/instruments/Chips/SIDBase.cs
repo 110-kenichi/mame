@@ -32,6 +32,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public abstract class SIDBase : InstrumentBase
     {
 
@@ -687,6 +688,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SIDTimbre>))]
         [DataContract]
+        [InstLock]
         public class SIDTimbre : TimbreBase
         {
             [DataMember]
@@ -921,7 +923,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SIDGlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class SIDGlobalSettings : ContextBoundObject
+        public class SIDGlobalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip")]

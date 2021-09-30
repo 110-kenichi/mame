@@ -32,6 +32,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class NAMCO_CUS30 : InstrumentBase
     {
 
@@ -567,6 +568,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<NAMCO_CUS30Timbre>))]
         [DataContract]
+        [InstLock]
         public class NAMCO_CUS30Timbre : TimbreBase
         {
             private SoundType f_SoundType;

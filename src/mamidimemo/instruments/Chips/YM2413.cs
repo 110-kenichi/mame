@@ -36,6 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class YM2413 : InstrumentBase
     {
 
@@ -1598,6 +1599,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Timbre>))]
         [DataContract]
+        [InstLock]
         public class YM2413Timbre : TimbreBase
         {
             #region FM Synth
@@ -1908,7 +1910,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413GlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class YM2413GlobalSettings : ContextBoundObject
+        public class YM2413GlobalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip")]
@@ -1999,7 +2001,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Operator>))]
         [DataContract]
         [InstLock]
-        public class YM2413Operator : ContextBoundObject
+        public class YM2413Operator : InstLockProxy
         {
 
             private byte f_AR;
@@ -2289,6 +2291,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Modulator>))]
         [DataContract]
+        [InstLock]
         public class YM2413Modulator : YM2413Operator
         {
 
@@ -2417,6 +2420,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Career>))]
         [DataContract]
+        [InstLock]
         public class YM2413Career : YM2413Operator
         {
 
@@ -2522,7 +2526,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413DrumFNum>))]
         [DataContract]
         [InstLock]
-        public class YM2413DrumFNum : ContextBoundObject
+        public class YM2413DrumFNum : InstLockProxy
         {
 
             private ushort f_h7 = 0x520;

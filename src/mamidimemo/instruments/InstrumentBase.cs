@@ -1,7 +1,8 @@
 ﻿// copyright-holders:K.Ito
 using FastDelegate.Net;
-using Jacobi.Vst.Core;
-using Jacobi.Vst.Interop.Host;
+//TODO: VST
+//using Jacobi.Vst.Core;
+//using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Newtonsoft.Json;
@@ -25,7 +26,8 @@ using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
-using zanac.MAmidiMEmo.Instruments.Vst;
+//TODO: VST
+//using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
@@ -36,7 +38,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [InstLock]
     [DataContract]
-    public abstract class InstrumentBase : ContextBoundObject, IDisposable
+    public abstract class InstrumentBase : InstLockProxy, IDisposable
     {
         public static readonly object VstPluginContextLockObject = new object();
 
@@ -284,25 +286,26 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        private VSTPluginCollection f_VSTPlugins;
+        //TODO: VST
+        //private VSTPluginCollection f_VSTPlugins;
 
-        [DataMember]
-        [Category("Filter")]
-        [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST")]
-        public VSTPluginCollection VSTPlugins
-        {
-            get
-            {
-                if (Program.IsVSTiMode())
-                    return null;
-                return f_VSTPlugins;
-            }
-            set
-            {
-                if (!Program.IsVSTiMode())
-                    f_VSTPlugins = value;
-            }
-        }
+        //[DataMember]
+        //[Category("Filter")]
+        //[Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST")]
+        //public VSTPluginCollection VSTPlugins
+        //{
+        //    get
+        //    {
+        //        if (Program.IsVSTiMode())
+        //            return null;
+        //        return f_VSTPlugins;
+        //    }
+        //    set
+        //    {
+        //        if (!Program.IsVSTiMode())
+        //            f_VSTPlugins = value;
+        //    }
+        //}
 
         /// <summary>
         /// 
@@ -343,7 +346,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private void serializeVstFx()
         {
-            SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
+            //TODO: VST
+            //SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
         }
 
         public abstract void RestoreFrom(string serializeData);
@@ -804,7 +808,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [InstLock]
         [DataContract]
-        public class ScaleTuning : ContextBoundObject
+        public class ScaleTuning : InstLockProxy
         {
             private string f_Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
 
@@ -1569,17 +1573,19 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         private static void SetVstFxCallback(uint unitNumber, string name, delg_vst_fx_callback callback)
         {
-            DeferredWriteData(set_vst_fx_callback, unitNumber, name, callback);
-            /*
-            try
-            {
-                Program.SoundUpdating();
-                set_vst_fx_callback(unitNumber, name, callback);
-            }
-            finally
-            {
-                Program.SoundUpdated();
-            }*/
+            //TODO: VST
+            //DeferredWriteData(set_vst_fx_callback, unitNumber, name, callback);
+
+            ///*
+            //try
+            //{
+            //    Program.SoundUpdating();
+            //    set_vst_fx_callback(unitNumber, name, callback);
+            //}
+            //finally
+            //{
+            //    Program.SoundUpdated();
+            //}*/
         }
 
         /// <summary>
@@ -1957,7 +1963,8 @@ namespace zanac.MAmidiMEmo.Instruments
             f_vst_fx_callback = new delg_vst_fx_callback(vst_fx_callback);
             SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, f_vst_fx_callback);
 
-            VSTPlugins = new VSTPluginCollection();
+            //TODO: VST
+            //VSTPlugins = new VSTPluginCollection();
         }
 
         #endregion
@@ -1982,15 +1989,16 @@ namespace zanac.MAmidiMEmo.Instruments
                 // TODO: 大きなフィールドを null に設定します。
                 set_device_enable(UnitNumber, SoundInterfaceTagNamePrefix, 0);
 
-                if (VSTPlugins != null)
-                {
-                    SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
+                //TODO: VST
+                //if (VSTPlugins != null)
+                //{
+                //    SetVstFxCallback(UnitNumber, SoundInterfaceTagNamePrefix, null);
 
-                    lock (InstrumentBase.VstPluginContextLockObject)
-                    {
-                        VSTPlugins.Dispose();
-                    }
-                }
+                //    lock (InstrumentBase.VstPluginContextLockObject)
+                //    {
+                //        VSTPlugins.Dispose();
+                //    }
+                //}
 
                 if (vstHandle.IsAllocated)
                     vstHandle.Free();
@@ -2419,8 +2427,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 94:
                 case 95:
                     {
-                        if (VSTPlugins != null)
-                            VSTPlugins.ProcessSoundControl(midiEvent.Channel, midiEvent.ControlNumber, midiEvent.ControlValue, 0);
+                        //TODO: VST
+                        //if (VSTPlugins != null)
+                        //    VSTPlugins.ProcessSoundControl(midiEvent.Channel, midiEvent.ControlNumber, midiEvent.ControlValue, 0);
                     }
                     break;
 
@@ -2510,8 +2519,9 @@ namespace zanac.MAmidiMEmo.Instruments
                     case 93:
                     case 94:
                     case 95:
-                        if (VSTPlugins != null)
-                            VSTPlugins.ProcessSoundControl(dataMsb.Channel, dataMsb.ControlNumber, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
+                        //TODO: VST
+                        //if (VSTPlugins != null)
+                        //    VSTPlugins.ProcessSoundControl(dataMsb.Channel, dataMsb.ControlNumber, lastDataMsb[dataMsb.Channel].ControlValue, dataLsb.ControlValue);
                         break;
                     default:
                         break;
@@ -2604,8 +2614,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="pos"></param>
         private void vst_fx_callback(IntPtr buffer, int samples)
         {
-            if (VSTPlugins != null)
-                VSTPlugins.ProcessCallback(buffer, samples);
+            //TODO: VST
+            //if (VSTPlugins != null)
+            //    VSTPlugins.ProcessCallback(buffer, samples);
         }
 
         #endregion

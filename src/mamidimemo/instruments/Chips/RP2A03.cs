@@ -36,6 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public partial class RP2A03 : InstrumentBase
     {
 
@@ -1590,6 +1591,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<RP2A03Timbre>))]
         [DataContract]
+        [InstLock]
         public class RP2A03Timbre : TimbreBase
         {
 
@@ -1897,7 +1899,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class FdsSettings : ContextBoundObject
+        public class FdsSettings : InstLockProxy
         {
 
             private byte[] f_WsgData = new byte[64];
@@ -2142,7 +2144,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class Vrc6Settings : ContextBoundObject
+        public class Vrc6Settings : InstLockProxy
         {
 
             private byte f_SQDuty;
@@ -2179,7 +2181,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class NesLfoMorphData : ContextBoundObject
+        public class NesLfoMorphData : InstLockProxy
         {
 
             private sbyte[] f_lfodata = new sbyte[32];
@@ -2584,7 +2586,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class SQSweepSettings : ContextBoundObject
+        public class SQSweepSettings : InstLockProxy
         {
 
             private byte f_Enable;
@@ -2687,6 +2689,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class DPcmSoundTable : PcmTimbreTableBase
         {
             /// <summary>
@@ -2703,6 +2706,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
+        //[TypeConverter(typeof(CustomExpandableObjectConverter))]
+        //[JsonConverter(typeof(NoTypeConverterJsonConverter<DeltaPcmTimbre>))]
         public class DeltaPcmTimbre : PcmTimbreBase
         {
 

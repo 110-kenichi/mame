@@ -1,6 +1,4 @@
 ﻿// copyright-holders:K.Ito
-using Jacobi.Vst.Core;
-using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Core;
 using Newtonsoft.Json;
 using System;

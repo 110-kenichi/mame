@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int AudioLatency {
             get {
                 return ((int)(this["AudioLatency"]));
@@ -253,7 +253,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM2151EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM2151EdSize"]));
@@ -265,7 +265,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM2610BEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM2610BEdSize"]));
@@ -277,7 +277,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM2612EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM2612EdSize"]));
@@ -289,7 +289,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM3812EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM3812EdSize"]));
@@ -301,7 +301,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM2413EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM2413EdSize"]));
@@ -313,7 +313,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YMF262EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YMF262EdSize"]));
@@ -325,7 +325,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size PWinSize {
             get {
                 return ((global::System.Drawing.Size)(this["PWinSize"]));
@@ -421,7 +421,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size YM2608EdSize {
             get {
                 return ((global::System.Drawing.Size)(this["YM2608EdSize"]));
@@ -469,7 +469,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size WsgEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["WsgEdSize"]));
@@ -493,7 +493,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size LpcEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["LpcEdSize"]));
@@ -505,7 +505,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size AllophonesEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["AllophonesEdSize"]));
@@ -517,7 +517,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size PhonemesEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["PhonemesEdSize"]));
@@ -541,7 +541,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("640, 480")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
         public global::System.Drawing.Size EnvEdSize {
             get {
                 return ((global::System.Drawing.Size)(this["EnvEdSize"]));

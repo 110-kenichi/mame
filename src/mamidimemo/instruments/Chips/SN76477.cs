@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class SN76477 : InstrumentBase
     {
 
@@ -1671,6 +1672,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477Timbre>))]
         [DataContract]
+        [InstLock]
         public class SN76477Timbre : TimbreBase
         {
 
@@ -1840,7 +1842,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477GenalSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477GenalSettings : ContextBoundObject
+        public class SN76477GenalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(General)")]
@@ -2051,7 +2053,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477VcoSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477VcoSettings : ContextBoundObject
+        public class SN76477VcoSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(VCO)")]
@@ -2225,7 +2227,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477SlfSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477SlfSettings : ContextBoundObject
+        public class SN76477SlfSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(SLF)")]
@@ -2321,7 +2323,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477OneShotSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477OneShotSettings : ContextBoundObject
+        public class SN76477OneShotSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(OneShot)")]
@@ -2417,7 +2419,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477NoiseSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477NoiseSettings : ContextBoundObject
+        public class SN76477NoiseSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(Noise)")]
@@ -2565,7 +2567,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477AtkDcySettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477AtkDcySettings : ContextBoundObject
+        public class SN76477AtkDcySettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(AtkDcy)")]
@@ -2688,7 +2690,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76477EtcSettings>))]
         [DataContract]
         [InstLock]
-        public class SN76477EtcSettings : ContextBoundObject
+        public class SN76477EtcSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(ETC)")]

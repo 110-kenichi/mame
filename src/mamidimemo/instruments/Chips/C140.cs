@@ -29,6 +29,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class C140 : InstrumentBase
     {
         public override string Name => "C140";
@@ -773,6 +774,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<C140Timbre>))]
         [DataContract]
+        [InstLock]
         public class C140Timbre : TimbreBase
         {
             [DataMember]
@@ -918,6 +920,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class C140PcmSoundTable : PcmTimbreTableBase
         {
 
@@ -939,6 +942,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class C140PcmTimbre : PcmTimbreBase
         {
 

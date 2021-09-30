@@ -31,6 +31,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class Beep : InstrumentBase
     {
 
@@ -440,6 +441,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<BeepTimbre>))]
         [DataContract]
+        [InstLock]
         public class BeepTimbre : TimbreBase
         {
             /// <summary>

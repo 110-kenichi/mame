@@ -11,7 +11,7 @@ namespace zanac.MAmidiMEmo.Instruments
     /// </summary>
     [DataContract]
     [InstLock]
-    public class PcmTimbreTableBase : ContextBoundObject
+    public class PcmTimbreTableBase : InstLockProxy
     {
         /// <summary>
         /// 

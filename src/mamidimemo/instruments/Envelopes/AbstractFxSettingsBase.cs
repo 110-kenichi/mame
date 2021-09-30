@@ -19,7 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [DataContract]
     [InstLock]
-    public abstract class AbstractFxSettingsBase : ContextBoundObject
+    public abstract class AbstractFxSettingsBase : InstLockProxy
     {
         private bool f_Enable;
 

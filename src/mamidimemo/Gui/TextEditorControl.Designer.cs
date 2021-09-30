@@ -62,7 +62,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
             this.textBoxWsgDataText.Size = new System.Drawing.Size(613, 612);
             this.textBoxWsgDataText.TabIndex = 2;
             this.textBoxWsgDataText.Zoom = 100;

@@ -18,7 +18,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [JsonConverter(typeof(NoTypeConverterJsonConverter<ArpSettings>))]
     [DataContract]
     [InstLock]
-    public class ArpSettings : ContextBoundObject
+    public class ArpSettings : InstLockProxy
     {
         private bool f_Enable;
 

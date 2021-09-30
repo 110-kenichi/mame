@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// <summary>
     /// 
     /// </summary>
+    [InstLock]
     [DataContract]
     public class YMF262 : InstrumentBase
     {
@@ -1510,7 +1511,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Operator>))]
         [DataContract]
         [InstLock]
-        public class YMF262Operator : ContextBoundObject
+        public class YMF262Operator : InstLockProxy
         {
 
             private byte f_AR;
@@ -1914,7 +1915,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262GlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class YMF262GlobalSettings : ContextBoundObject
+        public class YMF262GlobalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip")]

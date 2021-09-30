@@ -1,5 +1,4 @@
 ﻿// copyright-holders:K.Ito
-using Accessibility;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
 using Newtonsoft.Json;
@@ -50,15 +49,16 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
         public static event EventHandler ShuttingDown;
 
 #pragma warning disable CS0414
-        /// <summary>
-        /// ダミー(遅延Assemblyロード回避)
-        /// </summary>
-        private static readonly MultilineStringEditor dummyEditor = new MultilineStringEditor();
 
         /// <summary>
         /// ダミー(遅延Assemblyロード回避)
         /// </summary>
-        private static readonly AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
+        //private static readonly MultilineStringEditor dummyEditor = new MultilineStringEditor();
+
+        /// <summary>
+        /// ダミー(遅延Assemblyロード回避)
+        /// </summary>
+        //private static readonly AnnoScope dummyAnnoScope = AnnoScope.ANNO_CONTAINER;
 #pragma warning restore  CS0414
 
         private static readonly Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -130,13 +130,13 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
         /// <param name="parentModule">親モジュール</param>
-        public static void Main(IntPtr parentModule)
+        public static void DllMain(IntPtr parentModule)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            System.Resources.ResourceManager rm =
-                new System.Resources.ResourceManager("System", typeof(UriFormat).Assembly);
-            string dummy = rm.GetString("Arg_EmptyOrNullString");
+            //System.Resources.ResourceManager rm =
+            //    new System.Resources.ResourceManager("System", typeof(UriFormat).Assembly);
+            //string dummy = rm.GetString("Arg_EmptyOrNullString");
 
             ThreadPool.SetMaxThreads(250, 1000);
 
@@ -227,7 +227,8 @@ Copyright(C) 2019, 2021 Itoken.All rights reserved.";
             {
                 Priority = ThreadPriority.BelowNormal
             };
-            mainThread.SetApartmentState(ApartmentState.STA);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                mainThread.SetApartmentState(ApartmentState.STA);
             mainThread.Start();
             threadStart.WaitOne();
         }

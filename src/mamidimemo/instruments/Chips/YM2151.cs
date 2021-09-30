@@ -29,6 +29,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class YM2151 : InstrumentBase
     {
 
@@ -1136,6 +1137,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2151Timbre>))]
         [DataContract]
+        [InstLock]
         public class YM2151Timbre : TimbreBase
         {
             #region FM Synth
@@ -1565,7 +1567,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class YM2151Operator : ContextBoundObject
+        public class YM2151Operator : InstLockProxy
         {
             private byte f_Enable = 1;
 
@@ -1956,7 +1958,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2151GlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class YM2151GlobalSettings : ContextBoundObject
+        public class YM2151GlobalSettings : InstLockProxy
         {
             [DataMember]
             [Category("Chip(Global)")]

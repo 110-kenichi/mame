@@ -30,6 +30,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class uPD1771C : InstrumentBase
     {
 

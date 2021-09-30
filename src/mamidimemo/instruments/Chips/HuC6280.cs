@@ -29,6 +29,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class HuC6280 : InstrumentBase
     {
         public override string Name => "HuC6280";
@@ -946,6 +947,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<HuC6280Timbre>))]
         [DataContract]
+        [InstLock]
         public class HuC6280Timbre : TimbreBase
         {
             [DataMember]
@@ -1304,7 +1306,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class HuC6280LfoMorphData : ContextBoundObject
+        public class HuC6280LfoMorphData : InstLockProxy
         {
 
             private byte[] f_lfodata = new byte[32];

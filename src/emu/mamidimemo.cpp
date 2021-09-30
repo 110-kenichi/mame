@@ -41,7 +41,7 @@ DWORD WINAPI StartMAmidiMEmoMainThread(LPVOID lpParam)
 	HMODULE hModule = LoadLibrary("wrapper.dll");
 	if (hModule != NULL)
 	{
-		FARPROC proc = GetProcAddress(hModule, "_MainWarpper@4");
+		FARPROC proc = GetProcAddress(hModule, "_MainWrapper@4");
 		if (proc != NULL)
 		{
 			MainWrapperProc main = reinterpret_cast<MainWrapperProc>(proc);
@@ -116,7 +116,7 @@ void StartMAmidiMEmoMain()
 		soundTimerCallback = reinterpret_cast<SoundTimerCallbackProc>(proc);
 
 	// Launch MAmi
-	proc = GetProcAddress(hModule, "MainWarpper");
+	proc = GetProcAddress(hModule, "MainWrapper");
 	if (proc != NULL)
 	{
 		char path[MAX_PATH];

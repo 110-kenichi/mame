@@ -48,7 +48,7 @@
     <ProjectGuid>{3CC2BF97-549E-4C0E-AD13-C27D969ED3EF}</ProjectGuid>
     <RootNamespace>vst</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFramework>net5.0</TargetFramework>
     <ProjectName>MAmiVSTi</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -111,11 +111,11 @@
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\Output\Debug64\VST\</OutDir>
+    <OutDir>..\..\Output\Debug\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\Output\Release64\VST\</OutDir>
+    <OutDir>..\..\Output\Release\VST\</OutDir>
     <TargetName>MAmiVSTi</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -164,6 +164,7 @@
       <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>user32.lib;advapi32.lib;wsock32.lib;ws2_32.lib;iphlpapi.lib;shell32.lib;userenv.lib;setupapi.lib;opengl32.lib;gdi32.lib;dsound.lib;dxguid.lib;oleaut32.lib;winmm.lib;dinput8.lib;comctl32.lib;comdlg32.lib;psapi.lib;ole32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

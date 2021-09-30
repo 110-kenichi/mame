@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSettings));
+            zanac.MAmidiMEmo.Properties.Settings settings1 = new zanac.MAmidiMEmo.Properties.Settings();
             this.buttonOk = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.labelRate = new MetroFramework.Controls.MetroLabel();
@@ -97,7 +98,8 @@
             // 
             // comboBoxAudioLatency
             // 
-            this.comboBoxAudioLatency.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "AudioLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            settings1.SettingsKey = "";
+            this.comboBoxAudioLatency.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", settings1, "AudioLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxAudioLatency, "comboBoxAudioLatency");
             this.comboBoxAudioLatency.FormattingEnabled = true;
             this.comboBoxAudioLatency.Items.AddRange(new object[] {
@@ -106,7 +108,6 @@
             resources.GetString("comboBoxAudioLatency.Items2"),
             resources.GetString("comboBoxAudioLatency.Items3")});
             this.comboBoxAudioLatency.Name = "comboBoxAudioLatency";
-            this.comboBoxAudioLatency.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.AudioLatency;
             this.comboBoxAudioLatency.UseSelectable = true;
             // 
             // label3
@@ -116,7 +117,7 @@
             // 
             // comboBoxSoundType
             // 
-            this.comboBoxSoundType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SoundType", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxSoundType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", settings1, "SoundType", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxSoundType, "comboBoxSoundType");
             this.comboBoxSoundType.FormattingEnabled = true;
             this.comboBoxSoundType.Items.AddRange(new object[] {
@@ -125,12 +126,11 @@
             resources.GetString("comboBoxSoundType.Items2"),
             resources.GetString("comboBoxSoundType.Items3")});
             this.comboBoxSoundType.Name = "comboBoxSoundType";
-            this.comboBoxSoundType.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.SoundType;
             this.comboBoxSoundType.UseSelectable = true;
             // 
             // comboBoxSampleRate
             // 
-            this.comboBoxSampleRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SampleRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxSampleRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", settings1, "SampleRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxSampleRate, "comboBoxSampleRate");
             this.comboBoxSampleRate.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBoxSampleRate.FormattingEnabled = true;
@@ -141,7 +141,6 @@
             resources.GetString("comboBoxSampleRate.Items3"),
             resources.GetString("comboBoxSampleRate.Items4")});
             this.comboBoxSampleRate.Name = "comboBoxSampleRate";
-            this.comboBoxSampleRate.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.SampleRate;
             this.comboBoxSampleRate.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBoxSampleRate_DrawItem);
             this.comboBoxSampleRate.Validating += new System.ComponentModel.CancelEventHandler(this.comboBoxText_Validating);
             // 
@@ -179,11 +178,10 @@
             this.textBoxPaLatency.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxPaLatency.CustomButton.UseSelectable = true;
             this.textBoxPaLatency.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible")));
-            this.textBoxPaLatency.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxPaLatency.DataBindings.Add(new System.Windows.Forms.Binding("Text", settings1, "PaLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBoxPaLatency, "textBoxPaLatency");
             this.textBoxPaLatency.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBoxPaLatency.Lines = new string[] {
-        "0.003334"};
+            this.textBoxPaLatency.Lines = new string[0];
             this.textBoxPaLatency.MaxLength = 32767;
             this.textBoxPaLatency.Name = "textBoxPaLatency";
             this.textBoxPaLatency.PasswordChar = '\0';
@@ -192,7 +190,6 @@
             this.textBoxPaLatency.SelectionLength = 0;
             this.textBoxPaLatency.SelectionStart = 0;
             this.textBoxPaLatency.ShortcutsEnabled = true;
-            this.textBoxPaLatency.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaLatency;
             this.textBoxPaLatency.UseSelectable = true;
             this.textBoxPaLatency.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBoxPaLatency.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
@@ -218,12 +215,11 @@
             this.textBoxPaDevice.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxPaDevice.CustomButton.UseSelectable = true;
             this.textBoxPaDevice.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible1")));
-            this.textBoxPaDevice.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaDevice", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxPaDevice.DataBindings.Add(new System.Windows.Forms.Binding("Text", settings1, "PaDevice", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBoxPaDevice, "textBoxPaDevice");
             this.textBoxPaDevice.FontSize = MetroFramework.MetroTextBoxSize.Medium;
             this.textBoxPaDevice.FontWeight = MetroFramework.MetroTextBoxWeight.Light;
-            this.textBoxPaDevice.Lines = new string[] {
-        "default"};
+            this.textBoxPaDevice.Lines = new string[0];
             this.textBoxPaDevice.MaxLength = 32767;
             this.textBoxPaDevice.Name = "textBoxPaDevice";
             this.textBoxPaDevice.PasswordChar = '\0';
@@ -232,7 +228,6 @@
             this.textBoxPaDevice.SelectionLength = 0;
             this.textBoxPaDevice.SelectionStart = 0;
             this.textBoxPaDevice.ShortcutsEnabled = true;
-            this.textBoxPaDevice.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaDevice;
             this.textBoxPaDevice.UseSelectable = true;
             this.textBoxPaDevice.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBoxPaDevice.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
@@ -263,11 +258,10 @@
             this.textBoxPaApi.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBoxPaApi.CustomButton.UseSelectable = true;
             this.textBoxPaApi.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible2")));
-            this.textBoxPaApi.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaApi", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBoxPaApi.DataBindings.Add(new System.Windows.Forms.Binding("Text", settings1, "PaApi", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBoxPaApi, "textBoxPaApi");
             this.textBoxPaApi.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBoxPaApi.Lines = new string[] {
-        "\"Windows WASAPI\""};
+            this.textBoxPaApi.Lines = new string[0];
             this.textBoxPaApi.MaxLength = 32767;
             this.textBoxPaApi.Name = "textBoxPaApi";
             this.textBoxPaApi.PasswordChar = '\0';
@@ -276,7 +270,6 @@
             this.textBoxPaApi.SelectionLength = 0;
             this.textBoxPaApi.SelectionStart = 0;
             this.textBoxPaApi.ShortcutsEnabled = true;
-            this.textBoxPaApi.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaApi;
             this.textBoxPaApi.UseSelectable = true;
             this.textBoxPaApi.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBoxPaApi.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
@@ -316,7 +309,7 @@
             this.textBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.textBox1.CustomButton.UseSelectable = true;
             this.textBox1.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible3")));
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OutputDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", settings1, "OutputDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBox1, "textBox1");
             this.textBox1.FontSize = MetroFramework.MetroTextBoxSize.Medium;
             this.textBox1.Lines = new string[0];
@@ -328,7 +321,6 @@
             this.textBox1.SelectionLength = 0;
             this.textBox1.SelectionStart = 0;
             this.textBox1.ShortcutsEnabled = true;
-            this.textBox1.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.OutputDir;
             this.textBox1.UseSelectable = true;
             this.textBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);

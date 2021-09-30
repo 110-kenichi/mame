@@ -17,7 +17,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<DrumTimbre>))]
     [DataContract]
     [InstLock]
-    public class DrumTimbre : ContextBoundObject
+    public class DrumTimbre : InstLockProxy
     {
         /// <summary>
         /// 

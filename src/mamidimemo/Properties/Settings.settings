@@ -15,7 +15,7 @@
       <Value Profile="(Default)">48000</Value>
     </Setting>
     <Setting Name="AudioLatency" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">5</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="PaApi" Type="System.String" Scope="User">
       <Value Profile="(Default)">"Windows WASAPI"</Value>
@@ -60,25 +60,25 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="YM2151EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="YM2610BEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="YM2612EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="YM3812EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="YM2413EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="YMF262EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="PWinSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="MWinCC" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -102,7 +102,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="YM2608EdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="GitHubUserName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -114,25 +114,25 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="WsgEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="WsgFirWeight" Type="System.String" Scope="User">
       <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
     </Setting>
     <Setting Name="LpcEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="AllophonesEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="PhonemesEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="EnvFirWeight" Type="System.String" Scope="User">
       <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
     </Setting>
     <Setting Name="EnvEdSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">640, 480</Value>
+      <Value Profile="(Default)">800, 600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

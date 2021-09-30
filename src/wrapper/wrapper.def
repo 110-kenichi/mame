@@ -13,4 +13,4 @@ EXPORTS
 	LoadData
 	SaveData
 	SoundTimerCallback
-	MainWarpper			@4
+	MainWrapper			@4
