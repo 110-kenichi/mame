@@ -151,3 +151,5 @@ Release(but Debug .NET)
 /src/VSIF/VGMPlay_MSX/player_code.rel
 /src/VSIF/VGMPlay_MSX/player_code.sym
 /src/VSIF/VGMPlay_MSX/uart-4800.rel
+obj
+.vs
