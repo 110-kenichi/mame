@@ -29,7 +29,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         {
             //if (method.Name.StartsWith("set_"))
             {
-                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
         }
 

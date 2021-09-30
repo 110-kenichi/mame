@@ -42,7 +42,8 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(641, 488);
+            this.buttonCancel.Location = new System.Drawing.Point(761, 614);
+            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -53,7 +54,8 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(560, 488);
+            this.buttonOk.Location = new System.Drawing.Point(678, 614);
+            this.buttonOk.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
@@ -84,35 +86,38 @@ namespace zanac.MAmidiMEmo.Gui
             this.textBoxWsgDataText.CharWidth = 8;
             this.textBoxWsgDataText.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxWsgDataText.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.textBoxWsgDataText.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBoxWsgDataText.IsReplaceMode = false;
             this.textBoxWsgDataText.Language = FastColoredTextBoxNS.Language.JS;
             this.textBoxWsgDataText.LeftBracket = '(';
             this.textBoxWsgDataText.LeftBracket2 = '{';
-            this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 63);
+            this.textBoxWsgDataText.Location = new System.Drawing.Point(9, 64);
+            this.textBoxWsgDataText.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
             this.textBoxWsgDataText.Paddings = new System.Windows.Forms.Padding(0);
             this.textBoxWsgDataText.RightBracket = ')';
             this.textBoxWsgDataText.RightBracket2 = '}';
             this.textBoxWsgDataText.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.textBoxWsgDataText.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("textBoxWsgDataText.ServiceColors")));
             this.textBoxWsgDataText.ShowFoldingLines = true;
-            this.textBoxWsgDataText.Size = new System.Drawing.Size(707, 419);
+            this.textBoxWsgDataText.Size = new System.Drawing.Size(827, 542);
             this.textBoxWsgDataText.TabIndex = 0;
             this.textBoxWsgDataText.Zoom = 100;
             // 
             // FormTextEditor
             // 
             this.AcceptButton = this.buttonOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(725, 520);
+            this.ClientSize = new System.Drawing.Size(846, 650);
             this.Controls.Add(this.textBoxWsgDataText);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormTextEditor";
+            this.Padding = new System.Windows.Forms.Padding(6, 60, 6, 12);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;

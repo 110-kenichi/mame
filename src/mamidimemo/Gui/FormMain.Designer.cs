@@ -37,6 +37,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
+            zanac.MAmidiMEmo.Properties.Settings settings1 = new zanac.MAmidiMEmo.Properties.Settings();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.metroLabelDrop = new MetroFramework.Controls.MetroLabel();
@@ -108,7 +109,7 @@
             this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -376,7 +377,7 @@
             this.tabControlBottom.Controls.Add(this.tabPage3);
             this.tabControlBottom.Controls.Add(this.tabPage4);
             this.tabControlBottom.Controls.Add(this.tabPage2);
-            this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", settings1, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
             this.tabControlBottom.SelectedIndex = 0;
@@ -995,7 +996,8 @@
             // 
             resources.ApplyResources(this.metroTrackBarVol, "metroTrackBarVol");
             this.metroTrackBarVol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
-            this.metroTrackBarVol.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MasterVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            settings1.SettingsKey = "";
+            this.metroTrackBarVol.DataBindings.Add(new System.Windows.Forms.Binding("Value", settings1, "MasterVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTrackBarVol.Name = "metroTrackBarVol";
             this.metroTrackBarVol.UseCustomBackColor = true;
             this.metroTrackBarVol.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.MasterVolume;

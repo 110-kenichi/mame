@@ -61,11 +61,12 @@
             // 
             this.propertyGrid.ContextMenuStrip = this.contextMenuStripProp;
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.propertyGrid.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.propertyGrid.HelpBackColor = System.Drawing.SystemColors.Info;
-            this.propertyGrid.Location = new System.Drawing.Point(5, 85);
+            this.propertyGrid.Location = new System.Drawing.Point(6, 85);
+            this.propertyGrid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(630, 285);
+            this.propertyGrid.Size = new System.Drawing.Size(761, 378);
             this.propertyGrid.TabIndex = 2;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
@@ -89,17 +90,19 @@
             this.panel1.Controls.Add(this.pianoControl1);
             this.panel1.Controls.Add(this.toolStrip2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(5, 370);
+            this.panel1.Location = new System.Drawing.Point(6, 463);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(630, 100);
+            this.panel1.Size = new System.Drawing.Size(761, 125);
             this.panel1.TabIndex = 4;
             // 
             // pianoControl1
             // 
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pianoControl1.Location = new System.Drawing.Point(0, 25);
+            this.pianoControl1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(630, 75);
+            this.pianoControl1.Size = new System.Drawing.Size(761, 100);
             this.pianoControl1.TabIndex = 0;
             // 
             // toolStrip2
@@ -114,7 +117,7 @@
             this.toolStripComboBoxCC});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(630, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(761, 25);
             this.toolStrip2.TabIndex = 2;
             this.toolStrip2.Text = "toolStrip2";
             // 
@@ -254,7 +257,7 @@
             "127",
             "128"});
             this.toolStripComboBoxProg.Name = "toolStripComboBoxProg";
-            this.toolStripComboBoxProg.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxProg.Size = new System.Drawing.Size(87, 25);
             // 
             // toolStripLabel4
             // 
@@ -286,7 +289,7 @@
             "14(15ch)",
             "15(16ch)"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxCh.Size = new System.Drawing.Size(87, 25);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
@@ -436,7 +439,7 @@
             "126",
             "127"});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxCC.Size = new System.Drawing.Size(87, 25);
             // 
             // toolStrip3
             // 
@@ -445,9 +448,9 @@
             this.toolStripButtonCat,
             this.toolStripButtonA2Z,
             this.toolStripButtonPopup});
-            this.toolStrip3.Location = new System.Drawing.Point(5, 60);
+            this.toolStrip3.Location = new System.Drawing.Point(6, 60);
             this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(630, 25);
+            this.toolStrip3.Size = new System.Drawing.Size(761, 25);
             this.toolStrip3.TabIndex = 3;
             this.toolStrip3.Text = "toolStrip3";
             // 
@@ -486,15 +489,17 @@
             // 
             // FormProp
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(640, 480);
+            this.ClientSize = new System.Drawing.Size(773, 600);
             this.Controls.Add(this.propertyGrid);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip3);
+            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormProp";
+            this.Padding = new System.Windows.Forms.Padding(6, 60, 6, 12);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
