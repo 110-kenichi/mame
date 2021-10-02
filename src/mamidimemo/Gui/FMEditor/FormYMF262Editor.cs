@@ -356,6 +356,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     tone.aOp[0].DR = (byte)((idata[3]) & 0x0f);
 
                                     tone.aOp[0].SL = (byte)((idata[4] >> 4) & 0x0f);
+                                    tone.aOp[0].SR = -1;
                                     tone.aOp[0].RR = (byte)((idata[4]) & 0x0f);
 
                                     tone.aOp[0].WS = (byte)((idata[5]) & 0x07);
@@ -373,6 +374,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     tone.aOp[1].DR = (byte)((idata[9]) & 0x0f);
 
                                     tone.aOp[1].SL = (byte)((idata[10] >> 4) & 0x0f);
+                                    tone.aOp[1].SR = -1;
                                     tone.aOp[1].RR = (byte)((idata[10]) & 0x0f);
 
                                     tone.aOp[1].WS = (byte)((idata[11]) & 0x07);
@@ -471,6 +473,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 if (op != null)
                 {
                     op.SL = (byte)((reg >> 4) & 0x0f);
+                    op.SR = -1;
                     op.RR = (byte)((reg >> 0) & 0x0f);
                 }
                 //1
@@ -486,6 +489,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim2.KeyOnDelay = ReadInt16Big(file);
                 //2
                 tim2.KeyOffDelay = ReadInt16Big(file);
+            }
+            else
+            {
+                //2
+                ReadInt16Big(file);
+                //2
+                ReadInt16Big(file);
             }
         }
 
@@ -548,7 +558,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
                     ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR;
-                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = -1;
                     ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
                 }
                 ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
@@ -633,7 +643,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
                     tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
-                    tim.Ops[i].SR = (byte)(tone.aOp[i].SR);
+                    tim.Ops[i].SR = null;
                     tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
                 }
                 tim.Ops[i].RR = (byte)tone.aOp[i].RR;

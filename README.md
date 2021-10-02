@@ -269,6 +269,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 3.9.3.2	Fixed some minor bugs and refactored.
+		Fixed a WOPL and OPL file importer.
 3.9.3.1	Supported importing a OPL file to YMF262 Tone Editor.
 3.9.3.0	Added Key On/Off delay time property to a Timbre property.
 		Supported importing a WOPL file to YMF262 Tone Editor.

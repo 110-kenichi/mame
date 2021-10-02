@@ -34,6 +34,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class YM2612 : InstrumentBase
     {
 
@@ -1176,6 +1177,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2612Timbre>))]
         [DataContract]
+        [InstLock]
         public class YM2612Timbre : TimbreBase
         {
             #region FM Synth

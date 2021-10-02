@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -9,6 +10,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class MOS6581 : SIDBase
     {
 

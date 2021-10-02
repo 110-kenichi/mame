@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// <summary>
     /// 
     /// </summary>
+    [InstLock]
     [DataContract]
     public class YMF262 : InstrumentBase
     {

@@ -36,6 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public partial class RP2A03 : InstrumentBase
     {
 
@@ -1590,6 +1591,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<RP2A03Timbre>))]
         [DataContract]
+        [InstLock]
         public class RP2A03Timbre : TimbreBase
         {
 
@@ -2687,6 +2689,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class DPcmSoundTable : PcmTimbreTableBase
         {
             /// <summary>
@@ -2703,6 +2706,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class DeltaPcmTimbre : PcmTimbreBase
         {
 

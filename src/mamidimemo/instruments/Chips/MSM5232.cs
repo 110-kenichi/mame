@@ -31,6 +31,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class MSM5232 : InstrumentBase, IStandardValues
     {
 
@@ -670,6 +671,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<MSM5232Timbre>))]
         [DataContract]
+        [InstLock]
         public class MSM5232Timbre : TimbreBase
         {
             [DataMember]

@@ -34,6 +34,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class GB_APU : InstrumentBase
     {
         public override string Name => "GB_APU";
@@ -904,6 +905,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<GBAPUTimbre>))]
         [DataContract]
+        [InstLock]
         public class GBAPUTimbre : TimbreBase
         {
             [DataMember]
@@ -1305,6 +1307,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<BasicFxSettings>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
+        [InstLock]
         public class GbFxSettings : BasicFxSettings
         {
 

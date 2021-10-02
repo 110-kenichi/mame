@@ -34,6 +34,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class SP0256 : InstrumentBase
     {
 
@@ -927,6 +928,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SP0256Timbre>))]
         [DataContract]
+        [InstLock]
         public class SP0256Timbre : TimbreBase
         {
             private string words;

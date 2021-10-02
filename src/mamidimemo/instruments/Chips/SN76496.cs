@@ -36,6 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class SN76496 : InstrumentBase
     {
 
@@ -783,6 +784,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SN76496Timbre>))]
         [DataContract]
+        [InstLock]
         public class SN76496Timbre : TimbreBase
         {
             [DataMember]

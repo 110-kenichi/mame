@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class SCC1 : InstrumentBase
     {
 
@@ -934,6 +935,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SCC1Timbre>))]
         [DataContract]
+        [InstLock]
         public class SCC1Timbre : TimbreBase
         {
             private sbyte[] wsgData = new sbyte[32];

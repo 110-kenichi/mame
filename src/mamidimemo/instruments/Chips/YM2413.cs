@@ -36,6 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class YM2413 : InstrumentBase
     {
 
@@ -1598,6 +1599,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Timbre>))]
         [DataContract]
+        [InstLock]
         public class YM2413Timbre : TimbreBase
         {
             #region FM Synth
@@ -2289,6 +2291,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Modulator>))]
         [DataContract]
+        [InstLock]
         public class YM2413Modulator : YM2413Operator
         {
 
@@ -2417,6 +2420,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Career>))]
         [DataContract]
+        [InstLock]
         public class YM2413Career : YM2413Operator
         {
 

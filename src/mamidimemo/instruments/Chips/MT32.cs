@@ -29,6 +29,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class MT32 : InstrumentBase
     {
 
@@ -704,6 +705,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<MT32Timbre>))]
         [DataContract]
+        [InstLock]
         public class MT32Timbre : TimbreBase
         {
             /// <summary>

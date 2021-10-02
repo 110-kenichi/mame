@@ -1140,7 +1140,7 @@
       <Version>2.16.24</Version>
     </PackageReference>
     <PackageReference Include="FTD2XX.Net">
-      <Version>1.2.0</Version>
+      <Version>1.2.1</Version>
     </PackageReference>
     <PackageReference Include="Melanchall.DryWetMidi">
       <Version>5.2.1</Version>

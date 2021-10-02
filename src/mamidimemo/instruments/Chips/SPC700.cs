@@ -33,6 +33,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// 
     /// </summary>
     [DataContract]
+    [InstLock]
     public class SPC700 : InstrumentBase
     {
         public override string Name => "SPC700";
@@ -1378,6 +1379,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<SPC700Timbre>))]
         [DataContract]
+        [InstLock]
         public class SPC700Timbre : TimbreBase
         {
             [DataMember]
@@ -1673,6 +1675,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class SPC700PcmSoundTable : PcmTimbreTableBase
         {
 
@@ -1694,6 +1697,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         [DataContract]
+        [InstLock]
         public class SPC700PcmTimbre : PcmTimbreBase
         {
 
