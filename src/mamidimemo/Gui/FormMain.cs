@@ -1144,7 +1144,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 //Program change
                 var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProgNo.SelectedIndex - 1));
-                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex);
+                pe.Channel = (FourBitNumber)(toolStripComboBoxKeyCh.SelectedIndex & 0xf);
                 MidiManager.SendMidiEvent((MidiPort)(((toolStripComboBoxKeyCh.SelectedIndex & 0x30) >> 4) + 1), pe);
             }
         }
