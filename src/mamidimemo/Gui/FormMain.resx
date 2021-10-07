@@ -2590,7 +2590,7 @@
     <value>&amp;FILE</value>
   </data>
   <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>125, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Settings...</value>
@@ -2698,7 +2698,7 @@
     <value>CM-32&amp;P(Simulation)</value>
   </data>
   <data name="lAToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="lAToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;MIDI</value>
@@ -2716,55 +2716,61 @@
     <value>&amp;SPC700</value>
   </data>
   <data name="pCMToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="pCMToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;PCM</value>
   </data>
   <data name="extendYM2610BToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="extendYM2610BToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM2610&amp;B</value>
+    <value>YM2610B(OPN&amp;B)</value>
   </data>
   <data name="toolStripMenuItem2608.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="toolStripMenuItem2608.Text" xml:space="preserve">
-    <value>YM260&amp;8</value>
+    <value>YM260&amp;8(OPN&amp;A)</value>
   </data>
   <data name="addYM2151ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="addYM2151ToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM&amp;2151</value>
+    <value>YM2151(OP&amp;M)</value>
   </data>
   <data name="addYM2612ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="addYM2612ToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM2&amp;612</value>
+    <value>YM2&amp;612(OP&amp;N2)</value>
   </data>
   <data name="extendYM3812ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="extendYM3812ToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM&amp;3812</value>
+    <value>YM&amp;3812(OPL&amp;2)</value>
   </data>
   <data name="extendYM2413ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="extendYM2413ToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM2&amp;413</value>
+    <value>YM2413(OPL&amp;L)</value>
   </data>
   <data name="extendYMF262ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>223, 22</value>
   </data>
   <data name="extendYMF262ToolStripMenuItem.Text" xml:space="preserve">
-    <value>YM&amp;F262</value>
+    <value>YMF262(OPL&amp;3)</value>
+  </data>
+  <data name="yM2414ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>223, 22</value>
+  </data>
+  <data name="yM2414ToolStripMenuItem.Text" xml:space="preserve">
+    <value>YM2414(OP&amp;Z)(Experimental)</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="fMSynthesisToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;FM</value>
@@ -2788,7 +2794,7 @@
     <value>&amp;HuC6280</value>
   </data>
   <data name="wSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="wSGToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;WSG</value>
@@ -2839,7 +2845,7 @@
     <value>172, 22</value>
   </data>
   <data name="uPD1771ToolStripMenuItem.Text" xml:space="preserve">
-    <value>uPD1771C</value>
+    <value>&amp;uPD1771C</value>
   </data>
   <data name="extendMSM5232ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>172, 22</value>
@@ -2857,7 +2863,7 @@
     <value>False</value>
   </data>
   <data name="pSGToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="pSGToolStripMenuItem.Text" xml:space="preserve">
     <value>PS&amp;G</value>
@@ -2881,7 +2887,7 @@
     <value>S&amp;AM</value>
   </data>
   <data name="eTCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="eTCToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;VOICE</value>
@@ -2893,7 +2899,7 @@
     <value>&amp;SN76477</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="dISCRETEToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;DISCRETE</value>
@@ -5367,6 +5373,12 @@
     <value>extendYMF262ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;extendYMF262ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;yM2414ToolStripMenuItem.Name" xml:space="preserve">
+    <value>yM2414ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;yM2414ToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;wSGToolStripMenuItem.Name" xml:space="preserve">

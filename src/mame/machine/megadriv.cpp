@@ -960,8 +960,8 @@ void md_base_state::md_ntsc(machine_config &config)
 	screen.screen_vblank().set(FUNC(md_base_state::screen_vblank_megadriv)); /* Used to Sync the timing */
 	MCFG_VIDEO_START_OVERRIDE(md_base_state, megadriv)
 
-		/* sound hardware */
-		SPEAKER(config, "lspeaker").front_left();
+	/* sound hardware */
+	SPEAKER(config, "lspeaker").front_left();
 	SPEAKER(config, "rspeaker").front_right();
 	/*
 	YM2612(config, m_ymsnd, MASTER_CLOCK_NTSC / 7); /* 7.67 MHz */
@@ -1090,6 +1090,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		UPD1771C(config, *m_upd1771[i], 6_MHz_XTAL);
 		(*m_upd1771[i])->add_route(0, "lspeaker", 1.00);
 		(*m_upd1771[i])->add_route(1, "rspeaker", 1.00);
+
+		YMFM_OPZ(config, *m_ymfm_opz[i], XTAL(3'579'545));
+		(*m_ymfm_opz[i])->add_route(0, "lspeaker", 2.00);
+		(*m_ymfm_opz[i])->add_route(1, "rspeaker", 2.00);
 	}
 }
 /*

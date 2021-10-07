@@ -16,6 +16,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public string Label
+        {
+            get
+            {
+                return labelName.Text;
+            }
+            set
+            {
+                labelName.Text = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int Value
         {
             get

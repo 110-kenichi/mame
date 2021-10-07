@@ -149,7 +149,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Sound Driver Settings")]
-        [DisplayName("Sound Driver Settings(SDS)")]
+        [DisplayName("Sound Driver Settings[SDS]")]
         public virtual SoundDriverSettings SDS
         {
             get;
@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Sound Control Change Settings\r\n" +
             "Link Data Entry message value with the Timbre property value (Only the property that has a slider editor)\r\n" +
             "eg) \"DutyCycle,Volume\" ... You can change DutyCycle and Volume property values dynamically via MIDI Control Change No.7x message.")]
-        [DisplayName("Sound Control Change Settings(SCCS)")]
+        [DisplayName("Sound Control Change Settings[SCCS]")]
         public virtual SoundControlChangeSettings SCCS
         {
             get;

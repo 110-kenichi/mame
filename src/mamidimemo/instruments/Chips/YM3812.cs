@@ -844,7 +844,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Operators")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
-            [DisplayName("Operators(Ops)")]
+            [DisplayName("Operators[Ops]")]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             public YM3812Operator[] Ops
             {

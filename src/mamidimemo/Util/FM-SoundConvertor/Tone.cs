@@ -12,17 +12,19 @@ namespace FM_SoundConvertor
         public int SL;
         public int TL;
         public int KS;
+        public int FIX;
+        public int OSCF;
         public int ML;
         public int DT;
         public int DT2;
         public int AM;
+        public int EGSF;
 
         public int KSR;
         public int VIB;
         public int EG;
         public int WS;
         public int SSG;
-
 
         public Op()
         {
@@ -61,6 +63,9 @@ namespace FM_SoundConvertor
         public int FB2;
         public int AL;
         public int CNT = -1;
+        public int NE;
+        public int NF;
+
         public Op[] aOp;
 
         public int KeyShift;

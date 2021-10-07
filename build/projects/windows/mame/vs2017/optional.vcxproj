@@ -199,8 +199,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>X64_WINDOWS_ABI;PTR64=1;NDEBUG;CRLF=3;LSB_FIRST;FLAC__NO_DLL;PUGIXML_HEADER_ONLY;NATIVE_DRC=drcbe_x64;LUA_COMPAT_ALL;LUA_COMPAT_5_1;LUA_COMPAT_5_2;_WIN64;XML_STATIC;WIN32;_WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_STDIO_LEGACY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -293,6 +292,18 @@
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ym2413.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ymdeltat.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\ymf262.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_adpcm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_fm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_fm.ipp" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_misc.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opl.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opn.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opq.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opz.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_pcm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_ssg.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\video\vector.h" />
     <ClInclude Include="..\..\..\..\..\src\mame\audio\snes_snd.h" />
   </ItemGroup>
@@ -370,6 +381,15 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ym2413.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ymdeltat.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\ymf262.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_adpcm.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_misc.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opl.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opm.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opn.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opq.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_opz.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_pcm.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\ymfm\src\ymfm_ssg.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\video\vector.cpp" />
     <ClCompile Include="..\..\..\..\..\src\mame\audio\snes_snd.cpp" />
   </ItemGroup>

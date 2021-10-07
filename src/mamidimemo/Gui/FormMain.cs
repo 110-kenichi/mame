@@ -229,6 +229,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("SAM", Resources.SAM);
             imageList1.Images.Add("SN76477", Resources.SN76477);
             imageList1.Images.Add("uPD1771C", Resources.uPD1771C);
+            imageList1.Images.Add("YM2414", Resources.YM2414);
 
             if (Program.IsVSTiMode())
             {
@@ -571,6 +572,11 @@ namespace zanac.MAmidiMEmo.Gui
         private void addYM2151ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.YM2151);
+        }
+
+        private void yM2414ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.YM2414);
         }
 
         private void extendNESAPUToolStripMenuItem_Click(object sender, EventArgs e)

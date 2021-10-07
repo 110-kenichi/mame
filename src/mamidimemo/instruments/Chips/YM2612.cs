@@ -1420,7 +1420,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Operators")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-            [DisplayName("Operators(Ops)")]
+            [DisplayName("Operators[Ops]")]
             public YM2612Operator[] Ops
             {
                 get;
@@ -1673,6 +1673,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(FM)")]
             [Description("Decay Rate (0-31)")]
+            [DisplayName("D1R(DR)[D1R]")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1696,6 +1697,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(FM)")]
             [Description("Sustain Rate(2nd Decay Rate) (0-31)")]
+            [DisplayName("D2R(SR)[D2R]")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]

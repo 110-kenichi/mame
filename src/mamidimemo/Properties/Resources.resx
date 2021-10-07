@@ -388,4 +388,19 @@ Or, install the loopMIDI application to the PC.</value>
   <data name="UpdatingDPCM" xml:space="preserve">
     <value>Updating DPCM data...</value>
   </data>
+  <data name="WS10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS10.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS8.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WS9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WS9.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM2414" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM2414.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

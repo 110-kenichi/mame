@@ -152,7 +152,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Sound Driver Settings")]
-        [DisplayName("Sound Driver Settings(SDS)")]
+        [DisplayName("Sound Driver Settings[CSDS]")]
         public CombinedSoundDriverSettings CSDS
         {
             get;

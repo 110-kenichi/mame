@@ -144,6 +144,7 @@
             this.extendYM3812ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM2413ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYMF262ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yM2414ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wSGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSCC1kToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addNAMCOCUS30ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1358,7 +1359,8 @@
             this.addYM2612ToolStripMenuItem,
             this.extendYM3812ToolStripMenuItem,
             this.extendYM2413ToolStripMenuItem,
-            this.extendYMF262ToolStripMenuItem});
+            this.extendYMF262ToolStripMenuItem,
+            this.yM2414ToolStripMenuItem});
             this.fMSynthesisToolStripMenuItem.Name = "fMSynthesisToolStripMenuItem";
             resources.ApplyResources(this.fMSynthesisToolStripMenuItem, "fMSynthesisToolStripMenuItem");
             // 
@@ -1403,6 +1405,12 @@
             this.extendYMF262ToolStripMenuItem.Name = "extendYMF262ToolStripMenuItem";
             resources.ApplyResources(this.extendYMF262ToolStripMenuItem, "extendYMF262ToolStripMenuItem");
             this.extendYMF262ToolStripMenuItem.Click += new System.EventHandler(this.extendYMF262ToolStripMenuItem_Click);
+            // 
+            // yM2414ToolStripMenuItem
+            // 
+            this.yM2414ToolStripMenuItem.Name = "yM2414ToolStripMenuItem";
+            resources.ApplyResources(this.yM2414ToolStripMenuItem, "yM2414ToolStripMenuItem");
+            this.yM2414ToolStripMenuItem.Click += new System.EventHandler(this.yM2414ToolStripMenuItem_Click);
             // 
             // wSGToolStripMenuItem
             // 
@@ -1786,6 +1794,7 @@
         private System.Windows.Forms.ToolStripMenuItem dISCRETEToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sN76477ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uPD1771ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem yM2414ToolStripMenuItem;
     }
 }
 

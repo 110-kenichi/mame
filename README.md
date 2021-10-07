@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.3.3	Fixed crashing CM-32P.
+		Added YM2414(OPZ) as experimantal. And, added FITOM bank file reader as experimantal.
 3.9.3.2	Fixed some minor bugs and refactored.
 		Fixed a WOPL and OPL file importer.
 3.9.3.1	Supported importing a OPL file to YMF262 Tone Editor.

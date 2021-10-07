@@ -1314,7 +1314,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound")]
             [Description("Operators. Uses only first 2 opperators in 2 op mode.")]
             [TypeConverter(typeof(ExpandableCollectionConverter))]
-            [DisplayName("Operators(Ops)")]
+            [DisplayName("Operators[Ops]")]
             [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
             public YMF262Operator[] Ops
             {

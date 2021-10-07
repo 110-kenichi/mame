@@ -550,5 +550,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["EnvEdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size YM2414EdSize {
+            get {
+                return ((global::System.Drawing.Size)(this["YM2414EdSize"]));
+            }
+            set {
+                this["YM2414EdSize"] = value;
+            }
+        }
     }
 }

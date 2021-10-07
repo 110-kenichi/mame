@@ -40,5 +40,6 @@ namespace zanac.MAmidiMEmo.Instruments
         SAM,    //26
         SN76477,    //27
         uPD1771C,    //28
+        YM2414,     //29
     }
 }

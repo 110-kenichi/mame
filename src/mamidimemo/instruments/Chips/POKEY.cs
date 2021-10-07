@@ -1002,7 +1002,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [DisplayName("FI2+4/FI1+3(FI24_13)")]
+            [DisplayName("FI2+4/FI1+3[FI24_13]")]
             [Description("AUDCTL High-pass filter for channel 2 or 1 rated by frequency of channel 4 or 3 (0-1)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1023,7 +1023,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [DisplayName("CH4+3/CH2+1(CH43_21)")]
+            [DisplayName("CH4+3/CH2+1[CH43_21]")]
             [Description("AUDCTL Connection of dividers 4+3 or 2+1 to obtain 16-bit accuracy (0-1)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1045,7 +1045,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [DisplayName("CH3/CH1 1.79(CH3_1_179)")]
+            [DisplayName("CH3/CH1 1.79[CH3_1_179]")]
             [Description("AUDCTL Set channel 3 or 1 frequency. \"0\" is 64 kHz. \"1\" is 1.79 MHz NTSC or 1.77 MHz PAL (0-1)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]

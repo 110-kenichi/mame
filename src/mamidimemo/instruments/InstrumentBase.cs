@@ -1365,7 +1365,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "Link Data Entry message value with the Instrument property value (Only the property that has a slider editor)\r\n" +
             "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
             "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16-19,80-83 message.")]
-        [DisplayName("General Purpose Control Settings(GPCS)")]
+        [DisplayName("General Purpose Control Settings[GPCS]")]
         [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
         public GeneralPurposeControlSettings[] GPCS
         {

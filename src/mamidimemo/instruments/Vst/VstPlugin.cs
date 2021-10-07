@@ -177,7 +177,7 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
         [Description("VST Effect Control Change System-wide Settings  <MIDI 16ch>\r\n" +
     "Link Data Entry message value with the VST property value\r\n" +
     "eg) \"Reverb,Chorus\" ... You can change Reverb and Chorus depth property values dynamically via MIDI Control Change No.9x message.")]
-        [DisplayName("VST Effect Control Change System-wide Settings(VECCSS)")]
+        [DisplayName("VST Effect Control Change System-wide Settings[VECCSS]")]
         public VstEffectControlChangeSettings[] VECCSS
         {
             get;

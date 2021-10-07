@@ -38,6 +38,7 @@
 #include "..\devices\sound\samples.h"
 #include "..\devices\sound\sn76477.h"
 #include "..\devices\sound\upd1771.h"
+#include "..\devices\sound\ymfm\src\ymfm_opz.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2009,7 +2010,7 @@ extern "C"
 
 	DllExport void uPD1771_write(unsigned int unitNumber, uint8_t data)
 	{
-		if (sam_devices[unitNumber] == NULL)
+		if (upd1771c_devices[unitNumber] == NULL)
 		{
 			mame_machine_manager* mmm = mame_machine_manager::instance();
 			if (mmm == nullptr)
@@ -2027,7 +2028,29 @@ extern "C"
 		}
 		upd1771c_devices[unitNumber]->write(data);
 	}
+
+
+	ymfm_opz_device* ymfm_opz_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ymfm_opz_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ymfm_opz_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymfm_opz_device* ymfm_opz = dynamic_cast<ymfm_opz_device*>(rm->device((std::string("ymfm_opz_") + num).c_str()));
+			if (ymfm_opz == nullptr)
+				return;
+
+			ymfm_opz_devices[unitNumber] = ymfm_opz;
+		}
+		ymfm_opz_devices[unitNumber]->write(address, data);
+	}
+
 }
-
-
-

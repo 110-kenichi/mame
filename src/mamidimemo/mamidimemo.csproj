@@ -175,6 +175,31 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gui\FMEditor\FormYM2414Editor .cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM2414Editor .Designer.cs">
+      <DependentUpon>FormYM2414Editor .cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOpzWaveForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOpzWaveForm.Designer.cs">
+      <DependentUpon>RegisterOpzWaveForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2414GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2414GeneralContainer.Designer.cs">
+      <DependentUpon>YM2414GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2414OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM2414OperatorContainer.Designer.cs">
+      <DependentUpon>YM2414OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM24141UITypeEditor.cs" />
     <Compile Include="Gui\PhonemesUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
@@ -538,8 +563,10 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_AstroBlaster.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
+    <Compile Include="Instruments\Chips\YM2414.cs" />
     <Compile Include="Instruments\CombinedTimbreSettings.cs" />
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
+    <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
@@ -713,6 +740,10 @@
     <EmbeddedResource Include="Gui\FMEditor\FormToneSelector.resx">
       <DependentUpon>FormToneSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM2414Editor .resx">
+      <DependentUpon>FormYM2414Editor .cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM2413Editor.resx">
       <DependentUpon>FormYM2413Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -734,6 +765,9 @@
     <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
       <DependentUpon>FormYM2151Editor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOpzWaveForm.resx">
+      <DependentUpon>RegisterOpzWaveForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterSpace.resx">
       <DependentUpon>RegisterSpace.cs</DependentUpon>
     </EmbeddedResource>
@@ -754,6 +788,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterAlg4OpImg.resx">
       <DependentUpon>RegisterAlg4OpImg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2414GeneralContainer.resx">
+      <DependentUpon>YM2414GeneralContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM2414OperatorContainer.resx">
+      <DependentUpon>YM2414OperatorContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\YM2608GeneralContainer.resx">
       <DependentUpon>YM2608GeneralContainer.cs</DependentUpon>
@@ -1085,6 +1127,11 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\YM2414.png" />
+    <None Include="Resources\WS11.png" />
+    <None Include="Resources\WS10.png" />
+    <None Include="Resources\WS9.png" />
+    <None Include="Resources\WS8.png" />
     <None Include="Resources\uPD1771C.png" />
     <None Include="Resources\cmudict-0.7b.txt" />
     <None Include="Resources\SAM.png" />

@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util.FITOM;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
@@ -693,6 +694,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         break;
                     case ".GWI":
                         tones = Gwi.Reader(importFile, Option);
+                        break;
+                    case ".BNK":
+                        tones = BankReader.Read(file);
                         break;
                 }
             }

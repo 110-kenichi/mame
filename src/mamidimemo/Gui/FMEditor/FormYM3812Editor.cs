@@ -108,7 +108,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get
             {
-                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, OPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.opl";
+                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, OPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk;*.opl";
             }
         }
 
