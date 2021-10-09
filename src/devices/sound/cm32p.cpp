@@ -42,8 +42,11 @@ void cm32p_device::set_enable(int enable)
 {
 	if (m_enable != enable)
 	{
-		if (m_enable != 0)
+		if (enable != 0)
 		{
+			synth_rev_off = new_fluid_synth(settings);
+			synth_rev_on = new_fluid_synth(settings);
+
 			//fluid_synth_set_polyphony(synth, 31);
 			fluid_synth_set_reverb_on(synth_rev_off, 0);
 			fluid_synth_set_reverb_on(synth_rev_on, 0);
@@ -54,10 +57,10 @@ void cm32p_device::set_enable(int enable)
 		}
 		else
 		{
-			//delete_fluid_synth(synth_rev_off);
-			//delete_fluid_synth(synth_rev_on);
-			fluid_synth_system_reset(synth_rev_off);
-			fluid_synth_system_reset(synth_rev_on);
+			delete_fluid_synth(synth_rev_off);
+			delete_fluid_synth(synth_rev_on);
+			//fluid_synth_system_reset(synth_rev_off);
+			//fluid_synth_system_reset(synth_rev_on);
 		}
 		m_enable = enable;
 	}
@@ -244,8 +247,8 @@ void cm32p_device::device_start()
 
 	settings = new_fluid_settings();
 	fluid_settings_setnum(settings, "synth.sample-rate", machine().sample_rate());
-	synth_rev_off = new_fluid_synth(settings);
-	synth_rev_on = new_fluid_synth(settings);
+	//synth_rev_off = new_fluid_synth(settings);
+	//synth_rev_on = new_fluid_synth(settings);
 }
 
 //-------------------------------------------------

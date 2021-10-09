@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.3.4 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.3.6 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.3.6	Fixed crashing CM-32P(again).
+3.9.3.5	Fixed MIDI instruments not accepting All Sound Off MIDI events.
 3.9.3.4	Fixed crashing when set the S/W keyboard MIDI ch "B".
 3.9.3.3	Fixed crashing CM-32P.
 		Added YM2414(OPZ) as experimantal. And, added FITOM bank file reader as experimantal.

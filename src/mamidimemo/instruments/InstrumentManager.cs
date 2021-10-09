@@ -1050,14 +1050,18 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public static void Panic()
         {
-            //All Note Off
-            var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+            for (int i = 0; i < 16; i++)
+            {
+                //All Note Off
+                var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
+                me.Channel = (FourBitNumber)i;
+                MidiManager.SendMidiEvent(MidiPort.PortAB, me);
 
-            //All Sounds Off
-            me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
-
+                //All Sounds Off
+                me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                me.Channel = (FourBitNumber)i;
+                MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+            }
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 inst.AllSoundOff();
         }

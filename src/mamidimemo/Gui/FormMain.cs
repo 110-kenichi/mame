@@ -897,8 +897,12 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            var me = new ControlChangeEvent((SevenBitNumber)121, (SevenBitNumber)0);
-            MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+            for (int i = 0; i < 16; i++)
+            {
+                var me = new ControlChangeEvent((SevenBitNumber)121, (SevenBitNumber)0);
+                me.Channel = (FourBitNumber)i;
+                MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+            }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)

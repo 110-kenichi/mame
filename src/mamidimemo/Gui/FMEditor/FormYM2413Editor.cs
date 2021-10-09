@@ -121,7 +121,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Modulator"]["AM"]).Value = tone.aOp[0].AM;
             ((RegisterValue)this["Modulator"]["VIB"]).Value = tone.aOp[0].VIB;
             ((RegisterValue)this["Modulator"]["EG"]).Value = tone.aOp[0].EG;
-            ((RegisterValue)this["Modulator"]["DIST"]).Value = tone.aOp[0].DT;
+            ((RegisterValue)this["Modulator"]["DIST"]).Value = tone.aOp[0].WS;
 
             ((RegisterValue)this["Career"]["AR"]).Value = tone.aOp[1].AR / 2;
             ((RegisterValue)this["Career"]["DR"]).Value = tone.aOp[1].DR / 2;
@@ -134,7 +134,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["AM"]).Value = tone.aOp[1].AM;
             ((RegisterValue)this["Career"]["VIB"]).Value = tone.aOp[1].VIB;
             ((RegisterValue)this["Career"]["EG"]).Value = tone.aOp[1].EG;
-            ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].DT;
+            ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].WS;
 
             timbre.TimbreName = tone.Name;
         }

@@ -855,8 +855,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new CM32PTimbre();
 
-            CM32PInitlaizeMemory(UnitNumber);
-
             ChannelAssignments = new byte[] {
                     10, 11, 12,
                     13, 14, 15,
@@ -868,6 +866,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void PrepareSound()
         {
             base.PrepareSound();
+
+            CM32PInitlaizeMemory(UnitNumber);
 
             loadSfTable();
 
@@ -1131,7 +1131,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 emptySlot = SearchEmptySlotAndOff(parentModule, instOnSounds, note, 31);
                 return emptySlot;
-            }
+              }
 
             internal override void ProcessAllSoundOff()
             {

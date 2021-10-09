@@ -669,7 +669,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
-
             }
         }
 
