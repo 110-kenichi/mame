@@ -40,6 +40,7 @@
 #include "..\devices\sound\upd1771.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
+#include "..\devices\sound\Nuked-OPN2\ym3438.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
