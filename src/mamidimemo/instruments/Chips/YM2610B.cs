@@ -2565,6 +2565,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip")]
             [Description("Override global settings")]
+            [DefaultValue(false)]
             public bool Enable
             {
                 get;

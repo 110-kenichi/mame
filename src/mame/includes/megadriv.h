@@ -38,6 +38,7 @@
 #include "sound/sn76477.h"
 #include "sound/upd1771.h"
 #include "sound/ymfm/src/ymfm_opz.h"
+#include "sound/ymfm/src/ymfm_opn.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -98,7 +99,7 @@ public:
 			didx++;
 			//YM2612
 			strcpy(device_names[didx][i], (std::string("ym2612_") + num).c_str());
-			m_ym2612[i] = new optional_device<ym2612_device>(*this, device_names[didx][i]);
+			m_ym2612[i] = new optional_device<ymfm_opn2_device>(*this, device_names[didx][i]);
 			didx++;
 			//YM3812
 			strcpy(device_names[didx][i], (std::string("ym3812_") + num).c_str());
@@ -213,7 +214,7 @@ public:
 
 	char device_names[ 30 ][8][100];
 	optional_device<ym2151_device> *m_ym2151[8];	//1
-	optional_device<ym2612_device> *m_ym2612[8];	//2
+	optional_device<ymfm_opn2_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
 	optional_device<namco_cus30_device> *m_namco_cus30[8];	//4
 	optional_device<gameboy_sound_device> *m_gbsnd[8];	//5

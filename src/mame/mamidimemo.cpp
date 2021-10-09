@@ -39,6 +39,7 @@
 #include "..\devices\sound\sn76477.h"
 #include "..\devices\sound\upd1771.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
+#include "..\devices\sound\ymfm\src\ymfm_opn.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -356,7 +357,7 @@ extern "C"
 		ym2151_devices[unitNumber]->write(address, data);
 	}
 
-	ym2612_device *ym2612_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	ymfm_opn2_device *ym2612_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym2612_write(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
@@ -370,7 +371,7 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			ym2612_device *ym2612 = dynamic_cast<ym2612_device *>(rm->device((std::string("ym2612_") + num).c_str()));
+			ymfm_opn2_device*ym2612 = dynamic_cast<ymfm_opn2_device*>(rm->device((std::string("ym2612_") + num).c_str()));
 			//ym2612_device *ym2612 = dynamic_cast<ym2612_device *>(rm->root_device().subdevice((std::string("ym2612_") + num).c_str()));
 			if (ym2612 == nullptr)
 				return;

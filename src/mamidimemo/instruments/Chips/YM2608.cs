@@ -464,7 +464,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 uint yreg = (uint)(slot / 3) * 2;
                 DeferredWriteData(YM2608_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
                 DeferredWriteData(YM2608_write, unitNumber, yreg + 1, data);
-
+                FormMain.OutputDebugLog(this, "adr:" + (byte)(address + (op * 4) + (slot % 3)) + " dat:" + data);
                 //try
                 //{
                 //    Program.SoundUpdating();
@@ -3388,6 +3388,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("Override global settings")]
+            [DefaultValue(false)]
             public bool Enable
             {
                 get;
