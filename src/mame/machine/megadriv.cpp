@@ -976,11 +976,9 @@ void md_base_state::md_ntsc(machine_config &config)
 		(*m_ym2151[i])->add_route(0, "lspeaker", 2.00);
 		(*m_ym2151[i])->add_route(1, "rspeaker", 2.00);
 
-		YM2608(config, *m_ym2612[i], MASTER_CLOCK_NTSC / 7); /* 7.67 MHz */
-		//(*m_ym2612[i])->add_route(0, "lspeaker", 2.00);
-		//(*m_ym2612[i])->add_route(1, "rspeaker", 2.00);
-		(*m_ym2612[i])->add_route(2, "lspeaker", 2.00);
-		(*m_ym2612[i])->add_route(3, "rspeaker", 2.00);
+		YMFM_OPN2(config, *m_ym2612[i], MASTER_CLOCK_NTSC / 7); /* 7.67 MHz */
+		(*m_ym2612[i])->add_route(0, "lspeaker", 2.00);
+		(*m_ym2612[i])->add_route(1, "rspeaker", 2.00);
 
 		SN76496(config, *m_sn76496[i], 3579545); //3.579545 MHz
 		(*m_sn76496[i])->add_route(0, "lspeaker", 1.00);

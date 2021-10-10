@@ -355,7 +355,7 @@ void cm32p_device::set_card(u8 id)
 {
 	if (card_id != id)
 	{
-		if (id >= 16)
+		if (id == 16 || id == 17)
 		{
 			for (int i = 0; i < 128; i++) {
 				PatchParam *patch = &cm32p_ram.patches[i];
@@ -365,7 +365,7 @@ void cm32p_device::set_card(u8 id)
 		}
 		else 
 		{
-			if (card_id >= 16)
+			if (card_id == 16 || card_id == 17)
 			{
 				for (int i = 0; i < 128; i++) {
 					PatchParam *patch = &cm32p_ram.patches[i];

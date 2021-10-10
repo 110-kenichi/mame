@@ -84,6 +84,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         string tblp = Path.Combine(Program.MAmiDir, "Data", tn);
                         cn.Add(tblp);
                     }
+                    {
+                        string tblp = Path.Combine(Program.MAmiDir, "Data", "cm32p_user_internal_tone.tbl");
+                        cn.Add(tblp);
+                        tblp = Path.Combine(Program.MAmiDir, "Data", "cm32p_user_card_tone.tbl");
+                        cn.Add(tblp);
+                    }
                     cardToneTableFileNames = cn.ToArray();
                 }
                 return cardToneTableFileNames;
@@ -884,28 +890,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     using (var s = File.OpenText(cfn))
                     {
-                        string fn = s.ReadLine().ToUpper(CultureInfo.InvariantCulture);
-                        if (soundFontTable.ContainsKey(fn))
-                        {
-                            CM32PAddSf(UnitNumber, cid, soundFontTable[fn]);
-                        }
-                        else
-                        {
-                            IntPtr sf = CM32PLoadSf(UnitNumber, cid, Path.Combine(Program.MAmiDir, "Data", fn));
-                            soundFontTable.Add(fn, sf);
-                        }
+                        string line = null;
                         while (!s.EndOfStream)
                         {
-                            var line = s.ReadLine();
-                            string[] ns = line.Split(',');
-                            string[] ts = ns[0].Split(':');
-                            string bank_no_t = ts[0];
-                            string tone_no_t = ts[1];
-                            ushort bank_no = ushort.Parse(bank_no_t);
-                            ushort tone_no = ushort.Parse(tone_no_t);
-                            string[] preset_no_t = ns[1].Split(':');
-                            ushort preset_no = (ushort)(ushort.Parse(preset_no_t[0]) << 8 | ushort.Parse(preset_no_t[1]));
-                            CM32PSetTone(UnitNumber, cid, (ushort)(bank_no << 8 | tone_no), preset_no);
+                            line = s.ReadLine().Trim();
+                            if (!line.StartsWith("#"))
+                                break;
+                        }
+                        if (line != null && !s.EndOfStream)
+                        {
+                            string fn = line.ToUpper(CultureInfo.InvariantCulture);
+                            if (soundFontTable.ContainsKey(fn))
+                            {
+                                CM32PAddSf(UnitNumber, cid, soundFontTable[fn]);
+                            }
+                            else
+                            {
+                                IntPtr sf = CM32PLoadSf(UnitNumber, cid, Path.Combine(Program.MAmiDir, "Data", fn));
+                                soundFontTable.Add(fn, sf);
+                            }
+                            while (!s.EndOfStream)
+                            {
+                                line = s.ReadLine().Trim();
+                                if (line.StartsWith("#"))
+                                    continue;
+                                try
+                                {
+                                    string[] ns = line.Split(',');
+                                    string[] ts = ns[0].Split(':');
+                                    string bank_no_t = ts[0];
+                                    string tone_no_t = ts[1];
+                                    ushort bank_no = ushort.Parse(bank_no_t);
+                                    ushort tone_no = ushort.Parse(tone_no_t);
+                                    string[] preset_no_t = ns[1].Split(':');
+                                    ushort preset_no = (ushort)(ushort.Parse(preset_no_t[0]) << 8 | ushort.Parse(preset_no_t[1]));
+                                    CM32PSetTone(UnitNumber, cid, (ushort)(bank_no << 8 | tone_no), preset_no);
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+
+
+                                    System.Windows.Forms.MessageBox.Show(ex.ToString());
+                                }
+                            }
                         }
                     }
                 }
@@ -1223,7 +1254,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         C13_Super_Strings,
         C14_Super_Ac_Guitar,
         C15_Super_Brass,
-        C16_Ext_MSGS
+        C16_Ext_MSGS,
+        C17_Ext_User_Internal,
+        C17_Ext_User_Card
     }
 
 

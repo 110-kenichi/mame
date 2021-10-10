@@ -1,0 +1,4 @@
+# Write your own soundfont data for internal timbres
+# **You need to restart MAmidiMEmo to apply changes**
+# 1. 1st line: Specify the sound font file name.
+# 2. After the 2nd line: Specify <MIDI Bank No>:<MIDI Program No>,<SF Bank No>:<SF Prog No>

@@ -522,29 +522,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.Dispose();
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        internal override void PrepareSound()
-        {
-            base.PrepareSound();
-
-            initSounds();
-        }
-
-        private void initSounds()
-        {
-            //SSG OFF
-            Ym2612WriteData(UnitNumber, 0x07, 0, 0, 0x3f);
-            //RESET PRESCALER
-            Ym2612WriteData(UnitNumber, 0x2D, 0, 0, 0xFF, false);
-            //6CH MODE
-            Ym2612WriteData(UnitNumber, 0x29, 0, 0, 0xFF, false);
-
-            AllSoundOff();
-        }
-
         /// <summary>
         /// 
         /// </summary>
