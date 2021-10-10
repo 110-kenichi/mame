@@ -68,14 +68,29 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterFlag("LFO", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
             AddControl(new RegisterValue("LFRQ", "GlobalSettings.LFRQ", tim.GlobalSettings.LFRQ == null ? -1 : tim.GlobalSettings.LFRQ.Value, 0, 255, true));
-            AddControl(new RegisterValue("LFOF", "GlobalSettings.LFOF", tim.GlobalSettings.LFOF == null ? -1 : tim.GlobalSettings.LFOF.Value, 0, 1, true));
-            AddControl(new RegisterValue("LFOD", "GlobalSettings.LFOD", tim.GlobalSettings.LFOD == null ? -1 : tim.GlobalSettings.LFOD.Value, 0, 127, true));
+            AddControl(new RegisterValue("LFOF", "GlobalSettings.LFOF", tim.GlobalSettings.LFOF == null ? -1 : tim.GlobalSettings.LFOF.Value, 0, 1, true)).ValueChanged += LFOF_ValueChanged;
+            AddControl(new RegisterValue("AMD/PMD", "GlobalSettings.LFOD", tim.GlobalSettings.LFOD == null ? -1 : tim.GlobalSettings.LFOD.Value, 0, 127, true));
             AddControl(new RegisterValue("LFOW", "GlobalSettings.LFOW", tim.GlobalSettings.LFOW == null ? -1 : tim.GlobalSettings.LFOW.Value, 0, 3, true));
 
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterOscViewer(inst));
+
+            LFOF_ValueChanged(GetControl("GlobalSettings.LFOF"), null);
         }
 
+        private void LFOF_ValueChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RegisterValue amsf = (RegisterValue)sender;
+            RegisterValue ams = (RegisterValue)GetControl("GlobalSettings.LFOD");
+            if (amsf.Value == 1)
+            {
+                ams.Label = "PMD";
+            }
+            else
+            {
+                ams.Label = "AMD";
+            }
+        }
     }
 }

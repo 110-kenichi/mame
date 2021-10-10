@@ -84,7 +84,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// 
         /// </summary>
         /// <param name="control"></param>
-        protected void AddControl(RegisterBase control)
+        protected RegisterBase AddControl(RegisterBase control)
         {
             controls.Add(control.ItemName, control);
 
@@ -105,6 +105,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
 
             textBoxSR.Text = SerializeData;
+
+            return control;
         }
 
         /// <summary>

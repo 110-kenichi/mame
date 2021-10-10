@@ -270,6 +270,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [SlideParametersAttribute(0, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DefaultValue((byte)0)]
+        [DisplayName("AMD/PMD(LFOD)")]
         public byte LFOD
         {
             get

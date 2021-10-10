@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.4.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.4.1 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,8 +268,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.4.1 Fixed YM2414(OPZ)(as experimantal) LFO flags.
 3.9.4.0 Added user custom timbre files for CM-32P. You can use your custom sound font by modifying the cm32p_user_internal_tone.tbl and cm32p_user_card_tone.tbl. For more details, see the file.
-		Changeed YM2612 sound engine to the "ymfm" engine. If you noticed an issue, please contact me.
+		Changed YM2612 sound engine to the "ymfm" engine. If you noticed an issue, please contact me.
 3.9.3.8	Fixed YM2612 sounding not properly.
 3.9.3.7	Fixed YM2612 sounding not properly after reinitialized.
 3.9.3.6	Fixed crashing CM-32P(again).

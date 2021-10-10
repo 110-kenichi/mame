@@ -914,7 +914,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
                     if (gs.LFOW2.HasValue)
-                        parentModule.LFOW = gs.LFOW2.Value;
+                        parentModule.LFOW2 = gs.LFOW2.Value;
 
                     if (gs.LFRQ.HasValue)
                         parentModule.LFRQ = gs.LFRQ.Value;
@@ -966,7 +966,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
                     if (gs.LFOW2.HasValue)
-                        parentModule.LFOW = gs.LFOW2.Value;
+                        parentModule.LFOW2 = gs.LFOW2.Value;
 
                     if (gs.SYNC.HasValue)
                         parentModule.SYNC = gs.SYNC.Value;
@@ -1498,6 +1498,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DisplayName("AMS/AMS2(AMS)")]
             public byte AMS
             {
                 get
@@ -1538,6 +1539,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DisplayName("PMS/PMS2(PMS)")]
             public byte PMS
             {
                 get
@@ -2361,10 +2363,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Chip(Global)")]
-            [Description("LFO Depth (0-127)")]
+            [Description("AM/PM Depth (0-127)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DisplayName("AMD/PMD(LFOD)")]
             public byte? LFOD
             {
                 get
@@ -2419,6 +2422,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DisplayName("AMD/PMD(LFOD2)")]
             public byte? LFOD2
             {
                 get
