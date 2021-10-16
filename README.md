@@ -269,6 +269,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 
 3.9.5.0 Added Slot Assign Algorithm property to the "MIDI(Dedicated)" category.
+        Added filter buttons to the property pane.
 3.9.4.1 Fixed YM2414(OPZ)(as experimantal) LFO flags.
 3.9.4.0 Added user custom timbre files for CM-32P. You can use your custom sound font by modifying the cm32p_user_internal_tone.tbl and cm32p_user_card_tone.tbl. For more details, see the file.
 		Changed YM2612 sound engine to the "ymfm" engine. If you noticed an issue, please contact me.
