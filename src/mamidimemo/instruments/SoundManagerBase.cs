@@ -1174,13 +1174,6 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         offSnds.Add(onSnd);
                         continue;
-                        /*
-                        AllSounds.Remove(onSnd);
-                        onSounds.RemoveAt(i);
-                        onSnd.Dispose();
-                        i--;
-                        continue;
-                        */
                     }
                     onSnds.Add(onSnd);
                     if (newNote.Channel == onSnd.NoteOnEvent.Channel)
@@ -1201,14 +1194,6 @@ namespace zanac.MAmidiMEmo.Instruments
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
-                            /*
-                            AllSounds.Remove(onSnd);
-                            onSounds.Remove(onSnd);
-
-                            sameChSnds.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                            */
                         }
                     }
                 }
@@ -1226,15 +1211,28 @@ namespace zanac.MAmidiMEmo.Instruments
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
-                            /*
-                            AllSounds.Remove(onSnd);
-                            onSounds.Remove(onSnd);
-
-                            sameChSnds.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                            */
                         }
+                    }
+                }
+
+                //Use RecentlyUsedSlot
+                if (inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
+                {
+                    //Search last sound off sound
+                    offSnds.Sort(new Comparison<SoundBase>((x, y) =>
+                    {
+                        if (x.SoundOffTime < y.SoundOffTime)
+                            return 1;
+                        else if (x.SoundOffTime > y.SoundOffTime)
+                            return -1;
+                        else
+                            return 0;
+                    }));
+                    if (offSnds.Count != 0)
+                    {
+                        var offSnd = offSnds[0];
+                        offSnd.Dispose();
+                        return offSnd.Slot;
                     }
                 }
 
@@ -1412,13 +1410,6 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             offSnds.Add(onSnd);
                             continue;
-                            /*
-                            AllSounds.Remove(onSnd);
-                            onSounds.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                            continue;
-                            */
                         }
                         onSnds.Add(onSnd);
                         if (newNote.Channel == onSnd.NoteOnEvent.Channel)
@@ -1439,15 +1430,6 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
-                            /*
-                            AllSounds.Remove(onSnd);
-                            onSounds.Remove(onSnd);
-
-                            onSnds.Remove(onSnd);
-                            sameChSnds.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                            */
                         }
                     }
                 }
@@ -1464,16 +1446,28 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
-                            /*
-                            AllSounds.Remove(onSnd);
-                            onSounds.Remove(onSnd);
-
-                            onSnds.Remove(onSnd);
-                            sameChSnds.RemoveAt(i);
-                            onSnd.Dispose();
-                            i--;
-                            */
                         }
+                    }
+                }
+
+                //Use RecentlyUsedSlot
+                if (inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
+                {
+                    //Search last sound off sound
+                    offSnds.Sort(new Comparison<SoundBase>((x, y) =>
+                    {
+                        if (x.SoundOffTime < y.SoundOffTime)
+                            return 1;
+                        else if (x.SoundOffTime > y.SoundOffTime)
+                            return -1;
+                        else
+                            return 0;
+                    }));
+                    if (offSnds.Count != 0)
+                    {
+                        var offSnd = offSnds[0];
+                        offSnd.Dispose();
+                        return ((I)offSnd.ParentModule, offSnd.Slot);
                     }
                 }
 

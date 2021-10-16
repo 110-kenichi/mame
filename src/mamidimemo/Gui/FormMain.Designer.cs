@@ -317,7 +317,6 @@
             resources.ApplyResources(this.propertyGrid, "propertyGrid");
             this.propertyGrid.HelpBackColor = System.Drawing.SystemColors.Info;
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.ToolbarVisible = false;
             // 
             // contextMenuStripProp
             // 

@@ -1256,7 +1256,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         C15_Super_Brass,
         C16_Ext_MSGS,
         C17_Ext_User_Internal,
-        C17_Ext_User_Card
+        C18_Ext_User_Card
     }
 
 

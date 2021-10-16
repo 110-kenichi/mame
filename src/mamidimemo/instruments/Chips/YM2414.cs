@@ -132,34 +132,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private byte f_LFRQ2;
-
-        /// <summary>
-        /// LFRQ2 (0-255)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO2 Freq (0-255)")]
-        [SlideParametersAttribute(0, 255)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
-        public byte LFRQ2
-        {
-            get
-            {
-                return f_LFRQ2;
-            }
-            set
-            {
-                if (f_LFRQ2 != value)
-                {
-                    f_LFRQ2 = value;
-                    YM2414WriteData(UnitNumber, 0x16, 0, 0, LFRQ2);
-                }
-            }
-        }
-
-
         private byte f_LFOF;
 
         /// <summary>
@@ -190,7 +162,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private byte f_LFOD;
 
-
         /// <summary>
         /// LFO Depth(0-127)
         /// </summary>
@@ -217,6 +188,90 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private byte f_LFOW;
+
+
+        /// <summary>
+        /// LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
+        [SlideParametersAttribute(0, 3)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        public byte LFOW
+        {
+            get
+            {
+                return f_LFOW;
+            }
+            set
+            {
+                byte v = (byte)(value & 3);
+                if (f_LFOW != v)
+                {
+                    f_LFOW = v;
+                    YM2414WriteData(UnitNumber, 0x1B, 0, 0, (byte)(SYNC2 << 5 | SYNC << 4 | LFOW2 << 2 | LFOW));
+                }
+            }
+        }
+
+        private byte f_SYNC;
+
+        /// <summary>
+        /// LFO SYNC Enable (0:Disable 1:Enable)
+        /// </summary>
+        [Browsable(false)]
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("LFO SYNC Enable (0:Disable 1:Enable)")]
+        [SlideParametersAttribute(0, 1)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        public byte SYNC
+        {
+            get
+            {
+                return f_SYNC;
+            }
+            set
+            {
+                byte v = (byte)(value & 1);
+                if (f_SYNC != v)
+                {
+                    f_SYNC = v;
+                    YM2414WriteData(UnitNumber, 0x1B, 0, 0, (byte)(SYNC2 << 5 | SYNC << 4 | LFOW2 << 2 | LFOW));
+                }
+            }
+        }
+
+        private byte f_LFRQ2;
+
+        /// <summary>
+        /// LFRQ2 (0-255)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("LFO2 Freq (0-255)")]
+        [SlideParametersAttribute(0, 255)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        public byte LFRQ2
+        {
+            get
+            {
+                return f_LFRQ2;
+            }
+            set
+            {
+                if (f_LFRQ2 != value)
+                {
+                    f_LFRQ2 = value;
+                    YM2414WriteData(UnitNumber, 0x16, 0, 0, LFRQ2);
+                }
+            }
+        }
 
         private byte f_LFOF2;
 
@@ -275,36 +330,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private byte f_LFOW;
-
-
-        /// <summary>
-        /// LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
-        [SlideParametersAttribute(0, 3)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
-        public byte LFOW
-        {
-            get
-            {
-                return f_LFOW;
-            }
-            set
-            {
-                byte v = (byte)(value & 3);
-                if (f_LFOW != v)
-                {
-                    f_LFOW = v;
-                    YM2414WriteData(UnitNumber, 0x1B, 0, 0, (byte)(SYNC2 << 5 | SYNC << 4 | LFOW2 << 2 | LFOW));
-                }
-            }
-        }
-
-
         private byte f_LFOW2;
 
 
@@ -333,37 +358,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
         }
-
-
-        private byte f_SYNC;
-
-        /// <summary>
-        /// LFO SYNC Enable (0:Disable 1:Enable)
-        /// </summary>
-        [Browsable(false)]
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO SYNC Enable (0:Disable 1:Enable)")]
-        [SlideParametersAttribute(0, 1)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
-        public byte SYNC
-        {
-            get
-            {
-                return f_SYNC;
-            }
-            set
-            {
-                byte v = (byte)(value & 1);
-                if (f_SYNC != v)
-                {
-                    f_SYNC = v;
-                    YM2414WriteData(UnitNumber, 0x1B, 0, 0, (byte)(SYNC2 << 5 | SYNC << 4 | LFOW2 << 2 | LFOW));
-                }
-            }
-        }
-
 
         private byte f_SYNC2;
 
@@ -2305,30 +2299,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
-            private byte? f_LFRQ2;
-
-            /// <summary>
-            /// LFRQ2 (0-255)
-            /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("LFO2 Freq (0-255)")]
-            [SlideParametersAttribute(0, 255)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue(null)]
-            public byte? LFRQ2
-            {
-                get
-                {
-                    return f_LFRQ2;
-                }
-                set
-                {
-                    f_LFRQ2 = value;
-                }
-            }
-
             private byte? f_LFOF;
 
             /// <summary>
@@ -2357,7 +2327,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte? f_LFOD;
 
-
             /// <summary>
             /// LFO Depth(0-127)
             /// </summary>
@@ -2380,33 +2349,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (value.HasValue)
                         v = (byte)(value & 127);
                     f_LFOD = v;
-                }
-            }
-
-
-            private byte? f_LFOF2;
-
-            /// <summary>
-            /// Select AMD2 or PMD2(0:AMD2 1:PMD2)
-            /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("Select AMD2 or PMD2 (0:AMD2 1:PMD2)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte? LFOF2
-            {
-                get
-                {
-                    return f_LFOF2;
-                }
-                set
-                {
-                    byte? v = value;
-                    if (value.HasValue)
-                        v = (byte)(value & 1);
-                    f_LFOF2 = v;
                 }
             }
 
@@ -2440,7 +2382,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte? f_LFOW;
 
-
             /// <summary>
             /// LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
             /// </summary>
@@ -2464,35 +2405,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_LFOW = v;
                 }
             }
-
-
-            private byte? f_LFOW2;
-
-
-            /// <summary>
-            /// LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
-            /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte? LFOW2
-            {
-                get
-                {
-                    return f_LFOW2;
-                }
-                set
-                {
-                    byte? v = value;
-                    if (value.HasValue)
-                        v = (byte)(value & 3);
-                    f_LFOW2 = v;
-                }
-            }
-
 
             private byte? f_SYNC;
 
@@ -2521,6 +2433,81 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte? f_LFRQ2;
+
+            /// <summary>
+            /// LFRQ2 (0-255)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("LFO2 Freq (0-255)")]
+            [SlideParametersAttribute(0, 255)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(null)]
+            public byte? LFRQ2
+            {
+                get
+                {
+                    return f_LFRQ2;
+                }
+                set
+                {
+                    f_LFRQ2 = value;
+                }
+            }
+
+            private byte? f_LFOF2;
+
+            /// <summary>
+            /// Select AMD2 or PMD2(0:AMD2 1:PMD2)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("Select AMD2 or PMD2 (0:AMD2 1:PMD2)")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? LFOF2
+            {
+                get
+                {
+                    return f_LFOF2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 1);
+                    f_LFOF2 = v;
+                }
+            }
+
+            private byte? f_LFOW2;
+
+
+            /// <summary>
+            /// LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? LFOW2
+            {
+                get
+                {
+                    return f_LFOW2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 3);
+                    f_LFOW2 = v;
+                }
+            }
 
             private byte? f_SYNC2;
 

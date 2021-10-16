@@ -67,7 +67,6 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(630, 285);
             this.propertyGrid.TabIndex = 2;
-            this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
             // 
             // contextMenuStripProp
@@ -450,6 +449,7 @@
             this.toolStrip3.Size = new System.Drawing.Size(630, 25);
             this.toolStrip3.TabIndex = 3;
             this.toolStrip3.Text = "toolStrip3";
+            this.toolStrip3.Visible = false;
             // 
             // toolStripButtonCat
             // 
@@ -461,6 +461,7 @@
             this.toolStripButtonCat.Name = "toolStripButtonCat";
             this.toolStripButtonCat.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonCat.Text = "Categorized sort";
+            this.toolStripButtonCat.Visible = false;
             this.toolStripButtonCat.Click += new System.EventHandler(this.toolStripButtonCat_Click);
             // 
             // toolStripButtonA2Z
@@ -471,6 +472,7 @@
             this.toolStripButtonA2Z.Name = "toolStripButtonA2Z";
             this.toolStripButtonA2Z.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonA2Z.Text = "Alphabetical sort";
+            this.toolStripButtonA2Z.Visible = false;
             this.toolStripButtonA2Z.Click += new System.EventHandler(this.toolStripButtonA2Z_Click);
             // 
             // toolStripButtonPopup

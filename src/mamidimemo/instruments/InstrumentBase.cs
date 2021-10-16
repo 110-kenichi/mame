@@ -32,6 +32,7 @@ using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
+    [InstrumentPropertyTab]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<InstrumentBase>))]
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [InstLock]
@@ -586,7 +587,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
-        [Category(" Timbres")]
+        [Category(" Timbres(Extra)")]
         [Description("Combine multiple Timbres (0-255)\r\n" +
             "Override PatchTimbres to Timbres when you set binding patch numbers.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
@@ -612,6 +613,19 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             for (int i = 0; i < DrumTimbres.Length; i++)
                 DrumTimbres[i] = new DrumTimbre(i, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Receving MIDI Port")]
+        [DefaultValue(MidiPort.PortAB)]
+        public virtual MidiPort MidiPort
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -650,20 +664,6 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             for (int i = 0; i < ChannelTypes.Length; i++)
                 ChannelTypes[i] = ChannelType.Normal;
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember]
-        [Category("MIDI(Dedicated)")]
-        [Description("Receving MIDI Port")]
-        [DefaultValue(MidiPort.PortAB)]
-        public virtual MidiPort MidiPort
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -760,30 +760,31 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("MIDI(Dedicated)")]
-        [Description("Assign the Timbre/CombinedTimbre to program number.")]
+        [Description("Select an algorithm to search for available slots. <MIDI 16ch>")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public virtual ProgramAssignmentNumber[] ProgramAssignments
+        public virtual SlotAssignmentType[] SlotAssignAlgorithm
         {
             get;
             set;
         }
 
-        public virtual bool ShouldSerializeProgramAssignments()
+        public virtual bool ShouldSerializeSlotAssignAlgorithm()
         {
-            for (int i = 0; i < ProgramAssignments.Length; i++)
+            for (int i = 0; i < SlotAssignAlgorithm.Length; i++)
             {
-                if ((int)ProgramAssignments[i] != i)
+                if (SlotAssignAlgorithm[i] != SlotAssignmentType.MostUnusedSlot)
                     return true;
             }
             return false;
         }
 
-        public virtual void ResetProgramAssignments()
+        public virtual void ResetProgramSlotAssignAlgorithm()
         {
-            for (int i = 0; i < ProgramAssignments.Length; i++)
-                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+            for (int i = 0; i < SlotAssignAlgorithm.Length; i++)
+                SlotAssignAlgorithm[i] = (SlotAssignmentType)i;
         }
+
 
         /// <summary>
         /// 
@@ -885,6 +886,84 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             for (int i = 0; i < ScaleTunings.Length; i++)
                 ScaleTunings[i].Scales = "0 0 0 0 0 0 0 0 0 0 0 0";
+        }
+
+
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("General Purpose Control Settings <MIDI 16ch>\r\n" +
+            "Link Data Entry message value with the Instrument property value (Only the property that has a slider editor)\r\n" +
+            "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
+            "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16-19,80-83 message.")]
+        [DisplayName("General Purpose Control Settings[GPCS]")]
+        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
+        public GeneralPurposeControlSettings[] GPCS
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeGPCS()
+        {
+            foreach (var dt in GPCS)
+            {
+                if (dt.GeneralPurposeControl1 != null ||
+                    dt.GeneralPurposeControl2 != null ||
+                    dt.GeneralPurposeControl3 != null ||
+                    dt.GeneralPurposeControl4 != null ||
+                    dt.GeneralPurposeControl5 != null ||
+                    dt.GeneralPurposeControl6 != null ||
+                    dt.GeneralPurposeControl7 != null ||
+                    dt.GeneralPurposeControl8 != null
+                    )
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetGPCS()
+        {
+            for (int i = 0; i < GPCS.Length; i++)
+            {
+                GPCS[i].GeneralPurposeControl1 = null;
+                GPCS[i].GeneralPurposeControl2 = null;
+                GPCS[i].GeneralPurposeControl3 = null;
+                GPCS[i].GeneralPurposeControl4 = null;
+                GPCS[i].GeneralPurposeControl5 = null;
+                GPCS[i].GeneralPurposeControl6 = null;
+                GPCS[i].GeneralPurposeControl7 = null;
+                GPCS[i].GeneralPurposeControl8 = null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI(Dedicated)")]
+        [Description("Assign the Timbre/CombinedTimbre to program number.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual ProgramAssignmentNumber[] ProgramAssignments
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+            {
+                if ((int)ProgramAssignments[i] != i)
+                    return true;
+            }
+            return false;
+        }
+
+        public virtual void ResetProgramAssignments()
+        {
+            for (int i = 0; i < ProgramAssignments.Length; i++)
+                ProgramAssignments[i] = (ProgramAssignmentNumber)i;
         }
 
 
@@ -1359,53 +1438,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 PolyMode[i] = 0;
         }
 
-        [DataMember]
-        [Category("MIDI(Dedicated)")]
-        [Description("General Purpose Control Settings <MIDI 16ch>\r\n" +
-            "Link Data Entry message value with the Instrument property value (Only the property that has a slider editor)\r\n" +
-            "eg 1) \"GainLeft,GainRight\" ... You can change Gain property values dynamically via MIDI Control Change No.16-19,80-83 message.\r\n" +
-            "eg 2) \"Timbres[0].ALG\" ... You can change Timbre 0 FM synth algorithm values dynamically via MIDI Control Change No.16-19,80-83 message.")]
-        [DisplayName("General Purpose Control Settings[GPCS]")]
-        [TypeConverter(typeof(ExpandableMidiChCollectionConverter))]
-        public GeneralPurposeControlSettings[] GPCS
-        {
-            get;
-            set;
-        }
-
-        public bool ShouldSerializeGPCS()
-        {
-            foreach (var dt in GPCS)
-            {
-                if (dt.GeneralPurposeControl1 != null ||
-                    dt.GeneralPurposeControl2 != null ||
-                    dt.GeneralPurposeControl3 != null ||
-                    dt.GeneralPurposeControl4 != null ||
-                    dt.GeneralPurposeControl5 != null ||
-                    dt.GeneralPurposeControl6 != null ||
-                    dt.GeneralPurposeControl7 != null ||
-                    dt.GeneralPurposeControl8 != null
-                    )
-                    return true;
-            }
-            return false;
-        }
-
-        public void ResetGPCS()
-        {
-            for (int i = 0; i < GPCS.Length; i++)
-            {
-                GPCS[i].GeneralPurposeControl1 = null;
-                GPCS[i].GeneralPurposeControl2 = null;
-                GPCS[i].GeneralPurposeControl3 = null;
-                GPCS[i].GeneralPurposeControl4 = null;
-                GPCS[i].GeneralPurposeControl5 = null;
-                GPCS[i].GeneralPurposeControl6 = null;
-                GPCS[i].GeneralPurposeControl7 = null;
-                GPCS[i].GeneralPurposeControl8 = null;
-            }
-        }
-
         [Browsable(false)]
         public byte[] DataLsb
         {
@@ -1746,6 +1778,8 @@ namespace zanac.MAmidiMEmo.Instruments
             ProgramAssignments = new ProgramAssignmentNumber[128];
             for (int i = 0; i < ProgramAssignments.Length; i++)
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
+
+            SlotAssignAlgorithm = new SlotAssignmentType[16];
 
             ScaleTunings = new ScaleTuning[16]{
                 new ScaleTuning(), new ScaleTuning(), new ScaleTuning(), new ScaleTuning(),

@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.PropertyGridInternal;
+using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
@@ -69,6 +71,11 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 propertyGrid.SelectedObjects = instruments.ToArray();
             }
+            propertyGrid.RefreshTabs(PropertyTabScope.Component);
+
+            //HACK:
+            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
+            toolStrip.Items.Add(toolStripButtonPopup);
 
             setTitle();
 

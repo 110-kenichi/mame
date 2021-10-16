@@ -19,6 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments
     /// <summary>
     /// 
     /// </summary>
+    [TimbrePropertyTabAttribute]
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
     [DataContract]
@@ -30,6 +31,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Whether to ignore the keyoff event")]
         [DefaultValue(false)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public bool IgnoreKeyOff
         {
             get;
@@ -41,6 +43,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public int KeyShift
         {
             get;
@@ -54,6 +57,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(-1200, 1200)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public int PitchShift
         {
             get => f_PitchShift;
@@ -74,6 +78,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public int PanShift
         {
             get => f_PanShift;
@@ -94,6 +99,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(0, 1000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public int KeyOnDelay
         {
             get => f_KeyOnDelay;
@@ -113,6 +119,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DefaultValue(0)]
         [SlideParametersAttribute(0, 1000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
         public int KeyOffDelay
         {
             get => f_KeyOffDelay;
@@ -132,6 +139,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
             "... You can change Operator TL, MUL, D2R values dynamically via Velocity value.")]
         [DefaultValue(null)]
+        [Category("MIDI")]
         public string VelocityMap
         {
             get;
@@ -150,6 +158,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Sound Driver Settings")]
         [DisplayName("Sound Driver Settings[SDS]")]
+        [Category("General")]
         public virtual SoundDriverSettings SDS
         {
             get;
@@ -161,6 +170,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "Link Data Entry message value with the Timbre property value (Only the property that has a slider editor)\r\n" +
             "eg) \"DutyCycle,Volume\" ... You can change DutyCycle and Volume property values dynamically via MIDI Control Change No.7x message.")]
         [DisplayName("Sound Control Change Settings[SCCS]")]
+        [Category("General")]
         public virtual SoundControlChangeSettings SCCS
         {
             get;

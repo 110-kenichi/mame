@@ -376,6 +376,9 @@ namespace zanac.MAmidiMEmo.Gui
             listViewIntruments.Sort();
             propertyGrid.SelectedObjects = new object[] { };
             toolStripButtonPopup.Enabled = false;
+            //HACK:
+            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
+            toolStrip.Items.Add(toolStripButtonPopup);
         }
 
         /// <summary>
@@ -406,6 +409,9 @@ namespace zanac.MAmidiMEmo.Gui
             listViewIntruments.Sort();
             propertyGrid.SelectedObjects = new object[] { };
             toolStripButtonPopup.Enabled = false;
+            //HACK:
+            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
+            toolStrip.Items.Add(toolStripButtonPopup);
         }
 
         /// <summary>
@@ -542,6 +548,9 @@ namespace zanac.MAmidiMEmo.Gui
                 insts.Add((InstrumentBase)item.Tag);
             propertyGrid.SelectedObjects = insts.ToArray();
             toolStripButtonPopup.Enabled = (listViewIntruments.SelectedItems.Count != 0);
+            //HACK:
+            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
+            toolStrip.Items.Add(toolStripButtonPopup);
         }
 
         /// <summary>
@@ -1075,12 +1084,47 @@ namespace zanac.MAmidiMEmo.Gui
                 List<InstrumentBase> insts = new List<InstrumentBase>();
                 foreach (ListViewItem item in listViewIntruments.SelectedItems)
                     insts.Add((InstrumentBase)item.Tag);
-                FormProp fp = new FormProp(insts.ToArray());
+
+                TimbreBase[] timbres = findTimbre(propertyGrid.SelectedGridItem);
+                FormProp fp = null;
+                if (timbres != null && timbres.Length == 0)
+                    fp = new FormProp(insts.ToArray());
+                else
+                    fp = new FormProp(insts.ToArray().ToArray(), timbres);
                 fp.StartPosition = FormStartPosition.Manual;
                 fp.Location = this.Location;
 
                 fp.Show(this);
             }
+        }
+
+
+        private TimbreBase[] findTimbre(GridItem item)
+        {
+            List<TimbreBase> il = new List<TimbreBase>();
+            if (item == null)
+                return il.ToArray();
+
+            var instance = item.GetType().GetProperty("Instance").GetValue(item, null);
+            if (instance.GetType() == typeof(object[]))
+            {
+                var objs = instance as object[];
+                foreach (var o in objs)
+                {
+                    var inst = o as TimbreBase;
+                    if (inst != null)
+                        il.Add(inst);
+                }
+            }
+            {
+                var inst = instance as TimbreBase;
+                if (inst != null)
+                    il.Add(inst);
+            }
+            if (il.Count != 0)
+                return il.ToArray();
+
+            return findTimbre(item.Parent);
         }
 
         private void toolStripButton20_Click(object sender, EventArgs e)

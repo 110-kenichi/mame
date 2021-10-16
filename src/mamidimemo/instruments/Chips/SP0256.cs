@@ -997,8 +997,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append(" ");
                             }
                             var t = sb.ToString();
+                            string tmp = words;
                             Allophones = t.Trim();
-                            words = t;
+                            words = tmp;
                         }
                     }
                 }
@@ -1023,7 +1024,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         List<byte> data = new List<byte>();
                         StringBuilder sb = new StringBuilder();
-
+                        if (value == null)
+                            value = string.Empty;
                         var alps = value.Split(new char[] { ' ' },
                             StringSplitOptions.RemoveEmptyEntries);
                         foreach (var alp in alps)

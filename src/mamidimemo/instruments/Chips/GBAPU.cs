@@ -1252,6 +1252,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound(Sweep)")]
             [Description("SPSG Sweep Time (0:OFF 1-7:N/128Hz)")]
             [SlideParametersAttribute(0, 7)]
+            [DefaultValue((byte)0)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Time
             {
@@ -1271,6 +1272,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound(Sweep)")]
             [Description("SPSG Sweep Increase/Decrease (0: Addition 1: Subtraction)")]
             [SlideParametersAttribute(0, 1)]
+            [DefaultValue((byte)0)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Dir
             {
@@ -1290,6 +1292,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Sound(Sweep)")]
             [Description("SPSG Number of sweep shift (0-7)")]
             [SlideParametersAttribute(0, 7)]
+            [DefaultValue((byte)0)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte Speed
             {

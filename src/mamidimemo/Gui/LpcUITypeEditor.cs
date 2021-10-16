@@ -90,9 +90,13 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     value = frm.LpcData;
                 }
-                else
+                else if (value != null)
                 {
                     value = ((byte[])value).Clone();
+                }
+                else
+                {
+                    value = new byte[] { };
                 }
             }
             return value;
