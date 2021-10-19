@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
+using static zanac.MAmidiMEmo.Instruments.Chips.SPC700;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -77,17 +78,27 @@ namespace zanac.MAmidiMEmo.Gui
                     {
                         if (Path.GetExtension(fn).Equals(".brr", StringComparison.OrdinalIgnoreCase))
                         {
-                            List<byte> buf = new List<byte>();
-                            foreach (byte data in File.ReadAllBytes(fn))
+                            List<byte> buf = new List<byte>(File.ReadAllBytes(fn));
+                            var fi = new FileInfo(fn);
+                            switch (fi.Length % 9)
                             {
-                                buf.Add(data);
-                                if (att != null && att.MaxSize != 0 && att.MaxSize == buf.Count)
+                                case 2:
+                                    SPC700Timbre tim = context.Instance as SPC700Timbre;
+                                    if (tim != null)
+                                        tim.LoopPoint = (ushort)((buf[0] | (buf[1] << 8)) / 9);
+                                    buf.RemoveRange(0, 2);
                                     break;
                             }
-                            object rvalue = convertRawToRetValue(context, buf.ToArray());
-                            if (rvalue != null)
-                                return rvalue;
-                            return value;
+                            if (att != null && att.MaxSize != 0 && att.MaxSize == buf.Count)
+                            {
+                                if (buf.Count > att.MaxSize)
+                                    buf.RemoveRange(att.MaxSize, buf.Count - att.MaxSize);
+                            }
+                            return buf.ToArray();
+                            //object rvalue = convertRawToRetValue(context, buf.ToArray());
+                            //if (rvalue != null)
+                            //    return rvalue;
+                            //return value;
                         }
                         //else if (Path.GetExtension(fn).Equals(".wav", StringComparison.OrdinalIgnoreCase))
                         //{

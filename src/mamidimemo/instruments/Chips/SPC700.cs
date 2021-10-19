@@ -119,7 +119,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_LEVOL;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("Set Left Output Echo Volume")]
         [DefaultValue(typeof(sbyte), "127")]
         [SlideParametersAttribute(-128, 128)]
@@ -144,7 +144,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_REVOL;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("Set Right Output Echo Volume")]
         [DefaultValue(typeof(sbyte), "127")]
         [SlideParametersAttribute(-128, 128)]
@@ -194,7 +194,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private byte f_ECEN;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("Echo enable")]
         [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 1)]
@@ -220,7 +220,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_EFB;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("Echo Feedback")]
         [DefaultValue(typeof(sbyte), "31")]
         [SlideParametersAttribute(-128, 127)]
@@ -245,7 +245,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private byte f_EDL;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("EDL specifies the delay between the main sound and the echoed sound. The delay is calculated as EDL * 16ms.")]
         [DefaultValue((byte)1)]
         [SlideParametersAttribute(0, 15)]
@@ -270,7 +270,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF1;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "127")]
         [SlideParametersAttribute(-128, 127)]
@@ -295,7 +295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF2;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -320,7 +320,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF3;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -345,7 +345,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF4;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -370,7 +370,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF5;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -396,7 +396,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF6;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -421,7 +421,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF7;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -446,7 +446,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private sbyte f_COEF8;
 
         [DataMember]
-        [Category("Filter")]
+        [Category("Chip(Filter)")]
         [Description("COEF are used by the 8-tap FIR filter.")]
         [DefaultValue(typeof(sbyte), "0")]
         [SlideParametersAttribute(-128, 127)]
@@ -1443,8 +1443,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("BRR ADPCM Data (MAX 64KB)")]
-            [BrrFileLoaderEditor("Audio File(*.brr)|*.brr", 65535)]
-            //[BrrFileLoaderEditor("Audio File(*.brr, *.wav)|*.brr;*.wav", 65535)]
+            [BrrFileLoaderEditor("Audio File(*.brr)|*.brr", 65536)]
+            //[BrrFileLoaderEditor("Audio File(*.brr, *.wav)|*.brr;*.wav", 65536)]
             public byte[] AdpcmData
             {
                 get
@@ -1833,7 +1833,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_LEVOL;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("Set Left Output Echo Volume")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 128)]
@@ -1853,7 +1853,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_REVOL;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("Set Right Output Echo Volume")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 128)]
@@ -1896,7 +1896,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte? f_ECEN;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("Echo enable")]
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
@@ -1920,7 +1920,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_EFB;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("Echo Feedback")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -1940,7 +1940,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte? f_EDL;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("EDL specifies the delay between the main sound and the echoed sound. The delay is calculated as EDL * 16ms.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(0, 15)]
@@ -1963,7 +1963,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF1;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -1983,7 +1983,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF2;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2003,7 +2003,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF3;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2023,7 +2023,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF4;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2043,7 +2043,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF5;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2064,7 +2064,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF6;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2084,7 +2084,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF7;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
@@ -2104,7 +2104,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private sbyte? f_COEF8;
 
             [DataMember]
-            [Category("Filter")]
+            [Category("Chip(Filter)")]
             [Description("COEF are used by the 8-tap FIR filter.")]
             [DefaultValue(null)]
             [SlideParametersAttribute(-128, 127)]
