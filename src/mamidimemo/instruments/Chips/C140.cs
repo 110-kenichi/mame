@@ -1233,12 +1233,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
             int tn = 0;
+            int num = 0;
             foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
             {
                 if (s.SampleType == SF2SampleLink.MonoSample ||
                     s.SampleType == SF2SampleLink.LeftSample)
                 {
-                    var tim = Timbres[tn + offset];
+                    var tim = new C140Timbre();
 
                     double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
                     tim.BaseFreqency = baseFreq;
@@ -1277,6 +1278,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
                     }
 
+                    Timbres[tn + offset] = tim;
+                    num++;
+
                     var nidx = s.SampleName.IndexOf('\0');
                     if (nidx >= 0)
                         tim.TimbreName = s.SampleName.Substring(0, nidx);
@@ -1284,7 +1288,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tim.TimbreName = s.SampleName;
 
                     tn++;
-
                     if (tn == 128)
                         break;
                 }

@@ -229,6 +229,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             try
                             {
+                                Program.SoundUpdating();
                                 //clear current insts
                                 for (int i = instruments[v].Count - 1; i >= 0; i--)
                                 {
@@ -250,6 +251,10 @@ namespace zanac.MAmidiMEmo.Instruments
 
 
                                 System.Windows.Forms.MessageBox.Show(ex.ToString());
+                            }
+                            finally
+                            {
+                                Program.SoundUpdated();
                             }
                         }
                     }
@@ -296,6 +301,7 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
+                Program.SoundUpdating();
 
                 if (instruments[(int)instrumentType].Count < 8)
                 {
@@ -315,6 +321,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             finally
             {
+                Program.SoundUpdated();
                 InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
             }
             return null;

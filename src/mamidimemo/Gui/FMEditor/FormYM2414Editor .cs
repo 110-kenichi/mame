@@ -210,9 +210,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this["General"].Target = tim;
             ((RegisterValue)this["General"]["ALG"]).Value = tim.ALG;
             ((RegisterValue)this["General"]["FB"]).Value = tim.FB;
-            ((RegisterFlag)this["General"]["AMSF"]).Value = tim.AMSF == 0 ? false : true;
+            ((RegisterValue)this["General"]["AMSF"]).Value = tim.AMSF == 0 ? 0 : 1;
             ((RegisterValue)this["General"]["AMS"]).Value = tim.AMS;
-            ((RegisterFlag)this["General"]["PMSF"]).Value = tim.PMSF == 0 ? false : true;
+            ((RegisterValue)this["General"]["PMSF"]).Value = tim.PMSF == 0 ? 0 : 1;
             ((RegisterValue)this["General"]["PMS"]).Value = tim.PMS;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = tim.GlobalSettings.Enable;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tim.GlobalSettings.LFRQ;

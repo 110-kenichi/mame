@@ -579,6 +579,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void delegate_spc_resample(double org_rate, double target_rate, IntPtr org_buffer, uint org_len, IntPtr target_buffer, uint target_len);
 
+        [DllImport("split700.Dll", EntryPoint = "ExtractSpcFile", CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool ExtractSpcFile(string fileName, IntPtr[] sample_buffers, uint[] sample_sizes);
+
+        [DllImport("split700.Dll", EntryPoint = "ExtractSpcFile", CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool FreeExtractedSpcSampleBuffer(IntPtr sample_buffer_ptr);
+
         /// <summary>
         /// 
         /// </summary>
@@ -792,6 +798,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             RMVOL = 127;
             COEF1 = 127;
 
+            readSpcFileForTimbre = new ToolStripMenuItem(Resources.ImportSpcTimbre);
+            readSpcFileForTimbre.Click += ReadSpcFileForTimbre_Click;
+
+            readSpcFileForDrumTimbre = new ToolStripMenuItem(Resources.ImportSpcDrum);
+            readSpcFileForDrumTimbre.Click += ReadSpcFileForDrumTimbre_Click;
+
             readSoundFontForTimbre = new ToolStripMenuItem(Resources.ImportSF2Timbre);
             readSoundFontForTimbre.Click += ReadSoundFontForTimbre_Click;
 
@@ -812,6 +824,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //マネージ状態を破棄します (マネージ オブジェクト)。
                     soundManager?.Dispose();
                     soundManager = null;
+
+                    readSpcFileForTimbre?.Dispose();
+                    readSpcFileForTimbre = null;
+
+                    readSpcFileForDrumTimbre?.Dispose();
+                    readSpcFileForDrumTimbre = null;
 
                     readSoundFontForTimbre?.Dispose();
                     readSoundFontForTimbre = null;
@@ -2126,6 +2144,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         #region MENU
 
+        private ToolStripMenuItem readSpcFileForTimbre;
+
+        private ToolStripMenuItem readSpcFileForDrumTimbre;
+
         private ToolStripMenuItem readSoundFontForTimbre;
 
         private ToolStripMenuItem readSoundFontForDrumTimbre;
@@ -2136,10 +2158,80 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <returns></returns>
         internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
         {
-            return new ToolStripMenuItem[] { readSoundFontForTimbre, readSoundFontForDrumTimbre };
+            return new ToolStripMenuItem[] {
+                readSpcFileForTimbre,
+                readSpcFileForDrumTimbre,
+                readSoundFontForTimbre,
+                readSoundFontForDrumTimbre
+            };
         }
 
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSpcFileForTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 0;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SPC file";
+                    openFileDialog.Filter = "SPC File(*.spc)|*.spc";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadSpcFile(openFileDialog.FileName, offset, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ReadSpcFileForDrumTimbre_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int offset = 128;
+                using (openFileDialog = new System.Windows.Forms.OpenFileDialog())
+                {
+                    openFileDialog.SupportMultiDottedExtensions = true;
+                    openFileDialog.Title = "Select a SPC file";
+                    openFileDialog.Filter = "SPC File(*.spc)|*.spc";
+
+                    var fr = openFileDialog.ShowDialog(null);
+                    if (fr != DialogResult.OK)
+                        return;
+
+                    loadSpcFile(openFileDialog.FileName, offset, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
 
         /// <summary>
         /// 
@@ -2161,7 +2253,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (fr != DialogResult.OK)
                         return;
 
-                    loadPcm(offset, false);
+                    loadPcm(openFileDialog.FileName, offset, false);
                 }
             }
             catch (Exception ex)
@@ -2193,7 +2285,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (fr != DialogResult.OK)
                         return;
 
-                    loadPcm(offset, true);
+                    loadPcm(openFileDialog.FileName, offset, true);
                 }
                 for (int i = 0; i < 128; i++)
                 {
@@ -2291,23 +2383,80 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="offset"></param>
-        private void loadPcm(int offset, bool drum)
+        private void loadSpcFile(string fileName, int offset, bool drum)
         {
-            var sf2 = new SF2(openFileDialog.FileName);
+            IntPtr[] sampleBuffer = new IntPtr[256];
+            uint[] sampleSizes = new uint[256];
+            try
+            {
+                ExtractSpcFile(fileName, sampleBuffer, sampleSizes);
+
+                int dtn = 0;
+                int num = 0;
+                for (int i = 0; i < 256; i++)
+                {
+                    if (sampleBuffer[i] != IntPtr.Zero && sampleSizes[i] != 0)
+                    {
+                        //copy
+                        byte[] managedArray = new byte[sampleSizes[i]];
+                        Marshal.Copy(sampleBuffer[i], managedArray, 0, managedArray.Length);
+                        List<byte> buf = new List<byte>(managedArray);
+
+                        var tim = new SPC700Timbre();
+                        //loop
+                        tim.LoopPoint = (ushort)((buf[0] | (buf[1] << 8)) / 9);
+                        buf.RemoveRange(0, 2);
+                        //pcm data
+                        tim.AdpcmData = buf.ToArray();
+                        Timbres[i] = tim;
+
+                        //Drum
+                        if (drum)
+                        {
+                            DrumTimbres[dtn].TimbreNumber = (ProgramAssignmentNumber)(dtn + offset);
+                            dtn++;
+                            if (dtn == 128)
+                                break;
+                        }
+                        num++;
+                    }
+                }
+                MessageBox.Show(string.Format(Resources.TimbreLoaded, num));
+            }
+            finally
+            {
+                //free
+                for (int i = 0; i < 256; i++)
+                {
+                    if (sampleBuffer[i] != IntPtr.Zero)
+                        FreeExtractedSpcSampleBuffer(sampleBuffer[i]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="offset"></param>
+        private void loadPcm(string fileName, int offset, bool drum)
+        {
+            var sf2 = new SF2(fileName);
 
             var spl = sf2.SoundChunk.SMPLSubChunk.Samples;
             int tn = 0;
             bool warningAlign = false;
+            int num = 0;
             foreach (var s in sf2.HydraChunk.SHDRSubChunk.Samples)
             {
                 if (s.SampleType == SF2SampleLink.MonoSample ||
                     s.SampleType == SF2SampleLink.LeftSample)
                 {
-                    var tim = Timbres[tn + offset];
+                    var tim = new SPC700Timbre();
                     uint brrLoopStart;
 
                     double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
@@ -2392,9 +2541,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DrumTimbres[tn].BaseNote =
                             (NoteNames)(byte)Math.Round(MidiManager.CalcNoteNumberFromFrequency(tim.BaseFreqency));
                     }
+                    Timbres[tn + offset] = tim;
+                    num++;
 
                     tn++;
-
                     if (tn == 128)
                         break;
                 }
@@ -2403,6 +2553,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 MessageBox.Show(Resources.WanrSPC700SampleLength, "Warning", MessageBoxButtons.OK);
             }
+            MessageBox.Show(string.Format(Resources.TimbreLoaded, num));
         }
 
         #endregion

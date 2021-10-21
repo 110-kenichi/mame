@@ -487,7 +487,7 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   mport PCM from SF2 for &amp;DrumTimbres... に類似しているローカライズされた文字列を検索します。
+        ///   Import PCM from SF2 for &amp;DrumTimbres... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ImportSF2Drum {
             get {
@@ -501,6 +501,24 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string ImportSF2Timbre {
             get {
                 return ResourceManager.GetString("ImportSF2Timbre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import PCM from S&amp;PC for DrumTimbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSpcDrum {
+            get {
+                return ResourceManager.GetString("ImportSpcDrum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import PCM from &amp;SPC for Timbres... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ImportSpcTimbre {
+            get {
+                return ResourceManager.GetString("ImportSpcTimbre", resourceCulture);
             }
         }
         
@@ -789,6 +807,15 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("Timbre", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   {0} timbres loaded. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TimbreLoaded {
+            get {
+                return ResourceManager.GetString("TimbreLoaded", resourceCulture);
             }
         }
         

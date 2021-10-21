@@ -1,0 +1,45 @@
+version: 2.0.{build}
+
+image: Visual Studio 2017
+
+environment:
+  matrix:
+  - generator: "Visual Studio 15"
+    config: Release
+    arch: vs2017-x86
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
+  - generator: "Visual Studio 15 Win64"
+    config: Release
+    arch: vs2017-x64
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+
+  - generator: "Visual Studio 14"
+    config: Release
+    arch: vs2015-x86
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+  - generator: "Visual Studio 14 Win64"
+    config: Release
+    arch: vs2015-x64
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+init:
+  - git config --global core.autocrlf input
+
+build_script:
+  - cmake -G"%generator%" -H. -Bbuild
+  #- cmake --build build --config "%config%"
+  - msbuild build\split700.sln /t:build /p:Configuration="%config%" /m /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+after_build:
+  - ps: $env:gitrev = git describe --tags
+  - ps: $env:my_version = "$env:gitrev"
+  - set package_name=split700-%my_version%-%arch%
+  - copy "build\%config%\split700.exe" .
+  - copy "build\%config%\brr2wav.exe" .
+  - 7z a %package_name%.zip README.md README_ja.md brr2wav.exe split700.exe LICENSE
+
+artifacts:
+  - path: $(package_name).zip
+    name: $(arch)

@@ -1,0 +1,4 @@
+LIBRARY   SPLIT700
+EXPORTS
+	ExtractSpcFile
+	FreeExtractedSpcSampleBuffer

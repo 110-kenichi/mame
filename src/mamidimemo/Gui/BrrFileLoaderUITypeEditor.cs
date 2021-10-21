@@ -80,13 +80,17 @@ namespace zanac.MAmidiMEmo.Gui
                         {
                             List<byte> buf = new List<byte>(File.ReadAllBytes(fn));
                             var fi = new FileInfo(fn);
+                            SPC700Timbre tim = context.Instance as SPC700Timbre;
                             switch (fi.Length % 9)
                             {
                                 case 2:
-                                    SPC700Timbre tim = context.Instance as SPC700Timbre;
                                     if (tim != null)
                                         tim.LoopPoint = (ushort)((buf[0] | (buf[1] << 8)) / 9);
                                     buf.RemoveRange(0, 2);
+                                    break;
+                                default:
+                                    if (tim != null)
+                                        tim.LoopPoint = (ushort)buf.Count;
                                     break;
                             }
                             if (att != null && att.MaxSize != 0 && att.MaxSize == buf.Count)
@@ -94,6 +98,7 @@ namespace zanac.MAmidiMEmo.Gui
                                 if (buf.Count > att.MaxSize)
                                     buf.RemoveRange(att.MaxSize, buf.Count - att.MaxSize);
                             }
+
                             return buf.ToArray();
                             //object rvalue = convertRawToRetValue(context, buf.ToArray());
                             //if (rvalue != null)

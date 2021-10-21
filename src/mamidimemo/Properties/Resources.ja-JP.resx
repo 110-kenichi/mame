@@ -383,4 +383,13 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="UpdatingDPCM" xml:space="preserve">
     <value>DPCMデータを更新中...</value>
   </data>
+  <data name="ImportSpcDrum" xml:space="preserve">
+    <value>S&amp;PCファイルからPCMをDrumTimbresへインポートする...</value>
+  </data>
+  <data name="ImportSpcTimbre" xml:space="preserve">
+    <value>&amp;SPCファイルからPCMをTimbresへインポートする...</value>
+  </data>
+  <data name="TimbreLoaded" xml:space="preserve">
+    <value>{0} 個の Timbre を読み込みました。</value>
+  </data>
 </root>

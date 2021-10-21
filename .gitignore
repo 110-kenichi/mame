@@ -152,3 +152,8 @@ Release(but Debug .NET)
 /src/VSIF/VGMPlay_MSX/player_code.sym
 /src/VSIF/VGMPlay_MSX/uart-4800.rel
 /src/mamidimemo/obj
+/src/split700/Release
+/src/split700/Debug
+/src/split700/split700.vcxproj.filters
+/src/split700/split700.vcxproj.user
+/src/split700/x64

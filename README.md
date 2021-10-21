@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.6.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.6.1 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.6.1 Fixed a possible crash on startup.
+		Supported loading Timbres from a spc file for SPC700.
 3.9.6.0 Supported BRR file with loop header for SPC700.
 3.9.5.0 Added Slot Assign Algorithm property to the "MIDI(Dedicated)" category.
         Added filter buttons to the property pane.
@@ -564,3 +566,6 @@ https://github.com/ArtemioUrbina/MDFourier
 
 * kss2vgm - Mitsutaka Okazaki (kss2vgm is used only by VGMPlayer)
 https://github.com/digital-sound-antiques/kss2vgm/blob/master/LICENSE
+
+*Split700 - gocha
+https://github.com/gocha/split700/blob/master/LICENSE
