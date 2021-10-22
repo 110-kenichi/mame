@@ -26,17 +26,17 @@ namespace zanac.MAmidiMEmo.Instruments
         public String KeyName
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        [DataMember]
+        [IgnoreDataMember]
         public int NoteNumber
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>

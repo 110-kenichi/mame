@@ -776,12 +776,12 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int channel = note.Channel;
             var tim = parentModule.GetLastTimbre(channel);
-            if (!string.IsNullOrWhiteSpace(tim.VelocityMap))
+            if (!string.IsNullOrWhiteSpace(tim.MDS.VelocityMap))
             {
                 int msbValue = note.Velocity;
                 int lsbValue = 0;
 
-                var pis = TimbreBase.GetPropertiesInfo(tim, tim.VelocityMap);
+                var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.VelocityMap);
                 processIntProps(msbValue, lsbValue, pis);
             }
 
@@ -816,7 +816,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         protected void ProcessKeyOn(SoundBase sound)
         {
-            int delay = sound.Timbre.KeyOnDelay;
+            int delay = sound.Timbre.MDS.KeyOnDelay;
             CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(sound.NoteOnEvent, sound.Timbre, sound.BaseTimbreIndex);
             if (parent != null)
                 delay += parent.KeyOnDelayOffset;
@@ -880,9 +880,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offsnd.NoteOnEvent.NoteNumber == note.NoteNumber)
                     {
-                        if (!offsnd.Timbre.IgnoreKeyOff)
+                        if (!offsnd.Timbre.MDS.IgnoreKeyOff)
                         {
-                            int delay = offsnd.Timbre.KeyOffDelay;
+                            int delay = offsnd.Timbre.MDS.KeyOffDelay;
                             CombinedTimbreSettings parent = parentModule.TryGetBaseTimbreSettings(offsnd.NoteOnEvent, offsnd.Timbre, offsnd.BaseTimbreIndex);
                             if (parent != null)
                                 delay += parent.KeyOffDelayOffset;

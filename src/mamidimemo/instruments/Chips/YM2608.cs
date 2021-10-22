@@ -2533,6 +2533,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public virtual bool ShouldSerializeOps()
+            {
+                foreach (var op in Ops)
+                    return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+                return false;
+            }
+
+            public virtual void ResetOps()
+            {
+                Ops = new YM2608Operator[] {
+                    new YM2608Operator(),
+                    new YM2608Operator(),
+                    new YM2608Operator(),
+                    new YM2608Operator() };
+            }
+
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
         typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]

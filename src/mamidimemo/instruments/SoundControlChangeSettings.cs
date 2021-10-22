@@ -191,6 +191,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [IgnoreDataMember]
         [JsonIgnore]
         [Description("You can copy and paste this text data to other same type timber.\r\nNote: Open dropdown editor then copy all text and paste to dropdown editor. Do not copy and paste one liner text.")]
+        [DefaultValue("{}")]
         public string SerializeData
         {
             get
@@ -224,6 +225,19 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
+        public override bool Equals(object obj)
+        {
+            var mdsobj = obj as SoundControlChangeSettings;
+            if (mdsobj == null)
+                return false;
+
+            return string.Equals(SerializeData, mdsobj.SerializeData, StringComparison.Ordinal);
+        }
+
+        public override int GetHashCode()
+        {
+            return SerializeData.GetHashCode();
+        }
     }
 
 }

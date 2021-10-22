@@ -1759,6 +1759,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public virtual bool ShouldSerializeModulator()
+            {
+                return !string.Equals(JsonConvert.SerializeObject(Modulator, Formatting.Indented), "{}", StringComparison.Ordinal);
+            }
+
+            public virtual void ResetModulator()
+            {
+                Modulator = new YM2413Modulator();
+            }
 
             /// <summary>
             /// 
@@ -1770,6 +1779,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            public virtual bool ShouldSerializeCareer()
+            {
+                return !string.Equals(JsonConvert.SerializeObject(Career, Formatting.Indented), "{}", StringComparison.Ordinal);
+            }
+
+            public virtual void ResetCareer()
+            {
+                Career = new YM2413Career();
             }
 
             /// <summary>
@@ -1870,6 +1889,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            public virtual bool ShouldSerializeGlobalSettings()
+            {
+                return !string.Equals(JsonConvert.SerializeObject(GlobalSettings, Formatting.Indented), "{}", StringComparison.Ordinal);
+            }
+
+            public virtual void ResetGlobalSettings()
+            {
+                GlobalSettings = new YM2413GlobalSettings();
             }
 
             /// <summary>

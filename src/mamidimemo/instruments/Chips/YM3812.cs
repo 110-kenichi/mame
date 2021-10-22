@@ -852,6 +852,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public virtual bool ShouldSerializeOps()
+            {
+                foreach (var op in Ops)
+                    return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+                return false;
+            }
+
+            public virtual void ResetOps()
+            {
+                Ops = new YM3812Operator[] {
+                    new YM3812Operator(),
+                    new YM3812Operator() };
+            }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
                 typeof(UITypeEditor)), Localizable(false)]
@@ -940,6 +953,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 set;
+            }
+
+            public virtual bool ShouldSerializeGlobalSettings()
+            {
+                return !string.Equals(JsonConvert.SerializeObject(GlobalSettings, Formatting.Indented), "{}", StringComparison.Ordinal);
+            }
+
+            public virtual void ResetGlobalSettings()
+            {
+                GlobalSettings = new YM3812GlobalSettings();
             }
 
             /// <summary>

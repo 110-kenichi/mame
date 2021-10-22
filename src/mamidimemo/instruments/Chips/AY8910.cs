@@ -1079,6 +1079,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public virtual bool ShouldSerializeGlobalSettings()
+            {
+                return !string.Equals(JsonConvert.SerializeObject(GlobalSettings, Formatting.Indented), "{}", StringComparison.Ordinal);
+            }
+
+            public virtual void ResetGlobalSettings()
+            {
+                GlobalSettings = new AY8910GlobalSettings();
+            }
+
             public AY8910Timbre()
             {
                 GlobalSettings = new AY8910GlobalSettings();

@@ -27,123 +27,102 @@ namespace zanac.MAmidiMEmo.Instruments
     public abstract class TimbreBase : ContextBoundObject
     {
 
-        [DataMember]
-        [Description("Whether to ignore the keyoff event")]
-        [DefaultValue(false)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public bool IgnoreKeyOff
         {
-            get;
-            set;
+            get
+            {
+                return MDS.IgnoreKeyOff;
+            }
+            set
+            {
+                MDS.IgnoreKeyOff = value;
+            }
         }
 
-        [DataMember]
-        [Description("Base frequency offset [Semitone]")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(-127, 127)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public int KeyShift
         {
-            get;
-            set;
+            get
+            {
+                return MDS.KeyShift;
+            }
+            set
+            {
+                MDS.KeyShift = value;
+            }
         }
 
-        private int f_PitchShift;
-
-        [DataMember]
-        [Description("Base frequency offset [Cent]")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(-1200, 1200)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public int PitchShift
         {
-            get => f_PitchShift;
+            get
+            {
+                return MDS.PitchShift;
+            }
             set
             {
-                f_PitchShift = value;
-                if (f_PitchShift < -1200)
-                    f_PitchShift = -1200;
-                else if (f_PitchShift > 1200)
-                    f_PitchShift = 1200;
+                MDS.PitchShift = value;
             }
         }
 
-        private int f_PanShift;
-
-        [DataMember]
-        [Description("Base pan pot offset (-127 - 0 - 127)")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(-127, 127)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public int PanShift
         {
-            get => f_PanShift;
+            get
+            {
+                return MDS.PanShift;
+            }
             set
             {
-                f_PanShift = value;
-                if (f_PanShift < -127)
-                    f_PanShift = -127;
-                else if (f_PanShift > 127)
-                    f_PanShift = 127;
+                MDS.PanShift = value;
             }
         }
 
-        private int f_KeyOnDelay;
-
-        [DataMember]
-        [Description("Key On Delay [ms]")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(0, 1000)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public int KeyOnDelay
         {
-            get => f_KeyOnDelay;
+            get
+            {
+                return MDS.KeyOnDelay;
+            }
             set
             {
-                f_KeyOnDelay = value;
-                if (f_KeyOnDelay < 0)
-                    f_KeyOnDelay = 0;
+                MDS.KeyOnDelay = value;
             }
         }
 
-
-        private int f_KeyOffDelay;
-
-        [DataMember]
-        [Description("Key Off Delay [ms]")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(0, 1000)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public int KeyOffDelay
         {
-            get => f_KeyOffDelay;
+            get
+            {
+                return MDS.KeyOffDelay;
+            }
             set
             {
-                f_KeyOffDelay = value;
-                if (f_KeyOffDelay < 0)
-                    f_KeyOffDelay = 0;
+                MDS.KeyOffDelay = value;
             }
         }
 
-        [DataMember]
-        [Description("Define custom velocity map\r\n" +
-            "Link with Velocity value with the Timbre property value\r\n" +
-            "eg 1) \"DutyCycle,Volume\"\r\n" +
-            "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
-            "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
-            "... You can change Operator TL, MUL, D2R values dynamically via Velocity value.")]
-        [DefaultValue(null)]
-        [Category("MIDI")]
+        [Browsable(false)]
+        [Obsolete]
         public string VelocityMap
         {
-            get;
-            set;
+            get
+            {
+                return MDS.VelocityMap;
+            }
+            set
+            {
+                MDS.VelocityMap = value;
+            }
         }
 
         /// <summary>
@@ -151,8 +130,29 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public TimbreBase()
         {
+            MDS = new MidiDriverSettings();
             SDS = new SoundDriverSettings();
             SCCS = new SoundControlChangeSettings();
+        }
+
+        [DataMember]
+        [Description("Midi Driver Settings")]
+        [DisplayName("Midi Driver Settings[MDS]")]
+        [Category("General")]
+        public virtual MidiDriverSettings MDS
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeMDS()
+        {
+            return !string.Equals(MDS.SerializeData, "{}", StringComparison.Ordinal);
+        }
+
+        public virtual void ResetMDS()
+        {
+            MDS.SerializeData = "{}";
         }
 
         [DataMember]
@@ -165,6 +165,16 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        public virtual bool ShouldSerializeSDS()
+        {
+            return !string.Equals(SDS.SerializeData, "{}", StringComparison.Ordinal);
+        }
+
+        public virtual void ResetSDS()
+        {
+            SDS.SerializeData = "{}";
+        }
+
         [DataMember]
         [Description("Sound Control Change Settings\r\n" +
             "Link Data Entry message value with the Timbre property value (Only the property that has a slider editor)\r\n" +
@@ -175,6 +185,16 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get;
             set;
+        }
+
+        public virtual bool ShouldSerializeSCCS()
+        {
+            return !string.Equals(SCCS.SerializeData, "{}", StringComparison.Ordinal);
+        }
+
+        public virtual void ResetSCCS()
+        {
+            SCCS.SerializeData = "{}";
         }
 
         [DataMember]

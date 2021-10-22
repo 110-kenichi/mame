@@ -578,6 +578,7 @@
     <Compile Include="Instruments\CombinedTimbreSettings.cs" />
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
     <Compile Include="Instruments\SlotAssignmentType.cs" />
+    <Compile Include="Instruments\MidiDriverSettings.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />

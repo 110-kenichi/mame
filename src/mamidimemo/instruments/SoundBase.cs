@@ -326,8 +326,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
             double d1 = ((double)pitch / 8192d) * range;
             double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber +
-                pKeyShift + Timbre.KeyShift +
-                ((pPitchShift + Timbre.PitchShift) / 100d) + (scale / 100d);
+                pKeyShift + Timbre.MDS.KeyShift +
+                ((pPitchShift + Timbre.MDS.PitchShift) / 100d) + (scale / 100d);
 
             if (FxEngine != null)
                 d += FxEngine.DeltaNoteNumber;
@@ -357,7 +357,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.VelocityMap))
+            if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.MDS.VelocityMap))
                 v *= NoteOnEvent.Velocity / 127d;
 
             CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
@@ -394,7 +394,7 @@ namespace zanac.MAmidiMEmo.Instruments
             if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
                 pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
             else
-                pan += Timbre.PanShift;
+                pan += Timbre.MDS.PanShift;
 
             CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
             if (parent != null)

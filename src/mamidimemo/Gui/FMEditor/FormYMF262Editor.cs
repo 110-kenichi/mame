@@ -572,8 +572,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
             }
 
-            timbre.KeyShift = tone.KeyShift;
-            timbre.PitchShift = tone.PitchShift;
+            timbre.MDS.KeyShift = tone.KeyShift;
+            timbre.MDS.PitchShift = tone.PitchShift;
             timbre.TimbreName = tone.Name;
         }
 
@@ -657,8 +657,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim.Ops[i].WS = (byte)tone.aOp[i].WS;
             }
 
-            tim.KeyShift = tone.KeyShift;
-            tim.PitchShift = tone.PitchShift;
+            tim.MDS.KeyShift = tone.KeyShift;
+            tim.MDS.PitchShift = tone.PitchShift;
             timbre.TimbreName = tone.Name;
         }
 

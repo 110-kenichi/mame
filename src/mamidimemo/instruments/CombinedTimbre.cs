@@ -25,68 +25,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class CombinedTimbre : TimbreBase
     {
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new bool IgnoreKeyOff
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new int KeyShift
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new int PitchShift
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new int PanShift
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new int KeyOnDelay
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new int KeyOffDelay
-        {
-            get;
-            set;
-        }
-
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public new string VelocityMap
-        {
-            get;
-            set;
-        }
+     
 
         [Browsable(false)]
         [DataMember]
@@ -139,6 +78,15 @@ namespace zanac.MAmidiMEmo.Instruments
         [Browsable(false)]
         [JsonIgnore]
         [IgnoreDataMember]
+        public override MidiDriverSettings MDS
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
         public override SoundDriverSettings SDS
         {
             get
@@ -159,6 +107,16 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+
+        public virtual bool ShouldSerializeCSDS()
+        {
+            return !string.Equals(CSDS.SerializeData, "{}", StringComparison.Ordinal);
+        }
+
+        public virtual void ResetCSDS()
+        {
+            CSDS.SerializeData = "{}";
+        }
 
         /// <summary>
         /// 
