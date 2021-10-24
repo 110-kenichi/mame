@@ -327,6 +327,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   MAmi VSTi was copied to the DAW plugins folder. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CopiedVSTi {
+            get {
+                return ResourceManager.GetString("CopiedVSTi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap donate {
@@ -747,6 +756,15 @@ namespace zanac.MAmidiMEmo.Properties {
             get {
                 object obj = ResourceManager.GetObject("SCC1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a DAW plugins folder に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SelectDAWFolder {
+            get {
+                return ResourceManager.GetString("SelectDAWFolder", resourceCulture);
             }
         }
         

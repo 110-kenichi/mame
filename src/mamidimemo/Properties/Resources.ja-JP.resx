@@ -392,4 +392,10 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="TimbreLoaded" xml:space="preserve">
     <value>{0} 個の Timbre を読み込みました。</value>
   </data>
+  <data name="CopiedVSTi" xml:space="preserve">
+    <value>MAmi VSTi が DAW のプラグインフォルダにコピーされました。</value>
+  </data>
+  <data name="SelectDAWFolder" xml:space="preserve">
+    <value>DAW のプラグインフォルダを選択してください</value>
+  </data>
 </root>

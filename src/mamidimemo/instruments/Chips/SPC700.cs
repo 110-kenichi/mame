@@ -1652,7 +1652,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new SPC700GlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new SPC700GlobalSettings());
             }
 
             /// <summary>

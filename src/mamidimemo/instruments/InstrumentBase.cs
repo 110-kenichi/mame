@@ -593,34 +593,6 @@ namespace zanac.MAmidiMEmo.Instruments
             return ev.BaseTimbreIndexes;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember]
-        [Category(" Timbres(Extra)")]
-        [Description("Combine multiple Timbres (0-255)\r\n" +
-            "Override PatchTimbres to Timbres when you set binding patch numbers.")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public virtual CombinedTimbre[] CombinedTimbres
-        {
-            get;
-            set;
-        }
-
-        public virtual bool ShouldSerializeCombinedTimbres()
-        {
-            foreach (var op in CombinedTimbres)
-                return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
-            return false;
-        }
-
-        public void ResetCombinedTimbres()
-        {
-            for (int i = 0; i < CombinedTimbres.Length; i++)
-                CombinedTimbres[i] = new CombinedTimbre();
-        }
-
         private DrumTimbre[] f_DrumTimbres;
 
         [DataMember]
@@ -656,6 +628,34 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             for (int i = 0; i < DrumTimbres.Length; i++)
                 DrumTimbres[i] = new DrumTimbre(i, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category(" Timbres")]
+        [Description("Combine multiple Timbres (0-255)\r\n" +
+            "Override PatchTimbres to Timbres when you set binding patch numbers.")]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        public virtual CombinedTimbre[] CombinedTimbres
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeCombinedTimbres()
+        {
+            foreach (var op in CombinedTimbres)
+                return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+            return false;
+        }
+
+        public void ResetCombinedTimbres()
+        {
+            for (int i = 0; i < CombinedTimbres.Length; i++)
+                CombinedTimbres[i] = new CombinedTimbre();
         }
 
         /// <summary>

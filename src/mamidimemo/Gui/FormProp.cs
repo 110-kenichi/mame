@@ -106,8 +106,10 @@ namespace zanac.MAmidiMEmo.Gui
                 sb.Append(i.Name + "(" + i.UnitNumber + ")");
             }
             if (timbres != null)
-                sb.Append(" - Instrument " + TimbreNo);
-
+            {
+                sb.Append(" - Timbre " + TimbreNo);
+                sb.Append(" - \"" + timbres[0].TimbreName+"\"");
+            }
             this.Text = sb.ToString();
         }
 
@@ -200,6 +202,11 @@ namespace zanac.MAmidiMEmo.Gui
                 var inst = instance as TimbreBase;
                 if (inst != null)
                     il.Add(inst);
+            }
+            {
+                var array = instance as Array;
+                if (array != null && array.GetValue(0) is TimbreBase)
+                    il.Add((TimbreBase)array.GetValue(0));
             }
             if (il.Count != 0)
                 return il.ToArray();
@@ -314,5 +321,58 @@ namespace zanac.MAmidiMEmo.Gui
                 toolStripButtonPopup.Enabled = !(timbres != null && timbres.Length == 0);
             }
         }
+
+        private void propertyGrid_PropertyTabChanged(object sender, PropertyTabChangedEventArgs e)
+        {
+            selectTopItem(sender);
+        }
+
+
+        private void propertyGrid_SelectedObjectsChanged(object sender, EventArgs e)
+        {
+            selectTopItem(sender);
+        }
+
+        private static void selectTopItem(object s)
+        {
+            PropertyGrid propertyGrid = (PropertyGrid)s;
+            if (!propertyGrid.IsHandleCreated)
+                return;
+            propertyGrid.BeginInvoke(new MethodInvoker(() =>
+            {
+                if (propertyGrid.IsDisposed)
+                    return;
+
+                // get selected item
+                GridItem gi = propertyGrid.SelectedGridItem;
+                if (gi != null)
+                {
+                    // get category for selected item
+                    GridItem pgi = gi.Parent;
+                    if (pgi != null && gi.Parent.Parent != null)
+                        pgi = gi.Parent.Parent;
+                    if (pgi != null)
+                    {
+                        //sort categories
+                        List<GridItem> sortedCats = new List<GridItem>(pgi.GridItems.Cast<GridItem>());
+                        sortedCats.Sort(delegate (GridItem gi1, GridItem gi2) { return gi1.Label.CompareTo(gi2.Label); });
+
+                        // loop to first category
+                        for (int i = 0; i < pgi.GridItems.Count; i++)
+                        {
+                            if (pgi.GridItems[i] == gi)
+                                break; // in case full circle done
+                                       // select if first category
+                            if (pgi.GridItems[i].Label == sortedCats[0].Label)
+                            {
+                                pgi.GridItems[i].Select();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }));
+        }
+
     }
 }

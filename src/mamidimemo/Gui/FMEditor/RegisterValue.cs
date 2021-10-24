@@ -51,6 +51,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public int PreviousValue
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private int f_CurrentValue;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int? NullableValue
         {
             get
@@ -156,11 +170,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             trackBar.Maximum = max;
             trackBar.Value = value;
 
+            f_CurrentValue = value;
+            PreviousValue = value;
+
             numericUpDown.ValueChanged += (s, e) =>
             {
                 var v = (int)numericUpDown.Value;
                 if (trackBar.Value != v)
                     trackBar.Value = v;
+
+                PreviousValue = f_CurrentValue;
+                f_CurrentValue = v;
 
                 OnValueChanged(new PropertyChangedEventArgs(registerName));
             };
@@ -169,6 +189,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 var v = (int)trackBar.Value;
                 if ((int)numericUpDown.Value != v)
                     numericUpDown.Value = v;
+
+                PreviousValue = f_CurrentValue;
+                f_CurrentValue = v;
 
                 OnValueChanged(new PropertyChangedEventArgs(registerName));
             };

@@ -31,6 +31,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        public bool PreviousValue
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private bool f_CurrentValue;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public RegisterFlag() : base(null)
         {
         }
@@ -55,9 +69,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.labelName.Text = labelName != null ? labelName : registerName;
 
             checkBox.Checked = value;
+            f_CurrentValue = value;
+            PreviousValue = value;
 
             checkBox.CheckedChanged += (s, e) =>
             {
+                PreviousValue = f_CurrentValue;
+                f_CurrentValue = checkBox.Checked;
                 OnValueChanged(new PropertyChangedEventArgs(registerName));
             };
         }

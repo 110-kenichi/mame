@@ -62,21 +62,21 @@ namespace zanac.MAmidiMEmo.ComponentModel
                             name += " " + dtim.TimbreName;
                             break;
                         case Object obj:
-                            dynamic dobj = obj;
-                            try
-                            {
-                                name += " " + dobj.TimbreName;
-                            }
-                            catch
-                            {
-                                try
-                                {
-                                    name += " " + dobj.Memo;
-                                }
-                                catch
-                                {
-                                }
-                            }
+                            //dynamic dobj = obj;
+                            //try
+                            //{
+                            //    name += " " + dobj.TimbreName;
+                            //}
+                            //catch
+                            //{
+                            //    try
+                            //    {
+                            //        name += " " + dobj.Memo;
+                            //    }
+                            //    catch
+                            //    {
+                            //    }
+                            //}
                             break;
                     }
                     CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);

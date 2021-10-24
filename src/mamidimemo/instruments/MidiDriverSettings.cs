@@ -190,6 +190,16 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public MidiDriverSettings()
+        {
+
+        }
+
         public override bool Equals(object obj)
         {
             var mdsobj = obj as MidiDriverSettings;
@@ -203,8 +213,6 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             return SerializeData.GetHashCode();
         }
-
-        #endregion
 
     }
 

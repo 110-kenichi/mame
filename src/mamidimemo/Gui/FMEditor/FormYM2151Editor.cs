@@ -104,8 +104,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
-            ((RegisterValue)this["General"]["AMS"]).Value = 0;
-            ((RegisterValue)this["General"]["PMS"]).Value = 0;
+            ((RegisterValue)this["General"]["AMS"]).Value = tone.AMS;
+            ((RegisterValue)this["General"]["PMS"]).Value = tone.PMS;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = null;
             ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = null;
@@ -140,8 +140,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
-            tim.AMS = (byte)0;
-            tim.PMS = (byte)0;
+            tim.AMS = (byte)tone.AMS;
+            tim.PMS = (byte)tone.PMS;
             tim.GlobalSettings.Enable = false;
             tim.GlobalSettings.LFRQ = null;
             tim.GlobalSettings.LFOF = null;

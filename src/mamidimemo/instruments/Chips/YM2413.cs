@@ -1766,7 +1766,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetModulator()
             {
-                Modulator = new YM2413Modulator();
+                Modulator.InjectFrom(new LoopInjection(), new YM2413Modulator());
             }
 
             /// <summary>
@@ -1788,7 +1788,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetCareer()
             {
-                Career = new YM2413Career();
+                Career.InjectFrom(new LoopInjection(), new YM2413Career());
             }
 
             /// <summary>
@@ -1898,7 +1898,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new YM2413GlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new YM2413GlobalSettings());
             }
 
             /// <summary>

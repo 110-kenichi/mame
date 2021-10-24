@@ -896,7 +896,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new SIDGlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new SIDGlobalSettings());
             }
 
             /// <summary>

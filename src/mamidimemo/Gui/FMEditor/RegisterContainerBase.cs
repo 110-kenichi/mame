@@ -45,6 +45,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public FormFmEditor ParentEditor
+        {
+            get;
+            set;
+        }
+
 
         /// <summary>
         /// 
@@ -57,6 +66,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             set
             {
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Follow
+        {
+            get
+            {
+                return checkBoxFollow.Checked;
             }
         }
 
@@ -129,7 +149,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         }
 
         /// <summary>
-        /// 
+        /// Sender is RegisterBase
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs> ValueChanged;
 
@@ -161,7 +181,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     break;
             }
 
-            ValueChanged?.Invoke(this, e);
+            ValueChanged?.Invoke(sender, e);
 
             ignoreTextChange = true;
             textBoxSR.Text = SerializeData;
@@ -353,6 +373,67 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             else
             {
                 // do other staff
+            }
+        }
+
+        protected static string DropSourceText
+        {
+            get;
+            set;
+        }
+
+        protected static string DropTargetText
+        {
+            get;
+            set;
+        }
+
+        private void label1_MouseDown(object sender, MouseEventArgs e)
+        {
+            DropSourceText = textBoxSR.Text;
+            DropTargetText = null;
+            var flag = DoDragDrop(textBoxSR.Text, DragDropEffects.All);
+            if (flag == DragDropEffects.Move && DropTargetText != null)
+            {
+                try
+                {
+                    ParentEditor.IgnoreControlValueChanged = true;
+                    textBoxSR.Text = DropTargetText;
+                }
+                finally
+                {
+                    ParentEditor.IgnoreControlValueChanged = false;
+                }
+            }
+        }
+
+        private void textBoxSR_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                DropTargetText = textBoxSR.Text;
+                try
+                {
+                    ParentEditor.IgnoreControlValueChanged = true;
+                    textBoxSR.Text = (string)e.Data.GetData(DataFormats.Text);
+                }
+                finally
+                {
+                    ParentEditor.IgnoreControlValueChanged = false;
+                }
+            }
+        }
+
+        private void textBoxSR_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.Text))
+            {
+                string text = (string)e.Data.GetData(DataFormats.Text);
+                if (ModifierKeys == Keys.Shift)
+                    e.Effect = DragDropEffects.Move;
+                else
+                    e.Effect = DragDropEffects.Copy;
+                DropTargetText = text;
             }
         }
     }

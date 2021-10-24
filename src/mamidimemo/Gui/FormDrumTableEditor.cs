@@ -70,6 +70,7 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
                 insts.Add((DrumTimbre)item.Tag);
             propertyGrid1.SelectedObjects = insts.ToArray();
+         
         }
 
         /// <summary>

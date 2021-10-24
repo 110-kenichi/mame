@@ -1086,7 +1086,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new AY8910GlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new AY8910GlobalSettings());
             }
 
             public AY8910Timbre()

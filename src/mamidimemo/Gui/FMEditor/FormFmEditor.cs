@@ -377,6 +377,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             control.Dock = DockStyle.Top;
             flowLayoutPanel1.Controls.Add(control);
 
+            control.ParentEditor = this;
+
             control.ValueChanged += Control_ValueChanged;
         }
 
@@ -386,6 +388,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private int ignorePlayingFlag;
 
+        public bool IgnoreControlValueChanged
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -393,11 +401,119 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         private async void Control_ValueChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (IgnoreControlValueChanged)
+                return;
+
+            if (ModifierKeys == Keys.Shift)
+            {
+                IgnoreControlValueChanged = true;
+                try
+                {
+                    RegisterBase reg = (RegisterBase)sender;
+                    foreach (RegisterContainerBase container in controls.Values)
+                    {
+                        if (reg.Parent == container || !container.Follow)
+                            continue;
+                        foreach (var r in container.RegisterControls)
+                        {
+                            if (reg.ItemName.Equals(r.ItemName, StringComparison.Ordinal))
+                            {
+                                try
+                                {
+                                    switch (reg)
+                                    {
+                                        case RegisterFlag rf:
+                                            {
+                                                var rf2 = r as RegisterFlag;
+                                                if (rf2 != null)
+                                                    rf2.Value = rf.Value;
+                                                break;
+                                            }
+                                        case RegisterValue rc:
+                                            {
+                                                var rc2 = r as RegisterValue;
+                                                if (rc2 != null)
+                                                {
+                                                    rc2.Value = rc.Value;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    IgnoreControlValueChanged = false;
+                }
+            }
+            if (ModifierKeys == Keys.Control)
+            {
+                IgnoreControlValueChanged = true;
+                try
+                {
+                    RegisterBase reg = (RegisterBase)sender;
+                    foreach (RegisterContainerBase container in controls.Values)
+                    {
+                        if (reg.Parent == container || !container.Follow)
+                            continue;
+                        foreach (var r in container.RegisterControls)
+                        {
+                            if (reg.ItemName.Equals(r.ItemName, StringComparison.Ordinal))
+                            {
+                                try
+                                {
+                                    switch (reg)
+                                    {
+                                        case RegisterFlag rf:
+                                            {
+                                                var rf2 = r as RegisterFlag;
+                                                if (rf2 != null)
+                                                    rf2.Value = rf.Value;
+                                                break;
+                                            }
+                                        case RegisterValue rc:
+                                            {
+                                                var rc2 = r as RegisterValue;
+                                                if (rc2 != null)
+                                                {
+                                                    rc2.Value += rc.Value - rc.PreviousValue;
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex.GetType() == typeof(SystemException))
+                                        throw;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    IgnoreControlValueChanged = false;
+                }
+            }
             if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0)
             {
                 await testPlay();
             }
-
         }
 
         /// <summary>

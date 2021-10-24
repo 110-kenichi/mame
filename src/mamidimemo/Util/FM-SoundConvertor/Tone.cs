@@ -66,6 +66,19 @@ namespace FM_SoundConvertor
         public int NE;
         public int NF;
 
+        public int SY1;
+        public int SY2;
+        public int LFOF1;
+        public int LFOF2;
+        public int LFS1;
+        public int LFD1;
+        public int LFS2;
+        public int LFD2;
+        public int PMS;
+        public int AMS;
+        public int PMSF;
+        public int AMSF;
+
         public Op[] aOp;
 
         public int KeyShift;

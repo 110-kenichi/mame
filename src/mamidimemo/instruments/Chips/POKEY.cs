@@ -1079,7 +1079,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new PokeyGlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new PokeyGlobalSettings());
             }
 
             /// <summary>

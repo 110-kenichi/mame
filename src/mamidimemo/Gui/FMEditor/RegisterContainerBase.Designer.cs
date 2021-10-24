@@ -31,6 +31,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new MetroFramework.Controls.MetroLabel();
             this.textBoxSR = new MetroFramework.Controls.MetroTextBox();
+            this.checkBoxFollow = new MetroFramework.Controls.MetroCheckBox();
             this.labelName = new zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -43,6 +44,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBoxSR, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxFollow, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(18, 98);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -53,6 +55,7 @@
             // 
             // label1
             // 
+            this.label1.AllowDrop = true;
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 0);
@@ -61,9 +64,14 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Serialize Data:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label1.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragDrop);
+            this.label1.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragEnter);
+            this.label1.DragOver += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragEnter);
+            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label1_MouseDown);
             // 
             // textBoxSR
             // 
+            this.textBoxSR.AllowDrop = true;
             // 
             // 
             // 
@@ -93,6 +101,19 @@
             this.textBoxSR.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBoxSR.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxSR.TextChanged += new System.EventHandler(this.textBoxSR_TextChanged);
+            // 
+            // checkBoxFollow
+            // 
+            this.checkBoxFollow.AutoSize = true;
+            this.checkBoxFollow.Checked = true;
+            this.checkBoxFollow.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxFollow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxFollow.Location = new System.Drawing.Point(224, 3);
+            this.checkBoxFollow.Name = "checkBoxFollow";
+            this.checkBoxFollow.Size = new System.Drawing.Size(119, 19);
+            this.checkBoxFollow.TabIndex = 2;
+            this.checkBoxFollow.Text = "Follow";
+            this.checkBoxFollow.UseSelectable = true;
             // 
             // labelName
             // 
@@ -129,5 +150,6 @@
         private MetroFramework.Controls.MetroLabel label1;
         private MetroFramework.Controls.MetroTextBox textBoxSR;
         private zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel labelName;
+        private MetroFramework.Controls.MetroCheckBox checkBoxFollow;
     }
 }

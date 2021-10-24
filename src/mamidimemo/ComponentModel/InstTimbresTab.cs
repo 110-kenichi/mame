@@ -32,7 +32,10 @@ namespace zanac.MAmidiMEmo.ComponentModel
             foreach (PropertyDescriptor p in props)
             {
                 var atr = p.Attributes[typeof(CategoryAttribute)] as CategoryAttribute;
-                if (atr != null && atr.Category.StartsWith(TabName, StringComparison.Ordinal))
+                if (atr != null &&
+                    (atr.Category.StartsWith("Timbres", StringComparison.Ordinal) ||
+                    atr.Category.StartsWith(" Timbres", StringComparison.Ordinal))
+                    )
                     pdlist.Add(p);
             }
             return new PropertyDescriptorCollection(pdlist.ToArray());
@@ -45,7 +48,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         {
             get
             {
-                return " Timbres";
+                return "Timbres";
             }
         }
 

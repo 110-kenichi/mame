@@ -63,11 +63,13 @@
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.propertyGrid.HelpBackColor = System.Drawing.SystemColors.Info;
-            this.propertyGrid.Location = new System.Drawing.Point(5, 85);
+            this.propertyGrid.Location = new System.Drawing.Point(5, 60);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(630, 285);
+            this.propertyGrid.Size = new System.Drawing.Size(630, 310);
             this.propertyGrid.TabIndex = 2;
+            this.propertyGrid.PropertyTabChanged += new System.Windows.Forms.PropertyTabChangedEventHandler(this.propertyGrid_PropertyTabChanged);
             this.propertyGrid.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGrid_SelectedGridItemChanged);
+            this.propertyGrid.SelectedObjectsChanged += new System.EventHandler(this.propertyGrid_SelectedObjectsChanged);
             // 
             // contextMenuStripProp
             // 

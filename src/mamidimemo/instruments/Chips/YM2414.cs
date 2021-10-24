@@ -6,6 +6,7 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Text;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -583,6 +584,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //}
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private uint? YM2414ReadData(byte address, int op, int slot)
+        {
+            switch (op)
+            {
+                case 0:
+                    op = 0;
+                    break;
+                case 1:
+                    op = 2;
+                    break;
+                case 2:
+                    op = 1;
+                    break;
+                case 3:
+                    op = 3;
+                    break;
+            }
+            byte adr = (byte)(address + (op * 8) + slot);
+
+            return GetCachedWrittenData(adr);
+        }
+
 
         /// <summary>
         /// 
@@ -695,6 +721,201 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[3].AM = 0;
             Timbres[0].Ops[3].DT2 = 0;
             Timbres[0].Ops[3].TL = 24;
+
+
+            //loadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_01\TX81Z_G-StormPatches_01.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_02\TX81Z_G-StormPatches_02.syx");
+            
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z15m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx");
+        }
+
+        private void loadSyx(int offset, string fileName)
+        {
+            int[] opidtbl = { 0, 2, 1, 3 };
+            var dat = System.IO.File.ReadAllBytes(fileName);
+            if (dat.Length != 4104)
+                return;
+            int fileidx = 0;
+            //check VMEM header
+            if (dat[fileidx++] != 0xf0)
+                return;
+            if (dat[fileidx++] != 0x43)
+                return;
+            fileidx++;
+            if (dat[fileidx++] != 0x04)
+                return;
+            if (dat[fileidx++] != 0x20)
+                return;
+            if (dat[fileidx++] != 0x00)
+                return;
+            for (int ti = 0; ti < 32; ti++)
+            {
+                FM_SoundConvertor.Tone tone = new FM_SoundConvertor.Tone();
+
+                //Tone
+                for (int opi = 0; opi < 4; opi++)
+                {
+                    int opidx = opidtbl[opi];
+                    tone.aOp[opidx].AR = dat[fileidx++] & 31;
+                    tone.aOp[opidx].DR = dat[fileidx++] & 31;
+                    tone.aOp[opidx].SR = dat[fileidx++] & 31;
+                    tone.aOp[opidx].RR = dat[fileidx++] & 15;
+                    tone.aOp[opidx].SL = dat[fileidx++] & 15;
+                    fileidx++;  //KEYBOARD LEVEL SCALING (0-99)
+                    tone.aOp[opidx].AM = (dat[fileidx++] & 0x80) == 0x80 ? 1 : 0;   //EBS, KVS
+                    tone.aOp[opidx].TL = dat[fileidx++] & 127;
+                    {
+                        tone.aOp[opidx].ML = dat[fileidx] & 15;
+                        tone.aOp[opidx].DT2 = (dat[fileidx++] >> 4) & 3;
+                    }
+                    {
+                        tone.aOp[opidx].KS = (dat[fileidx] >> 3) & 3;
+                        tone.aOp[opidx].DT = dat[fileidx++] & 15;
+                    }
+                }
+                {
+                    tone.SY1 = (dat[fileidx] >> 6) & 1;
+                    tone.SY2 = (dat[fileidx] >> 7) & 1;
+                    tone.FB = (dat[fileidx] >> 3) & 7;
+                    tone.AL = dat[fileidx++] & 7;
+                }
+                tone.LFS1 = dat[fileidx++]; tone.LFS2 = tone.LFS1;
+                fileidx++;  //LFO DELAY
+                tone.LFD1 = dat[fileidx++]; tone.LFOF1 = 0;
+                tone.LFD2 = dat[fileidx++]; tone.LFOF2 = 1;
+                {
+                    tone.PMS = (dat[fileidx] >> 5) & 7;
+                    tone.AMS = (dat[fileidx] >> 2) & 3;
+                    tone.AMS = dat[fileidx++] & 3;
+                    tone.PMSF = 1;
+                    tone.AMSF = 1;
+                }
+                tone.KeyShift = dat[fileidx++] - 24;
+                fileidx++;  //Pitch Bend Range
+                fileidx++;  //CH
+                fileidx++;  //PORT
+                fileidx++;  //FC VOL
+                fileidx++;  //MW PITCH
+                fileidx++;  //MW AMPLI
+                fileidx++;  //BC PITCH
+                fileidx++;  //BC AMPLI
+                fileidx++;  //BC P BIAS
+                fileidx++;  //BC E BIAS
+                StringBuilder name = new StringBuilder(new String(new char[] { (char)dat[fileidx++] }));
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                name.Append((char)dat[fileidx++]);
+                tone.Name = name.ToString();
+                fileidx++;  //PEG PR1
+                fileidx++;  //PEG PR2
+                fileidx++;  //PEG PR3
+                fileidx++;  //PEG PL1
+                fileidx++;  //PEG PL2
+                fileidx++;  //PEG PL3
+                for (int opi = 0; opi < 4; opi++)
+                {
+                    int opidx = opidtbl[opi];
+                    {
+                        var egst = (dat[fileidx] >> 4) & 2;
+                        if (egst != 0)
+                        {
+                            tone.aOp[opidx].EGSF = 1;
+                            tone.aOp[opidx].DT2 = egst;
+                        }
+                        tone.aOp[0].FIX = (dat[fileidx] >> 3) & 1;
+                        if (tone.aOp[opidx].FIX != 0)
+                            tone.aOp[opidx].DT = dat[fileidx] & 7;
+                        fileidx++;
+                    }
+                    {
+                        var osw = (dat[fileidx] >> 4) & 7;
+                        if (osw != 0)
+                        {
+                            tone.aOp[opidx].OSCF = 1;
+                            tone.aOp[opidx].DT = osw;
+                            tone.aOp[opidx].ML = dat[fileidx] & 15;
+                        }
+                        fileidx++;
+                    }
+                }
+                {
+                    var rev = dat[fileidx++] & 7;
+                    for (int opi = 0; opi < 4; opi++)
+                    {
+                        int opidx = opidtbl[opi];
+                        if (tone.aOp[opidx].OSCF != 0)
+                            tone.aOp[opidx].SR = rev;
+                    }
+                }
+                fileidx++; //FOOT CONTROL PITCH RANGE (0-99)
+                fileidx++; //FOOT CONTROL AMPLITUDE RANGE (0-99)
+                fileidx += 44;
+                ApplyTone(Timbres[ti + offset], tone);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tone"></param>
+        protected void ApplyTone(TimbreBase timbre, FM_SoundConvertor.Tone tone)
+        {
+            YM2414Timbre tim = (YM2414Timbre)timbre;
+
+            tim.ALG = (byte)tone.AL;
+            tim.FB = (byte)tone.FB;
+            tim.AMSF = (byte)0;
+            tim.AMS = (byte)tone.AMS;
+            tim.PMSF = (byte)0;
+            tim.PMS = (byte)tone.PMS;
+
+            tim.GlobalSettings.Enable = tone.NE != 0 ? true : false;
+
+            tim.GlobalSettings.NE = (byte)tone.NE;
+            tim.GlobalSettings.NFRQ = (byte)tone.NF;
+
+            tim.GlobalSettings.LFRQ = (byte)tone.LFS1;
+            tim.GlobalSettings.LFRQ2 = (byte)tone.LFS2;
+
+            tim.GlobalSettings.LFOF = (byte)tone.LFOF1;
+            tim.GlobalSettings.LFOD = (byte)tone.LFD1;
+            tim.GlobalSettings.LFOF2 = (byte)tone.LFOF2;
+            tim.GlobalSettings.LFOD2 = (byte)tone.LFD2;
+
+            tim.GlobalSettings.LFOW = null;
+            tim.GlobalSettings.LFOW2 = null;
+
+            tim.GlobalSettings.SYNC = (byte)tone.SY1;
+            tim.GlobalSettings.SYNC2 = (byte)tone.SY2;
+
+            for (int i = 0; i < 4; i++)
+            {
+                tim.Ops[i].Enable = 1;
+                tim.Ops[i].AR = (byte)tone.aOp[i].AR;
+                tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
+                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
+                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                tim.Ops[i].TL = (byte)tone.aOp[i].TL;
+                tim.Ops[i].RS = (byte)tone.aOp[i].KS;
+                tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
+                tim.Ops[i].OSCF = (byte)tone.aOp[i].OSCF;
+                tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
+                tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
+                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
+                tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+            }
+            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>
@@ -1118,13 +1339,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 parentModule.YM2414WriteData(unitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn), false);
 
-                byte pan = CalcCurrentPanpot();
-                if (pan <= 96)
-                    pan = 0x1;
+                byte mono = CalcCurrentPanpot();
+                if (32 <= mono && mono < 96)
+                    mono = 0x1;
                 else
-                    pan = 0x0;
-
-                parentModule.YM2414WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2 | pan), false);
+                    mono = 0x0;
+                parentModule.YM2414WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2 | mono), false);
 
                 base.OnPitchUpdated();
             }
@@ -1183,11 +1403,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte pan = CalcCurrentPanpot();
                 if (pan < 32)
                     pan = 0x1;
-                else if (pan > 96)
+                else if (pan >= 96)
                     pan = 0x2;
                 else
                     pan = 0x3;
+                byte mono = 0;
+                if (32 <= pan && pan < 96)
+                    mono = 0x1;
+                else
+                    mono = 0x0;
+
                 parentModule.YM2414WriteData(unitNumber, 0x20, 0, Slot, (byte)(pan << 6 | (timbre.FB << 3) | timbre.ALG));
+
+                uint? wd = parentModule.YM2414ReadData(0x20, 0, Slot);
+                if (wd != null)
+                {
+                    byte data = (byte)(wd.Value & 0xfe);
+                    parentModule.YM2414WriteData(unitNumber, 0x30, 0, Slot, (byte)(data | mono), false);
+                }
+                else
+                {
+                    parentModule.YM2414WriteData(unitNumber, 0x30, 0, Slot, (byte)mono, false);
+                }
             }
 
             /// <summary>
@@ -1570,11 +1807,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetOps()
             {
-                Ops = new YM2414Operator[] {
+                var ops = new YM2414Operator[] {
                     new YM2414Operator(),
                     new YM2414Operator(),
                     new YM2414Operator(),
                     new YM2414Operator() };
+                for (int i = 0; i < Ops.Length; i++)
+                    Ops[i].InjectFrom(new LoopInjection(), ops[i]);
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1739,7 +1978,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new YM2414GlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new YM2414GlobalSettings());
             }
 
             /// <summary>

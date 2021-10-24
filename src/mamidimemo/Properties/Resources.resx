@@ -430,4 +430,10 @@ Or, install the loopMIDI application to the PC.</value>
   <data name="TimbreLoaded" xml:space="preserve">
     <value>{0} timbres loaded.</value>
   </data>
+  <data name="CopiedVSTi" xml:space="preserve">
+    <value>MAmi VSTi was copied to the DAW plugins folder.</value>
+  </data>
+  <data name="SelectDAWFolder" xml:space="preserve">
+    <value>Please select a DAW plugins folder</value>
+  </data>
 </root>

@@ -1439,11 +1439,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetOps()
             {
-                Ops = new YM2612Operator[] {
+                var ops = new YM2612Operator[] {
                     new YM2612Operator(),
                     new YM2612Operator(),
                     new YM2612Operator(),
                     new YM2612Operator() };
+                for (int i = 0; i < Ops.Length; i++)
+                    Ops[i].InjectFrom(new LoopInjection(), ops[i]);
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1589,7 +1591,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings = new YM2612GlobalSettings();
+                GlobalSettings.InjectFrom(new LoopInjection(), new YM2612GlobalSettings());
             }
 
             /// <summary>
