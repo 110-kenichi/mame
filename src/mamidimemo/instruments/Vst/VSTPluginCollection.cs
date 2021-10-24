@@ -247,15 +247,10 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
         /// <summary>
         /// 
         /// </summary>
-        public void ProcessCallback(IntPtr buffer, int samples)
+        public void ProcessCallback(int[][] buf, int samples)
         {
             if (samples == 0)
                 return;
-
-            int[][] buf = new int[2][] { new int[samples], new int[samples] };
-            IntPtr[] pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
-            Marshal.Copy(pt[0], buf[0], 0, samples);
-            Marshal.Copy(pt[1], buf[1], 0, samples);
 
             using (VstAudioBufferManager bufA = new VstAudioBufferManager(2, samples))
             using (VstAudioBufferManager bufB = new VstAudioBufferManager(2, samples))
@@ -314,8 +309,6 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
                             //    buf[idx][i] = (int)(vab[i] * int.MaxValue);
                             idx++;
                         }
-                        Marshal.Copy(buf[0], 0, pt[0], samples);
-                        Marshal.Copy(buf[1], 0, pt[1], samples);
                     }
                 }
             }

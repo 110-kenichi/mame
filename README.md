@@ -268,6 +268,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.6.3 Added some useful menus.
+        Added some features to FM Sound Editor.
+          You can Copy/Swap operator values by dragging Serialize Values Label. If you want to swap values, press the Shift key while dragging.
+          You can change same operator values by Shift/Ctrl key pressing.
+		Added Graphic Equalizer property as Filter.
+3.9.6.2 Reduced MAmi file size
+        Moved properties related with MIDI to Midi Driver Settings sub property
 3.9.6.1 Fixed a possible crash on startup.
 		Supported loading Timbres from a spc file for SPC700.
 3.9.6.0 Supported BRR file with loop header for SPC700.
@@ -569,3 +576,6 @@ https://github.com/digital-sound-antiques/kss2vgm/blob/master/LICENSE
 
 *Split700 - gocha
 https://github.com/gocha/split700/blob/master/LICENSE
+
+*MathParserTK - Yerzhan Kalzhani
+https://github.com/kirnbas/MathParserTK

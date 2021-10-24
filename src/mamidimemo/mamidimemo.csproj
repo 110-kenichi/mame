@@ -211,6 +211,12 @@
       <DependentUpon>YM2414OperatorContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FMEditor\YM24141UITypeEditor.cs" />
+    <Compile Include="Gui\GraphicEqulizer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\GraphicEqulizer.Designer.cs">
+      <DependentUpon>GraphicEqulizer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\PhonemesUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
@@ -579,6 +585,7 @@
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
     <Compile Include="Instruments\SlotAssignmentType.cs" />
     <Compile Include="Instruments\MidiDriverSettings.cs" />
+    <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
@@ -905,6 +912,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormLpcEditor.resx">
       <DependentUpon>FormLpcEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\GraphicEqulizer.resx">
+      <DependentUpon>GraphicEqulizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\TextEditorControl.resx">
       <DependentUpon>TextEditorControl.cs</DependentUpon>

@@ -66,7 +66,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("General")]
-        [Description("Gain Left ch. (0.0-*) of this Instrument")]
+        [Description("Gain Left ch. (0.0-*) of this Instrument.\r\n" +
+            "Affected only for Software Engine.")]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0d, 10d, 0.1d)]
         public virtual float GainLeft
@@ -103,7 +104,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("General")]
-        [Description("Gain Right ch. (0.0-*) of this Instrument")]
+        [Description("Gain Right ch. (0.0-*) of this Instrument.\r\n" +
+            "Affected only for Software Engine.")]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0d, 10d, 0.1d)]
         public virtual float GainRight
@@ -235,7 +237,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("Filter")]
-        [Description("Audio Cutoff Filter (0.1-0.99) of this Instrument")]
+        [Description("Audio Cutoff Filter (0.1-0.99) of this Instrument.\r\n" +
+            "Affected only for Software Engine.")]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0.01d, 0.99d, 0.01d)]
         [DefaultValue(0.99d)]
@@ -269,7 +272,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         [DataMember]
         [Category("Filter")]
-        [Description("Audio Cutoff Filter (0.01-1.00) of this Instrument")]
+        [Description("Audio Cutoff Filter (0.01-1.00) of this Instrument.\r\n" +
+            "Affected only for Software Engine.")]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0.01d, 1.00d, 0.01d)]
         [DefaultValue(0.01d)]
@@ -295,11 +299,34 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+
+        [DataMember]
+        [Description("Graphic Equalizer Settings.\r\n" +
+            "Affected only for Software Engine.")]
+        [DisplayName("Graphic Equalizer Settings[GEQ]")]
+        [Category("Filter")]
+        public virtual GraphicEqualizerSettings GEQ
+        {
+            get;
+            set;
+        }
+
+        public virtual bool ShouldSerializeGEQ()
+        {
+            return !string.Equals(GEQ.SerializeData, "{}", StringComparison.Ordinal);
+        }
+
+        public virtual void ResetGEQ()
+        {
+            GEQ.SerializeData = "{}";
+        }
+
         private VSTPluginCollection f_VSTPlugins;
 
         [DataMember]
         [Category("Filter")]
-        [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST")]
+        [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST.\r\n" +
+            "Affected only for Software Engine.")]
         public VSTPluginCollection VSTPlugins
         {
             get
@@ -1825,6 +1852,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
             set_filter(UnitNumber, SoundInterfaceTagNamePrefix, FilterMode, FilterCutoff, FilterResonance);
 
+            GEQ = new GraphicEqualizerSettings();
+
             vstHandle = GCHandle.Alloc(this);
 
             if (!Program.IsVSTiMode())
@@ -2701,8 +2730,19 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="pos"></param>
         private void vst_fx_callback(IntPtr buffer, int samples)
         {
+            int[][] buf = new int[2][] { new int[samples], new int[samples] };
+            IntPtr[] pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
+            Marshal.Copy(pt[0], buf[0], 0, samples);
+            Marshal.Copy(pt[1], buf[1], 0, samples);
+
             if (VSTPlugins != null)
-                VSTPlugins.ProcessCallback(buffer, samples);
+                VSTPlugins.ProcessCallback(buf, samples);
+
+            if (GEQ.Enable)
+                GEQ.ProcessCallback(buf, samples);
+
+            Marshal.Copy(buf[0], 0, pt[0], samples);
+            Marshal.Copy(buf[1], 0, pt[1], samples);
         }
 
         #endregion
