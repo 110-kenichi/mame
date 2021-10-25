@@ -302,6 +302,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Graphic Equalizer Settings.\r\n" +
+            "This EQ is a peaking filter and its bandwidth is one octave wide.\r\n" +
             "Affected only for Software Engine.")]
         [DisplayName("Graphic Equalizer Settings[GEQ]")]
         [Category("Filter")]
@@ -647,7 +648,10 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual bool ShouldSerializeDrumTimbres()
         {
             foreach (var op in DrumTimbres)
-                return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+            {
+                if (!string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}"))
+                    return true;
+            }
             return false;
         }
 
@@ -675,7 +679,10 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual bool ShouldSerializeCombinedTimbres()
         {
             foreach (var op in CombinedTimbres)
-                return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+            {
+                if (!string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}"))
+                    return true;
+            }
             return false;
         }
 
@@ -2730,19 +2737,41 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="pos"></param>
         private void vst_fx_callback(IntPtr buffer, int samples)
         {
-            int[][] buf = new int[2][] { new int[samples], new int[samples] };
-            IntPtr[] pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
-            Marshal.Copy(pt[0], buf[0], 0, samples);
-            Marshal.Copy(pt[1], buf[1], 0, samples);
+            bool copied = false;
+            int[][] buf = null;
+            IntPtr[] pt = null;
 
             if (VSTPlugins != null)
+            {
+                if (!copied)
+                {
+                    buf = new int[2][] { new int[samples], new int[samples] };
+                    pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
+                    Marshal.Copy(pt[0], buf[0], 0, samples);
+                    Marshal.Copy(pt[1], buf[1], 0, samples);
+                    copied = true;
+                }
                 VSTPlugins.ProcessCallback(buf, samples);
+            }
 
             if (GEQ.Enable)
+            {
+                if (!copied)
+                {
+                    buf = new int[2][] { new int[samples], new int[samples] };
+                    pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
+                    Marshal.Copy(pt[0], buf[0], 0, samples);
+                    Marshal.Copy(pt[1], buf[1], 0, samples);
+                    copied = true;
+                }
                 GEQ.ProcessCallback(buf, samples);
+            }
 
-            Marshal.Copy(buf[0], 0, pt[0], samples);
-            Marshal.Copy(buf[1], 0, pt[1], samples);
+            if (copied)
+            {
+                Marshal.Copy(buf[0], 0, pt[0], samples);
+                Marshal.Copy(buf[1], 0, pt[1], samples);
+            }
         }
 
         #endregion

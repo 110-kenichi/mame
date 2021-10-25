@@ -339,6 +339,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
+        //https://www.utsbox.com/?p=1783
+
         /// <summary>
         /// 
         /// </summary>
@@ -346,10 +348,13 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="samples"></param>
         public void ProcessCallback(int[][] buf, int samples)
         {
+            double[] tmpBuf = new double[] { 0, 0 };
+
             // 入力信号と正弦波を掛け合わせる
             for (int i = 0; i < samples; i++)
             {
-                double[] tmpBuf = new double[] { buf[0][i], buf[1][i] };
+                tmpBuf[0] = buf[0][i];
+                tmpBuf[1] = buf[1][i];
 
                 // 入力信号にフィルタを直列にかける(左分)
                 gain100HzFilter.Process(tmpBuf);
@@ -438,7 +443,7 @@ namespace zanac.MAmidiMEmo.Instruments
             public void SetParameters(double freq, double bw, double gain, double samplerate)
             {
                 // フィルタ係数計算で使用する中間値を求める。
-                double omega = 2.0d * 3.14159265d * freq / samplerate;
+                double omega = 2.0d * Math.PI * freq / samplerate;
                 double alpha = Math.Sin(omega) * Math.Sinh(Math.Log(2.0d) / 2.0 * bw * omega / Math.Sin(omega));
                 double A = Math.Pow(10.0d, (gain / 40.0d));
 

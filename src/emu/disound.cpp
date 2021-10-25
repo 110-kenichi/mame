@@ -506,13 +506,10 @@ void device_sound_interface::apply_filter(stream_sample_t **outputs, int samples
 	stream_sample_t *buffer0 = outputs[0];
 	stream_sample_t *buffer1 = outputs[1];
 
-	if (mode != FILTER_MODE_NONE)
+	for (int i = 0; i < samples; i++)
 	{
-		for (int i = 0; i < samples; i++)
-		{
-			*buffer0++ = process(0, *buffer0);
-			*buffer1++ = process(1, *buffer1);
-		}
+		*buffer0++ = process(0, *buffer0);
+		*buffer1++ = process(1, *buffer1);
 	}
 	if (m_vst_fx_callback != NULL)
 		m_vst_fx_callback(outputs, samples);
@@ -565,22 +562,25 @@ void device_mixer_interface::sound_stream_update(sound_stream &stream, stream_sa
 //http://www.martin-finke.de/blog/articles/audio-plugins-013-filter/
 
 double device_sound_interface::process(int ch, double inputValue) {
-	double calculatedCutoff = getCalculatedCutoff();
-	buf0[ch] += calculatedCutoff * (inputValue - buf0[ch] + feedbackAmount * (buf0[ch] - buf1[ch]));
-	buf1[ch] += calculatedCutoff * (buf0[ch] - buf1[ch]);
-	buf2[ch] += calculatedCutoff * (buf1[ch] - buf2[ch]);
-	buf3[ch] += calculatedCutoff * (buf2[ch] - buf3[ch]);
-	double in = 0.0;
-	switch (mode) {
-	case FILTER_MODE_LOWPASS:
-		in = buf3[ch];
-		break;
-	case FILTER_MODE_HIGHPASS:
-		in = inputValue - buf3[ch];
-		break;
-	case FILTER_MODE_BANDPASS:
-		in = buf0[ch] - buf3[ch];
-		break;
+	double in = inputValue;
+	if (mode != FILTER_MODE_NONE)
+	{
+		double calculatedCutoff = getCalculatedCutoff();
+		buf0[ch] += calculatedCutoff * (inputValue - buf0[ch] + feedbackAmount * (buf0[ch] - buf1[ch]));
+		buf1[ch] += calculatedCutoff * (buf0[ch] - buf1[ch]);
+		buf2[ch] += calculatedCutoff * (buf1[ch] - buf2[ch]);
+		buf3[ch] += calculatedCutoff * (buf2[ch] - buf3[ch]);
+		switch (mode) {
+		case FILTER_MODE_LOWPASS:
+			in = buf3[ch];
+			break;
+		case FILTER_MODE_HIGHPASS:
+			in = inputValue - buf3[ch];
+			break;
+		case FILTER_MODE_BANDPASS:
+			in = buf0[ch] - buf3[ch];
+			break;
+		}
 	}
 
 	//DC Cut

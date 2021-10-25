@@ -1325,7 +1325,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public virtual bool ShouldSerializeOps()
             {
                 foreach (var op in Ops)
-                    return !string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}");
+                {
+                    if (!string.Equals(JsonConvert.SerializeObject(op, Formatting.Indented), "{}"))
+                        return true;
+                }
                 return false;
             }
 
