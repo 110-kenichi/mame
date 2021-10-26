@@ -2741,19 +2741,6 @@ namespace zanac.MAmidiMEmo.Instruments
             int[][] buf = null;
             IntPtr[] pt = null;
 
-            if (VSTPlugins != null)
-            {
-                if (!copied)
-                {
-                    buf = new int[2][] { new int[samples], new int[samples] };
-                    pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
-                    Marshal.Copy(pt[0], buf[0], 0, samples);
-                    Marshal.Copy(pt[1], buf[1], 0, samples);
-                    copied = true;
-                }
-                VSTPlugins.ProcessCallback(buf, samples);
-            }
-
             if (GEQ.Enable)
             {
                 if (!copied)
@@ -2765,6 +2752,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     copied = true;
                 }
                 GEQ.ProcessCallback(buf, samples);
+            }
+
+            if (VSTPlugins != null)
+            {
+                if (!copied)
+                {
+                    buf = new int[2][] { new int[samples], new int[samples] };
+                    pt = new IntPtr[] { Marshal.ReadIntPtr(buffer), Marshal.ReadIntPtr(buffer + IntPtr.Size) };
+                    Marshal.Copy(pt[0], buf[0], 0, samples);
+                    Marshal.Copy(pt[1], buf[1], 0, samples);
+                    copied = true;
+                }
+                VSTPlugins.ProcessCallback(buf, samples);
             }
 
             if (copied)

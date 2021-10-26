@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelName = new System.Windows.Forms.Label();
             this.trackBar = new zanac.MAmidiMEmo.Gui.TrackBarWheel();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
@@ -80,6 +82,8 @@
             this.trackBar.Size = new System.Drawing.Size(40, 66);
             this.trackBar.TabIndex = 15;
             this.trackBar.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.toolTip1.SetToolTip(this.trackBar, "You can change same operator values(only \"Follow\" is checked) by Shift/Ctrl key p" +
+        "ressing.");
             // 
             // numericUpDown
             // 
@@ -93,6 +97,11 @@
             this.numericUpDown.Name = "numericUpDown";
             this.numericUpDown.Size = new System.Drawing.Size(40, 19);
             this.numericUpDown.TabIndex = 22;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
+            this.toolTip1.ShowAlways = true;
             // 
             // RegisterValue
             // 
@@ -116,5 +125,6 @@
         private System.Windows.Forms.Label labelName;
         private TrackBarWheel trackBar;
         private System.Windows.Forms.NumericUpDown numericUpDown;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

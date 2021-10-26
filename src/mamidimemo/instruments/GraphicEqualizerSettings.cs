@@ -34,227 +34,506 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
-        private PeakingFilter gain100HzFilter = new PeakingFilter();
+        private PeakFilter gain31HzFilter;
 
-        private double f_Gain100Hz;
+        private double f_Gain31Hz;
 
         [DataMember]
-        [Description("Gain for around 100 Hz")]
+        [Description("Gain for around 31 Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain100Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain31Hz
         {
             get
             {
-                return f_Gain100Hz;
+                return f_Gain31Hz;
             }
             set
             {
-                if (f_Gain100Hz != value)
+                if (f_Gain31Hz != value)
                 {
-                    f_Gain100Hz = value;
-                    gain100HzFilter.SetParameters(100.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain31Hz = value;
+                    //gain31HzFilter.SetParameters(31.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    gain31HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain200HzFilter = new PeakingFilter();
+        private PeakFilter gain62HzFilter;
 
-        private double f_Gain200Hz;
+        private double f_Gain62Hz;
 
         [DataMember]
-        [Description("Gain for around 200 Hz")]
+        [Description("Gain for around 62 Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain200Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain62Hz
         {
             get
             {
-                return f_Gain200Hz;
+                return f_Gain62Hz;
             }
             set
             {
-                if (f_Gain200Hz != value)
+                if (f_Gain62Hz != value)
                 {
-                    f_Gain200Hz = value;
-                    gain200HzFilter.SetParameters(200.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain62Hz = value;
+                    gain62HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain400HzFilter = new PeakingFilter();
+        private PeakFilter gain125HzFilter;
 
-        private double f_Gain400Hz;
+        private double f_Gain125Hz;
 
         [DataMember]
-        [Description("Gain for around 400 Hz")]
+        [Description("Gain for around 125 Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain400Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain125Hz
         {
             get
             {
-                return f_Gain400Hz;
+                return f_Gain125Hz;
             }
             set
             {
-                if (f_Gain400Hz != value)
+                if (f_Gain125Hz != value)
                 {
-                    f_Gain400Hz = value;
-                    gain400HzFilter.SetParameters(400.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain125Hz = value;
+                    gain125HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain800HzFilter = new PeakingFilter();
+        private PeakFilter gain250HzFilter;
 
-        private double f_Gain800Hz;
+        private double f_Gain250Hz;
 
         [DataMember]
-        [Description("Gain for around 800 Hz")]
+        [Description("Gain for around 250 Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain800Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain250Hz
         {
             get
             {
-                return f_Gain800Hz;
+                return f_Gain250Hz;
             }
             set
             {
-                if (f_Gain800Hz != value)
+                if (f_Gain250Hz != value)
                 {
-                    f_Gain800Hz = value;
-                    gain800HzFilter.SetParameters(800.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain250Hz = value;
+                    gain250HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain1600HzFilter = new PeakingFilter();
+        private PeakFilter gain500HzFilter;
 
-        private double f_Gain1600Hz;
+        private double f_Gain500Hz;
 
         [DataMember]
-        [Description("Gain for around 1.6k Hz")]
+        [Description("Gain for around 500 Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain1600Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain500Hz
         {
             get
             {
-                return f_Gain1600Hz;
+                return f_Gain500Hz;
             }
             set
             {
-                if (f_Gain1600Hz != value)
+                if (f_Gain500Hz != value)
                 {
-                    f_Gain1600Hz = value;
-                    gain1600HzFilter.SetParameters(1600.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain500Hz = value;
+                    gain500HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain3200HzFilter = new PeakingFilter();
+        private PeakFilter gain1000HzFilter;
 
-        private double f_Gain3200Hz;
+        private double f_Gain1000Hz;
 
         [DataMember]
-        [Description("Gain for around 3.2k Hz")]
+        [Description("Gain for around 1k Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain3200Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain1000Hz
         {
             get
             {
-                return f_Gain3200Hz;
+                return f_Gain1000Hz;
             }
             set
             {
-                if (f_Gain3200Hz != value)
+                if (f_Gain1000Hz != value)
                 {
-                    f_Gain3200Hz = value;
-                    gain3200HzFilter.SetParameters(3200.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain1000Hz = value;
+                    gain1000HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain6400HzFilter = new PeakingFilter();
+        private PeakFilter gain2000HzFilter;
 
-        private double f_Gain6400Hz;
+        private double f_Gain2000Hz;
 
         [DataMember]
-        [Description("Gain for around 6.4k Hz")]
+        [Description("Gain for around 2k Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain6400Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain2000Hz
         {
             get
             {
-                return f_Gain6400Hz;
+                return f_Gain2000Hz;
             }
             set
             {
-                if (f_Gain6400Hz != value)
+                if (f_Gain2000Hz != value)
                 {
-                    f_Gain6400Hz = value;
-                    gain6400HzFilter.SetParameters(6400.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain2000Hz = value;
+                    gain2000HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain12800HzFilter = new PeakingFilter();
+        private PeakFilter gain4000HzFilter;
 
-        private double f_Gain12800Hz;
+        private double f_Gain4000Hz;
 
         [DataMember]
-        [Description("Gain for around 12.8k Hz")]
+        [Description("Gain for around 4k Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain12800Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain4000Hz
         {
             get
             {
-                return f_Gain12800Hz;
+                return f_Gain4000Hz;
             }
             set
             {
-                if (f_Gain12800Hz != value)
+                if (f_Gain4000Hz != value)
                 {
-                    f_Gain12800Hz = value;
-                    gain12800HzFilter.SetParameters(12800.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain4000Hz = value;
+                    gain4000HzFilter.GainDB = value;
                 }
             }
         }
 
-        private PeakingFilter gain25600HzFilter = new PeakingFilter();
+        private PeakFilter gain8000HzFilter;
 
-        private double f_Gain25600Hz;
+        private double f_Gain8000Hz;
 
         [DataMember]
-        [Description("Gain for around 25.6k Hz")]
+        [Description("Gain for around 8k Hz")]
         [DefaultValue(0.0d)]
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
-        [DoubleSlideParameters(-30d, 30d, 0.1d)]
-        public double Gain25600Hz
+        [DoubleSlideParameters(-15d, 15d, 0.1d)]
+        public double Gain8000Hz
         {
             get
             {
-                return f_Gain25600Hz;
+                return f_Gain8000Hz;
             }
             set
             {
-                if (f_Gain25600Hz != value)
+                if (f_Gain8000Hz != value)
                 {
-                    f_Gain25600Hz = value;
-                    gain25600HzFilter.SetParameters(25600.0d, 1.0d, value, (double)Program.CurrentSamplingRate);
+                    f_Gain8000Hz = value;
+                    gain8000HzFilter.GainDB = value;
+                }
+            }
+        }
+
+
+        private PeakFilter gain16000HzFilter;
+
+        private double f_Gain16000Hz;
+
+        [DataMember]
+        [Description("Gain for around 16k Hz")]
+        [DefaultValue(0.0d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0d, 100d, 0.1d)]
+        public double Gain16000Hz
+        {
+            get
+            {
+                return f_Gain16000Hz;
+            }
+            set
+            {
+                if (f_Gain16000Hz != value)
+                {
+                    f_Gain16000Hz = value;
+                    gain16000HzFilter.GainDB = value;
+                }
+            }
+        }
+
+
+
+
+
+        private double f_BandWidth31Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 31 Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth31Hz
+        {
+            get
+            {
+                return f_BandWidth31Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth31Hz != value)
+                {
+                    f_BandWidth31Hz = value;
+                    gain31HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth62Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 62 Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth62Hz
+        {
+            get
+            {
+                return f_BandWidth62Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth62Hz != value)
+                {
+                    f_BandWidth62Hz = value;
+                    gain62HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth125Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 125 Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth125Hz
+        {
+            get
+            {
+                return f_BandWidth125Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth125Hz != value)
+                {
+                    f_BandWidth125Hz = value;
+                    gain125HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth250Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 250 Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth250Hz
+        {
+            get
+            {
+                return f_BandWidth250Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth250Hz != value)
+                {
+                    f_BandWidth250Hz = value;
+                    gain250HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth500Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 500 Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth500Hz
+        {
+            get
+            {
+                return f_BandWidth500Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth500Hz != value)
+                {
+                    f_BandWidth500Hz = value;
+                    gain500HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth1000Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 1k Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth1000Hz
+        {
+            get
+            {
+                return f_BandWidth1000Hz;
+            }
+            set
+            {
+                if (f_BandWidth1000Hz != value)
+                {
+                    f_BandWidth1000Hz = value;
+                    gain1000HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth2000Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 2k Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth2000Hz
+        {
+            get
+            {
+                return f_BandWidth2000Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth2000Hz != value)
+                {
+                    f_BandWidth2000Hz = value;
+                    gain2000HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth4000Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 4k Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth4000Hz
+        {
+            get
+            {
+                return f_BandWidth4000Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth4000Hz != value)
+                {
+                    f_BandWidth4000Hz = value;
+                    gain4000HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth8000Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 8k Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth8000Hz
+        {
+            get
+            {
+                return f_BandWidth8000Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth8000Hz != value)
+                {
+                    f_BandWidth8000Hz = value;
+                    gain8000HzFilter.BandWidth = value;
+                }
+            }
+        }
+
+        private double f_BandWidth16000Hz = 1.41d;
+
+        [DataMember]
+        [Description("BandWidth for around 16k Hz")]
+        [DefaultValue(1.41d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(0.1d, 100d, 0.1d)]
+        public double BandWidth16000Hz
+        {
+            get
+            {
+                return f_BandWidth16000Hz;
+            }
+            set
+            {
+                if (value <= 0)
+                    return;
+                if (f_BandWidth16000Hz != value)
+                {
+                    f_BandWidth16000Hz = value;
+                    gain16000HzFilter.BandWidth = value;
                 }
             }
         }
@@ -264,15 +543,18 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         public GraphicEqualizerSettings()
         {
-            gain100HzFilter.SetParameters(100.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain200HzFilter.SetParameters(200.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain400HzFilter.SetParameters(400.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain800HzFilter.SetParameters(800.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain1600HzFilter.SetParameters(1600.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain3200HzFilter.SetParameters(3200.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain6400HzFilter.SetParameters(6400.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain12800HzFilter.SetParameters(12800.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
-            gain25600HzFilter.SetParameters(25600.0d, 1.0d, 0, (double)Program.CurrentSamplingRate);
+            var sampleRate = Program.CurrentSamplingRate;
+            double defaultGain = 0;
+            gain31HzFilter = new PeakFilter(sampleRate, 31, f_BandWidth31Hz, defaultGain);
+            gain62HzFilter = new PeakFilter(sampleRate, 62, f_BandWidth62Hz, defaultGain);
+            gain125HzFilter = new PeakFilter(sampleRate, 125, f_BandWidth125Hz, defaultGain);
+            gain250HzFilter = new PeakFilter(sampleRate, 250, f_BandWidth250Hz, defaultGain);
+            gain500HzFilter = new PeakFilter(sampleRate, 500, f_BandWidth500Hz, defaultGain);
+            gain1000HzFilter = new PeakFilter(sampleRate, 1000, f_BandWidth1000Hz, defaultGain);
+            gain2000HzFilter = new PeakFilter(sampleRate, 2000, f_BandWidth2000Hz, defaultGain);
+            gain4000HzFilter = new PeakFilter(sampleRate, 4000, f_BandWidth4000Hz, defaultGain);
+            gain8000HzFilter = new PeakFilter(sampleRate, 8000, f_BandWidth8000Hz, defaultGain);
+            gain16000HzFilter = new PeakFilter(sampleRate, 16000, f_BandWidth16000Hz, defaultGain);
         }
 
         #region Etc
@@ -339,8 +621,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
-        //https://www.utsbox.com/?p=1783
-
         /// <summary>
         /// 
         /// </summary>
@@ -348,112 +628,18 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="samples"></param>
         public void ProcessCallback(int[][] buf, int samples)
         {
-            double[] tmpBuf = new double[] { 0, 0 };
-
-            // 入力信号と正弦波を掛け合わせる
             for (int i = 0; i < samples; i++)
             {
-                tmpBuf[0] = buf[0][i];
-                tmpBuf[1] = buf[1][i];
-
-                // 入力信号にフィルタを直列にかける(左分)
-                gain100HzFilter.Process(tmpBuf);
-                gain200HzFilter.Process(tmpBuf);
-                gain400HzFilter.Process(tmpBuf);
-                gain800HzFilter.Process(tmpBuf);
-                gain1600HzFilter.Process(tmpBuf);
-                gain3200HzFilter.Process(tmpBuf);
-                gain6400HzFilter.Process(tmpBuf);
-                gain12800HzFilter.Process(tmpBuf);
-                gain25600HzFilter.Process(tmpBuf);
-
-                // フィルタをかけた信号を出力する
-                buf[0][i] = (int)Math.Round(tmpBuf[0]);
-                buf[1][i] = (int)Math.Round(tmpBuf[1]);
-            }
-        }
-
-        //https://www.utsbox.com/?page_id=728
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private class PeakingFilter
-        {
-            // フィルタの係数
-            private double a0, a1, a2, b0, b1, b2;
-            // バッファ
-            private double out1_R, out2_R;
-            private double in1_R, in2_R;
-            private double out1_L, out2_L;
-            private double in1_L, in2_L;
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public PeakingFilter()
-            {
-
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="inputData"></param>
-            /// <returns></returns>
-            public void Process(double[] inputData)
-            {
-                {
-                    // 入力信号にフィルタを適用し、出力信号変数に保存。
-                    double outData_R = b0 / a0 * inputData[1] + b1 / a0 * in1_R + b2 / a0 * in2_R
-                        - a1 / a0 * out1_R - a2 / a0 * out2_R;
-
-                    in2_R = in1_R; // 2つ前の入力信号を更新
-                    in1_R = inputData[1];  // 1つ前の入力信号を更新
-
-                    out2_R = out1_R; // 2つ前の出力信号を更新
-                    out1_R = outData_R;  // 1つ前の出力信号を更新
-
-                    // 出力信号を返す
-                    inputData[1] = outData_R;
-                }
-                {
-                    // 入力信号にフィルタを適用し、出力信号変数に保存。
-                    double outData_L = b0 / a0 * inputData[0] + b1 / a0 * in1_R + b2 / a0 * in2_R
-                        - a1 / a0 * out1_R - a2 / a0 * out2_R;
-
-                    in2_L = in1_L; // 2つ前の入力信号を更新
-                    in1_L = inputData[0];  // 1つ前の入力信号を更新
-
-                    out2_L = out1_L; // 2つ前の出力信号を更新
-                    out1_L = outData_L;  // 1つ前の出力信号を更新
-
-                    // 出力信号を返す
-                    inputData[0] = outData_L;
-                }
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="freq"></param>
-            /// <param name="bw"></param>
-            /// <param name="gain"></param>
-            /// <param name="samplerate"></param>
-            public void SetParameters(double freq, double bw, double gain, double samplerate)
-            {
-                // フィルタ係数計算で使用する中間値を求める。
-                double omega = 2.0d * Math.PI * freq / samplerate;
-                double alpha = Math.Sin(omega) * Math.Sinh(Math.Log(2.0d) / 2.0 * bw * omega / Math.Sin(omega));
-                double A = Math.Pow(10.0d, (gain / 40.0d));
-
-                // フィルタ係数を求める。
-                a0 = 1.0d + alpha / A;
-                a1 = -2.0d * Math.Cos(omega);
-                a2 = 1.0d - alpha / A;
-                b0 = 1.0d + alpha * A;
-                b1 = -2.0d * Math.Cos(omega);
-                b2 = 1.0d - alpha * A;
+                gain31HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain62HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain125HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain250HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain500HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain1000HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain2000HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain4000HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain8000HzFilter.Process(ref buf[0][i], ref buf[1][i]);
+                gain16000HzFilter.Process(ref buf[0][i], ref buf[1][i]);
             }
         }
 
@@ -483,6 +669,245 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        /// <summary>
+        /// Represents a biquad-filter.
+        /// </summary>
+        public abstract class BiQuad
+        {
+            /// <summary>
+            /// The a0 value.
+            /// </summary>
+            protected double A0;
+            /// <summary>
+            /// The a1 value.
+            /// </summary>
+            protected double A1;
+            /// <summary>
+            /// The a2 value.
+            /// </summary>
+            protected double A2;
+            /// <summary>
+            /// The b1 value.
+            /// </summary>
+            protected double B1;
+            /// <summary>
+            /// The b2 value.
+            /// </summary>
+            protected double B2;
+            /// <summary>
+            /// The q value.
+            /// </summary>
+            private double _q;
+            /// <summary>
+            /// The gain value in dB.
+            /// </summary>
+            private double _gainDB;
+
+            /// <summary>
+            /// The z1 value.
+            /// </summary>
+            protected double Z1_L;
+            /// <summary>
+            /// The z2 value.
+            /// </summary>
+            protected double Z2_L;
+
+            /// <summary>
+            /// The z1 value.
+            /// </summary>
+            protected double Z1_R;
+            /// <summary>
+            /// The z2 value.
+            /// </summary>
+            protected double Z2_R;
+
+            private double _frequency;
+
+            /// <summary>
+            /// Gets or sets the frequency.
+            /// </summary>
+            /// <exception cref="System.ArgumentOutOfRangeException">value;The samplerate has to be bigger than 2 * frequency.</exception>
+            public double Frequency
+            {
+                get { return _frequency; }
+                set
+                {
+                    if (SampleRate < value * 2)
+                    {
+                        throw new ArgumentOutOfRangeException("value", "The samplerate has to be bigger than 2 * frequency.");
+                    }
+                    _frequency = value;
+                    CalculateBiQuadCoefficients();
+                }
+            }
+
+            /// <summary>
+            /// Gets the sample rate.
+            /// </summary>
+            public int SampleRate { get; private set; }
+
+            /// <summary>
+            /// The q value.
+            /// </summary>
+            public double Q
+            {
+                get { return _q; }
+                set
+                {
+                    if (value <= 0)
+                    {
+                        throw new ArgumentOutOfRangeException("value");
+                    }
+                    _q = value;
+                    CalculateBiQuadCoefficients();
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets the gain value in dB.
+            /// </summary>
+            public double GainDB
+            {
+                get { return _gainDB; }
+                set
+                {
+                    _gainDB = value;
+                    CalculateBiQuadCoefficients();
+                }
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="BiQuad"/> class.
+            /// </summary>
+            /// <param name="sampleRate">The sample rate.</param>
+            /// <param name="frequency">The frequency.</param>
+            /// <exception cref="System.ArgumentOutOfRangeException">
+            /// sampleRate
+            /// or
+            /// frequency
+            /// or
+            /// q
+            /// </exception>
+            protected BiQuad(int sampleRate, double frequency)
+                : this(sampleRate, frequency, 1.0 / Math.Sqrt(2))
+            {
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="BiQuad"/> class.
+            /// </summary>
+            /// <param name="sampleRate">The sample rate.</param>
+            /// <param name="frequency">The frequency.</param>
+            /// <param name="q">The q.</param>
+            /// <exception cref="System.ArgumentOutOfRangeException">
+            /// sampleRate
+            /// or
+            /// frequency
+            /// or
+            /// q
+            /// </exception>
+            protected BiQuad(int sampleRate, double frequency, double q)
+            {
+                if (sampleRate <= 0)
+                    throw new ArgumentOutOfRangeException("sampleRate");
+                if (frequency <= 0)
+                    throw new ArgumentOutOfRangeException("frequency");
+                if (q <= 0)
+                    throw new ArgumentOutOfRangeException("q");
+                SampleRate = sampleRate;
+                Frequency = frequency;
+                Q = q;
+                GainDB = 6;
+            }
+
+            /// <summary>
+            /// Processes a single <paramref name="inputL"/> sample and returns the result.
+            /// </summary>
+            /// <param name="inputL">The input sample to process.</param>
+            /// <returns>The result of the processed <paramref name="inputL"/> sample.</returns>
+            public void Process(ref int inputL, ref int inputR)
+            {
+                double o = inputL * A0 + Z1_L;
+                Z1_L = inputL * A1 + Z2_L - B1 * o;
+                Z2_L = inputL * A2 - B2 * o;
+                inputL = (int)o;
+
+                o = inputR * A0 + Z1_R;
+                Z1_R = inputR * A1 + Z2_R - B1 * o;
+                Z2_R = inputR * A2 - B2 * o;
+                inputR = (int)o;
+            }
+
+            /// <summary>
+            /// Calculates all coefficients.
+            /// </summary>
+            protected abstract void CalculateBiQuadCoefficients();
+        }
+
+        //https://github.com/filoe/cscore/blob/master/CSCore/DSP/PeakFilter.cs
+
+        /// <summary>
+        /// Used to apply an peak-filter to a signal.
+        /// </summary>
+        public class PeakFilter : BiQuad
+        {
+            /// <summary>
+            /// Gets or sets the bandwidth.
+            /// </summary>
+            public double BandWidth
+            {
+                get { return Q; }
+                set
+                {
+                    if (value <= 0)
+                        throw new ArgumentOutOfRangeException("value");
+                    Q = value;
+                }
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PeakFilter"/> class.
+            /// </summary>
+            /// <param name="sampleRate">The sampleRate of the audio data to process.</param>
+            /// <param name="frequency">The center frequency to adjust.</param>
+            /// <param name="bandWidth">The bandWidth.</param>
+            /// <param name="peakGainDB">The gain value in dB.</param>
+            public PeakFilter(int sampleRate, double frequency, double bandWidth, double peakGainDB)
+                : base(sampleRate, frequency, bandWidth)
+            {
+                GainDB = peakGainDB;
+            }
+
+            /// <summary>
+            /// Calculates all coefficients.
+            /// </summary>
+            protected override void CalculateBiQuadCoefficients()
+            {
+                double norm;
+                double v = Math.Pow(10, Math.Abs(GainDB) / 20.0);
+                double k = Math.Tan(Math.PI * Frequency / SampleRate);
+                double q = Q;
+
+                if (GainDB >= 0) //boost
+                {
+                    norm = 1 / (1 + 1 / q * k + k * k);
+                    A0 = (1 + v / q * k + k * k) * norm;
+                    A1 = 2 * (k * k - 1) * norm;
+                    A2 = (1 - v / q * k + k * k) * norm;
+                    B1 = A1;
+                    B2 = (1 - 1 / q * k + k * k) * norm;
+                }
+                else //cut
+                {
+                    norm = 1 / (1 + v / q * k + k * k);
+                    A0 = (1 + 1 / q * k + k * k) * norm;
+                    A1 = 2 * (k * k - 1) * norm;
+                    A2 = (1 - 1 / q * k + k * k) * norm;
+                    B1 = A1;
+                    B2 = (1 - v / q * k + k * k) * norm;
+                }
+            }
+        }
     }
 
 }

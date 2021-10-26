@@ -70,6 +70,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportAllGit = new MetroFramework.Controls.MetroButton();
+            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -518,7 +519,8 @@
             // openFileDialogTone
             // 
             this.openFileDialogTone.DefaultExt = "*.muc";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gw" +
+    "i;*.bnk";
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
             this.openFileDialogTone.Title = "Load tone file";
             // 
@@ -593,6 +595,12 @@
             this.metroButtonImportAllGit.UseSelectable = true;
             this.metroButtonImportAllGit.Click += new System.EventHandler(this.metroButtonImportAllGit_Click);
             // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
             // FormFmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -657,5 +665,6 @@
         private MetroFramework.Controls.MetroButton metroButtonImportAllGit;
         private MetroFramework.Controls.MetroButton metroButtonImportGit;
         private System.Windows.Forms.ToolStripButton toolStripButtonHook;
+        private MetroFramework.Components.MetroToolTip metroToolTip1;
     }
 }

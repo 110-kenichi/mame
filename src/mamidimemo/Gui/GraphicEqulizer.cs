@@ -32,15 +32,27 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     ignoreValueChanged = true;
 
-                    trackBar100.Value = getTrackValue(Settings.Gain100Hz);
-                    trackBar200.Value = getTrackValue(Settings.Gain200Hz);
-                    trackBar400.Value = getTrackValue(Settings.Gain400Hz);
-                    trackBar800.Value = getTrackValue(Settings.Gain800Hz);
-                    trackBar1600.Value = getTrackValue(Settings.Gain1600Hz);
-                    trackBar3200.Value = getTrackValue(Settings.Gain3200Hz);
-                    trackBar6400.Value = getTrackValue(Settings.Gain6400Hz);
-                    trackBar12800.Value = getTrackValue(Settings.Gain12800Hz);
-                    trackBar25600.Value = getTrackValue(Settings.Gain25600Hz);
+                    trackBar31.Value = getTrackValue(Settings.Gain31Hz);
+                    trackBar62.Value = getTrackValue(Settings.Gain62Hz);
+                    trackBar125.Value = getTrackValue(Settings.Gain125Hz);
+                    trackBar250.Value = getTrackValue(Settings.Gain250Hz);
+                    trackBar500.Value = getTrackValue(Settings.Gain500Hz);
+                    trackBar1000.Value = getTrackValue(Settings.Gain1000Hz);
+                    trackBar2000.Value = getTrackValue(Settings.Gain2000Hz);
+                    trackBar4000.Value = getTrackValue(Settings.Gain4000Hz);
+                    trackBar8000.Value = getTrackValue(Settings.Gain8000Hz);
+                    trackBar16000.Value = getTrackValue(Settings.Gain16000Hz);
+
+                    trackBar31W.Value = getTrackWidthValue(Settings.BandWidth31Hz);
+                    trackBar62W.Value = getTrackWidthValue(Settings.BandWidth62Hz);
+                    trackBar125W.Value = getTrackWidthValue(Settings.BandWidth125Hz);
+                    trackBar250W.Value = getTrackWidthValue(Settings.BandWidth250Hz);
+                    trackBar500W.Value = getTrackWidthValue(Settings.BandWidth500Hz);
+                    trackBar1000W.Value = getTrackWidthValue(Settings.BandWidth1000Hz);
+                    trackBar2000W.Value = getTrackWidthValue(Settings.BandWidth2000Hz);
+                    trackBar4000W.Value = getTrackWidthValue(Settings.BandWidth4000Hz);
+                    trackBar8000W.Value = getTrackWidthValue(Settings.BandWidth8000Hz);
+                    trackBar16000W.Value = getTrackWidthValue(Settings.BandWidth16000Hz);
                 }
                 finally
                 {
@@ -51,11 +63,20 @@ namespace zanac.MAmidiMEmo.Gui
 
         private int getTrackValue(double value)
         {
-            if (value > 30)
-                return 30;
-            else if (value < -30)
-                return -30;
+            if (value > 15)
+                return 15;
+            else if (value < -15)
+                return -15;
             return (int)Math.Round(value);
+        }
+
+        private int getTrackWidthValue(double value)
+        {
+            if (value > 2000)
+                return 2000;
+            else if (value < 0.01)
+                return 1;
+            return (int)Math.Round(value * 100);
         }
 
         /// <summary>
@@ -73,41 +94,87 @@ namespace zanac.MAmidiMEmo.Gui
             if (ignoreValueChanged)
                 return;
 
-            if (sender == trackBar100)
+            Settings.Enable = true;
+
+            if (sender == trackBar31)
             {
-                Settings.Gain100Hz = trackBar100.Value;
+                Settings.Gain31Hz = trackBar31.Value;
             }
-            else if (sender == trackBar200)
+            else if (sender == trackBar62)
             {
-                Settings.Gain200Hz = trackBar200.Value;
+                Settings.Gain62Hz = trackBar62.Value;
             }
-            else if (sender == trackBar400)
+            else if (sender == trackBar125)
             {
-                Settings.Gain400Hz = trackBar400.Value;
+                Settings.Gain125Hz = trackBar125.Value;
             }
-            else if (sender == trackBar800)
+            else if (sender == trackBar250)
             {
-                Settings.Gain800Hz = trackBar800.Value;
+                Settings.Gain250Hz = trackBar250.Value;
             }
-            else if (sender == trackBar1600)
+            else if (sender == trackBar500)
             {
-                Settings.Gain1600Hz = trackBar1600.Value;
+                Settings.Gain500Hz = trackBar500.Value;
             }
-            else if (sender == trackBar3200)
+            else if (sender == trackBar1000)
             {
-                Settings.Gain3200Hz = trackBar3200.Value;
+                Settings.Gain1000Hz = trackBar1000.Value;
             }
-            else if (sender == trackBar6400)
+            else if (sender == trackBar2000)
             {
-                Settings.Gain6400Hz = trackBar6400.Value;
+                Settings.Gain2000Hz = trackBar2000.Value;
             }
-            else if (sender == trackBar12800)
+            else if (sender == trackBar4000)
             {
-                Settings.Gain12800Hz = trackBar12800.Value;
+                Settings.Gain4000Hz = trackBar4000.Value;
             }
-            else if (sender == trackBar25600)
+            else if (sender == trackBar8000)
             {
-                Settings.Gain25600Hz = trackBar25600.Value;
+                Settings.Gain8000Hz = trackBar8000.Value;
+            }
+            else if (sender == trackBar16000)
+            {
+                Settings.Gain16000Hz = trackBar16000.Value;
+            }
+            else if (sender == trackBar31W)
+            {
+                Settings.BandWidth31Hz = trackBar31W.Value / 100d;
+            }
+            else if (sender == trackBar62W)
+            {
+                Settings.BandWidth62Hz = trackBar62W.Value / 100d;
+            }
+            else if (sender == trackBar125W)
+            {
+                Settings.BandWidth125Hz = trackBar125W.Value / 100d;
+            }
+            else if (sender == trackBar250W)
+            {
+                Settings.BandWidth250Hz = trackBar250W.Value / 100d;
+            }
+            else if (sender == trackBar500W)
+            {
+                Settings.BandWidth500Hz = trackBar500W.Value / 100d;
+            }
+            else if (sender == trackBar1000W)
+            {
+                Settings.BandWidth1000Hz = trackBar1000W.Value / 100d;
+            }
+            else if (sender == trackBar2000W)
+            {
+                Settings.BandWidth2000Hz = trackBar2000W.Value / 100d;
+            }
+            else if (sender == trackBar4000W)
+            {
+                Settings.BandWidth4000Hz = trackBar4000W.Value / 100d;
+            }
+            else if (sender == trackBar8000W)
+            {
+                Settings.BandWidth8000Hz = trackBar8000W.Value / 100d;
+            }
+            else if (sender == trackBar16000W)
+            {
+                Settings.BandWidth16000Hz = trackBar16000W.Value / 100d;
             }
         }
     }

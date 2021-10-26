@@ -298,6 +298,8 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
 
         #region IDisposable Support
 
+        public event EventHandler<EventArgs> PluginDisposing;
+
         private bool disposedValue = false; // 重複する呼び出しを検出するには
 
         protected virtual void Dispose(bool disposing)
@@ -307,6 +309,7 @@ namespace zanac.MAmidiMEmo.Instruments.Vst
                 if (disposing)
                 {
                     //マネージ状態を破棄します (マネージ オブジェクト)。
+                    PluginDisposing?.Invoke(this, EventArgs.Empty);
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。

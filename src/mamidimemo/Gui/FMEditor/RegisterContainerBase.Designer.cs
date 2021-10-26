@@ -1,4 +1,6 @@
-﻿namespace zanac.MAmidiMEmo.Gui.FMEditor
+﻿using System.Windows.Forms;
+
+namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     partial class RegisterContainerBase
     {
@@ -28,10 +30,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new MetroFramework.Controls.MetroLabel();
             this.textBoxSR = new MetroFramework.Controls.MetroTextBox();
             this.checkBoxFollow = new MetroFramework.Controls.MetroCheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.labelName = new zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -64,6 +68,7 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Serialize Data:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label1, "You can Copy/Swap operator values by dragging Serialize Values Label.");
             this.label1.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragDrop);
             this.label1.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragEnter);
             this.label1.DragOver += new System.Windows.Forms.DragEventHandler(this.textBoxSR_DragEnter);
@@ -115,6 +120,12 @@
             this.checkBoxFollow.Text = "Follow";
             this.checkBoxFollow.UseSelectable = true;
             // 
+            // toolTip1
+            // 
+            this.toolTip1.IsBalloon = true;
+            this.toolTip1.ShowAlways = true;
+            this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            // 
             // labelName
             // 
             this.labelName.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -151,5 +162,6 @@
         private MetroFramework.Controls.MetroTextBox textBoxSR;
         private zanac.MAmidiMEmo.Gui.FMEditor.VerticalLabel labelName;
         private MetroFramework.Controls.MetroCheckBox checkBoxFollow;
+        private ToolTip toolTip1;
     }
 }

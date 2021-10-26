@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.6.1 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.7.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,12 +268,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.9.6.3 Added some useful menus.
+3.9.7.0 Added some useful menus.
         Added some features to FM Sound Editor.
           You can Copy/Swap operator values by dragging Serialize Values Label. If you want to swap values, press the Shift key while dragging.
           You can change same operator values by Shift/Ctrl key pressing.
 		Added Graphic Equalizer property as Filter.
-3.9.6.2 Reduced MAmi file size
+		Applied DC cutoff filter always.
+        Reduced MAmi file size
         Moved properties related with MIDI to Midi Driver Settings sub property
 3.9.6.1 Fixed a possible crash on startup.
 		Supported loading Timbres from a spc file for SPC700.
@@ -579,3 +580,6 @@ https://github.com/gocha/split700/blob/master/LICENSE
 
 *MathParserTK - Yerzhan Kalzhani
 https://github.com/kirnbas/MathParserTK
+
+*PeakFilter - filoe
+https://github.com/filoe/cscore/blob/master/CSCore/DSP/PeakFilter.cs

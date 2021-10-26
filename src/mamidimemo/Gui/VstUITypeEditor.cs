@@ -47,17 +47,77 @@ namespace zanac.MAmidiMEmo.Gui
             if (editorService == null || vs == null)
                 return value;
 
-            using (FormVstEditorFrame dlg = new FormVstEditorFrame())
+            VstPlugin plugin = (VstPlugin)context.Instance;
+
+            if (!openedFrame.ContainsKey(plugin))
             {
-                lock (InstrumentBase.VstPluginContextLockObject)
+                FormVstEditorFrame dlg = new FormVstEditorFrame();
                 {
-                    var ctx = vs.VstPluginContext;
-                    if (ctx != null)
-                        dlg.PluginCommandStub = ctx.Context.PluginCommandStub;
+                    lock (InstrumentBase.VstPluginContextLockObject)
+                    {
+                        var ctx = vs.VstPluginContext;
+                        if (ctx != null)
+                            dlg.PluginCommandStub = ctx.Context.PluginCommandStub;
+                    }
+
+                    try
+                    {
+                        InstrumentManager.InstExclusiveLockObject.EnterReadLock();
+                        InstrumentBase targetInst = null;
+                        foreach (var inst in InstrumentManager.GetAllInstruments())
+                        {
+                            foreach (var i in inst.VSTPlugins)
+                            {
+                                if (i == plugin)
+                                {
+                                    targetInst = inst;
+                                    break;
+                                }
+                            }
+                            if (targetInst != null)
+                                break;
+                        }
+                        dlg.FormClosed += Dlg_FormClosed;
+                        plugin.PluginDisposing += Plugin_PluginDisposing;
+                        openedFrame.Add(plugin, dlg);
+                        dlg.Show(FormMain.AppliactionForm, targetInst);
+                    }
+                    finally
+                    {
+                        InstrumentManager.InstExclusiveLockObject.ExitReadLock();
+                    }
                 }
-                dlg.ShowDialog(null);
+            }
+            else
+            {
+                openedFrame[plugin].BringToFront();
             }
             return value;
         }
+
+        private void Plugin_PluginDisposing(object sender, EventArgs e)
+        {
+            var plugin = (VstPlugin)sender;
+            if (openedFrame.ContainsKey(plugin))
+            {
+                var form = openedFrame[plugin];
+                openedFrame.Remove(plugin);
+                form.Close();
+            }
+        }
+
+        private void Dlg_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
+        {
+            foreach (var plugin in openedFrame.Keys)
+            {
+                if (openedFrame[plugin] == sender)
+                {
+                    openedFrame.Remove(plugin);
+                    break;
+                }
+            }
+        }
+
+        private static Dictionary<VstPlugin, FormVstEditorFrame> openedFrame = new Dictionary<VstPlugin, FormVstEditorFrame>();
     }
 }

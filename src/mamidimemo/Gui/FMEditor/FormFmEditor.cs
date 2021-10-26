@@ -412,7 +412,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     RegisterBase reg = (RegisterBase)sender;
                     foreach (RegisterContainerBase container in controls.Values)
                     {
-                        if (reg.Parent == container || !container.Follow)
+                        if (reg.Parent == container || !container.Follow || !container.Enabled)
                             continue;
                         foreach (var r in container.RegisterControls)
                         {
@@ -465,7 +465,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     RegisterBase reg = (RegisterBase)sender;
                     foreach (RegisterContainerBase container in controls.Values)
                     {
-                        if (reg.Parent == container || !container.Follow)
+                        if (reg.Parent == container || !container.Follow || !container.Enabled)
                             continue;
                         foreach (var r in container.RegisterControls)
                         {
