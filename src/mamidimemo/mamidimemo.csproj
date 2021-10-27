@@ -587,6 +587,7 @@
     <Compile Include="Instruments\MidiDriverSettings.cs" />
     <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
+    <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
@@ -1105,7 +1106,67 @@
     <None Include="Samples\YM2414_GM%28from OPNA%29.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Samples\YM2414_TX81Z.MAmi">
+    <None Include="Samples\YM2414_TX81Z_Bank%2801%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2802-03%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2804-05%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2806-07%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2808-09%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2810-11%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2812-13%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2814-15%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2816-17%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2818-19%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2820-21%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2822-23%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2824-25%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2826-27%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2828-29%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2830-33%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2834-37%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Bank%2838-41%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_G-Storm.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Preset%28Alt%29.MAmi">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Samples\YM2414_TX81Z_Preset.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Samples\YM2608_GM.MAmi">

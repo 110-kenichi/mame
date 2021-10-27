@@ -71,6 +71,7 @@
             this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportAllGit = new MetroFramework.Controls.MetroButton();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -91,9 +92,9 @@
             // pianoControl1
             // 
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pianoControl1.Location = new System.Drawing.Point(0, 25);
+            this.pianoControl1.Location = new System.Drawing.Point(0, 27);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(793, 55);
+            this.pianoControl1.Size = new System.Drawing.Size(793, 53);
             this.pianoControl1.TabIndex = 0;
             // 
             // toolStrip2
@@ -104,6 +105,7 @@
             this.toolStripLabel2,
             this.toolStripButtonPlay,
             this.toolStripButtonHook,
+            this.toolStripButton1,
             this.toolStripSeparator1,
             this.toolStripLabel1,
             this.toolStripComboBoxNote,
@@ -116,7 +118,7 @@
             this.toolStripComboBoxCC});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(793, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(793, 27);
             this.toolStrip2.TabIndex = 2;
             // 
             // toolStripComboBoxCh
@@ -141,14 +143,14 @@
             "14",
             "15"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 27);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
+            this.toolStripLabel2.Size = new System.Drawing.Size(43, 24);
             this.toolStripLabel2.Text = "Key Ch";
             // 
             // toolStripButtonPlay
@@ -157,7 +159,7 @@
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
             this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(85, 22);
+            this.toolStripButtonPlay.Size = new System.Drawing.Size(85, 24);
             this.toolStripButtonPlay.Text = "PlayOnEdit";
             // 
             // toolStripButtonHook
@@ -165,43 +167,43 @@
             this.toolStripButtonHook.CheckOnClick = true;
             this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
-            this.toolStripButtonHook.Size = new System.Drawing.Size(64, 22);
+            this.toolStripButtonHook.Size = new System.Drawing.Size(64, 24);
             this.toolStripButtonHook.Text = "HookMidi";
             this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(33, 22);
+            this.toolStripLabel1.Size = new System.Drawing.Size(33, 24);
             this.toolStripLabel1.Text = "Note";
             // 
             // toolStripComboBoxNote
             // 
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            this.toolStripComboBoxNote.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxNote.Size = new System.Drawing.Size(75, 27);
             // 
             // toolStripLabel4
             // 
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(48, 22);
+            this.toolStripLabel4.Size = new System.Drawing.Size(48, 24);
             this.toolStripLabel4.Text = "Velocity";
             // 
             // toolStripComboBoxVelo
             // 
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(75, 27);
             // 
             // toolStripLabel3
             // 
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(31, 22);
+            this.toolStripLabel3.Size = new System.Drawing.Size(31, 24);
             this.toolStripLabel3.Text = "Gate";
             // 
             // toolStripComboBoxGate
@@ -214,17 +216,17 @@
             "2000ms",
             "5000ms"});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 27);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
             // 
             // toolStripLabel5
             // 
             this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(21, 22);
+            this.toolStripLabel5.Size = new System.Drawing.Size(21, 24);
             this.toolStripLabel5.Text = "CC";
             // 
             // toolStripComboBoxCC
@@ -361,7 +363,7 @@
             "126",
             "127"});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 25);
+            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 23);
             // 
             // tableLayoutPanel1
             // 
@@ -519,8 +521,8 @@
             // openFileDialogTone
             // 
             this.openFileDialogTone.DefaultExt = "*.muc";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gw" +
-    "i;*.bnk";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gw" +
+    "i;*.bnk;*.syx";
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
             this.openFileDialogTone.Title = "Load tone file";
             // 
@@ -601,6 +603,16 @@
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
+            this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(59, 24);
+            this.toolStripButton1.Text = "Panic!";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // FormFmEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -666,5 +678,6 @@
         private MetroFramework.Controls.MetroButton metroButtonImportGit;
         private System.Windows.Forms.ToolStripButton toolStripButtonHook;
         private MetroFramework.Components.MetroToolTip metroToolTip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }

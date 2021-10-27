@@ -19,6 +19,7 @@ using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Util.FITOM;
+using zanac.MAmidiMEmo.Util.Syx;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
@@ -510,7 +511,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     IgnoreControlValueChanged = false;
                 }
             }
-            if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0)
+            if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
             {
                 await testPlay();
             }
@@ -813,6 +814,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         break;
                     case ".BNK":
                         tones = BankReader.Read(file);
+                        break;
+                    case ".SYX":
+                        tones = SyxReaderTX81Z.Read(file);
                         break;
                 }
             }
@@ -1169,5 +1173,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.Panic();
+        }
     }
 }

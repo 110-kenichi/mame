@@ -1981,7 +1981,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Max number of 4 op mode sound")]
             [SlideParametersAttribute(0, 6)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             public byte? CONSEL
             {
                 get

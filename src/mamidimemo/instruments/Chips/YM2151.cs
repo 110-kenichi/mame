@@ -2078,7 +2078,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO Depth (0-127)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? LFOD
@@ -2106,7 +2106,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? LFOW
@@ -2133,7 +2133,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("Noise Enable (0:Disable 1:Enable)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? NE
@@ -2161,7 +2161,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip(Global)")]
             [Description(" Noise Feequency (0-31)\r\n" +
                 "3'579'545/(32*NFRQ)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? NFRQ

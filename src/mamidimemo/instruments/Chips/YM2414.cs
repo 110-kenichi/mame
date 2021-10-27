@@ -722,145 +722,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[3].DT2 = 0;
             Timbres[0].Ops[3].TL = 24;
 
-
             //loadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_01\TX81Z_G-StormPatches_01.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_02\TX81Z_G-StormPatches_02.syx");
-            
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z15m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx");
-        }
+            //loadSyx(32, @"D:\Downloads\TX81Z_G-StormPatches_02\TX81Z_G-StormPatches_02.syx");
 
-        private void loadSyx(int offset, string fileName)
-        {
-            int[] opidtbl = { 0, 2, 1, 3 };
-            var dat = System.IO.File.ReadAllBytes(fileName);
-            if (dat.Length != 4104)
-                return;
-            int fileidx = 0;
-            //check VMEM header
-            if (dat[fileidx++] != 0xf0)
-                return;
-            if (dat[fileidx++] != 0x43)
-                return;
-            fileidx++;
-            if (dat[fileidx++] != 0x04)
-                return;
-            if (dat[fileidx++] != 0x20)
-                return;
-            if (dat[fileidx++] != 0x00)
-                return;
-            for (int ti = 0; ti < 32; ti++)
-            {
-                FM_SoundConvertor.Tone tone = new FM_SoundConvertor.Tone();
+            //loadSyx(0, @"D:\Downloads\TX81Z Presets\tx81z_1.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z Presets\tx81z_2.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z Presets\tx81z_3.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z Presets\tx81z_4.syx");
 
-                //Tone
-                for (int opi = 0; opi < 4; opi++)
-                {
-                    int opidx = opidtbl[opi];
-                    tone.aOp[opidx].AR = dat[fileidx++] & 31;
-                    tone.aOp[opidx].DR = dat[fileidx++] & 31;
-                    tone.aOp[opidx].SR = dat[fileidx++] & 31;
-                    tone.aOp[opidx].RR = dat[fileidx++] & 15;
-                    tone.aOp[opidx].SL = dat[fileidx++] & 15;
-                    fileidx++;  //KEYBOARD LEVEL SCALING (0-99)
-                    tone.aOp[opidx].AM = (dat[fileidx++] & 0x80) == 0x80 ? 1 : 0;   //EBS, KVS
-                    tone.aOp[opidx].TL = dat[fileidx++] & 127;
-                    {
-                        tone.aOp[opidx].ML = dat[fileidx] & 15;
-                        tone.aOp[opidx].DT2 = (dat[fileidx++] >> 4) & 3;
-                    }
-                    {
-                        tone.aOp[opidx].KS = (dat[fileidx] >> 3) & 3;
-                        tone.aOp[opidx].DT = dat[fileidx++] & 15;
-                    }
-                }
-                {
-                    tone.SY1 = (dat[fileidx] >> 6) & 1;
-                    tone.SY2 = (dat[fileidx] >> 7) & 1;
-                    tone.FB = (dat[fileidx] >> 3) & 7;
-                    tone.AL = dat[fileidx++] & 7;
-                }
-                tone.LFS1 = dat[fileidx++]; tone.LFS2 = tone.LFS1;
-                fileidx++;  //LFO DELAY
-                tone.LFD1 = dat[fileidx++]; tone.LFOF1 = 0;
-                tone.LFD2 = dat[fileidx++]; tone.LFOF2 = 1;
-                {
-                    tone.PMS = (dat[fileidx] >> 5) & 7;
-                    tone.AMS = (dat[fileidx] >> 2) & 3;
-                    tone.AMS = dat[fileidx++] & 3;
-                    tone.PMSF = 1;
-                    tone.AMSF = 1;
-                }
-                tone.KeyShift = dat[fileidx++] - 24;
-                fileidx++;  //Pitch Bend Range
-                fileidx++;  //CH
-                fileidx++;  //PORT
-                fileidx++;  //FC VOL
-                fileidx++;  //MW PITCH
-                fileidx++;  //MW AMPLI
-                fileidx++;  //BC PITCH
-                fileidx++;  //BC AMPLI
-                fileidx++;  //BC P BIAS
-                fileidx++;  //BC E BIAS
-                StringBuilder name = new StringBuilder(new String(new char[] { (char)dat[fileidx++] }));
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                name.Append((char)dat[fileidx++]);
-                tone.Name = name.ToString();
-                fileidx++;  //PEG PR1
-                fileidx++;  //PEG PR2
-                fileidx++;  //PEG PR3
-                fileidx++;  //PEG PL1
-                fileidx++;  //PEG PL2
-                fileidx++;  //PEG PL3
-                for (int opi = 0; opi < 4; opi++)
-                {
-                    int opidx = opidtbl[opi];
-                    {
-                        var egst = (dat[fileidx] >> 4) & 2;
-                        if (egst != 0)
-                        {
-                            tone.aOp[opidx].EGSF = 1;
-                            tone.aOp[opidx].DT2 = egst;
-                        }
-                        tone.aOp[0].FIX = (dat[fileidx] >> 3) & 1;
-                        if (tone.aOp[opidx].FIX != 0)
-                            tone.aOp[opidx].DT = dat[fileidx] & 7;
-                        fileidx++;
-                    }
-                    {
-                        var osw = (dat[fileidx] >> 4) & 7;
-                        if (osw != 0)
-                        {
-                            tone.aOp[opidx].OSCF = 1;
-                            tone.aOp[opidx].DT = osw;
-                            tone.aOp[opidx].ML = dat[fileidx] & 15;
-                        }
-                        fileidx++;
-                    }
-                }
-                {
-                    var rev = dat[fileidx++] & 7;
-                    for (int opi = 0; opi < 4; opi++)
-                    {
-                        int opidx = opidtbl[opi];
-                        if (tone.aOp[opidx].OSCF != 0)
-                            tone.aOp[opidx].SR = rev;
-                    }
-                }
-                fileidx++; //FOOT CONTROL PITCH RANGE (0-99)
-                fileidx++; //FOOT CONTROL AMPLITUDE RANGE (0-99)
-                fileidx += 44;
-                ApplyTone(Timbres[ti + offset], tone);
-            }
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z01n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z02m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z02n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z03m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z03n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z04m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z04n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z05m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z05n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z06m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z06n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z07m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z07n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z08m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z08n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z09m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z09n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z10m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z10n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z11m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z11n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z12m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z12n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z13m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z13n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z14m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z14n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z15m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z15n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z16m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z16n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z17m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z17n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z18m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z18n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z19m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z19n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z20m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z20n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z21m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z21n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z22m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z22n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z23m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z23n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z24m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z24n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z25m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z25n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z26m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z26n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z27m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z27n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z28m.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z28n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z29m.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z29n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z30n.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z31n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z32n.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z33n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z34n.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z35n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z36n.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z37n.syx");
+            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z38n.syx");
+            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z39n.syx");
+            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z40n.syx");
+            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z41n.syx");
         }
 
         /// <summary>
@@ -873,29 +814,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
-            tim.AMSF = (byte)0;
+            tim.AMSF = (byte)tone.AMSF;
             tim.AMS = (byte)tone.AMS;
-            tim.PMSF = (byte)0;
+            tim.PMSF = (byte)tone.PMSF;
             tim.PMS = (byte)tone.PMS;
 
-            tim.GlobalSettings.Enable = tone.NE != 0 ? true : false;
+            tim.GlobalSettings.NE = (byte?)tone.NE;
+            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
 
-            tim.GlobalSettings.NE = (byte)tone.NE;
-            tim.GlobalSettings.NFRQ = (byte)tone.NF;
+            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+            tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
+            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
+            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+            tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
+            tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
+            tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
 
-            tim.GlobalSettings.LFRQ = (byte)tone.LFS1;
-            tim.GlobalSettings.LFRQ2 = (byte)tone.LFS2;
+            tim.GlobalSettings.SYNC = (byte?)tone.SY;
+            tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
 
-            tim.GlobalSettings.LFOF = (byte)tone.LFOF1;
-            tim.GlobalSettings.LFOD = (byte)tone.LFD1;
-            tim.GlobalSettings.LFOF2 = (byte)tone.LFOF2;
-            tim.GlobalSettings.LFOD2 = (byte)tone.LFD2;
-
-            tim.GlobalSettings.LFOW = null;
-            tim.GlobalSettings.LFOW2 = null;
-
-            tim.GlobalSettings.SYNC = (byte)tone.SY1;
-            tim.GlobalSettings.SYNC2 = (byte)tone.SY2;
+            if (tim.GlobalSettings.NE > 0 ||
+                tim.GlobalSettings.LFRQ > 0 ||
+                tim.GlobalSettings.LFRQ2 > 0 ||
+                tim.GlobalSettings.LFOW > 0 ||
+                tim.GlobalSettings.LFOW2 > 0 ||
+                tim.GlobalSettings.LFOD > 0 ||
+                tim.GlobalSettings.LFOD2 > 0
+                )
+                tim.GlobalSettings.Enable = true;
 
             for (int i = 0; i < 4; i++)
             {
@@ -2601,7 +2548,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("AM/PM Depth (0-127)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DisplayName("AMD/PMD(LFOD)")]
@@ -2629,7 +2576,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO2 Depth (0-127)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DisplayName("AMD/PMD(LFOD2)")]
@@ -2656,7 +2603,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? LFOW
@@ -2679,13 +2626,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// LFO SYNC Enable (0:Disable 1:Enable)
             /// </summary>
-            [Browsable(false)]
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO SYNC Enable (0:Disable 1:Enable)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             public byte? SYNC
             {
                 get
@@ -2759,7 +2705,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? LFOW2
@@ -2782,13 +2728,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// LFO SYNC2 Enable (0:Disable 1:Enable)
             /// </summary>
-            [Browsable(false)]
             [DataMember]
             [Category("Chip(Global)")]
             [Description("LFO SYNC2 Enable (0:Disable 1:Enable)")]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             public byte? SYNC2
             {
                 get
@@ -2813,7 +2758,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Chip(Global)")]
             [Description("Noise Enable (0:Disable 1:Enable)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? NE
@@ -2841,7 +2786,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Category("Chip(Global)")]
             [Description(" Noise Feequency (0-31)\r\n" +
                 "3'579'545/(32*NFRQ)")]
-            [DefaultValue((byte)0)]
+            [DefaultValue(null)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? NFRQ

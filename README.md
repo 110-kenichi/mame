@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.7.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 3.9.7.1 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+3.9.7.1 Improved YM2414 and added sample files. Still *Experimantal*
+		Added syx file loading feature for YM2414.
 3.9.7.0 Added some useful menus.
         Added some features to FM Sound Editor.
           You can Copy/Swap operator values by dragging Serialize Values Label. If you want to swap values, press the Shift key while dragging.

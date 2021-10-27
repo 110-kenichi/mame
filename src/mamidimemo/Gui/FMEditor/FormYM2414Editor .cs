@@ -108,19 +108,31 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["General"]["AMS"]).Value = tone.AMS;
             ((RegisterValue)this["General"]["PMSF"]).Value = tone.PMSF;
             ((RegisterValue)this["General"]["PMS"]).Value = tone.PMS;
-            ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
-            ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = null;
 
-            ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF2"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD2"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOW2"]).NullableValue = null;
+            ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tone.LFRQ;
+            ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = tone.LFRQ2;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tone.LFOF;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tone.LFOD;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOF2"]).NullableValue = tone.LFOF2;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOD2"]).NullableValue = tone.LFOD2;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tone.LFOW;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOW2"]).NullableValue = tone.LFOW2;
 
-            ((RegisterValue)this["General"]["GlobalSettings.SYNC"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.SYNC2"]).NullableValue = null;
+            ((RegisterValue)this["General"]["GlobalSettings.SYNC"]).NullableValue = tone.SY;
+            ((RegisterValue)this["General"]["GlobalSettings.SYNC2"]).NullableValue = tone.SY2;
+
+            ((RegisterValue)this["General"]["GlobalSettings.NE"]).NullableValue = tone.NE;
+            ((RegisterValue)this["General"]["GlobalSettings.NFRQ"]).NullableValue = tone.NF;
+
+            if (tone.NE > 0 ||
+               tone.LFRQ > 0 ||
+               tone.LFRQ2 > 0 ||
+               tone.LFOW > 0 ||
+               tone.LFOW2 > 0 ||
+               tone.LFOD > 0 ||
+               tone.LFOD2 > 0
+               )
+                ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = true;
 
             for (int i = 0; i < 4; i++)
             {
@@ -153,29 +165,35 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
-            tim.AMSF = (byte)0;
+            tim.AMSF = (byte)tone.AMSF;
             tim.AMS = (byte)tone.AMS;
-            tim.PMSF = (byte)0;
+            tim.PMSF = (byte)tone.PMSF;
             tim.PMS = (byte)tone.PMS;
 
-            tim.GlobalSettings.Enable = tone.NE != 0 ? true : false;
+            tim.GlobalSettings.NE = (byte?)tone.NE;
+            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
 
-            tim.GlobalSettings.NE = (byte)tone.NE;
-            tim.GlobalSettings.NFRQ = (byte)tone.NF;
+            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+            tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
+            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
+            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+            tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
+            tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
+            tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
 
-            tim.GlobalSettings.LFRQ = (byte)tone.LFS1;
-            tim.GlobalSettings.LFRQ2 = (byte)tone.LFS2;
+            tim.GlobalSettings.SYNC = (byte?)tone.SY;
+            tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
 
-            tim.GlobalSettings.LFOF = (byte)tone.LFOF1;
-            tim.GlobalSettings.LFOD = (byte)tone.LFD1;
-            tim.GlobalSettings.LFOF2 = (byte)tone.LFOF2;
-            tim.GlobalSettings.LFOD2 = (byte)tone.LFD2;
-
-            tim.GlobalSettings.LFOW = null;
-            tim.GlobalSettings.LFOW2 = null;
-
-            tim.GlobalSettings.SYNC = (byte)tone.SY1;
-            tim.GlobalSettings.SYNC2 = (byte)tone.SY2;
+            if (tim.GlobalSettings.NE > 0 ||
+                tim.GlobalSettings.LFRQ > 0 ||
+                tim.GlobalSettings.LFRQ2 > 0 ||
+                tim.GlobalSettings.LFOW > 0 ||
+                tim.GlobalSettings.LFOW2 > 0 ||
+                tim.GlobalSettings.LFOD > 0 ||
+                tim.GlobalSettings.LFOD2 > 0
+                )
+                tim.GlobalSettings.Enable = true;
 
             for (int i = 0; i < 4; i++)
             {

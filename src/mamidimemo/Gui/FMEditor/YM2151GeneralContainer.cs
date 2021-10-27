@@ -33,7 +33,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     "GlobalSettings.LFRQ",
                     "GlobalSettings.LFOF",
                     "GlobalSettings.LFOD",
-                    "GlobalSettings.LFOW"
+                    "GlobalSettings.LFOW",
+                    "GlobalSettings.NE",
+                    "GlobalSettings.NFRQ"
                     );
             }
             set
@@ -47,7 +49,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     "GlobalSettings.LFRQ",
                     "GlobalSettings.LFOF",
                     "GlobalSettings.LFOD",
-                    "GlobalSettings.LFOW"
+                    "GlobalSettings.LFOW",
+                    "GlobalSettings.NE",
+                    "GlobalSettings.NFRQ"
                    );
             }
         }
@@ -66,11 +70,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("AMS", tim.AMS, 0, 3));
             AddControl(new RegisterValue("PMS", tim.PMS, 0, 7));
 
-            AddControl(new RegisterFlag("LFO", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
+            AddControl(new RegisterFlag("EN", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
             AddControl(new RegisterValue("LFRQ", "GlobalSettings.LFRQ", tim.GlobalSettings.LFRQ == null ? -1 : tim.GlobalSettings.LFRQ.Value, 0, 255, true));
             AddControl(new RegisterValue("LFOF", "GlobalSettings.LFOF", tim.GlobalSettings.LFOF == null ? -1 : tim.GlobalSettings.LFOF.Value, 0, 1, true)).ValueChanged += LFOF_ValueChanged;
             AddControl(new RegisterValue("AMD/PMD", "GlobalSettings.LFOD", tim.GlobalSettings.LFOD == null ? -1 : tim.GlobalSettings.LFOD.Value, 0, 127, true));
             AddControl(new RegisterValue("LFOW", "GlobalSettings.LFOW", tim.GlobalSettings.LFOW == null ? -1 : tim.GlobalSettings.LFOW.Value, 0, 3, true));
+            AddControl(new RegisterValue("NE", "GlobalSettings.NE", tim.GlobalSettings.NE == null ? -1 : tim.GlobalSettings.NE.Value, 0, 1, true));
+            AddControl(new RegisterValue("NFRQ", "GlobalSettings.NFRQ", tim.GlobalSettings.NFRQ == null ? -1 : tim.GlobalSettings.NFRQ.Value, 0, 31, true));
 
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
