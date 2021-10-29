@@ -12,13 +12,16 @@ namespace FM_SoundConvertor
         public int SL;
         public int TL;
         public int KS;
-        public int FIX;
-        public int OSCF;
         public int ML;
         public int DT;
         public int DT2;
+        public int OSCW;
+        public int FINE;
         public int AM;
         public int EGSF;
+        public int REV;
+        public int FIX;
+        public int FIXR;
 
         public int KSR;
         public int VIB;
@@ -66,8 +69,8 @@ namespace FM_SoundConvertor
 
         public int PMS;
         public int AMS;
-        public int PMSF;
-        public int AMSF;
+        public int PMS2;
+        public int AMS2;
 
         public int? NE;
         public int? NF;

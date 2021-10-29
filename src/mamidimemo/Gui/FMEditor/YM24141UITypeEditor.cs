@@ -89,10 +89,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
                         nameof(tim.ALG),
                         nameof(tim.FB),
-                        nameof(tim.AMSF),
                         nameof(tim.AMS),
-                        nameof(tim.PMSF),
                         nameof(tim.PMS),
+                        nameof(tim.AMS2),
+                        nameof(tim.PMS2),
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
                         "GlobalSettings.LFRQ2",
@@ -120,13 +120,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                 nameof(op.SL),
                                 nameof(op.TL),
                                 nameof(op.RS),
-                                nameof(op.FIX),
-                                nameof(op.OSCF),
                                 nameof(op.MUL),
                                 nameof(op.DT1),
                                 nameof(op.AM),
+                                nameof(op.DT2),
+                                nameof(op.FINE),
+                                nameof(op.FIX),
+                                nameof(op.FIXR),
+                                nameof(op.OSCW),
                                 nameof(op.EGSF),
-                                nameof(op.DT2)
+                                nameof(op.REV)
                                 ));
                         }
 

@@ -27,10 +27,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 return SerializeProps(this,
                     nameof(tim.ALG),
                     nameof(tim.FB),
-                    nameof(tim.AMSF),
                     nameof(tim.AMS),
-                    nameof(tim.PMSF),
                     nameof(tim.PMS),
+                    nameof(tim.AMS2),
+                    nameof(tim.PMS2),
 
                     "GlobalSettings.EN",
                     "GlobalSettings.LFRQ",
@@ -52,10 +52,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 DeserializeProps(this, value,
                     nameof(tim.ALG),
                     nameof(tim.FB),
-                    nameof(tim.AMSF),
                     nameof(tim.AMS),
-                    nameof(tim.PMSF),
                     nameof(tim.PMS),
+                    nameof(tim.AMS2),
+                    nameof(tim.PMS2),
 
                     "GlobalSettings.EN",
                     "GlobalSettings.LFRQ",
@@ -85,10 +85,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterValue("ALG", tim.ALG, 0, 7));
             AddControl(new RegisterValue("FB", tim.FB, 0, 7));
-            AddControl(new RegisterValue("AMSF", tim.AMSF, 0, 1)).ValueChanged += AMSF_ValueChanged;
             AddControl(new RegisterValue("AMS", tim.AMS, 0, 3));
-            AddControl(new RegisterValue("PMSF", tim.PMSF, 0, 1)).ValueChanged += PMSF_ValueChanged;
             AddControl(new RegisterValue("PMS", tim.PMS, 0, 7));
+            AddControl(new RegisterValue("AMS2", tim.AMS2, 0, 3));
+            AddControl(new RegisterValue("PMS2", tim.PMS2, 0, 7));
 
             AddControl(new RegisterFlag("EN", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
 
@@ -113,8 +113,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             LFOF_ValueChanged(GetControl("GlobalSettings.LFOF"), null);
             LFOF2_ValueChanged(GetControl("GlobalSettings.LFOF2"), null);
-            AMSF_ValueChanged(GetControl("AMSF"), null);
-            PMSF_ValueChanged(GetControl("PMSF"), null);
         }
 
         private void LFOF2_ValueChanged(object sender, PropertyChangedEventArgs e)
@@ -145,32 +143,5 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
-        private void AMSF_ValueChanged(object sender, PropertyChangedEventArgs e)
-        {
-            RegisterValue amsf = (RegisterValue)sender;
-            RegisterValue ams = (RegisterValue)GetControl("AMS");
-            if (amsf.Value == 0)
-            {
-                ams.Label = "AMS";
-            }
-            else
-            {
-                ams.Label = "AMS2";
-            }
-        }
-
-        private void PMSF_ValueChanged(object sender, PropertyChangedEventArgs e)
-        {
-            RegisterValue amsf = (RegisterValue)sender;
-            RegisterValue ams = (RegisterValue)GetControl("PMS");
-            if (amsf.Value == 0)
-            {
-                ams.Label = "PMS";
-            }
-            else
-            {
-                ams.Label = "PMS2";
-            }
-        }
     }
 }

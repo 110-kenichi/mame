@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -20,6 +21,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.Util.Syx;
 
 //http://sr4.sakura.ne.jp/fmsound/opz.html
 //https://sites.google.com/site/undocumentedsoundchips/yamaha/ym2414
@@ -721,148 +723,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[3].AM = 0;
             Timbres[0].Ops[3].DT2 = 0;
             Timbres[0].Ops[3].TL = 24;
+        }
 
-            //loadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_01\TX81Z_G-StormPatches_01.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z_G-StormPatches_02\TX81Z_G-StormPatches_02.syx");
-
-            //loadSyx(0, @"D:\Downloads\TX81Z Presets\tx81z_1.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z Presets\tx81z_2.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z Presets\tx81z_3.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z Presets\tx81z_4.syx");
-
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z01n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z02m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z02n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z03m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z03n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z04m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z04n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z05m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z05n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z06m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z06n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z07m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z07n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z08m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z08n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z09m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z09n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z10m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z10n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z11m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z11n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z12m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z12n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z13m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z13n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z14m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z14n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z15m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z15n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z16m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z16n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z17m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z17n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z18m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z18n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z19m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z19n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z20m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z20n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z21m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z21n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z22m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z22n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z23m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z23n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z24m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z24n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z25m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z25n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z26m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z26n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z27m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z27n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z28m.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z28n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z29m.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z29n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z30n.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z31n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z32n.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z33n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z34n.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z35n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z36n.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z37n.syx");
-            //loadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z38n.syx");
-            //loadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z39n.syx");
-            //loadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z40n.syx");
-            //loadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z41n.syx");
+        private static void saveMami(string fileName)
+        {
+            var es = Program.SaveEnvironmentSettings();
+            string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
+            File.WriteAllText(fileName, StringCompressionUtility.Compress(data));
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="tone"></param>
-        protected void ApplyTone(TimbreBase timbre, FM_SoundConvertor.Tone tone)
+        protected void ApplyTone(int offset, FM_SoundConvertor.Tone[] tones)
         {
-            YM2414Timbre tim = (YM2414Timbre)timbre;
-
-            tim.ALG = (byte)tone.AL;
-            tim.FB = (byte)tone.FB;
-            tim.AMSF = (byte)tone.AMSF;
-            tim.AMS = (byte)tone.AMS;
-            tim.PMSF = (byte)tone.PMSF;
-            tim.PMS = (byte)tone.PMS;
-
-            tim.GlobalSettings.NE = (byte?)tone.NE;
-            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
-
-            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
-            tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
-            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
-            tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
-            tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
-            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
-            tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
-
-            tim.GlobalSettings.SYNC = (byte?)tone.SY;
-            tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
-
-            if (tim.GlobalSettings.NE > 0 ||
-                tim.GlobalSettings.LFRQ > 0 ||
-                tim.GlobalSettings.LFRQ2 > 0 ||
-                tim.GlobalSettings.LFOW > 0 ||
-                tim.GlobalSettings.LFOW2 > 0 ||
-                tim.GlobalSettings.LFOD > 0 ||
-                tim.GlobalSettings.LFOD2 > 0
-                )
-                tim.GlobalSettings.Enable = true;
-
-            for (int i = 0; i < 4; i++)
+            for (int idx = 0; idx < 128; idx++)
             {
-                tim.Ops[i].Enable = 1;
-                tim.Ops[i].AR = (byte)tone.aOp[i].AR;
-                tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
-                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
-                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
-                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                tim.Ops[i].TL = (byte)tone.aOp[i].TL;
-                tim.Ops[i].RS = (byte)tone.aOp[i].KS;
-                tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
-                tim.Ops[i].OSCF = (byte)tone.aOp[i].OSCF;
-                tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
-                tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
-                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
-                tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+                //YM2414Timbre tim = (YM2414Timbre)Timbres[offset + idx];
+                YM2414Timbre tim = new YM2414Timbre();
+                if (idx < tones.Length)
+                {
+                    FM_SoundConvertor.Tone tone = tones[idx];
+
+                    tim.ALG = (byte)tone.AL;
+                    tim.FB = (byte)tone.FB;
+                    tim.AMS = (byte)tone.AMS;
+                    tim.PMS = (byte)tone.PMS;
+                    tim.AMS2 = (byte)tone.AMS2;
+                    tim.PMS2 = (byte)tone.PMS2;
+
+                    tim.GlobalSettings.NE = (byte?)tone.NE;
+                    tim.GlobalSettings.NFRQ = (byte?)tone.NF;
+
+                    tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+                    tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
+                    tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
+                    tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+                    tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
+                    tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+                    tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
+                    tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
+
+                    tim.GlobalSettings.SYNC = (byte?)tone.SY;
+                    tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
+
+                    if (tim.GlobalSettings.NE > 0 ||
+                        tim.GlobalSettings.LFRQ > 0 ||
+                        tim.GlobalSettings.LFRQ2 > 0 ||
+                        tim.GlobalSettings.LFOW > 0 ||
+                        tim.GlobalSettings.LFOW2 > 0 ||
+                        tim.GlobalSettings.LFOD > 0 ||
+                        tim.GlobalSettings.LFOD2 > 0
+                        )
+                        tim.GlobalSettings.Enable = true;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        tim.Ops[i].Enable = 1;
+                        tim.Ops[i].AR = (byte)tone.aOp[i].AR;
+                        tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
+                        tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
+                        tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                        tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                        tim.Ops[i].TL = (byte)tone.aOp[i].TL;
+                        tim.Ops[i].RS = (byte)tone.aOp[i].KS;
+                        tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
+                        tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
+                        tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                        tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+                        tim.Ops[i].FINE = (byte)tone.aOp[i].FINE;
+                        tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
+                        tim.Ops[i].FIXR = (byte)tone.aOp[i].FIXR;
+                        tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
+                        tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
+                        tim.Ops[i].REV = (byte)tone.aOp[i].REV;
+                    }
+                    tim.TimbreName = tone.Name;
+                }
+                Timbres[offset + idx] = tim;
             }
-            timbre.TimbreName = tone.Name;
         }
 
         /// <summary>
@@ -871,7 +811,132 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
+            //createSamples();
             soundManager.ProcessKeyOn(midiEvent);
+        }
+
+        private void createSamples()
+        {
+            if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Control)
+            {
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z_G-StormPatches_01\TX81Z_G-StormPatches_01.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z_G-StormPatches_02\TX81Z_G-StormPatches_02.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_G-Storm.MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z Presets\tx81z_1.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z Presets\tx81z_2.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z Presets\tx81z_3.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z Presets\tx81z_4.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Preset.MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z01n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(01).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z02m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z02n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z03m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z03n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(02-03).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z04m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z04n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z05m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z05n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(04-05).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z06m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z06n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z07m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z07n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(06-07).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z08m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z08n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z09m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z09n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(08-09).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z10m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z10n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z11m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z11n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(10-11).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z12m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z12n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z13m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z13n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(12-13).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z14m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z14n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z15m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z15n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(14-15).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z16m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z16n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z17m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z17n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(16-17).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z18m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z18n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z19m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z19n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(18-19).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z20m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z20n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z21m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z21n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(20-21).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z22m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z22n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z23m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z23n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(22-23).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z24m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z24n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z25m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z25n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(24-25).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z26m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z26n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z27m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z27n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(26-27).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z28m.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z28n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z29m.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z29n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(28-29).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z30n.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z31n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z32n.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z33n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(30-33).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z34n.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z35n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z36n.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z37n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(34-37).MAmi");
+
+                ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z38n.syx"));
+                ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z39n.syx"));
+                ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z40n.syx"));
+                ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z41n.syx"));
+                saveMami(@".\Samples\YM2414_TX81Z_Bank(38-41).MAmi");
+            }
         }
 
         /// <summary>
@@ -1141,11 +1206,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.NFRQ = gs.NFRQ.Value;
                 }
 
-                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot,
-                    (byte)((timbre.PMSF << 7 | timbre.PMS << 4 | timbre.AMSF << 2 | timbre.AMS)));
+                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
+                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((1 << 7 | timbre.PMS << 4 | 1 << 2 | timbre.AMS)));
                 for (int op = 0; op < 4; op++)
                 {
-                    parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    if (timbre.Ops[op].FIX == 0)
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    else
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIX)));
+                    parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((1 << 7 | timbre.Ops[op].OSCW << 4 | timbre.Ops[op].FINE)));
                     switch (timbre.ALG)
                     {
                         case 0:
@@ -1181,7 +1250,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     parentModule.YM2414WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].FIX << 5 | timbre.Ops[op].AR)));
                     parentModule.YM2414WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].EGSF << 5 | timbre.Ops[op].D2R)));
+                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].D2R)));
+                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].EGSF << 6 | 1 << 5 | timbre.Ops[op].REV)));
                     parentModule.YM2414WriteData(unitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
@@ -1379,14 +1449,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMSF << 7 | timbre.PMS << 4 | timbre.AMSF << 2 | timbre.AMS)));
+                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)(( timbre.PMS << 4 | timbre.AMS)));
+                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((1 << 7 | timbre.PMS2 << 4 | 1 << 2 | timbre.AMS2)));
                 for (int op = 0; op < 4; op++)
                 {
-                    parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].OSCF << 7 | timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    if (timbre.Ops[op].FIX == 0)
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                    else
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIX)));
+                    parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((1 << 7 | timbre.Ops[op].OSCW << 4 | timbre.Ops[op].FINE)));
+
                     parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                     parentModule.YM2414WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].FIX << 5 | timbre.Ops[op].AR)));
                     parentModule.YM2414WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].EGSF << 5 | timbre.Ops[op].D2R)));
+                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].D2R)));
+                    parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].EGSF << 6 | 1 << 5 | timbre.Ops[op].REV)));
                     parentModule.YM2414WriteData(unitNumber, 0xe0, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
                 }
 
@@ -1430,10 +1507,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return SimpleSerializer.SerializeProps(this,
                         nameof(ALG),
                         nameof(FB),
-                        nameof(AMSF),
                         nameof(AMS),
-                        nameof(PMSF),
                         nameof(PMS),
+                        nameof(AMS2),
+                        nameof(PMS2),
 
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
@@ -1455,13 +1532,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].SL",
                         "Ops[0].TL",
                         "Ops[0].RS",
-                        "Ops[0].FIX",
-                        "Ops[0].OSCF",
                         "Ops[0].MUL",
                         "Ops[0].DT1",
                         "Ops[0].AM",
-                        "Ops[0].EGSF",
                         "Ops[0].DT2",
+                        "Ops[0].FINE",
+                        "Ops[0].FIX",
+                        "Ops[0].FIXR",
+                        "Ops[0].OSCW",
+                        "Ops[0].EGSF",
+                        "Ops[0].REV",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1471,13 +1551,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SL",
                         "Ops[1].TL",
                         "Ops[1].RS",
-                        "Ops[1].FIX",
-                        "Ops[1].OSCF",
                         "Ops[1].MUL",
                         "Ops[1].DT1",
                         "Ops[1].AM",
-                        "Ops[1].EGSF",
                         "Ops[1].DT2",
+                        "Ops[1].FINE",
+                        "Ops[1].FIX",
+                        "Ops[1].FIXR",
+                        "Ops[1].OSCW",
+                        "Ops[1].EGSF",
+                        "Ops[1].REV",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1487,13 +1570,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SL",
                         "Ops[2].TL",
                         "Ops[2].RS",
-                        "Ops[2].FIX",
-                        "Ops[2].OSCF",
                         "Ops[2].MUL",
                         "Ops[2].DT1",
                         "Ops[2].AM",
-                        "Ops[2].EGSF",
                         "Ops[2].DT2",
+                        "Ops[2].FINE",
+                        "Ops[2].FIX",
+                        "Ops[2].FIXR",
+                        "Ops[2].OSCW",
+                        "Ops[2].EGSF",
+                        "Ops[2].REV",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1503,23 +1589,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].SL",
                         "Ops[3].TL",
                         "Ops[3].RS",
-                        "Ops[3].FIX",
-                        "Ops[3].OSCF",
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
+                        "Ops[3].DT2",
+                        "Ops[3].FINE",
+                        "Ops[3].FIX",
+                        "Ops[3].FIXR",
+                        "Ops[3].OSCW",
                         "Ops[3].EGSF",
-                        "Ops[3].DT2");
+                        "Ops[3].REV"
+                        );
                 }
                 set
                 {
                     SimpleSerializer.DeserializeProps(this, value,
                         nameof(ALG),
                         nameof(FB),
-                        nameof(AMSF),
                         nameof(AMS),
-                        nameof(PMSF),
                         nameof(PMS),
+                        nameof(AMS2),
+                        nameof(PMS2),
 
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
@@ -1541,13 +1631,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].SL",
                         "Ops[0].TL",
                         "Ops[0].RS",
-                        "Ops[0].FIX",
-                        "Ops[0].OSCF",
                         "Ops[0].MUL",
                         "Ops[0].DT1",
                         "Ops[0].AM",
-                        "Ops[0].EGSF",
                         "Ops[0].DT2",
+                        "Ops[0].FINE",
+                        "Ops[0].FIX",
+                        "Ops[0].FIXR",
+                        "Ops[0].OSCW",
+                        "Ops[0].EGSF",
+                        "Ops[0].REV",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1557,13 +1650,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SL",
                         "Ops[1].TL",
                         "Ops[1].RS",
-                        "Ops[1].FIX",
-                        "Ops[1].OSCF",
                         "Ops[1].MUL",
                         "Ops[1].DT1",
                         "Ops[1].AM",
-                        "Ops[1].EGSF",
                         "Ops[1].DT2",
+                        "Ops[1].FINE",
+                        "Ops[1].FIX",
+                        "Ops[1].FIXR",
+                        "Ops[1].OSCW",
+                        "Ops[1].EGSF",
+                        "Ops[1].REV",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1573,13 +1669,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SL",
                         "Ops[2].TL",
                         "Ops[2].RS",
-                        "Ops[2].FIX",
-                        "Ops[2].OSCF",
                         "Ops[2].MUL",
                         "Ops[2].DT1",
                         "Ops[2].AM",
-                        "Ops[2].EGSF",
                         "Ops[2].DT2",
+                        "Ops[2].FINE",
+                        "Ops[2].FIX",
+                        "Ops[2].FIXR",
+                        "Ops[2].OSCW",
+                        "Ops[2].EGSF",
+                        "Ops[2].REV",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1589,13 +1688,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].SL",
                         "Ops[3].TL",
                         "Ops[3].RS",
-                        "Ops[3].FIX",
-                        "Ops[3].OSCF",
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
+                        "Ops[3].DT2",
+                        "Ops[3].FINE",
+                        "Ops[3].FIX",
+                        "Ops[3].FIXR",
+                        "Ops[3].OSCW",
                         "Ops[3].EGSF",
-                        "Ops[3].DT2");
+                        "Ops[3].REV"
+                        );
                 }
             }
 
@@ -1647,32 +1750,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
-            private byte f_AMSF;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Amplitude Modulation Sensitivity Type (0 or 1)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 3)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AMSF
-            {
-                get
-                {
-                    return f_AMSF;
-                }
-                set
-                {
-                    f_AMSF = (byte)(value & 1);
-                }
-            }
-
             private byte f_AMS;
 
             [DataMember]
             [Category("Sound")]
-            [Description("Amplitude Modulation Sensitivity (0-3)")]
+            [Description("Amplitude Modulation Sensitivity for LFO (0-3)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1689,31 +1771,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_PMSF;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Phase Modulation Sensitivity Type (0 or 1)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte PMSF
-            {
-                get
-                {
-                    return f_PMSF;
-                }
-                set
-                {
-                    f_PMSF = (byte)(value & 1);
-                }
-            }
-
             private byte f_PMS;
 
             [DataMember]
             [Category("Sound")]
-            [Description("Phase Modulation Sensitivity (0-7)")]
+            [Description("Phase Modulation Sensitivity for LFO (0-7)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1727,6 +1789,46 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_PMS = (byte)(value & 7);
+                }
+            }
+
+            private byte f_AMS2;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Amplitude Modulation Sensitivity for LFO2 (0-3)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte AMS2
+            {
+                get
+                {
+                    return f_AMS2;
+                }
+                set
+                {
+                    f_AMS2 = (byte)(value & 3);
+                }
+            }
+
+            private byte f_PMS2;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Phase Modulation Sensitivity for LFO2 (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte PMS2
+            {
+                get
+                {
+                    return f_PMS2;
+                }
+                set
+                {
+                    f_PMS2 = (byte)(value & 7);
                 }
             }
 
@@ -1781,6 +1883,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(ALG),
                         nameof(FB),
 
+                        "Ops[0].EN",
                         "Ops[0].AR",
                         "Ops[0].D1R",
                         "Ops[0].D2R",
@@ -1788,13 +1891,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].SL",
                         "Ops[0].TL",
                         "Ops[0].RS",
-                        //"Ops[0].FIX",
-                        //"Ops[0].OSCF",
                         "Ops[0].MUL",
                         "Ops[0].DT1",
                         "Ops[0].AM",
                         "Ops[0].DT2",
+                        "Ops[0].FINE",
+                        "Ops[0].FIX",
+                        "Ops[0].FIXR",
+                        "Ops[0].OSCW",
+                        "Ops[0].EGSF",
+                        "Ops[0].REV",
 
+                        "Ops[1].EN",
                         "Ops[1].AR",
                         "Ops[1].D1R",
                         "Ops[1].D2R",
@@ -1802,13 +1910,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SL",
                         "Ops[1].TL",
                         "Ops[1].RS",
-                        //"Ops[1].FIX",
-                        //"Ops[1].OSCF",
                         "Ops[1].MUL",
                         "Ops[1].DT1",
                         "Ops[1].AM",
                         "Ops[1].DT2",
+                        "Ops[1].FINE",
+                        "Ops[1].FIX",
+                        "Ops[1].FIXR",
+                        "Ops[1].OSCW",
+                        "Ops[1].EGSF",
+                        "Ops[1].REV",
 
+                        "Ops[2].EN",
                         "Ops[2].AR",
                         "Ops[2].D1R",
                         "Ops[2].D2R",
@@ -1816,13 +1929,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SL",
                         "Ops[2].TL",
                         "Ops[2].RS",
-                        //"Ops[2].FIX",
-                        //"Ops[2].OSCF",
                         "Ops[2].MUL",
                         "Ops[2].DT1",
                         "Ops[2].AM",
                         "Ops[2].DT2",
+                        "Ops[2].FINE",
+                        "Ops[2].FIX",
+                        "Ops[2].FIXR",
+                        "Ops[2].OSCW",
+                        "Ops[2].EGSF",
+                        "Ops[2].REV",
 
+                        "Ops[3].EN",
                         "Ops[3].AR",
                         "Ops[3].D1R",
                         "Ops[3].D2R",
@@ -1830,12 +1948,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].SL",
                         "Ops[3].TL",
                         "Ops[3].RS",
-                        //"Ops[3].FIX",
-                        //"Ops[3].OSCF",
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
                         "Ops[3].DT2",
+                        "Ops[3].FINE",
+                        "Ops[3].FIX",
+                        "Ops[3].FIXR",
+                        "Ops[3].OSCW",
+                        "Ops[3].EGSF",
+                        "Ops[3].REV",
 
                         nameof(AMS),
                         nameof(PMS));
@@ -1846,6 +1968,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(ALG),
                         nameof(FB),
 
+                         "Ops[0].EN",
                         "Ops[0].AR",
                         "Ops[0].D1R",
                         "Ops[0].D2R",
@@ -1853,14 +1976,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].SL",
                         "Ops[0].TL",
                         "Ops[0].RS",
-                        //"Ops[0].FIX",
-                        //"Ops[0].OSCF",
                         "Ops[0].MUL",
                         "Ops[0].DT1",
                         "Ops[0].AM",
-                        //"Ops[0].EGSF",
                         "Ops[0].DT2",
+                        "Ops[0].FINE",
+                        "Ops[0].FIX",
+                        "Ops[0].FIXR",
+                        "Ops[0].OSCW",
+                        "Ops[0].EGSF",
+                        "Ops[0].REV",
 
+                        "Ops[1].EN",
                         "Ops[1].AR",
                         "Ops[1].D1R",
                         "Ops[1].D2R",
@@ -1868,14 +1995,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].SL",
                         "Ops[1].TL",
                         "Ops[1].RS",
-                        //"Ops[1].FIX",
-                        //"Ops[1].OSCF",
                         "Ops[1].MUL",
                         "Ops[1].DT1",
                         "Ops[1].AM",
-                        //"Ops[1].EGSF",
                         "Ops[1].DT2",
+                        "Ops[1].FINE",
+                        "Ops[1].FIX",
+                        "Ops[1].FIXR",
+                        "Ops[1].OSCW",
+                        "Ops[1].EGSF",
+                        "Ops[1].REV",
 
+                        "Ops[2].EN",
                         "Ops[2].AR",
                         "Ops[2].D1R",
                         "Ops[2].D2R",
@@ -1883,14 +2014,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].SL",
                         "Ops[2].TL",
                         "Ops[2].RS",
-                        //"Ops[2].FIX",
-                        //"Ops[2].OSCF",
                         "Ops[2].MUL",
                         "Ops[2].DT1",
                         "Ops[2].AM",
-                        //"Ops[2].EGSF",
                         "Ops[2].DT2",
+                        "Ops[2].FINE",
+                        "Ops[2].FIX",
+                        "Ops[2].FIXR",
+                        "Ops[2].OSCW",
+                        "Ops[2].EGSF",
+                        "Ops[2].REV",
 
+                        "Ops[3].EN",
                         "Ops[3].AR",
                         "Ops[3].D1R",
                         "Ops[3].D2R",
@@ -1898,13 +2033,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].SL",
                         "Ops[3].TL",
                         "Ops[3].RS",
-                        //"Ops[3].FIX",
-                        //"Ops[3].OSCF",
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
-                        //"Ops[3].EGSF",
                         "Ops[3].DT2",
+                        "Ops[3].FINE",
+                        "Ops[3].FIX",
+                        "Ops[3].FIXR",
+                        "Ops[3].OSCW",
+                        "Ops[3].EGSF",
+                        "Ops[3].REV",
 
                         nameof(AMS),
                         nameof(PMS));
@@ -2069,9 +2207,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Sustain Rate(2nd Decay Rate) (0-31)\r\n" +
-                " or Reverberation Rate (0-7) when EGSF=1")]
-            [DisplayName("D2R(SR)/REV[D2R]")]
+            [Description("Sustain Rate(2nd Decay Rate) (0-31)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 31)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2179,52 +2315,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte f_FIX;
-
-            /// <summary>
-            /// Fix Frequency Mode Enable (0:Disable or 1)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Fix Frequency Mode Enable (0:Disable or 1)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte FIX
-            {
-                get
-                {
-                    return f_FIX;
-                }
-                set
-                {
-                    f_FIX = (byte)(value & 1);
-                }
-            }
-
-            private byte f_OSCF;
-
-            /// <summary>
-            /// Oscillator Mode(0 or 1)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Oscillator Mode Enable (0:Disable or 1)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte OSCF
-            {
-                get
-                {
-                    return f_OSCF;
-                }
-                set
-                {
-                    f_OSCF = (byte)(value & 1);
-                }
-            }
-
             private byte f_MUL;
 
             /// <summary>
@@ -2232,10 +2322,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Multiply (0-15)" +
-                " or Fix Frequency (0-15) when FIX=1" +
-                " or Oscillator Frequency Fine (0-15) when OSCF=1")]
-            [DisplayName("MUL/FXF/FINE[MUL]")]
+            [Description("Multiply (0-15")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2260,18 +2347,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("DeTune 1 (7(-3),6(-2),5(-1),4(+0),0(+0),1(+1),2(+2),3(+3)) \r\n" +
-                " or Oscillator Fix Frequency Range (0-7) when FIX=1\r\n" +
-                " or Oscillator Wave Form (0-7) when OSCF=1\r\n" +
-                "0: Sine\r\n" +
-                "1: Sine2\r\n" +
-                "2: Half Sine\r\n" +
-                "3: Half Sine2\r\n" +
-                "4: 1/2 Sine\r\n" +
-                "5: 1/2 Sine2\r\n" +
-                "6: Double Half Sine\r\n" +
-                "7: Double Half Sine2")]
-            [DisplayName("DT1/FXR/OW[DT1]")]
+            [Description("DeTune 1 (7(-3),6(-2),5(-1),4(+0),0(+0),1(+1),2(+2),3(+3))")]
             [DefaultValue((byte)4)]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2310,30 +2386,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
-            private byte f_EGSF;
-
-            /// <summary>
-            /// DT2(0-3)
-            /// </summary>
-            [DataMember]
-            [Category("Sound")]
-            [Description("Use EG Shift and Reverberation Rate (0:Disable 1:Enable)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte EGSF
-            {
-                get
-                {
-                    return f_EGSF;
-                }
-                set
-                {
-                    f_EGSF = (byte)(value & 1);
-                }
-            }
-
             private byte f_DT2;
 
             /// <summary>
@@ -2341,9 +2393,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("Detune 2 (0-3)\r\n" +
-                " or EG Shift (0-3) when EGSF=1")]
-            [DisplayName("DT2/EGS[DT2]")]
+            [Description("Detune 2 (0-3)")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2359,6 +2409,151 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte f_FIX;
+
+            /// <summary>
+            /// Fix Frequency Mode Enable (0:Disable or 1:Enable)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Fix Frequency Mode Enable (0:Disable or 1)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FIX
+            {
+                get
+                {
+                    return f_FIX;
+                }
+                set
+                {
+                    f_FIX = (byte)(value & 1);
+                }
+            }
+
+            private byte f_FIXR;
+
+            /// <summary>
+            /// Fix Frequency Range Enable (0-7)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Fix Frequency Range (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FIXR
+            {
+                get
+                {
+                    return f_FIXR;
+                }
+                set
+                {
+                    f_FIXR = (byte)(value & 7);
+                }
+            }
+
+            private byte f_FINE;
+
+            /// <summary>
+            /// Fine Frequency(0-15)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description(" Fine Frequency(0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FINE
+            {
+                get
+                {
+                    return f_FINE;
+                }
+                set
+                {
+                    f_FINE = (byte)(value & 15);
+                }
+            }
+
+            private byte f_OSCW;
+
+            /// <summary>
+            /// Oscillator Wave Form (0-7)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Oscillator Wave Form (0-7)" +
+                "0: Sine\r\n" +
+                "1: Sine2\r\n" +
+                "2: Half Sine\r\n" +
+                "3: Half Sine2\r\n" +
+                "4: 1/2 Sine\r\n" +
+                "5: 1/2 Sine2\r\n" +
+                "6: Double Half Sine\r\n" +
+                "7: Double Half Sine2")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte OSCW
+            {
+                get
+                {
+                    return f_OSCW;
+                }
+                set
+                {
+                    f_OSCW = (byte)(value & 7);
+                }
+            }
+
+            private byte f_EGSF;
+
+            /// <summary>
+            /// EGSF(0-3)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description(" EG Shift(0-3)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 3)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte EGSF
+            {
+                get
+                {
+                    return f_EGSF;
+                }
+                set
+                {
+                    f_EGSF = (byte)(value & 3);
+                }
+            }
+
+            private byte f_REV;
+
+            /// <summary>
+            /// Reverberation(0-7)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Reverberation Rate (0-7)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte REV
+            {
+                get
+                {
+                    return f_REV;
+                }
+                set
+                {
+                    f_REV = (byte)(value & 3);
+                }
+            }
 
             #region Etc
 
@@ -2391,13 +2586,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(SL),
                         nameof(TL),
                         nameof(RS),
-                        //nameof(FIX),
-                        //nameof(OSCF),
                         nameof(MUL),
                         nameof(DT1),
                         nameof(AM),
-                        //nameof(EGSF),
-                        nameof(DT2));
+                        nameof(DT2),
+                        nameof(FINE),
+                        nameof(FIX),
+                        nameof(FIXR),
+                        nameof(OSCW),
+                        nameof(EGSF),
+                        nameof(REV)
+                        );
                 }
                 set
                 {
@@ -2409,13 +2608,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(SL),
                         nameof(TL),
                         nameof(RS),
-                        //nameof(FIX),
-                        //nameof(OSCF),
                         nameof(MUL),
                         nameof(DT1),
                         nameof(AM),
-                        //nameof(EGSF),
-                        nameof(DT2));
+                        nameof(DT2),
+                        nameof(FINE),
+                        nameof(FIX),
+                        nameof(FIXR),
+                        nameof(OSCW),
+                        nameof(EGSF),
+                        nameof(REV)
+                        );
                 }
             }
 

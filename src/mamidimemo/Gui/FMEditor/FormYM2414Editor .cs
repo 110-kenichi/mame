@@ -104,10 +104,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
-            ((RegisterValue)this["General"]["AMSF"]).Value = tone.AMSF;
             ((RegisterValue)this["General"]["AMS"]).Value = tone.AMS;
-            ((RegisterValue)this["General"]["PMSF"]).Value = tone.PMSF;
             ((RegisterValue)this["General"]["PMS"]).Value = tone.PMS;
+            ((RegisterValue)this["General"]["AMS2"]).Value = tone.AMS2;
+            ((RegisterValue)this["General"]["PMS2"]).Value = tone.PMS2;
 
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tone.LFRQ;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = tone.LFRQ2;
@@ -144,13 +144,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
                 ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
                 ((RegisterValue)this["Operator " + (i + 1)]["RS"]).Value = tone.aOp[i].KS;
-                ((RegisterValue)this["Operator " + (i + 1)]["FIX"]).Value = tone.aOp[i].FIX;
-                ((RegisterValue)this["Operator " + (i + 1)]["OSCF"]).Value = tone.aOp[i].OSCF;
                 ((RegisterValue)this["Operator " + (i + 1)]["MUL"]).Value = tone.aOp[i].ML;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT1"]).Value = tone.aOp[i].DT;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["EGSF"]).Value = tone.aOp[i].EGSF;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT2"]).Value = tone.aOp[i].DT2;
+                ((RegisterValue)this["Operator " + (i + 1)]["FINE"]).Value = tone.aOp[i].FINE;
+                ((RegisterValue)this["Operator " + (i + 1)]["FIX"]).Value = tone.aOp[i].FIX;
+                ((RegisterValue)this["Operator " + (i + 1)]["FIXR"]).Value = tone.aOp[i].FIXR;
+                ((RegisterValue)this["Operator " + (i + 1)]["OSCW"]).Value = tone.aOp[i].OSCW;
+                ((RegisterValue)this["Operator " + (i + 1)]["EGSF"]).Value = tone.aOp[i].EGSF;
+                ((RegisterValue)this["Operator " + (i + 1)]["REV"]).Value = tone.aOp[i].REV;
             }
             timbre.TimbreName = tone.Name;
         }
@@ -165,10 +168,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
-            tim.AMSF = (byte)tone.AMSF;
             tim.AMS = (byte)tone.AMS;
-            tim.PMSF = (byte)tone.PMSF;
             tim.PMS = (byte)tone.PMS;
+            tim.AMS2 = (byte)tone.AMS2;
+            tim.PMS2 = (byte)tone.PMS2;
 
             tim.GlobalSettings.NE = (byte?)tone.NE;
             tim.GlobalSettings.NFRQ = (byte?)tone.NF;
@@ -205,13 +208,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim.Ops[i].SL = (byte)tone.aOp[i].SL;
                 tim.Ops[i].TL = (byte)tone.aOp[i].TL;
                 tim.Ops[i].RS = (byte)tone.aOp[i].KS;
-                tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
-                tim.Ops[i].OSCF = (byte)tone.aOp[i].OSCF;
                 tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
                 tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
                 tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
                 tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+                tim.Ops[i].FINE = (byte)tone.aOp[i].FINE;
+                tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
+                tim.Ops[i].FIXR = (byte)tone.aOp[i].FIXR;
+                tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
+                tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
+                tim.Ops[i].REV = (byte)tone.aOp[i].REV;
             }
             timbre.TimbreName = tone.Name;
         }
@@ -228,10 +234,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this["General"].Target = tim;
             ((RegisterValue)this["General"]["ALG"]).Value = tim.ALG;
             ((RegisterValue)this["General"]["FB"]).Value = tim.FB;
-            ((RegisterValue)this["General"]["AMSF"]).Value = tim.AMSF == 0 ? 0 : 1;
             ((RegisterValue)this["General"]["AMS"]).Value = tim.AMS;
-            ((RegisterValue)this["General"]["PMSF"]).Value = tim.PMSF == 0 ? 0 : 1;
             ((RegisterValue)this["General"]["PMS"]).Value = tim.PMS;
+            ((RegisterValue)this["General"]["AMS2"]).Value = tim.AMS2;
+            ((RegisterValue)this["General"]["PMS2"]).Value = tim.PMS2;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = tim.GlobalSettings.Enable;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tim.GlobalSettings.LFRQ;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = tim.GlobalSettings.LFRQ2;
@@ -258,13 +264,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tim.Ops[i].SL;
                 ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tim.Ops[i].TL;
                 ((RegisterValue)this["Operator " + (i + 1)]["RS"]).Value = tim.Ops[i].RS;
-                ((RegisterValue)this["Operator " + (i + 1)]["FIX"]).Value = tim.Ops[i].FIX;
-                ((RegisterValue)this["Operator " + (i + 1)]["OSCF"]).Value = tim.Ops[i].OSCF;
                 ((RegisterValue)this["Operator " + (i + 1)]["MUL"]).Value = tim.Ops[i].MUL;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT1"]).Value = tim.Ops[i].DT1;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tim.Ops[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["EGSF"]).Value = tim.Ops[i].EGSF;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT2"]).Value = tim.Ops[i].DT2;
+                ((RegisterValue)this["Operator " + (i + 1)]["FINE"]).Value = tim.Ops[i].FINE;
+                ((RegisterValue)this["Operator " + (i + 1)]["FIX"]).Value = tim.Ops[i].FIX;
+                ((RegisterValue)this["Operator " + (i + 1)]["FIXR"]).Value = tim.Ops[i].FIXR;
+                ((RegisterValue)this["Operator " + (i + 1)]["OSCW"]).Value = tim.Ops[i].OSCW;
+                ((RegisterValue)this["Operator " + (i + 1)]["EGSF"]).Value = tim.Ops[i].EGSF;
+                ((RegisterValue)this["Operator " + (i + 1)]["REV"]).Value = tim.Ops[i].REV;
             }
         }
     }

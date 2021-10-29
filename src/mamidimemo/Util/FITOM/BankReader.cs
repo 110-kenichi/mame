@@ -97,24 +97,12 @@ namespace zanac.MAmidiMEmo.Util.FITOM
                     }
                     vals = extractParams(val);
 
-                    tone.aOp[opNo].FIX = vals[0];   //FIX
-                    if (vals[0] != 0)
-                    {
-                        tone.aOp[opNo].ML = vals[1];    //Fine
-                        tone.aOp[opNo].DT = vals[2];    //WS
-                    }
-                    if (vals[1] != 0 || vals[2] != 0)
-                    {
-                        tone.aOp[opNo].OSCF = 1;
-                        tone.aOp[opNo].ML = vals[1];    //Fine
-                        tone.aOp[opNo].DT = vals[2];    //WS
-                    }
-                    if (vals[3] != 0 || vals[4] != 0)
-                    {
-                        tone.aOp[opNo].EGSF = 1;
-                        tone.aOp[opNo].SR = vals[3];    //Rev
-                        tone.aOp[opNo].DT2 = vals[4];   //EGS
-                    }
+                    tone.aOp[opNo].FIX = vals[0];
+                    tone.aOp[opNo].FINE = vals[1];
+                    tone.aOp[opNo].FIXR = tone.aOp[opNo].DT;
+                    tone.aOp[opNo].OSCW = vals[2];
+                    tone.aOp[opNo].REV = vals[3];
+                    tone.aOp[opNo].EGSF = vals[4];
                 }
                 if (tone != null)
                     tones.Add(tone);

@@ -1163,9 +1163,6 @@
     <None Include="Samples\YM2414_TX81Z_G-Storm.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Samples\YM2414_TX81Z_Preset%28Alt%29.MAmi">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Samples\YM2414_TX81Z_Preset.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

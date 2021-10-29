@@ -17,14 +17,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
     {
         private YM2414.YM2414Operator op;
 
-        private RegisterValue d2r;
-        private RegisterValue egsf;
-        private RegisterValue dt2;
-        private RegisterValue fix;
-        private RegisterValue oscf;
-        private RegisterValue mul;
-        private RegisterValue dt1;
-
         /// <summary>
         /// 
         /// </summary>
@@ -41,13 +33,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(op.SL),
                         nameof(op.TL),
                         nameof(op.RS),
-                        nameof(op.FIX),
-                        nameof(op.OSCF),
                         nameof(op.MUL),
                         nameof(op.DT1),
                         nameof(op.AM),
+                        nameof(op.DT2),
+                        nameof(op.FINE),
+                        nameof(op.FIX),
+                        nameof(op.FIXR),
+                        nameof(op.OSCW),
                         nameof(op.EGSF),
-                        nameof(op.DT2));
+                        nameof(op.REV)
+                        );
             }
             set
             {
@@ -60,13 +56,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(op.SL),
                     nameof(op.TL),
                     nameof(op.RS),
-                    nameof(op.FIX),
-                    nameof(op.OSCF),
                     nameof(op.MUL),
                     nameof(op.DT1),
                     nameof(op.AM),
+                    nameof(op.DT2),
+                    nameof(op.FINE),
+                    nameof(op.FIX),
+                    nameof(op.OSCW),
                     nameof(op.EGSF),
-                    nameof(op.DT2));
+                    nameof(op.REV)
+                    );
             }
         }
 
@@ -82,28 +81,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterFlag("EN", op.EN != 0 ? true : false));
             AddControl(new RegisterValue("AR", op.AR, 0, 31));
             AddControl(new RegisterValue("D1R", op.D1R, 0, 31));
-            d2r = new RegisterValue("D2R", "D2R", op.D2R, 0, 31, false);
-            AddControl(d2r);
+            AddControl(new RegisterValue("D2R", op.D2R, 0, 31));
             AddControl(new RegisterValue("RR", op.RR, 0, 15));
             AddControl(new RegisterValue("SL", op.SL, 0, 15));
             AddControl(new RegisterValue("TL", op.TL, 0, 127));
             AddControl(new RegisterValue("RS", op.RS, 0, 3));
-            fix = new RegisterValue("FIX", op.FIX, 0, 1);
-            AddControl(fix);
-            oscf = new RegisterValue("OSCF", op.OSCF, 0, 1);
-            AddControl(oscf);
-            mul = new RegisterValue("MUL/FXF/FINE", "MUL", op.MUL, 0, 15, false);
-            AddControl(mul);
-            dt1 = new RegisterValue("DT1/FXR/OW", "DT1", op.DT1, 0, 7, false);
-            AddControl(dt1);
+            AddControl(new RegisterValue("MUL", op.MUL, 0, 15));
+            AddControl(new RegisterValue("DT1", op.DT1, 0, 7));
             AddControl(new RegisterValue("AM", op.AM, 0, 1));
-            egsf = new RegisterValue("EGSF", op.EGSF, 0, 1);
-            AddControl(egsf);
-            dt2 = new RegisterValue("DT2/EGS", "DT2", op.DT2, 0, 3, false);
-            AddControl(dt2);
+            AddControl(new RegisterValue("DT2", op.DT2, 0, 3));
+            AddControl(new RegisterValue("FINE", op.FINE, 0, 15));
+            AddControl(new RegisterValue("FIX", op.FIX, 0, 1));
+            AddControl(new RegisterValue("FIXR", op.FIXR, 0, 7));
+            AddControl(new RegisterValue("OSCW", op.OSCW, 0, 7));
+            AddControl(new RegisterValue("EGSF", op.EGSF, 0, 3));
+            AddControl(new RegisterValue("REV", op.REV, 0, 7));
 
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
-            AddControl(new RegisterOpzWaveForm((RegisterValue)GetControl("OSCF"), (RegisterValue)GetControl("DT1")));
+            AddControl(new RegisterOpzWaveForm((RegisterValue)GetControl("OSCW")));
             AddControl(new RegisterEnvForm(
                 (RegisterValue)GetControl("AR"),
                 (RegisterValue)GetControl("TL"),
@@ -112,58 +107,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 (RegisterValue)GetControl("D2R"),
                 (RegisterValue)GetControl("RR")
                 ));
-
-            egsf.ValueChanged += YM2414OperatorContainer_EGSF_ValueChanged;
-            YM2414OperatorContainer_EGSF_ValueChanged(egsf, null);
-            oscf.ValueChanged += YM2414OperatorContainer_OSCF_ValueChanged;
-            fix.ValueChanged += YM2414OperatorContainer_OSCF_ValueChanged;
-            YM2414OperatorContainer_OSCF_ValueChanged(oscf, null);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void YM2414OperatorContainer_EGSF_ValueChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (egsf.Value == 0)
-            {
-                d2r.Label = "D2R";
-                dt2.Label = "DT2";
-            }
-            else
-            {
-                d2r.Label = "REV";
-                dt2.Label = "EGS";
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void YM2414OperatorContainer_OSCF_ValueChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (oscf.Value == 0)
-            {
-                if (fix.Value == 0)
-                {
-                    dt1.Label = "DT1";
-                    mul.Label = "MUL";
-                }
-                else
-                {
-                    dt1.Label = "FXR";
-                    mul.Label = "FXF";
-                }
-            }
-            else
-            {
-                dt1.Label = "OW";
-                mul.Label = "FINE";
-            }
-        }
     }
 }
