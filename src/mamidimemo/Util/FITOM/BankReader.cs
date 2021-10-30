@@ -82,7 +82,7 @@ namespace zanac.MAmidiMEmo.Util.FITOM
                     tone.aOp[opNo].SL = vals[4];
                     tone.aOp[opNo].TL = vals[5];
                     tone.aOp[opNo].KS = vals[6];
-                    tone.aOp[opNo].ML = vals[7];
+                    tone.aOp[opNo].ML = vals[7]; tone.aOp[opNo].FIXF = tone.aOp[opNo].ML;
                     tone.aOp[opNo].DT = vals[8];
                     tone.aOp[opNo].DT2 = vals[9];
                     tone.aOp[opNo].AM = vals[10];

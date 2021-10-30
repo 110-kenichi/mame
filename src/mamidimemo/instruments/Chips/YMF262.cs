@@ -1511,7 +1511,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YMF262Operator(),
                     new YMF262Operator() };
                 GlobalSettings = new YMF262GlobalSettings();
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

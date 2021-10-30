@@ -1277,6 +1277,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 SDS.FxS = new HuC6280FxSettings();
             }
 
+            protected override void InitializeFxS()
+            {
+                SDS.FxS = new HuC6280FxSettings();
+            }
 
             /// <summary>
             /// 

@@ -2789,6 +2789,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2608Operator() };
                 GlobalSettings = new YM2608GlobalSettings();
                 SsgSoundType = SsgSoundType.PSG;
+            }
+
+            protected override void InitializeFxS()
+            {
                 this.SDS.FxS = new YM2608FxSettings();
             }
 

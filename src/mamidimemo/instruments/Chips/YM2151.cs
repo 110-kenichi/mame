@@ -1566,7 +1566,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2151Operator(),
                     new YM2151Operator() };
                 GlobalSettings = new YM2151GlobalSettings();
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             #endregion

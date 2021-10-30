@@ -1087,8 +1087,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public PokeyTimbre()
             {
-                SDS.FxS = new PokeyFxSettings();
                 GlobalSettings = new PokeyGlobalSettings();
+            }
+
+            protected override void InitializeFxS()
+            {
+                SDS.FxS = new PokeyFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

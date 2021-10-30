@@ -1089,9 +1089,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public SCC1Timbre()
             {
-                this.SDS.FxS = new SccFxSettings();
-
                 calcWsgDataHashCode();
+            }
+
+            protected override void InitializeFxS()
+            {
+                this.SDS.FxS = new SccFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

@@ -912,7 +912,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public SAMTimbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

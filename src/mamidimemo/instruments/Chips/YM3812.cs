@@ -979,7 +979,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM3812Operator(),
                     new YM3812Operator() };
                 GlobalSettings = new YM3812GlobalSettings();
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

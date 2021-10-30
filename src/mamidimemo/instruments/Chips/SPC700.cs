@@ -1661,7 +1661,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public SPC700Timbre()
             {
                 GlobalSettings = new SPC700GlobalSettings();
-                SDS.FxS = new BasicFxSettings();
             }
 
             /// <summary>

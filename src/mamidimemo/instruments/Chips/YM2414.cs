@@ -450,6 +450,73 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private object lfdLock = new object();
+
+        private byte f_LFD;
+
+        private double lfdStep;
+
+        private double lfdCurrent;
+
+        private double lfdTarget;
+
+        private YM2414Sound lfdSound;
+
+        /// <summary>
+        /// LFO Delay
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global(Driver))")]
+        [Description("LFO Delay (0-99)")]
+        [DefaultValue((byte)0)]
+        [SlideParametersAttribute(0, 99)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte LFD
+        {
+            get
+            {
+                return f_LFD;
+            }
+            set
+            {
+                if (0 <= value & value <= 99)
+                    f_LFD = value;
+            }
+        }
+
+        private byte f_LFD2;
+
+        private double lfd2Step;
+
+        private double lfd2Current;
+
+        private double lfd2Target;
+
+        private YM2414Sound lfd2Sound;
+
+        /// <summary>
+        /// LFO Delay 2
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global(Driver))")]
+        [Description("LFO Delay 2 (0-99)")]
+        [DefaultValue((byte)0)]
+        [SlideParametersAttribute(0, 99)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte LFD2
+        {
+            get
+            {
+                return f_LFD2;
+            }
+            set
+            {
+                if (0 <= value & value <= 99)
+                    f_LFD2 = value;
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -765,6 +832,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
                     tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
 
+                    tim.GlobalSettings.LFD = (byte?)tone.LFD;
+                    tim.GlobalSettings.LFD2 = (byte?)tone.LFD2;
+
                     tim.GlobalSettings.SYNC = (byte?)tone.SY;
                     tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
 
@@ -795,9 +865,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tim.Ops[i].FINE = (byte)tone.aOp[i].FINE;
                         tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
                         tim.Ops[i].FIXR = (byte)tone.aOp[i].FIXR;
+                        tim.Ops[i].FIXF = (byte)tone.aOp[i].FIXF;
                         tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
                         tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
                         tim.Ops[i].REV = (byte)tone.aOp[i].REV;
+                        tim.Ops[i].LS = (byte)tone.aOp[i].LS;
+                        tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
                     }
                     tim.TimbreName = tone.Name;
                 }
@@ -811,8 +884,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
-            //createSamples();
             soundManager.ProcessKeyOn(midiEvent);
+            //createSamples();
         }
 
         private void createSamples()
@@ -829,6 +902,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z Presets\tx81z_4.syx"));
                 saveMami(@".\Samples\YM2414_TX81Z_Preset.MAmi");
 
+                //*
                 ApplyTone(0, SyxReaderTX81Z.LoadSyx(0, @"D:\Downloads\TX81Z 41 Banks\Tx81z01a.syx"));
                 ApplyTone(32, SyxReaderTX81Z.LoadSyx(32, @"D:\Downloads\TX81Z 41 Banks\Tx81z01g.syx"));
                 ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z01m.syx"));
@@ -936,6 +1010,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ApplyTone(64, SyxReaderTX81Z.LoadSyx(64, @"D:\Downloads\TX81Z 41 Banks\Tx81z40n.syx"));
                 ApplyTone(96, SyxReaderTX81Z.LoadSyx(96, @"D:\Downloads\TX81Z 41 Banks\Tx81z41n.syx"));
                 saveMami(@".\Samples\YM2414_TX81Z_Bank(38-41).MAmi");
+                //*/
             }
         }
 
@@ -1157,6 +1232,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.NE = gs.NE.Value;
                     if (gs.NFRQ.HasValue)
                         parentModule.NFRQ = gs.NFRQ.Value;
+
+                    if (gs.LFD.HasValue)
+                        parentModule.LFD = gs.LFD.Value;
+                    if (gs.LFD2.HasValue)
+                        parentModule.LFD2 = gs.LFD2.Value;
                 }
 
                 //
@@ -1168,8 +1248,87 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //On
                 byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 parentModule.YM2414WriteData(unitNumber, 0x08, 0, 0, (byte)(op | Slot));
+
+                if (parentModule.LFD != 0 || parentModule.LFD2 != 0)
+                {
+                    lock (parentModule.lfdLock)
+                    {
+                        if (parentModule.LFD != 0)
+                        {
+                            parentModule.lfdStep = parentModule.LFD / lfoDelayTime[parentModule.LFD];
+                            parentModule.lfdCurrent = 0;
+                            parentModule.lfdTarget = parentModule.LFD;
+                            parentModule.lfdSound = this;
+                        }
+                        if (parentModule.LFD2 != 0)
+                        {
+                            parentModule.lfd2Step = parentModule.LFD2 / lfoDelayTime[parentModule.LFD2];
+                            parentModule.lfd2Current = 0;
+                            parentModule.lfd2Target = parentModule.LFD2;
+                            parentModule.lfd2Sound = this;
+                        }
+                    }
+                    HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processLfoDelay), 20, this, true);
+                }
             }
 
+            private double processLfoDelay(object state)
+            {
+                bool processed = false;
+
+                lock (parentModule.lfdLock)
+                {
+                    if (IsDisposed || IsSoundOff)
+                    {
+                        if (parentModule.lfdSound == this)
+                            parentModule.lfdSound = null;
+                        if (parentModule.lfd2Sound == this)
+                            parentModule.lfd2Sound = null;
+                        return -1;
+                    }
+
+                    if (parentModule.lfdSound == this)
+                    {
+                        processed = true;
+
+                        parentModule.lfdCurrent += parentModule.lfdStep;
+                        if (parentModule.lfdCurrent > 127)
+                            parentModule.lfdCurrent = 127;
+                        parentModule.LFOD = (byte)parentModule.lfdCurrent;
+                        if (parentModule.lfdCurrent >= parentModule.lfdTarget)
+                            parentModule.lfdSound = null;
+                    }
+                    if (parentModule.lfd2Sound == this)
+                    {
+                        processed = true;
+
+                        parentModule.lfd2Current += parentModule.lfd2Step;
+                        if (parentModule.lfd2Current > 127)
+                            parentModule.lfd2Current = 127;
+                        parentModule.LFOD2 = (byte)parentModule.lfd2Current;
+                        if (parentModule.lfd2Current >= parentModule.lfd2Target)
+                            parentModule.lfd2Sound = null;
+                    }
+                }
+
+                if (processed)
+                    return 20;
+                else
+                    return -1;
+            }
+
+            private static double[] lfoDelayTime = new double[]{
+                 0,    15,    16,    16,    17,    18,    18,    19,    19,    20,
+                21,    22,    23,    24,    25,    26,    27,    29,    31,    32,
+                34,    35,    36,    37,    38,    40,    41,    43,    45,    47,
+                49,    52,    54,    57,    61,    64,    67,    69,    71,    74,
+                76,    79,    82,    86,    90,    94,    98,    103,    108,    114,
+                121,    128,    133,    137,    142,    147,    152,    158,    164,    171,
+                179,    187,    196,    205,    216,    228,    241,    256,    265,    273,
+                283,    293,    304,    315,    328,    341,    356,    372,    390,    409,
+                431,    455,    481,    511,    528,    546,    564,    585,    606,    630,
+                655,    682,    711,    744,    780,    818,    861,    909,    963,    1022
+            };
 
             public override void OnSoundParamsUpdated()
             {
@@ -1181,11 +1340,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.LFRQ2.HasValue)
                         parentModule.LFRQ2 = gs.LFRQ2.Value;
 
-                    if (gs.LFOD.HasValue)
+                    if (gs.LFOD.HasValue && parentModule.lfdSound == null)
                         parentModule.LFOD = gs.LFOD.Value;
                     if (gs.LFOF.HasValue)
                         parentModule.LFOF = gs.LFOF.Value;
-                    if (gs.LFOD2.HasValue)
+                    if (gs.LFOD2.HasValue && parentModule.lfd2Sound == null)
                         parentModule.LFOD2 = gs.LFOD2.Value;
                     if (gs.LFOF2.HasValue)
                         parentModule.LFOF2 = gs.LFOF2.Value;
@@ -1213,37 +1372,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.Ops[op].FIX == 0)
                         parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     else
-                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIX)));
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIXF)));
                     parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((1 << 7 | timbre.Ops[op].OSCW << 4 | timbre.Ops[op].FINE)));
+
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+
                     switch (timbre.ALG)
                     {
                         case 0:
                             if (op != 3)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 1:
                             if (op != 3)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 2:
                             if (op != 3)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 3:
                             if (op != 3)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 4:
                             if (op != 1 && op != 3)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 5:
                             if (op == 4)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 6:
                             if (op == 4)
-                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 7:
                             break;
@@ -1300,11 +1467,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         ops.Add(3);
                         break;
                 }
-                var v = CalcCurrentVolume();
                 foreach (int op in ops)
                 {
                     //$60+: total level
-                    parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
+                    FMOperatorBase opb = timbre.Ops[op];
+
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+                    double vol = 0;
+                    if (kvs < 0)
+                        vol = ((127 / 3) - Math.Round(((127 / 3) - (tl / 3)) * CalcCurrentVolume()));
+                    else
+                        vol = (127 - Math.Round((127 - (tl + kvs)) * CalcCurrentVolume(true)));
+                    parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)vol);
                 }
             }
 
@@ -1449,14 +1628,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)(( timbre.PMS << 4 | timbre.AMS)));
+                parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
                 parentModule.YM2414WriteData(unitNumber, 0x38, 0, Slot, (byte)((1 << 7 | timbre.PMS2 << 4 | 1 << 2 | timbre.AMS2)));
                 for (int op = 0; op < 4; op++)
                 {
                     if (timbre.Ops[op].FIX == 0)
                         parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     else
-                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIX)));
+                        parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIXR)));
                     parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((1 << 7 | timbre.Ops[op].OSCW << 4 | timbre.Ops[op].FINE)));
 
                     parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
@@ -1523,6 +1702,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "GlobalSettings.LFOW2",
                         "GlobalSettings.SYNC",
                         "GlobalSettings.SYNC2",
+                        "GlobalSettings.LFD",
+                        "GlobalSettings.LFD2",
 
                         "Ops[0].EN",
                         "Ops[0].AR",
@@ -1539,9 +1720,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].FINE",
                         "Ops[0].FIX",
                         "Ops[0].FIXR",
+                        "Ops[0].FIXF",
                         "Ops[0].OSCW",
                         "Ops[0].EGSF",
                         "Ops[0].REV",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1558,9 +1742,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].FINE",
                         "Ops[1].FIX",
                         "Ops[1].FIXR",
+                        "Ops[1].FIXF",
                         "Ops[1].OSCW",
                         "Ops[1].EGSF",
                         "Ops[1].REV",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1577,9 +1764,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].FINE",
                         "Ops[2].FIX",
                         "Ops[2].FIXR",
+                        "Ops[2].FIXF",
                         "Ops[2].OSCW",
                         "Ops[2].EGSF",
                         "Ops[2].REV",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1596,9 +1786,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].FINE",
                         "Ops[3].FIX",
                         "Ops[3].FIXR",
+                        "Ops[3].FIXF",
                         "Ops[3].OSCW",
                         "Ops[3].EGSF",
-                        "Ops[3].REV"
+                        "Ops[3].REV",
+                        "Ops[3].LS",
+                        "Ops[3].KVS"
                         );
                 }
                 set
@@ -1638,9 +1831,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].FINE",
                         "Ops[0].FIX",
                         "Ops[0].FIXR",
+                        "Ops[0].FIXF",
                         "Ops[0].OSCW",
                         "Ops[0].EGSF",
                         "Ops[0].REV",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1657,9 +1853,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].FINE",
                         "Ops[1].FIX",
                         "Ops[1].FIXR",
+                        "Ops[1].FIXF",
                         "Ops[1].OSCW",
                         "Ops[1].EGSF",
                         "Ops[1].REV",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1676,9 +1875,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].FINE",
                         "Ops[2].FIX",
                         "Ops[2].FIXR",
+                        "Ops[2].FIXF",
                         "Ops[2].OSCW",
                         "Ops[2].EGSF",
                         "Ops[2].REV",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1695,9 +1897,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].FINE",
                         "Ops[3].FIX",
                         "Ops[3].FIXR",
+                        "Ops[3].FIXF",
                         "Ops[3].OSCW",
                         "Ops[3].EGSF",
-                        "Ops[3].REV"
+                        "Ops[3].REV",
+                        "Ops[3].LS",
+                        "Ops[3].KVS"
                         );
                 }
             }
@@ -2080,7 +2285,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2414Operator(),
                     new YM2414Operator() };
                 GlobalSettings = new YM2414GlobalSettings();
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             #endregion
@@ -2113,7 +2317,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class YM2414Operator : ContextBoundObject
+        public class YM2414Operator : FMOperatorBase
         {
             private byte f_Enable = 1;
 
@@ -2347,7 +2551,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description("DeTune 1 (7(-3),6(-2),5(-1),4(+0),0(+0),1(+1),2(+2),3(+3))")]
+            [Description("DeTune 1\r\n" +
+                "1-3: +1 ～ +3 cent\r\n" +
+                "5-7: -1 ～ -3 cent")]
             [DefaultValue((byte)4)]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2435,7 +2641,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte f_FIXR;
 
             /// <summary>
-            /// Fix Frequency Range Enable (0-7)
+            /// Fix Frequency Range (0-7)
             /// </summary>
             [DataMember]
             [Category("Sound")]
@@ -2455,6 +2661,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte f_FIXF;
+
+            /// <summary>
+            /// Fix Frequency (0-7)
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Fix Frequency (0-15)")]
+            [DefaultValue((byte)0)]
+            [SlideParametersAttribute(0, 15)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte FIXF
+            {
+                get
+                {
+                    return f_FIXF;
+                }
+                set
+                {
+                    f_FIXF = (byte)(value & 15);
+                }
+            }
+
             private byte f_FINE;
 
             /// <summary>
@@ -2462,7 +2691,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description(" Fine Frequency(0-15)")]
+            [Description("Fine Frequency\r\n" +
+                "When MUL is 0, there are 8 levels (0-7)." +
+                "When MUL is 1 or higher, there are 16 levels (0-15).")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 15)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2516,7 +2747,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             [DataMember]
             [Category("Sound")]
-            [Description(" EG Shift(0-3)")]
+            [Description(" EG Shift(0-3)\r\n" +
+                "Note: Not affect for Carrier")]
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2593,9 +2825,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(FINE),
                         nameof(FIX),
                         nameof(FIXR),
+                        nameof(FIXF),
                         nameof(OSCW),
                         nameof(EGSF),
-                        nameof(REV)
+                        nameof(REV),
+                        nameof(LS),
+                        nameof(KVS)
                         );
                 }
                 set
@@ -2615,9 +2850,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(FINE),
                         nameof(FIX),
                         nameof(FIXR),
+                        nameof(FIXF),
                         nameof(OSCW),
                         nameof(EGSF),
-                        nameof(REV)
+                        nameof(REV),
+                        nameof(LS),
+                        nameof(KVS)
                         );
                 }
             }
@@ -2677,7 +2915,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             }
-
 
             [IgnoreDataMember]
             [JsonIgnore]
@@ -3007,7 +3244,388 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private byte? f_LFD;
+
+
+            /// <summary>
+            /// LFO Delay
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global(Driver))")]
+            [Description("LFO Delay (0-99)")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 99)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? LFD
+            {
+                get
+                {
+                    return f_LFD;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue & 0 <= value.Value & value.Value <= 99)
+                        v = (byte)(value);
+                    f_LFD = v;
+                }
+            }
+
+
+            private byte? f_LFD2;
+
+
+            /// <summary>
+            /// LFO Delay
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global(Driver))")]
+            [Description("LFO Delay 2(0-99)")]
+            [DefaultValue(null)]
+            [SlideParametersAttribute(0, 99)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte? LFD2
+            {
+                get
+                {
+                    return f_LFD2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue & 0 <= value.Value & value.Value <= 99)
+                        v = (byte)(value);
+                    f_LFD2 = v;
+                }
+            }
         }
+    }
+
+
+    [JsonConverter(typeof(NoTypeConverterJsonConverter<FMOperatorBase>))]
+    [TypeConverter(typeof(CustomExpandableObjectConverter))]
+    [DataContract]
+    [InstLock]
+    public class FMOperatorBase : ContextBoundObject
+    {
+
+        private byte f_LS;
+
+        /// <summary>
+        /// Level Scaling
+        /// </summary>
+        [DataMember]
+        [Category("Sound(Driver)")]
+        [Description("Level Scaling(0-99")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 99)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte LS
+        {
+            get
+            {
+                return f_LS;
+            }
+            set
+            {
+                if (0 <= value && value <= 99)
+                    f_LS = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="noteNumber"></param>
+        /// <returns></returns>
+        public int GetLSAttenuationValue(int noteNumber)
+        {
+            for (int i = 0; i < LevelScalingIndex.Length; i++)
+            {
+                if (noteNumber <= LevelScalingIndex[i])
+                    return LevelScalingAttenuationValue[LS][i];
+            }
+            return LevelScalingAttenuationValue[LS][LevelScalingIndex.Length - 1];
+        }
+
+        private static int[] LevelScalingIndex = new int[] { 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108 };
+
+        private static int[][] LevelScalingAttenuationValue = new int[][] {
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,4},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,5},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,4,5,6,7,8},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,9},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,11},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,13},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,14},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,16},
+                        new int[] {0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,4,4,5,6,7,9,11,13,15,17},
+                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,11,14,16,18},
+                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,17,20},
+                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,21},
+                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,22},
+                        new int[] {0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,23},
+                        new int[] {0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,25},
+                        new int[] {0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,4,4,6,7,8,10,11,14,16,20,23,26},
+                        new int[] {0,0,0,0,0,0,0,0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,20,24,27},
+                        new int[] {0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,13,15,18,21,25,29},
+                        new int[] {0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,19,22,26,30},
+                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,10,11,14,16,20,23,28,31},
+                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,20,24,29,33},
+                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,21,25,30,34},
+                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,8,9,11,13,15,18,22,26,31,35},
+                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,27,32,36},
+                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,10,12,14,16,20,24,28,33,38},
+                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,24,29,34,39},
+                        new int[] {0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,21,25,30,35,40},
+                        new int[] {0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,42},
+                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,43},
+                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,4,4,5,6,8,10,11,14,16,19,23,28,33,39,44},
+                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,4,5,5,7,8,10,12,14,17,20,24,28,34,40,45},
+                        new int[] {0,0,0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,24,29,35,41,47},
+                        new int[] {0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,25,30,35,42,48},
+                        new int[] {0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,43,49},
+                        new int[] {0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,26,32,38,45,51},
+                        new int[] {0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,38,45,52},
+                        new int[] {0,0,0,1,1,1,1,1,2,2,3,4,4,5,6,8,9,12,14,16,20,23,28,33,40,47,53},
+                        new int[] {0,0,0,1,1,1,1,1,2,3,3,4,4,6,7,8,10,12,14,17,20,24,28,34,40,48,54},
+                        new int[] {0,0,0,1,1,1,1,1,2,3,3,4,5,6,7,8,10,12,14,17,20,24,29,35,41,49,56},
+                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,21,25,30,36,43,50,57},
+                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,21,26,30,36,43,51,58},
+                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,44,52,60},
+                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,53,61},
+                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,8,9,11,14,16,19,23,27,32,39,46,55,62},
+                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,11,14,16,20,23,28,33,40,47,56,63},
+                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,12,14,17,20,24,28,34,40,48,57,65},
+                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,6,7,8,10,12,14,17,20,24,29,35,41,49,58,66},
+                        new int[] {0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,15,17,21,25,30,35,42,50,59,67},
+                        new int[] {0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,15,18,21,25,30,36,43,51,60,69},
+                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,22,26,31,36,44,52,61,70},
+                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,13,16,18,22,26,31,37,45,53,63,71},
+                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,54,63,72},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,27,32,38,46,55,65,74},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,28,33,39,47,56,66,75},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,14,17,20,24,28,33,40,48,57,67,76},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,7,8,10,11,14,17,20,24,29,34,41,49,58,68,78},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,7,8,10,12,14,17,20,24,29,35,41,49,59,69,79},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,18,21,25,30,35,42,50,60,70,80},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,21,25,30,36,43,51,61,72,82},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,21,26,30,36,43,52,61,73,83},
+                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,22,26,31,37,44,53,63,74,84},
+                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,19,22,26,31,37,45,53,63,75,85},
+                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,54,64,76,87},
+                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,39,46,55,65,77,88},
+                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,8,9,11,13,16,20,23,28,33,39,47,56,66,78,89},
+                        new int[] {0,1,1,1,2,2,2,3,3,5,5,6,8,10,11,13,16,20,23,28,33,40,47,57,67,80,91},
+                        new int[] {0,1,1,1,2,2,2,3,3,5,5,6,8,10,11,14,16,20,24,28,34,40,48,57,68,80,92},
+                        new int[] {0,1,1,1,2,2,2,3,4,5,5,6,8,10,12,14,17,20,24,29,34,41,49,58,69,82,93},
+                        new int[] {0,1,1,1,2,2,2,3,4,5,5,7,8,10,12,14,17,21,24,29,35,41,49,59,70,83,94},
+                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,21,25,30,35,42,50,60,71,84,96},
+                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,21,25,30,36,43,51,60,72,85,97},
+                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,22,25,30,36,43,51,61,73,86,98},
+                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,22,26,31,37,44,52,62,74,87,100},
+                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,44,53,63,75,88,101},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,32,38,45,53,64,76,90,102},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,19,23,27,32,38,45,54,65,77,91,103},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,39,46,55,65,78,92,105},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,33,39,47,55,66,79,93,106},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,8,9,11,13,16,19,24,28,33,40,47,56,67,80,94,107},
+                        new int[] {0,1,1,2,2,2,3,3,4,5,6,8,9,11,14,16,20,24,28,34,40,48,57,68,81,95,109},
+                        new int[] {0,1,1,2,2,3,3,3,4,6,6,8,9,12,14,16,20,24,28,34,41,48,57,69,82,96,110},
+                        new int[] {0,1,1,2,2,3,3,3,4,6,7,8,10,12,14,17,20,24,29,35,41,49,58,70,83,98,111},
+                        new int[] {0,1,1,2,2,3,3,3,4,6,7,8,10,12,14,17,20,25,29,35,41,49,59,70,83,98,112},
+                        new int[] {0,1,1,2,2,3,3,4,4,6,7,8,10,12,14,17,21,25,29,35,42,50,59,71,84,100,114},
+                        new int[] {0,1,1,2,2,3,3,4,4,6,7,8,10,12,14,17,21,25,30,36,43,51,60,72,86,101,115},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,26,30,36,43,51,61,73,86,102,116},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,21,26,31,37,43,52,62,74,87,103,118},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,21,26,31,37,44,52,62,74,88,104,119},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,22,26,31,37,44,53,63,75,89,105,120},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,10,13,15,18,22,27,31,38,45,53,63,76,90,106,121},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,27,32,38,45,54,64,77,91,108,123},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,39,46,55,65,78,92,109,124},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,28,32,39,46,55,65,78,93,110,125},
+                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,28,33,39,47,56,66,79,94,111,127}
+            };
+
+        private int f_KVS = -1;
+
+        /// <summary>
+        /// Level Scaling
+        /// </summary>
+        [DataMember]
+        [Category("Sound(Driver)")]
+        [Description("Key Velocity Sense(-1(MAmi),0(Off),1-7(KVS On)\r\n" +
+            "-1: MAmi original algolithm" +
+            " 0: Off(Ignore Velocity)")]
+        [DefaultValue(-1)]
+        [SlideParametersAttribute(-1, 7)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int KVS
+        {
+            get
+            {
+                return f_KVS;
+            }
+            set
+            {
+                if (-1 <= value && value <= 7)
+                    f_KVS = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="noteNumber"></param>
+        /// <returns></returns>
+        public int GetKvsAttenuationValue(int velocity)
+        {
+            if (KVS < 0)
+                return -1;
+            if (KVS == 0)
+                return 0;
+
+            return KeyVelocitySenseValues[velocity][KVS - 1];
+        }
+
+        private static int[][] KeyVelocitySenseValues = new int[][]{
+                          //kvs=1   2   3   4   5   6   7
+                new int[] {     0,  0,  0,  0,  0,  0,  0},
+                new int[] {    18, 29, 40, 51, 62, 73, 84},
+                new int[] {    17, 28, 38, 48, 58, 69, 79},
+                new int[] {    17, 27, 37, 47, 56, 66, 76},
+                new int[] {    17, 26, 36, 45, 55, 64, 74},
+                new int[] {    16, 25, 34, 44, 53, 62, 71},
+                new int[] {    16, 25, 34, 43, 51, 60, 69},
+                new int[] {    16, 24, 33, 41, 50, 58, 67},
+                new int[] {    15, 24, 32, 40, 48, 57, 65},
+                new int[] {    15, 23, 31, 39, 47, 55, 63},
+                new int[] {    15, 23, 30, 38, 46, 54, 62},
+                new int[] {    15, 22, 30, 38, 45, 53, 60},
+                new int[] {    14, 22, 29, 37, 44, 51, 59},
+                new int[] {    14, 21, 28, 36, 43, 50, 57},
+                new int[] {    14, 21, 28, 35, 42, 49, 56},
+                new int[] {    14, 21, 27, 34, 41, 48, 55},
+                new int[] {    14, 20, 27, 34, 40, 47, 53},
+                new int[] {    13, 20, 26, 33, 39, 46, 52},
+                new int[] {    13, 20, 26, 32, 38, 45, 51},
+                new int[] {    13, 19, 25, 32, 38, 44, 50},
+                new int[] {    13, 19, 25, 31, 37, 43, 49},
+                new int[] {    13, 19, 24, 30, 36, 42, 48},
+                new int[] {    13, 18, 24, 30, 35, 41, 47},
+                new int[] {    13, 18, 24, 29, 35, 40, 46},
+                new int[] {    12, 18, 23, 29, 34, 40, 45},
+                new int[] {    12, 18, 23, 28, 34, 39, 44},
+                new int[] {    12, 17, 23, 28, 33, 38, 43},
+                new int[] {    12, 17, 22, 27, 32, 37, 42},
+                new int[] {    12, 17, 22, 27, 32, 37, 42},
+                new int[] {    12, 17, 21, 26, 31, 36, 41},
+                new int[] {    12, 17, 21, 26, 31, 36, 40},
+                new int[] {    12, 16, 21, 26, 30, 35, 39},
+                new int[] {    12, 16, 21, 25, 30, 34, 39},
+                new int[] {    11, 16, 20, 25, 29, 33, 38},
+                new int[] {    11, 16, 20, 24, 29, 33, 37},
+                new int[] {    11, 15, 20, 24, 28, 32, 36},
+                new int[] {    11, 15, 19, 24, 28, 32, 36},
+                new int[] {    11, 15, 19, 23, 27, 31, 35},
+                new int[] {    11, 15, 19, 23, 27, 31, 35},
+                new int[] {    11, 15, 19, 23, 26, 30, 34},
+                new int[] {    11, 15, 18, 22, 26, 30, 33},
+                new int[] {    11, 14, 18, 22, 25, 29, 33},
+                new int[] {    11, 14, 18, 22, 25, 29, 32},
+                new int[] {    11, 14, 18, 21, 25, 28, 32},
+                new int[] {    10, 14, 17, 21, 24, 28, 31},
+                new int[] {    10, 14, 17, 21, 24, 27, 31},
+                new int[] {    10, 14, 17, 20, 23, 27, 30},
+                new int[] {    10, 13, 17, 20, 23, 26, 29},
+                new int[] {    10, 13, 16, 20, 23, 26, 29},
+                new int[] {    10, 13, 16, 19, 22, 25, 28},
+                new int[] {    10, 13, 16, 19, 22, 25, 28},
+                new int[] {    10, 13, 16, 19, 22, 25, 28},
+                new int[] {    10, 13, 16, 19, 21, 24, 27},
+                new int[] {    10, 13, 15, 18, 21, 24, 26},
+                new int[] {    10, 12, 15, 18, 20, 23, 26},
+                new int[] {    10, 12, 15, 18, 20, 23, 25},
+                new int[] {    10, 12, 15, 17, 20, 22, 25},
+                new int[] {    10, 12, 15, 17, 20, 22, 25},
+                new int[] {     9, 12, 14, 17, 19, 22, 24},
+                new int[] {     9, 12, 14, 17, 19, 21, 24},
+                new int[] {     9, 12, 14, 16, 19, 21, 23},
+                new int[] {     9, 12, 14, 16, 18, 21, 23},
+                new int[] {     9, 11, 13, 16, 18, 20, 22},
+                new int[] {     9, 11, 13, 15, 17, 19, 21},
+                new int[] {     9, 11, 13, 15, 17, 19, 21},
+                new int[] {     9, 11, 13, 15, 17, 19, 21},
+                new int[] {     9, 11, 13, 15, 16, 18, 20},
+                new int[] {     9, 11, 12, 14, 16, 18, 20},
+                new int[] {     9, 11, 12, 14, 16, 18, 19},
+                new int[] {     9, 10, 12, 14, 15, 17, 19},
+                new int[] {     9, 10, 12, 14, 15, 17, 18},
+                new int[] {     9, 10, 12, 13, 15, 16, 18},
+                new int[] {     9, 10, 12, 13, 15, 16, 18},
+                new int[] {     8, 10, 11, 13, 14, 16, 17},
+                new int[] {     8, 10, 11, 13, 14, 15, 17},
+                new int[] {     8, 10, 11, 12, 14, 15, 16},
+                new int[] {     8, 10, 11, 12, 13, 15, 16},
+                new int[] {     8,  9, 11, 12, 13, 14, 15},
+                new int[] {     8,  9, 10, 12, 13, 14, 15},
+                new int[] {     8,  9, 10, 11, 12, 13, 14},
+                new int[] {     8,  9, 10, 11, 12, 13, 14},
+                new int[] {     8,  9, 10, 11, 12, 13, 14},
+                new int[] {     8,  9, 10, 11, 11, 12, 13},
+                new int[] {     8,  9,  9, 10, 11, 12, 13},
+                new int[] {     8,  9,  9, 10, 11, 12, 12},
+                new int[] {     8,  8,  9, 10, 10, 11, 12},
+                new int[] {     8,  8,  9, 10, 10, 11, 11},
+                new int[] {     8,  8,  9, 10, 10, 11, 11},
+                new int[] {     8,  8,  9,  9, 10, 10, 11},
+                new int[] {     8,  8,  9,  9, 10, 10, 11},
+                new int[] {     7,  8,  8,  9,  9, 10, 10},
+                new int[] {     7,  8,  8,  9,  9,  9, 10},
+                new int[] {     7,  8,  8,  9,  9,  9, 10},
+                new int[] {     7,  8,  8,  8,  9,  9,  9},
+                new int[] {     7,  8,  8,  8,  8,  9,  9},
+                new int[] {     7,  7,  8,  8,  8,  8,  8},
+                new int[] {     7,  7,  7,  8,  8,  8,  8},
+                new int[] {     7,  7,  7,  8,  8,  8,  8},
+                new int[] {     7,  7,  7,  7,  7,  7,  7},
+                new int[] {     7,  7,  7,  7,  7,  7,  7},
+                new int[] {     7,  7,  7,  7,  7,  7,  7},
+                new int[] {     7,  7,  7,  7,  7,  7,  7},
+                new int[] {     7,  7,  7,  7,  6,  6,  6},
+                new int[] {     7,  7,  7,  7,  6,  6,  6},
+                new int[] {     7,  7,  6,  6,  6,  6,  6},
+                new int[] {     7,  7,  6,  6,  6,  6,  5},
+                new int[] {     7,  7,  6,  6,  6,  6,  5},
+                new int[] {     7,  6,  6,  6,  5,  5,  5},
+                new int[] {     7,  6,  6,  6,  5,  5,  5},
+                new int[] {     7,  6,  6,  6,  5,  5,  4},
+                new int[] {     7,  6,  6,  5,  5,  4,  4},
+                new int[] {     7,  6,  6,  5,  5,  4,  4},
+                new int[] {     7,  6,  6,  5,  5,  4,  4},
+                new int[] {     6,  6,  5,  5,  4,  4,  3},
+                new int[] {     6,  6,  5,  5,  4,  4,  3},
+                new int[] {     6,  6,  5,  5,  4,  3,  3},
+                new int[] {     6,  6,  5,  5,  4,  3,  3},
+                new int[] {     6,  6,  5,  4,  4,  3,  2},
+                new int[] {     6,  6,  5,  4,  4,  3,  2},
+                new int[] {     6,  6,  5,  4,  3,  3,  2},
+                new int[] {     6,  6,  5,  4,  3,  3,  2},
+                new int[] {     6,  5,  5,  4,  3,  2,  1},
+                new int[] {     6,  5,  5,  4,  3,  2,  1},
+                new int[] {     6,  5,  4,  4,  3,  2,  1},
+                new int[] {     6,  5,  4,  4,  3,  2,  1},
+                new int[] {     6,  5,  4,  3,  2,  1,  0},
+                new int[] {     6,  5,  4,  3,  2,  1,  0},
+                new int[] {     6,  5,  4,  3,  2,  1,  0}
+            };
+
     }
 
 

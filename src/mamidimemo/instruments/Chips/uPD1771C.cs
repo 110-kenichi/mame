@@ -647,7 +647,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public uPD1771Timbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

@@ -44,7 +44,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     "GlobalSettings.SYNC",
                     "GlobalSettings.SYNC2",
                     "GlobalSettings.NE",
-                    "GlobalSettings.NFRQ"
+                    "GlobalSettings.NFRQ",
+                    "GlobalSettings.LFD",
+                    "GlobalSettings.LFD2"
                     );
             }
             set
@@ -69,7 +71,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     "GlobalSettings.SYNC",
                     "GlobalSettings.SYNC2",
                     "GlobalSettings.NE",
-                    "GlobalSettings.NFRQ"
+                    "GlobalSettings.NFRQ",
+                    "GlobalSettings.LFD",
+                    "GlobalSettings.LFD2"
                     );
             }
         }
@@ -106,6 +110,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             AddControl(new RegisterValue("NE", "GlobalSettings.NE", tim.GlobalSettings.NE == null ? -1 : tim.GlobalSettings.NE.Value, 0, 1, true));
             AddControl(new RegisterValue("NFRQ", "GlobalSettings.NFRQ", tim.GlobalSettings.NFRQ == null ? -1 : tim.GlobalSettings.NFRQ.Value, 0, 31, true));
+
+            AddControl(new RegisterValue("LFD", "GlobalSettings.LFD", tim.GlobalSettings.LFD == null ? -1 : tim.GlobalSettings.LFD.Value, 0, 99, true));
+            AddControl(new RegisterValue("LFD2", "GlobalSettings.LFD2", tim.GlobalSettings.LFD2 == null ? -1 : tim.GlobalSettings.LFD2.Value, 0, 99, true));
 
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });

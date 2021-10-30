@@ -1911,7 +1911,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 DrumFNum = new YM2413DrumFNum();
 
                 GlobalSettings = new YM2413GlobalSettings();
+            }
 
+            protected override void InitializeFxS()
+            {
                 this.SDS.FxS = new YM2413FxSettings();
             }
 

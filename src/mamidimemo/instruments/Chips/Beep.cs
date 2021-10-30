@@ -449,7 +449,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public BeepTimbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

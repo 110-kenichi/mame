@@ -663,7 +663,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public NAMCO_CUS30Timbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

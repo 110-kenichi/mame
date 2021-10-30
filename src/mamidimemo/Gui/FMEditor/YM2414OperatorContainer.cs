@@ -40,9 +40,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(op.FINE),
                         nameof(op.FIX),
                         nameof(op.FIXR),
+                        nameof(op.FIXF),
                         nameof(op.OSCW),
                         nameof(op.EGSF),
-                        nameof(op.REV)
+                        nameof(op.REV),
+                        nameof(op.LS),
+                        nameof(op.KVS)
                         );
             }
             set
@@ -62,9 +65,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(op.DT2),
                     nameof(op.FINE),
                     nameof(op.FIX),
+                    nameof(op.FIXF),
                     nameof(op.OSCW),
                     nameof(op.EGSF),
-                    nameof(op.REV)
+                    nameof(op.REV),
+                    nameof(op.LS),
+                    nameof(op.KVS)
                     );
             }
         }
@@ -93,9 +99,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("FINE", op.FINE, 0, 15));
             AddControl(new RegisterValue("FIX", op.FIX, 0, 1));
             AddControl(new RegisterValue("FIXR", op.FIXR, 0, 7));
+            AddControl(new RegisterValue("FIXF", op.FIXR, 0, 15));
             AddControl(new RegisterValue("OSCW", op.OSCW, 0, 7));
             AddControl(new RegisterValue("EGSF", op.EGSF, 0, 3));
             AddControl(new RegisterValue("REV", op.REV, 0, 7));
+            AddControl(new RegisterValue("LS", op.LS, 0, 99));
+            AddControl(new RegisterValue("KVS", op.KVS, -1, 7));
 
             AddControl(new RegisterSpace("spc") { Dock = DockStyle.Right });
             AddControl(new RegisterOpzWaveForm((RegisterValue)GetControl("OSCW")));

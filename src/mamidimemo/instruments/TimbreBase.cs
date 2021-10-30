@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -155,14 +156,29 @@ namespace zanac.MAmidiMEmo.Instruments
             MDS.SerializeData = "{}";
         }
 
+        private SoundDriverSettings f_SDS;
+
         [DataMember]
         [Description("Sound Driver Settings")]
         [DisplayName("Sound Driver Settings[SDS]")]
         [Category("General")]
         public virtual SoundDriverSettings SDS
         {
-            get;
-            set;
+            get
+            {
+                return f_SDS;
+            }
+            set
+            {
+                f_SDS = value;
+                if (f_SDS.FxS == null)
+                    InitializeFxS();
+            }
+        }
+
+        protected virtual void InitializeFxS()
+        {
+            f_SDS.FxS = new BasicFxSettings();
         }
 
         public virtual bool ShouldSerializeSDS()

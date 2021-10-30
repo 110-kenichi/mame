@@ -65,20 +65,26 @@ namespace zanac.MAmidiMEmo.Util.Syx
                     tone.aOp[opidx].DR = dat[fileidx++] & 31;
                     tone.aOp[opidx].SR = dat[fileidx++] & 31;
                     tone.aOp[opidx].RR = dat[fileidx++] & 15;
-                    tone.aOp[opidx].SL = 15 - (dat[fileidx++] & 15);    //TODO:
-                    fileidx++;  //KEYBOARD LEVEL SCALING (0-99)
-                    tone.aOp[opidx].AM = (dat[fileidx++] & 0x40) == 0x40 ? 1 : 0;   //EBS, KVS
+                    tone.aOp[opidx].SL = 15 - (dat[fileidx++] & 15);    //TODO: need to check
+                    tone.aOp[opidx].LS = dat[fileidx++] & 127; //(0-99)
+                    {
+                        tone.aOp[opidx].KVS = dat[fileidx] & 0x7;
+                        //TODO: tone.aOp[opidx].EBS = (dat[fileidx] >> 3) & 0x7;
+                        tone.aOp[opidx].AM = (dat[fileidx++] & 0x40) == 0x40 ? 1 : 0;
+                    }
                     {
                         //https://nornand.hatenablog.com/entry/2020/11/21/201911
                         tone.aOp[opidx].TL = AttenuationOfOperatorOutputLevels[dat[fileidx++] % 100];
                     }
                     {
-                        tone.aOp[opidx].ML = CoarseToMul[dat[fileidx] & 63];
-                        tone.aOp[opidx].DT2 = CoarseToDt2[dat[fileidx++] & 63];
+                        int F = dat[fileidx++] & 63;
+                        tone.aOp[opidx].ML = CoarseToMul[F];
+                        tone.aOp[opidx].DT2 = CoarseToDt2[F];
+                        tone.aOp[opidx].FIXF = F >> 2;
                     }
                     {
                         tone.aOp[opidx].KS = (dat[fileidx] >> 3) & 3;
-                        tone.aOp[opidx].DT = dat[fileidx++] & 15;
+                        tone.aOp[opidx].DT = Detune1Table[dat[fileidx++] & 7];
                     }
                 }
                 {
@@ -108,7 +114,7 @@ namespace zanac.MAmidiMEmo.Util.Syx
                     }
                 }
                 tone.LFRQ = LfoSpeeds[dat[fileidx++]]; tone.LFRQ2 = tone.LFRQ;
-                fileidx++;  //LFO DELAY
+                tone.LFD = LfoSpeeds[dat[fileidx++]]; tone.LFD2 = tone.LFD;
                 tone.LFOD = PMDepth[dat[fileidx++]]; tone.LFOF = 1;
                 tone.LFOD2 = AMDepth[dat[fileidx++]]; tone.LFOF2 = 0;
                 {
@@ -177,12 +183,14 @@ namespace zanac.MAmidiMEmo.Util.Syx
             return tones.ToArray();
         }
 
+        //https://docs.google.com/spreadsheets/d/1SSmypnGQ3c4COnKj8OF9WvM3qRMZTe0R-sLnMElGPvI/edit#gid=0
+
         private static int[] CoarseToMul = new int[64]{
-             0, 0, 0, 0, 1, 1, 1, 1, 
-             2, 2, 3, 2, 2, 4, 3, 3, 
-             5, 3, 4, 6, 4, 4, 7, 5, 
-             5, 8, 6, 5, 9, 6, 7,10, 
-             6, 7,11, 8,12, 7, 8, 9, 
+             0, 0, 0, 0, 1, 1, 1, 1,
+             2, 2, 3, 2, 2, 4, 3, 3,
+             5, 3, 4, 6, 4, 4, 7, 5,
+             5, 8, 6, 5, 9, 6, 7,10,
+             6, 7,11, 8,12, 7, 8, 9,
             13, 8,14,10, 9,15,11, 9,
             10,12,11,10,13,12,11,14,
             13,12,15,14,13,15,14,15
@@ -213,14 +221,14 @@ namespace zanac.MAmidiMEmo.Util.Syx
         };
 
         private static int[] PMDepth = new int[100]{
-              0,  0,  2,  3,  4,  5,  7,  8,  9, 11,  
-             12, 13, 14, 16, 17, 18, 20, 21, 22, 23,  
-             25, 26, 27, 29, 30, 31, 33, 34, 35, 36,  
-             38, 39, 40, 42, 43, 44, 45, 47, 48, 49,  
-             51, 52, 53, 54, 56, 57, 58, 60, 61, 62,  
-             63, 65, 66, 67, 69, 70, 71, 72, 74, 75,  
-             76, 78, 79, 80, 82, 83, 84, 85, 87, 88,  
-             89, 91, 92, 93, 94, 96, 97, 98,100,101,  
+              0,  0,  2,  3,  4,  5,  7,  8,  9, 11,
+             12, 13, 14, 16, 17, 18, 20, 21, 22, 23,
+             25, 26, 27, 29, 30, 31, 33, 34, 35, 36,
+             38, 39, 40, 42, 43, 44, 45, 47, 48, 49,
+             51, 52, 53, 54, 56, 57, 58, 60, 61, 62,
+             63, 65, 66, 67, 69, 70, 71, 72, 74, 75,
+             76, 78, 79, 80, 82, 83, 84, 85, 87, 88,
+             89, 91, 92, 93, 94, 96, 97, 98,100,101,
             102,103,105,106,107,109,110,111,112,114,
             115,116,118,119,120,121,123,124,125,127
         };
@@ -241,16 +249,27 @@ namespace zanac.MAmidiMEmo.Util.Syx
 
         private static int[] AttenuationOfOperatorOutputLevels = new int[100]{
             127,122,118,114,110,107,104,102,100, 98,
-             96, 94, 92, 90, 88, 86, 85, 84, 82, 81, 
-             79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 
-             69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 
-             59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 
-             49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 
-             39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 
-             29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 
-             19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 
+             96, 94, 92, 90, 88, 86, 85, 84, 82, 81,
+             79, 78, 77, 76, 75, 74, 73, 72, 71, 70,
+             69, 68, 67, 66, 65, 64, 63, 62, 61, 60,
+             59, 58, 57, 56, 55, 54, 53, 52, 51, 50,
+             49, 48, 47, 46, 45, 44, 43, 42, 41, 40,
+             39, 38, 37, 36, 35, 34, 33, 32, 31, 30,
+             29, 28, 27, 26, 25, 24, 23, 22, 21, 20,
+             19, 18, 17, 16, 15, 14, 13, 12, 11, 10,
               9,  8,  7,  6,  5,  4,  3,  2,  1,  0
         };
+
+        private static int[] Detune1Table = new int[8]{
+            7,  //-3
+            6,  //-2
+            5,  //-1
+            4,  // 0
+            1,  //+1
+            2,  //+2
+            3,  //+3
+            0   // 0
+            };
 
         private static int calcRealValue(int max, int value, int baseValue)
         {

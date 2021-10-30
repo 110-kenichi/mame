@@ -103,7 +103,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         "GlobalSettings.LFOW",
                         "GlobalSettings.LFOW2",
                         "GlobalSettings.SYNC",
-                        "GlobalSettings.SYNC2"
+                        "GlobalSettings.SYNC2",
+                        "GlobalSettings.NE",
+                        "GlobalSettings.NFRQ",
+                        "GlobalSettings.LFD",
+                        "GlobalSettings.LFD2"
                         );
                         ed.MmlValueGeneral = mmlValueGeneral;
 
@@ -127,9 +131,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                 nameof(op.FINE),
                                 nameof(op.FIX),
                                 nameof(op.FIXR),
+                                nameof(op.FIXF),
                                 nameof(op.OSCW),
                                 nameof(op.EGSF),
-                                nameof(op.REV)
+                                nameof(op.REV),
+                                nameof(op.LS),
+                                nameof(op.KVS)
                                 ));
                         }
 

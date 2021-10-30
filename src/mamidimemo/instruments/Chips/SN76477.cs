@@ -1814,8 +1814,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Noise = new SN76477NoiseSettings();
                 AtkDcy = new SN76477AtkDcySettings();
                 Etc = new SN76477EtcSettings();
-
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

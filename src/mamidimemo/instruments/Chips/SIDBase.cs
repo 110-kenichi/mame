@@ -905,6 +905,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public SIDTimbre()
             {
                 GlobalSettings = new SIDGlobalSettings();
+            }
+
+            protected override void InitializeFxS()
+            {
                 this.SDS.FxS = new SidFxSettings();
             }
 

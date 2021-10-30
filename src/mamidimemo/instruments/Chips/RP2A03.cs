@@ -1864,9 +1864,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public RP2A03Timbre()
             {
                 SQSweep = new SQSweepSettings();
-                SDS.FxS = new NesFxSettings();
                 FDS = new FdsSettings();
                 VRC6 = new Vrc6Settings();
+            }
+
+            protected override void InitializeFxS()
+            {
+                SDS.FxS = new NesFxSettings();
             }
 
             /// <summary>

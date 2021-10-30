@@ -22,12 +22,17 @@ namespace FM_SoundConvertor
         public int REV;
         public int FIX;
         public int FIXR;
+        public int FIXF;
 
         public int KSR;
         public int VIB;
         public int EG;
         public int WS;
         public int SSG;
+
+        public int LS;
+        public int EBS;
+        public int KVS = -1;
 
         public Op()
         {
@@ -84,6 +89,9 @@ namespace FM_SoundConvertor
         public int? LFOD2;
         public int? LFOW;
         public int? LFOW2;
+
+        public int? LFD;
+        public int? LFD2;
 
         public Op[] aOp;
 

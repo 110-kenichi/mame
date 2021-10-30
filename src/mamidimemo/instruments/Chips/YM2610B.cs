@@ -2156,7 +2156,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2610BOperator() };
                 GlobalSettings = new YM2610BGlobalSettings();
                 SsgSoundType = SsgSoundType.PSG;
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)

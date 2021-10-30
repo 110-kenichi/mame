@@ -879,7 +879,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public C140Timbre()
             {
-                SDS.FxS = new BasicFxSettings();
             }
 
             /// <summary>

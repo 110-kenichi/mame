@@ -1093,7 +1093,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 GlobalSettings = new AY8910GlobalSettings();
                 SoundType = SoundType.PSG;
+            }
 
+            protected override void InitializeFxS()
+            {
                 this.SDS.FxS = new AyFxSettings();
             }
 

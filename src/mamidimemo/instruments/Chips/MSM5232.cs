@@ -810,6 +810,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.SDS.FxS = new MsmFxSettings();
             }
 
+            protected override void InitializeFxS()
+            {
+                this.SDS.FxS = new MsmFxSettings();
+            }
+
             public override void RestoreFrom(string serializeData)
             {
                 try

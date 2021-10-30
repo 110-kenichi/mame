@@ -1211,7 +1211,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public CM32PTimbre()
             {
-                this.SDS.FxS = new BasicFxSettings();
             }
 
             public override void RestoreFrom(string serializeData)
