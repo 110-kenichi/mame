@@ -1255,16 +1255,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         if (parentModule.LFD != 0)
                         {
-                            parentModule.lfdStep = parentModule.LFD / lfoDelayTime[parentModule.LFD];
+                            parentModule.lfdStep = parentModule.LFOD / lfoDelayTime[parentModule.LFD];
                             parentModule.lfdCurrent = 0;
-                            parentModule.lfdTarget = parentModule.LFD;
+                            parentModule.lfdTarget = parentModule.LFOD;
                             parentModule.lfdSound = this;
                         }
                         if (parentModule.LFD2 != 0)
                         {
-                            parentModule.lfd2Step = parentModule.LFD2 / lfoDelayTime[parentModule.LFD2];
+                            parentModule.lfd2Step = parentModule.LFOD2 / lfoDelayTime[parentModule.LFD2];
                             parentModule.lfd2Current = 0;
-                            parentModule.lfd2Target = parentModule.LFD2;
+                            parentModule.lfd2Target = parentModule.LFOD2;
                             parentModule.lfd2Sound = this;
                         }
                     }
@@ -3265,7 +3265,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     byte? v = value;
-                    if (value.HasValue & 0 <= value.Value & value.Value <= 99)
+                    if (value.HasValue && 0 <= value.Value && value.Value <= 99)
                         v = (byte)(value);
                     f_LFD = v;
                 }
@@ -3293,7 +3293,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     byte? v = value;
-                    if (value.HasValue & 0 <= value.Value & value.Value <= 99)
+                    if (value.HasValue && 0 <= value.Value && value.Value <= 99)
                         v = (byte)(value);
                     f_LFD2 = v;
                 }
