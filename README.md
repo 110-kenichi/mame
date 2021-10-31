@@ -1,4 +1,4 @@
-MAmidiMEmo 3.9.7.4 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 4.0.0.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,7 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-3.9.7.4 Fixed LFOD and LFD calculation again for YM2414. Updates sample files for YM2414. 
+4.0.0.0 Removed "Experimental" from YM2414.
+		Fixed LFOD and LFD calculation again for YM2414. Updated sample files for YM2414. 
 		Supported SPFM for YM2414.
 		Supported KVS, LS for YM2151 and fixed KVS of YM2414.
 3.9.7.3 Fixed LFOD and LFD calculation for YM2414.
