@@ -581,6 +581,7 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
     <Compile Include="Instruments\Chips\YM2414.cs" />
+    <Compile Include="Instruments\Chips\YM\YMOperatorBase.cs" />
     <Compile Include="Instruments\CombinedTimbreSettings.cs" />
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
     <Compile Include="Instruments\SlotAssignmentType.cs" />

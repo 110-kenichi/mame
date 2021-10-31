@@ -15,6 +15,7 @@ using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
+using zanac.MAmidiMEmo.Instruments.Chips.YM;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -890,35 +891,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int op = 0; op < 4; op++)
                 {
                     parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+
                     switch (timbre.ALG)
                     {
                         case 0:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 1:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 2:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 3:
                             if (op != 3)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 4:
                             if (op != 1 && op != 3)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 5:
                             if (op == 4)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 6:
                             if (op == 4)
-                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 7:
                             break;
@@ -983,8 +992,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var v = CalcCurrentVolume();
                 foreach (int op in ops)
                 {
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+                    double vol = 0;
+                    if (kvs < 0)
+                        vol = ((127 / 3) - Math.Round(((127 / 3) - (tl / 3)) * CalcCurrentVolume()));
+                    else
+                        vol = (127 - Math.Round((127 - (tl + kvs)) * CalcCurrentVolume(true)));
                     //$60+: total level
-                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
+                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)vol);
                 }
             }
 
@@ -1110,7 +1130,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 for (int op = 0; op < 4; op++)
                 {
                     parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                     parentModule.Ym2151WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     parentModule.Ym2151WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     parentModule.Ym2151WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 7 | timbre.Ops[op].D2R)));
@@ -1598,7 +1624,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class YM2151Operator : ContextBoundObject
+        public class YM2151Operator : YMOperatorBase
         {
             private byte f_Enable = 1;
 

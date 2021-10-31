@@ -529,6 +529,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             this.Invoke(new MethodInvoker(() =>
             {
+                if (this.IsDisposed)
+                    return;
+
                 if (toolStripButtonHook.Checked)
                 {
                     switch (e.Event.Event)

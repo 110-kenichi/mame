@@ -17,6 +17,7 @@ using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
+using zanac.MAmidiMEmo.Instruments.Chips.YM;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
@@ -66,12 +67,109 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        private object spfmPtrLock = new object();
+
+        private IntPtr spfmPtr;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports Software and SPFM.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value &&
+                    (value == SoundEngineType.Software ||
+                    value == SoundEngineType.SPFM))
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeSPFM : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.SPFM });
+
+                return sc;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (spfmPtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2414, (SC_CHIP_CLOCK)MasterClock);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
         public enum MasterClockType : uint
         {
             Default = 3579545,
+            X68000 = 4000000,
         }
 
         private uint f_MasterClock;
@@ -94,6 +192,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
+                    setSoundEngine(SoundEngine);
                 }
             }
         }
@@ -454,13 +553,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private byte f_LFD;
 
-        private double lfdStep;
-
-        private double lfdCurrent;
-
-        private double lfdTarget;
-
-        private YM2414Sound lfdSound;
+        private YM2414Sound lfdProcessingSound;
 
         /// <summary>
         /// LFO Delay
@@ -486,13 +579,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private byte f_LFD2;
 
-        private double lfd2Step;
-
-        private double lfd2Current;
-
-        private double lfd2Target;
-
-        private YM2414Sound lfd2Sound;
+        private YM2414Sound lfd2ProcessingSound;
 
         /// <summary>
         /// LFO Delay 2
@@ -610,7 +697,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void YM2414WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
-            YM2414WriteData(unitNumber, address, op, slot, data, false);
+            YM2414WriteData(unitNumber, address, op, slot, data, true);
         }
 
         /// <summary>
@@ -637,6 +724,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             WriteData(adr, data, useCache, new Action(() =>
             {
+                lock (spfmPtrLock)
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                        ScciManager.SetRegister(spfmPtr, adr, data, false);
+
                 DeferredWriteData(YM2414_write, unitNumber, (uint)0, adr);
                 DeferredWriteData(YM2414_write, unitNumber, (uint)1, data);
             }));
@@ -1204,7 +1295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.LFOD.HasValue)
+                    if (gs.LFOD.HasValue && gs.LFD.HasValue)
                         parentModule.LFOD = gs.LFOD.Value;
                     if (gs.LFOF.HasValue)
                         parentModule.LFOF = gs.LFOF.Value;
@@ -1249,65 +1340,130 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 parentModule.YM2414WriteData(unitNumber, 0x08, 0, 0, (byte)(op | Slot));
 
-                if (parentModule.LFD != 0 || parentModule.LFD2 != 0)
+                if ((parentModule.LFD != 0 && parentModule.LFOD != 0) ||
+                    (parentModule.LFD2 != 0 && parentModule.LFOD2 != 0))
                 {
+                    LfdProcessingParam param = new LfdProcessingParam();
                     lock (parentModule.lfdLock)
                     {
-                        if (parentModule.LFD != 0)
+                        //https://nornand.hatenablog.com/entry/2020/11/30/185005
+                        if (parentModule.LFD != 0 && parentModule.LFOD != 0)
                         {
-                            parentModule.lfdStep = parentModule.LFOD / lfoDelayTime[parentModule.LFD];
-                            parentModule.lfdCurrent = 0;
-                            parentModule.lfdTarget = parentModule.LFOD;
-                            parentModule.lfdSound = this;
+                            param.DelayTime1 = lfoDelayTime[parentModule.LFD] / 2;
+                            param.LFOF1 = parentModule.LFOF;
+                            if (param.LFOF1 == 0)
+                                param.AmdBase1 = (param.DelayTime1 * param.DelayTime1) / parentModule.LFOD; //exponential function
+                            else
+                                param.PmdStep1 = parentModule.LFOD / param.DelayTime1;    //liner step
+                            param.TargetDepth1 = parentModule.LFOD;
+                            parentModule.lfdProcessingSound = this;
+                            parentModule.LFOD = 0;
                         }
-                        if (parentModule.LFD2 != 0)
+                        if (parentModule.LFD2 != 0 && parentModule.LFOD2 != 0)
                         {
-                            parentModule.lfd2Step = parentModule.LFOD2 / lfoDelayTime[parentModule.LFD2];
-                            parentModule.lfd2Current = 0;
-                            parentModule.lfd2Target = parentModule.LFOD2;
-                            parentModule.lfd2Sound = this;
+                            param.DelayTime2 = lfoDelayTime[parentModule.LFD2] / 2;
+                            param.LFOF2 = parentModule.LFOF2;
+                            if (param.LFOF2 == 0)
+                                param.AmdBase2 = (param.DelayTime2 * param.DelayTime2) / parentModule.LFOD2; //exponential function
+                            else
+                                param.PmdStep2 = parentModule.LFOD2 / param.DelayTime2;    //liner step
+                            param.TargetDepth2 = parentModule.LFOD2;
+                            parentModule.lfd2ProcessingSound = this;
+                            parentModule.LFOD2 = 0;
                         }
                     }
-                    HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processLfoDelay), 20, this, true);
+                    HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processLfoDelay), 20, param, true);
                 }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            private class LfdProcessingParam
+            {
+                public byte LFOF1;
+                public byte LFOF2;
+
+                public int CurrentTime1;
+                public int CurrentTime2;
+                public double DelayTime1;
+                public double DelayTime2;
+
+                public double PmdStep1;
+                public double AmdBase1;
+                public double PmdStep2;
+                public double AmdBase2;
+
+                public double CurrentDepth1;
+                public double CurrentDepth2;
+                public double TargetDepth1;
+                public double TargetDepth2;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="state"></param>
+            /// <returns></returns>
             private double processLfoDelay(object state)
             {
+                LfdProcessingParam param = (LfdProcessingParam)state;
                 bool processed = false;
 
                 lock (parentModule.lfdLock)
                 {
                     if (IsDisposed || IsSoundOff)
                     {
-                        if (parentModule.lfdSound == this)
-                            parentModule.lfdSound = null;
-                        if (parentModule.lfd2Sound == this)
-                            parentModule.lfd2Sound = null;
+                        if (parentModule.lfdProcessingSound == this)
+                            parentModule.lfdProcessingSound = null;
+                        if (parentModule.lfd2ProcessingSound == this)
+                            parentModule.lfd2ProcessingSound = null;
                         return -1;
                     }
 
-                    if (parentModule.lfdSound == this)
+                    if (parentModule.lfdProcessingSound == this)
                     {
                         processed = true;
-
-                        parentModule.lfdCurrent += parentModule.lfdStep;
-                        if (parentModule.lfdCurrent > 127)
-                            parentModule.lfdCurrent = 127;
-                        parentModule.LFOD = (byte)parentModule.lfdCurrent;
-                        if (parentModule.lfdCurrent >= parentModule.lfdTarget)
-                            parentModule.lfdSound = null;
+                        param.CurrentTime1++;
+                        if (param.CurrentTime1 >= param.DelayTime1)
+                        {
+                            if (param.LFOF1 == 0)
+                            {
+                                param.PmdStep1 += 1;
+                                param.CurrentDepth1 = (param.PmdStep1 * param.PmdStep1) / param.AmdBase1;
+                            }
+                            else
+                            {
+                                param.CurrentDepth1 += param.PmdStep1;
+                            }
+                            if (param.CurrentDepth1 > 127)
+                                param.CurrentDepth1 = 127;
+                            parentModule.LFOD = (byte)param.CurrentDepth1;
+                            if (param.CurrentDepth1 >= param.TargetDepth1)
+                                parentModule.lfdProcessingSound = null;
+                        }
                     }
-                    if (parentModule.lfd2Sound == this)
+                    if (parentModule.lfd2ProcessingSound == this)
                     {
                         processed = true;
-
-                        parentModule.lfd2Current += parentModule.lfd2Step;
-                        if (parentModule.lfd2Current > 127)
-                            parentModule.lfd2Current = 127;
-                        parentModule.LFOD2 = (byte)parentModule.lfd2Current;
-                        if (parentModule.lfd2Current >= parentModule.lfd2Target)
-                            parentModule.lfd2Sound = null;
+                        param.CurrentTime2++;
+                        if (param.CurrentTime2 >= param.DelayTime2)
+                        {
+                            if (param.LFOF2 == 0)
+                            {
+                                param.PmdStep2 += 1;
+                                param.CurrentDepth2 = (param.PmdStep2 * param.PmdStep2) / param.AmdBase2;
+                            }
+                            else
+                            {
+                                param.CurrentDepth2 += param.PmdStep2;
+                            }
+                            if (param.CurrentDepth2 > 127)
+                                param.CurrentDepth2 = 127;
+                            parentModule.LFOD2 = (byte)param.CurrentDepth2;
+                            if (param.CurrentDepth2 >= param.TargetDepth2)
+                                parentModule.lfdProcessingSound = null;
+                        }
                     }
                 }
 
@@ -1340,11 +1496,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.LFRQ2.HasValue)
                         parentModule.LFRQ2 = gs.LFRQ2.Value;
 
-                    if (gs.LFOD.HasValue && parentModule.lfdSound == null)
+                    if (gs.LFOD.HasValue && parentModule.lfdProcessingSound == null)
                         parentModule.LFOD = gs.LFOD.Value;
                     if (gs.LFOF.HasValue)
                         parentModule.LFOF = gs.LFOF.Value;
-                    if (gs.LFOD2.HasValue && parentModule.lfd2Sound == null)
+                    if (gs.LFOD2.HasValue && parentModule.lfd2ProcessingSound == null)
                         parentModule.LFOD2 = gs.LFOD2.Value;
                     if (gs.LFOF2.HasValue)
                         parentModule.LFOF2 = gs.LFOF2.Value;
@@ -1470,7 +1626,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 foreach (int op in ops)
                 {
                     //$60+: total level
-                    FMOperatorBase opb = timbre.Ops[op];
+                    YMOperatorBase opb = timbre.Ops[op];
 
                     var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
                     int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
@@ -1638,7 +1794,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].FIXR << 4 | timbre.Ops[op].FIXR)));
                     parentModule.YM2414WriteData(unitNumber, 0x40, op, Slot, (byte)((1 << 7 | timbre.Ops[op].OSCW << 4 | timbre.Ops[op].FINE)));
 
-                    parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
+                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
+                    if (kvs > 0)
+                        tl += kvs;
+                    if (tl > 127)
+                        tl = 127;
+                    parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                     parentModule.YM2414WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].FIX << 5 | timbre.Ops[op].AR)));
                     parentModule.YM2414WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     parentModule.YM2414WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].D2R)));
@@ -1963,7 +2125,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 3)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DisplayName("AMS/AMS2(AMS)")]
             public byte AMS
             {
                 get
@@ -1984,7 +2145,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue((byte)0)]
             [SlideParametersAttribute(0, 7)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DisplayName("PMS/PMS2(PMS)")]
             public byte PMS
             {
                 get
@@ -2317,7 +2477,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class YM2414Operator : FMOperatorBase
+        public class YM2414Operator : YMOperatorBase
         {
             private byte f_Enable = 1;
 
@@ -3300,333 +3460,5 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
     }
-
-
-    [JsonConverter(typeof(NoTypeConverterJsonConverter<FMOperatorBase>))]
-    [TypeConverter(typeof(CustomExpandableObjectConverter))]
-    [DataContract]
-    [InstLock]
-    public class FMOperatorBase : ContextBoundObject
-    {
-
-        private byte f_LS;
-
-        /// <summary>
-        /// Level Scaling
-        /// </summary>
-        [DataMember]
-        [Category("Sound(Driver)")]
-        [Description("Level Scaling(0-99")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(0, 99)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public byte LS
-        {
-            get
-            {
-                return f_LS;
-            }
-            set
-            {
-                if (0 <= value && value <= 99)
-                    f_LS = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="noteNumber"></param>
-        /// <returns></returns>
-        public int GetLSAttenuationValue(int noteNumber)
-        {
-            for (int i = 0; i < LevelScalingIndex.Length; i++)
-            {
-                if (noteNumber <= LevelScalingIndex[i])
-                    return LevelScalingAttenuationValue[LS][i];
-            }
-            return LevelScalingAttenuationValue[LS][LevelScalingIndex.Length - 1];
-        }
-
-        private static int[] LevelScalingIndex = new int[] { 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66, 69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99, 102, 105, 108 };
-
-        private static int[][] LevelScalingAttenuationValue = new int[][] {
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,4},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,5},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,4,5,6,7,8},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,9},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,11},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,13},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,14},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,16},
-                        new int[] {0,0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,4,4,5,6,7,9,11,13,15,17},
-                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,11,14,16,18},
-                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,17,20},
-                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,21},
-                        new int[] {0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,22},
-                        new int[] {0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,23},
-                        new int[] {0,0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,25},
-                        new int[] {0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,4,4,6,7,8,10,11,14,16,20,23,26},
-                        new int[] {0,0,0,0,0,0,0,0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,20,24,27},
-                        new int[] {0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,13,15,18,21,25,29},
-                        new int[] {0,0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,19,22,26,30},
-                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,10,11,14,16,20,23,28,31},
-                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,20,24,29,33},
-                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,21,25,30,34},
-                        new int[] {0,0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,8,9,11,13,15,18,22,26,31,35},
-                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,27,32,36},
-                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,10,12,14,16,20,24,28,33,38},
-                        new int[] {0,0,0,0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,24,29,34,39},
-                        new int[] {0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,21,25,30,35,40},
-                        new int[] {0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,42},
-                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,43},
-                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,4,4,5,6,8,10,11,14,16,19,23,28,33,39,44},
-                        new int[] {0,0,0,0,1,1,1,1,1,2,2,3,4,5,5,7,8,10,12,14,17,20,24,28,34,40,45},
-                        new int[] {0,0,0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,17,20,24,29,35,41,47},
-                        new int[] {0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,25,30,35,42,48},
-                        new int[] {0,0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,43,49},
-                        new int[] {0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,26,32,38,45,51},
-                        new int[] {0,0,0,1,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,38,45,52},
-                        new int[] {0,0,0,1,1,1,1,1,2,2,3,4,4,5,6,8,9,12,14,16,20,23,28,33,40,47,53},
-                        new int[] {0,0,0,1,1,1,1,1,2,3,3,4,4,6,7,8,10,12,14,17,20,24,28,34,40,48,54},
-                        new int[] {0,0,0,1,1,1,1,1,2,3,3,4,5,6,7,8,10,12,14,17,20,24,29,35,41,49,56},
-                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,21,25,30,36,43,50,57},
-                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,21,26,30,36,43,51,58},
-                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,44,52,60},
-                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,53,61},
-                        new int[] {0,0,0,1,1,1,1,2,2,3,3,4,5,6,8,9,11,14,16,19,23,27,32,39,46,55,62},
-                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,11,14,16,20,23,28,33,40,47,56,63},
-                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,5,7,8,9,12,14,17,20,24,28,34,40,48,57,65},
-                        new int[] {0,0,1,1,1,1,2,2,2,3,4,4,6,7,8,10,12,14,17,20,24,29,35,41,49,58,66},
-                        new int[] {0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,15,17,21,25,30,35,42,50,59,67},
-                        new int[] {0,0,1,1,1,1,2,2,2,3,4,5,6,7,8,10,12,15,18,21,25,30,36,43,51,60,69},
-                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,22,26,31,36,44,52,61,70},
-                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,10,13,16,18,22,26,31,37,45,53,63,71},
-                        new int[] {0,0,1,1,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,54,63,72},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,27,32,38,46,55,65,74},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,13,16,19,23,28,33,39,47,56,66,75},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,6,8,9,11,14,17,20,24,28,33,40,48,57,67,76},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,7,8,10,11,14,17,20,24,29,34,41,49,58,68,78},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,4,5,7,8,10,12,14,17,20,24,29,35,41,49,59,69,79},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,8,10,12,14,18,21,25,30,35,42,50,60,70,80},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,21,25,30,36,43,51,61,72,82},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,21,26,30,36,43,52,61,73,83},
-                        new int[] {0,0,1,1,1,2,2,2,3,4,5,6,7,9,10,12,15,18,22,26,31,37,44,53,63,74,84},
-                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,19,22,26,31,37,45,53,63,75,85},
-                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,38,45,54,64,76,87},
-                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,39,46,55,65,77,88},
-                        new int[] {0,1,1,1,2,2,2,3,3,4,5,6,8,9,11,13,16,20,23,28,33,39,47,56,66,78,89},
-                        new int[] {0,1,1,1,2,2,2,3,3,5,5,6,8,10,11,13,16,20,23,28,33,40,47,57,67,80,91},
-                        new int[] {0,1,1,1,2,2,2,3,3,5,5,6,8,10,11,14,16,20,24,28,34,40,48,57,68,80,92},
-                        new int[] {0,1,1,1,2,2,2,3,4,5,5,6,8,10,12,14,17,20,24,29,34,41,49,58,69,82,93},
-                        new int[] {0,1,1,1,2,2,2,3,4,5,5,7,8,10,12,14,17,21,24,29,35,41,49,59,70,83,94},
-                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,21,25,30,35,42,50,60,71,84,96},
-                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,14,17,21,25,30,36,43,51,60,72,85,97},
-                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,22,25,30,36,43,51,61,73,86,98},
-                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,9,10,12,15,18,22,26,31,37,44,52,62,74,87,100},
-                        new int[] {0,1,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,31,37,44,53,63,75,88,101},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,18,22,26,32,38,45,53,64,76,90,102},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,15,19,23,27,32,38,45,54,65,77,91,103},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,32,39,46,55,65,78,92,105},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,7,9,11,13,16,19,23,27,33,39,47,55,66,79,93,106},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,8,9,11,13,16,19,24,28,33,40,47,56,67,80,94,107},
-                        new int[] {0,1,1,2,2,2,3,3,4,5,6,8,9,11,14,16,20,24,28,34,40,48,57,68,81,95,109},
-                        new int[] {0,1,1,2,2,3,3,3,4,6,6,8,9,12,14,16,20,24,28,34,41,48,57,69,82,96,110},
-                        new int[] {0,1,1,2,2,3,3,3,4,6,7,8,10,12,14,17,20,24,29,35,41,49,58,70,83,98,111},
-                        new int[] {0,1,1,2,2,3,3,3,4,6,7,8,10,12,14,17,20,25,29,35,41,49,59,70,83,98,112},
-                        new int[] {0,1,1,2,2,3,3,4,4,6,7,8,10,12,14,17,21,25,29,35,42,50,59,71,84,100,114},
-                        new int[] {0,1,1,2,2,3,3,4,4,6,7,8,10,12,14,17,21,25,30,36,43,51,60,72,86,101,115},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,12,15,17,21,26,30,36,43,51,61,73,86,102,116},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,12,15,18,21,26,31,37,43,52,62,74,87,103,118},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,21,26,31,37,44,52,62,74,88,104,119},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,8,10,13,15,18,22,26,31,37,44,53,63,75,89,105,120},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,10,13,15,18,22,27,31,38,45,53,63,76,90,106,121},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,15,18,22,27,32,38,45,54,64,77,91,108,123},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,22,27,32,39,46,55,65,78,92,109,124},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,28,32,39,46,55,65,78,93,110,125},
-                        new int[] {0,1,1,2,2,3,3,4,5,6,7,9,11,13,16,19,23,28,33,39,47,56,66,79,94,111,127}
-            };
-
-        private int f_KVS = -1;
-
-        /// <summary>
-        /// Level Scaling
-        /// </summary>
-        [DataMember]
-        [Category("Sound(Driver)")]
-        [Description("Key Velocity Sense(-1(MAmi),0(Off),1-7(KVS On)\r\n" +
-            "-1: MAmi original algolithm" +
-            " 0: Off(Ignore Velocity)")]
-        [DefaultValue(-1)]
-        [SlideParametersAttribute(-1, 7)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public int KVS
-        {
-            get
-            {
-                return f_KVS;
-            }
-            set
-            {
-                if (-1 <= value && value <= 7)
-                    f_KVS = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="noteNumber"></param>
-        /// <returns></returns>
-        public int GetKvsAttenuationValue(int velocity)
-        {
-            if (KVS < 0)
-                return -1;
-            if (KVS == 0)
-                return 0;
-
-            return KeyVelocitySenseValues[velocity][KVS - 1];
-        }
-
-        private static int[][] KeyVelocitySenseValues = new int[][]{
-                          //kvs=1   2   3   4   5   6   7
-                new int[] {     0,  0,  0,  0,  0,  0,  0},
-                new int[] {    18, 29, 40, 51, 62, 73, 84},
-                new int[] {    17, 28, 38, 48, 58, 69, 79},
-                new int[] {    17, 27, 37, 47, 56, 66, 76},
-                new int[] {    17, 26, 36, 45, 55, 64, 74},
-                new int[] {    16, 25, 34, 44, 53, 62, 71},
-                new int[] {    16, 25, 34, 43, 51, 60, 69},
-                new int[] {    16, 24, 33, 41, 50, 58, 67},
-                new int[] {    15, 24, 32, 40, 48, 57, 65},
-                new int[] {    15, 23, 31, 39, 47, 55, 63},
-                new int[] {    15, 23, 30, 38, 46, 54, 62},
-                new int[] {    15, 22, 30, 38, 45, 53, 60},
-                new int[] {    14, 22, 29, 37, 44, 51, 59},
-                new int[] {    14, 21, 28, 36, 43, 50, 57},
-                new int[] {    14, 21, 28, 35, 42, 49, 56},
-                new int[] {    14, 21, 27, 34, 41, 48, 55},
-                new int[] {    14, 20, 27, 34, 40, 47, 53},
-                new int[] {    13, 20, 26, 33, 39, 46, 52},
-                new int[] {    13, 20, 26, 32, 38, 45, 51},
-                new int[] {    13, 19, 25, 32, 38, 44, 50},
-                new int[] {    13, 19, 25, 31, 37, 43, 49},
-                new int[] {    13, 19, 24, 30, 36, 42, 48},
-                new int[] {    13, 18, 24, 30, 35, 41, 47},
-                new int[] {    13, 18, 24, 29, 35, 40, 46},
-                new int[] {    12, 18, 23, 29, 34, 40, 45},
-                new int[] {    12, 18, 23, 28, 34, 39, 44},
-                new int[] {    12, 17, 23, 28, 33, 38, 43},
-                new int[] {    12, 17, 22, 27, 32, 37, 42},
-                new int[] {    12, 17, 22, 27, 32, 37, 42},
-                new int[] {    12, 17, 21, 26, 31, 36, 41},
-                new int[] {    12, 17, 21, 26, 31, 36, 40},
-                new int[] {    12, 16, 21, 26, 30, 35, 39},
-                new int[] {    12, 16, 21, 25, 30, 34, 39},
-                new int[] {    11, 16, 20, 25, 29, 33, 38},
-                new int[] {    11, 16, 20, 24, 29, 33, 37},
-                new int[] {    11, 15, 20, 24, 28, 32, 36},
-                new int[] {    11, 15, 19, 24, 28, 32, 36},
-                new int[] {    11, 15, 19, 23, 27, 31, 35},
-                new int[] {    11, 15, 19, 23, 27, 31, 35},
-                new int[] {    11, 15, 19, 23, 26, 30, 34},
-                new int[] {    11, 15, 18, 22, 26, 30, 33},
-                new int[] {    11, 14, 18, 22, 25, 29, 33},
-                new int[] {    11, 14, 18, 22, 25, 29, 32},
-                new int[] {    11, 14, 18, 21, 25, 28, 32},
-                new int[] {    10, 14, 17, 21, 24, 28, 31},
-                new int[] {    10, 14, 17, 21, 24, 27, 31},
-                new int[] {    10, 14, 17, 20, 23, 27, 30},
-                new int[] {    10, 13, 17, 20, 23, 26, 29},
-                new int[] {    10, 13, 16, 20, 23, 26, 29},
-                new int[] {    10, 13, 16, 19, 22, 25, 28},
-                new int[] {    10, 13, 16, 19, 22, 25, 28},
-                new int[] {    10, 13, 16, 19, 22, 25, 28},
-                new int[] {    10, 13, 16, 19, 21, 24, 27},
-                new int[] {    10, 13, 15, 18, 21, 24, 26},
-                new int[] {    10, 12, 15, 18, 20, 23, 26},
-                new int[] {    10, 12, 15, 18, 20, 23, 25},
-                new int[] {    10, 12, 15, 17, 20, 22, 25},
-                new int[] {    10, 12, 15, 17, 20, 22, 25},
-                new int[] {     9, 12, 14, 17, 19, 22, 24},
-                new int[] {     9, 12, 14, 17, 19, 21, 24},
-                new int[] {     9, 12, 14, 16, 19, 21, 23},
-                new int[] {     9, 12, 14, 16, 18, 21, 23},
-                new int[] {     9, 11, 13, 16, 18, 20, 22},
-                new int[] {     9, 11, 13, 15, 17, 19, 21},
-                new int[] {     9, 11, 13, 15, 17, 19, 21},
-                new int[] {     9, 11, 13, 15, 17, 19, 21},
-                new int[] {     9, 11, 13, 15, 16, 18, 20},
-                new int[] {     9, 11, 12, 14, 16, 18, 20},
-                new int[] {     9, 11, 12, 14, 16, 18, 19},
-                new int[] {     9, 10, 12, 14, 15, 17, 19},
-                new int[] {     9, 10, 12, 14, 15, 17, 18},
-                new int[] {     9, 10, 12, 13, 15, 16, 18},
-                new int[] {     9, 10, 12, 13, 15, 16, 18},
-                new int[] {     8, 10, 11, 13, 14, 16, 17},
-                new int[] {     8, 10, 11, 13, 14, 15, 17},
-                new int[] {     8, 10, 11, 12, 14, 15, 16},
-                new int[] {     8, 10, 11, 12, 13, 15, 16},
-                new int[] {     8,  9, 11, 12, 13, 14, 15},
-                new int[] {     8,  9, 10, 12, 13, 14, 15},
-                new int[] {     8,  9, 10, 11, 12, 13, 14},
-                new int[] {     8,  9, 10, 11, 12, 13, 14},
-                new int[] {     8,  9, 10, 11, 12, 13, 14},
-                new int[] {     8,  9, 10, 11, 11, 12, 13},
-                new int[] {     8,  9,  9, 10, 11, 12, 13},
-                new int[] {     8,  9,  9, 10, 11, 12, 12},
-                new int[] {     8,  8,  9, 10, 10, 11, 12},
-                new int[] {     8,  8,  9, 10, 10, 11, 11},
-                new int[] {     8,  8,  9, 10, 10, 11, 11},
-                new int[] {     8,  8,  9,  9, 10, 10, 11},
-                new int[] {     8,  8,  9,  9, 10, 10, 11},
-                new int[] {     7,  8,  8,  9,  9, 10, 10},
-                new int[] {     7,  8,  8,  9,  9,  9, 10},
-                new int[] {     7,  8,  8,  9,  9,  9, 10},
-                new int[] {     7,  8,  8,  8,  9,  9,  9},
-                new int[] {     7,  8,  8,  8,  8,  9,  9},
-                new int[] {     7,  7,  8,  8,  8,  8,  8},
-                new int[] {     7,  7,  7,  8,  8,  8,  8},
-                new int[] {     7,  7,  7,  8,  8,  8,  8},
-                new int[] {     7,  7,  7,  7,  7,  7,  7},
-                new int[] {     7,  7,  7,  7,  7,  7,  7},
-                new int[] {     7,  7,  7,  7,  7,  7,  7},
-                new int[] {     7,  7,  7,  7,  7,  7,  7},
-                new int[] {     7,  7,  7,  7,  6,  6,  6},
-                new int[] {     7,  7,  7,  7,  6,  6,  6},
-                new int[] {     7,  7,  6,  6,  6,  6,  6},
-                new int[] {     7,  7,  6,  6,  6,  6,  5},
-                new int[] {     7,  7,  6,  6,  6,  6,  5},
-                new int[] {     7,  6,  6,  6,  5,  5,  5},
-                new int[] {     7,  6,  6,  6,  5,  5,  5},
-                new int[] {     7,  6,  6,  6,  5,  5,  4},
-                new int[] {     7,  6,  6,  5,  5,  4,  4},
-                new int[] {     7,  6,  6,  5,  5,  4,  4},
-                new int[] {     7,  6,  6,  5,  5,  4,  4},
-                new int[] {     6,  6,  5,  5,  4,  4,  3},
-                new int[] {     6,  6,  5,  5,  4,  4,  3},
-                new int[] {     6,  6,  5,  5,  4,  3,  3},
-                new int[] {     6,  6,  5,  5,  4,  3,  3},
-                new int[] {     6,  6,  5,  4,  4,  3,  2},
-                new int[] {     6,  6,  5,  4,  4,  3,  2},
-                new int[] {     6,  6,  5,  4,  3,  3,  2},
-                new int[] {     6,  6,  5,  4,  3,  3,  2},
-                new int[] {     6,  5,  5,  4,  3,  2,  1},
-                new int[] {     6,  5,  5,  4,  3,  2,  1},
-                new int[] {     6,  5,  4,  4,  3,  2,  1},
-                new int[] {     6,  5,  4,  4,  3,  2,  1},
-                new int[] {     6,  5,  4,  3,  2,  1,  0},
-                new int[] {     6,  5,  4,  3,  2,  1,  0},
-                new int[] {     6,  5,  4,  3,  2,  1,  0}
-            };
-
-    }
-
 
 }

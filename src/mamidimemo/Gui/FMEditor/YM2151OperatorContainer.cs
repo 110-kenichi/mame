@@ -36,7 +36,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(op.MUL),
                         nameof(op.DT1),
                         nameof(op.AM),
-                        nameof(op.DT2));
+                        nameof(op.DT2),
+                        nameof(op.LS),
+                        nameof(op.KVS)
+                        );
             }
             set
             {
@@ -52,7 +55,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(op.MUL),
                     nameof(op.DT1),
                     nameof(op.AM),
-                    nameof(op.DT2));
+                    nameof(op.DT2),
+                    nameof(op.LS),
+                    nameof(op.KVS)
+                    );
             }
         }
 
@@ -77,6 +83,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("DT1", op.DT1, 0, 7));
             AddControl(new RegisterValue("AM", op.AM, 0, 1));
             AddControl(new RegisterValue("DT2", op.DT2, 0, 3));
+            AddControl(new RegisterValue("LS", op.LS, 0, 99));
+            AddControl(new RegisterValue("KVS", op.KVS, -1, 7));
 
             AddControl(new RegisterEnvForm(
                 (RegisterValue)GetControl("AR"),
