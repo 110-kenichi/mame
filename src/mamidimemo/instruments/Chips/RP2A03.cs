@@ -1500,7 +1500,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x02), (byte)((nt << 7) | (n & 0xf)));
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x03), (byte)(timbre.PlayLength << 3));
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((3 * 4) + 0x03), (byte)(timbre.PlayLength << 3), false, false);
             }
 
             private void updateFdsPitch()

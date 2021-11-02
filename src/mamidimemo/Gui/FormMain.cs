@@ -374,11 +374,8 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 addItem(inst);
             listViewIntruments.Sort();
-            propertyGrid.SelectedObjects = new object[] { };
+            setSelectedObject(new InstrumentBase[] { });
             toolStripButtonPopup.Enabled = false;
-            //HACK:
-            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
-            toolStrip.Items.Add(toolStripButtonPopup);
         }
 
         /// <summary>
@@ -407,11 +404,8 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (var inst in InstrumentManager.GetAllInstruments())
                 addItem(inst);
             listViewIntruments.Sort();
-            propertyGrid.SelectedObjects = new object[] { };
+            setSelectedObject(new InstrumentBase[] { });
             toolStripButtonPopup.Enabled = false;
-            //HACK:
-            var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
-            toolStrip.Items.Add(toolStripButtonPopup);
         }
 
         /// <summary>
@@ -546,11 +540,65 @@ namespace zanac.MAmidiMEmo.Gui
             List<InstrumentBase> insts = new List<InstrumentBase>();
             foreach (ListViewItem item in listViewIntruments.SelectedItems)
                 insts.Add((InstrumentBase)item.Tag);
-            propertyGrid.SelectedObjects = insts.ToArray();
+            setSelectedObject(insts.ToArray());
             toolStripButtonPopup.Enabled = (listViewIntruments.SelectedItems.Count != 0);
-            //HACK:
+        }
+
+        private string lastCheckedLabel = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="insts"></param>
+        private void setSelectedObject(InstrumentBase[] insts)
+        {
             var toolStrip = propertyGrid.Controls.OfType<ToolStrip>().FirstOrDefault();
+
+            //Retreive last selected button name
+            bool foundSeparator = false;
+            foreach (ToolStripItem item in toolStrip.Items)
+            {
+                if (!foundSeparator)
+                {
+                    if (item is ToolStripSeparator)
+                        foundSeparator = true;
+                    continue;
+                }
+                var menu = item as ToolStripButton;
+                if (menu != null && menu.Enabled && menu.Visible && menu.Checked)
+                {
+                    lastCheckedLabel = menu.Text;
+                    break;
+                }
+            }
+
+            propertyGrid.SelectedObjects = insts;
+            //HACK:
             toolStrip.Items.Add(toolStripButtonPopup);
+
+            //Re-select last selected button
+            if (lastCheckedLabel != null)
+            {
+                foundSeparator = false;
+                foreach (ToolStripItem item in toolStrip.Items)
+                {
+                    if (!foundSeparator)
+                    {
+                        if (item is ToolStripSeparator)
+                            foundSeparator = true;
+                        continue;
+                    }
+                    var menu = item as ToolStripButton;
+                    if (menu != null && menu.Enabled && menu.Visible)
+                    {
+                        if (string.Equals(menu.Text, lastCheckedLabel, StringComparison.Ordinal))
+                        {
+                            menu.PerformClick();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

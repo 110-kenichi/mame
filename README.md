@@ -268,7 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
-4.0.0.1 Removed "Experimental" from YM2414.
+4.0.0.1 Fixed RP2A03 NOISE ch does not sound properly.
+4.0.0.0 Removed "Experimental" from YM2414.
 		Fixed LFOD and LFD calculation again for YM2414. Updated sample files for YM2414. 
 		Supported SPFM for YM2414.
 		Supported KVS, LS for YM2151 and fixed KVS of YM2414.
