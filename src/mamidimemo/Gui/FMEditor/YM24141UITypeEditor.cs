@@ -93,6 +93,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(tim.PMS),
                         nameof(tim.AMS2),
                         nameof(tim.PMS2),
+
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
                         "GlobalSettings.LFRQ2",

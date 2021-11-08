@@ -65,6 +65,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     nameof(op.DT2),
                     nameof(op.FINE),
                     nameof(op.FIX),
+                    nameof(op.FIXR),
                     nameof(op.FIXF),
                     nameof(op.OSCW),
                     nameof(op.EGSF),

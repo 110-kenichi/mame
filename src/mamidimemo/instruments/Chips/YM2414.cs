@@ -1864,6 +1864,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "GlobalSettings.LFOW2",
                         "GlobalSettings.SYNC",
                         "GlobalSettings.SYNC2",
+                        "GlobalSettings.NE",
+                        "GlobalSettings.NFRQ",
                         "GlobalSettings.LFD",
                         "GlobalSettings.LFD2",
 
@@ -1977,6 +1979,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "GlobalSettings.LFOW2",
                         "GlobalSettings.SYNC",
                         "GlobalSettings.SYNC2",
+                        "GlobalSettings.NE",
+                        "GlobalSettings.NFRQ",
+                        "GlobalSettings.LFD",
+                        "GlobalSettings.LFD2",
 
                         "Ops[0].EN",
                         "Ops[0].AR",
