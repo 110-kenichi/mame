@@ -1140,7 +1140,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("MIDI")]
-        [Description("Volume ((L)0-63(C)64-127(R)) <MIDI 16ch>")]
+        [Description("Panpot ((L)0-63(C)64-127(R)) <MIDI 16ch>")]
         [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [Mask(127)]

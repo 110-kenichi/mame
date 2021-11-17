@@ -147,6 +147,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             f_CurrentSoundEngineType = SoundEngineType.Software;
                             SetDevicePassThru(false);
                         }
+
+                        //http://sr4.sakura.ne.jp/fmsound/opz.html
+                        YM2414WriteData(UnitNumber, 0x09, 0, 0, 0x00);
+                        YM2414WriteData(UnitNumber, 0x0f, 0, 0, 0x00);
+                        YM2414WriteData(UnitNumber, 0x1c, 0, 0, 0x00);
+                        YM2414WriteData(UnitNumber, 0x1e, 0, 0, 0x00);
+
+                        YM2414WriteData(UnitNumber, 0x0a, 0, 0, 0x04);
+                        YM2414WriteData(UnitNumber, 0x14, 0, 0, 0x70);
+                        YM2414WriteData(UnitNumber, 0x15, 0, 0, 0x01);
+
                         break;
                 }
             }
@@ -811,6 +822,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (spfmPtrLock)
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
 
             base.Dispose();
         }
@@ -1691,11 +1709,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 parentModule.YM2414WriteData(unitNumber, 0x28, 0, Slot, (byte)((octave << 4) | nn), false);
 
-                byte mono = CalcCurrentPanpot();
-                if (32 <= mono && mono < 96)
+                byte pan = CalcCurrentPanpot();
+
+                byte mono = 0;
+                if (32 <= pan && pan < 96)
                     mono = 0x1;
-                else
-                    mono = 0x0;
+
                 parentModule.YM2414WriteData(unitNumber, 0x30, 0, Slot, (byte)(kf << 2 | mono), false);
 
                 base.OnPitchUpdated();
@@ -1752,22 +1771,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnPanpotUpdated()
             {
+                //0x0a bit3 = PSG
+                //parentModule.YM2414WriteData(unitNumber, parentModule.LFOD, 0, 0, parentModule.LFRQ);
+
                 byte pan = CalcCurrentPanpot();
-                if (pan < 32)
-                    pan = 0x1;
-                else if (pan >= 96)
-                    pan = 0x2;
-                else
-                    pan = 0x3;
+
                 byte mono = 0;
                 if (32 <= pan && pan < 96)
                     mono = 0x1;
+
+                if (pan < 32)
+                    pan = 0x2;
+                else if (pan >= 96)
+                    pan = 0x1;
                 else
-                    mono = 0x0;
+                    pan = 0x0;
 
                 parentModule.YM2414WriteData(unitNumber, 0x20, 0, Slot, (byte)(pan << 6 | (timbre.FB << 3) | timbre.ALG));
 
-                uint? wd = parentModule.YM2414ReadData(0x20, 0, Slot);
+                uint? wd = parentModule.YM2414ReadData(0x30, 0, Slot);
                 if (wd != null)
                 {
                     byte data = (byte)(wd.Value & 0xfe);
