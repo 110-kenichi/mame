@@ -1781,9 +1781,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     mono = 0x1;
 
                 if (pan < 32)
-                    pan = 0x2;
-                else if (pan >= 96)
                     pan = 0x1;
+                else if (pan >= 96)
+                    pan = 0x2;
                 else
                     pan = 0x0;
 
