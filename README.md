@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+4.0.1.0 Increased octave range for OPN and OPL family.
 4.0.0.4 Fixed YM2414 LR channel operation.
 4.0.0.3 Fixed YM2414 LR channel operation.
         Fixed YM2414 initialization and deinitialization.

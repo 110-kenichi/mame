@@ -1072,16 +1072,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
                 var freq = convertFmFrequency(nnOn, 0);
                 var octave = nnOn.GetNoteOctave();
-                if (octave < 0)
-                    octave = 0;
-                else if (octave > 7)
-                    octave = 7;
-                octave = octave << 3;
 
                 if (d != 0)
                     freq += (convertFmFrequency(nnOn, (d < 0) ? -1 : +1) - freq) * Math.Abs(d - Math.Truncate(d));
 
+                if (octave < 0)
+                {
+                    freq /= 2 * -octave;
+                    octave = 0;
+                }
+                else if (octave > 7)
+                {
+                    freq *= 2 * (octave - 7);
+                    if (freq > 0x7ff)
+                        freq = 0x7ff;
+                    octave = 7;
+                }
+
                 ushort dfreq = (ushort)Math.Round(freq);
+                octave = octave << 3;
 
                 parentModule.Ym2612WriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)), false);
                 parentModule.Ym2612WriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq), false);
@@ -1155,16 +1164,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 int nn = note.NoteNumber + deltaNoteNum;
                 int oct = note.GetNoteOctave();
-                if (nn < 12)
-                {
-                    nn = 12;
-                    oct = 0;
-                }
-                else if (nn > 107)
-                {
-                    nn = 107;
-                    oct = 7;
-                }
 
                 var freq = MidiManager.CalcCurrentFrequency(nn);
 

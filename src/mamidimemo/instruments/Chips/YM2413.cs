@@ -1308,7 +1308,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 byte reg7 = 0x16;
                                 val7 += val7 * pitch / 4096;
-                                if(lastToneType == ToneType.DrumSetEnhanced)
+                                if (lastToneType == ToneType.DrumSetEnhanced)
                                     val7 += ch7Ofst;
                                 if (val7 > 4095)
                                     val7 = 4095;
@@ -1358,14 +1358,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             else if (noteNum < 0)
                                 noteNum = 0;
                             var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
-                            ushort freq = convertFmFrequency(nnOn);
-                            var oct = nnOn.GetNoteOctave();
-                            if (oct < 0)
-                                oct = 0;
-                            byte octave = (byte)(oct << 1);
+                            int freq = convertFmFrequency(nnOn);
+                            int oct = nnOn.GetNoteOctave();
 
                             if (d != 0)
                                 freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
+
+                            if (oct < 0)
+                            {
+                                freq /= 2 * -oct;
+                                oct = 0;
+                            }
+                            else if (oct > 7)
+                            {
+                                freq *= 2 * (oct - 7);
+                                if (freq > 0x3ff)
+                                    freq = 0x3ff;
+                                oct = 7;
+                            }
+
+                            byte octave = (byte)(oct << 1);
 
                             //keyon
                             byte kon = IsKeyOff ? (byte)0 : (byte)0x10;

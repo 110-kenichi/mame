@@ -965,22 +965,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 else if (noteNum < 0)
                     noteNum = 0;
                 var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
-                ushort freq = convertFmFrequency(nnOn);
+                int freq = convertFmFrequency(nnOn);
                 var octave = nnOn.GetNoteOctave();
-                if (octave < 0)
-                {
-                    octave = 0;
-                    freq = freqTable[0];
-                }
-                if (octave > 7)
-                {
-                    octave = 7;
-                    freq = freqTable[13];
-                }
-                octave = octave << 2;
 
                 if (d != 0)
                     freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
+
+                if (octave < 0)
+                {
+                    freq /= 2 * -octave;
+                    octave = 0;
+                }
+                else if (octave > 7)
+                {
+                    freq *= 2 * (octave - 7);
+                    if (freq > 0x3ff)
+                        freq = 0x3ff;
+                    octave = 7;
+                }
+
+                octave = octave << 2;
 
                 //keyon
                 byte kon = IsKeyOff ? (byte)0 : (byte)0x20;
