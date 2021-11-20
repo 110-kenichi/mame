@@ -108,6 +108,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
 
+            pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
             this.Timbre = timbre;
             this.Instrument = inst;
 
@@ -214,11 +215,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             foreach (var inst in InstrumentManager.GetAllInstruments())
             {
                 if (Instrument.DeviceID == inst.DeviceID && Instrument.UnitNumber == inst.UnitNumber)
-                {
-                    Close();
-                    break;
-                }
+                    return;
             }
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         /// <summary>
@@ -234,11 +234,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             foreach (var inst in InstrumentManager.GetAllInstruments())
             {
                 if (Instrument.DeviceID == inst.DeviceID && Instrument.UnitNumber == inst.UnitNumber)
-                {
-                    Close();
-                    break;
-                }
+                    return;
             }
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private TimbreBase[] findTimbre(GridItem item)
@@ -524,7 +523,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="e"></param>
         private void MidiManager_MidiEventHooked(object sender, CancelMidiEventReceivedEventArgs e)
         {
-            if (!this.IsHandleCreated)
+            if (!this.IsHandleCreated || ActiveForm != this)
                 return;
 
             this.Invoke(new MethodInvoker(() =>
@@ -1179,6 +1178,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             InstrumentManager.Panic();
+        }
+
+        private void buttonOK_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

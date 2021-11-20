@@ -92,10 +92,11 @@
             // pianoControl1
             // 
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pianoControl1.Location = new System.Drawing.Point(0, 27);
+            this.pianoControl1.Location = new System.Drawing.Point(0, 25);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(793, 53);
+            this.pianoControl1.Size = new System.Drawing.Size(793, 55);
             this.pianoControl1.TabIndex = 0;
+            this.pianoControl1.TargetTimbres = null;
             // 
             // toolStrip2
             // 
@@ -118,7 +119,7 @@
             this.toolStripComboBoxCC});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(793, 27);
+            this.toolStrip2.Size = new System.Drawing.Size(793, 25);
             this.toolStrip2.TabIndex = 2;
             // 
             // toolStripComboBoxCh
@@ -127,30 +128,31 @@
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
             this.toolStripComboBoxCh.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15"});
+            "1ch",
+            "2ch",
+            "3ch",
+            "4ch",
+            "5ch",
+            "6ch",
+            "7ch",
+            "8ch",
+            "9ch",
+            "10ch",
+            "11ch",
+            "12ch",
+            "13ch",
+            "14ch",
+            "15ch",
+            "16ch"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 27);
+            this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 25);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(43, 24);
+            this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
             this.toolStripLabel2.Text = "Key Ch";
             // 
             // toolStripButtonPlay
@@ -159,7 +161,7 @@
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
             this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(85, 24);
+            this.toolStripButtonPlay.Size = new System.Drawing.Size(85, 22);
             this.toolStripButtonPlay.Text = "PlayOnEdit";
             // 
             // toolStripButtonHook
@@ -167,7 +169,7 @@
             this.toolStripButtonHook.CheckOnClick = true;
             this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
-            this.toolStripButtonHook.Size = new System.Drawing.Size(64, 24);
+            this.toolStripButtonHook.Size = new System.Drawing.Size(64, 22);
             this.toolStripButtonHook.Text = "HookMidi";
             this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
@@ -177,43 +179,43 @@
             this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(59, 24);
+            this.toolStripButton1.Size = new System.Drawing.Size(59, 22);
             this.toolStripButton1.Text = "Panic!";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(33, 24);
+            this.toolStripLabel1.Size = new System.Drawing.Size(33, 22);
             this.toolStripLabel1.Text = "Note";
             // 
             // toolStripComboBoxNote
             // 
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            this.toolStripComboBoxNote.Size = new System.Drawing.Size(75, 27);
+            this.toolStripComboBoxNote.Size = new System.Drawing.Size(75, 25);
             // 
             // toolStripLabel4
             // 
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(48, 24);
+            this.toolStripLabel4.Size = new System.Drawing.Size(48, 22);
             this.toolStripLabel4.Text = "Velocity";
             // 
             // toolStripComboBoxVelo
             // 
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(75, 27);
+            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(75, 25);
             // 
             // toolStripLabel3
             // 
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(31, 24);
+            this.toolStripLabel3.Size = new System.Drawing.Size(31, 22);
             this.toolStripLabel3.Text = "Gate";
             // 
             // toolStripComboBoxGate
@@ -226,17 +228,17 @@
             "2000ms",
             "5000ms"});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 27);
+            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 25);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripLabel5
             // 
             this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(21, 24);
+            this.toolStripLabel5.Size = new System.Drawing.Size(21, 22);
             this.toolStripLabel5.Text = "CC";
             // 
             // toolStripComboBoxCC
@@ -373,7 +375,7 @@
             "126",
             "127"});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 23);
+            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 25);
             // 
             // tableLayoutPanel1
             // 
@@ -469,6 +471,7 @@
             this.buttonOK.TabIndex = 4;
             this.buttonOK.Text = "&OK";
             this.buttonOK.UseSelectable = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
@@ -480,6 +483,7 @@
             this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "&Cancel";
             this.buttonCancel.UseSelectable = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // metroButtonImport
             // 

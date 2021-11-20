@@ -8,12 +8,14 @@ using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
+using zanac.MAmidiMEmo.Midi;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
@@ -81,16 +83,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             if (inst != null)
             {
-                using (FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel))
+                if (singleSel)
                 {
-                    if (singleSel)
-                    {
-                        var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
-                        nameof(tim.FB),
-                        nameof(tim.SUS));
+                    var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
+                    nameof(tim.FB),
+                    nameof(tim.SUS));
                     var tt = tim.ToneType;
                     tim.ToneType = ToneType.Custom;
-                    ed.MmlValueGeneral = mmlValueGeneral;
 
                     List<string> mmlValueOps = new List<string>();
 
@@ -127,18 +126,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(ca.DIST)
                         ));
 
-                    DialogResult dr = editorService.ShowDialog(ed);
-                    if (dr == DialogResult.OK)
+                    FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel);
                     {
-                        return ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                        ed.MmlValueGeneral = mmlValueGeneral;
+
+                        ed.FormClosed += (s, e) =>
+                        {
+                            if (ed.DialogResult == DialogResult.OK)
+                            {
+                                tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
+                            }
+                            else
+                            {
+                                tim.ToneType = tt;
+                                tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
+                            }
+                        };
+                        ed.Show();
                     }
-                    else
-                    {
-                        tim.ToneType = tt;
-                        return mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
-                    }
-                    }
-                    else
+                }
+                else
+                {
+                    using (FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel))
                     {
                         string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
                         DialogResult dr = editorService.ShowDialog(ed);

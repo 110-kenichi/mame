@@ -38,7 +38,6 @@ namespace zanac.MAmidiMEmo.Gui
 
         private int bKeyWOfst;
 
-
         private Rectangle cr;
 
         private Dictionary<SoundBase, SoundUpdatedEventArgs> soundKeyOn = new Dictionary<SoundBase, SoundUpdatedEventArgs>();
@@ -83,6 +82,12 @@ namespace zanac.MAmidiMEmo.Gui
                     Invalidate(new Rectangle(0, 0, wKeyW, Height));
                 }
             }
+        }
+
+        public TimbreBase[] TargetTimbres
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -145,6 +150,21 @@ namespace zanac.MAmidiMEmo.Gui
                 bool fill;
                 SoundBase snd = (SoundBase)sender;
 
+                if (TargetTimbres != null)
+                {
+                    bool found = false;
+                    foreach (var tt in TargetTimbres)
+                    {
+                        if (snd.Timbre == tt)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found)
+                        return;
+                }
+
                 if (!receiveChs[snd.NoteOnEvent.Channel])
                     return;
 
@@ -194,6 +214,21 @@ namespace zanac.MAmidiMEmo.Gui
                     return;
 
                 bool fill;
+
+                if (TargetTimbres != null)
+                {
+                    bool found = false;
+                    foreach (var tt in TargetTimbres)
+                    {
+                        if (snd.Timbre == tt)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        return;
+                }
 
                 if (!receiveChs[snd.NoteOnEvent.Channel])
                     return;

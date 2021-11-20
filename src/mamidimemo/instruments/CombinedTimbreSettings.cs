@@ -205,6 +205,39 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         } = ProgramAssignmentTimbreNumber.Timbre0;
 
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public TimbreBase TimberObject
+        {
+            get
+            {
+                return findTimbre();
+            }
+        }
+
+        private TimbreBase findTimbre()
+        {
+            TimbreBase inst = null;
+            foreach (var i in InstrumentManager.GetAllInstruments())
+            {
+                Parallel.ForEach(i.CombinedTimbres, t =>
+                {
+                    foreach (var bt in t.Timbres)
+                    {
+                        if (bt == this && (int)TimbreNumber < i.BaseTimbres.Length)
+                        {
+                            inst = i.BaseTimbres[(int)TimbreNumber];
+                            break;
+                        }
+                    }
+                    if (inst != null)
+                        return;
+                });
+            }
+            return inst;
+        }
+
+
         [DataMember]
         [Description("Memo")]
         [DefaultValue(null)]

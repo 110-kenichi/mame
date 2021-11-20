@@ -40,7 +40,10 @@ namespace zanac.MAmidiMEmo.ComponentModel
             if (ccm != null)
             {
                 return this.InitializeServerObject(ccm);
-
+                //RealProxy rp = RemotingServices.GetRealProxy(this.f_Target);
+                //rp.InitializeServerObject(ccm);
+                //MarshalByRefObject tp = this.GetTransparentProxy() as MarshalByRefObject;
+                //return EnterpriseServicesHelper.CreateConstructionReturnMessage(ccm, tp);
             }
 
             IMethodCallMessage mcm = (IMethodCallMessage)msg;

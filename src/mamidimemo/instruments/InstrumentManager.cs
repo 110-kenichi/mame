@@ -167,7 +167,6 @@ namespace zanac.MAmidiMEmo.Instruments
             return inst;
         }
 
-
         public static int FindInstrumentIndex(InstrumentBase instrument, TimbreBase timbre)
         {
             var index = -1;

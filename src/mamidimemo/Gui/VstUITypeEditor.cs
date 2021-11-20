@@ -80,7 +80,7 @@ namespace zanac.MAmidiMEmo.Gui
                         dlg.FormClosed += Dlg_FormClosed;
                         plugin.PluginDisposing += Plugin_PluginDisposing;
                         openedFrame.Add(plugin, dlg);
-                        dlg.Show(FormMain.AppliactionForm, targetInst);
+                        dlg.Show(null, targetInst);
                     }
                     finally
                     {

@@ -71,6 +71,9 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 propertyGrid.SelectedObjects = instruments.ToArray();
             }
+
+            pianoControl1.TargetTimbres = timbres;
+
             propertyGrid.RefreshTabs(PropertyTabScope.Component);
 
             //HACK:
@@ -107,7 +110,11 @@ namespace zanac.MAmidiMEmo.Gui
             }
             if (timbres != null)
             {
-                sb.Append(" - Timbre " + TimbreNo);
+                if(timbres[0] is CombinedTimbre)
+                    sb.Append(" - CombinedTimbre " + TimbreNo);
+                else
+                    sb.Append(" - Timbre " + TimbreNo);
+
                 sb.Append(" - \"" + timbres[0].TimbreName+"\"");
             }
             this.Text = sb.ToString();

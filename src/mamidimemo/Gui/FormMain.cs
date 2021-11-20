@@ -1153,6 +1153,27 @@ namespace zanac.MAmidiMEmo.Gui
             if (item == null)
                 return il.ToArray();
 
+            if (item.Value != null && item.Value.GetType() == typeof(object[]))
+            {
+                var objs = item.Value as object[];
+                foreach (var o in objs)
+                {
+                    var inst = o as TimbreBase;
+                    if (inst != null)
+                        il.Add(inst);
+                }
+            }
+            {
+                var inst = item.Value as TimbreBase;
+                if (inst != null)
+                    il.Add(inst);
+            }
+            {
+                var array = item.Value as Array;
+                if (array != null && array.GetValue(0) is TimbreBase)
+                    il.Add((TimbreBase)array.GetValue(0));
+            }
+
             var instance = item.GetType().GetProperty("Instance").GetValue(item, null);
             if (instance.GetType() == typeof(object[]))
             {
