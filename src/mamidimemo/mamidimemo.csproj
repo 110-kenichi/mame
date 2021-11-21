@@ -210,7 +210,7 @@
     <Compile Include="Gui\FMEditor\YM2414OperatorContainer.Designer.cs">
       <DependentUpon>YM2414OperatorContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\FMEditor\YM24141UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM2414UITypeEditor.cs" />
     <Compile Include="Gui\GraphicEqulizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
