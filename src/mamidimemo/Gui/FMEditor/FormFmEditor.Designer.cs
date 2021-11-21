@@ -62,6 +62,7 @@
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportGit = new MetroFramework.Controls.MetroButton();
+            this.metroButtonAbort = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -379,10 +380,11 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 5;
+            this.tableLayoutPanel1.ColumnCount = 6;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
@@ -392,6 +394,7 @@
             this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 4, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 5, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 583);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -431,7 +434,7 @@
             // 
             // 
             this.metroTextBoxTarget.CustomButton.Image = null;
-            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(435, 2);
+            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(354, 2);
             this.metroTextBoxTarget.CustomButton.Name = "";
             this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -447,12 +450,14 @@
             this.metroTextBoxTarget.MaxLength = 32767;
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
             this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxTarget.SelectedText = "";
             this.metroTextBoxTarget.SelectionLength = 0;
             this.metroTextBoxTarget.SelectionStart = 0;
             this.metroTextBoxTarget.ShortcutsEnabled = true;
-            this.metroTextBoxTarget.Size = new System.Drawing.Size(459, 26);
+            this.metroTextBoxTarget.Size = new System.Drawing.Size(378, 26);
             this.metroTextBoxTarget.TabIndex = 2;
             this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
             this.metroTextBoxTarget.UseSelectable = true;
@@ -465,11 +470,12 @@
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(632, 43);
+            this.buttonOK.Location = new System.Drawing.Point(551, 43);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 4;
             this.buttonOK.Text = "&OK";
+            this.metroToolTip1.SetToolTip(this.buttonOK, "Close and apply editor data.");
             this.buttonOK.UseSelectable = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
@@ -477,11 +483,12 @@
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(713, 43);
+            this.buttonCancel.Location = new System.Drawing.Point(632, 43);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "&Cancel";
+            this.metroToolTip1.SetToolTip(this.buttonCancel, "Close and undo data to inital data.");
             this.buttonCancel.UseSelectable = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
@@ -509,6 +516,19 @@
             this.metroButtonImportGit.Text = "Import &Git...";
             this.metroButtonImportGit.UseSelectable = true;
             this.metroButtonImportGit.Click += new System.EventHandler(this.metroButtonImportGit_Click);
+            // 
+            // metroButtonAbort
+            // 
+            this.metroButtonAbort.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonAbort.DialogResult = System.Windows.Forms.DialogResult.Abort;
+            this.metroButtonAbort.Location = new System.Drawing.Point(713, 43);
+            this.metroButtonAbort.Name = "metroButtonAbort";
+            this.metroButtonAbort.Size = new System.Drawing.Size(75, 23);
+            this.metroButtonAbort.TabIndex = 5;
+            this.metroButtonAbort.Text = "&Abort";
+            this.metroToolTip1.SetToolTip(this.metroButtonAbort, "Close and does not undo data to initial data.");
+            this.metroButtonAbort.UseSelectable = true;
+            this.metroButtonAbort.Click += new System.EventHandler(this.metroButtonAbort_Click);
             // 
             // panel1
             // 
@@ -683,5 +703,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonHook;
         private MetroFramework.Components.MetroToolTip metroToolTip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private MetroFramework.Controls.MetroButton metroButtonAbort;
     }
 }

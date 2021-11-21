@@ -127,13 +127,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             {
                                 tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                             }
-                            else
+                            else if (ed.DialogResult == DialogResult.Cancel)
                             {
                                 tim.ToneType = lastTone;
                                 tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                             }
                         };
                         ed.Show();
+                        ed.Activated += (s, e) =>
+                        {
+                            tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        };
                     }
                 }
                 else
@@ -142,7 +146,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     {
                         string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
                         DialogResult dr = editorService.ShowDialog(ed);
-                        if (dr == DialogResult.OK)
+                        if (dr == DialogResult.OK || dr == DialogResult.Abort)
                             return value;
                         else
                             return JsonConvert.DeserializeObject<YM2610BTimbre[]>(org);

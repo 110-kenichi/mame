@@ -132,12 +132,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                                 tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                             }
-                            else
+                            else if (ed.DialogResult == DialogResult.Cancel)
                             {
                                 tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                             }
                         };
                         ed.Show();
+                        ed.Activated += (s, e) =>
+                        {
+                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
+
+                            tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
+                        };
                     }
                 }
                 else
@@ -149,7 +156,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         inst.CONSEL = 6;
                         DialogResult dr = editorService.ShowDialog(ed);
                         inst.CONSEL = consel;
-                        if (dr == DialogResult.OK)
+                        if (dr == DialogResult.OK || dr == DialogResult.Abort)
                         {
                             if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
                                 MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);

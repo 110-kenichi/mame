@@ -1191,5 +1191,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             DialogResult = DialogResult.Cancel;
             Close();
         }
+
+        private void metroButtonAbort_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Abort;
+            Close();
+        }
     }
 }
