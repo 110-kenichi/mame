@@ -272,6 +272,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             if (keyData == (Keys.W | Keys.Control) || keyData == Keys.Escape)
             {
+                DialogResult = DialogResult.Cancel;
                 Close();
                 return true;
             }

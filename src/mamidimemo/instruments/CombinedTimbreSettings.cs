@@ -101,7 +101,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private int f_KeyOnDelayOffset;
 
         [DataMember]
-        [Description("Key Off Delay Offset [ms]")]
+        [Description("Key On Delay Offset [ms]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(0, 1000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -119,7 +119,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private int f_KeyOffDelayOffset;
 
         [DataMember]
-        [Description("Key Off Delay [ms]")]
+        [Description("Key Off Delay Offset [ms]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(0, 1000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]

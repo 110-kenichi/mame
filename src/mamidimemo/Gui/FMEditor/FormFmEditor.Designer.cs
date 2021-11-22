@@ -450,8 +450,6 @@
             this.metroTextBoxTarget.MaxLength = 32767;
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PasswordChar = '\0';
-            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-    " with comma. )";
             this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxTarget.SelectedText = "";
             this.metroTextBoxTarget.SelectionLength = 0;
@@ -488,7 +486,7 @@
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "&Cancel";
-            this.metroToolTip1.SetToolTip(this.buttonCancel, "Close and undo data to inital data.");
+            this.metroToolTip1.SetToolTip(this.buttonCancel, "Close and undo data to initial data.");
             this.buttonCancel.UseSelectable = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
@@ -639,8 +637,10 @@
             // 
             // FormFmEditor
             // 
+            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(803, 664);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelPiano);

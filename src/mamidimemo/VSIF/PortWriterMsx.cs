@@ -41,6 +41,10 @@ namespace zanac.MAmidiMEmo.VSIF
             List<byte> ds = new List<byte>();
             foreach (var dt in data)
             {
+                if (dt.Type == 0 && dt.Address == 0x07)
+                    //https://hra1129.github.io/system/psg_reg7.html
+                    dt.Data = (byte)((dt.Data & 0x3f) | 0x80);
+
                 byte[] sd = new byte[5] {
                     (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
                     (byte)((dt.Data    >> 4) | 0x20), (byte)((dt.Data &    0x0f) | 0x00),
