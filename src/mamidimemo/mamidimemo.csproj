@@ -1065,9 +1065,7 @@
     </None>
     <None Include="Data\Images.pdn" />
     <None Include="Data\Images.pptx" />
-    <None Include="mame.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="mame.ini" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -1179,9 +1177,6 @@
     <None Include="Samples\YMF262_GM.MAmi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="scci.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="VST\MAmiVSTi.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1248,12 +1243,6 @@
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />
-    <None Include="scci.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="scciconfig.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\Pause.png" />
     <None Include="Resources\Open.png" />
     <None Include="Resources\Stop.png" />
