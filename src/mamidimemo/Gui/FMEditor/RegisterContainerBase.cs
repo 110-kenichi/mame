@@ -350,6 +350,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
             try
             {
+                if(ParentEditor != null)
+                    ParentEditor.IgnoreControlValueChanged = true;
                 SerializeData = textBoxSR.Text;
             }
             catch (Exception ex)
@@ -359,6 +361,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
 
+            }
+            finally
+            {
+                if (ParentEditor != null)
+                    ParentEditor.IgnoreControlValueChanged = false;
             }
         }
 

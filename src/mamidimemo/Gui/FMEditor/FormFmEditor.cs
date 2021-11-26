@@ -389,6 +389,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private int ignorePlayingFlag;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IgnoreControlValueChanged
         {
             get;

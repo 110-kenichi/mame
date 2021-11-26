@@ -110,6 +110,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             StopVgmRecording();
+            Scci.ScciManager.TryReleaseScci();
         }
 
         /// <summary>
