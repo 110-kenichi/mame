@@ -26,6 +26,8 @@ using zanac.MAmidiMEmo.Util.Syx;
 
 //http://sr4.sakura.ne.jp/fmsound/opz.html
 //https://sites.google.com/site/undocumentedsoundchips/yamaha/ym2414
+//https://www.ladislavbrezovnik.com/studio/synthesisers/Yamaha_TX81Z/Yamaha_TX81Z_ServiceManual.pdf
+//https://mgregory22.me/tx81z/programmer/docs.php
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {

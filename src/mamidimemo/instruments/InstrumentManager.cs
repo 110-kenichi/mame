@@ -110,7 +110,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 InstrumentManager.InstExclusiveLockObject.ExitReadLock();
             }
             StopVgmRecording();
-            Scci.ScciManager.TryReleaseScci();
+
+            //HACK: To avoid freezing after sound interface changed.
+            //Scci.ScciManager.TryReleaseScci();
         }
 
         /// <summary>

@@ -108,7 +108,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
 
-            pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
+            if (singleSelect)
+                pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
             this.Timbre = timbre;
             this.Instrument = inst;
 
