@@ -111,8 +111,8 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             StopVgmRecording();
 
-            //HACK: To avoid freezing after sound interface changed.
-            //Scci.ScciManager.TryReleaseScci();
+            //TODO: Need to avoid freezing after sound interface changed.
+            Scci.ScciManager.TryReleaseScci();
         }
 
         /// <summary>

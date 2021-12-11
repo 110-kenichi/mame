@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace zanac.MAmidiMEmo.VSIF
@@ -48,7 +49,11 @@ namespace zanac.MAmidiMEmo.VSIF
 
             lock (LockObject)
             {
-                SerialPort?.Write(dsa, 0, data.Length);
+                if (SerialPort != null)
+                {
+                    for (int i = 0; i < dsa.Length; i += 2)
+                        SerialPort?.Write(dsa, i, 2);
+                }
                 if (FtdiPort != null)
                 {
                     convertToDataPacket(dsa);
@@ -66,7 +71,11 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             lock (LockObject)
             {
-                SerialPort?.Write(data, 0, data.Length);
+                if (SerialPort != null)
+                {
+                    for (int i = 0; i < data.Length; i += 2)
+                        SerialPort?.Write(data, i, 2);
+                }
                 if (FtdiPort != null)
                 {
                     sendData(data, wait);

@@ -157,3 +157,4 @@ Release(but Debug .NET)
 /src/split700/split700.vcxproj.filters
 /src/split700/split700.vcxproj.user
 /src/split700/x64
+/src/VSIF/VGMPlayer/.vs/VGMPlayer/v17

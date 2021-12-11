@@ -1,4 +1,4 @@
-MAmidiMEmo 4.0.1.4 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 4.0.1.5 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -254,10 +254,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
    1. MT-32 & CM32-P can not store/restore last settings.
    2. HuC6820 suddenly stop sounding. Please restart MAmi.
+   3. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
    
 *** How to create build environment ***
 
-   1. Install *LATEST* Visual Studio 2019 w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
+   1. Install *LATEST* Visual Studio 2022 w/ VC++, C#, Windows Universal CRT SDK, .NET 4.7 SDK and Targeting Pack
    2. Install Windows 8.1 SDK and 10 SDK
    3. Install MinGW Development Environment(https://www.mamedev.org/tools/)
    4. Install vcpkg
@@ -268,6 +269,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+4.0.1.5 Re-fixed SCCI instance disposing sequence. Please see limitation.
+		Fixed VSIF for UART mode.
 4.0.1.4 Fixed SCCI instance disposing sequence.
 		Fixed Piano control painting status on the FM Editor.
 4.0.1.3 Updated SCCI modules.
