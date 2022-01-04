@@ -35,7 +35,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
-        [Description("Base frequency offset [Semitone]")]
+        [Description("Base key offset [Semitone]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]

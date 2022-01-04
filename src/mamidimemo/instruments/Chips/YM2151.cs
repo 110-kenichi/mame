@@ -496,7 +496,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             byte adr = (byte)(address + (op * 8) + slot);
 
-            WriteData(adr, data, useCache, new Action(()=>
+            WriteData(adr, data, useCache, new Action(() =>
             {
                 lock (spfmPtrLock)
                     if (CurrentSoundEngine == SoundEngineType.SPFM)
@@ -1014,7 +1014,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
+                double d = (CalcCurrentPitchDeltaNoteNumber() - (12d * Math.Log(parentModule.MasterClock / 3579545d, 2))) * 63d;
 
                 int kf = 0;
                 if (d > 0)

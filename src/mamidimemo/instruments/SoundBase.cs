@@ -316,13 +316,13 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <returns></returns>
         protected double CalcCurrentPitchDeltaNoteNumber()
         {
-            var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
-            var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
-            var scale = (int)ParentModule.ScaleTunings[NoteOnEvent.Channel].ScalesNums[NoteOnEvent.NoteNumber % 12];
-
             CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);
             int pKeyShift = parent != null ? parent.KeyShift : 0;
             int pPitchShift = parent != null ? parent.PitchShift : 0;
+
+            var pitch = (int)ParentModule.Pitchs[NoteOnEvent.Channel] - 8192;
+            var range = (int)ParentModule.PitchBendRanges[NoteOnEvent.Channel];
+            var scale = (int)ParentModule.ScaleTunings[NoteOnEvent.Channel].ScalesNums[(int)Math.Abs(NoteOnEvent.NoteNumber + Timbre.MDS.KeyShift + pKeyShift) % 12];
 
             double d1 = ((double)pitch / 8192d) * range;
             double d = d1 + ModultionDeltaNoteNumber + PortamentoDeltaNoteNumber + ArpeggiateDeltaNoteNumber +
