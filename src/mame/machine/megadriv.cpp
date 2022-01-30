@@ -1006,7 +1006,7 @@ void md_base_state::md_ntsc(machine_config &config)
 		(*m_ym3812[i])->add_route(0, "lspeaker", 2.00);
 		(*m_ym3812[i])->add_route(1, "rspeaker", 2.00);
 
-		EMU2413(config, *m_ym2413[i], XTAL(3'579'545));
+		YMFM_OPLL(config, *m_ym2413[i], XTAL(3'579'545));
 		(*m_ym2413[i])->add_route(0, "lspeaker", 1.00);
 		(*m_ym2413[i])->add_route(1, "rspeaker", 1.00);
 

@@ -246,6 +246,48 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum OpllType
+        {
+            YM2413 = 0x0,
+            YM2423 = 0x1,
+            YMF281 = 0x2,
+            DS1001 = 0x3,
+        }
+
+        private OpllType f_OpllVariation;
+
+        /// <summary>
+        /// Rhythm mode
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [DefaultValue(OpllType.YM2413)]
+        [Description("Specify a variation of OPLL for the Software sound engine.")]
+        public OpllType Variation
+        {
+            get
+            {
+                return f_OpllVariation;
+            }
+            set
+            {
+                if (f_OpllVariation != value)
+                {
+                    f_OpllVariation = value;
+
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.Software:
+                            YM2413_write(UnitNumber, 0x2, (byte)f_OpllVariation);
+                            break;
+                    }
+                }
+            }
+        }
+
         private byte f_RHY;
 
         /// <summary>
@@ -1699,7 +1741,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Tone type")]
+            [Description("Tone type(YM2413 tone names)")]
             [DefaultValue(ToneType.Custom)]
             public ToneType ToneType
             {

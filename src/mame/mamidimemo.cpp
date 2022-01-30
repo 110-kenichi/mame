@@ -40,6 +40,7 @@
 #include "..\devices\sound\upd1771.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
+#include "..\devices\sound\ymfm\src\ymfm_opl.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -428,7 +429,7 @@ extern "C"
 		ymf262_devices[unitNumber]->write(address, data);
 	}
 
-	emu2413_device *ym2413_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	ymfm_opll_device *ym2413_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym2413_write(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
@@ -442,7 +443,8 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			emu2413_device  *ym2413 = dynamic_cast<emu2413_device  *>(rm->device((std::string("ym2413_") + num).c_str()));
+			ymfm_opll_device* ym2413 = dynamic_cast<ymfm_opll_device*>(rm->device((std::string("ym2413_") + num).c_str()));
+			//emu2413_device  *ym2413 = dynamic_cast<emu2413_device  *>(rm->device((std::string("ym2413_") + num).c_str()));
 			//ym2413_device *ym2413 = dynamic_cast<ym2413_device *>(rm->root_device().subdevice((std::string("ym2413_") + num).c_str()));
 			if (ym2413 == nullptr)
 				return;
