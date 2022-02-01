@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Common;
@@ -1065,7 +1066,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (sb.Length != 0)
                         sb.Append(' ');
-                    sb.Append(data[i].ToString("X", (IFormatProvider)null));
+                    sb.Append(data[i].ToString("X2", (IFormatProvider)null));
                 }
                 return sb.ToString();
             }
@@ -1077,8 +1078,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 foreach (var val in vals)
                 {
                     sbyte v = 0;
-                    if (sbyte.TryParse(val, System.Globalization.NumberStyles.HexNumber, null, out v))
-                        vs.Add(v);
+                    if (val.Length > 2)
+                    {
+                        foreach (Match m in Regex.Matches(val, "(..)"))
+                        {
+                            if (sbyte.TryParse(m.Value, System.Globalization.NumberStyles.HexNumber, null, out v))
+                                vs.Add(v);
+                        }
+                    }
+                    else
+                    {
+                        if (sbyte.TryParse(val, System.Globalization.NumberStyles.HexNumber, null, out v))
+                            vs.Add(v);
+                    }
                 }
                 for (int i = 0; i < Math.Min(data.Length, vs.Count); i++)
                     data[i] = vs[i];
