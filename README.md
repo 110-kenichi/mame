@@ -1,4 +1,4 @@
-MAmidiMEmo 4.0.1.6 Itoken (c)2019, 2020, 2021 / GPL-2.0
+MAmidiMEmo 4.0.2.0 Itoken (c)2019, 2020, 2021 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -269,6 +269,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+4.0.2.0 Added several variations of the OPLL family. YM2423, YMF281, DS1001.
+		Added SIN/TRI/SQ/SAW wave creating buttons on a WSG editor.
 4.0.1.6 Fixed MasterClock calculation for YM2151 and YM2414. MasterClock setting was not working.
 		Fixed ScaleTuning calculation. ScaleTuning settings was not working for KeyShift settings.
 4.0.1.5 Re-fixed SCCI instance disposing sequence. Please see limitation.

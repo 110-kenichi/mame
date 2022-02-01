@@ -1,4 +1,4 @@
-﻿ using MetroFramework.Forms;
+﻿using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -454,6 +454,61 @@ namespace zanac.MAmidiMEmo.Gui
             for (int i = 0; i < ByteWsgData.Length; i++)
             {
                 ByteWsgData[i] = (byte)Math.Round((((double)ByteWsgData[i] - (double)min) / ((double)max - (double)min)) * (double)f_WsgMaxValue);
+            }
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonSin_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ByteWsgData.Length; i++)
+                ByteWsgData[i] = (byte)((f_WsgMaxValue / 2) + (Math.Sin(((double)i / (double)ByteWsgData.Length) * 2d * Math.PI) * (f_WsgMaxValue / 2d)));
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonSaw_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ByteWsgData.Length; i++)
+                ByteWsgData[i] = (byte)((f_WsgMaxValue * i) / (ByteWsgData.Length - 1));
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonSq_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ByteWsgData.Length / 2; i++)
+                ByteWsgData[i] = (byte)0;
+            for (int i = ByteWsgData.Length / 2; i < ByteWsgData.Length; i++)
+                ByteWsgData[i] = (byte)f_WsgMaxValue;
+
+            updateText();
+
+            graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonTri_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ByteWsgData.Length / 4; i++)
+            {
+                ByteWsgData[i] = (byte)((f_WsgMaxValue / 2) + ((i * (f_WsgMaxValue / 2)) / (ByteWsgData.Length / 4)));
+                ByteWsgData[i + (ByteWsgData.Length / 4)] = (byte)(f_WsgMaxValue - ((i * (f_WsgMaxValue / 2)) / (ByteWsgData.Length / 4)));
+                ByteWsgData[i + (2 * (ByteWsgData.Length / 4))] = (byte)((f_WsgMaxValue / 2) - ((i * (f_WsgMaxValue / 2)) / (ByteWsgData.Length / 4)));
+                ByteWsgData[i + (3 * (ByteWsgData.Length / 4))] = (byte)(((i * (f_WsgMaxValue / 2)) / (ByteWsgData.Length / 4)));
             }
 
             updateText();

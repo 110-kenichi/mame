@@ -1039,6 +1039,51 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return sb.ToString();
             }
 
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("MML Data")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataMmlData
+            {
+                get
+                {
+                    return createWsgDataMmlData(WsgData);
+                }
+                set
+                {
+                    applyWsgMmlData(value, WsgData);
+                    calcWsgDataHashCode();
+                }
+            }
+
+            private static string createWsgDataMmlData(sbyte[] data)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < data.Length; i++)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(' ');
+                    sb.Append(data[i].ToString("X", (IFormatProvider)null));
+                }
+                return sb.ToString();
+            }
+
+            private void applyWsgMmlData(string value, sbyte[] data)
+            {
+                string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var vs = new List<sbyte>();
+                foreach (var val in vals)
+                {
+                    sbyte v = 0;
+                    if (sbyte.TryParse(val, System.Globalization.NumberStyles.HexNumber, null, out v))
+                        vs.Add(v);
+                }
+                for (int i = 0; i < Math.Min(data.Length, vs.Count); i++)
+                    data[i] = vs[i];
+            }
+
             [Browsable(false)]
             [DataMember]
             [DefaultValue(null)]
