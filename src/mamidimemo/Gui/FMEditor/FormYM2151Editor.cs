@@ -146,16 +146,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             tim.AMS = (byte)tone.AMS;
             tim.PMS = (byte)tone.PMS;
             tim.GlobalSettings.Enable = false;
-            tim.GlobalSettings.LFRQ = (byte)tone.LFRQ;
-            tim.GlobalSettings.LFOF = (byte)tone.LFOF;
-            tim.GlobalSettings.LFOD = (byte)tone.LFOD;
-            tim.GlobalSettings.LFOW = (byte)tone.LFOW;
-            tim.GlobalSettings.NE = (byte)tone.NE;
-            tim.GlobalSettings.NFRQ = (byte)tone.NF;
-            if (tim.GlobalSettings.NE != 0 ||
-                tim.GlobalSettings.LFRQ != 0 ||
-                tim.GlobalSettings.LFOW != 0 ||
-                tim.GlobalSettings.LFOD != 0
+            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
+            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
+            tim.GlobalSettings.NE = (byte?)tone.NE;
+            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
+            if (tim.GlobalSettings.NE > 0 ||
+                tim.GlobalSettings.LFRQ > 0 ||
+                tim.GlobalSettings.LFOW > 0 ||
+                tim.GlobalSettings.LFOD > 0
                 )
                 tim.GlobalSettings.Enable = true;
 
