@@ -970,7 +970,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
-        private void tryApplyTone(Tone tone)
+        private async void tryApplyTone(Tone tone)
         {
             if (tone != null)
             {
@@ -978,12 +978,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     ignorePlayingFlag++;
                     ApplyTone(tone);
+                    Control_ValueChanged(this, null);
                 }
                 finally
                 {
                     ignorePlayingFlag--;
                 }
-                Control_ValueChanged(this, null);
+                if (ignorePlayingFlag == 0 && Visible)
+                {
+                    await testPlay();
+                }
             }
         }
 
