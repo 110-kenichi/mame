@@ -88,7 +88,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object vsifLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private VsifClient vsifClient;
 
@@ -133,7 +133,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (vsifClient != null)
                 {
@@ -206,7 +206,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
             updateDpcmData();
         }
@@ -298,7 +298,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updateDpcmData()
         {
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (CurrentSoundEngine != SoundEngineType.VSIF_NES_FTDI_FDS &&
                     CurrentSoundEngine != SoundEngineType.VSIF_NES_FTDI_MMC5)
@@ -386,7 +386,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 FormProgress.RunDialog(Resources.UpdatingDPCM,
                         new Action<FormProgress>((f) =>
                         {
-                            lock (vsifLock)
+                            lock (sndEnginePtrLock)
                             {
                                 if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
                                 {
@@ -556,7 +556,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (address)
                         {
                             case uint cmd when 0x0 <= address && address <= 0x15:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                         }
@@ -565,7 +565,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (address)
                         {
                             case uint cmd when 0x0 <= address && address <= 0xff:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                         }
@@ -574,19 +574,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (address)
                         {
                             case uint cmd when 0x0 <= address && address <= 0x15:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x9000 <= address && address <= 0x9003:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)(24 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0xa000 <= address && address <= 0xa003:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)(28 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0xb000 <= address && address <= 0xb003:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)(32 + (cmd & 0x03)), data, f_ftdiClkWidth);
                                 break;
                         }
@@ -595,15 +595,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (address)
                         {
                             case uint cmd when 0x0 <= address && address <= 0x17:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x5000 <= address && address <= 0x5007:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)(24 + (cmd & 0x07)), data, f_ftdiClkWidth);
                                 break;
                             case uint cmd when 0x5010 <= address && address <= 0x5011:
-                                lock (vsifLock)
+                                lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)(28 + (cmd & 0x01)), data, f_ftdiClkWidth);
                                 break;
                         }
@@ -740,6 +740,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                    vsifClient.Dispose();
+            }
 
             base.Dispose();
         }

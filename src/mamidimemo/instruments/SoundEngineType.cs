@@ -36,5 +36,7 @@ namespace zanac.MAmidiMEmo.Instruments
         VSIF_NES_FTDI_MMC5,
         [Description("Real(VSIF MSX(FTDI))")]
         VSIF_MSX_FTDI,
+        [Description("Real(CMI8738)")]
+        Real_OPL3,
     }
 }

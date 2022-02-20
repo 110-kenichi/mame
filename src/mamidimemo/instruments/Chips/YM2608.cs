@@ -1226,7 +1226,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         internal override void AllSoundOff()
         {
-            soundManager?.ProcessAllSoundOff();
+            soundManager.ProcessAllSoundOff();
             ClearWrittenDataCache();
         }
 

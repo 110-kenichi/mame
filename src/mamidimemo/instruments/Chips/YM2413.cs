@@ -93,7 +93,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object vsifLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private VsifClient vsifClient;
 
@@ -136,7 +136,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (vsifClient != null)
                 {
@@ -220,7 +220,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     switch (CurrentSoundEngine)
                     {
@@ -477,7 +477,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             address = (byte)(address + slot);
             WriteData(address, data, useCache, new Action(() =>
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     switch (CurrentSoundEngine)
                     {
@@ -544,7 +544,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
                 if (vsifClient != null)
                     vsifClient.Dispose();
 

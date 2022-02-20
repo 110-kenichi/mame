@@ -92,7 +92,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object vsifLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private VsifClient vsifClient;
 
@@ -135,7 +135,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (vsifClient != null)
                 {
@@ -315,7 +315,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             byte address = 0;
             byte type = 0;
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
                 {
@@ -337,7 +337,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             WriteData(address, data, true, new Action(() =>
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
@@ -363,7 +363,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             byte address = 0;
             byte type = 0;
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
                 {
@@ -385,7 +385,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             WriteData(address, freq, true, new Action(() =>
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                     {
@@ -423,7 +423,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             byte address = 0;
             byte type = 0;
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
                 {
@@ -445,7 +445,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             WriteData(address, data, true, new Action(() =>
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
@@ -487,7 +487,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void Scc1WriteWaveData(uint unitNumber, uint offset, sbyte[] data, int hashCode)
         {
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 switch (CurrentSoundEngine)
                 {
@@ -608,6 +608,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                    vsifClient.Dispose();
+            }
+
             base.Dispose();
         }
 

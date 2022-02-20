@@ -24,9 +24,12 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.VSIF;
+using zanac.MAmidiMEmo.Util;
+using System.Threading;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
+//https://www.alsa-project.org/files/pub/manuals/yamaha/sax-rege.pdf
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -94,6 +97,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private VsifClient vsifClient;
 
+        private IntPtr opl3PortHandle;
+
         private object sndEnginePtrLock = new object();
 
         private SoundEngineType f_SoundEngineType;
@@ -103,7 +108,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports Software and SPFM and VSIF - MSX.")]
+            "Supports Software and VSIF - MSX and CMI8738(x64).")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYMF262))]
         public SoundEngineType SoundEngine
@@ -116,7 +121,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
-                    value == SoundEngineType.VSIF_MSX_FTDI))
+                    value == SoundEngineType.VSIF_MSX_FTDI ||
+                    value == SoundEngineType.Real_OPL3
+                    ))
                 {
                     setSoundEngine(value);
                 }
@@ -127,12 +134,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                if (Environment.Is64BitProcess)
+                {
+                    var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_MSX_FTDI,
-                });
-
-                return sc;
+                    SoundEngineType.Real_OPL3,
+                    });
+                    return sc;
+                }
+                else
+                {
+                    var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_MSX_FTDI,
+                    });
+                    return sc;
+                }
             }
         }
 
@@ -146,6 +164,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     vsifClient.Dispose();
                     vsifClient = null;
+                }
+                if (opl3PortHandle != IntPtr.Zero)
+                {
+                    CloseOPL3Port(opl3PortHandle);
+                    opl3PortHandle = IntPtr.Zero;
                 }
 
                 f_SoundEngineType = value;
@@ -169,8 +192,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.Real_OPL3:
+                        IntPtr handle = OpenOPL3Port(CMI8738Index);
+                        if (handle != IntPtr.Zero)
+                        {
+                            opl3PortHandle = handle;
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
+                updateOPL3Registers();
             }
+        }
+
+        private void updateOPL3Registers()
+        {
+            //NEW
+            YMF262WriteData(UnitNumber, 0x105, 0, 0, 0, 0, (byte)5);
+            //CONSEL
+            var v = 0;
+            for (int i = 0; i < f_CONSEL; i++)
+                v |= 1 << i;
+            YMF262WriteData(UnitNumber, 0x104, 0, 0, 0, 0, (byte)v);
+            //AMD, VIB
+            YMF262WriteData(UnitNumber, 0xBD, 0, 0, 0, 0, (byte)(AMD << 7 | VIB << 6));
+
+            OnControlChangeEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
         }
 
         [Category("Chip(Dedicated)")]
@@ -202,6 +255,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             {
                 f_ftdiClkWidth = value;
+            }
+        }
+
+        private int f_CMI8738Index;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(0, 8)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(0)]
+        [Description("Set CMI8738 PCIe card index number.")]
+        public int CMI8738Index
+        {
+            get
+            {
+                return f_CMI8738Index;
+            }
+            set
+            {
+                f_CMI8738Index = value;
             }
         }
 
@@ -376,6 +449,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data, bool useCache)
         {
+            //useCache = false;
             var adrL = address & 0xff;
             var adrH = (address & 0x100) >> 7;  // 0 or 2
             switch (opmode)
@@ -433,7 +507,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 var adr = (byte)(adrL + (op * 3) + chofst);
-                address = adrH | adr;
+                address = (adrH << 8) | adr;
 
                 WriteData(address, data, useCache, new Action(() =>
                 {
@@ -453,6 +527,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                         break;
                                 }
                                 break;
+                            case SoundEngineType.Real_OPL3:
+                                WriteOPL3PortData(opl3PortHandle, (byte)adrH, adr);
+                                while ((ReadOPL3PortData(opl3PortHandle, 0) & 5) != 0)
+                                {
+                                    Thread.Sleep(0);
+                                    break;
+                                }
+                                WriteOPL3PortData(opl3PortHandle, (byte)(adrH + 1), data);
+
+                                //FormMain.OutputLog(this, adrH.ToString("x") + "," + adr);
+                                //FormMain.OutputLog(this, (adrH + 1).ToString("x") + "," + data);
+                                break;
                         }
                     }
                 }));
@@ -460,8 +546,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YMF262_write(unitNumber, (uint)adrH, adr);
                 YMF262_write(unitNumber, (uint)1, data);
 #else
-                    DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
-                    DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
+            DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+            DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
 #endif
 
 #if DEBUG
@@ -473,6 +559,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 #endif
         }
 
+        [DllImport("kernel32.dll")]
+        private extern static IntPtr GetProcAddress(IntPtr hModule, String ProcName);
+
+        [DllImport("CMI8738OPL3Library.dll")]
+        private extern static IntPtr OpenOPL3Port(int memberIndex);
+
+        [DllImport("CMI8738OPL3Library.dll")]
+        private extern static void CloseOPL3Port(IntPtr OPL3PortHandle);
+
+        [DllImport("CMI8738OPL3Library.dll")]
+        private extern static void WriteOPL3PortData(IntPtr OPL3PortHandle, byte offset, byte data);
+
+        [DllImport("CMI8738OPL3Library.dll")]
+        private extern static byte ReadOPL3PortData(IntPtr OPL3PortHandle, byte offset);
 
         private const float DEFAULT_GAIN = 1.5f;
 
@@ -537,6 +637,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                    vsifClient.Dispose();
+                if (opl3PortHandle != IntPtr.Zero)
+                    CloseOPL3Port(opl3PortHandle);
+            }
+
             base.Dispose();
         }
 
@@ -676,6 +785,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>
