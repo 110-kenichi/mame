@@ -1,0 +1,80 @@
+;
+; CMI8738OPL3.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=MEDIA ; TODO: specify appropriate Class
+ClassGuid={4d36e96c-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=CMI8738OPL3.cat
+DriverVer=02/20/2022,1.00.05.00 ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+;CMI8738OPL3_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+CMI8738OPL3.sys  = 1,,
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%CMI8738OPL3.DeviceDesc%=CMI8738OPL3_Device, PCI\VEN_13F6&DEV_0111 ; TODO: edit hw-id
+%CMI8738OPL3.DeviceDesc%=CMI8738OPL3_Device, PCI\VEN_13F6&DEV_0111&SUBSYS_011013F6 ; TODO: edit hw-id
+%CMI8738OPL3.DeviceDesc%=CMI8738OPL3_Device, PCI\VEN_13F6&DEV_0111&SUBSYS_011113F6 ; TODO: edit hw-id
+
+[CMI8738OPL3_Device.NT]
+Include=CMI8738OPL3.inf
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+CMI8738OPL3.sys
+
+;-------------- Service installation
+[DefaultInstall.Services]
+AddService = CMI8738OPL3,%SPSVCINST_ASSOCSERVICE%, CMI8738OPL3_Service_Inst
+
+[CMI8738OPL3_Device.NT.Services]
+AddService = CMI8738OPL3,%SPSVCINST_ASSOCSERVICE%, CMI8738OPL3_Service_Inst
+
+; -------------- CMI8738OPL3 driver install sections
+[CMI8738OPL3_Service_Inst]
+DisplayName    = %CMI8738OPL3.DeviceDesc%
+Description    = %CMI8738OPL3.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 1               ; SERVICE_SYSTEM_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\CMI8738OPL3.sys
+
+;
+;--- CMI8738OPL3_Device Coinstaller installation ------
+;
+
+;[CMI8738OPL3_Device.NT.CoInstallers]
+;CopyFiles=CMI8738OPL3_Device_CoInstaller_CopyFiles
+
+;[CMI8738OPL3_Device_CoInstaller_CopyFiles]
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[CMI8738OPL3_Device.NT.Wdf]
+KmdfService =  CMI8738OPL3, CMI8738OPL3_wdfsect
+[CMI8738OPL3_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="itoken" ;TODO: Replace with your manufacturer name
+DiskName = "CMI8738 OPL3 Installation Disk"
+CMI8738OPL3.DeviceDesc = "CMI8738 OPL3 Device"
+CMI8738OPL3.SVCDESC = "CMI8738 OPL3 Service"

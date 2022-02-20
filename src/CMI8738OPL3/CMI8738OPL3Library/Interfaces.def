@@ -1,0 +1,6 @@
+LIBRARY
+EXPORTS
+	OpenOPL3Port
+	CloseOPL3Port
+	WriteOPL3PortData
+	ReadOPL3PortData
