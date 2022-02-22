@@ -172,23 +172,23 @@ Return Value:
 						//BUSY Wait
 						//while ((ReadPortUChar(ULongToPtr(deviceContext->IoBaseAddress + 0x50)) & 0x5) != 0);
 
-						DbgPrint("CMI8738OPL3 IOCTL_WRITE_DATA_TO_PORT(%ld,%d,%d) ", deviceContext->IoBaseAddress, portOfst, portData);
+						//DbgPrint("CMI8738OPL3 IOCTL_WRITE_DATA_TO_PORT(%ld,%d,%d) ", deviceContext->IoBaseAddress, portOfst, portData);
 
 						WRITE_PORT_UCHAR(portAdrs, portData);
 					}
 					else {
-						DbgPrint("CMI8738OPL3 Invalid request(port=%d)", portOfst);
+						//DbgPrint("CMI8738OPL3 Invalid request(port=%d)", portOfst);
 					}
 					status = STATUS_SUCCESS;
 				}
 				else
 				{
-					DbgPrint("CMI8738OPL3 Invalid request(len=%lld)", InputBufferLength);
+					//DbgPrint("CMI8738OPL3 Invalid request(len=%lld)", InputBufferLength);
 					status = STATUS_INVALID_DEVICE_REQUEST;
 				}
 			}
 			else {
-				DbgPrint("CMI8738OPL3 Invalid request(stat=%x, len=%lld)", status, InputBufferLength);
+				//DbgPrint("CMI8738OPL3 Invalid request(stat=%x, len=%lld)", status, InputBufferLength);
 			}
 			break;
 		}
@@ -222,25 +222,25 @@ Return Value:
 							ucOutputDataBuffer[0] = portData;
 						}
 						else {
-							DbgPrint("CMI8738OPL3 Invalid request(port=%d)", portOfst);
+							//DbgPrint("CMI8738OPL3 Invalid request(port=%d)", portOfst);
 						}
 						status = STATUS_SUCCESS;
 					}
 					else
 					{
-						DbgPrint("CMI8738OPL3 Invalid request(len=%lld,%lld)", InputBufferLength, OutputBufferLength);
+						//DbgPrint("CMI8738OPL3 Invalid request(len=%lld,%lld)", InputBufferLength, OutputBufferLength);
 						status = STATUS_INVALID_DEVICE_REQUEST;
 					}
 				}
 			}
 			else {
-				DbgPrint("CMI8738OPL3 Invalid IOCTL request(%lld)", InputBufferLength);
+				//DbgPrint("CMI8738OPL3 Invalid IOCTL request(%lld)", InputBufferLength);
 			}
 			break;
 		}
 		default:
 		{
-			DbgPrint("CMI8738OPL3 Invalid IOCTL request(%d)", IoControlCode);
+			//DbgPrint("CMI8738OPL3 Invalid IOCTL request(%d)", IoControlCode);
 			ASSERTMSG(FALSE, "Invalid IOCTL request\n");
 			status = STATUS_INVALID_DEVICE_REQUEST;
 			break;

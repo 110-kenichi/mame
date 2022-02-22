@@ -206,15 +206,9 @@
     <Inf />
     <Inf />
     <Inf />
-    <Inf>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-    </Inf>
-    <Inf>
-      <SpecifyDriverVerDirectiveVersion>true</SpecifyDriverVerDirectiveVersion>
-    </Inf>
-    <Inf>
-      <SpecifyDriverVerDirectiveDate>true</SpecifyDriverVerDirectiveDate>
-    </Inf>
+    <Inf />
+    <Inf />
+    <Inf />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -230,15 +224,9 @@
     <Inf />
     <Inf />
     <Inf />
-    <Inf>
-      <SpecifyArchitecture>true</SpecifyArchitecture>
-    </Inf>
-    <Inf>
-      <SpecifyDriverVerDirectiveVersion>true</SpecifyDriverVerDirectiveVersion>
-    </Inf>
-    <Inf>
-      <SpecifyDriverVerDirectiveDate>true</SpecifyDriverVerDirectiveDate>
-    </Inf>
+    <Inf />
+    <Inf />
+    <Inf />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
