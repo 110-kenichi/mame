@@ -53,7 +53,7 @@ AddService = CMI8738OPL3,%SPSVCINST_ASSOCSERVICE%, CMI8738OPL3_Service_Inst
 DisplayName    = %CMI8738OPL3.DeviceDesc%
 Description    = %CMI8738OPL3.SVCDESC%
 ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
-StartType      = 1               ; SERVICE_SYSTEM_START
+StartType      = 3               ; SERVICE_DEMAND_START 
 ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %12%\CMI8738OPL3.sys
 

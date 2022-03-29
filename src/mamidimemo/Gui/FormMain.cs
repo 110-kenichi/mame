@@ -192,8 +192,28 @@ namespace zanac.MAmidiMEmo.Gui
             tabControlBottom.SelectedIndex = Settings.Default.MWinTab;
 
             Size = Settings.Default.MWinSize;
-            splitContainer1.SplitterDistance = Settings.Default.MWinSp1Pos;
-            splitContainer2.SplitterDistance = Settings.Default.MWinSp2Pos;
+            try
+            {
+                splitContainer1.SplitterDistance = Settings.Default.MWinSp1Pos;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            try
+            {
+                splitContainer2.SplitterDistance = Settings.Default.MWinSp2Pos;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
 
             toolStripComboBoxPort.SelectedIndex = Settings.Default.MWinPort;
             toolStripComboBoxKeyCh.SelectedIndex = Settings.Default.MWinKeyCh;
