@@ -562,11 +562,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Modulator.VIB = 1;
         }
 
-        internal override void PrepareSound()
-        {
-            base.PrepareSound();
-        }
-
         /// <summary>
         /// 
         /// </summary>

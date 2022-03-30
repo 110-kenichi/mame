@@ -627,10 +627,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
+            initRegisters();
+        }
+
+        private void initRegisters()
+        {
             //SSG OFF
             YM2610BWriteData(UnitNumber, (byte)(7), 0, 0, (byte)(0x3f));
             //ADPCMA TOTAL LEVEL MAX
             YM2610BWriteData(UnitNumber, (byte)(1), 0, 3, (byte)(0x3f));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmPath"></param>
+        public override void StartVgmRecordingTo(string vgmPath)
+        {
+            base.StartVgmRecordingTo(vgmPath);
+
+            initRegisters();
         }
 
         /// <summary>

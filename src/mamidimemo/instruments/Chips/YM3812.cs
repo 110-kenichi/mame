@@ -313,8 +313,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
+            initRegisters();
+        }
+
+        private void initRegisters()
+        {
             //WS Enable
             YM3812WriteData(UnitNumber, (byte)0x01, 0, 0, (byte)0x20);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmPath"></param>
+        public override void StartVgmRecordingTo(string vgmPath)
+        {
+            base.StartVgmRecordingTo(vgmPath);
+
+            initRegisters();
         }
 
         /// <summary>
