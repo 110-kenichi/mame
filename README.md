@@ -1,4 +1,4 @@
-MAmidiMEmo 4.1.0.3 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.1.0.4 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -269,6 +269,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 
+4.1.0.4 Re-supported VGM recording feature for YM2413 & YM2612.
 4.1.0.3 Fixed VGM recording feature. Send register initialize commands before recording.
 4.1.0.2 Fixed crashing while opening the window.
 4.1.0.1 Fixed crashing some chips when adding it.

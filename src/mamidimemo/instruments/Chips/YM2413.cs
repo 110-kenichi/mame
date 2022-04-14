@@ -554,6 +554,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="vgmPath"></param>
+        public override void StartVgmRecordingTo(string vgmPath)
+        {
+            base.StartVgmRecordingTo(vgmPath);
+
+            updateRhyRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void setPresetInstruments()
         {
             Timbres[0].Career.AR = 15;
