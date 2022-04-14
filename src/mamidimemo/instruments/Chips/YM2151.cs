@@ -1191,6 +1191,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "GlobalSettings.LFOF",
                         "GlobalSettings.LFOD",
                         "GlobalSettings.LFOW",
+                        "GlobalSettings.NE",
+                        "GlobalSettings.NFRQ",
 
                         "Ops[0].EN",
                         "Ops[0].AR",
@@ -1204,6 +1206,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DT1",
                         "Ops[0].AM",
                         "Ops[0].DT2",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1217,6 +1221,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DT1",
                         "Ops[1].AM",
                         "Ops[1].DT2",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1230,6 +1236,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].DT1",
                         "Ops[2].AM",
                         "Ops[2].DT2",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1242,7 +1250,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
-                        "Ops[3].DT2");
+                        "Ops[3].DT2",
+                        "Ops[3].LS",
+                        "Ops[3].KVS"
+                        );
                 }
                 set
                 {
@@ -1257,6 +1268,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "GlobalSettings.LFOF",
                         "GlobalSettings.LFOD",
                         "GlobalSettings.LFOW",
+                        "GlobalSettings.NE",
+                        "GlobalSettings.NFRQ",
 
                         "Ops[0].EN",
                         "Ops[0].AR",
@@ -1270,6 +1283,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DT1",
                         "Ops[0].AM",
                         "Ops[0].DT2",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].EN",
                         "Ops[1].AR",
@@ -1283,6 +1298,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DT1",
                         "Ops[1].AM",
                         "Ops[1].DT2",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].EN",
                         "Ops[2].AR",
@@ -1296,6 +1313,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].DT1",
                         "Ops[2].AM",
                         "Ops[2].DT2",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].EN",
                         "Ops[3].AR",
@@ -1308,7 +1327,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].MUL",
                         "Ops[3].DT1",
                         "Ops[3].AM",
-                        "Ops[3].DT2");
+                        "Ops[3].DT2",
+                        "Ops[3].LS",
+                        "Ops[3].KVS"
+                        );
                 }
             }
 
@@ -1462,6 +1484,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DT1",
                         "Ops[0].AM",
                         "Ops[0].DT2",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].AR",
                         "Ops[1].D1R",
@@ -1474,6 +1498,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DT1",
                         "Ops[1].AM",
                         "Ops[1].DT2",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].AR",
                         "Ops[2].D1R",
@@ -1486,6 +1512,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].DT1",
                         "Ops[2].AM",
                         "Ops[2].DT2",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].AR",
                         "Ops[3].D1R",
@@ -1498,6 +1526,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].DT1",
                         "Ops[3].AM",
                         "Ops[3].DT2",
+                        "Ops[3].LS",
+                        "Ops[3].KVS",
 
                         nameof(AMS),
                         nameof(PMS));
@@ -1519,6 +1549,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[0].DT1",
                         "Ops[0].AM",
                         "Ops[0].DT2",
+                        "Ops[0].LS",
+                        "Ops[0].KVS",
 
                         "Ops[1].AR",
                         "Ops[1].D1R",
@@ -1531,6 +1563,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].DT1",
                         "Ops[1].AM",
                         "Ops[1].DT2",
+                        "Ops[1].LS",
+                        "Ops[1].KVS",
 
                         "Ops[2].AR",
                         "Ops[2].D1R",
@@ -1543,6 +1577,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[2].DT1",
                         "Ops[2].AM",
                         "Ops[2].DT2",
+                        "Ops[2].LS",
+                        "Ops[2].KVS",
 
                         "Ops[3].AR",
                         "Ops[3].D1R",
@@ -1555,6 +1591,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].DT1",
                         "Ops[3].AM",
                         "Ops[3].DT2",
+                        "Ops[3].LS",
+                        "Ops[3].KVS",
 
                         nameof(AMS),
                         nameof(PMS));

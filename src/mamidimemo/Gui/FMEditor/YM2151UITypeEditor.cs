@@ -95,7 +95,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     "GlobalSettings.LFRQ",
                     "GlobalSettings.LFOF",
                     "GlobalSettings.LFOD",
-                    "GlobalSettings.LFOW"
+                    "GlobalSettings.LFOW",
+                    "GlobalSettings.NE",
+                    "GlobalSettings.NFRQ"
                     );
 
                     List<string> mmlValueOps = new List<string>();
@@ -114,7 +116,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             nameof(op.MUL),
                             nameof(op.DT1),
                             nameof(op.AM),
-                            nameof(op.DT2)
+                            nameof(op.DT2),
+                            nameof(op.LS),
+                            nameof(op.KVS)
                             ));
                     }
                     FormYM2151Editor ed = new FormYM2151Editor(inst, tim, singleSel);
