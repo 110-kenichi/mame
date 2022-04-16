@@ -208,6 +208,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+            PrepareSound();
         }
 
         private int f_ftdiClkWidth = 9;

@@ -146,6 +146,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+            PrepareSound();
         }
 
         [Category("Chip(Dedicated)")]
@@ -638,6 +639,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Ops[3].AM = 0;
             Timbres[0].Ops[3].DT2 = 0;
             Timbres[0].Ops[3].TL = 24;
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void initGlobalRegisters()
+        {
+            Ym2151WriteData(UnitNumber, 0x18, 0, 0, LFRQ);
+            Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
+            Ym2151WriteData(UnitNumber, 0x1B, 0, 0, (byte)LFOW);
+            Ym2151WriteData(UnitNumber, 0x0f, 0, 0, (byte)(NE << 7 | NFRQ));
         }
 
         /// <summary>

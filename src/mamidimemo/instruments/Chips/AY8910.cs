@@ -194,6 +194,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
+                PrepareSound();
             }
         }
 
@@ -294,7 +295,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_EnvelopeFrequencyCoarse != value)
                 {
                     f_EnvelopeFrequencyCoarse = value;
-                    Ay8910WriteData(UnitNumber, 12, value);
+                    Ay8910WriteData(UnitNumber, 12, f_EnvelopeFrequencyCoarse);
                     Ay8910WriteData(UnitNumber, 11, EnvelopeFrequencyFine);
                 }
             }
@@ -608,12 +609,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
-            initRegisters();
+            initGlobalRegisters();
         }
 
-        private void initRegisters()
+        private void initGlobalRegisters()
         {
             Ay8910WriteData(UnitNumber, 7, (byte)(0x3f));
+
+            Ay8910WriteData(UnitNumber, 13, EnvelopeType);
+            Ay8910WriteData(UnitNumber, 12, EnvelopeFrequencyCoarse);
+            Ay8910WriteData(UnitNumber, 11, EnvelopeFrequencyFine);
         }
 
         /// <summary>
@@ -624,7 +629,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.StartVgmRecordingTo(vgmPath);
 
-            initRegisters();
+            initGlobalRegisters();
         }
 
         /// <summary>

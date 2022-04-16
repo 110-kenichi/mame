@@ -153,7 +153,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            initSounds();
+            PrepareSound();
         }
 
         [Category("Chip(Dedicated)")]
@@ -813,32 +813,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
-            initSounds();
+            initGlobalRegisters();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vgmPath"></param>
-        public override void StartVgmRecordingTo(string vgmPath)
-        {
-            base.StartVgmRecordingTo(vgmPath);
-
-            initRegisters();
-        }
-
-        private void initSounds()
-        {
-            initRegisters();
-
-            AllSoundOff();
-
-            lock (spfmPtrLock)
-                lastTransferPcmData = new byte[] { };
-            updatePcmData(null);
-        }
-
-        private void initRegisters()
+        private void initGlobalRegisters()
         {
             //SSG OFF
             YM2608WriteData(UnitNumber, 0x07, 0, 0, 0x3f);
@@ -851,6 +829,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //ADPCM B
             YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x20, false);  //EXTMEM
             YM2608WriteData(UnitNumber, 0x01, 0, 3, 0xC2);  //LR, 8bit DRAM
+
+            YM2608WriteData(UnitNumber, 0x0b, 0, 0, (byte)f_EnvelopeFrequencyCoarse);
+            YM2608WriteData(UnitNumber, 0x0c, 0, 0, (byte)f_EnvelopeFrequencyFine);
+            YM2608WriteData(UnitNumber, 0x0d, 0, 0, (byte)f_EnvelopeType);
+            YM2608WriteData(UnitNumber, 0x22, 0, 0, (byte)(LFOEN << 3 | LFRQ));
+
+            lock (spfmPtrLock)
+                lastTransferPcmData = new byte[] { };
+            updatePcmData(null);
         }
 
         /// <summary>

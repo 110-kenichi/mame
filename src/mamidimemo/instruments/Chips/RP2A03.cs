@@ -179,7 +179,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-            initSounds();
+            PrepareSound();
         }
 
         private int f_ftdiClkWidth = 15;
@@ -201,16 +201,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_ftdiClkWidth = value;
             }
         }
-
-        private void initSounds()
-        {
-            AllSoundOff();
-
-            lock (sndEnginePtrLock)
-                lastTransferPcmData = new byte[] { };
-            updateDpcmData();
-        }
-
 
         /// <summary>
         /// 
@@ -755,6 +745,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void setPresetInstruments()
         {
+        }
+
+
+        private void initSounds()
+        {
+            lock (sndEnginePtrLock)
+                lastTransferPcmData = new byte[] { };
+            updateDpcmData();
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initSounds();
         }
 
         /// <summary>

@@ -191,6 +191,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+            PrepareSound();
         }
 
         private int f_ftdiClkWidth = 10;
@@ -704,6 +705,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[1].Ops[3].AM = 0;
             Timbres[1].Ops[3].SSG_EG = 0;
             Timbres[1].Ops[3].TL = 10;
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void initGlobalRegisters()
+        {
+            Ym2612WriteData(UnitNumber, 0x22, 0, 0, (byte)(LFOEN << 3 | LFRQ));
         }
 
         /// <summary>

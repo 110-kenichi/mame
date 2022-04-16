@@ -1756,6 +1756,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <param name="vgmPath"></param>
         public virtual void StartVgmRecordingTo(string vgmPath)
         {
+            AllSoundOff();
+            ClearWrittenDataCache();
+
             vgmRecording = true;
 
             var now = DateTime.Now;
@@ -1763,6 +1766,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-'));
 
             StartVgmRecordingToInternal(UnitNumber, SoundInterfaceTagNamePrefix, op);
+
+            PrepareSound();
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -1790,7 +1795,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        public void StopVgmRecording()
+        public virtual void StopVgmRecording()
         {
             vgmRecording = false;
             StopVgmRecordingInternal(UnitNumber, SoundInterfaceTagNamePrefix);

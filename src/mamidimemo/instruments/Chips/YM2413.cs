@@ -180,7 +180,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
-                updateRhyRegisters();
+                initGlobalRegisters();
             }
         }
 
@@ -313,12 +313,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_RHY = v;
 
-                    updateRhyRegisters();
+                    initGlobalRegisters();
                 }
             }
         }
 
-        private void updateRhyRegisters()
+        private void initGlobalRegisters()
         {
             OnControlChangeEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
 
@@ -559,7 +559,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.StartVgmRecordingTo(vgmPath);
 
-            updateRhyRegisters();
+            ClearWrittenDataCache();
+            initGlobalRegisters();
         }
 
         /// <summary>
@@ -571,6 +572,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Career.DIST = 1;
             Timbres[0].Modulator.AR = 14;
             Timbres[0].Modulator.VIB = 1;
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
         }
 
         /// <summary>

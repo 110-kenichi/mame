@@ -472,6 +472,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres[0].Channel = ChannelType.CH1;
         }
 
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void initGlobalRegisters()
+        {
+            PokeySetOutputType(UnitNumber, f_OutputType, f_RegisterR, f_RegisterC, f_RegisterV);
+            PokeyWriteData(UnitNumber, 8, (byte)((f_AC_POLY9 << 7) | f_AC_15kHz));
+        }
+
         /// <summary>
         /// 
         /// </summary>
