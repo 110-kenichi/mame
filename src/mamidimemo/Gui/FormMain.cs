@@ -926,7 +926,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                         string midiFile = Path.GetTempFileName();
                         midiEntry.ExtractToFile(midiFile, true);
-                        loadMidiFile(midiFile);
+                        loadMidiFile(file, midiFile);
                     }
                 }
                 catch (Exception ex)
@@ -1228,17 +1228,22 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton20_CheckedChanged(object sender, EventArgs e)
         {
+            var now = DateTime.Now;
+            string fname = (Path.GetFileNameWithoutExtension(loadedOrgMidiFile) ?? "MAmi") + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
+
             if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
                 Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-            var now = DateTime.Now;
-            string op = Path.Combine(Settings.Default.OutputDir, "MAmi_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-') + ".wav");
 
             try
             {
                 Program.SoundUpdating();
                 if (toolStripButton20.Checked)
                 {
+                    if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
+                        Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                    string op = Path.Combine(Settings.Default.OutputDir, fname + ".wav");
+
                     MameIF.StartRecordingTo(op);
                 }
                 else
@@ -1261,22 +1266,32 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton21_CheckedChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
-                Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var now = DateTime.Now;
+            string fname = (Path.GetFileNameWithoutExtension(loadedOrgMidiFile) ?? "MAmi_VGM") + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
 
-            if (toolStripButton21.Checked)
+
+            try
             {
-                var now = DateTime.Now;
-                string op = Path.Combine(Settings.Default.OutputDir, "MAmi_VGM_" +
-                    now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-'));
-                Directory.CreateDirectory(op);
+                Program.SoundUpdating();
+                if (toolStripButton21.Checked)
+                {
+                    if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
+                        Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-                InstrumentManager.StartVgmRecordingTo(op);
+                    string op = Path.Combine(Settings.Default.OutputDir, fname);
+                    Directory.CreateDirectory(op);
+
+                    InstrumentManager.StartVgmRecordingTo(op);
+                }
+                else
+                {
+                    InstrumentManager.StopVgmRecording();
+                    Process.Start(InstrumentManager.LastVgmOutputDir);
+                }
             }
-            else
+            finally
             {
-                InstrumentManager.StopVgmRecording();
-                Process.Start(InstrumentManager.LastVgmOutputDir);
+                Program.SoundUpdated();
             }
         }
 
@@ -1377,6 +1392,18 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
 
             midiPlayback.Stop();
+
+            if (toolStripButtonAutoWav.Checked)
+            {
+                toolStripButton20.Checked = false;
+                toolStripButton20.Checked = true;
+            }
+            if (toolStripButtonAutoVGM.Checked)
+            {
+                toolStripButton21.Checked = false;
+                toolStripButton21.Checked = true;
+            }
+
             InstrumentManager.Panic();
             midiPlayback.MoveToStart();
             midiPlayback.Start();
@@ -1413,6 +1440,11 @@ namespace zanac.MAmidiMEmo.Gui
             if (this.labelStat.Image != null)
                 this.labelStat.Image.Dispose();
             this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+
+            if (toolStripButtonAutoWav.Checked)
+                toolStripButton20.Checked = false;
+            if (toolStripButtonAutoVGM.Checked)
+                toolStripButton21.Checked = false;
         }
 
         private void toolStripButtonOpen_Click(object sender, EventArgs e)
@@ -1426,7 +1458,7 @@ namespace zanac.MAmidiMEmo.Gui
                     case ".MIDI":
                     case ".MID":
                     case ".SMF":
-                        loadMidiFile(openFileDialogMidi.FileName);
+                        loadMidiFile(openFileDialogMidi.FileName, openFileDialogMidi.FileName);
                         break;
                     case ".MAMIDI":
                         loadMAmidiFile(openFileDialogMidi.FileName);
@@ -1437,11 +1469,13 @@ namespace zanac.MAmidiMEmo.Gui
 
         private string loadedMidiFile;
 
+        private string loadedOrgMidiFile;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fn"></param>
-        private void loadMidiFile(string fn)
+        private void loadMidiFile(string orgFileName, string fn)
         {
             try
             {
@@ -1450,6 +1484,7 @@ namespace zanac.MAmidiMEmo.Gui
                 var midiFile = MidiFile.Read(fn);
 
                 loadedMidiFile = fn;
+                loadedOrgMidiFile = orgFileName;
 
                 try
                 {
@@ -1537,7 +1572,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void timerReload_Tick(object sender, EventArgs e)
         {
-            loadMidiFile(loadedMidiFile);
+            loadMidiFile(loadedMidiFile, loadedMidiFile);
             timerReload.Enabled = false;
         }
 
@@ -1561,7 +1596,7 @@ namespace zanac.MAmidiMEmo.Gui
                             case ".MIDI":
                             case ".MID":
                             case ".SMF":
-                                loadMidiFile(drags[0]);
+                                loadMidiFile(drags[0], drags[0]);
                                 break;
                             case ".MAMIDI":
                                 loadMAmidiFile(drags[0]);
