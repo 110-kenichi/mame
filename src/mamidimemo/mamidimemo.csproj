@@ -187,6 +187,10 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gui\CancelListViewItemDragEventArgs.cs" />
+    <Compile Include="Gui\DraggableListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\FMEditor\FormYM2414Editor .cs">
       <SubType>Form</SubType>
     </Compile>
@@ -218,6 +222,8 @@
     <Compile Include="Gui\GraphicEqulizer.Designer.cs">
       <DependentUpon>GraphicEqulizer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\InsertionMode.cs" />
+    <Compile Include="Gui\ListViewItemDragEventArgs.cs" />
     <Compile Include="Gui\PhonemesUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\BrrFileLoaderEditorAttribute.cs" />
@@ -1241,6 +1247,10 @@
     <None Include="Resources\General.png" />
     <None Include="Resources\Midi.png" />
     <None Include="Resources\AllProp.png" />
+    <None Include="Resources\Next.png" />
+    <None Include="Resources\Prev.png" />
+    <None Include="Resources\Play1.png" />
+    <None Include="Resources\Play11.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

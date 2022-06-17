@@ -220,6 +220,19 @@ namespace zanac.MAmidiMEmo.Gui
             toolStripComboBoxProgNo.SelectedIndex = Settings.Default.MWinProgNo;
             toolStripComboBoxCC.SelectedIndex = Settings.Default.MWinCC;
 
+            try
+            {
+                draggableListView1.BeginUpdate();
+                foreach (string fn in Settings.Default.MediaList)
+                    draggableListView1.Items.Add(new ListViewItem(fn));
+                draggableListView1.Columns[0].Width = -2;
+            }
+            catch { }
+            finally
+            {
+                draggableListView1.EndUpdate();
+            }
+
             //Images
             imageList1.Images.Add("YM2612", Resources.YM2612);
             imageList1.Images.Add("YM2151", Resources.YM2151);
@@ -324,6 +337,8 @@ namespace zanac.MAmidiMEmo.Gui
 
             Settings.Default.MWinTab = tabControlBottom.SelectedIndex;
 
+            Settings.Default.MediaList = new System.Collections.Specialized.StringCollection();
+            Settings.Default.MediaList.AddRange(draggableListView1.Items.Cast<ListViewItem>().Select(item => item.Text).ToArray());
             base.OnClosing(e);
         }
 
@@ -1389,7 +1404,10 @@ namespace zanac.MAmidiMEmo.Gui
         private void toolStripButtonPlay_Click(object sender, EventArgs e)
         {
             if (midiPlayback == null)
+            {
+                playSelectedItem();
                 return;
+            }
 
             midiPlayback.Stop();
 
@@ -1887,5 +1905,330 @@ namespace zanac.MAmidiMEmo.Gui
             }));
         }
 
+        private void draggableListView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            switch (draggableListView1.Sorting)
+            {
+                case SortOrder.Ascending:
+                    draggableListView1.Sorting = SortOrder.Descending;
+                    draggableListView1.Columns[0].Text = "File name ▼";
+                    break;
+                case SortOrder.Descending:
+                    draggableListView1.Sorting = SortOrder.None;
+                    draggableListView1.Columns[0].Text = "File name";
+                    break;
+                case SortOrder.None:
+                    draggableListView1.Sorting = SortOrder.Ascending;
+                    draggableListView1.Columns[0].Text = "File name ▲";
+                    break;
+            }
+        }
+
+        private ListViewItem currentSongItem;
+
+        private void playSelectedItem()
+        {
+            if (draggableListView1.SelectedItems.Count != 0)
+            {
+                currentSongItem = draggableListView1.SelectedItems[0];
+                draggableListView1.SelectedItems.Clear();
+
+                toolStripButtonStop_Click(null, null);
+
+                string ext = Path.GetExtension(currentSongItem.Text);
+                switch (ext.ToUpperInvariant())
+                {
+                    case ".MIDI":
+                    case ".MID":
+                    case ".SMF":
+                        loadMidiFile(currentSongItem.Text, currentSongItem.Text);
+                        break;
+                    case ".MAMIDI":
+                        loadMAmidiFile(currentSongItem.Text);
+                        break;
+                }
+            }
+            else
+            {
+                playItem(0);
+            }
+        }
+
+        private void draggableListView1_DoubleClick(object sender, EventArgs e)
+        {
+            playSelectedItem();
+        }
+
+        private void draggableListView1_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+
+        }
+
+        private void draggableListView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Deleteキーが押されたら項目を削除
+
+
+            if (e.KeyData == Keys.Delete ||
+                e.KeyData == Keys.Back ||
+                (e.KeyCode == Keys.X && e.Control))
+            {
+                removeSelectedItem();
+            }
+            if (e.KeyCode == Keys.Enter)
+            {
+                playSelectedItem();
+            }
+            if (e.KeyCode == Keys.A && e.Control)
+            {
+                try
+                {
+                    draggableListView1.BeginUpdate();
+                    foreach (ListViewItem item in draggableListView1.Items)
+                        item.Selected = true;
+                }
+                finally
+                {
+                    draggableListView1.EndUpdate();
+                }
+            }
+            if (e.KeyCode == Keys.V && e.Control)
+            {
+                System.Collections.Specialized.StringCollection files = Clipboard.GetFileDropList();
+                if (files != null)
+                {
+                    ListViewItem lvi = null;
+                    try
+                    {
+                        draggableListView1.BeginUpdate();
+
+                        draggableListView1.SelectedItems.Clear();
+                        lvi = addAllFiles(files.Cast<string>().ToArray(), lvi);
+                    }
+                    finally
+                    {
+                        draggableListView1.EndUpdate();
+                        lvi?.EnsureVisible();
+                    }
+                }
+            }
+        }
+
+
+        private void removeSelectedItem()
+        {
+            try
+            {
+                draggableListView1.BeginUpdate();
+                int index = 0;
+                for (int i = 0; i < draggableListView1.SelectedItems.Count; i++)
+                {
+                    // 現在選択している行のインデックスを取得
+                    index = draggableListView1.SelectedItems[0].Index;
+                    if ((0 <= index) && (index < draggableListView1.Items.Count))
+                    {
+                        draggableListView1.Items.RemoveAt(index);
+                        i--;
+                    }
+                }
+                if (index < draggableListView1.Items.Count)
+                {
+                    draggableListView1.Items[index].Selected = true;
+                    draggableListView1.Items[index].EnsureVisible();
+                }
+                else if (draggableListView1.Items.Count != 0)
+                {
+                    draggableListView1.Items[draggableListView1.Items.Count - 1].Selected = true;
+                    draggableListView1.Items[draggableListView1.Items.Count - 1].EnsureVisible();
+                }
+            }
+            finally
+            {
+                draggableListView1.EndUpdate();
+            }
+        }
+
+        private void draggableListView1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                addFilesToList((string[])e.Data.GetData(DataFormats.FileDrop, false));
+            }
+        }
+
+        private void addFilesToList(string[] files)
+        {
+            ListViewItem lvi = null;
+            try
+            {
+                draggableListView1.BeginUpdate();
+
+                draggableListView1.SelectedItems.Clear();
+                lvi = addAllFiles(files, lvi);
+                draggableListView1.Columns[0].Width = -2;
+            }
+            finally
+            {
+                draggableListView1.EndUpdate();
+                lvi?.EnsureVisible();
+            }
+        }
+
+        private ListViewItem addAllFiles(IEnumerable<string> files, ListViewItem lvi)
+        {
+            foreach (var fileName in files)
+            {
+                var fp = Path.GetFullPath(fileName);
+                if (File.Exists(fp))
+                {
+                    string ext = Path.GetExtension(fp);
+                    switch (ext.ToUpper())
+                    {
+                        case ".MIDI":
+                        case ".MID":
+                        case ".SMF":
+                        case ".MAMIDI":
+                            lvi = new ListViewItem(fp);
+                            draggableListView1.Items.Add(lvi);
+                            lvi.Selected = true;
+                            break;
+                    }
+                }
+                if (Directory.Exists(fp))
+                {
+                    string[] allfiles = Directory.GetFiles(fp, "*.*", SearchOption.AllDirectories);
+                    lvi = addAllFiles(allfiles, lvi);
+                }
+            }
+
+            return lvi;
+        }
+
+        private void draggableListView1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void draggableListView1_DragLeave(object sender, EventArgs e)
+        {
+
+        }
+
+        private void draggableListView1_DragOver(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void draggableListView1_SizeChanged(object sender, EventArgs e)
+        {
+            //draggableListView1.Columns[0].Width = -2;
+        }
+
+
+        private void playToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            playSelectedItem();
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            removeSelectedItem();
+        }
+
+        private void explorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = draggableListView1.FocusedItem;
+            if (item != null)
+            {
+                Task.Run(new Action(() =>
+                {
+                    Process.Start("explorer.exe", "/select,\"" + item.Text + "\"");
+                }));
+            }
+        }
+
+        private void playFile(string fileName)
+        {
+            //currentSongItem = draggableListView1.SelectedItems[0];
+            draggableListView1.SelectedItems.Clear();
+
+            toolStripButtonStop_Click(null, null);
+
+            string ext = Path.GetExtension(fileName);
+            switch (ext.ToUpperInvariant())
+            {
+                case ".MIDI":
+                case ".MID":
+                case ".SMF":
+                    loadMidiFile(currentSongItem.Text, currentSongItem.Text);
+                    break;
+                case ".MAMIDI":
+                    loadMAmidiFile(currentSongItem.Text);
+                    break;
+            }
+        }
+
+        private void stopCurrentSong()
+        {
+            if (currentSongItem != null)
+            {
+                currentSongItem.Selected = true;
+                currentSongItem.EnsureVisible();
+            }
+            toolStripButtonStop_Click(null, null);
+        }
+
+        private void playItem(int idx)
+        {
+            if (idx >= draggableListView1.Items.Count)
+                idx = draggableListView1.Items.Count - 1;
+            if (idx < 0)
+                return;
+
+            currentSongItem = draggableListView1.Items[idx];
+            draggableListView1.SelectedItems.Clear();
+
+            stopCurrentSong();
+            playFile(currentSongItem.Text);
+        }
+
+        private void toolStripButton23_Click(object sender, EventArgs e)
+        {
+            int idx = 0;
+            if (currentSongItem != null)
+                idx = currentSongItem.Index;
+            if (idx < 0 && draggableListView1.Items.Count != 0)
+            {
+                playItem(0);
+            }
+            else
+            {
+                idx++;
+                if (idx >= draggableListView1.Items.Count)
+                    idx = 0;
+                playItem(idx);
+            }
+        }
+
+        private void toolStripButton22_Click(object sender, EventArgs e)
+        {
+            int idx = 0;
+            if (currentSongItem != null)
+                idx = currentSongItem.Index;
+            if (idx < 0 && draggableListView1.Items.Count != 0)
+            {
+                playItem(0);
+            }
+            else
+            {
+                idx--;
+                if (idx < 0)
+                    idx = draggableListView1.Items.Count - 1;
+                playItem(idx);
+            }
+        }
     }
 }

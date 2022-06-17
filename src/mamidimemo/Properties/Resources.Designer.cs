@@ -611,6 +611,16 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap Next {
+            get {
+                object obj = ResourceManager.GetObject("Next", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   There are no MIDI IN devices.
         ///Please install at least one MIDI IN device to use the MAmidiMEmo all functions.
         ///Or, install the loopMIDI application to the PC. に類似しているローカライズされた文字列を検索します。
@@ -687,6 +697,16 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static System.Drawing.Bitmap Popup {
             get {
                 object obj = ResourceManager.GetObject("Popup", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap Prev {
+            get {
+                object obj = ResourceManager.GetObject("Prev", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
