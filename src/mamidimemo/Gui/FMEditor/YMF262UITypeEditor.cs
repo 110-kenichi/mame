@@ -118,6 +118,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             nameof(op.WS)
                             ));
                     }
+                    bool conselWarned = false;
                     FormYMF262Editor ed = new FormYMF262Editor(inst, tim, singleSel);
                     {
                         ed.MmlValueGeneral = mmlValueGeneral;
@@ -140,8 +141,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         ed.Show();
                         ed.Activated += (s, e) =>
                         {
-                            if (consel == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
-                                MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
+                            if (inst.CONSEL == 0 && ((YMF262Timbre)ed.Timbre).ALG >= 2)
+                            {
+                                if (!conselWarned)
+                                {
+                                    MessageBox.Show(Resources.CNTWarning, "Warning", MessageBoxButtons.OK);
+                                    conselWarned = true;
+                                }
+                            }
 
                             tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                         };

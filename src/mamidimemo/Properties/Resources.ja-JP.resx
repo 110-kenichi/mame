@@ -362,7 +362,7 @@
     <value>全ての音源をクリアしますか？</value>
   </data>
   <data name="CNTWarning" xml:space="preserve">
-    <value>4OPで音を出力する場合、CNTの値を1またはそれ以上にするべきです。</value>
+    <value>4OPで音を出力する場合、Chip(Global) -> CONSEL プロパティの値を1またはそれ以上にしないと音がなりません。</value>
   </data>
   <data name="NoMidiPort" xml:space="preserve">
     <value>MIDI IN デバイスがありません。

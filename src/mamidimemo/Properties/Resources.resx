@@ -363,7 +363,7 @@ So, sound glitches may occur.</value>
     <value>Do you clear all instruments?</value>
   </data>
   <data name="CNTWarning" xml:space="preserve">
-    <value>You should CNT value to 1 or higher value to sound 4 operator sound.</value>
+    <value>You should Chip(Global) -> CONSEL prop value to 1 or higher value to sound 4 operator sound.</value>
   </data>
   <data name="NoMidiPort" xml:space="preserve">
     <value>There are no MIDI IN devices.

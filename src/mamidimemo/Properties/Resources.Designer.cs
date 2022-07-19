@@ -309,7 +309,7 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   You should CNT value to 1 or higher value to sound 4 operator sound. に類似しているローカライズされた文字列を検索します。
+        ///   You should Chip(Global) -&gt; CONSEL prop value to 1 or higher value to sound 4 operator sound. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string CNTWarning {
             get {
