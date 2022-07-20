@@ -1524,6 +1524,7 @@ namespace zanac.MAmidiMEmo.Gui
                 midiPlayback?.Dispose();
                 midiPlayback = midiFile.GetPlayback(new InternalMidiPlayerDevice());
                 midiPlayback.EventPlayed += MidiPlayback_EventPlayed;
+                midiPlayback.Finished += MidiPlayback_Finished;
 
                 InstrumentBase.MasterGain = (float)metroTrackBarVol.Value / 100f;
 
@@ -1538,6 +1539,31 @@ namespace zanac.MAmidiMEmo.Gui
 
                 MessageBox.Show(Resources.FailedLoadMidi + "\r\n" + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MidiPlayback_Finished(object sender, EventArgs e)
+        {
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                int idx = 0;
+                if (currentSongItem != null)
+                    idx = currentSongItem.Index;
+                if (idx < 0 && draggableListView1.Items.Count != 0)
+                {
+                    playItem(0);
+                }
+                else
+                {
+                    idx++;
+                    if (idx < draggableListView1.Items.Count)
+                        playItem(idx);
+                }
+            }));
         }
 
         private void InstrumentBase_StaticPropertyChanged(object sender, PropertyChangingEventArgs e)

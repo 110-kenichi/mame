@@ -104,12 +104,12 @@
             this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton22 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton23 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonAutoVGM = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonAutoWav = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton22 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton23 = new System.Windows.Forms.ToolStripButton();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.draggableListView1 = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -404,7 +404,7 @@
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 0;
+            this.tabControlBottom.SelectedIndex = 2;
             this.tabControlBottom.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             this.tabControlBottom.UseSelectable = true;
@@ -1140,6 +1140,20 @@
             this.toolStripButtonStop.Name = "toolStripButtonStop";
             this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
             // 
+            // toolStripButton22
+            // 
+            this.toolStripButton22.Image = global::zanac.MAmidiMEmo.Properties.Resources.Prev;
+            resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
+            this.toolStripButton22.Name = "toolStripButton22";
+            this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click);
+            // 
+            // toolStripButton23
+            // 
+            this.toolStripButton23.Image = global::zanac.MAmidiMEmo.Properties.Resources.Next;
+            resources.ApplyResources(this.toolStripButton23, "toolStripButton23");
+            this.toolStripButton23.Name = "toolStripButton23";
+            this.toolStripButton23.Click += new System.EventHandler(this.toolStripButton23_Click);
+            // 
             // toolStripButtonOpen
             // 
             this.toolStripButtonOpen.Image = global::zanac.MAmidiMEmo.Properties.Resources.Open;
@@ -1174,20 +1188,6 @@
             resources.ApplyResources(this.toolStripButtonReload, "toolStripButtonReload");
             this.toolStripButtonReload.Name = "toolStripButtonReload";
             this.toolStripButtonReload.CheckStateChanged += new System.EventHandler(this.toolStripButtonReload_CheckStateChanged);
-            // 
-            // toolStripButton22
-            // 
-            this.toolStripButton22.Image = global::zanac.MAmidiMEmo.Properties.Resources.Prev;
-            resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
-            this.toolStripButton22.Name = "toolStripButton22";
-            this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click);
-            // 
-            // toolStripButton23
-            // 
-            this.toolStripButton23.Image = global::zanac.MAmidiMEmo.Properties.Resources.Next;
-            resources.ApplyResources(this.toolStripButton23, "toolStripButton23");
-            this.toolStripButton23.Name = "toolStripButton23";
-            this.toolStripButton23.Click += new System.EventHandler(this.toolStripButton23_Click);
             // 
             // tabPage5
             // 
