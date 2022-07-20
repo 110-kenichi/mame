@@ -1301,7 +1301,7 @@ namespace zanac.MAmidiMEmo.Gui
                 else
                 {
                     InstrumentManager.StopVgmRecording();
-                    Process.Start(InstrumentManager.LastVgmOutputDir);
+                    //Process.Start(InstrumentManager.LastVgmOutputDir);
                 }
             }
             finally
@@ -1451,6 +1451,11 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (midiPlayback == null)
                 return;
+
+            if (toolStripButtonAutoWav.Checked)
+                toolStripButton20.Checked = false;
+            if (toolStripButtonAutoVGM.Checked)
+                toolStripButton21.Checked = false;
 
             midiPlayback.Stop();
             InstrumentManager.Panic();
