@@ -26,6 +26,7 @@ using System.Drawing.Text;
 using MetroFramework.Forms;
 using Melanchall.DryWetMidi.Interaction;
 using zanac.MAmidiMEmo.Util;
+using System.Security.Permissions;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -222,15 +223,15 @@ namespace zanac.MAmidiMEmo.Gui
 
             try
             {
-                draggableListView1.BeginUpdate();
+                draggableListViewMediaList.BeginUpdate();
                 foreach (string fn in Settings.Default.MediaList)
-                    draggableListView1.Items.Add(new ListViewItem(fn));
-                draggableListView1.Columns[0].Width = -2;
+                    draggableListViewMediaList.Items.Add(new ListViewItem(fn));
+                draggableListViewMediaList.Columns[0].Width = -2;
             }
             catch { }
             finally
             {
-                draggableListView1.EndUpdate();
+                draggableListViewMediaList.EndUpdate();
             }
 
             //Images
@@ -338,7 +339,7 @@ namespace zanac.MAmidiMEmo.Gui
             Settings.Default.MWinTab = tabControlBottom.SelectedIndex;
 
             Settings.Default.MediaList = new System.Collections.Specialized.StringCollection();
-            Settings.Default.MediaList.AddRange(draggableListView1.Items.Cast<ListViewItem>().Select(item => item.Text).ToArray());
+            Settings.Default.MediaList.AddRange(draggableListViewMediaList.Items.Cast<ListViewItem>().Select(item => item.Text).ToArray());
             base.OnClosing(e);
         }
 
@@ -1409,6 +1410,11 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
             }
 
+            playCore();
+        }
+
+        private void playCore()
+        {
             midiPlayback.Stop();
 
             if (toolStripButtonAutoWav.Checked)
@@ -1524,6 +1530,7 @@ namespace zanac.MAmidiMEmo.Gui
                 }
 
                 labelTitle.SetText("(Loaded)");
+                labelTitle.SetText(Path.GetFileName(fn));
                 labelTitle.Tag = new object();
 
                 midiPlayback?.Dispose();
@@ -1533,7 +1540,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 InstrumentBase.MasterGain = (float)metroTrackBarVol.Value / 100f;
 
-                toolStripButtonPlay_Click(null, null);
+                playCore();
             }
             catch (Exception ex)
             {
@@ -1558,14 +1565,14 @@ namespace zanac.MAmidiMEmo.Gui
                 int idx = 0;
                 if (currentSongItem != null)
                     idx = currentSongItem.Index;
-                if (idx < 0 && draggableListView1.Items.Count != 0)
+                if (idx < 0 && draggableListViewMediaList.Items.Count != 0)
                 {
                     playItem(0);
                 }
                 else
                 {
                     idx++;
-                    if (idx < draggableListView1.Items.Count)
+                    if (idx < draggableListViewMediaList.Items.Count)
                         playItem(idx);
                 }
             }));
@@ -1938,19 +1945,19 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void draggableListView1_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            switch (draggableListView1.Sorting)
+            switch (draggableListViewMediaList.Sorting)
             {
                 case SortOrder.Ascending:
-                    draggableListView1.Sorting = SortOrder.Descending;
-                    draggableListView1.Columns[0].Text = "File name ▼";
+                    draggableListViewMediaList.Sorting = SortOrder.Descending;
+                    draggableListViewMediaList.Columns[0].Text = "File name ▼";
                     break;
                 case SortOrder.Descending:
-                    draggableListView1.Sorting = SortOrder.None;
-                    draggableListView1.Columns[0].Text = "File name";
+                    draggableListViewMediaList.Sorting = SortOrder.None;
+                    draggableListViewMediaList.Columns[0].Text = "File name";
                     break;
                 case SortOrder.None:
-                    draggableListView1.Sorting = SortOrder.Ascending;
-                    draggableListView1.Columns[0].Text = "File name ▲";
+                    draggableListViewMediaList.Sorting = SortOrder.Ascending;
+                    draggableListViewMediaList.Columns[0].Text = "File name ▲";
                     break;
             }
         }
@@ -1959,10 +1966,10 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void playSelectedItem()
         {
-            if (draggableListView1.SelectedItems.Count != 0)
+            if (draggableListViewMediaList.SelectedItems.Count != 0)
             {
-                currentSongItem = draggableListView1.SelectedItems[0];
-                draggableListView1.SelectedItems.Clear();
+                currentSongItem = draggableListViewMediaList.SelectedItems[0];
+                draggableListViewMediaList.SelectedItems.Clear();
 
                 toolStripButtonStop_Click(null, null);
 
@@ -2014,13 +2021,13 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 try
                 {
-                    draggableListView1.BeginUpdate();
-                    foreach (ListViewItem item in draggableListView1.Items)
+                    draggableListViewMediaList.BeginUpdate();
+                    foreach (ListViewItem item in draggableListViewMediaList.Items)
                         item.Selected = true;
                 }
                 finally
                 {
-                    draggableListView1.EndUpdate();
+                    draggableListViewMediaList.EndUpdate();
                 }
             }
             if (e.KeyCode == Keys.V && e.Control)
@@ -2031,14 +2038,14 @@ namespace zanac.MAmidiMEmo.Gui
                     ListViewItem lvi = null;
                     try
                     {
-                        draggableListView1.BeginUpdate();
+                        draggableListViewMediaList.BeginUpdate();
 
-                        draggableListView1.SelectedItems.Clear();
+                        draggableListViewMediaList.SelectedItems.Clear();
                         lvi = addAllFiles(files.Cast<string>().ToArray(), lvi);
                     }
                     finally
                     {
-                        draggableListView1.EndUpdate();
+                        draggableListViewMediaList.EndUpdate();
                         lvi?.EnsureVisible();
                     }
                 }
@@ -2050,32 +2057,32 @@ namespace zanac.MAmidiMEmo.Gui
         {
             try
             {
-                draggableListView1.BeginUpdate();
+                draggableListViewMediaList.BeginUpdate();
                 int index = 0;
-                for (int i = 0; i < draggableListView1.SelectedItems.Count; i++)
+                for (int i = 0; i < draggableListViewMediaList.SelectedItems.Count; i++)
                 {
                     // 現在選択している行のインデックスを取得
-                    index = draggableListView1.SelectedItems[0].Index;
-                    if ((0 <= index) && (index < draggableListView1.Items.Count))
+                    index = draggableListViewMediaList.SelectedItems[0].Index;
+                    if ((0 <= index) && (index < draggableListViewMediaList.Items.Count))
                     {
-                        draggableListView1.Items.RemoveAt(index);
+                        draggableListViewMediaList.Items.RemoveAt(index);
                         i--;
                     }
                 }
-                if (index < draggableListView1.Items.Count)
+                if (index < draggableListViewMediaList.Items.Count)
                 {
-                    draggableListView1.Items[index].Selected = true;
-                    draggableListView1.Items[index].EnsureVisible();
+                    draggableListViewMediaList.Items[index].Selected = true;
+                    draggableListViewMediaList.Items[index].EnsureVisible();
                 }
-                else if (draggableListView1.Items.Count != 0)
+                else if (draggableListViewMediaList.Items.Count != 0)
                 {
-                    draggableListView1.Items[draggableListView1.Items.Count - 1].Selected = true;
-                    draggableListView1.Items[draggableListView1.Items.Count - 1].EnsureVisible();
+                    draggableListViewMediaList.Items[draggableListViewMediaList.Items.Count - 1].Selected = true;
+                    draggableListViewMediaList.Items[draggableListViewMediaList.Items.Count - 1].EnsureVisible();
                 }
             }
             finally
             {
-                draggableListView1.EndUpdate();
+                draggableListViewMediaList.EndUpdate();
             }
         }
 
@@ -2092,15 +2099,15 @@ namespace zanac.MAmidiMEmo.Gui
             ListViewItem lvi = null;
             try
             {
-                draggableListView1.BeginUpdate();
+                draggableListViewMediaList.BeginUpdate();
 
-                draggableListView1.SelectedItems.Clear();
+                draggableListViewMediaList.SelectedItems.Clear();
                 lvi = addAllFiles(files, lvi);
-                draggableListView1.Columns[0].Width = -2;
+                draggableListViewMediaList.Columns[0].Width = -2;
             }
             finally
             {
-                draggableListView1.EndUpdate();
+                draggableListViewMediaList.EndUpdate();
                 lvi?.EnsureVisible();
             }
         }
@@ -2120,7 +2127,7 @@ namespace zanac.MAmidiMEmo.Gui
                         case ".SMF":
                         case ".MAMIDI":
                             lvi = new ListViewItem(fp);
-                            draggableListView1.Items.Add(lvi);
+                            draggableListViewMediaList.Items.Add(lvi);
                             lvi.Selected = true;
                             break;
                     }
@@ -2171,7 +2178,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void explorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var item = draggableListView1.FocusedItem;
+            var item = draggableListViewMediaList.FocusedItem;
             if (item != null)
             {
                 Task.Run(new Action(() =>
@@ -2184,7 +2191,7 @@ namespace zanac.MAmidiMEmo.Gui
         private void playFile(string fileName)
         {
             //currentSongItem = draggableListView1.SelectedItems[0];
-            draggableListView1.SelectedItems.Clear();
+            draggableListViewMediaList.SelectedItems.Clear();
 
             toolStripButtonStop_Click(null, null);
 
@@ -2214,16 +2221,19 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void playItem(int idx)
         {
-            if (idx >= draggableListView1.Items.Count)
-                idx = draggableListView1.Items.Count - 1;
+            if (idx >= draggableListViewMediaList.Items.Count)
+                idx = draggableListViewMediaList.Items.Count - 1;
             if (idx < 0)
                 return;
 
-            currentSongItem = draggableListView1.Items[idx];
-            draggableListView1.SelectedItems.Clear();
+            currentSongItem = draggableListViewMediaList.Items[idx];
+            draggableListViewMediaList.SelectedItems.Clear();
 
             stopCurrentSong();
             playFile(currentSongItem.Text);
+
+            draggableListViewMediaList.SelectedItem = currentSongItem;
+            draggableListViewMediaList.FocusedItem = currentSongItem;
         }
 
         private void toolStripButton23_Click(object sender, EventArgs e)
@@ -2231,14 +2241,14 @@ namespace zanac.MAmidiMEmo.Gui
             int idx = 0;
             if (currentSongItem != null)
                 idx = currentSongItem.Index;
-            if (idx < 0 && draggableListView1.Items.Count != 0)
+            if (idx < 0 && draggableListViewMediaList.Items.Count != 0)
             {
                 playItem(0);
             }
             else
             {
                 idx++;
-                if (idx >= draggableListView1.Items.Count)
+                if (idx >= draggableListViewMediaList.Items.Count)
                     idx = 0;
                 playItem(idx);
             }
@@ -2249,7 +2259,7 @@ namespace zanac.MAmidiMEmo.Gui
             int idx = 0;
             if (currentSongItem != null)
                 idx = currentSongItem.Index;
-            if (idx < 0 && draggableListView1.Items.Count != 0)
+            if (idx < 0 && draggableListViewMediaList.Items.Count != 0)
             {
                 playItem(0);
             }
@@ -2257,9 +2267,103 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 idx--;
                 if (idx < 0)
-                    idx = draggableListView1.Items.Count - 1;
+                    idx = draggableListViewMediaList.Items.Count - 1;
                 playItem(idx);
             }
+        }
+
+        private void draggableListView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            draggableListViewMediaList.Items.Cast<ListViewItem>()
+                .ToList().ForEach(item =>
+                {
+                    item.BackColor = SystemColors.Window;
+                    item.ForeColor = SystemColors.WindowText;
+                });
+            draggableListViewMediaList.SelectedItems.Cast<ListViewItem>()
+                .ToList().ForEach(item =>
+                {
+                    item.BackColor = SystemColors.Highlight;
+                    item.ForeColor = SystemColors.HighlightText;
+                });
+        }
+
+        internal static class NativeConstants
+        {
+            public const int WM_APPCOMMAND = 0x0319;
+        }
+
+        internal enum ApplicationCommand
+        {
+            VolumeMute = 8,
+            VolumeDown = 9,
+            VolumeUp = 10,
+            MediaNexttrack = 11,
+            MediaPrevioustrack = 12,
+            MediaStop = 13,
+            MediaPlayPause = 14,
+            Close = 31,
+            MediaPlay = 46,
+            MediaPause = 47,
+            MediaFastForward = 49,
+            MediaRewind = 50
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+
+            switch (m.Msg)
+            {
+                case NativeConstants.WM_APPCOMMAND:
+                    switch ((ApplicationCommand)(m.LParam.ToInt32() >> 16))
+                    {
+                        case ApplicationCommand.MediaFastForward:
+                            goto default;
+                        case ApplicationCommand.MediaRewind:
+                            goto default;
+                        case ApplicationCommand.MediaPause:
+                            toolStripButtonPause.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPlay:
+                            toolStripButtonPlay.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPlayPause:
+                            if (midiPlayback == null)
+                                toolStripButtonPlay.PerformClick();
+                            else
+                                toolStripButtonPause.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaNexttrack:
+                            toolStripButtonNext.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaPrevioustrack:
+                            toolStripButtonPrev.PerformClick();
+                            goto default;
+                        case ApplicationCommand.MediaStop:
+                            toolStripButtonStop.PerformClick();
+                            goto default;
+                        case ApplicationCommand.VolumeDown:
+                            goto default;
+                        case ApplicationCommand.VolumeUp:
+                            goto default;
+                        case ApplicationCommand.VolumeMute:
+                            goto default;
+                        case ApplicationCommand.Close:
+                            Close();
+                            goto default;
+                        default:
+                            /* According to MSDN, when handling
+                             * this message, we must return TRUE. */
+                            m.Result = new IntPtr(1);
+                            base.WndProc(ref m);
+                            return;
+                    }
+            }
+
+            /* Other message handlers here… */
+
+            base.WndProc(ref m);
         }
     }
 }

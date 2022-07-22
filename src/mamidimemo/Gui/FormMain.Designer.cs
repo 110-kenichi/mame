@@ -104,14 +104,14 @@
             this.toolStripButtonPlay = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonStop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton22 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton23 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonPrev = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonNext = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonAutoVGM = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonAutoWav = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonReload = new System.Windows.Forms.ToolStripButton();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.draggableListView1 = new ListViewInsertionDrag.DraggableListView();
+            this.draggableListViewMediaList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStripList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1110,8 +1110,8 @@
             this.toolStripButtonPlay,
             this.toolStripButtonPause,
             this.toolStripButtonStop,
-            this.toolStripButton22,
-            this.toolStripButton23,
+            this.toolStripButtonPrev,
+            this.toolStripButtonNext,
             this.toolStripButtonOpen,
             this.toolStripButtonAutoVGM,
             this.toolStripButtonAutoWav,
@@ -1140,19 +1140,19 @@
             this.toolStripButtonStop.Name = "toolStripButtonStop";
             this.toolStripButtonStop.Click += new System.EventHandler(this.toolStripButtonStop_Click);
             // 
-            // toolStripButton22
+            // toolStripButtonPrev
             // 
-            this.toolStripButton22.Image = global::zanac.MAmidiMEmo.Properties.Resources.Prev;
-            resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
-            this.toolStripButton22.Name = "toolStripButton22";
-            this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click);
+            this.toolStripButtonPrev.Image = global::zanac.MAmidiMEmo.Properties.Resources.Prev;
+            resources.ApplyResources(this.toolStripButtonPrev, "toolStripButtonPrev");
+            this.toolStripButtonPrev.Name = "toolStripButtonPrev";
+            this.toolStripButtonPrev.Click += new System.EventHandler(this.toolStripButton22_Click);
             // 
-            // toolStripButton23
+            // toolStripButtonNext
             // 
-            this.toolStripButton23.Image = global::zanac.MAmidiMEmo.Properties.Resources.Next;
-            resources.ApplyResources(this.toolStripButton23, "toolStripButton23");
-            this.toolStripButton23.Name = "toolStripButton23";
-            this.toolStripButton23.Click += new System.EventHandler(this.toolStripButton23_Click);
+            this.toolStripButtonNext.Image = global::zanac.MAmidiMEmo.Properties.Resources.Next;
+            resources.ApplyResources(this.toolStripButtonNext, "toolStripButtonNext");
+            this.toolStripButtonNext.Name = "toolStripButtonNext";
+            this.toolStripButtonNext.Click += new System.EventHandler(this.toolStripButton23_Click);
             // 
             // toolStripButtonOpen
             // 
@@ -1191,33 +1191,34 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.draggableListView1);
+            this.tabPage5.Controls.Add(this.draggableListViewMediaList);
             resources.ApplyResources(this.tabPage5, "tabPage5");
             this.tabPage5.Name = "tabPage5";
             // 
-            // draggableListView1
+            // draggableListViewMediaList
             // 
-            this.draggableListView1.AllowDrop = true;
-            this.draggableListView1.AllowItemDrag = true;
-            this.draggableListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.draggableListViewMediaList.AllowDrop = true;
+            this.draggableListViewMediaList.AllowItemDrag = true;
+            this.draggableListViewMediaList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderFname});
-            this.draggableListView1.ContextMenuStrip = this.contextMenuStripList;
-            resources.ApplyResources(this.draggableListView1, "draggableListView1");
-            this.draggableListView1.FullRowSelect = true;
-            this.draggableListView1.GridLines = true;
-            this.draggableListView1.HideSelection = false;
-            this.draggableListView1.Name = "draggableListView1";
-            this.draggableListView1.UseCompatibleStateImageBehavior = false;
-            this.draggableListView1.View = System.Windows.Forms.View.Details;
-            this.draggableListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.draggableListView1_ColumnClick);
-            this.draggableListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.draggableListView1_ItemDrag);
-            this.draggableListView1.SizeChanged += new System.EventHandler(this.draggableListView1_SizeChanged);
-            this.draggableListView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragDrop);
-            this.draggableListView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragEnter);
-            this.draggableListView1.DragOver += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragOver);
-            this.draggableListView1.DragLeave += new System.EventHandler(this.draggableListView1_DragLeave);
-            this.draggableListView1.DoubleClick += new System.EventHandler(this.draggableListView1_DoubleClick);
-            this.draggableListView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.draggableListView1_KeyDown);
+            this.draggableListViewMediaList.ContextMenuStrip = this.contextMenuStripList;
+            resources.ApplyResources(this.draggableListViewMediaList, "draggableListViewMediaList");
+            this.draggableListViewMediaList.FullRowSelect = true;
+            this.draggableListViewMediaList.GridLines = true;
+            this.draggableListViewMediaList.HideSelection = false;
+            this.draggableListViewMediaList.Name = "draggableListViewMediaList";
+            this.draggableListViewMediaList.UseCompatibleStateImageBehavior = false;
+            this.draggableListViewMediaList.View = System.Windows.Forms.View.Details;
+            this.draggableListViewMediaList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.draggableListView1_ColumnClick);
+            this.draggableListViewMediaList.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.draggableListView1_ItemDrag);
+            this.draggableListViewMediaList.SelectedIndexChanged += new System.EventHandler(this.draggableListView1_SelectedIndexChanged);
+            this.draggableListViewMediaList.SizeChanged += new System.EventHandler(this.draggableListView1_SizeChanged);
+            this.draggableListViewMediaList.DragDrop += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragDrop);
+            this.draggableListViewMediaList.DragEnter += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragEnter);
+            this.draggableListViewMediaList.DragOver += new System.Windows.Forms.DragEventHandler(this.draggableListView1_DragOver);
+            this.draggableListViewMediaList.DragLeave += new System.EventHandler(this.draggableListView1_DragLeave);
+            this.draggableListViewMediaList.DoubleClick += new System.EventHandler(this.draggableListView1_DoubleClick);
+            this.draggableListViewMediaList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.draggableListView1_KeyDown);
             // 
             // columnHeaderFname
             // 
@@ -1978,14 +1979,14 @@
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.ColumnHeader columnHeaderFile;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private ListViewInsertionDrag.DraggableListView draggableListView1;
+        private ListViewInsertionDrag.DraggableListView draggableListViewMediaList;
         private System.Windows.Forms.ColumnHeader columnHeaderFname;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripList;
         private System.Windows.Forms.ToolStripMenuItem playToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem explorerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton22;
-        private System.Windows.Forms.ToolStripButton toolStripButton23;
+        private System.Windows.Forms.ToolStripButton toolStripButtonPrev;
+        private System.Windows.Forms.ToolStripButton toolStripButtonNext;
     }
 }
 

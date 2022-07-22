@@ -468,6 +468,33 @@
   <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 38</value>
+  </data>
+  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1127, 133</value>
+  </data>
+  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
+    <value>tabPage1</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
+    <value>tabControlBottom</value>
+  </data>
+  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="pianoControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -478,7 +505,7 @@
     <value>6, 4, 6, 4</value>
   </data>
   <data name="pianoControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1127, 108</value>
+    <value>1133, 110</value>
   </data>
   <data name="pianoControl1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1840,7 +1867,7 @@
     <value>0, 0</value>
   </data>
   <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1127, 25</value>
+    <value>1133, 25</value>
   </data>
   <data name="toolStrip2.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1861,10 +1888,10 @@
     <value>1</value>
   </data>
   <data name="tabPage3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 38</value>
+    <value>4, 42</value>
   </data>
   <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1127, 133</value>
+    <value>1133, 135</value>
   </data>
   <data name="tabPage3.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1882,33 +1909,6 @@
     <value>tabControlBottom</value>
   </data>
   <data name="&gt;&gt;tabPage3.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabPage1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 42</value>
-  </data>
-  <data name="tabPage1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="tabPage1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1133, 135</value>
-  </data>
-  <data name="tabPage1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="tabPage1.Text" xml:space="preserve">
-    <value>Audio</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Name" xml:space="preserve">
-    <value>tabPage1</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.Parent" xml:space="preserve">
-    <value>tabControlBottom</value>
-  </data>
-  <data name="&gt;&gt;tabPage1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
@@ -2349,22 +2349,22 @@
   <data name="toolStripButtonStop.Text" xml:space="preserve">
     <value>Stop</value>
   </data>
-  <data name="toolStripButton22.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+  <data name="toolStripButtonPrev.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
-  <data name="toolStripButton22.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripButtonPrev.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 24</value>
   </data>
-  <data name="toolStripButton22.Text" xml:space="preserve">
+  <data name="toolStripButtonPrev.Text" xml:space="preserve">
     <value>Prev</value>
   </data>
-  <data name="toolStripButton23.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+  <data name="toolStripButtonNext.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
-  <data name="toolStripButton23.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripButtonNext.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 24</value>
   </data>
-  <data name="toolStripButton23.Text" xml:space="preserve">
+  <data name="toolStripButtonNext.Text" xml:space="preserve">
     <value>Next</value>
   </data>
   <data name="toolStripButtonOpen.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -2496,31 +2496,31 @@
   <data name="&gt;&gt;contextMenuStripList.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="draggableListView1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="draggableListViewMediaList.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="draggableListView1.LabelWrap" type="System.Boolean, mscorlib">
+  <data name="draggableListViewMediaList.LabelWrap" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="draggableListView1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="draggableListViewMediaList.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="draggableListView1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="draggableListViewMediaList.Size" type="System.Drawing.Size, System.Drawing">
     <value>1127, 133</value>
   </data>
-  <data name="draggableListView1.TabIndex" type="System.Int32, mscorlib">
+  <data name="draggableListViewMediaList.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;draggableListView1.Name" xml:space="preserve">
-    <value>draggableListView1</value>
+  <data name="&gt;&gt;draggableListViewMediaList.Name" xml:space="preserve">
+    <value>draggableListViewMediaList</value>
   </data>
-  <data name="&gt;&gt;draggableListView1.Type" xml:space="preserve">
+  <data name="&gt;&gt;draggableListViewMediaList.Type" xml:space="preserve">
     <value>ListViewInsertionDrag.DraggableListView, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;draggableListView1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;draggableListViewMediaList.Parent" xml:space="preserve">
     <value>tabPage5</value>
   </data>
-  <data name="&gt;&gt;draggableListView1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;draggableListViewMediaList.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="tabPage5.Location" type="System.Drawing.Point, System.Drawing">
@@ -5315,16 +5315,16 @@
   <data name="&gt;&gt;toolStripButtonStop.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripButton22.Name" xml:space="preserve">
-    <value>toolStripButton22</value>
+  <data name="&gt;&gt;toolStripButtonPrev.Name" xml:space="preserve">
+    <value>toolStripButtonPrev</value>
   </data>
-  <data name="&gt;&gt;toolStripButton22.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripButtonPrev.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripButton23.Name" xml:space="preserve">
-    <value>toolStripButton23</value>
+  <data name="&gt;&gt;toolStripButtonNext.Name" xml:space="preserve">
+    <value>toolStripButtonNext</value>
   </data>
-  <data name="&gt;&gt;toolStripButton23.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripButtonNext.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripButtonOpen.Name" xml:space="preserve">
