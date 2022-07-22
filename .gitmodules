@@ -4,6 +4,3 @@
 [submodule "src/FluidLite"]
 	path = src/FluidLite
 	url = https://github.com/110-kenichi/FluidLite
-[submodule "src/devices/sound/ymfm"]
-	path = src/devices/sound/ymfm
-	url = https://github.com/aaronsgiles/ymfm
