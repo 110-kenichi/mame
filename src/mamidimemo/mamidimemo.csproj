@@ -197,6 +197,18 @@
     <Compile Include="Gui\FMEditor\FormYM2414Editor .Designer.cs">
       <DependentUpon>FormYM2414Editor .cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3806Editor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\FormYM3806Editor.Designer.cs">
+      <DependentUpon>FormYM3806Editor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOpqAlg4OpImg.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\RegisterOpqAlg4OpImg.Designer.cs">
+      <DependentUpon>RegisterOpqAlg4OpImg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FMEditor\RegisterOpzWaveForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -216,6 +228,19 @@
       <DependentUpon>YM2414OperatorContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FMEditor\YM2414UITypeEditor.cs" />
+    <Compile Include="Gui\FMEditor\YM3806GeneralContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3806GeneralContainer.Designer.cs">
+      <DependentUpon>YM3806GeneralContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3806OperatorContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3806OperatorContainer.Designer.cs">
+      <DependentUpon>YM3806OperatorContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FMEditor\YM3806UITypeEditor.cs" />
     <Compile Include="Gui\GraphicEqulizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -588,6 +613,7 @@
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Soundbites.cs" />
     <Compile Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Special.cs" />
     <Compile Include="Instruments\Chips\YM2414.cs" />
+    <Compile Include="Instruments\Chips\YM3806.cs" />
     <Compile Include="Instruments\Chips\YM\YMOperatorBase.cs" />
     <Compile Include="Instruments\CombinedTimbreSettings.cs" />
     <Compile Include="Instruments\CombinedTimbreSettingsCollection.cs" />
@@ -785,6 +811,9 @@
     <EmbeddedResource Include="Gui\FMEditor\FormYM2608Editor.resx">
       <DependentUpon>FormYM2608Editor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormYM3806Editor.resx">
+      <DependentUpon>FormYM3806Editor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYMF262Editor.resx">
       <DependentUpon>FormYMF262Editor.cs</DependentUpon>
     </EmbeddedResource>
@@ -799,6 +828,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
       <DependentUpon>FormYM2151Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\RegisterOpqAlg4OpImg.resx">
+      <DependentUpon>RegisterOpqAlg4OpImg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterOpzWaveForm.resx">
       <DependentUpon>RegisterOpzWaveForm.cs</DependentUpon>
@@ -846,6 +878,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\YM2413GeneralContainer.resx">
       <DependentUpon>YM2413GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3806GeneralContainer.resx">
+      <DependentUpon>YM3806GeneralContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\YM3806OperatorContainer.resx">
+      <DependentUpon>YM3806OperatorContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\YMF262OperatorContainer.resx">
       <DependentUpon>YMF262OperatorContainer.cs</DependentUpon>
@@ -1232,6 +1271,7 @@
   <ItemGroup>
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
+    <None Include="Resources\YM3806.png" />
     <None Include="Resources\Timbre.png" />
     <None Include="Resources\YM2414.png" />
     <None Include="Resources\WS11.png" />
@@ -1251,6 +1291,8 @@
     <None Include="Resources\Prev.png" />
     <None Include="Resources\Play1.png" />
     <None Include="Resources\Play11.png" />
+    <None Include="Resources\ALG5Q.png" />
+    <None Include="Resources\ALG8Q.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

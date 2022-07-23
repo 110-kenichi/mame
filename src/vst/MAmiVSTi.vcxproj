@@ -164,6 +164,7 @@
       <AdditionalIncludeDirectories>..\rpclib\include\</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>user32.lib;advapi32.lib;wsock32.lib;ws2_32.lib;iphlpapi.lib;shell32.lib;userenv.lib;setupapi.lib;opengl32.lib;gdi32.lib;dsound.lib;dxguid.lib;oleaut32.lib;winmm.lib;dinput8.lib;comctl32.lib;comdlg32.lib;psapi.lib;ole32.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>

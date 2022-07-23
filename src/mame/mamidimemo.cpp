@@ -41,6 +41,7 @@
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
+#include "..\devices\sound\ymfm\src\ymfm_opq.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2054,6 +2055,30 @@ extern "C"
 			ymfm_opz_devices[unitNumber] = ymfm_opz;
 		}
 		ymfm_opz_devices[unitNumber]->write(address, data);
+	}
+
+
+	ymfm_opq_device* ymfm_opq_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void ymfm_opq_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (ymfm_opq_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymfm_opq_device* ymfm_opq = dynamic_cast<ymfm_opq_device*>(rm->device((std::string("ymfm_opq_") + num).c_str()));
+			if (ymfm_opq == nullptr)
+				return;
+
+			ymfm_opq_devices[unitNumber] = ymfm_opq;
+		}
+		ymfm_opq_devices[unitNumber]->write(address, data);
 	}
 
 }

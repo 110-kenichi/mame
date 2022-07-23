@@ -264,6 +264,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("SN76477", Resources.SN76477);
             imageList1.Images.Add("uPD1771C", Resources.uPD1771C);
             imageList1.Images.Add("YM2414", Resources.YM2414);
+            imageList1.Images.Add("YM3806", Resources.YM3806);
 
             if (Program.IsVSTiMode())
             {
@@ -789,6 +790,11 @@ namespace zanac.MAmidiMEmo.Gui
         private void uPD1771ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.uPD1771C);
+        }
+
+        private void yM3806OPQToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.YM3806);
         }
 
         /// <summary>
@@ -2365,5 +2371,6 @@ namespace zanac.MAmidiMEmo.Gui
 
             base.WndProc(ref m);
         }
+
     }
 }

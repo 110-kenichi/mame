@@ -40,6 +40,7 @@
 #include "sound/ymfm/src/ymfm_opz.h"
 #include "sound/ymfm/src/ymfm_opn.h"
 #include "sound/ymfm/src/ymfm_opl.h"
+#include "sound/ymfm/src/ymfm_opq.h"
 
 /* Megadrive Console Specific */
 #include "bus/megadrive/md_slot.h"
@@ -210,10 +211,14 @@ public:
 			strcpy(device_names[didx][i], (std::string("ymfm_opz_") + num).c_str());
 			m_ymfm_opz[i] = new optional_device<ymfm_opz_device>(*this, device_names[didx][i]);
 			didx++;
+			//m_ymfm_opq
+			strcpy(device_names[didx][i], (std::string("ymfm_opq_") + num).c_str());
+			m_ymfm_opq[i] = new optional_device<ymfm_opq_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
-	char device_names[ 30 ][8][100];
+	char device_names[ 31 ][8][100];
 	optional_device<ym2151_device> *m_ym2151[8];	//1
 	optional_device<ymfm_opn2_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
@@ -243,6 +248,7 @@ public:
 	optional_device<sn76477_device>* m_sn76477[8];	//27
 	optional_device<upd1771c_device>* m_upd1771[8];	//28
 	optional_device<ymfm_opz_device>* m_ymfm_opz[8];	//29
+	optional_device<ymfm_opq_device>* m_ymfm_opq[8];	//30
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

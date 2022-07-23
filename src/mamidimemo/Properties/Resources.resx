@@ -363,7 +363,7 @@ So, sound glitches may occur.</value>
     <value>Do you clear all instruments?</value>
   </data>
   <data name="CNTWarning" xml:space="preserve">
-    <value>You should Chip(Global) -> CONSEL prop value to 1 or higher value to sound 4 operator sound.</value>
+    <value>You should Chip(Global) -&gt; CONSEL prop value to 1 or higher value to sound 4 operator sound.</value>
   </data>
   <data name="NoMidiPort" xml:space="preserve">
     <value>There are no MIDI IN devices.
@@ -441,5 +441,14 @@ Or, install the loopMIDI application to the PC.</value>
   </data>
   <data name="Prev" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Play11.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="YM3806" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YM3806.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG5Q" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG5Q.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ALG8Q" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ALG8Q.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

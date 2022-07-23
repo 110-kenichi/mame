@@ -140,5 +140,8 @@
     <Setting Name="MediaList" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="YM3806EdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">800, 600</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

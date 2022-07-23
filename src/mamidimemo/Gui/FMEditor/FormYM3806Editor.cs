@@ -16,13 +16,13 @@ using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2151;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3806;
 
 namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
-    public partial class FormYM2151Editor : FormFmEditor
+    public partial class FormYM3806Editor : FormFmEditor
     {
-        private YM2151Timbre timbre;
+        private YM3806Timbre timbre;
 
         /// <summary>
         /// 
@@ -66,7 +66,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public FormYM2151Editor()
+        public FormYM3806Editor()
         {
             InitializeComponent();
         }
@@ -74,19 +74,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public FormYM2151Editor(YM2151 inst, YM2151Timbre timbre, bool singleSelect) : base(inst, timbre, singleSelect)
+        public FormYM3806Editor(YM3806 inst, YM3806Timbre timbre, bool singleSelect) : base(inst, timbre, singleSelect)
         {
             this.timbre = timbre;
             InitializeComponent();
 
-            Size = Settings.Default.YM2151EdSize;
+            Size = Settings.Default.YM3806EdSize;
 
-            AddControl(new YM2151GeneralContainer(inst, timbre, "General"));
+            AddControl(new YM3806GeneralContainer(inst, timbre, "General"));
 
-            AddControl(new YM2151OperatorContainer(timbre.Ops[0], "Operator 1"));
-            AddControl(new YM2151OperatorContainer(timbre.Ops[1], "Operator 2"));
-            AddControl(new YM2151OperatorContainer(timbre.Ops[2], "Operator 3"));
-            AddControl(new YM2151OperatorContainer(timbre.Ops[3], "Operator 4"));
+            AddControl(new YM3806OperatorContainer(timbre.Ops[0], "Operator 1"));
+            AddControl(new YM3806OperatorContainer(timbre.Ops[1], "Operator 2"));
+            AddControl(new YM3806OperatorContainer(timbre.Ops[2], "Operator 3"));
+            AddControl(new YM3806OperatorContainer(timbre.Ops[3], "Operator 4"));
         }
 
         /// <summary>
@@ -97,23 +97,21 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             base.OnClosing(e);
 
-            Settings.Default.YM2151EdSize = Size;
+            Settings.Default.YM3806EdSize = Size;
         }
 
         protected override void ApplyTone(Tone tone)
         {
             ((RegisterValue)this["General"]["ALG"]).Value = tone.AL;
             ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+            ((RegisterValue)this["General"]["REV"]).Value = tone.REV;
             ((RegisterValue)this["General"]["AMS"]).Value = tone.AMS;
             ((RegisterValue)this["General"]["PMS"]).Value = tone.PMS;
+            ((RegisterValue)this["General"]["PitchShift13"]).Value = tone.PitchShift;
+            ((RegisterValue)this["General"]["PitchShift24"]).Value = tone.PitchShift2;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOE"]).NullableValue = tone.LFOE;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tone.LFRQ;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tone.LFOF;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tone.LFOD;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tone.LFOW;
-
-            ((RegisterValue)this["General"]["GlobalSettings.NE"]).NullableValue = tone.NE;
-            ((RegisterValue)this["General"]["GlobalSettings.NFRQ"]).NullableValue = tone.NF;
 
             for (int i = 0; i < 4; i++)
             {
@@ -128,7 +126,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["MUL"]).Value = tone.aOp[i].ML;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT1"]).Value = tone.aOp[i].DT;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["DT2"]).Value = tone.aOp[i].DT2;
+                ((RegisterValue)this["Operator " + (i + 1)]["OSCW"]).Value = tone.aOp[i].OSCW;
                 ((RegisterValue)this["Operator " + (i + 1)]["LS"]).Value = tone.aOp[i].LS;
                 ((RegisterValue)this["Operator " + (i + 1)]["KVS"]).Value = tone.aOp[i].KVS;
             }
@@ -141,23 +139,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected override void ApplyTone(TimbreBase timbre, Tone tone)
         {
-            YM2151Timbre tim = (YM2151Timbre)timbre;
+            YM3806Timbre tim = (YM3806Timbre)timbre;
 
             tim.ALG = (byte)tone.AL;
             tim.FB = (byte)tone.FB;
+            tim.REV = (byte)tone.REV;
             tim.AMS = (byte)tone.AMS;
             tim.PMS = (byte)tone.PMS;
+            tim.PitchShift13 = (byte)tone.PitchShift;
+            tim.PitchShift24 = (byte)tone.PitchShift2;
             tim.GlobalSettings.Enable = false;
+            tim.GlobalSettings.LFOE = (byte?)tone.LFOE;
             tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
-            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
-            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
-            tim.GlobalSettings.NE = (byte?)tone.NE;
-            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
-            if (tim.GlobalSettings.NE > 0 ||
-                tim.GlobalSettings.LFRQ > 0 ||
-                tim.GlobalSettings.LFOW > 0 ||
-                tim.GlobalSettings.LFOD > 0
+            if(tim.GlobalSettings.LFRQ > 0 ||
+                tim.GlobalSettings.LFOE > 0
                 )
                 tim.GlobalSettings.Enable = true;
 
@@ -174,7 +169,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
                 tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
                 tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+                tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
                 tim.Ops[i].LS = (byte)tone.aOp[i].LS;
                 tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
             }
@@ -187,19 +182,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected override void ApplyTimbre(TimbreBase timbre)
         {
-            YM2151Timbre tim = (YM2151Timbre)timbre;
+            YM3806Timbre tim = (YM3806Timbre)timbre;
             this.timbre = tim;
 
             this["General"].Target = tim;
             ((RegisterValue)this["General"]["ALG"]).Value = tim.ALG;
             ((RegisterValue)this["General"]["FB"]).Value = tim.FB;
+            ((RegisterValue)this["General"]["REV"]).Value = tim.REV;
             ((RegisterValue)this["General"]["AMS"]).Value = tim.AMS;
             ((RegisterValue)this["General"]["PMS"]).Value = tim.PMS;
+            ((RegisterValue)this["General"]["PitchShift13"]).Value = tim.PitchShift13;
+            ((RegisterValue)this["General"]["PitchShift24"]).Value = tim.PitchShift24;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = tim.GlobalSettings.Enable;
+            ((RegisterValue)this["General"]["GlobalSettings.LFOE"]).NullableValue = tim.GlobalSettings.LFOE;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tim.GlobalSettings.LFRQ;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tim.GlobalSettings.LFOF;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tim.GlobalSettings.LFOD;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tim.GlobalSettings.LFOW;
             for (int i = 0; i < 4; i++)
             {
                 this["Operator " + (i + 1)].Target = tim.Ops[i];
@@ -214,11 +210,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["MUL"]).Value = tim.Ops[i].MUL;
                 ((RegisterValue)this["Operator " + (i + 1)]["DT1"]).Value = tim.Ops[i].DT1;
                 ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tim.Ops[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["DT2"]).Value = tim.Ops[i].DT2;
+                ((RegisterValue)this["Operator " + (i + 1)]["OSCW"]).Value = tim.Ops[i].OSCW;
                 ((RegisterValue)this["Operator " + (i + 1)]["LS"]).Value = tim.Ops[i].LS;
                 ((RegisterValue)this["Operator " + (i + 1)]["KVS"]).Value = tim.Ops[i].KVS;
             }
         }
+
     }
 
 }

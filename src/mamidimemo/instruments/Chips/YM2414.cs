@@ -1602,11 +1602,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 5:
-                            if (op == 4)
+                            if (op == 3)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 6:
-                            if (op == 4)
+                            if (op == 3)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
                             break;
                         case 7:

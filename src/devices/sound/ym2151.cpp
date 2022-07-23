@@ -462,7 +462,7 @@ void ym2151_device::YM2151Operator::key_off(uint32_t key_set)
 void ym2151_device::envelope_KONKOFF(YM2151Operator * op, int v)
 {
 	// m1, m2, c1, c2
-	static uint8_t masks[4] = { 0x08, 0x20, 0x10, 0x40 };
+	static uint8_t masks[4] = { 0x08, 0x10, 0x20, 0x40 };
 	for(int i=0; i != 4; i++)
 		if (v & masks[i]) /* M1 */
 			op[i].key_on(1, eg_cnt);

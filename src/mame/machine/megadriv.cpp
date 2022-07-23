@@ -1094,6 +1094,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		YMFM_OPZ(config, *m_ymfm_opz[i], XTAL(3'579'545));
 		(*m_ymfm_opz[i])->add_route(0, "lspeaker", 2.00);
 		(*m_ymfm_opz[i])->add_route(1, "rspeaker", 2.00);
+
+		YMFM_OPQ(config, *m_ymfm_opq[i], XTAL(3'579'545));
+		(*m_ymfm_opq[i])->add_route(0, "lspeaker", 2.00);
+		(*m_ymfm_opq[i])->add_route(1, "rspeaker", 2.00);
 	}
 }
 /*

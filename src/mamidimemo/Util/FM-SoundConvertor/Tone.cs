@@ -72,6 +72,8 @@ namespace FM_SoundConvertor
         public int AL;
         public int CNT = -1;
 
+        public int REV;
+
         public int PMS;
         public int AMS;
         public int PMS2;
@@ -81,6 +83,7 @@ namespace FM_SoundConvertor
         public int? NF;
         public int? SY;
         public int? SY2;
+        public int? LFOE;
         public int? LFOF;
         public int? LFOF2;
         public int? LFRQ;
@@ -97,6 +100,7 @@ namespace FM_SoundConvertor
 
         public int KeyShift;
         public int PitchShift;
+        public int PitchShift2;
         public int KeyOnDelay;
         public int KeyOffDelay;
 
