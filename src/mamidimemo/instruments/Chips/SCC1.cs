@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - SMS/MSX\"\r\n" +
+        [Description("Set Port No for \"VSIF - MSX\"\r\n" +
             "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
@@ -156,7 +156,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
-                            enableScc(SCCChipType, ExtSCCSlot);
+                            enableScc(SCCChipType, ExtSCCSlot, true);
                             SetDevicePassThru(true);
                         }
                         else
@@ -187,7 +187,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_MSX_FTDI:
-                        enableScc(f_sccType, value);
+                        enableScc(f_sccType, value, true);
                         break;
                 }
                 f_extSCCSlot = value;
@@ -213,7 +213,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 switch (CurrentSoundEngine)
                 {
                     case SoundEngineType.VSIF_MSX_FTDI:
-                        enableScc(value, f_extSCCSlot);
+                        enableScc(value, f_extSCCSlot, true);
                         break;
                 }
                 f_sccType = value;
@@ -222,15 +222,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void enableScc(SCCType type, SCCSlotNo slot)
         {
+            enableScc(type, slot, false);
+        }
+
+        private void enableScc(SCCType type, SCCSlotNo slot, bool clearCache)
+        {
             if (slot != SCCSlotNo.None)
             {
                 lock (vsifClient.LockObject)
                 {
                     vsifClient.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
-                    vsifClient.Sleep(16);
+                    //vsifClient.Sleep(16);
                 }
             }
-            ClearWrittenDataCache();
+            if(clearCache)
+                ClearWrittenDataCache();
         }
 
         private int f_ftdiClkWidth = 15;
@@ -340,7 +346,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                    {
+                        enableScc(SCCChipType, ExtSCCSlot);
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
+                    }
                 }
                 DeferredWriteData(SCC1_volume_w, unitNumber, offset, data);
             }));
@@ -391,6 +400,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         lock (vsifClient.LockObject)
                         {
+                            enableScc(SCCChipType, ExtSCCSlot);
                             vsifClient.WriteData(type, address, (byte)(freq & 0xff), f_ftdiClkWidth);
 
                             byte freq_h = (byte)((freq >> 8) & 0xf);
@@ -448,7 +458,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                    {
+                        enableScc(SCCChipType, ExtSCCSlot);
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
+                    }
                 }
                 DeferredWriteData(SCC1_keyonoff_w, unitNumber, (uint)0, data);
             }));
@@ -508,16 +521,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 WriteData(offset, (uint)hashCode, true, new Action(() =>
                                 {
-                                    byte address = (byte)(0x00 + offset);
-                                    vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
-
-                                    for (int i = 1; i < data.Length; i++)
+                                    lock (vsifClient.LockObject)
                                     {
-                                        var dt = (byte)data[i];
-                                        vsifClient.RawWriteData(new byte[] {
+                                        byte address = (byte)(0x00 + offset);
+                                        enableScc(SCCChipType, ExtSCCSlot);
+                                        vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
+
+                                        for (int i = 1; i < data.Length; i++)
+                                        {
+                                            var dt = (byte)data[i];
+                                            vsifClient.RawWriteData(new byte[] {
                                                 (byte)((dt    >> 4) | 0x00),
                                                 (byte)((dt &  0x0f) | 0x20),
                                         }, f_ftdiClkWidth);
+                                        }
                                     }
                                 }));
                             }

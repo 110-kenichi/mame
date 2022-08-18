@@ -12,6 +12,8 @@ namespace zanac.MAmidiMEmo.VSIF
 {
     public class PortWriterMsx : PortWriter
     {
+        private int lastSccType = -1;
+        private int lastSccSlot = -1;
 
         /// <summary>
         /// 
@@ -45,11 +47,32 @@ namespace zanac.MAmidiMEmo.VSIF
                     //https://hra1129.github.io/system/psg_reg7.html
                     dt.Data = (byte)((dt.Data & 0x3f) | 0x80);
 
-                byte[] sd = new byte[5] {
+                if (dt.Type == 3)
+                {
+                    if (lastSccType != dt.Address || lastSccSlot != dt.Data)
+                    {
+                        lastSccType = dt.Address;
+                        lastSccSlot = dt.Data;
+                        byte[] sd = new byte[5] {
+                        (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
+                        (byte)((dt.Data    >> 4) | 0x20), (byte)((dt.Data &    0x0f) | 0x00),
+                        (byte)(dt.Type           | 0x20) };
+                        ds.AddRange(sd);
+
+                        //dummy wait
+                        sd = new byte[5] { 0, 0, 0, 0, 0 };
+                        for(int i=0;i<8;i++)
+                            ds.AddRange(sd);
+                    }
+                }
+                else
+                {
+                    byte[] sd = new byte[5] {
                     (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
                     (byte)((dt.Data    >> 4) | 0x20), (byte)((dt.Data &    0x0f) | 0x00),
                     (byte)(dt.Type           | 0x20) };
-                ds.AddRange(sd);
+                    ds.AddRange(sd);
+                }
             }
             byte[] dsa = ds.ToArray();
 
