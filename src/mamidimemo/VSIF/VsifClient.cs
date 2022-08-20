@@ -146,6 +146,35 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void WriteData(byte type, byte address, byte[] data, int wait)
+        {
+            try
+            {
+                if (disposedValue)
+                    return;
+                lock (lockObject)
+                {
+                    PortWriteData[] pdata = new PortWriteData[data.Length];
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        pdata[i] = new PortWriteData() { Type = type, Address = address++, Data = data[i], Wait = wait };
+                    }
+                    SerialPort?.Write(pdata);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
 
         /// <summary>
         /// 

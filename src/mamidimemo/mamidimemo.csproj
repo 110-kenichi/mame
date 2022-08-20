@@ -623,6 +623,7 @@
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
+    <Compile Include="VSIF\PortWriterC64.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />

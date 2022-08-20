@@ -31,6 +31,9 @@ namespace zanac.MAmidiMEmo.VSIF
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 100;
 
+        public const int FTDI_BAUDRATE_C64 = 31250*3 / 16;
+        public const int FTDI_BAUDRATE_C64_MUL = 300;
+
         //public const int FTDI_BAUDRATE_MSX = 9600 / 16;
         public const int FTDI_BAUDRATE_MSX = 38400 / 16;
         public const int FTDI_BAUDRATE_MSX_MUL = 100;
@@ -228,6 +231,30 @@ namespace zanac.MAmidiMEmo.VSIF
                                 }
                             }
                             break;
+                        case VsifSoundModuleType.C64_FTDI:
+                            {
+                                var ftdi = new FTD2XX_NET.FTDI();
+                                var stat = ftdi.OpenByIndex((uint)comPort);
+                                if (stat == FTDI.FT_STATUS.FT_OK)
+                                {
+                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_C64 * FTDI_BAUDRATE_C64_MUL);
+                                    ftdi.SetTimeouts(500, 500);
+                                    ftdi.SetLatency(0);
+                                    {
+                                        uint dummy = 0;
+                                        ftdi.Write(new byte[] { 0x1f }, 1, ref dummy);
+                                    }
+
+                                    VsifClient client = new VsifClient(soundModule, new PortWriterC64(ftdi, comPort));
+
+                                    client.Disposed += Client_Disposed;
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                            }
+                            break;
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -273,6 +300,7 @@ namespace zanac.MAmidiMEmo.VSIF
         NES_FTDI_INDIRECT,
         NES_FTDI_DIRECT,
         MSX_FTDI,
+        C64_FTDI,
     }
 
 
