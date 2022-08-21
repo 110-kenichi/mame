@@ -1,6 +1,14 @@
 *=$0801
 BasicUpstart(main)
 
+.zp
+{
+    addr:
+        .byte 0
+    data:
+        .byte 0
+}
+
 * = $0810
 
 //CLOCK_PAL  =  985248 Hz
@@ -8,6 +16,24 @@ BasicUpstart(main)
 
 //  31250bps 31.527936 clk @ 985248 (PAL)
 //  31250bps 32.727264 clk @ 1022727 Hz (NTSC)
+
+.macro CheckStartBit1()
+{
+    loop:
+        lda $dc00            //3  3 //Read port2 data
+        and #%00001000       //2  5 // Fire Bit is 0? 
+        beq loop             //2  7
+        lda $dc00            //3 10 //Read port2 data
+}
+
+.macro CheckStartBit0()
+{
+    loop:
+        lda $dc00            //3  3 //Read port2 data
+        and #%00001000       //2  5 // Fire Bit is 0? 
+        bne loop             //2  7
+        lda $dc00            //3 10 //Read port2 data
+}
 
 main:
     jsr $e544 //clear screen
@@ -38,27 +64,6 @@ main:
     lda #%10000000      //Select Paddle #2
     sta $dc00           //Bits #6-#7: Paddle selection; %01 = Paddle #1; %10 = Paddle #2.
 
-// // value_check:
-// // lda $d419           //3 13 //Read port2 data
-// // lsr
-// // lsr
-// // lsr
-// // lsr
-// // and #$1f
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// // lda $d41a           //3 13 //Read port2 data
-// // lsr
-// // lsr
-// // lsr
-// // lsr
-// // and #$1f
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// //jmp value_check
-
 /* ------------------------------------------------------------------ */
 //http://codebase64.org/doku.php?id=base:joystick_input_handling    
 // Bit #0: 0 = Port 2 joystick up pressed.
@@ -78,10 +83,7 @@ get_address_Lo:
 // adrs_lo, mid, hi, data_hi, mid, lo, ...
 /* ------------------------------------------------------------------ */
 get_address_Mid:
-    lda $dc00            //3  3 //Read port2 data
-    and #%00001000       //2  5 // Fire Bit is 0? 
-    beq get_address_Mid  //2  7
-    lda $dc00            //3 10 //Read port2 data
+    CheckStartBit1()     //10 10
     and #%00000111       //2 12
     asl                  //2 14
     asl                  //2 16
@@ -90,10 +92,7 @@ get_address_Mid:
     sta addr             //4 26
 
 get_address_Hi:
-    lda $dc00           //3  3 //Read port2 data
-    and #%00001000      //2  5 //Fire Bit is 0?
-    bne get_address_Hi  //2  7
-    lda $dc00           //3 10 //Read port2 data
+    CheckStartBit0()     //10 10
     and #%00000011      //2 12
     ror                 //2 14
     ror                 //2 16
@@ -102,10 +101,7 @@ get_address_Hi:
     tax                 //2 26
 
 get_data_Hi:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 1?
-    beq get_data_Hi    //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit1()     //10 10
     and #%00000111     //2 12
     ror                //2 14
     ror                //2 16
@@ -114,10 +110,7 @@ get_data_Hi:
     sta data           //4 24
 
 get_data_Mid:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 1?
-    bne get_data_Mid   //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit0()     //10 10
     and #%00000111     //2 12
     asl                //2 14
     asl                //2 16
@@ -125,44 +118,11 @@ get_data_Mid:
     sta data           //4 24
 
 get_data_Lo:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 0?
-    beq get_data_Lo    //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit1()     //10 10
     and #%00000011     //2 12
     //Sound SID
     ora data           //4 16
     sta $d400,x        //6 22
-
-// sta data
-// and #$f0
-// lsr
-// lsr
-// lsr
-// lsr
-// adc #$30
-// jsr $ffd2 //bsout
-// lda data
-// and #$0f
-// adc #$30
-// jsr $ffd2 //bsout
-
-// txa
-// and #$f0
-// lsr
-// lsr
-// lsr
-// lsr
-// adc #$30
-// jsr $ffd2 //bsout
-// txa
-// and #$0f
-// adc #$30
-// jsr $ffd2 //bsout
-
-// lda #$20
-// jsr $ffd2 //bsout
-//jmp wait_start_bit
 
     lda $dc00           //3 25 //Read port2 data
     and #%0000_0100     //2 27
@@ -171,10 +131,7 @@ get_data_Lo:
     inx                 //2 31
 
 get_data_Hi2:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 1?
-    bne get_data_Hi2   //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit0()     //10 10
     and #%00000111     //2 12
     ror                //2 14
     ror                //2 16
@@ -183,10 +140,7 @@ get_data_Hi2:
     sta data           //4 24
 
 get_data_Mid2:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 1?
-    beq get_data_Mid2  //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit1()     //10 10
     and #%00000111     //2 12
     asl                //2 14
     asl                //2 16
@@ -194,10 +148,7 @@ get_data_Mid2:
     sta data           //4 24
 
 get_data_Lo2:
-    lda $dc00          //3  3 //Read port2 data
-    and #%00001000     //2  5 //Fire Bit is 0?
-    bne get_data_Lo2   //2  7
-    lda $dc00          //3 10 //Read port2 data
+    CheckStartBit0()     //10 10
     and #%00000011     //2 12
     //Sound SID
     ora data           //4 16
@@ -212,47 +163,7 @@ wait_start_bit_jmp:
     jmp wait_start_bit //3 32
 /* ------------------------------------------------------------------ */
 
-// // lda #$2d    //-
-// // jsr $ffd2 //bsout
-
-// // sta data1
-
-// // lda addr
-// // lsr 
-// // lsr 
-// // lsr 
-// // lsr 
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// // lda addr
-// // and #$1f
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// // lda data1
-// // lsr 
-// // lsr 
-// // lsr 
-// // lsr 
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// // lda data1
-// // and #$1f
-// // adc #$30
-// // jsr $ffd2 //bsout
-
-// // lda #$20
-// // jsr $ffd2 //bsout
-// // jmp wait_start_bit_0  //3 23
-
-
 /* ------------------------------------------------------------------ */
-addr:
-    .byte 0
-data:
-    .byte 0
 
 //https://www.c64-wiki.com/wiki/Assembler_Example
 //bsout    =$ffd2                //kernel character output sub

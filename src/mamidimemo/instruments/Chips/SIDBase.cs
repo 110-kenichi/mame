@@ -136,9 +136,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
+                initGlobalRegisters();
             }
         }
 
+        private void initGlobalRegisters()
+        {
+            SidWriteData(UnitNumber, 0x15, (byte)(f_FC & 0x7), (byte)(f_FC >> 3));
+            SidWriteData(UnitNumber, 0x17, (byte)(f_RES << 4 | (int)f_FILT));
+            SidWriteData(UnitNumber, 0x18, (byte)((int)f_FilterType << 4 | (int)f_Volume));
+        }
+
+        private SidBaseAddressType f_SidBaseAddress;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("SID Address offset")]
+        [DefaultValue(SidBaseAddressType.D400)]
+        public SidBaseAddressType SidBaseAddress
+        {
+            get => f_SidBaseAddress;
+            set
+            {
+                if (f_SidBaseAddress != value)
+                {
+                    f_SidBaseAddress = value;
+                    initGlobalRegisters();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum SidBaseAddressType
+        {
+            D400 = 0x00,
+            D420 = 0x20,
+            D440 = 0x40,
+            D460 = 0x60,
+            D480 = 0x80,
+            D4A0 = 0xA0,
+            D4C0 = 0xC0,
+            D4E0 = 0xE0,
+        }
 
         private int f_ftdiClkWidth = 25;
 
@@ -396,8 +440,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
                 {
-                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
-                    //vsifClient.WriteData(0, (byte)0x1f, 0, f_ftdiClkWidth);
+                    vsifClient.WriteData(0, (byte)(address + SidBaseAddress), data, f_ftdiClkWidth);
                 }
             }
             DeferredWriteData(Sid_write, unitNumber, address, data);
@@ -422,7 +465,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
                 {
-                    vsifClient.WriteData(1, (byte)address, new byte[] { data1, data2 }, f_ftdiClkWidth);
+                    vsifClient.WriteData(1, (byte)(address + SidBaseAddress), new byte[] { data1, data2 }, f_ftdiClkWidth);
                 }
             }
             DeferredWriteData(Sid_write, unitNumber, address + 1, data2);
@@ -739,6 +782,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
 
+                //HACK: workaround of the SID bug
+                //parentModule.SidWriteData(parentModule.UnitNumber, Slot * 7 + 4, 0b1000);
+
                 SetTimbre();
                 OnVolumeUpdated();
                 OnPitchUpdated();
@@ -834,7 +880,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //parentModule.SidWriteData(un, Slot * 7 + 1, (byte)(f >> 8));
 
                 byte data = (byte)((int)w << 4 | timbre.RING << 2 | timbre.SYNC << 1 | (IsSoundOff ? 0 : 1));
-                parentModule.SidWriteData(un, Slot * 7 + 4, data);
                 parentModule.SidWriteData(un, Slot * 7 + 4, data);
 
                 base.OnPitchUpdated();
