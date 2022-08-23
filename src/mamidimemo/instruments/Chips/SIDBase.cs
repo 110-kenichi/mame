@@ -851,19 +851,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var res = parentModule.RES;
                 var fc = parentModule.FC;
                 var w = timbre.Waveform;
+                var sync = timbre.SYNC;
+                var ring = timbre.RING;
+                var test = timbre.TEST;
                 if (FxEngine != null && FxEngine.Active)
                 {
                     var eng = (SidFxEngine)FxEngine;
-                    if (eng.DutyValue != null)
-                        pw = eng.DutyValue.Value;
-                    if (eng.WaveFormValue != null)
-                        w = eng.WaveFormValue.Value;
                     if (eng.Settings.Enable)
                     {
+                        if (eng.DutyValue != null)
+                            pw = eng.DutyValue.Value;
+                        if (eng.WaveFormValue != null)
+                            w = eng.WaveFormValue.Value;
                         if (eng.ResonanceValue != null)
                             res = eng.ResonanceValue.Value;
                         if (eng.CutOffValue != null)
                             fc = eng.CutOffValue.Value;
+
+                        if (eng.SyncValue != null)
+                            sync = eng.SyncValue.Value;
+                        if (eng.RingValue != null)
+                            ring = eng.RingValue.Value;
+                        if (eng.TestValue != null)
+                            ring = eng.TestValue.Value;
                     }
                 }
                 var un = parentModule.UnitNumber;
@@ -879,7 +889,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //parentModule.SidWriteData(un, Slot * 7 + 0, (byte)(f & 0xff));
                 //parentModule.SidWriteData(un, Slot * 7 + 1, (byte)(f >> 8));
 
-                byte data = (byte)((int)w << 4 | timbre.RING << 2 | timbre.SYNC << 1 | (IsSoundOff ? 0 : 1));
+                byte data = (byte)((int)w << 4 | timbre.TEST << 3 | timbre.RING << 2 | timbre.SYNC << 1 | (IsSoundOff ? 0 : 1));
                 parentModule.SidWriteData(un, Slot * 7 + 4, data);
 
                 base.OnPitchUpdated();
@@ -892,7 +902,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.SoundOff();
 
-                byte data = (byte)((int)timbre.Waveform << 4 | timbre.RING << 2 | timbre.SYNC << 1 | 0);
+                byte data = (byte)((int)timbre.Waveform << 4 | timbre.TEST << 3 | timbre.RING << 2 | timbre.SYNC << 1 | 0);
                 parentModule.SidWriteData(parentModule.UnitNumber, Slot * 7 + 4, data);
             }
 
@@ -1092,6 +1102,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_SYNC = (byte)(value & 1);
+                }
+            }
+
+            private byte f_TEST;
+
+            [DataMember]
+            [Category("Sound")]
+            [DefaultValue((byte)0)]
+            [Description("Disable voice, reset noise generator (0-1)")]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte TEST
+            {
+                get
+                {
+                    return f_TEST;
+                }
+                set
+                {
+                    f_TEST = (byte)(value & 1);
                 }
             }
 
@@ -1398,6 +1428,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
+            private uint f_syncCounter;
+
+            public byte? SyncValue
+            {
+                get;
+                private set;
+            }
+
+            private uint f_ringCounter;
+
+            public byte? RingValue
+            {
+                get;
+                private set;
+            }
+
+            private uint f_testCounter;
+
+            public byte? TestValue
+            {
+                get;
+                private set;
+            }
+
             protected override bool ProcessCore(SoundBase sound, bool isKeyOff, bool isSoundOff)
             {
                 bool process = base.ProcessCore(sound, isKeyOff, isSoundOff);
@@ -1548,6 +1602,117 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
 
+                SyncValue = null;
+                if (settings.SyncEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.SyncEnvelopesNums.Length;
+                        if (settings.SyncEnvelopesReleasePoint >= 0)
+                            vm = settings.SyncEnvelopesReleasePoint;
+                        if (f_syncCounter >= vm)
+                        {
+                            if (settings.WaveFormEnvelopesRepeatPoint >= 0)
+                                f_syncCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
+                            else
+                                f_syncCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.SyncEnvelopesReleasePoint < 0)
+                            f_syncCounter = (uint)settings.SyncEnvelopesNums.Length;
+
+                        //if (f_wavCounter >= settings.SyncEnvelopesNums.Length)
+                        //{
+                        //    if (settings.SyncEnvelopesReleasePoint >= 0)
+                        //        f_wavCounter = (uint)settings.SyncEnvelopesReleasePoint;
+                        //}
+                    }
+
+                    if (f_syncCounter < settings.SyncEnvelopesNums.Length)
+                    {
+                        int vol = settings.SyncEnvelopesNums[f_syncCounter++];
+
+                        SyncValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                RingValue = null;
+                if (settings.RingEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.RingEnvelopesNums.Length;
+                        if (settings.RingEnvelopesReleasePoint >= 0)
+                            vm = settings.RingEnvelopesReleasePoint;
+                        if (f_ringCounter >= vm)
+                        {
+                            if (settings.WaveFormEnvelopesRepeatPoint >= 0)
+                                f_ringCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
+                            else
+                                f_ringCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.RingEnvelopesReleasePoint < 0)
+                            f_ringCounter = (uint)settings.RingEnvelopesNums.Length;
+
+                        //if (f_wavCounter >= settings.RingEnvelopesNums.Length)
+                        //{
+                        //    if (settings.RingEnvelopesReleasePoint >= 0)
+                        //        f_wavCounter = (uint)settings.RingEnvelopesReleasePoint;
+                        //}
+                    }
+
+                    if (f_ringCounter < settings.RingEnvelopesNums.Length)
+                    {
+                        int vol = settings.RingEnvelopesNums[f_ringCounter++];
+
+                        RingValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                TestValue = null;
+                if (settings.TestEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.TestEnvelopesNums.Length;
+                        if (settings.TestEnvelopesReleasePoint >= 0)
+                            vm = settings.TestEnvelopesReleasePoint;
+                        if (f_testCounter >= vm)
+                        {
+                            if (settings.WaveFormEnvelopesRepeatPoint >= 0)
+                                f_testCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
+                            else
+                                f_testCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        if (settings.TestEnvelopesReleasePoint < 0)
+                            f_testCounter = (uint)settings.TestEnvelopesNums.Length;
+
+                        //if (f_wavCounter >= settings.TestEnvelopesNums.Length)
+                        //{
+                        //    if (settings.TestEnvelopesReleasePoint >= 0)
+                        //        f_wavCounter = (uint)settings.TestEnvelopesReleasePoint;
+                        //}
+                    }
+
+                    if (f_testCounter < settings.TestEnvelopesNums.Length)
+                    {
+                        int vol = settings.TestEnvelopesNums[f_testCounter++];
+
+                        TestValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
                 return process;
             }
 
@@ -1563,7 +1728,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_DutyEnvelopes;
 
             [DataMember]
-            [Description("Set duty envelop by text. Input duty value and split it with space like the FamiTracker.\r\n" +
+            [Description("Set Duty envelop by text. Input duty value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 4095 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 4095)]
@@ -1657,7 +1822,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_ResonanceEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+            [Description("Set Resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 15 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 15)]
@@ -1751,7 +1916,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_CutOffEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+            [Description("Set Cut Off envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
                        "0 ～ 2047 \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(0, 2047)]
@@ -1844,8 +2009,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private string f_WaveFormEnvelopes;
 
             [DataMember]
-            [Description("Set resonance envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
-                       "1 ～ 8(Tri:1 Saw:2 Pulse:4 Noise:8) \"|\" is repeat point. \"/\" is release point.")]
+            [Description("Set WaveForm envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+                       "0 ～ 8(Tri:1 Saw:2 Pulse:4 Noise:8) \"|\" is repeat point. \"/\" is release point.")]
             [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [EnvelopeEditorAttribute(1, 8)]
             public string WaveFormEnvelopes
@@ -1881,8 +2046,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 int v;
                                 if (int.TryParse(val, out v))
                                 {
-                                    if (v < 1)
-                                        v = 1;
+                                    if (v < 0)
+                                        v = 0;
                                     else if (v > 15)
                                         v = 15;
                                     vs.Add(v);
@@ -1933,6 +2098,288 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [IgnoreDataMember]
             [DefaultValue(-1)]
             public int WaveFormEnvelopesReleasePoint { get; set; } = -1;
+
+
+            private string f_SyncEnvelopes;
+
+            [DataMember]
+            [Description("Set SYNC envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+                       "0 or 1 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(1, 8)]
+            public string SyncEnvelopes
+            {
+                get
+                {
+                    return f_SyncEnvelopes;
+                }
+                set
+                {
+                    if (f_SyncEnvelopes != value)
+                    {
+                        SyncEnvelopesRepeatPoint = -1;
+                        SyncEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            SyncEnvelopesNums = new int[] { };
+                            f_SyncEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_SyncEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                SyncEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                SyncEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 1;
+                                    else if (v > 1)
+                                        v = 1;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        SyncEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < SyncEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (SyncEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (SyncEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(SyncEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_SyncEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeSyncEnvelopes()
+            {
+                return !string.IsNullOrEmpty(SyncEnvelopes);
+            }
+
+            public void ResetSyncEnvelopes()
+            {
+                SyncEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] SyncEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int SyncEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int SyncEnvelopesReleasePoint { get; set; } = -1;
+
+
+            private string f_RingEnvelopes;
+
+            [DataMember]
+            [Description("Set RING envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+                       "0 or 1 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(1, 8)]
+            public string RingEnvelopes
+            {
+                get
+                {
+                    return f_RingEnvelopes;
+                }
+                set
+                {
+                    if (f_RingEnvelopes != value)
+                    {
+                        RingEnvelopesRepeatPoint = -1;
+                        RingEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            RingEnvelopesNums = new int[] { };
+                            f_RingEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_RingEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                RingEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                RingEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 1;
+                                    else if (v > 1)
+                                        v = 1;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        RingEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < RingEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (RingEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (RingEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(RingEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_RingEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeRingEnvelopes()
+            {
+                return !string.IsNullOrEmpty(RingEnvelopes);
+            }
+
+            public void ResetRingEnvelopes()
+            {
+                RingEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] RingEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int RingEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int RingEnvelopesReleasePoint { get; set; } = -1;
+
+
+            private string f_TestEnvelopes;
+
+            [DataMember]
+            [Description("Set TEST envelop by text. Input resonance value and split it with space like the FamiTracker.\r\n" +
+                       "0 or 1 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(1, 8)]
+            public string TestEnvelopes
+            {
+                get
+                {
+                    return f_TestEnvelopes;
+                }
+                set
+                {
+                    if (f_TestEnvelopes != value)
+                    {
+                        TestEnvelopesRepeatPoint = -1;
+                        TestEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            TestEnvelopesNums = new int[] { };
+                            f_TestEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_TestEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                TestEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                TestEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < 0)
+                                        v = 1;
+                                    else if (v > 1)
+                                        v = 1;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        TestEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < TestEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (TestEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (TestEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            sb.Append(TestEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_TestEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeTestEnvelopes()
+            {
+                return !string.IsNullOrEmpty(TestEnvelopes);
+            }
+
+            public void ResetTestEnvelopes()
+            {
+                TestEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] TestEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int TestEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int TestEnvelopesReleasePoint { get; set; } = -1;
 
 
             /// <summary>
