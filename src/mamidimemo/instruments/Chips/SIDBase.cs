@@ -469,12 +469,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 GetCachedWrittenData(adrs + 1) != data2)
             {
                 WriteData(adrs, data1, true, null);
-                WriteData(adrs+1, data2, true, null);
+                WriteData(adrs + 1, data2, true, null);
                 lock (sndEnginePtrLock)
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
                     {
-                        vsifClient?.WriteData(1, (byte)(address + SidBaseAddress), new byte[] { data1, data2 }, f_ftdiClkWidth);
+                        vsifClient?.WriteData(1, (byte)(address + SidBaseAddress), new byte[] { data2, data1 }, f_ftdiClkWidth);
                     }
                 }
                 DeferredWriteData(Sid_write, unitNumber, address, data1);

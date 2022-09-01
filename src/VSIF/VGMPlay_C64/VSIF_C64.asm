@@ -7,6 +7,8 @@ BasicUpstart(main)
         .byte 0
     data:
         .byte 0
+    data2:
+        .byte 0
 }
 
 * = $0810
@@ -119,16 +121,22 @@ get_data_Mid:
 
 get_data_Lo:
     CheckStartBit1()     //10 10
-    and #%00000011     //2 12
+    and #%0000_0100      //2 12
+    bne wait_next_data2  //2 14
+
+    lda $dc00           //3 17 //Read port2 data
+    and #%00000011      //2 19
     //Sound SID
-    ora data           //4 16
-    sta $d400,x        //6 22
+    ora data            //4 23
+    sta $d400,x         //6 29
+    jmp wait_start_bit  //2 31
 
-    lda $dc00           //3 25 //Read port2 data
-    and #%0000_0100     //2 27
 
-    beq wait_start_bit  //2 29
-    inx                 //2 31
+wait_next_data2:
+    lda $dc00           //3 17 //Read port2 data
+    and #%00000011      //2 19
+    ora data            //4 23
+    sta data            //4 27
 
 get_data_Hi2:
     CheckStartBit0()     //10 10
@@ -137,30 +145,35 @@ get_data_Hi2:
     ror                //2 16
     ror                //2 18
     ror                //2 20
-    sta data           //4 24
+    sta data2           //4 24
 
 get_data_Mid2:
     CheckStartBit1()     //10 10
     and #%00000111     //2 12
     asl                //2 14
     asl                //2 16
-    ora data           //4 20
-    sta data           //4 24
+    ora data2           //4 20
+    sta data2           //4 24
 
 get_data_Lo2:
-    CheckStartBit0()     //10 10
-    and #%00000011     //2 12
+    CheckStartBit0()    //10 10
+    and #%00000011      //2 12
     //Sound SID
-    ora data           //4 16
-    sta $d400,x        //6 22
+    ora data2           //4 16
+    sta $d400,x         //6 22
+    inx                 //2 24
+    lda data            //3 27
+    sta $d400,x         //6 33
 
-    lda $dc00          //3 25 //Read port2 data
-    and #%0000_0100    //2 27
-    beq wait_start_bit_jmp  //2 29
-    inx                //2 31
-    jmp get_data_Hi    //3 33
-wait_start_bit_jmp:
-    jmp wait_start_bit //3 32
+    jmp wait_start_bit  //3 36
+
+//     lda $dc00          //3 25 //Read port2 data
+//     and #%0000_0100    //2 27
+//     beq wait_start_bit_jmp  //2 29
+//     inx                //2 31
+//     jmp get_data_Hi    //3 33
+// wait_start_bit_jmp:
+//     jmp wait_start_bit //3 32
 /* ------------------------------------------------------------------ */
 
 /* ------------------------------------------------------------------ */
