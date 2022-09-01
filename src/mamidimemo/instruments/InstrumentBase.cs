@@ -2222,14 +2222,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 var cacheData = GetCachedWrittenData(address);
                 if (cacheData == null || cacheData.Value != data)
                 {
-                    wtiteAction();
+                    wtiteAction?.Invoke();
                     lock (writtenDataCache)
                         writtenDataCache[address] = data;
                 }
             }
             else
             {
-                wtiteAction();
+                wtiteAction?.Invoke();
                 lock (writtenDataCache)
                     writtenDataCache[address] = data;
             }

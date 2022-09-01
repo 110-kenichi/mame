@@ -1,4 +1,4 @@
-MAmidiMEmo 4.3.1.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.3.2.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,7 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
-4.3.1.0 Added SYNC, RING, TEST flags envelope FxS.
+4.3.2.0 Improved performance for VSIF for SID chip.
+4.3.1.0 Added SYNC, RING, TEST flags envelope FxS for SID chip.
 4.3.0.0 Supported SID chip for VSIF.
 4.2.0.0 Updated ymfm engine to latest. ymfm is used for OPZ, OPQ, OPN2, OPLL.
 		Supported YM3806(aka OPQ) chip. YM3806(YM3533) is used by PORTATONE PSR-70.

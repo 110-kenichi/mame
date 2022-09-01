@@ -184,13 +184,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             D4E0 = 0xE0,
         }
 
-        private int f_ftdiClkWidth = 25;
+        private int f_ftdiClkWidth = 45;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(25)]
+        [DefaultValue(45)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {
@@ -436,14 +436,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void SidWriteData(uint unitNumber, int address, byte data)
         {
-            lock (sndEnginePtrLock)
+            WriteData((uint)address, data, true, new Action(() =>
             {
-                if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
+                lock (sndEnginePtrLock)
                 {
-                    vsifClient.WriteData(0, (byte)(address + SidBaseAddress), data, f_ftdiClkWidth);
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
+                    {
+                        vsifClient?.WriteData(0, (byte)(address + SidBaseAddress), data, f_ftdiClkWidth);
+                    }
                 }
-            }
-            DeferredWriteData(Sid_write, unitNumber, address, data);
+                DeferredWriteData(Sid_write, unitNumber, address, data);
+            }));
             /*
             try
             {
@@ -461,15 +464,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void SidWriteData(uint unitNumber, int address, byte data1, byte data2)
         {
-            lock (sndEnginePtrLock)
+            uint adrs = (uint)address;
+            if (GetCachedWrittenData(adrs) != data1 &&
+                GetCachedWrittenData(adrs + 1) != data2)
             {
-                if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
+                WriteData(adrs, data1, true, null);
+                WriteData(adrs+1, data2, true, null);
+                lock (sndEnginePtrLock)
                 {
-                    vsifClient.WriteData(1, (byte)(address + SidBaseAddress), new byte[] { data1, data2 }, f_ftdiClkWidth);
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_C64_FTDI)
+                    {
+                        vsifClient?.WriteData(1, (byte)(address + SidBaseAddress), new byte[] { data1, data2 }, f_ftdiClkWidth);
+                    }
                 }
+                DeferredWriteData(Sid_write, unitNumber, address, data1);
+                DeferredWriteData(Sid_write, unitNumber, address + 1, data2);
             }
-            DeferredWriteData(Sid_write, unitNumber, address + 1, data2);
-            DeferredWriteData(Sid_write, unitNumber, address, data1);
+            else
+            {
+                SidWriteData(unitNumber, address, data1);
+                SidWriteData(unitNumber, address + 1, data2);
+            }
+
+
             /*
             try
             {
@@ -622,6 +639,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager.ProcessAllSoundOff();
+            ClearWrittenDataCache();
         }
 
         /// <summary>
