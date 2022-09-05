@@ -189,7 +189,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
-                    setSoundEngine(SoundEngine);
                 }
             }
         }

@@ -204,6 +204,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum MasterClockType : uint
+        {
+            PAL = 985248,
+            NTSC = 1022272,
+        }
+
+        private uint f_MasterClock;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set Master Clock of this chip")]
+        [TypeConverter(typeof(EnumConverter<MasterClockType>))]
+        public uint MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+                    SetClock(UnitNumber, (uint)value);
+                }
+            }
+        }
+
+        public bool ShouldSerializeMasterClock()
+        {
+            return MasterClock != (uint)MasterClockType.PAL;
+        }
+
+        public void ResetMasterClock()
+        {
+            MasterClock = (uint)MasterClockType.PAL;
+        }
+
         private byte f_RES;
 
         /// <summary>
@@ -550,6 +594,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             FilterCutoff = 0.9d;
             FilterResonance = 0.1d;
 
+            MasterClock = (uint)MasterClockType.PAL;
+
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
@@ -861,7 +907,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPitchUpdated()
             {
                 double freq = CalcCurrentFrequency();
-                int f = (int)Math.Round(16777216d * freq / (14318181d / 14d));
+                int f = (int)Math.Round(16777216d * freq / parentModule.MasterClock);
                 if (f > 0xffff)
                     f = 0xffff;
 

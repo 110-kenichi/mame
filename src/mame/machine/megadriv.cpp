@@ -1019,11 +1019,12 @@ void md_base_state::md_ntsc(machine_config &config)
 		(*m_ay8910[i])->add_route(0, "lspeaker", 1.00);
 		(*m_ay8910[i])->add_route(1, "rspeaker", 1.00);
 
-		MOS8580(config, *m_sid8580[i], XTAL(14'318'181) / 14);
+		//https://www.ktverkko.fi/~msmakela/8bit/cbm.html
+		MOS8580(config, *m_sid8580[i], XTAL(17734472) / 18);	//PAL
 		(*m_sid8580[i])->add_route(0, "lspeaker", 1.00);
 		(*m_sid8580[i])->add_route(1, "rspeaker", 1.00);
 
-		MOS6581(config, *m_sid6581[i], XTAL(14'318'181) / 14);
+		MOS6581(config, *m_sid6581[i], XTAL(17734472) / 18);	//PAL
 		(*m_sid6581[i])->add_route(0, "lspeaker", 1.00);
 		(*m_sid6581[i])->add_route(1, "rspeaker", 1.00);
 
