@@ -953,10 +953,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //parentModule.SidWriteData(un, Slot * 7 + 0, (byte)(f & 0xff));
                 //parentModule.SidWriteData(un, Slot * 7 + 1, (byte)(f >> 8));
 
-                byte data = (byte)((int)w << 4 | timbre.TEST << 3 | timbre.RING << 2 | timbre.SYNC << 1 | (IsSoundOff ? 0 : 1));
+                byte data = (byte)((int)w << 4 | timbre.TEST << 3 | timbre.RING << 2 | timbre.SYNC << 1 | (IsKeyOff ? 0 : 1));
                 parentModule.SidWriteData(un, Slot * 7 + 4, data);
 
                 base.OnPitchUpdated();
+            }
+
+            public override void KeyOff()
+            {
+                base.KeyOff();
+
+                byte data = (byte)((int)timbre.Waveform << 4 | timbre.TEST << 3 | timbre.RING << 2 | timbre.SYNC << 1 | 0);
+                parentModule.SidWriteData(parentModule.UnitNumber, Slot * 7 + 4, data);
             }
 
             /// <summary>
