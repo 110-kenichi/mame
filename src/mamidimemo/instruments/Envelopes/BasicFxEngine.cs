@@ -121,14 +121,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.VolumeEnvelopesReleasePoint < 0)
-                        volumeCounter = (uint)settings.VolumeEnvelopesNums.Length;
+                    //if (settings.VolumeEnvelopesReleasePoint < 0)
+                    //    volumeCounter = (uint)settings.VolumeEnvelopesNums.Length;
 
-                    //if (volumeCounter >= settings.VolumeEnvelopesNums.Length)
-                    //{
-                    //    if (settings.VolumeEnvelopesRepeatPoint >= 0)
-                    //        volumeCounter = (uint)settings.VolumeEnvelopesRepeatPoint;
-                    //}
+                    if (volumeCounter < settings.VolumeEnvelopesNums.Length)
+                    {
+                        if (settings.VolumeEnvelopesReleasePoint >= 0 && volumeCounter < (uint)settings.VolumeEnvelopesReleasePoint)
+                        volumeCounter = (uint)settings.VolumeEnvelopesReleasePoint;
+                    }
                 }
 
                 if (volumeCounter < settings.VolumeEnvelopesNums.Length)
@@ -158,14 +158,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.PitchEnvelopesReleasePoint < 0)
-                        pitchCounter = (uint)settings.PitchEnvelopesNums.Length;
+                    //if (settings.PitchEnvelopesReleasePoint < 0)
+                    //    pitchCounter = (uint)settings.PitchEnvelopesNums.Length;
 
-                    //if (pitchCounter >= settings.PitchEnvelopesNums.Length)
-                    //{
-                    //    if (settings.PitchEnvelopesRepeatPoint >= 0)
-                    //        pitchCounter = (uint)settings.PitchEnvelopesRepeatPoint;
-                    //}
+                    if (pitchCounter < settings.PitchEnvelopesNums.Length)
+                    {
+                        if (settings.PitchEnvelopesReleasePoint >= 0 && pitchCounter < (uint)settings.PitchEnvelopesReleasePoint)
+                            pitchCounter = (uint)settings.PitchEnvelopesReleasePoint;
+                    }
                 }
                 if (pitchCounter < settings.PitchEnvelopesNums.Length)
                 {
@@ -205,14 +205,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.PanShiftEnvelopesReleasePoint < 0)
-                        panCounter = (uint)settings.PanShiftEnvelopesNums.Length;
+                    //if (settings.PanShiftEnvelopesReleasePoint < 0)
+                    //    panCounter = (uint)settings.PanShiftEnvelopesNums.Length;
 
-                    //if (panCounter >= settings.PanEnvelopesNums.Length)
-                    //{
-                    //    if (settings.PanEnvelopesRepeatPoint >= 0)
-                    //        panCounter = (uint)settings.PanEnvelopesRepeatPoint;
-                    //}
+                    if (panCounter < settings.PanShiftEnvelopesNums.Length)
+                    {
+                        if (settings.PanShiftEnvelopesReleasePoint >= 0 && panCounter < (uint)settings.PanShiftEnvelopesReleasePoint)
+                            panCounter = (uint)settings.PanShiftEnvelopesReleasePoint;
+                    }
                 }
 
                 if (panCounter < settings.PanShiftEnvelopesNums.Length)
@@ -242,14 +242,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 }
                 else
                 {
-                    if (settings.ArpEnvelopesReleasePoint < 0)
-                        arpCounter = (uint)settings.ArpEnvelopesNums.Length;
+                    //if (settings.ArpEnvelopesReleasePoint < 0)
+                    //    arpCounter = (uint)settings.ArpEnvelopesNums.Length;
 
-                    //if (arpCounter >= settings.ArpEnvelopesNums.Length)
-                    //{
-                    //    if (settings.ArpEnvelopesRepeatPoint >= 0)
-                    //        arpCounter = (uint)settings.ArpEnvelopesRepeatPoint;
-                    //}
+                    if (arpCounter < settings.ArpEnvelopesNums.Length)
+                    {
+                        if (settings.ArpEnvelopesReleasePoint >= 0 && arpCounter < (uint)settings.ArpEnvelopesReleasePoint)
+                            arpCounter = (uint)settings.ArpEnvelopesReleasePoint;
+                    }
                 }
                 if (arpCounter < settings.ArpEnvelopesNums.Length)
                 {

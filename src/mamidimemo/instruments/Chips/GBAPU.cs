@@ -1453,14 +1453,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesReleasePoint < 0)
-                            f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
+                        //if (settings.DutyEnvelopesReleasePoint < 0)
+                        //    f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        //{
-                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
-                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        //}
+                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        {
+                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
+                                f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
+                        }
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {

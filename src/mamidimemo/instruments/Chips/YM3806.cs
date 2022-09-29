@@ -2312,14 +2312,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.PitchShift13ReleasePoint < 0)
-                            f_PitchShift13Counter = (uint)settings.PitchShift13Nums.Length;
+                        //if (settings.PitchShift13ReleasePoint < 0)
+                        //    f_PitchShift13Counter = (uint)settings.PitchShift13Nums.Length;
 
-                        //if (f_dutyCounter >= settings.PitchShift13Nums.Length)
-                        //{
-                        //    if (settings.PitchShift13RepeatPoint >= 0)
-                        //        f_dutyCounter = (uint)settings.PitchShift13RepeatPoint;
-                        //}
+                        if (f_PitchShift13Counter >= settings.PitchShift13Nums.Length)
+                        {
+                            if (settings.PitchShift13ReleasePoint >= 0)
+                                f_PitchShift13Counter = (uint)settings.PitchShift13ReleasePoint;
+                        }
                     }
                     if (f_PitchShift13Counter < settings.PitchShift13Nums.Length)
                     {
@@ -2348,14 +2348,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.PitchShift24ReleasePoint < 0)
-                            f_PitchShift24Counter = (uint)settings.PitchShift24Nums.Length;
+                        //if (settings.PitchShift24ReleasePoint < 0)
+                        //    f_PitchShift24Counter = (uint)settings.PitchShift24Nums.Length;
 
-                        //if (f_dutyCounter >= settings.PitchShift24Nums.Length)
-                        //{
-                        //    if (settings.PitchShift24RepeatPoint >= 0)
-                        //        f_dutyCounter = (uint)settings.PitchShift24RepeatPoint;
-                        //}
+                        if (f_PitchShift24Counter >= settings.PitchShift24Nums.Length)
+                        {
+                            if (settings.PitchShift24ReleasePoint >= 0)
+                                f_PitchShift24Counter = (uint)settings.PitchShift24ReleasePoint;
+                        }
                     }
                     if (f_PitchShift24Counter < settings.PitchShift24Nums.Length)
                     {

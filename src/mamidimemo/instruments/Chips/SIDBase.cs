@@ -1546,14 +1546,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DutyEnvelopesReleasePoint < 0)
-                            f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
+                        //if (settings.DutyEnvelopesReleasePoint < 0)
+                        //    f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        //if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
-                        //{
-                        //    if (settings.DutyEnvelopesRepeatPoint >= 0)
-                        //        f_dutyCounter = (uint)settings.DutyEnvelopesRepeatPoint;
-                        //}
+                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        {
+                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
+                                f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
+                        }
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                     {
@@ -1582,14 +1582,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.ResonanceEnvelopesRepeatPoint < 0)
-                            f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
+                        //if (settings.ResonanceEnvelopesRepeatPoint < 0)
+                        //    f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
 
-                        //if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
-                        //{
-                        //    if (settings.ResonanceEnvelopesRepeatPoint >= 0)
-                        //        f_resCounter = (uint)settings.ResonanceEnvelopesRepeatPoint;
-                        //}
+                        if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
+                        {
+                            if (settings.ResonanceEnvelopesReleasePoint >= 0 && f_resCounter < (uint)settings.ResonanceEnvelopesReleasePoint)
+                                f_resCounter = (uint)settings.ResonanceEnvelopesReleasePoint;
+                        }
                     }
                     if (f_resCounter < settings.ResonanceEnvelopesNums.Length)
                     {
@@ -1618,14 +1618,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.CutOffEnvelopesRepeatPoint < 0)
-                            f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
+                        //if (settings.CutOffEnvelopesRepeatPoint < 0)
+                        //    f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
 
-                        //if (f_cutCounter >= settings.CutOffEnvelopesNums.Length)
-                        //{
-                        //    if (settings.CutOffEnvelopesRepeatPoint >= 0)
-                        //        f_cutCounter = (uint)settings.CutOffEnvelopesRepeatPoint;
-                        //}
+                        if (f_cutCounter >= settings.CutOffEnvelopesNums.Length && f_cutCounter < (uint)settings.CutOffEnvelopesReleasePoint)
+                        {
+                            if (settings.CutOffEnvelopesReleasePoint >= 0)
+                                f_cutCounter = (uint)settings.CutOffEnvelopesReleasePoint;
+                        }
                     }
 
                     if (f_cutCounter < settings.CutOffEnvelopesNums.Length)
@@ -1655,14 +1655,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.WaveFormEnvelopesRepeatPoint < 0)
-                            f_wavCounter = (uint)settings.WaveFormEnvelopesNums.Length;
+                        //if (settings.WaveFormEnvelopesRepeatPoint < 0)
+                        //    f_wavCounter = (uint)settings.WaveFormEnvelopesNums.Length;
 
-                        //if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length)
-                        //{
-                        //    if (settings.WaveFormEnvelopesRepeatPoint >= 0)
-                        //        f_wavCounter = (uint)settings.WaveFormEnvelopesRepeatPoint;
-                        //}
+                        if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length && f_wavCounter < (uint)settings.WaveFormEnvelopesReleasePoint)
+                        {
+                            if (settings.WaveFormEnvelopesReleasePoint >= 0)
+                                f_wavCounter = (uint)settings.WaveFormEnvelopesReleasePoint;
+                        }
                     }
 
                     if (f_wavCounter < settings.WaveFormEnvelopesNums.Length)
@@ -1692,14 +1692,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.SyncEnvelopesReleasePoint < 0)
-                            f_syncCounter = (uint)settings.SyncEnvelopesNums.Length;
+                        //if (settings.SyncEnvelopesReleasePoint < 0)
+                        //    f_syncCounter = (uint)settings.SyncEnvelopesNums.Length;
 
-                        //if (f_wavCounter >= settings.SyncEnvelopesNums.Length)
-                        //{
-                        //    if (settings.SyncEnvelopesReleasePoint >= 0)
-                        //        f_wavCounter = (uint)settings.SyncEnvelopesReleasePoint;
-                        //}
+                        if (f_syncCounter >= settings.SyncEnvelopesNums.Length && f_syncCounter < (uint)settings.SyncEnvelopesReleasePoint)
+                        {
+                            if (settings.SyncEnvelopesReleasePoint >= 0)
+                                f_syncCounter = (uint)settings.SyncEnvelopesReleasePoint;
+                        }
                     }
 
                     if (f_syncCounter < settings.SyncEnvelopesNums.Length)
@@ -1729,14 +1729,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.RingEnvelopesReleasePoint < 0)
-                            f_ringCounter = (uint)settings.RingEnvelopesNums.Length;
+                        //if (settings.RingEnvelopesReleasePoint < 0)
+                        //    f_ringCounter = (uint)settings.RingEnvelopesNums.Length;
 
-                        //if (f_wavCounter >= settings.RingEnvelopesNums.Length)
-                        //{
-                        //    if (settings.RingEnvelopesReleasePoint >= 0)
-                        //        f_wavCounter = (uint)settings.RingEnvelopesReleasePoint;
-                        //}
+                        if (f_ringCounter >= settings.RingEnvelopesNums.Length && f_ringCounter < (uint)settings.RingEnvelopesReleasePoint)
+                        {
+                            if (settings.RingEnvelopesReleasePoint >= 0)
+                                f_ringCounter = (uint)settings.RingEnvelopesReleasePoint;
+                        }
                     }
 
                     if (f_ringCounter < settings.RingEnvelopesNums.Length)
@@ -1766,14 +1766,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.TestEnvelopesReleasePoint < 0)
-                            f_testCounter = (uint)settings.TestEnvelopesNums.Length;
+                        //if (settings.TestEnvelopesReleasePoint < 0)
+                        //    f_testCounter = (uint)settings.TestEnvelopesNums.Length;
 
-                        //if (f_wavCounter >= settings.TestEnvelopesNums.Length)
-                        //{
-                        //    if (settings.TestEnvelopesReleasePoint >= 0)
-                        //        f_wavCounter = (uint)settings.TestEnvelopesReleasePoint;
-                        //}
+                        if (f_testCounter >= settings.TestEnvelopesNums.Length && f_testCounter < (uint)settings.TestEnvelopesReleasePoint)
+                        {
+                            if (settings.TestEnvelopesReleasePoint >= 0)
+                                f_testCounter = (uint)settings.TestEnvelopesReleasePoint;
+                        }
                     }
 
                     if (f_testCounter < settings.TestEnvelopesNums.Length)

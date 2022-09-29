@@ -3169,14 +3169,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.ToneEnvelopesReleasePoint < 0)
-                            f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+                        //if (settings.ToneEnvelopesReleasePoint < 0)
+                        //    f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
-                        //if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
-                        //{
-                        //    if (settings.ToneEnvelopesRepeatPoint >= 0)
-                        //        f_toneCounter = (uint)settings.ToneEnvelopesRepeatPoint;
-                        //}
+                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        {
+                            if (settings.ToneEnvelopesReleasePoint >= 0)
+                                f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
+                        }
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                     {
@@ -3204,14 +3204,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DrumCh7FNumEnvelopesReleasePoint < 0)
-                            f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesNums.Length;
+                        //if (settings.DrumCh7FNumEnvelopesReleasePoint < 0)
+                        //    f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesNums.Length;
 
-                        //if (f_DrumCh7FNumCounter >= settings.DrumCh7FNumEnvelopesNums.Length)
-                        //{
-                        //    if (settings.DrumCh7FNumEnvelopesRepeatPoint >= 0)
-                        //        f_DrumCh7FNumCounter = (uint)settings.DrumCh7FNumEnvelopesRepeatPoint;
-                        //}
+                        if (f_drumCh7FNumCounter >= settings.DrumCh7FNumEnvelopesNums.Length)
+                        {
+                            if (settings.DrumCh7FNumEnvelopesReleasePoint >= 0)
+                                f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesReleasePoint;
+                        }
                     }
                     if (f_drumCh7FNumCounter < settings.DrumCh7FNumEnvelopesNums.Length)
                     {
@@ -3238,14 +3238,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DrumCh8FNumEnvelopesReleasePoint < 0)
-                            f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesNums.Length;
+                        //if (settings.DrumCh8FNumEnvelopesReleasePoint < 0)
+                        //    f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesNums.Length;
 
-                        //if (f_DrumCh8FNumCounter >= settings.DrumCh8FNumEnvelopesNums.Length)
-                        //{
-                        //    if (settings.DrumCh8FNumEnvelopesRepeatPoint >= 0)
-                        //        f_DrumCh8FNumCounter = (uint)settings.DrumCh8FNumEnvelopesRepeatPoint;
-                        //}
+                        if (f_drumCh8FNumCounter >= settings.DrumCh8FNumEnvelopesNums.Length)
+                        {
+                            if (settings.DrumCh8FNumEnvelopesReleasePoint >= 0)
+                                f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesReleasePoint;
+                        }
                     }
                     if (f_drumCh8FNumCounter < settings.DrumCh8FNumEnvelopesNums.Length)
                     {
@@ -3272,14 +3272,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        if (settings.DrumCh9FNumEnvelopesReleasePoint < 0)
-                            f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesNums.Length;
+                        //if (settings.DrumCh9FNumEnvelopesReleasePoint < 0)
+                        //    f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesNums.Length;
 
-                        //if (f_DrumCh9FNumCounter >= settings.DrumCh9FNumEnvelopesNums.Length)
-                        //{
-                        //    if (settings.DrumCh9FNumEnvelopesRepeatPoint >= 0)
-                        //        f_DrumCh9FNumCounter = (uint)settings.DrumCh9FNumEnvelopesRepeatPoint;
-                        //}
+                        if (f_drumCh9FNumCounter >= settings.DrumCh9FNumEnvelopesNums.Length)
+                        {
+                            if (settings.DrumCh9FNumEnvelopesReleasePoint >= 0)
+                                f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesReleasePoint;
+                        }
                     }
                     if (f_drumCh9FNumCounter < settings.DrumCh9FNumEnvelopesNums.Length)
                     {
