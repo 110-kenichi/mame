@@ -883,7 +883,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void SetTimbre()
             {
                 var pn = parentModule.ProgramNumbers[NoteOnEvent.Channel];
-                var timbre = parentModule.Timbres[pn];
 
                 parentModule.SidWriteData(parentModule.UnitNumber, Slot * 7 + 5, (byte)(timbre.ATK << 4 | timbre.DCY), (byte)(timbre.STN << 4 | timbre.RIS));
                 //parentModule.SidWriteData(parentModule.UnitNumber, Slot * 7 + 5, (byte)(timbre.ATK << 4 | timbre.DCY));
