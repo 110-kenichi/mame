@@ -634,21 +634,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                if (!timbre.NoiseTone)
+                if (!IsKeyOff)
                 {
-                    int nn = NoteOnEvent.NoteNumber;
-                    if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                        nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
-                    nn -= 36;
-                    if (nn < 0)
-                        nn = 0;
-                    byte noteNum = (byte)nn;
+                    if (!timbre.NoiseTone)
+                    {
+                        int nn = NoteOnEvent.NoteNumber;
+                        if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                            nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                        nn -= 36;
+                        if (nn < 0)
+                            nn = 0;
+                        byte noteNum = (byte)nn;
 
-                    MSM5232WriteData(parentModule.UnitNumber, (uint)(Slot + (lastGroup * 4)), (byte)(0x80 | noteNum));
-                }
-                else
-                {
-                    MSM5232WriteData(parentModule.UnitNumber, (uint)(Slot + (lastGroup * 4)), (byte)(0xff));
+                        MSM5232WriteData(parentModule.UnitNumber, (uint)(Slot + (lastGroup * 4)), (byte)(0x80 | noteNum));
+                    }
+                    else
+                    {
+                        MSM5232WriteData(parentModule.UnitNumber, (uint)(Slot + (lastGroup * 4)), (byte)(0xff));
+                    }
                 }
 
                 base.OnPitchUpdated();
