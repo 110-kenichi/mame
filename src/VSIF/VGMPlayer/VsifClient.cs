@@ -15,6 +15,12 @@ namespace zanac.VGMPlayer
     /// </summary>
     public class VsifClient : IDisposable
     {
+        public object Tag
+        {
+            get;
+            set;
+        }
+
         private object lockObject = new object();
 
         private List<PortWriteData> deferredWriteAdrAndData;

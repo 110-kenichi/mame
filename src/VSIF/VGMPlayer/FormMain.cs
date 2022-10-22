@@ -30,6 +30,7 @@ namespace zanac.VGMPlayer
             comboBoxOPLL.SelectedIndex = 0;
             comboBoxOPNA2.SelectedIndex = 0;
             comboBoxSCC.SelectedIndex = 0;
+            comboBoxSccType.SelectedIndex = 0;
             comboBoxY8910.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
@@ -724,19 +725,24 @@ namespace zanac.VGMPlayer
                         comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.SCC_Port, false);
                         if (comPortSCC != null)
-                            enableScc(SCCType.SCC1, SCCSlotNo[comboBoxSccSlot.SelectedIndex]);
+                        {
+                            comPortSCC.Tag = (SCCType)(comboBoxSccType.SelectedIndex + 1);
+                            enableScc((SCCType)comPortSCC.Tag, SCCSlotNo[comboBoxSccSlot.SelectedIndex]);
+                        }
                         break;
                 }
                 checkBoxConnSCC.Checked = comPortSCC != null;
                 comboBoxSCC.Enabled = comPortSCC == null;
                 comboBoxPortSCC.Enabled = comPortSCC == null;
                 comboBoxSccSlot.Enabled = comPortSCC == null;
+                comboBoxSccType.Enabled = comPortSCC == null;
             }
             else
             {
                 comboBoxSCC.Enabled = true;
                 comboBoxPortSCC.Enabled = true;
                 comboBoxSccSlot.Enabled = true;
+                comboBoxSccType.Enabled = true;
 
                 comPortSCC?.Dispose();
             }

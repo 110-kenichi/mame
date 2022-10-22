@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using zanac.VGMPlayer;
+using static zanac.VGMPlayer.FormMain;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -156,6 +157,7 @@ namespace zanac.VGMPlayer
             }
             //SCC
             comPortSCC?.DeferredWriteData(4, (byte)0xaf, (byte)00, (int)Settings.Default.BitBangWaitSCC);
+            comPortSCC?.DeferredWriteData(5, (byte)0x8f, (byte)00, (int)Settings.Default.BitBangWaitSCC);
             comPortSCC?.FlushDeferredWriteData();
 
             //Y8910
@@ -537,28 +539,63 @@ namespace zanac.VGMPlayer
                                             var dd = readByte();
                                             if (dd < 0)
                                                 break;
+
                                             switch (comPortSCC?.SoundModuleType)
                                             {
                                                 case VsifSoundModuleType.MSX_FTDI:
                                                     {
-                                                        switch (pp)
+                                                        if (comPortSCC?.Tag != null)
                                                         {
-                                                            case 1: //Freq
-                                                                aa += 0xa0;
-                                                                break;
-                                                            case 2: //Vol
-                                                                aa += 0xaa;
-                                                                break;
-                                                            case 3: //Ena
-                                                                aa = 0xaf;
-                                                                break;
-                                                            case 5: //
-                                                                aa += 0xe0;
-                                                                break;
-                                                            default:
-                                                                break;
+                                                            SCCType st = (SCCType)comPortSCC?.Tag;
+                                                            switch (st)
+                                                            {
+                                                                case SCCType.SCC1:
+                                                                    {
+                                                                        switch (pp)
+                                                                        {
+                                                                            case 1: //Freq
+                                                                                aa += 0xa0;
+                                                                                break;
+                                                                            case 2: //Vol
+                                                                                aa += 0xaa;
+                                                                                break;
+                                                                            case 3: //Ena
+                                                                                aa = 0xaf;
+                                                                                break;
+                                                                            case 5: //
+                                                                                aa += 0xe0;
+                                                                                break;
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                        comPortSCC?.DeferredWriteData(4, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
+                                                                    }
+                                                                    break;
+                                                                case SCCType.SCC1_Compat:
+                                                                case SCCType.SCC:
+                                                                    {
+                                                                        switch (pp)
+                                                                        {
+                                                                            case 1: //Freq
+                                                                                aa += 0x80;
+                                                                                break;
+                                                                            case 2: //Vol
+                                                                                aa += 0x8a;
+                                                                                break;
+                                                                            case 3: //Ena
+                                                                                aa = 0x8f;
+                                                                                break;
+                                                                            case 5: //
+                                                                                aa += 0xe0;
+                                                                                break;
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                        comPortSCC?.DeferredWriteData(5, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
+                                                                    }
+                                                                    break;
+                                                            }
                                                         }
-                                                        comPortSCC?.DeferredWriteData(4, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
                                                     }
                                                     break;
                                             }

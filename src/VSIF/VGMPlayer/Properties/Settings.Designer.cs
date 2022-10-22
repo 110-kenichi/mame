@@ -12,7 +12,7 @@ namespace zanac.VGMPlayer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -240,7 +240,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("17")]
         public decimal BitBangWaitOPLL {
             get {
                 return ((decimal)(this["BitBangWaitOPLL"]));
@@ -252,7 +252,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("17")]
         public decimal BitBangWaitSCC {
             get {
                 return ((decimal)(this["BitBangWaitSCC"]));
@@ -264,7 +264,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        [global::System.Configuration.DefaultSettingValueAttribute("17")]
         public decimal BitBangWaitAY8910 {
             get {
                 return ((decimal)(this["BitBangWaitAY8910"]));
@@ -343,6 +343,18 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["KSS_Max"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SCC_Type {
+            get {
+                return ((int)(this["SCC_Type"]));
+            }
+            set {
+                this["SCC_Type"] = value;
             }
         }
     }
