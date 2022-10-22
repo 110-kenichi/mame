@@ -232,20 +232,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 lock (vsifClient.LockObject)
                 {
                     vsifClient.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
-                    //vsifClient.Sleep(16);
                 }
             }
             if(clearCache)
                 ClearWrittenDataCache();
         }
 
-        private int f_ftdiClkWidth = 15;
+        private int f_ftdiClkWidth = 17;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(15)]
+        [DefaultValue(17)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {
