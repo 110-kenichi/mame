@@ -162,6 +162,7 @@
             this.extendYM2413ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYMF262ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.yM2414ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.yM3806OPQToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wSGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSCC1kToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addNAMCOCUS30ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,7 +196,6 @@
             this.betterFolderBrowserVSTi = new WK.Libraries.BetterFolderBrowserNS.BetterFolderBrowser(this.components);
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.yM3806OPQToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1578,6 +1578,12 @@
             resources.ApplyResources(this.yM2414ToolStripMenuItem, "yM2414ToolStripMenuItem");
             this.yM2414ToolStripMenuItem.Click += new System.EventHandler(this.yM2414ToolStripMenuItem_Click);
             // 
+            // yM3806OPQToolStripMenuItem
+            // 
+            this.yM3806OPQToolStripMenuItem.Name = "yM3806OPQToolStripMenuItem";
+            resources.ApplyResources(this.yM3806OPQToolStripMenuItem, "yM3806OPQToolStripMenuItem");
+            this.yM3806OPQToolStripMenuItem.Click += new System.EventHandler(this.yM3806OPQToolStripMenuItem_Click);
+            // 
             // wSGToolStripMenuItem
             // 
             this.wSGToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1784,12 +1790,6 @@
             this.betterFolderBrowserVSTi.Multiselect = false;
             this.betterFolderBrowserVSTi.RootFolder = ".\\";
             this.betterFolderBrowserVSTi.Title = "";
-            // 
-            // yM3806OPQToolStripMenuItem
-            // 
-            this.yM3806OPQToolStripMenuItem.Name = "yM3806OPQToolStripMenuItem";
-            resources.ApplyResources(this.yM3806OPQToolStripMenuItem, "yM3806OPQToolStripMenuItem");
-            this.yM3806OPQToolStripMenuItem.Click += new System.EventHandler(this.yM3806OPQToolStripMenuItem_Click);
             // 
             // FormMain
             // 

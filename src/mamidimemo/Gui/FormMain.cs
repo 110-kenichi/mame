@@ -480,6 +480,16 @@ namespace zanac.MAmidiMEmo.Gui
                 if (si >= 0)
                     toolStripComboBoxMidiIfA.SelectedIndex = si;
 
+                using (System.Drawing.Graphics graphics = CreateGraphics())
+                {
+                    int maxWidth = 0;
+                    foreach (object obj in toolStripComboBoxMidiIfA.Items)
+                    {
+                        System.Drawing.SizeF area = graphics.MeasureString(obj.ToString(), toolStripComboBoxMidiIfA.Font);
+                        maxWidth = Math.Max((int)area.Width, maxWidth);
+                    }
+                    toolStripComboBoxMidiIfA.DropDownWidth = maxWidth;
+                }
             }
             catch (Exception ex)
             {
@@ -509,6 +519,16 @@ namespace zanac.MAmidiMEmo.Gui
                 if (si >= 0)
                     toolStripComboBoxMidiIfB.SelectedIndex = si;
 
+                using (System.Drawing.Graphics graphics = CreateGraphics())
+                {
+                    int maxWidth = 0;
+                    foreach (object obj in toolStripComboBoxMidiIfB.Items)
+                    {
+                        System.Drawing.SizeF area = graphics.MeasureString(obj.ToString(), toolStripComboBoxMidiIfB.Font);
+                        maxWidth = Math.Max((int)area.Width, maxWidth);
+                    }
+                    toolStripComboBoxMidiIfB.DropDownWidth = maxWidth;
+                }
             }
             catch (Exception ex)
             {
