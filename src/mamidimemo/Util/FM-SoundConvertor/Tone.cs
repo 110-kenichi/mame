@@ -131,12 +131,12 @@ namespace FM_SoundConvertor
 
         public bool IsValid()
         {
-            return (Number >= 0x00 && Number <= 0xff && aOp[0].AR > 0 && aOp[1].AR > 0 && aOp[2].AR > 0 && aOp[3].AR > 0);
+            return (Number >= 0x00 && Number <= 0xff);  // && aOp[0].AR > 0 && aOp[1].AR > 0 && aOp[2].AR > 0 && aOp[3].AR > 0);
         }
 
         public bool IsValid2Op()
         {
-            return (Number >= 0x00 && Number <= 0xff && aOp[0].AR > 0 && aOp[1].AR > 0);
+            return (Number >= 0x00 && Number <= 0xff);  // && aOp[0].AR > 0 && aOp[1].AR > 0);
         }
 
         public override string ToString()

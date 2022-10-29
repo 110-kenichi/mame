@@ -183,9 +183,10 @@ namespace FM_SoundConvertor
 					if (Option.bPmd) Pmd.Put(vTone, ref BufferPmd);
 					if (Option.bVopm) Vopm.Put(vTone, ref BufferVopm);
 
-                    if (vTone.IsValid() &&
-                        i != 0) //skip index 0 tone is dummy
-                        tones.Add(new Tone(vTone));
+                    //if (vTone.IsValid() &&
+                    //    i != 0) //skip index 0 tone is dummy
+                    if (vTone.IsValid())
+						tones.Add(new Tone(vTone));
                 }
 
                 if (Option.bMuc) Muc.Writer(Path, BufferMuc);
