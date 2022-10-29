@@ -62,6 +62,7 @@ namespace zanac.MAmidiMEmo.Instruments
             AllSounds = new SoundList<SoundBase>(-1);
             ArpeggiatorsForKeyOn = new Dictionary<int, ArpEngine>();
             ArpeggiatorsForPitch = new Dictionary<int, ArpEngine>();
+            monoNoteOnRemovedList = new List<NoteEvent>();
         }
 
         /// <summary>
@@ -768,6 +769,8 @@ namespace zanac.MAmidiMEmo.Instruments
             return arp.Step;
         }
 
+        private List<NoteEvent> monoNoteOnRemovedList;
+
         /// <summary>
         /// 
         /// </summary>
@@ -868,6 +871,15 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private void keyOffCore(NoteOffEvent note)
         {
+            for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
+            {
+                if (monoNoteOnRemovedList[oni].NoteNumber == note.NoteNumber)
+                {
+                    monoNoteOnRemovedList.RemoveAt(oni);
+                    break;
+                }
+            }
+
             foreach (SoundBase offsnd in AllSounds)
             {
                 if (offsnd.ParentModule.UnitNumber != parentModule.UnitNumber)
@@ -894,6 +906,14 @@ namespace zanac.MAmidiMEmo.Instruments
                         //break;
                     }
                 }
+            }
+
+            //Restore kon event remove by mono mode
+            if (monoNoteOnRemovedList.Count > 0)
+            {
+                var kon = monoNoteOnRemovedList[monoNoteOnRemovedList.Count - 1];
+                monoNoteOnRemovedList.RemoveAt(monoNoteOnRemovedList.Count - 1);
+                ProcessKeyOn((TaggedNoteOnEvent)kon);
             }
         }
 
@@ -1194,6 +1214,19 @@ namespace zanac.MAmidiMEmo.Instruments
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
+
+                            //Store removed keyon event;
+                            bool konfound = false;
+                            for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
+                            {
+                                if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                {
+                                    konfound = true;
+                                    break;
+                                }
+                            }
+                            if(!konfound)
+                                monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                         }
                     }
                 }
@@ -1430,6 +1463,19 @@ namespace zanac.MAmidiMEmo.Instruments
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
+
+                            //Store removed keyon event;
+                            bool onfound = false;
+                            for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
+                            {
+                                if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                {
+                                    onfound = true;
+                                    break;
+                                }
+                            }
+                            if (!onfound)
+                                monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                         }
                     }
                 }
