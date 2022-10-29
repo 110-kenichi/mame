@@ -1,4 +1,4 @@
-MAmidiMEmo 4.3.7.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.3.8.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.3.8.0 Fixed importing mucom88 tone data to avoid skipping.
+        Added Copy & Paste button to FM tone editor for all timbre.
+		Fixed MIDI I/F combobox doropdown width.
+		Improved boot sequence of VSIF Genesis(FTDI)
 4.3.7.0 Ignored Pitch change message for MSM5232.
 4.3.6.0 Fixed(Changed) calculation of the Envelope Release point "/".  The process after the Envelope Release point was completely broken.
 4.3.5.0 Fixed SID FxEngine after Key off sequence.
