@@ -149,13 +149,13 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetBaudRate(FTDI_BAUDRATE_GEN * FTDI_BAUDRATE_GEN_MUL);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
-                                    byte ps = 0;
-                                    ftdi.GetPinStates(ref ps);
-                                    if ((ps & 0x40) == 0)
-                                    {
-                                        uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
-                                    }
+                                    //byte ps = 0;
+                                    //ftdi.GetPinStates(ref ps);
+                                    //if ((ps & 0x40) == 0)
+                                    //{
+                                    //    uint dummy = 0;
+                                    //    ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
+                                    //}
 
                                     var client = new VsifClient(soundModule, new PortWriterGenesis(ftdi, comPort));
 
