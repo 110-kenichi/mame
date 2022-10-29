@@ -128,6 +128,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 metroComboBoxTimbres.Enabled = false;
                 metroButtonImportAll.Enabled = false;
                 metroButtonImportAllGit.Enabled = false;
+                metroButtonCopy.Enabled = false;
+                metroButtonPaste.Enabled = false;
             }
 
             setTitle();
@@ -1205,6 +1207,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             DialogResult = DialogResult.Abort;
             Close();
+        }
+
+        public event EventHandler CopyRequested;
+
+        private void metroButtonCopy_Click(object sender, EventArgs e)
+        {
+            CopyRequested?.Invoke(sender, e);
+        }
+
+        public event EventHandler PasteRequested;
+
+        private void metroButtonPaste_Click(object sender, EventArgs e)
+        {
+            PasteRequested?.Invoke(sender, e);
         }
     }
 }

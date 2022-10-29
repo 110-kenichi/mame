@@ -152,12 +152,43 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                             tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1] + "," + ed.MmlValueOps[2] + "," + ed.MmlValueOps[3];
                         };
+                        string lastCopiedMmlValueGeneral = null;
+                        string[] lastCopiedMmlValueOps = null;
+                        ed.CopyRequested += (s, e) =>
+                        {
+                            lastCopiedMmlValueGeneral = ed.MmlValueGeneral;
+                            lastCopiedMmlValueOps = new string[] { ed.MmlValueOps[0], ed.MmlValueOps[1], ed.MmlValueOps[2], ed.MmlValueOps[3] };
+                        };
+                        ed.PasteRequested += (s, e) =>
+                        {
+                            if (lastCopiedMmlValueGeneral != null)
+                            {
+                                ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
+                                ed.MmlValueOps = lastCopiedMmlValueOps;
+                            }
+                        };
                     }
                 }
                 else
                 {
                     using (FormYMF262Editor ed = new FormYMF262Editor(inst, tim, singleSel))
                     {
+                        string lastCopiedMmlValueGeneral = null;
+                        string[] lastCopiedMmlValueOps = null;
+                        ed.CopyRequested += (s, e) =>
+                        {
+                            lastCopiedMmlValueGeneral = ed.MmlValueGeneral;
+                            lastCopiedMmlValueOps = new string[] { ed.MmlValueOps[0], ed.MmlValueOps[1], ed.MmlValueOps[2], ed.MmlValueOps[3] };
+                        };
+                        ed.PasteRequested += (s, e) =>
+                        {
+                            if (lastCopiedMmlValueGeneral != null)
+                            {
+                                ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
+                                ed.MmlValueOps = lastCopiedMmlValueOps;
+                            }
+                        };
+
                         string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
                         var consel = inst.CONSEL;
                         inst.CONSEL = 6;
