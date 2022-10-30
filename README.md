@@ -1,4 +1,4 @@
-MAmidiMEmo 4.3.8.1 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.3.8.2 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,7 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
-4.3.8.1 Improved MONO mode for playing legato.
+4.3.8.2 Improved MONO mode for playing legato.
 4.3.8.0 Fixed importing mucom88 tone data to avoid skipping.
         Added Copy & Paste button to FM tone editor window for all timbre mode.
 		Fixed MIDI I/F combobox doropdown width.

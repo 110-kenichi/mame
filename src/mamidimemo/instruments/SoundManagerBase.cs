@@ -913,9 +913,12 @@ namespace zanac.MAmidiMEmo.Instruments
             //Restore kon event remove by mono mode
             if (!koffremoved)
             {
-                var kon = monoNoteOnRemovedList[monoNoteOnRemovedList.Count - 1];
-                monoNoteOnRemovedList.RemoveAt(monoNoteOnRemovedList.Count - 1);
-                ProcessKeyOn((TaggedNoteOnEvent)kon);
+                if (monoNoteOnRemovedList.Count > 0)
+                {
+                    var kon = monoNoteOnRemovedList[monoNoteOnRemovedList.Count - 1];
+                    monoNoteOnRemovedList.RemoveAt(monoNoteOnRemovedList.Count - 1);
+                    ProcessKeyOn((TaggedNoteOnEvent)kon);
+                }
             }
         }
 
