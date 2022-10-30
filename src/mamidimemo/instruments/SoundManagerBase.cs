@@ -871,10 +871,12 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private void keyOffCore(NoteOffEvent note)
         {
+            bool koffremoved = false;
             for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
             {
                 if (monoNoteOnRemovedList[oni].NoteNumber == note.NoteNumber)
                 {
+                    koffremoved = true;
                     monoNoteOnRemovedList.RemoveAt(oni);
                     break;
                 }
@@ -909,7 +911,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
             //Restore kon event remove by mono mode
-            if (monoNoteOnRemovedList.Count > 0)
+            if (!koffremoved)
             {
                 var kon = monoNoteOnRemovedList[monoNoteOnRemovedList.Count - 1];
                 monoNoteOnRemovedList.RemoveAt(monoNoteOnRemovedList.Count - 1);
@@ -1225,7 +1227,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                     break;
                                 }
                             }
-                            if(!konfound)
+                            if (!konfound)
                                 monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                         }
                     }
