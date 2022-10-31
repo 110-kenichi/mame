@@ -274,7 +274,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 toolStripComboBoxMidiIfB.Enabled = false;
 
-                toolStripMenuItemExit.Enabled = false;
+                mIDIDelayCheckerToolStripMenuItem.Enabled = false;
                 this.ControlBox = false;
             }
             else
@@ -2392,5 +2392,12 @@ namespace zanac.MAmidiMEmo.Gui
             base.WndProc(ref m);
         }
 
+        private void mIDIDelayCheckerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var mt = new FormMidiTest())
+            {
+                mt.ShowDialog();
+            }
+        }
     }
 }

@@ -143,5 +143,8 @@
     <Setting Name="YM3806EdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">800, 600</Value>
     </Setting>
+    <Setting Name="OutMidiIF" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

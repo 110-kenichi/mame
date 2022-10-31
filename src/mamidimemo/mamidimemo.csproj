@@ -241,6 +241,12 @@
       <DependentUpon>YM3806OperatorContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FMEditor\YM3806UITypeEditor.cs" />
+    <Compile Include="Gui\FormMidiTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormMidiTest.Designer.cs">
+      <DependentUpon>FormMidiTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GraphicEqulizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -922,6 +928,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormMidiTest.resx">
+      <DependentUpon>FormMidiTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormMain.ja-JP.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

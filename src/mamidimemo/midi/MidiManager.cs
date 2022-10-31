@@ -74,6 +74,15 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<OutputDevice> GetOutputMidiDevices()
+        {
+            return OutputDevice.GetAll();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public static void SetInputMidiDeviceA(string deviceName)
         {
             if (inputDeviceA != null && inputDeviceA.Name.Equals(deviceName))
