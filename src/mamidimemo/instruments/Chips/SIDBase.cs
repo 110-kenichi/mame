@@ -871,6 +871,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (gs.Enable)
                 {
                     if (gs.FC.HasValue)
+                        parentModule.FC = gs.FC.Value;
+                    if (gs.RES.HasValue)
+                        parentModule.RES = gs.RES.Value;
+                    if (gs.OFF3.HasValue)
+                        parentModule.OFF3 = gs.OFF3.Value;
+                    if (gs.FILT.HasValue)
                     {
                         FilterChannel2 fc = (FilterChannel2)gs.FILT.Value;
                         if (fc == FilterChannel2.AutoChOnOr)
@@ -882,12 +888,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         else if (fc != FilterChannel2.None)
                             parentModule.FILT = (FilterChannel)fc;
                     }
-                    if (gs.RES.HasValue)
-                        parentModule.RES = gs.RES.Value;
-                    if (gs.OFF3.HasValue)
-                        parentModule.OFF3 = gs.OFF3.Value;
-                    if (gs.FILT.HasValue)
-                        parentModule.FILT = (FilterChannel)gs.FILT.Value;
                     if (gs.FilterType.HasValue)
                         parentModule.FilterType = (FilterTypes)gs.FilterType.Value;
                 }
