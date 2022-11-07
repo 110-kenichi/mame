@@ -460,6 +460,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            YM2413WriteData(UnitNumber, (byte)address, 0, (byte)data, !(0x20 <= address && address <= 0x28));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="unitNumber"></param>
         /// <param name="address"></param>
         /// <param name="slot"></param>
@@ -1439,7 +1449,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             byte kon = IsKeyOff ? (byte)0 : (byte)0x10;
                             lastFreqData = (byte)(timbre.SUS << 5 | kon | octave | ((freq >> 8) & 1));
 
-                            parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq), false);
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x10 + Slot), 0, (byte)(0xff & freq));
                             parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + Slot), 0, lastFreqData, false);
                         }
                         break;

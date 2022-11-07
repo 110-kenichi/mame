@@ -441,6 +441,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            if(address < 14)
+            {
+                if (address == 7)
+                    data &= 0x3f;
+                Ay8910WriteData(UnitNumber, (byte)address, (byte)data, !(address == 13));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitNumber"></param>
+        /// <param name="offset"></param>
+        /// <param name="data"></param>
         private void Ay8910WriteData(uint unitNumber, uint offset, byte data)
         {
             Ay8910WriteData(unitNumber, offset, data, true);
@@ -835,7 +856,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                parentModule.Ay8910WriteData(parentModule.UnitNumber, 7, 0xff);
+                parentModule.Ay8910WriteData(parentModule.UnitNumber, 7, 0x3f);
             }
 
         }

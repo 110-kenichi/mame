@@ -1105,5 +1105,23 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        unsafe public static void DirectAccessToChip(byte device_id, byte unit, uint address, uint data)
+        {
+            try
+            {
+                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
+
+                if(unit < instruments[(int)device_id - 1].Count)
+                    instruments[(int)device_id - 1][unit].DirectAccessToChip(address, data);
+            }
+            finally
+            {
+                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
+            }
+        }
     }
 }

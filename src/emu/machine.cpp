@@ -312,6 +312,7 @@ void LoadData(unsigned char* data, int length);
 int SaveData(void** saveBuf);
 void SendMidiEvent(unsigned char data1, unsigned char data2, unsigned char data3);
 void SendMidiSysEvent(unsigned char* data, int length);
+void DirectAccessToChip(unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data);
 
 void running_machine::mami_timer_callback(void* ptr, s32 param)
 {
@@ -320,11 +321,11 @@ void running_machine::mami_timer_callback(void* ptr, s32 param)
 
 void SetVSTiMode();
 
-rpc::client* m_rpcClient;
-rpc::server* m_rpcSrv;
+rpc::client* m_rpcClient = NULL;
+rpc::server* m_rpcSrv = NULL;
 
-CHAR* m_cpSharedMemory;
-HANDLE m_hSharedMemory;
+CHAR* m_cpSharedMemory = NULL;
+HANDLE m_hSharedMemory = NULL;
 
 bool createSharedMemory(int m_mami_sample_rate, USHORT m_vstPort)
 {
@@ -542,6 +543,11 @@ int running_machine::run(bool quiet)
 				SendMidiSysEvent(&buffer[0], length);
 			});
 
+			m_rpcSrv->bind("DirectAccessToChip", [&](unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
+				{
+					DirectAccessToChip(device_id, unit, address, data);
+				});
+
 			m_rpcSrv->async_run();
 
 			m_rpcClient->call("MAmiMainStarted");
@@ -554,6 +560,16 @@ int running_machine::run(bool quiet)
 			device_sound_interface* sdr =
 				dynamic_cast<device_sound_interface*>(this->device((std::string("rspeaker")).c_str()));
 			sdr->set_stream_update_callback(StreamUpdatedR);
+		}
+		else {
+			m_rpcSrv = new rpc::server(30000);
+
+			m_rpcSrv->bind("DirectAccessToChip", [&](unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
+				{
+					DirectAccessToChip(device_id, unit, address, data);
+				});
+
+			m_rpcSrv->async_run();
 		}
 
 		// run the CPUs until a reset or exit

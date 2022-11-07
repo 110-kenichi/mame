@@ -20,6 +20,7 @@ typedef int(CALLBACK* CloseApplicationProc)();
 typedef void(CALLBACK*  LoadDataProc)(unsigned char* data, int length);
 typedef int(CALLBACK* SaveDataProc)(void** saveBuf);
 typedef void(CALLBACK* SoundTimerCallbackProc)();
+typedef void(CALLBACK* DirectAccessToChipProc)(unsigned char device_id, unsigned char index, unsigned int address, unsigned int data);
 
 InitializeDotNetProc initializeDotNet = 0;
 HasExitedProc hasExited = 0;
@@ -35,6 +36,7 @@ CloseApplicationProc closeApplication = 0;
 LoadDataProc loadData = 0;
 SaveDataProc saveData = 0;
 SoundTimerCallbackProc soundTimerCallback = 0;
+DirectAccessToChipProc directAccessToChip = 0;
 
 DWORD WINAPI StartMAmidiMEmoMainThread(LPVOID lpParam)
 {
@@ -114,6 +116,9 @@ void StartMAmidiMEmoMain()
 	proc = GetProcAddress(hModule, "SoundTimerCallback");
 	if (proc != NULL)
 		soundTimerCallback = reinterpret_cast<SoundTimerCallbackProc>(proc);
+	proc = GetProcAddress(hModule, "DirectAccessToChip");
+	if (proc != NULL)
+		directAccessToChip = reinterpret_cast<DirectAccessToChipProc>(proc);
 
 	// Launch MAmi
 	proc = GetProcAddress(hModule, "MainWarpper");
@@ -220,4 +225,9 @@ void SoundTimerCallback()
 {
 	if(soundTimerCallback != 0)
 		soundTimerCallback();
+}
+
+void DirectAccessToChip(unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
+{
+	directAccessToChip(device_id, unit, address, data);
 }

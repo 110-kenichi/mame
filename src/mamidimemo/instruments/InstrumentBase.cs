@@ -2147,6 +2147,8 @@ namespace zanac.MAmidiMEmo.Instruments
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public virtual void Dispose()
         {
+            AllSoundOff();
+
             Program.SoundUpdating();
 
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
@@ -2235,6 +2237,11 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        internal virtual void DirectAccessToChip(uint address, uint data)
+        {
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -2271,6 +2278,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     {
                         foreach (var (d, a) in deferredWriteData)
                         {
+                            if (Program.HasExited() != 0)
+                                break;
                             try
                             {
                                 invokeFunction(d, a);

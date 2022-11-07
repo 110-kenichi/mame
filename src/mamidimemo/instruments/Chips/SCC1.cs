@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.VSIF;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 //http://bifi.msxnet.org/msxnet/tech/scc.html
 
@@ -234,7 +235,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     vsifClient.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
                 }
             }
-            if(clearCache)
+            if (clearCache)
                 ClearWrittenDataCache();
         }
 
@@ -312,6 +313,98 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private static delegate_SCC1_w SCC1_keyonoff_w;
 
         private static delegate_SCC1_r SCC1_keyonoff_r;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            byte type = 0;
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        switch (SCCChipType)
+                        {
+                            case SCCType.SCC1:
+                                type = 4;
+                                break;
+                            case SCCType.SCC1_Compat:
+                            case SCCType.SCC:
+                                type = 5;
+                                break;
+                        }
+                        break;
+                }
+            }
+            WriteData(address, data, true, new Action(() =>
+            {
+                lock (sndEnginePtrLock)
+                {
+                    if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
+                    {
+                        enableScc(SCCChipType, ExtSCCSlot);
+                        vsifClient.WriteData(type, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                    }
+                }
+                if (address < 0x100)
+                {
+                    //SCC
+                    if (address < 0x80)
+                    {
+                        // 0x00..0x7F : write wave form 1..4
+                        DeferredWriteData(SCC1_waveform_w, UnitNumber, (uint)address, new sbyte[] { (sbyte)data }, 1);
+                    }
+                    else if (address < 0x8a)
+                    {
+                        // 0x80..0x9F : freq volume block
+                        DeferredWriteData(SCC1_frequency_w, UnitNumber, (uint)(address - 0x80), (byte)data);
+                    }
+                    else if (address < 0x8f)
+                    {
+                        DeferredWriteData(SCC1_volume_w, UnitNumber, (uint)(address - 0x8a), (byte)data);
+                    }
+                    else if (address == 0x8f)
+                    {
+                        DeferredWriteData(SCC1_keyonoff_w, UnitNumber, (uint)0, (byte)data);
+                    }
+                    else
+                    {
+                        // 0xA0..0xDF : no function
+                        // 0xE0..0xFF : deformation register
+                    }
+                }
+                else
+                {
+                    //SCC+
+                    address = address & 0xff;
+                    if (address < 0xa0)
+                    {
+                        DeferredWriteData(SCC1_waveform_w, UnitNumber, (uint)address, new sbyte[] { (sbyte)data }, 1);
+                    }
+                    else if (address < 0xaa)
+                    {
+                        DeferredWriteData(SCC1_frequency_w, UnitNumber, (uint)(address - 0xa0), (byte)data);
+                    }
+                    else if (address < 0xaf)
+                    {
+                        DeferredWriteData(SCC1_volume_w, UnitNumber, (uint)(address - 0xaa), (byte)data);
+                    }
+                    else if (address == 0xaf)
+                    {
+                        DeferredWriteData(SCC1_keyonoff_w, UnitNumber, (uint)0, (byte)data);
+                    }
+                    else
+                    {
+                        // 0xA0..0xDF : no function
+                        // 0xE0..0xFF : deformation register
+                    }
+                }
+            }));
+        }
 
         /// <summary>
         /// 
