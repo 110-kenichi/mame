@@ -559,6 +559,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            initGlobalRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private class PokeySoundManager : SoundManagerBase
         {
             private SoundList<PokeySound> ch1OnSounds = new SoundList<PokeySound>(1);

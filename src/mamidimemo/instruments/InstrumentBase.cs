@@ -2190,7 +2190,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        protected void ClearWrittenDataCache()
+        protected virtual void ClearWrittenDataCache()
         {
             lock (writtenDataCache)
                 writtenDataCache.Clear();

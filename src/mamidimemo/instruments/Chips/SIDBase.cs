@@ -143,7 +143,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void initGlobalRegisters()
         {
             SidWriteData(UnitNumber, 0x15, (byte)(f_FC & 0x7), (byte)(f_FC >> 3));
-            SidWriteData(UnitNumber, 0x17, (byte)(f_RES << 4 | (int)f_FILT));
+            SidWriteData(UnitNumber, 0x17, (byte)(f_Off3 << 7 | f_RES << 4 | (int)f_FILT));
             SidWriteData(UnitNumber, 0x18, (byte)((int)f_FilterType << 4 | (int)f_Volume));
         }
 
@@ -164,7 +164,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_SidBaseAddress != value)
                 {
                     f_SidBaseAddress = value;
-                    initGlobalRegisters();
+                    setSoundEngine(SoundEngine);
                 }
             }
         }
@@ -686,6 +686,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager.ProcessAllSoundOff();
             ClearWrittenDataCache();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            initGlobalRegisters();
         }
 
         /// <summary>

@@ -207,23 +207,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
-                updateOPL3Registers();
             }
-        }
-
-        private void updateOPL3Registers()
-        {
-            //NEW
-            YMF262WriteData(UnitNumber, 0x105, 0, 0, 0, 0, (byte)5);
-            //CONSEL
-            var v = 0;
-            for (int i = 0; i < f_CONSEL; i++)
-                v |= 1 << i;
-            YMF262WriteData(UnitNumber, 0x104, 0, 0, 0, 0, (byte)v);
-            //AMD, VIB
-            YMF262WriteData(UnitNumber, 0xBD, 0, 0, 0, 0, (byte)(AMD << 7 | VIB << 6));
-
-            OnControlChangeEvent(new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0));
+            PrepareSound();
         }
 
         [Category("Chip(Dedicated)")]
@@ -719,6 +704,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         }
 
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        private void initGlobalRegisters()
+        {
+            //NEW
+            YMF262WriteData(UnitNumber, 0x105, 0, 0, 0, 0, (byte)5);
+            //CONSEL
+            var v = 0;
+            for (int i = 0; i < f_CONSEL; i++)
+                v |= 1 << i;
+            YMF262WriteData(UnitNumber, 0x104, 0, 0, 0, 0, (byte)v);
+            //AMD, VIB
+            YMF262WriteData(UnitNumber, 0xBD, 0, 0, 0, 0, (byte)(AMD << 7 | VIB << 6));
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -786,6 +791,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.ProcessAllSoundOff();
             ClearWrittenDataCache();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            initGlobalRegisters();
         }
 
         /// <summary>

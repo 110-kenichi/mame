@@ -627,10 +627,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.PrepareSound();
 
-            initRegisters();
+            initGlobalRegisters();
         }
 
-        private void initRegisters()
+        private void initGlobalRegisters()
         {
             //SSG OFF
             YM2610BWriteData(UnitNumber, (byte)(7), 0, 0, (byte)(0x3f));
@@ -646,7 +646,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.StartVgmRecordingTo(vgmPath);
 
-            initRegisters();
+            initGlobalRegisters();
         }
 
         /// <summary>

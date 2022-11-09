@@ -502,6 +502,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            initGlobalRegisters();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private class YM3806SoundManager : SoundManagerBase
         {
             private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
