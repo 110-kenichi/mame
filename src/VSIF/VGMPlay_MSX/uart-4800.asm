@@ -26,7 +26,7 @@ CHPUT = #0xA2
     ;41BCH
 
     .macro INIT_CONST   ;   14
-    LD  E,#0x30         ; 7  7
+    ;LD  E,#0x30         ; 7  7
     LD  C,#14           ; 7 14
     .endm
 
@@ -55,7 +55,7 @@ CHPUT = #0xA2
     LD  (HL), D         ;  7 58
     INC L               ;  4 62
     LD  (HL), A         ;  7 69
-    LD  E,#0x30         ;  7 76
+    ;LD  E,#0x30         ;  7 76
     JP  __VGM_LOOP      ; 10 86
     .endm
 
@@ -154,14 +154,16 @@ __VGM_DATA_LO:
     LD  D,A             ;  4 63
 
     LD  L,#0            ;  7 70 Zero clear
+    LD  E,#0xF          ;  7 77
 __VGM_TYPE:
     IN  A,(PSGRD)       ; 11 11
     BIT 5,A             ;  8 19
     JP  Z, __VGM_TYPE   ; 10 29
     IN  A,(PSGRD)       ; 11 40
-    XOR #0xB0           ;  7 47
-    LD  H,A             ;  4 51
-    JP  (HL)            ;  4 55
+    AND	E               ;  4 44
+    OR  #0x50           ;  7 47+4
+    LD  H,A             ;  4 51+4
+    JP  (HL)            ;  4 55+4
 
 _END_VGM:
     EI                  ;  4
@@ -178,10 +180,10 @@ __WRITE_PSG_IO:
 
     .ORG 0x5100
 __WRITE_OPLL_IO:
-    LD  A,B
-    OUT (OPLLAD),A
-    LD  A,D
-    OUT (OPLLWR),A
+    LD  A,B             ;  4 59
+    OUT (OPLLAD),A      ; 11 70
+    LD  A,D             ;  4 74
+    OUT (OPLLWR),A      ; 11 85
     JP  __VGM_LOOP      ; 10 95
 
     .ORG 0x5200
@@ -285,7 +287,7 @@ __WRITE_SCC_32_BYTES:
 
     .ORG 0x5A00
 __WRITE_OPL3_IO1:
-    LD  A,B
+    LD  A,B             ;  4 59
     OUT (OPL3AD1),A
     LD  A,D
     OUT (OPL3WR),A
@@ -293,10 +295,10 @@ __WRITE_OPL3_IO1:
 
     .ORG 0x5B00
 __WRITE_OPL3_IO2:
-    LD  A,B
-    OUT (OPL3AD2),A
-    LD  A,D
-    OUT (OPL3WR),A
+    LD  A,B             ;  4 59
+    OUT (OPL3AD2),A     ; 11 70
+    LD  A,D             ;  4 74
+    OUT (OPL3WR),A      ; 11 85
     JP  __VGM_LOOP      ; 10 95
 
     .ORG 0x5C00

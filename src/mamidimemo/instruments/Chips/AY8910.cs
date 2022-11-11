@@ -75,7 +75,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - MSX\".\r\n" +
+        [Description("Set FTDI or COM Port No for \"VSIF - MSX\".\r\n" +
             "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId
@@ -209,13 +209,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private int f_ftdiClkWidth = 15;
+        private int f_ftdiClkWidth = 17;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(15)]
+        [DefaultValue(17)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {

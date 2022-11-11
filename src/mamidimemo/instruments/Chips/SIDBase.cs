@@ -44,7 +44,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - C64\"\r\n" +
+        [Description("Set FTDI No for \"VSIF - C64\"\r\n" +
             "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId

@@ -72,7 +72,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set Port No for \"VSIF - Genesis\".\r\n" +
+        [Description("Set FTDI or COM Port No for \"VSIF - Genesis\".\r\n" +
             "See the manual about the VSIF.")]
         [DefaultValue(PortId.No1)]
         public PortId PortId

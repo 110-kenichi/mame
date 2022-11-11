@@ -29,18 +29,18 @@ LOOP:
 __endasm;
 */
     print("MAMI VGM SOUND DRIVER BY ITOKEN\r\n");
-    print("NOTE: PLEASE RESET AFTER RECONNECTED");
-    print(" \r\n");
+    print("MEMO: PUSH PANIC BTN WHEN GET WEIRD\r\n");
+    print("\r\n");
     print("READY TO PLAY.\r\n");
     print(" \r\n");
-    print("-CONNECT P2 PORT PIN1-4,6,7,9 TO FTDI2XX.");
+    print("-CONNECT P2 PORT PIN1-7,9 TO FTDI2XX.");
     print(" \r\n");
-    print(" 1,2,3,4  -> FTDI2XX TX,RX,RTS,CTS\r\n");
+    print(" 1,2,3,4,5 -> FTDI2XX TX,RX,RTS,CTS,VCC\r\n");
     print("___________ \r\n");
-    print("\\* * * * o/\r\n");
+    print("\\* * * * */\r\n");
     print(" \\* * o */ \r\n");
     print("  -------   \r\n");
-    print("  6,7,  9 -> FTDI2XX DTR,DSR,GND\r\n");
+    print("  6,7,  9  -> FTDI2XX DTR,DSR,GND\r\n");
 
     uart_processVgm();
 }
