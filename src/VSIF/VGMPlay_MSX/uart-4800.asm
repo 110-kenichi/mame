@@ -25,16 +25,18 @@ CHPUT = #0xA2
 ; void uart_processVgm()
     ;41BCH
 
+;=======================================================
     .macro INIT_CONST   ;   14
     ;LD  E,#0x30         ; 7  7
     LD  C,#14           ; 7 14
     .endm
 
+;=======================================================
     .macro WRITE_SCC_2BYTES
 1$:
     ; 2ND DATA Hi 4bit
     IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
+    AND #0x20           ;  8 19*
     JP  NZ, 1$          ; 10 29
     IN  A,(PSGRD)       ; 11 40
     LD  E,A             ;  4 44
@@ -45,7 +47,7 @@ CHPUT = #0xA2
 2$:
     ; 2ND DATA Lo 4bit
     IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
+    AND #0x20           ;  8 19*
     JP  Z, 2$           ; 10 29
     IN  A,(PSGRD)       ; 11 40
     AND #0xf            ;  7 47
@@ -59,12 +61,13 @@ CHPUT = #0xA2
     JP  __VGM_LOOP      ; 10 86
     .endm
 
+;=======================================================
     .macro WRITE_SCC_31_BYTES
     LD  B,#31           ;  7  7
 1$:
     ; DATA Hi 4bit
     IN  A,(PSGRD)       ; 11 18
-    BIT 5,A             ;  8 26
+    AND #0x20           ;  8 26*
     JP  NZ,1$           ; 10 36
     IN  A,(PSGRD)       ; 11 47
     LD  D,A             ;  4 51
@@ -75,7 +78,7 @@ CHPUT = #0xA2
 2$:
     ; DATA Lo 4bit
     IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
+    AND #0x20           ;  8 19*
     JP  Z,2$            ; 10 29
     IN  A,(PSGRD)       ; 11 40
     AND #0xf            ;  7 47
@@ -88,6 +91,35 @@ CHPUT = #0xA2
     JP  __VGM_LOOP      ;       10 80
     .endm
 
+;=======================================================
+    .macro READ_DATA
+;__VGM_DATA_HI:
+3$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  NZ, 3$          ; 10 28 __VGM_DATA_HI
+    ; DATA Hi 4bit
+    IN  A,(PSGRD)       ; 11 39
+    LD  D,A             ;  4 43
+    SLA D               ;  8 51
+    SLA D               ;  8 59
+    SLA D               ;  8 67
+    SLA D               ;  8 75
+
+;__VGM_DATA_LO:
+4$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z,4$            ; 10 28 __VGM_DATA_LO
+    ; DATA Lo 4bit
+    IN  A,(PSGRD)       ; 11 39
+    AND E               ;  4 43
+    ; DATA 8bit
+    OR  D               ;  4 47
+    LD  D,A             ;  4 51
+    .endm
+
+;=======================================================
 _uart_processVgm::
     DI
     LD  A,#15        ;  7
@@ -104,7 +136,7 @@ __VGM_LOOP:
 
 __VGM_ADRS_HI:
     IN  A,(PSGRD)       ; 11 26
-    BIT 4,A             ;  8 34
+    AND #0x10           ;  8 34*
     JP  Z,__VGM_ADRS_HI ; 10 44
     IN  A,(PSGRD)       ; 11 55
     BIT 5,A             ;  8 63
@@ -117,122 +149,112 @@ __VGM_ADRS_HI:
 
 __VGM_ADRS_LO:
     IN  A,(PSGRD)       ; 11 11
-    BIT 4,A             ;  8 19
-    JP  NZ,__VGM_ADRS_LO ; 10 29
+    AND #0x10           ;  7 18
+    JP  NZ,__VGM_ADRS_LO ; 10 28
     ; ADDRESS Lo 4bit
-    IN  A,(PSGRD)       ; 11 40
-    AND #0xf            ;  7 47
-    SLA B               ;  8 55 ;X
-    SLA B               ;  8 63 ;X
-    SLA B               ;  8 71 ;X
+    IN  A,(PSGRD)       ; 11 39
+    AND #0xf            ;  7 46
+    SLA B               ;  8 54 ;X
+    SLA B               ;  8 62 ;X
+    SLA B               ;  8 70 ;X
     ; ADDRESS 8bit
-    OR  B               ;  4 75
-    LD  B, A            ;  4 79
+    OR  B               ;  4 74
+    LD  B, A            ;  4 78
 
-__VGM_DATA_HI:
-    IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
-    JP  Z, __VGM_DATA_HI ; 10 36
-    ; DATA Hi 4bit
-    IN  A,(PSGRD)       ; 11 47
-    LD  D,A             ;  4 51
-    SLA D               ;  8 59
-    SLA D               ;  8 67
-    SLA D               ;  8 75
-;    SLA D               ; exec later X
+    LD  L,#0            ;  7 85 Zero clear
+    LD  E,#0xF          ;  7 92
 
-__VGM_DATA_LO:
-    IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
-    JP  NZ,__VGM_DATA_LO ; 10 29
-    ; DATA Lo 4bit
-    IN  A,(PSGRD)       ; 11 40
-    AND #0xf            ;  7 47
-    SLA D               ;  8 55 ;X
-    ; DATA 8bit
-    OR  D               ;  4 59
-    LD  D,A             ;  4 63
-
-    LD  L,#0            ;  7 70 Zero clear
-    LD  E,#0xF          ;  7 77
 __VGM_TYPE:
     IN  A,(PSGRD)       ; 11 11
-    BIT 5,A             ;  8 19
+    AND #0x20           ;  8 19*
     JP  Z, __VGM_TYPE   ; 10 29
     IN  A,(PSGRD)       ; 11 40
     AND	E               ;  4 44
-    OR  #0x50           ;  7 47+4
-    LD  H,A             ;  4 51+4
-    JP  (HL)            ;  4 55+4
+    OR  #0x50           ;  7 51
+    LD  H,A             ;  4 55
+    JP  (HL)            ;  4 59
 
 _END_VGM:
     EI                  ;  4
     ret                 ; 10
 
     .area   _HEADER (ABS)
+
+;=======================================================
     .ORG 0x5000
 __WRITE_PSG_IO:
-    LD  A,B             ;  4 59
-    OUT (PSGAD),A       ; 11 70
-    LD  A,D             ;  4 74
-    OUT (PSGWR),A       ; 11 85
-    JP  __VGM_LOOP      ; 10 95
+    READ_DATA           ; 51
 
+    LD  A,B             ;  4 55
+    OUT (PSGAD),A       ; 11 66
+    LD  A,D             ;  4 70
+    OUT (PSGWR),A       ; 11 81
+    JP  __VGM_LOOP      ; 10 91
+
+;=======================================================
     .ORG 0x5100
 __WRITE_OPLL_IO:
-    LD  A,B             ;  4 59
-    OUT (OPLLAD),A      ; 11 70
-    LD  A,D             ;  4 74
-    OUT (OPLLWR),A      ; 11 85
-    JP  __VGM_LOOP      ; 10 95
+    LD  A,B             ;  4 63
+    OUT (OPLLAD),A      ; 11 74
+
+    READ_DATA           ; 51
+
+    LD  A,D             ;  4 55
+    OUT (OPLLWR),A      ; 11 66
+    JP  __VGM_LOOP      ; 10 76
 
     .ORG 0x5200
 __WRITE_OPLL_ENA:
-    PUSH    DE
-    LD      HL,#0x7FF6     ; Address for EXT OPLL ENA FLAG 
-    LD      A,D            ; SLOT #
-    CALL    RDSLT
-    SET     0,A            ; ENA OPLL BIT 1
-    POP     DE
+    READ_DATA           ;51
 
-    LD      E,A            ; Write val
-    LD      A,D            ; SLOT #
-    LD      HL,#0x7FF6     ; Address  for EXT OPLL ENA FLAG 
-    CALL    WRSLT
-    INIT_CONST
-    JP  __VGM_LOOP
+    PUSH    DE          ;11 70 59+11
+    LD      HL,#0x7FF6  ;10 80     ; Address for EXT OPLL ENA FLAG 
+    LD      A,D         ; 4 84     ; SLOT #
+    CALL    RDSLT       ;17 101
+    SET     0,A         ; 8 ???+8  ; ENA OPLL BIT 1
+    POP     DE          ;10 ???+18
 
+    LD      E,A         ; 4 ???+22 ; Write val
+    LD      A,D         ; 4 ???+26 ; SLOT #
+    LD      HL,#0x7FF6  ;10 ???+36 ; Address  for EXT OPLL ENA FLAG 
+    CALL    WRSLT       ;17 ???+73
+    INIT_CONST          ; 7 ???+80
+    JP  __VGM_LOOP      ;10 ???+90
+
+;=======================================================
     .ORG 0x5300
     ;https://www.msx.org/forum/msx-talk/software/scc-music-altera-de-1
 __WRITE_SCC_SLOT:
+    READ_DATA           ;51
+
     ; CHANGE PAGE2 TO SCC SLOT PAGE2
-    PUSH    BC
-    LD      A,D
-    LD      H,#0x80
-    CALL    ENASLT
-    POP     BC
+    PUSH    BC          ;11 70 59+11
+    LD      A,D         ; 4 74
+    LD      H,#0x80     ; 7 81
+    CALL    ENASLT      ;17 98
+    POP     BC          ;10 ???+10
 
     ; ENA SCC
-    LD      A,B
-    CP      #0x01
-    JP      Z,__ENA_SCC1
-    CP      #0x02
-    JP      Z,__ENA_SCC1_COMPAT
-    CP      #0x03
-    JP      Z,__ENA_SCC
+    LD      A,B          ; 4 ???+14
+    CP      #0x01        ; 7 ???+21
+    JP      Z,__ENA_SCC1 ;12 ???+33
+    CP      #0x02        ; 7 ???+40
+    JP      Z,__ENA_SCC1_COMPAT ;12 ???+52
+    CP      #0x03        ; 7 ???+59
+    JP      Z,__ENA_SCC  ;12 ???+71
 
-    JP      __VGM_LOOP
+    JP      __VGM_LOOP   ;10 ???+81
 
 __ENA_SCC1:
-    LD      HL,#0xBFFE
-    LD      A,#0x20
-    LD      (HL),A
+    LD      HL,#0xBFFE   ;10 ???+ 43
+    LD      A,#0x20      ; 7 ???+ 50
+    LD      (HL),A       ; 7 ???+ 57
 
-    LD      HL,#0xB000
-    LD      A,#0x80
-    LD      (HL),A
-    INIT_CONST
-    JP  __VGM_LOOP
+    LD      HL,#0xB000   ;10 ???+ 67
+    LD      A,#0x80      ; 7 ???+ 74
+    LD      (HL),A       ; 7 ???+ 81
+    INIT_CONST           ; 7 ???+ 88
+    JP  __VGM_LOOP       ;10 ???+ 98
 
 __ENA_SCC1_COMPAT:
     LD      HL,#0xBFFE
@@ -243,76 +265,113 @@ __ENA_SCC:
     LD      A,#0x3F
     LD      (HL),A
     INIT_CONST
-    JP  __VGM_LOOP
+    JP  __VGM_LOOP       ;10 ???+ 98+19
 
+;=======================================================
     .ORG 0x5400
 __WRITE_SCC1:
-    LD  H,#0xB8         ;  7 62
-    LD  L,B             ;  4 66
-    LD  (HL), D         ;  7 73
-    JP  __VGM_LOOP      ; 10 83
+    LD  H,#0xB8         ;  7 66
+    LD  L,B             ;  4 70
 
+    READ_DATA           ; 51
+
+    LD  (HL), D         ;  7 58
+    JP  __VGM_LOOP      ; 10 68
+
+;=======================================================
     .ORG 0x5500
 __WRITE_SCC:
-    LD  H,#0x98         ;  7 62
-    LD  L,B             ;  4 66
-    LD  (HL), D         ;  7 73
-    JP  __VGM_LOOP      ; 10 83
+    LD  H,#0x98         ;  7 66
+    LD  L,B             ;  4 70
 
+    READ_DATA           ; 51
+
+    LD  (HL), D         ;  7 58
+    JP  __VGM_LOOP      ; 10 68
+
+;=======================================================
     .ORG 0x5600
 __WRITE_SCC1_2BYTES:
-    LD  H,#0xB8         ;  7 62
-    LD  L,B             ;  4 66
+    LD  H,#0xB8         ;  7 66
+    LD  L,B             ;  4 70
+
+    READ_DATA           ; 51
+
     WRITE_SCC_2BYTES
 
+;=======================================================
     .ORG 0x5700
 __WRITE_SCC_2BYTES:
-    LD  H,#0x98         ;  7 62
-    LD  L,B             ;  4 66
+    LD  H,#0x98         ;  7 66
+    LD  L,B             ;  4 70
+
+    READ_DATA           ; 51
+
     WRITE_SCC_2BYTES
 
+;=======================================================
     .ORG 0x5800
 __WRITE_SCC1_32_BYTES:
-    LD  H,#0xB8         ;  7 62
-    LD  L,B             ;  4 66
-    LD  (HL), D         ;  7 73
+    LD  H,#0xB8         ;  7 66
+    LD  L,B             ;  4 70
+
+    READ_DATA           ; 51
+
+    LD  (HL), D         ;  7 58
     WRITE_SCC_31_BYTES
 
+;=======================================================
     .ORG 0x5900
 __WRITE_SCC_32_BYTES:
-    LD  H,#0x98         ;  7 62
-    LD  L,B             ;  4 66
-    LD  (HL), D         ;  7 73
+    LD  H,#0x98         ;  7 66
+    LD  L,B             ;  4 70
+
+    READ_DATA           ; 51
+
+    LD  (HL), D         ;  7 58
     WRITE_SCC_31_BYTES
 
+;=======================================================
     .ORG 0x5A00
 __WRITE_OPL3_IO1:
-    LD  A,B             ;  4 59
-    OUT (OPL3AD1),A
-    LD  A,D
-    OUT (OPL3WR),A
-    JP  __VGM_LOOP      ; 10 95
+    LD  A,B             ;  4 63
+    OUT (OPL3AD1),A     ; 11 77
 
+    READ_DATA           ; 52
+
+    LD  A,D             ;  4 56
+    OUT (OPL3WR),A      ; 11 67
+    JP  __VGM_LOOP      ; 10 77
+
+;=======================================================
     .ORG 0x5B00
 __WRITE_OPL3_IO2:
-    LD  A,B             ;  4 59
-    OUT (OPL3AD2),A     ; 11 70
-    LD  A,D             ;  4 74
-    OUT (OPL3WR),A      ; 11 85
-    JP  __VGM_LOOP      ; 10 95
+    LD  A,B             ;  4 63
+    OUT (OPL3AD2),A     ; 11 77
 
+    READ_DATA           ; 52
+
+    LD  A,D             ;  4 56
+    OUT (OPL3WR),A      ; 11 67
+    JP  __VGM_LOOP      ; 10 77
+
+;=======================================================
     .ORG 0x5C00
-    JP __VGM_LOOP       ; 10 98
+    JP __VGM_LOOP       ; 10 69
 
+;=======================================================
     .ORG 0x5D00
-    JP __VGM_LOOP       ; 10 98
+    JP __VGM_LOOP       ; 10 69
 
+;=======================================================
     .ORG 0x5E00
-    JP __VGM_LOOP       ; 10 98
+    JP __VGM_LOOP       ; 10 69
 
+;=======================================================
     .ORG 0x5F00
-    JP __VGM_LOOP       ; 10 98
+    JP __VGM_LOOP       ; 10 69
 
+;=======================================================
 
 LD  A, H
 ADD A, #0x30
