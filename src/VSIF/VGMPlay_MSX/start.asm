@@ -1,0 +1,27 @@
+;
+;	CARTRIDGE HEADER (16 ROM, PAGEADDR 1, 0x4000-0x8000)
+;
+;	0,	0x0000-0x3FFF,	ROM MAIN -> (SFG(OPM))
+;	1,	0x4000-0x7FFF,	ROM VSIF
+;	2,	0x8000-0xBFFF,	ROM (SCC/SCC-1)
+;	3,	0xC000-0xFFFF,	RAM WORK AREA
+;
+
+	.module	start
+	.globl	_main
+;
+	.area	_ROM_HDR (ABS)
+	.org	0x4000
+;
+	.db	'A
+	.db	'B
+	.dw	_main
+	.dw	0
+	.dw	0
+	.dw	0
+	.dw	0
+	.dw	0
+	.dw	0
+;
+	.ascii	"END ROMHEADER"
+;

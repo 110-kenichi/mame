@@ -239,6 +239,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ClearWrittenDataCache();
         }
 
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+
+            enableScc(f_sccType, f_extSCCSlot, true);
+        }
+
         private int f_ftdiClkWidth = 18;
 
         [DataMember]
@@ -498,7 +505,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             byte freq_h = (byte)((freq >> 8) & 0xf);
                             vsifClient.RawWriteData(new byte[] {
                                 (byte)((freq_h    >> 4) | 0x00),
-                                (byte)((freq_h &  0x0f) | 0x20),
+                                (byte)((freq_h &  0x0f) | 0x10),
                             }, f_ftdiClkWidth);
                         }
                     }
@@ -624,7 +631,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                             var dt = (byte)data[i];
                                             vsifClient.RawWriteData(new byte[] {
                                                 (byte)((dt    >> 4) | 0x00),
-                                                (byte)((dt &  0x0f) | 0x20),
+                                                (byte)((dt &  0x0f) | 0x10),
                                         }, f_ftdiClkWidth);
                                         }
                                     }

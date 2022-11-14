@@ -54,9 +54,9 @@ namespace zanac.MAmidiMEmo.VSIF
                         lastSccType = dt.Address;
                         lastSccSlot = dt.Data;
                         byte[] sd = new byte[5] {
-                        (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
                         (byte)(dt.Type           | 0x20),
-                        (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x20),
+                        (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                        (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                          };
                         ds.AddRange(sd);
 
@@ -69,9 +69,9 @@ namespace zanac.MAmidiMEmo.VSIF
                 else
                 {
                     byte[] sd = new byte[5] {
-                    (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
                     (byte)(dt.Type           | 0x20),
-                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x20),
+                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                     };
                     ds.AddRange(sd);
                 }
