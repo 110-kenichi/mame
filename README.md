@@ -1,4 +1,4 @@
-MAmidiMEmo 4.4.3.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.4.4.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
