@@ -31,6 +31,9 @@ namespace zanac.MAmidiMEmo.VSIF
         {
         }
 
+        private byte lastDataType = 0xff;
+        private byte lastWriteSccAddress;
+
         /// <summary>
         /// 
         /// </summary>
@@ -62,18 +65,34 @@ namespace zanac.MAmidiMEmo.VSIF
 
                         //dummy wait
                         sd = new byte[5] { 0, 0, 0, 0, 0 };
-                        for(int i=0;i<8;i++)
+                        for (int i = 0; i < 8; i++)
                             ds.AddRange(sd);
+
+                        lastDataType = dt.Type;
+                        lastWriteSccAddress = dt.Address;
                     }
                 }
                 else
                 {
-                    byte[] sd = new byte[5] {
-                    (byte)(dt.Type           | 0x20),
-                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
-                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
-                    };
-                    ds.AddRange(sd);
+                    if ((dt.Type == 4 || dt.Type == 5) && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteSccAddress + 1))
+                    {
+                        byte[] sd = new byte[3] {
+                            (byte)(0x1f              | 0x20),
+                            (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            };
+                        ds.AddRange(sd);
+                    }
+                    else
+                    {
+                        byte[] sd = new byte[5] {
+                            (byte)(dt.Type           | 0x20),
+                            (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                            (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                        };
+                        ds.AddRange(sd);
+                    }
+                    lastDataType = dt.Type;
+                    lastWriteSccAddress = dt.Address;
                 }
             }
             byte[] dsa = ds.ToArray();

@@ -243,7 +243,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.ClearWrittenDataCache();
 
-            enableScc(f_sccType, f_extSCCSlot, true);
+            enableScc(f_sccType, f_extSCCSlot, false);
         }
 
         private int f_ftdiClkWidth = 18;
@@ -360,7 +360,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (address < 0x100)
                 {
                     //SCC
-                    if (address < 0x80)
+                    if (address < 0x80)  
                     {
                         // 0x00..0x7F : write wave form 1..4
                         DeferredWriteData(SCC1_waveform_w, UnitNumber, (uint)address, new sbyte[] { (sbyte)data }, 1);

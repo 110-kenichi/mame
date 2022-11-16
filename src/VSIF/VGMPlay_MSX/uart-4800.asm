@@ -99,13 +99,11 @@ CHPUT = #0xA2
     AND #0x20           ;  7 18
     JP  NZ, 5$          ; 10 28
     IN  A,(PSGRD)       ; 11 39
-    BIT 5,A             ;  8 37
-    JP  NZ, 5$          ; 10 47
-    LD  B,A             ;  4 51
+    LD  B,A             ;  4 43
+    SLA B               ;  8 51
     SLA B               ;  8 59
-    SLA B               ;  8 68
-    SLA B               ;  8 76
-    SLA B               ;  8 84
+    SLA B               ;  8 67
+    SLA B               ;  8 75
 
 ;__VGM_ADRS_LO:
 6$:
@@ -195,10 +193,10 @@ __WRITE_PSG_IO:
     ; JOY2 Pin Read Mode
     LD  A,C             ;  4 82
     OUT (PSGAD),A       ; 11 93
-__VGM_TYPE2:
+1$:
     IN  A,(PSGRD)       ; 11 25
     AND #0x20           ;  7 32
-    JP  Z, __VGM_TYPE2  ; 10 42
+    JP  Z, 1$           ; 10 42
     IN  A,(PSGRD)       ; 11 53
     AND	#0x1F           ;  7 60
     OR  #0x60           ;  7 67
@@ -213,22 +211,22 @@ __WRITE_OPLL_IO:
     LD  A,B             ;  4 62
     OUT (OPLLAD),A      ; 11 73
 
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  A,D             ;  4 55
-    OUT (OPLLWR),A      ; 11 66
-    JP  __VGM_LOOP      ; 10 76
+    LD  A,D             ;  4 52
+    OUT (OPLLWR),A      ; 11 63
+    JP  __VGM_LOOP      ; 10 73
 
 ;=======================================================
     .ORG 0x6200
 __WRITE_OPLL_ENA:
     READ_ADRS
-    READ_DATA           ;51
+    READ_DATA           ;48
 
-    PUSH    DE          ;11 62
-    LD      HL,#0x7FF6  ;10 72     ; Address for EXT OPLL ENA FLAG 
-    LD      A,D         ; 4 76     ; SLOT #
-    CALL    RDSLT       ;17 93
+    PUSH    DE          ;11 59
+    LD      HL,#0x7FF6  ;10 70     ; Address for EXT OPLL ENA FLAG 
+    LD      A,D         ; 4 74     ; SLOT #
+    CALL    RDSLT       ;17 91
     SET     0,A         ; 8 ???+8  ; ENA OPLL BIT 1
     POP     DE          ;10 ???+18
 
@@ -244,13 +242,13 @@ __WRITE_OPLL_ENA:
     ;https://www.msx.org/forum/msx-talk/software/scc-music-altera-de-1
 __WRITE_SCC_SLOT:
     READ_ADRS
-    READ_DATA           ;51
+    READ_DATA           ;48
 
     ; CHANGE PAGE2 TO SCC SLOT PAGE2
-    PUSH    BC          ;11 70 59+11
-    LD      A,D         ; 4 74
-    LD      H,#0x80     ; 7 81
-    CALL    ENASLT      ;17 98
+    PUSH    BC          ;11 59 59+11
+    LD      A,D         ; 4 63
+    LD      H,#0x80     ; 7 70
+    CALL    ENASLT      ;17 87
     POP     BC          ;10 ???+10
 
     ; ENA SCC
@@ -290,64 +288,98 @@ __ENA_SCC:
     .ORG 0x6400
 __WRITE_SCC1:
     READ_ADRS
-    READ_DATA           ; 51
+0$:
+    READ_DATA           ; 48
 
-    LD  H,#0xB8         ;  7 57
-    LD  L,B             ;  4 61
-    LD  (HL), D         ;  7 68
-    JP  __VGM_LOOP      ; 10 78
+    LD  H,#0xB8         ;  7 55
+    LD  L,B             ;  4 59
+    LD  (HL), D         ;  7 66
+
+    ; Continuous Write
+    INC B               ;  4 70
+    LD  E,#0x1F         ;  7 77
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6500
 __WRITE_SCC:
     READ_ADRS
-    READ_DATA           ; 51
+0$:
+    READ_DATA           ; 48
 
-    LD  H,#0x98         ;  7 57
-    LD  L,B             ;  4 64
-    LD  (HL), D         ;  7 68
-    JP  __VGM_LOOP      ; 10 78
+    LD  H,#0x98         ;  7 55
+    LD  L,B             ;  4 59
+    LD  (HL), D         ;  7 66
+
+    ; Continuous Write
+    INC B               ;  4 70
+    LD  E,#0x1F         ;  7 77
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6600
 __WRITE_SCC1_2BYTES:
     READ_ADRS
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  H,#0xB8         ;  7 58
-    LD  L,B             ;  4 62
+    LD  H,#0xB8         ;  7 55
+    LD  L,B             ;  4 59
     WRITE_SCC_2BYTES
 
 ;=======================================================
     .ORG 0x6700
 __WRITE_SCC_2BYTES:
     READ_ADRS
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  H,#0x98         ;  7 58
-    LD  L,B             ;  4 62
+    LD  H,#0x98         ;  7 55
+    LD  L,B             ;  4 59
     WRITE_SCC_2BYTES
 
 ;=======================================================
     .ORG 0x6800
 __WRITE_SCC1_32_BYTES:
     READ_ADRS
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  H,#0xB8         ;  7 58
-    LD  L,B             ;  4 62
-    LD  (HL), D         ;  7 69
+    LD  H,#0xB8         ;  7 55
+    LD  L,B             ;  4 59
+    LD  (HL), D         ;  7 66
     WRITE_SCC_31_BYTES
 
 ;=======================================================
     .ORG 0x6900
 __WRITE_SCC_32_BYTES:
     READ_ADRS
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  H,#0x98         ;  7 58
-    LD  L,B             ;  4 62
-    LD  (HL), D         ;  7 69
+    LD  H,#0x98         ;  7 55
+    LD  L,B             ;  4 59
+    LD  (HL), D         ;  7 66
     WRITE_SCC_31_BYTES
 
 ;=======================================================
@@ -357,11 +389,11 @@ __WRITE_OPL3_IO1:
     LD  A,B             ;  4 62
     OUT (OPL3AD1),A     ; 11 76
 
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  A,D             ;  4 55
-    OUT (OPL3WR),A      ; 11 66
-    JP  __VGM_LOOP      ; 10 76
+    LD  A,D             ;  4 52
+    OUT (OPL3WR),A      ; 11 63
+    JP  __VGM_LOOP      ; 10 73
 
 ;=======================================================
     .ORG 0x6B00
@@ -370,11 +402,11 @@ __WRITE_OPL3_IO2:
     LD  A,B             ;  4 62
     OUT (OPL3AD2),A     ; 11 76
 
-    READ_DATA           ; 51
+    READ_DATA           ; 48
 
-    LD  A,D             ;  4 55
-    OUT (OPL3WR),A      ; 11 66
-    JP  __VGM_LOOP      ; 10 76
+    LD  A,D             ;  4 52
+    OUT (OPL3WR),A      ; 11 63
+    JP  __VGM_LOOP      ; 10 73
 
 ;=======================================================
     .ORG 0x6C00
