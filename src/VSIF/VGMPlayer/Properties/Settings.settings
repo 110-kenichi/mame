@@ -3,25 +3,25 @@
   <Profiles />
   <Settings>
     <Setting Name="DCSG_IF" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">12</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="DCSG_Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">14</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OPLL_Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">19</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OPNA2_Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">9</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Loop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="OPLL_IF" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">17</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OPNA2_IF" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">27</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OPLL_Enable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -72,10 +72,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SCC_Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">24</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Y8910_Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">29</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="SCC_Slot" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
@@ -84,6 +84,18 @@
       <Value Profile="(Default)">300</Value>
     </Setting>
     <Setting Name="SCC_Type" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OPM_Port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="BitBangWaitOPM" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">18</Value>
+    </Setting>
+    <Setting Name="OPM_Enable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OPM_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

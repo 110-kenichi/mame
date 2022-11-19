@@ -15,10 +15,10 @@ __asm
     
     ;//how-change-text2-mode-screen0-width80
     ;//https://www.msx.org/forum/msx-talk/development/how-change-text2-mode-screen0-width80-asm
-    LD A,#80              ;// 80 columns in screen 0
+    LD A,#32              ;// 80 columns in screen 0
     LD (#0xF3AE),A
-    XOR A
-    CALL CHGMOD          ;// SCREEN0   
+    CALL #0x006C
+    CALL #0x0C3
 __endasm;
 
     processPlayer();

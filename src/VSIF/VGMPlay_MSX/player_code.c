@@ -1,6 +1,7 @@
 #include "main.h"
 
 void uart_processVgm();
+void SARCHFM();
 
 #define CLS   #0x00C3
 #define PSGAD #0xA0
@@ -29,18 +30,14 @@ LOOP:
 __endasm;
 */
     print("MAMI VGM SOUND DRIVER BY ITOKEN\r\n");
-    print("MEMO: PUSH PANIC BTN WHEN GET WEIRD\r\n");
     print("\r\n");
-    print("READY TO PLAY.\r\n");
-    print(" \r\n");
-    print("-CONNECT P2 PORT PIN1-7,9 TO FTDI2XX.");
-    print(" \r\n");
-    print(" 1,2,3,4,5 -> FTDI2XX TX,RX,RTS,CTS,VCC\r\n");
-    print("___________ \r\n");
-    print("\\* * * * */\r\n");
-    print(" \\* * o */ \r\n");
-    print("  -------   \r\n");
-    print("  6,7,  9  -> FTDI2XX DTR,DSR,GND\r\n");
+    print("*PUSH PANIC BTN WHEN GET WEIRD\r\n");
+    print("*CONNECT PORT2 PIN TO FTDI2XX\r\n");
+    print(" ___________\r\n");
+    print(" \\1 2 3 4 5/->TX,RX,RTS,CTS,Vcc\r\n");
+    print("  \\6 7 * 9/ ->DTR,DSR,GND\r\n");
+    print("   -------\r\n\r\n");
 
-    uart_processVgm();
+    SARCHFM();
+    //uart_processVgm();
 }

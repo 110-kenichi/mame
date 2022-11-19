@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
 //http://www.smspower.org/maxim/Documents/YM2413ApplicationManual
@@ -170,7 +171,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
-                            enableOpll(ExtOPLLSlot);
+                            enableOpll(ExtOPLLSlot, true);
                             SetDevicePassThru(true);
                         }
                         else
@@ -205,13 +206,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private OPLLSlotNo f_extOPLLSlot = OPLLSlotNo.None;
+        private OPLLSlotNo f_extOPLLSlot = OPLLSlotNo.No0;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [DefaultValue(OPLLSlotNo.None)]
-        [Description("Specify the external OPLL slot number to enable I/O access from VSIF.\r\n" +
-            "*WANRING* Be sure to specify a valid slot to avoid crashing.")]
+        [DefaultValue(OPLLSlotNo.No0)]
+        [Description("Specify the OPLL ID number for VSIF(MSX).")]
         public OPLLSlotNo ExtOPLLSlot
         {
             get
@@ -220,16 +220,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                lock (sndEnginePtrLock)
+                if (f_extOPLLSlot != value)
                 {
+                    switch (value)
+                    {
+                        case OPLLSlotNo.No0:
+                        //case OPLLSlotNo.ExternalNo0:
+                        //case OPLLSlotNo.ExternalNo1:
+                            f_extOPLLSlot = value;
+                            break;
+                    }
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.VSIF_MSX_FTDI:
-                            enableOpll(value);
+                            enableOpll(value, true);
                             break;
                     }
                 }
-                f_extOPLLSlot = value;
             }
         }
 
@@ -237,13 +244,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="slot"></param>
-        private void enableOpll(OPLLSlotNo slot)
+        private void enableOpll(OPLLSlotNo slot, bool clearCache)
         {
-            if (slot != OPLLSlotNo.None)
-            {
-                vsifClient.WriteData(2, 0, (byte)slot, f_ftdiClkWidth);
-                Thread.Sleep(16);
-            }
+            //if (slot == OPLLSlotNo.ExternalNo0 || slot == OPLLSlotNo.ExternalNo1)
+            //{
+            //    lock (sndEnginePtrLock)
+            //    {
+            //        vsifClient?.WriteData(2, 0, (byte)(slot - 1), f_ftdiClkWidth);
+            //    }
+            //}
+            if (clearCache)
+                ClearWrittenDataCache();
         }
 
         /// <summary>
@@ -495,7 +506,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0, address, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
-                            vsifClient.WriteData(1, address, data, f_ftdiClkWidth);
+                            enableOpll(f_extOPLLSlot, false);
+                            if (f_extOPLLSlot == OPLLSlotNo.No0)
+                                vsifClient.WriteData(1, address, data, f_ftdiClkWidth);
+                            else
+                                vsifClient.WriteData(0xc, address, data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -666,6 +681,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         protected override void ClearWrittenDataCache()
         {
             base.ClearWrittenDataCache();
+
+            enableOpll(f_extOPLLSlot, false);
+
             initGlobalRegisters();
         }
 
@@ -3333,30 +3351,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum OPLLSlotNo
         {
-            None = 0xff,
-            Slot0_Basic = 0b0000_0000,
-            Slot0_Ext0 = 0b1000_0000,
-            Slot0_Ext1 = 0b1000_0100,
-            Slot0_Ext2 = 0b1000_1000,
-            Slot0_Ext3 = 0b1000_1100,
-
-            Slot1_Basic = 0b0000_0001,
-            Slot1_Ext0 = 0b1000_0001,
-            Slot1_Ext1 = 0b1000_0101,
-            Slot1_Ext2 = 0b1000_1001,
-            Slot1_Ext3 = 0b1000_1101,
-
-            Slot2_Basic = 0b0000_0010,
-            Slot2_Ext0 = 0b1000_0010,
-            Slot2_Ext1 = 0b1000_0110,
-            Slot2_Ext2 = 0b1000_1010,
-            Slot2_Ext3 = 0b1000_1110,
-
-            Slot3_Basic = 0b0000_0011,
-            Slot3_Ext0 = 0b1000_0011,
-            Slot3_Ext1 = 0b1000_0111,
-            Slot3_Ext2 = 0b1000_1011,
-            Slot3_Ext3 = 0b1000_1111,
+            No0 = 0,
+            //ExternalNo0 = 1,
+            //ExternalNo1 = 2,
         }
 
     }

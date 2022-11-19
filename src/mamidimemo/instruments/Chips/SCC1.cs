@@ -170,13 +170,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private SCCSlotNo f_extSCCSlot = SCCSlotNo.None;
+        private SCCSlotNo f_extSCCSlot = SCCSlotNo.No0;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [DefaultValue(SCCSlotNo.None)]
-        [Description("Specify the external SCC/SCC-I slot number.\r\n" +
-            "*WANRING* Be sure to specify a valid slot to avoid crashing.")]
+        [DefaultValue(SCCSlotNo.No0)]
+        [Description("Specify the SCC/SCC-I ID number for VSIF(MSX).")]
         public SCCSlotNo ExtSCCSlot
         {
             get
@@ -185,13 +184,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                switch (CurrentSoundEngine)
+                if (f_extSCCSlot != value)
                 {
-                    case SoundEngineType.VSIF_MSX_FTDI:
-                        enableScc(f_sccType, value, true);
-                        break;
+                    switch (value)
+                    {
+                        case SCCSlotNo.No0:
+                        case SCCSlotNo.No1:
+                            f_extSCCSlot = value;
+                            break;
+                    }
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            enableScc(f_sccType, f_extSCCSlot, true);
+                            break;
+                    }
                 }
-                f_extSCCSlot = value;
             }
         }
 
@@ -211,13 +219,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                switch (CurrentSoundEngine)
+                if (f_sccType != value)
                 {
-                    case SoundEngineType.VSIF_MSX_FTDI:
-                        enableScc(value, f_extSCCSlot, true);
-                        break;
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            enableScc(value, f_extSCCSlot, true);
+                            break;
+                    }
+                    f_sccType = value;
                 }
-                f_sccType = value;
             }
         }
 
@@ -228,12 +239,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void enableScc(SCCType type, SCCSlotNo slot, bool clearCache)
         {
-            if (slot != SCCSlotNo.None)
+            lock (sndEnginePtrLock)
             {
-                lock (vsifClient.LockObject)
-                {
-                    vsifClient.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
-                }
+                vsifClient?.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
             }
             if (clearCache)
                 ClearWrittenDataCache();
@@ -353,14 +361,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                     {
-                        enableScc(SCCChipType, ExtSCCSlot);
+                        enableScc(SCCChipType, ExtSCCSlot, false);
                         vsifClient.WriteData(type, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
                     }
                 }
                 if (address < 0x100)
                 {
                     //SCC
-                    if (address < 0x80)  
+                    if (address < 0x80)
                     {
                         // 0x00..0x7F : write wave form 1..4
                         DeferredWriteData(SCC1_waveform_w, UnitNumber, (uint)address, new sbyte[] { (sbyte)data }, 1);
@@ -446,7 +454,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                     {
-                        enableScc(SCCChipType, ExtSCCSlot);
+                        enableScc(SCCChipType, ExtSCCSlot, false);
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
                     }
                 }
@@ -499,7 +507,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         lock (vsifClient.LockObject)
                         {
-                            enableScc(SCCChipType, ExtSCCSlot);
+                            enableScc(SCCChipType, ExtSCCSlot, false);
                             vsifClient.WriteData(type, address, (byte)(freq & 0xff), f_ftdiClkWidth);
 
                             byte freq_h = (byte)((freq >> 8) & 0xf);
@@ -558,7 +566,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (CurrentSoundEngine == SoundEngineType.VSIF_MSX_FTDI)
                     {
-                        enableScc(SCCChipType, ExtSCCSlot);
+                        enableScc(SCCChipType, ExtSCCSlot, false);
                         vsifClient.WriteData(type, address, data, f_ftdiClkWidth);
                     }
                 }
@@ -623,7 +631,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     lock (vsifClient.LockObject)
                                     {
                                         byte address = (byte)(0x00 + offset);
-                                        enableScc(SCCChipType, ExtSCCSlot);
+                                        enableScc(SCCChipType, ExtSCCSlot, false);
                                         vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
 
                                         for (int i = 1; i < data.Length; i++)
@@ -1789,30 +1797,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum SCCSlotNo
         {
-            None = 0xff,
-            Slot0_Basic = 0b0000_0000,
-            Slot0_Ext0 = 0b1000_0000,
-            Slot0_Ext1 = 0b1000_0100,
-            Slot0_Ext2 = 0b1000_1000,
-            Slot0_Ext3 = 0b1000_1100,
-
-            Slot1_Basic = 0b0000_0001,
-            Slot1_Ext0 = 0b1000_0001,
-            Slot1_Ext1 = 0b1000_0101,
-            Slot1_Ext2 = 0b1000_1001,
-            Slot1_Ext3 = 0b1000_1101,
-
-            Slot2_Basic = 0b0000_0010,
-            Slot2_Ext0 = 0b1000_0010,
-            Slot2_Ext1 = 0b1000_0110,
-            Slot2_Ext2 = 0b1000_1010,
-            Slot2_Ext3 = 0b1000_1110,
-
-            Slot3_Basic = 0b0000_0011,
-            Slot3_Ext0 = 0b1000_0011,
-            Slot3_Ext1 = 0b1000_0111,
-            Slot3_Ext2 = 0b1000_1011,
-            Slot3_Ext3 = 0b1000_1111,
+            No0 = 0,
+            No1 = 1,
         }
 
     }

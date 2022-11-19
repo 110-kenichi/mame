@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -26,6 +27,7 @@ using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 //http://www.smspower.org/Development/SN76489
 //http://www.st.rim.or.jp/~nkomatsu/peripheral/SN76489.html
@@ -93,7 +95,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object vsifLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private VsifClient vsifClient;
 
@@ -138,7 +140,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (vsifClient != null)
                 {
@@ -195,6 +197,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.VSIF_Genesis_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -303,6 +318,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            Sn76496WriteData(UnitNumber, (byte)data);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void Sn76496WriteData(uint unitNumber, byte data)
         {
             Sn76496WriteData(unitNumber, data, true);
@@ -315,7 +340,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             WriteData(0, data, useCache, new Action(() =>
             {
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     switch (CurrentSoundEngine)
                     {
@@ -326,6 +351,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_Genesis_Low:
                         case SoundEngineType.VSIF_Genesis_FTDI:
                             vsifClient.WriteData(0, 0x04 * 5, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            vsifClient.WriteData(0xc, 0, data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -404,7 +432,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
                 if (vsifClient != null)
                     vsifClient.Dispose();
 
@@ -864,6 +892,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_Genesis,
                     SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,
+                    SoundEngineType.VSIF_MSX_FTDI,
                });
 
                 return sc;

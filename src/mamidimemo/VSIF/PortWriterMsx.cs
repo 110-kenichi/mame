@@ -15,6 +15,12 @@ namespace zanac.MAmidiMEmo.VSIF
         private int lastSccType = -1;
         private int lastSccSlot = -1;
 
+        private int lastOpllType = -1;
+        private int lastOpllSlot = -1;
+
+        private int lastOpmType = -1;
+        private int lastOpmSlot = -1;
+
         /// <summary>
         /// 
         /// </summary>
@@ -50,49 +56,94 @@ namespace zanac.MAmidiMEmo.VSIF
                     //https://hra1129.github.io/system/psg_reg7.html
                     dt.Data = (byte)((dt.Data & 0x3f) | 0x80);
 
-                if (dt.Type == 3)
+                switch (dt.Type)
                 {
-                    if (lastSccType != dt.Address || lastSccSlot != dt.Data)
-                    {
-                        lastSccType = dt.Address;
-                        lastSccSlot = dt.Data;
-                        byte[] sd = new byte[5] {
-                        (byte)(dt.Type           | 0x20),
-                        (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
-                        (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
-                         };
-                        ds.AddRange(sd);
-
-                        //dummy wait
-                        sd = new byte[5] { 0, 0, 0, 0, 0 };
-                        for (int i = 0; i < 8; i++)
+                    case 2:
+                        if (lastOpllType != dt.Address || lastOpllSlot != dt.Data)
+                        {
+                            lastOpllType = dt.Address;
+                            lastOpllSlot = dt.Data;
+                            byte[] sd = new byte[5] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            };
                             ds.AddRange(sd);
 
-                        lastDataType = dt.Type;
-                        lastWriteSccAddress = dt.Address;
-                    }
-                }
-                else
-                {
-                    if ((dt.Type == 4 || dt.Type == 5) && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteSccAddress + 1))
-                    {
-                        byte[] sd = new byte[3] {
-                            (byte)(0x1f              | 0x20),
-                            (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            //dummy wait
+                            ds.AddRange(new byte[] { 0, 0 });
+
+                            lastDataType = dt.Type;
+                            lastWriteSccAddress = dt.Address;
+                        }
+                        break;
+                    case 3:
+                        if (lastSccType != dt.Address || lastSccSlot != dt.Data)
+                        {
+                            lastSccType = dt.Address;
+                            lastSccSlot = dt.Data;
+                            byte[] sd = new byte[5] {
+                                (byte)(dt.Type           | 0x20),
+                                (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                             };
-                        ds.AddRange(sd);
-                    }
-                    else
-                    {
-                        byte[] sd = new byte[5] {
-                            (byte)(dt.Type           | 0x20),
-                            (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
-                            (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
-                        };
-                        ds.AddRange(sd);
-                    }
-                    lastDataType = dt.Type;
-                    lastWriteSccAddress = dt.Address;
+                            ds.AddRange(sd);
+
+                            //dummy wait
+                            ds.AddRange(new byte[3] { 0, 0, 0 });
+
+                            lastDataType = dt.Type;
+                            lastWriteSccAddress = dt.Address;
+                        }
+                        break;
+                    case 0xd:
+                        if (lastOpmType != dt.Address || lastOpmSlot != dt.Data)
+                        {
+                            lastOpmType = dt.Address;
+                            lastOpmSlot = dt.Data;
+                            byte[] sd = new byte[5] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            };
+                            ds.AddRange(sd);
+
+                            //dummy wait
+                            ds.AddRange(new byte[] { 0, 0 });
+
+                            lastDataType = dt.Type;
+                            lastWriteSccAddress = dt.Address;
+                        }
+                        break;
+                    default:
+                        {
+                            if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
+                                dt.Type == 4 || dt.Type == 5 || //SCC
+                                dt.Type == 0xa || dt.Type == 0xb || //OPL3
+                                dt.Type == 0xe || //OPM
+                                dt.Type == 0x10 || dt.Type == 0x11  //OPN2
+                                )
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteSccAddress + 1))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else
+                            {
+                                byte[] sd = new byte[5] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            lastDataType = dt.Type;
+                            lastWriteSccAddress = dt.Address;
+                            break;
+                        }
                 }
             }
             byte[] dsa = ds.ToArray();

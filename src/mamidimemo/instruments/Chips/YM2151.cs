@@ -20,6 +20,8 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 //https://www16.atwiki.jp/mxdrv/pages/24.html
 //http://map.grauw.nl/resources/sound/yamaha_ym2151_synthesis.pdf
@@ -64,9 +66,34 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object spfmPtrLock = new object();
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set FTDI Port No for \"VSIF - MSX\"\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        private object sndEnginePtrLock = new object();
 
         private IntPtr spfmPtr;
+
+        private VsifClient vsifClient;
 
         private SoundEngineType f_SoundEngineType;
 
@@ -88,7 +115,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
-                    value == SoundEngineType.SPFM))
+                    value == SoundEngineType.SPFM ||
+                    value == SoundEngineType.VSIF_MSX_FTDI))
                 {
                     setSoundEngine(value);
                 }
@@ -101,7 +129,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
-                    SoundEngineType.SPFM });
+                    SoundEngineType.SPFM,
+                    SoundEngineType.VSIF_MSX_FTDI});
 
                 return sc;
             }
@@ -115,12 +144,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
             {
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
+                }
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
                 }
 
                 f_SoundEngineType = value;
@@ -144,6 +178,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            enableOpm(ExtOPMSlot, true);
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
             PrepareSound();
@@ -158,6 +206,78 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return f_CurrentSoundEngineType;
             }
+        }
+
+
+        private int f_ftdiClkWidth = 18;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(18)]
+        [Description("Set FTDI Clock Width[%].")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
+            }
+        }
+
+
+        private OPMSlotNo f_extOPMSlot = OPMSlotNo.No0;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [DefaultValue(OPLLSlotNo.No0)]
+        [Description("Specify the OPM ID number for VSIF(MSX).")]
+        public OPMSlotNo ExtOPMSlot
+        {
+            get
+            {
+                return f_extOPMSlot;
+            }
+            set
+            {
+                if (f_extOPMSlot != value)
+                {
+                    switch (value)
+                    {
+                        case OPMSlotNo.No0:
+                        case OPMSlotNo.No1:
+                            f_extOPMSlot = value;
+                            break;
+                    }
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            enableOpm(value, true);
+                            break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot"></param>
+        private void enableOpm(OPMSlotNo slot, bool clearCache)
+        {
+            if (slot == OPMSlotNo.No0 || slot == OPMSlotNo.No1)
+            {
+                lock (sndEnginePtrLock)
+                {
+                    vsifClient?.WriteData(0xd, 0, (byte)slot, f_ftdiClkWidth);
+                }
+            }
+            if (clearCache)
+                ClearWrittenDataCache();
         }
 
         /// <summary>
@@ -469,6 +589,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            WriteData(address, data, address != 0x8, new Action(() =>
+            {
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, address, data, false);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            enableOpm(f_extOPMSlot, false);
+                            vsifClient.WriteData(0xe, (byte)address, (byte)data, f_ftdiClkWidth);
+                            break;
+                    }
+                }
+                DeferredWriteData(Ym2151_write, UnitNumber, (uint)0, address);
+                DeferredWriteData(Ym2151_write, UnitNumber, (uint)1, data);
+            }));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void Ym2151WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
             Ym2151WriteData(unitNumber, address, op, slot, data, true);
@@ -498,10 +645,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             WriteData(adr, data, useCache, new Action(() =>
             {
-                lock (spfmPtrLock)
-                    if (CurrentSoundEngine == SoundEngineType.SPFM)
-                        ScciManager.SetRegister(spfmPtr, adr, data, false);
-
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, adr, data, false);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            enableOpm(f_extOPMSlot, false);
+                            vsifClient.WriteData(0xe, adr, data, f_ftdiClkWidth);
+                            break;
+                    }
+                }
                 DeferredWriteData(Ym2151_write, unitNumber, (uint)0, adr);
                 DeferredWriteData(Ym2151_write, unitNumber, (uint)1, data);
             }));
@@ -562,7 +718,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
@@ -733,6 +889,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         protected override void ClearWrittenDataCache()
         {
             base.ClearWrittenDataCache();
+
+            enableOpm(f_extOPMSlot, false);
+
             initGlobalRegisters();
         }
 
@@ -2268,6 +2427,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum OPMSlotNo
+        {
+            No0 = 0,
+            No1 = 1,
         }
     }
 

@@ -9,11 +9,43 @@ OPL3AD1 = #0xC4
 OPL3WR  = #0xC5
 OPL3AD2 = #0xC6
 
+DCSGAD = #0x3F
+
+OPN2AD1 = #0x14 ;:OPN2 ch1-3 address(W) / status(R)
+OPN2WR1 = #0x15 ;:OPN2 ch1-3 data(W)
+OPN2AD2 = #0x16 ;:OPN2 ch4-6 address(W)
+OPN2WR2 = #0x17 ;:OPN2 ch4-6 data(W)
+
 WRSLT = #0x14
 RDSLT = #0x0c
 ENASLT = #0x24
 
 CHPUT = #0xA2
+
+;ユーザー定義のワークリア
+SCC0_S	= #0xE000		;+0 SCC0 スロット番号
+			        	;+1 SCC0 切り替え用拡張スロットレジスタ
+			        	;+2 SCC0 運用時基本スロットレジスタ
+			        	;+3 SCC0 P2+P3切り替え用基本スロットレジスタ
+SCC1_S	= #0xE004		;以下同様
+
+OPLL0_S	= #0xE008
+
+OPLL1_S	= #0xE00C
+
+OPM0_S	= #0xE010
+
+OPM1_S	= #0xE014
+
+DCSG_F	= #0xE018		;発見された音源の数
+OPLL_F	= #0xE019		;OPLLは bit7:1 = EXT / bit0 = INT
+SCC_F	= #0xE01A
+OPM_F	= #0xE01B
+
+; A ;音源の存在するスロット番号
+; B ;ターゲットの拡張スロットレジスタの値（音源が存在する基本スロットのFFFFhに書き込む値）
+; C ;ターゲットの基本スロットレジスタの値（音源アクセス時の基本スロットの状態）
+; D ;ターゲットとP3の基本スロットレジスタの値（拡張スロット選択レジスタに値を書き込むときの基本スロットの状態）
 
 ; ・ボーレート 115200bps（１ビット 30.79clk@3.5466MHz PAL）
 ; ・ボーレート 115200bps（１ビット 31.07clk@3.5793MHz NTSC）
@@ -208,72 +240,133 @@ __WRITE_PSG_IO:
     .ORG 0x6100
 __WRITE_OPLL_IO:
     READ_ADRS
+0$:
     LD  A,B             ;  4 62
     OUT (OPLLAD),A      ; 11 73
 
     READ_DATA           ; 48
-
     LD  A,D             ;  4 52
     OUT (OPLLWR),A      ; 11 63
-    JP  __VGM_LOOP      ; 10 73
+
+    ; Continuous Write
+    INC B               ;  4 67
+    LD  E,#0x1F         ;  7 74
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6200
-__WRITE_OPLL_ENA:
+__SELECT_OPLL_SLOT:
     READ_ADRS
     READ_DATA           ;48
+    INC D               ; 4 52
+    DEC D               ; 4 56
+    JP  NZ,OPLL1_P2     ;10 66
+;=================================
 
-    PUSH    DE          ;11 59
-    LD      HL,#0x7FF6  ;10 70     ; Address for EXT OPLL ENA FLAG 
-    LD      A,D         ; 4 74     ; SLOT #
-    CALL    RDSLT       ;17 91
-    SET     0,A         ; 8 ???+8  ; ENA OPLL BIT 1
-    POP     DE          ;10 ???+18
+;OPLL0のスロットのPAGE2を表に出す(要DIで実行)
+OPLL0_P2:
+    LD  A,(OPLL0_S)     ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
 
-    LD      E,A         ; 4 ???+22 ; Write val
-    LD      A,D         ; 4 ???+26 ; SLOT #
-    LD      HL,#0x7FF6  ;10 ???+36 ; Address  for EXT OPLL ENA FLAG 
-    CALL    WRSLT       ;17 ???+73
-    INIT_CONST          ; 7 ???+80
-    JP  __VGM_LOOP      ;10 ???+90
+	LD	HL,(OPLL0_S+1)
+	LD	A,(OPLL0_S+3)
+	OUT	(#0xA8),A	;P2+P3をOPLL0の基本スロットに切り替え
+	LD	A,L
+	LD	(#0xFFFF),A	;拡張スロット切り替え
+	LD	A,H
+	OUT	(#0xA8),A	;72 ;P3をRAMに戻す
+    JP  __VGM_LOOP      ;10 72+10
+;OPLL1のスロットのPAGE2を表に出す(要DIで実行)
+OPLL1_P2:
+    LD  A,(OPLL1_S)     ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
+
+	LD	HL,(OPLL1_S+1)
+	LD	A,(OPLL1_S+3)
+	OUT	(#0xA8),A	;P2+P3をOPLL1の基本スロットに切り替え
+	LD	A,L
+	LD	(#0xFFFF),A	;拡張スロット切り替え
+	LD	A,H
+	OUT	(#0xA8),A	;72 ;P3をRAMに戻す
+    JP  __VGM_LOOP      ;10 72+10
+;=================================
 
 ;=======================================================
     .ORG 0x6300
     ;https://www.msx.org/forum/msx-talk/software/scc-music-altera-de-1
-__WRITE_SCC_SLOT:
+__SELECT_SCC_SLOT:
     READ_ADRS
     READ_DATA           ;48
+    INC D               ; 4 52
+    DEC D               ; 4 56
+    JP  NZ,SCC1_P2      ;10 66
+;=================================
 
-    ; CHANGE PAGE2 TO SCC SLOT PAGE2
-    PUSH    BC          ;11 59 59+11
-    LD      A,D         ; 4 63
-    LD      H,#0x80     ; 7 70
-    CALL    ENASLT      ;17 87
-    POP     BC          ;10 ???+10
+;SCC0のスロットのPAGE2を表に出す(要DIで実行)
+SCC0_P2:
+    LD  A,(SCC0_S)      ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
 
-    ; ENA SCC
-    LD      A,B          ; 4 ???+14
-    CP      #0x01        ; 7 ???+21
-    JP      Z,__ENA_SCC1 ;12 ???+33
-    CP      #0x02        ; 7 ???+40
-    JP      Z,__ENA_SCC1_COMPAT ;12 ???+52
-    CP      #0x03        ; 7 ???+59
-    JP      Z,__ENA_SCC  ;12 ???+71
+	LD	HL,(SCC0_S+1)   ;16
+	LD	A,(SCC0_S+3)    ;13   
+	OUT	(#0xA8),A	    ;11    ;P2+P3をSCC0の基本スロットに切り替え
+	LD	A,L             ; 4 
+	LD	(#0xFFFF),A	    ;13    ;拡張スロット切り替え
+	LD	A,H             ; 4  
+	OUT	(#0xA8),A	    ;11 72 ;P3をRAMに戻す
 
-    JP      __VGM_LOOP   ;10 ???+81
+    JP  _ENA_SCC        ;10 82+27
+;SCC1のスロットのPAGE2を表に出す(要DIで実行)
+SCC1_P2:
+    LD  A,(SCC1_S)      ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
+
+	LD	HL,(SCC1_S+1)   ;
+	LD	A,(SCC1_S+3)
+	OUT	(#0xA8),A   	;      ;P2+P3をSCC1の基本スロットに切り替え
+	LD	A,L
+	LD	(#0xFFFF),A	    ;      ;拡張スロット切り替え
+	LD	A,H
+	OUT	(#0xA8),A	    ;   72+27 ;P3をRAMに戻す
+;=================================
+
+_ENA_SCC:
+    LD      A,B          ; 4 
+    DEC     A            ; 4 
+    JP      Z,__ENA_SCC1 ;10        18
+    DEC     A            ; 4 
+    JP      Z,__ENA_SCC1_COMPAT ;10 32
+    DEC     A            ; 4 
+    JP      Z,__ENA_SCC  ;10 
+    JP      __VGM_LOOP   ;10
 
 __ENA_SCC1:
-    LD      HL,#0xBFFE   ;10 ???+ 43
-    LD      A,#0x20      ; 7 ???+ 50
-    LD      (HL),A       ; 7 ???+ 57
+    LD      HL,#0xBFFE   ;10
+    LD      A,#0x20      ; 7
+    LD      (HL),A       ; 7
 
-    LD      HL,#0xB000   ;10 ???+ 67
-    LD      A,#0x80      ; 7 ???+ 74
-    LD      (HL),A       ; 7 ???+ 81
-    INIT_CONST           ; 7 ???+ 88
-    JP  __VGM_LOOP       ;10 ???+ 98
+    LD      HL,#0xB000   ;10
+    LD      A,#0x80      ; 7
+    LD      (HL),A       ; 7
+    JP  __VGM_LOOP       ;10 65+18=83
 
-__ENA_SCC1_COMPAT:
+__ENA_SCC1_COMPAT:       ;32
     LD      HL,#0xBFFE
     LD      A,#0x00
     LD      (HL),A
@@ -281,8 +374,8 @@ __ENA_SCC:
     LD      HL,#0x9000
     LD      A,#0x3F
     LD      (HL),A
-    INIT_CONST
-    JP  __VGM_LOOP       ;10 ???+ 98+19
+    JP  __VGM_LOOP       ;10 65+32+7
+;=================================
 
 ;=======================================================
     .ORG 0x6400
@@ -386,6 +479,7 @@ __WRITE_SCC_32_BYTES:
     .ORG 0x6A00
 __WRITE_OPL3_IO1:
     READ_ADRS
+0$:
     LD  A,B             ;  4 62
     OUT (OPL3AD1),A     ; 11 76
 
@@ -393,12 +487,29 @@ __WRITE_OPL3_IO1:
 
     LD  A,D             ;  4 52
     OUT (OPL3WR),A      ; 11 63
-    JP  __VGM_LOOP      ; 10 73
+
+    ; Continuous Write
+    INC B               ;  4 67
+    LD  E,#0x1F         ;  7 74
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6B00
 __WRITE_OPL3_IO2:
     READ_ADRS
+0$:
     LD  A,B             ;  4 62
     OUT (OPL3AD2),A     ; 11 76
 
@@ -406,31 +517,195 @@ __WRITE_OPL3_IO2:
 
     LD  A,D             ;  4 52
     OUT (OPL3WR),A      ; 11 63
-    JP  __VGM_LOOP      ; 10 73
+
+    ; Continuous Write
+    INC B               ;  4 67
+    LD  E,#0x1F         ;  7 74
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6C00
+;https://www.msx.org/wiki/MSX-MUSIC_programming
+__WRITE_OPLL_MEM:
+    READ_ADRS
+0$:
+    LD  A,B             ;  4 62
+    LD  (#0x7FF4),A     ; 13 75
+
+    READ_DATA           ; 48
+    LD  A,D             ;  4 52
+    LD  (#0x7FF5),A     ; 13 65
+
+    ; Continuous Write
+    INC B               ;  4 69
+    LD  E,#0x1F         ;  7 76
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
+;=======================================================
+
+    .ORG 0x6D00
+__SELECT_OPM_SLOT:
+    READ_ADRS
+    READ_DATA           ;48
+    INC D               ; 4 52
+    DEC D               ; 4 56
+    JP  NZ,OPM1_P0      ;10 66
+;=================================
+
+;OPM0のスロットのPAGE0を表に出す(要DIで実行)
+OPM0_P0:
+    LD  A,(OPM0_S)      ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
+
+	LD	BC,(OPM0_S+1)
+	LD	A,(OPM0_S+3)
+	OUT	(#0xA8),A	;P0+P3をOPM0の基本スロットに切り替え
+	LD	A,C
+	LD	(#0xFFFF),A	;拡張スロット切り替え
+	LD	A,B
+	OUT	(#0xA8),A	;P3をRAMに戻す
     JP __VGM_LOOP       ; 10 69
 
-;=======================================================
-    .ORG 0x6D00
+;OPM1のスロットのPAGE0を表に出す(要DIで実行)
+OPM1_P0:
+    LD  A,(OPM1_S)      ;13
+    INC A               ; 4
+    JP  Z,__VGM_LOOP    ;10
+
+	LD	BC,(OPM1_S+1)
+	LD	A,(OPM1_S+3)
+	OUT	(#0xA8),A	;P0+P3をOPM1の基本スロットに切り替え
+	LD	A,C
+	LD	(#0xFFFF),A	;拡張スロット切り替え
+	LD	A,B
+	OUT	(#0xA8),A	;P3をRAMに戻す
     JP __VGM_LOOP       ; 10 69
+;=================================
 
 ;=======================================================
     .ORG 0x6E00
-    JP __VGM_LOOP       ; 10 69
+    ;http://niga2.sytes.net/sp/eseopm.pdf
+__WRITE_OPM_MEM:
+    READ_ADRS
+0$:
+    LD  A,B             ;  4 62
+    LD  (#0x3ff0),A     ; 13 75
+
+    READ_DATA           ; 48
+    LD  A,D             ;  4 52
+    LD  (#0x3ff1),A     ; 13 65
+
+    ; Continuous Write
+    INC B               ;  4 69
+    LD  E,#0x1F         ;  7 76
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x6F00
-    JP __VGM_LOOP       ; 10 69
+__WRITE_DCSG:
+    READ_ADRS
+    READ_DATA
+
+    LD  A,B             ;  4 52
+    OUT (DCSGAD),A      ; 11 63
+
+    JP __VGM_LOOP       ; 10 73
 
 ;=======================================================
     .ORG 0x7000
-    JP __VGM_LOOP       ; 10 69
+__WRITE_OPN2_IO1:
+    READ_ADRS
+0$:
+    LD  A,B             ;  4 62
+    OUT (OPN2AD1),A     ; 11 76
+
+    READ_DATA           ; 48
+
+    LD  A,D             ;  4 52
+    OUT (OPN2WR1),A     ; 11 63
+
+    ; Continuous Write
+    INC B               ;  4 67
+    LD  E,#0x1F         ;  7 74
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x7100
-    JP __VGM_LOOP       ; 10 69
+__WRITE_OPN2_IO2:
+    READ_ADRS
+0$:
+    LD  A,B             ;  4 62
+    OUT (OPN2AD2),A     ; 11 76
+
+    READ_DATA           ; 48
+
+    LD  A,D             ;  4 52
+    OUT (OPN2WR2),A     ; 11 63
+
+    ; Continuous Write
+    INC B               ;  4 67
+    LD  E,#0x1F         ;  7 74
+1$:
+    IN  A,(PSGRD)       ; 11 11
+    AND #0x20           ;  7 18
+    JP  Z, 1$           ; 10 28
+    IN  A,(PSGRD)       ; 11 39
+    AND	E               ;  4 43
+    CP  E               ;  4 47
+    JP  Z,0$            ; 12 59    ; Continuous Write
+
+    OR  #0x60           ;  7 66
+    LD  H,A             ;  4 70
+    LD  L,#0            ;  7 77
+    JP  (HL)            ;  4 81    ; Jump to other ID
 
 ;=======================================================
     .ORG 0x7200

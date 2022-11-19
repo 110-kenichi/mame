@@ -25,7 +25,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int DCSG_IF {
             get {
                 return ((int)(this["DCSG_IF"]));
@@ -37,7 +37,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("14")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int DCSG_Port {
             get {
                 return ((int)(this["DCSG_Port"]));
@@ -49,7 +49,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("19")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OPLL_Port {
             get {
                 return ((int)(this["OPLL_Port"]));
@@ -61,7 +61,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OPNA2_Port {
             get {
                 return ((int)(this["OPNA2_Port"]));
@@ -85,7 +85,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("17")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OPLL_IF {
             get {
                 return ((int)(this["OPLL_IF"]));
@@ -97,7 +97,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("27")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int OPNA2_IF {
             get {
                 return ((int)(this["OPNA2_IF"]));
@@ -300,7 +300,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("24")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SCC_Port {
             get {
                 return ((int)(this["SCC_Port"]));
@@ -312,7 +312,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("29")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int Y8910_Port {
             get {
                 return ((int)(this["Y8910_Port"]));
@@ -355,6 +355,54 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["SCC_Type"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPM_Port {
+            get {
+                return ((int)(this["OPM_Port"]));
+            }
+            set {
+                this["OPM_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("18")]
+        public decimal BitBangWaitOPM {
+            get {
+                return ((decimal)(this["BitBangWaitOPM"]));
+            }
+            set {
+                this["BitBangWaitOPM"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OPM_Enable {
+            get {
+                return ((bool)(this["OPM_Enable"]));
+            }
+            set {
+                this["OPM_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPM_IF {
+            get {
+                return ((int)(this["OPM_IF"]));
+            }
+            set {
+                this["OPM_IF"] = value;
             }
         }
     }

@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -91,7 +92,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object vsifLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private VsifClient vsifClient;
 
@@ -134,7 +135,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
             {
                 if (vsifClient != null)
                 {
@@ -178,6 +179,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.VSIF_Genesis_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
                         if (vsifClient != null)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -390,6 +404,40 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            uint port1 = 1;
+            if (address >= 0x100)
+                port1 = 2;
+            address = address & 0xff;
+
+            WriteData(address, data, data != 0x28, new Action(() =>
+            {
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_Genesis:
+                        case SoundEngineType.VSIF_Genesis_Low:
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            vsifClient.WriteData(0, (byte)(4 * port1), (byte)address, f_ftdiClkWidth);
+                            vsifClient.WriteData(0, (byte)(8 * port1), (byte)data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            vsifClient.WriteData((byte)(0x10 + (port1 - 1)), (byte)address, (byte)data, f_ftdiClkWidth);
+                            break;
+                    }
+                }
+                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 0, address);
+                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 1, data);
+            }));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="unitNumber"></param>
         /// <param name="address"></param>
         /// <param name="op"></param>
@@ -428,7 +476,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 uint yreg = (uint)(slot / 3) * 2;
 
-                lock (vsifLock)
+                lock (sndEnginePtrLock)
                 {
                     switch (CurrentSoundEngine)
                     {
@@ -437,6 +485,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_Genesis_FTDI:
                             vsifClient.WriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), f_ftdiClkWidth);
                             vsifClient.WriteData(0, (byte)((1 + (yreg + 1)) * 4), data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                            vsifClient.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -516,7 +567,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
-            lock (vsifLock)
+            lock (sndEnginePtrLock)
                 if (vsifClient != null)
                     vsifClient.Dispose();
 
@@ -2167,6 +2218,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_Genesis,
                     SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,
+                    SoundEngineType.VSIF_MSX_FTDI,
                 });
 
                 return sc;
