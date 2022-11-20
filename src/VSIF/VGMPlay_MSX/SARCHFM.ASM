@@ -237,7 +237,7 @@ OPLL_INI1:
 
 _END:
 	LD	HL,#STR_COMP	;complete MES
-	;CALL	STRPUT
+	CALL	STRPUT
 
 	.globl _uart_processVgm
 	JP	_uart_processVgm
@@ -428,9 +428,8 @@ S_OPLL_EX2:
 	INC	A
 	INC	A
 	LD	(OPLL_F),A
-;HACK:
-;	LD	A,#4		;A=4 OPLL(EXT)発見
-;	JP	S_HIT
+	LD	A,#4		;A=4 OPLL(EXT)発見
+	JP	S_HIT
 
 S_OPM:	;------------------------ OPMか調べる
 	LD	HL,#0x0080
