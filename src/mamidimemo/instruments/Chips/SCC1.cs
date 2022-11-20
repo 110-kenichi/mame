@@ -922,7 +922,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SCC1Timbre timbre;
 
-            private byte lastWaveTable;
+            private int lastWaveTable;
 
             /// <summary>
             /// 
@@ -994,23 +994,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var eng = (SccFxEngine)FxEngine;
                     if (eng.MorphValue != null)
                     {
-                        var no = (byte)(eng.MorphValue.Value & 3);
-                        if (lastWaveTable != no)
+                        if (eng.MorphValue.Value <= timbre.WsgDataMorphs.Count)
                         {
-                            lastWaveTable = no;
-                            sbyte[] wsgData;
-                            int hashCode = 0;
-                            if (no != 0 && no - 1 < timbre.WsgDataMorphs.Count)
+                            var no = eng.MorphValue.Value;
+                            if (lastWaveTable != no)
                             {
-                                wsgData = timbre.WsgDataMorphs[no - 1].WsgData;
-                                hashCode = timbre.WsgDataMorphs[no - 1].GetWsgDataHashCode();
+                                lastWaveTable = no;
+                                sbyte[] wsgData;
+                                int hashCode = 0;
+                                if (no != 0 && no - 1 < timbre.WsgDataMorphs.Count)
+                                {
+                                    wsgData = timbre.WsgDataMorphs[no - 1].WsgData;
+                                    hashCode = timbre.WsgDataMorphs[no - 1].GetWsgDataHashCode();
+                                }
+                                else
+                                {
+                                    wsgData = timbre.WsgData;
+                                    hashCode = timbre.GetWsgDataHashCode();
+                                }
+                                parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData, hashCode);
                             }
-                            else
-                            {
-                                wsgData = timbre.WsgData;
-                                hashCode = timbre.GetWsgDataHashCode();
-                            }
-                            parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData, hashCode);
                         }
                     }
                 }
@@ -1641,8 +1644,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 {
                                     if (v < 0)
                                         v = 0;
-                                    else if (v > 3)
-                                        v = 3;
                                     vs.Add(v);
                                 }
                             }
@@ -1650,7 +1651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         MorphEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= MorphEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1658,7 +1659,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (MorphEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < MorphEnvelopesNums.Length)
+                                sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_MorphEnvelopes = sb.ToString();
                     }
@@ -1720,7 +1722,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private uint f_morphCounter;
 
-            public byte? MorphValue
+            public int? MorphValue
             {
                 get;
                 private set;
@@ -1751,7 +1753,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.MorphEnvelopesReleasePoint < 0)
                         //    f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
 
-                        if (f_morphCounter >= settings.MorphEnvelopesNums.Length)
+                        if (f_morphCounter < settings.MorphEnvelopesNums.Length)
                         {
                             if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter < (uint)settings.MorphEnvelopesReleasePoint)
                                 f_morphCounter = (uint)settings.MorphEnvelopesReleasePoint;
@@ -1761,7 +1763,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         int vol = settings.MorphEnvelopesNums[f_morphCounter++];
 
-                        MorphValue = (byte)vol;
+                        MorphValue = vol;
                         process = true;
                     }
                 }

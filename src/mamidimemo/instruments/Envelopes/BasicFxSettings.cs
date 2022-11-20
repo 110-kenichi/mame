@@ -81,7 +81,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             sb.Append("| ");
                         if (VolumeEnvelopesReleasePoint == i)
                             sb.Append("/ ");
-                        sb.Append(VolumeEnvelopesNums[i].ToString((IFormatProvider)null));
+                        if (i < VolumeEnvelopesNums.Length)
+                            sb.Append(VolumeEnvelopesNums[i].ToString((IFormatProvider)null));
                     }
                     f_VolumeEnvelopes = sb.ToString();
                 }
@@ -174,7 +175,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             sb.Append("| ");
                         if (PitchEnvelopesReleasePoint == i)
                             sb.Append("/ ");
-                        sb.Append(PitchEnvelopesNums[i].ToString((IFormatProvider)null));
+                        if (i < PitchEnvelopesNums.Length)
+                            sb.Append(PitchEnvelopesNums[i].ToString((IFormatProvider)null));
                     }
                     f_PitchEnvelopes = sb.ToString();
                 }
@@ -307,7 +309,8 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             sb.Append("| ");
                         if (PanShiftEnvelopesReleasePoint == i)
                             sb.Append("/ ");
-                        sb.Append(PanShiftEnvelopesNums[i].ToString((IFormatProvider)null));
+                        if (i < PanShiftEnvelopesNums.Length)
+                            sb.Append(PanShiftEnvelopesNums[i].ToString((IFormatProvider)null));
                     }
                     f_PanShiftEnvelopes = sb.ToString();
                 }
@@ -404,10 +407,13 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                             sb.Append("| ");
                         if (ArpEnvelopesReleasePoint == i)
                             sb.Append("/ ");
-                        if(ArpEnvelopesNums[i] == null)
-                            sb.Append("-");
-                        else
-                            sb.Append(ArpEnvelopesNums[i].Value.ToString((IFormatProvider)null));
+                        if (i < ArpEnvelopesNums.Length)
+                        {
+                            if (ArpEnvelopesNums[i] == null)
+                                sb.Append("-");
+                            else
+                                sb.Append(ArpEnvelopesNums[i].Value.ToString((IFormatProvider)null));
+                        }
                     }
                     f_ArpEnvelopes = sb.ToString();
                 }

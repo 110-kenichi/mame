@@ -9,5 +9,6 @@
         "xev_tile.h": "c",
         "font.h": "c",
         "type_traits": "c"
-    }
+    },
+    "z80-asm-meter.platform": "msx"
 }

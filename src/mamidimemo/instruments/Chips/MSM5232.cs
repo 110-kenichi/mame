@@ -913,7 +913,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (HarmonicsEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(HarmonicsEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < HarmonicsEnvelopesNums.Length)
+                                sb.Append(HarmonicsEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_HarmonicsEnvelopes = sb.ToString();
                     }

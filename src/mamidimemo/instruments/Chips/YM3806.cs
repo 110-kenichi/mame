@@ -2127,7 +2127,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (PitchShift13ReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(PitchShift13Nums[i].ToString((IFormatProvider)null));
+                            if (i < PitchShift13Nums.Length)
+                                sb.Append(PitchShift13Nums[i].ToString((IFormatProvider)null));
                         }
                         f_PitchShift13 = sb.ToString();
                     }
@@ -2221,7 +2222,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (PitchShift24ReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(PitchShift24Nums[i].ToString((IFormatProvider)null));
+                            if (i < PitchShift24Nums.Length)
+                                sb.Append(PitchShift24Nums[i].ToString((IFormatProvider)null));
                         }
                         f_PitchShift24 = sb.ToString();
                     }

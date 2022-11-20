@@ -2893,7 +2893,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (SoundTypeEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(SoundTypeEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < SoundTypeEnvelopesNums.Length)
+                                sb.Append(SoundTypeEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_SoundTypeEnvelopes = sb.ToString();
                     }

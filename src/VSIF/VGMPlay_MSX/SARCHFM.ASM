@@ -72,15 +72,7 @@ _SARCHFM::
 	LD	(HL),#0
 	LDIR
 
-    LD  A,#0xFF
-    LD  (OPLL0_S),A
-    LD  (OPLL1_S),A
-    LD  (SCC0_S),A
-    LD  (SCC1_S),A
-    LD  (OPM0_S),A
-    LD  (OPM1_S),A
-
-
+	;HACK:
 	; LD	HL,FORCLR	;前景色ワークエリア
 	; LD	A,15
 	; LD	(HL),A		;前景色15にする
@@ -310,7 +302,7 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	XOR	B
 	JP	NZ,S_MMM3
 
-S_MMM2:	LD	A,#0x80
+S_MMM2:	LD	A,#0x40
 	LD	(#0x803C),A	;DCSG 有効化
 	XOR	A
 	OUT	(#0x3C),A	;MMM mapped IO disable
@@ -436,8 +428,9 @@ S_OPLL_EX2:
 	INC	A
 	INC	A
 	LD	(OPLL_F),A
-	LD	A,#4		;A=4 OPLL(EXT)発見
-	JP	S_HIT
+;HACK:
+;	LD	A,#4		;A=4 OPLL(EXT)発見
+;	JP	S_HIT
 
 S_OPM:	;------------------------ OPMか調べる
 	LD	HL,#0x0080
@@ -572,27 +565,36 @@ FM_INI3:
 
 	;----------パラメータ表示
 	LD	HL,#STR_A
+	;HACK:
 	;CALL	STRPUT
 	POP	AF
 	PUSH	AF
+	;HACK:
 	;CALL	_PUT_A
 
 	LD	HL,#STR_B
+	;HACK:
 	;CALL	STRPUT
 	LD	A,B
+	;HACK:
 	;CALL	_PUT_A
 
 	LD	HL,#STR_C
+	;HACK:
 	;CALL	STRPUT
 	LD	A,C
+	;HACK:
 	;CALL	_PUT_A
 
 	LD	HL,#STR_D
+	;HACK:
 	;CALL	STRPUT
 	LD	A,D
+	;HACK:
 	;CALL	_PUT_A
 
 	LD	HL,#STR_CRLF
+	;HACK:
 	;CALL	STRPUT
 
 FM_INI4:

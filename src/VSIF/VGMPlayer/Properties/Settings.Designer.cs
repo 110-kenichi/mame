@@ -324,7 +324,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int SCC_Slot {
             get {
                 return ((int)(this["SCC_Slot"]));
@@ -403,6 +403,18 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["OPM_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPM_Slot {
+            get {
+                return ((int)(this["OPM_Slot"]));
+            }
+            set {
+                this["OPM_Slot"] = value;
             }
         }
     }

@@ -616,7 +616,7 @@ namespace zanac.VGMPlayer
                                                     comPortDCSG?.DeferredWriteData(0, 0xFF, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                                                     break;
                                                 case VsifSoundModuleType.MSX_FTDI:
-                                                    comPortDCSG?.DeferredWriteData(0xc, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
+                                                    comPortDCSG?.DeferredWriteData(0xF, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                                                     break;
                                             }
                                         }
@@ -790,9 +790,9 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPM != null)
                                             {
-                                                if (comPortOPNA2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                if (comPortOPM.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                                                 {
-                                                    comPortOPNA2.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                                                    comPortOPM.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
                                                 }
                                             }
                                         }

@@ -432,7 +432,7 @@ namespace zanac.VGMPlayer
                                                         comPortDCSG?.DeferredWriteData(0, 0xFF, (byte)data, (int)Settings.Default.BitBangWaitOPNA2);
                                                         break;
                                                     case VsifSoundModuleType.MSX_FTDI:
-                                                        comPortDCSG?.DeferredWriteData(0xc, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
+                                                        comPortDCSG?.DeferredWriteData(0xF, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                                                         break;
                                                 }
                                             }

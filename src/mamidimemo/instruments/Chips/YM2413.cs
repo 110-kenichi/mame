@@ -2800,7 +2800,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (ToneEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(ToneEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < ToneEnvelopesNums.Length)
+                                sb.Append(ToneEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_ToneEnvelopes = sb.ToString();
                     }
@@ -2893,7 +2894,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (DrumCh7FNumEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(DrumCh7FNumEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < DrumCh7FNumEnvelopesNums.Length)
+                                sb.Append(DrumCh7FNumEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_DrumCh7FNumEnvelopes = sb.ToString();
                     }
@@ -2986,7 +2988,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (DrumCh8FNumEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(DrumCh8FNumEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < DrumCh8FNumEnvelopesNums.Length)
+                                sb.Append(DrumCh8FNumEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_DrumCh8FNumEnvelopes = sb.ToString();
                     }
@@ -3079,7 +3082,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (DrumCh9FNumEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(DrumCh9FNumEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < DrumCh9FNumEnvelopesNums.Length)
+                                sb.Append(DrumCh9FNumEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_DrumCh9FNumEnvelopes = sb.ToString();
                     }

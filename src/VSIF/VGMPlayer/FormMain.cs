@@ -34,6 +34,7 @@ namespace zanac.VGMPlayer
             comboBoxSccSlot.SelectedIndex = 0;
             comboBoxY8910.SelectedIndex = 0;
             comboBoxOPM.SelectedIndex = 0;
+            comboBoxOpmSlot.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -775,6 +776,10 @@ namespace zanac.VGMPlayer
             comPortSCC.WriteData(3, (byte)(type), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
         }
 
+        private void enableOpm(int slot)
+        {
+            comPortOPM.WriteData(0xd, 0, (byte)slot, (int)Settings.Default.BitBangWaitOPM);
+        }
 
         private VsifClient comPortY8910;
 
@@ -817,17 +822,20 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                            (PortId)Settings.Default.Y8910_Port, false);
+                            (PortId)Settings.Default.OPM_Port, false);
+                        enableOpm(comboBoxOpmSlot.SelectedIndex);
                         break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
                 comboBoxOPM.Enabled = comPortOPM == null;
                 comboBoxPortOPM.Enabled = comPortOPM == null;
+                comboBoxOpmSlot.Enabled = comPortOPM == null;
             }
             else
             {
                 comboBoxOPM.Enabled = true;
                 comboBoxPortOPM.Enabled = true;
+                comboBoxOpmSlot.Enabled = true;
                 comPortOPM?.Dispose();
             }
         }

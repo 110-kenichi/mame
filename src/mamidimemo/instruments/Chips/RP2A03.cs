@@ -2343,7 +2343,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (DutyEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(DutyEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < DutyEnvelopesNums.Length)
+                                sb.Append(DutyEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_DutyEnvelopes = sb.ToString();
                     }
@@ -2437,7 +2438,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (MorphEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < MorphEnvelopesNums.Length)
+                                sb.Append(MorphEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_MorphEnvelopes = sb.ToString();
                     }

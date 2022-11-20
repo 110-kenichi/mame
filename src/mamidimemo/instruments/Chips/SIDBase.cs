@@ -1887,7 +1887,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (DutyEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(DutyEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < DutyEnvelopesNums.Length)
+                                sb.Append(DutyEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_DutyEnvelopes = sb.ToString();
                     }
@@ -1981,7 +1982,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (ResonanceEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(ResonanceEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < ResonanceEnvelopesNums.Length)
+                                sb.Append(ResonanceEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_ResonanceEnvelopes = sb.ToString();
                     }
@@ -2075,7 +2077,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (CutOffEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(CutOffEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < CutOffEnvelopesNums.Length)
+                                sb.Append(CutOffEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_CutOffEnvelopes = sb.ToString();
                     }
@@ -2168,7 +2171,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (WaveFormEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(WaveFormEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < WaveFormEnvelopesNums.Length)
+                                sb.Append(WaveFormEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_WaveFormEnvelopes = sb.ToString();
                     }
@@ -2262,7 +2266,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (SyncEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(SyncEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < SyncEnvelopesNums.Length)
+                                sb.Append(SyncEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_SyncEnvelopes = sb.ToString();
                     }
@@ -2356,7 +2361,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (RingEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(RingEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < RingEnvelopesNums.Length)
+                                sb.Append(RingEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_RingEnvelopes = sb.ToString();
                     }
@@ -2450,7 +2456,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sb.Append("| ");
                             if (TestEnvelopesReleasePoint == i)
                                 sb.Append("/ ");
-                            sb.Append(TestEnvelopesNums[i].ToString((IFormatProvider)null));
+                            if (i < TestEnvelopesNums.Length)
+                                sb.Append(TestEnvelopesNums[i].ToString((IFormatProvider)null));
                         }
                         f_TestEnvelopes = sb.ToString();
                     }

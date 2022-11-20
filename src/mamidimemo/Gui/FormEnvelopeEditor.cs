@@ -220,7 +220,7 @@ namespace zanac.MAmidiMEmo.Gui
             var rpt = sr.Points[0];
 
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < sv.Points.Count; i++)
+            for (int i = 0; i <= sv.Points.Count; i++)
             {
                 if (sb.Length != 0)
                     sb.Append(' ');
@@ -229,8 +229,8 @@ namespace zanac.MAmidiMEmo.Gui
                     sb.Append("| ");
                 if ((int)rpt.XValue == i && metroToggleRelease.Checked)
                     sb.Append("/ ");
-
-                sb.Append(((int)sv.Points[i].YValues[0]).ToString((IFormatProvider)null));
+                if(i < sv.Points.Count)
+                    sb.Append(((int)sv.Points[i].YValues[0]).ToString((IFormatProvider)null));
             }
 
             if (metroToggleRepeat.Checked)
@@ -356,7 +356,8 @@ namespace zanac.MAmidiMEmo.Gui
                         sb.Append("| ");
                     if (EnvelopesReleasePoint == i)
                         sb.Append("/ ");
-                    sb.Append(EnvelopesNums[i].ToString((IFormatProvider)null));
+                    if(i < EnvelopesNums.Length)
+                        sb.Append(EnvelopesNums[i].ToString((IFormatProvider)null));
                 }
                 f_EnvelopeValuesText = sb.ToString();
 
