@@ -1,6 +1,8 @@
 ;ステート数表(MSXはM1で1 WAIT入る)
 ;https://web.archive.org/web/20220527125012/https://taku.izumisawa.jp/Msx/ktecho2.htm
 ;http://www.yamamo10.jp/yamamoto/comp/Z80/instructions/index.php
+;Slots
+;https://www.msx.org/wiki/Slots#Program_samples
 
 PSGAD = #0xA0
 PSGWR = #0xA1
@@ -40,11 +42,6 @@ OPLL1_S	= #0xE00C
 OPM0_S	= #0xE010
 
 OPM1_S	= #0xE014
-
-DCSG_F	= #0xE018		;発見された音源の数
-OPLL_F	= #0xE019		;OPLLは bit7:1 = EXT / bit0 = INT
-SCC_F	= #0xE01A
-OPM_F	= #0xE01B
 
 ; A ;音源の存在するスロット番号
 ; B ;ターゲットの拡張スロットレジスタの値（音源が存在する基本スロットのFFFFhに書き込む値）
@@ -288,7 +285,8 @@ OPLL0_P2:
     OR  A
     JP  Z,__VGM_LOOP    ;
 
-	OUT	(#0xA8),A	    ;   P2+P3をOPLL0の基本スロットに切り替え
+	LD	HL,(OPLL0_S+1)
+    OUT	(#0xA8),A	    ;   P2+P3をOPLL0の基本スロットに切り替え
 	LD	A,L
 	LD	(#0xFFFF),A	    ;   拡張スロット切り替え
 	LD	A,H
@@ -315,9 +313,12 @@ OPLL1_P2:
 __SELECT_SCC_SLOT:
     READ_ADRS           ;61
     READ_DATA           ;55
+    LD  A,B
+    CP  #4
+    JP  NC,CALL_P2_CHG  ;24 85 ;4または4以上で従来のスロット選択方式
     INC D               ;
     DEC D               ;
-    JP  NZ,SCC1_P2      ;21 76
+    JP  NZ,SCC1_P2      ;45 100
 ;=================================
 
 ;SCC0のスロットのPAGE2を表に出す(要DIで実行)
@@ -346,8 +347,18 @@ SCC1_P2:
 	LD	(#0xFFFF),A	    ;      ;拡張スロット切り替え
 	LD	A,H
 	OUT	(#0xA8),A	    ;  95  ;P3をRAMに戻す
-;=================================
 
+    JP  _ENA_SCC        ; 106
+;=================================
+CALL_P2_CHG:
+    .globl P2_CHG
+    SUB  #4
+    LD   B,A
+    LD   A,D
+    PUSH BC
+    CALL P2_CHG          ; 48 + 300
+    POP  BC              ; 11
+;=================================
 _ENA_SCC:
     LD      A,B          ; 
     DEC     A            ; 
@@ -599,11 +610,11 @@ OPM0_P0:
     OR  A
     JP  Z,__VGM_LOOP    ;
 
-	LD	BC,(OPM0_S+1)
+	LD	HL,(OPM0_S+1)
 	OUT	(#0xA8),A	    ;   P0+P3をOPM0の基本スロットに切り替え
-	LD	A,C
+	LD	A,L
 	LD	(#0xFFFF),A	    ;   拡張スロット切り替え
-	LD	A,B
+	LD	A,H
 	OUT	(#0xA8),A	    ;   P3をRAMに戻す
     JP __VGM_LOOP       ;111
 
@@ -613,11 +624,11 @@ OPM1_P0:
     OR  A
     JP  Z,__VGM_LOOP    ;
 
-	LD	BC,(OPM1_S+1)
+	LD	HL,(OPM1_S+1)
 	OUT	(#0xA8),A	    ;   P0+P3をOPM1の基本スロットに切り替え
-	LD	A,C
+	LD	A,L
 	LD	(#0xFFFF),A	    ;   拡張スロット切り替え
-	LD	A,B
+	LD	A,H
 	OUT	(#0xA8),A	    ;   P3をRAMに戻す
     JP __VGM_LOOP       ;111
 ;=================================

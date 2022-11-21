@@ -91,7 +91,10 @@ namespace zanac.VGMPlayer
                             ds.AddRange(sd);
 
                             //dummy wait
-                            ds.AddRange(new byte[3] { 0, 0, 0 });
+                            if (dt.Address < 4)
+                                ds.AddRange(new byte[3] { 0, 0, 0 });   //自動選択方式
+                            else
+                                ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });  //従来方式
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;

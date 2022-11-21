@@ -343,6 +343,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 YM2413WriteData(UnitNumber, (byte)(0x27), 0, 0x05);
                 YM2413WriteData(UnitNumber, (byte)(0x28), 0, 0x01);
             }
+            soundManager?.ProcessAllSoundOff();
         }
 
         /// <summary>
@@ -994,20 +995,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     for (int i = 0; i < 9; i++)
                         parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                    for (int i = 0; i < 9; i++)
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
                 }
                 else
                 {
                     for (int i = 0; i < 6; i++)
                         parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                    for (int i = 0; i < 6; i++)
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, 0xf);
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, 0xff);
+                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, 0xff);
+
                     parentModule.lastDrumKeyOn = 0;
                     parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
                 }
-
-                for (int i = 0; i < 9; i++)
-                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 64);
-                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, 64);
-                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, 64);
-                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, 64);
             }
 
         }
@@ -1455,7 +1458,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             int oct = nnOn.GetNoteOctave();
 
                             if (d != 0)
-                                freq += (ushort)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
+                                freq += (int)(((double)(convertFmFrequency(nnOn, (d < 0) ? false : true) - freq)) * Math.Abs(d - Math.Truncate(d)));
 
                             if (oct < 0)
                             {
@@ -1465,8 +1468,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             else if (oct > 7)
                             {
                                 freq *= 2 * (oct - 7);
-                                if (freq > 0x3ff)
-                                    freq = 0x3ff;
+                                if (freq > 0x1ff)
+                                    freq = 0x1ff;
                                 oct = 7;
                             }
 

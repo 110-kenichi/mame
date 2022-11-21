@@ -176,6 +176,11 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        public virtual void ClearDataCache()
+        {
+            SerialPort?.ClearDataCache();
+        }
+
         /// <summary>
         /// 
         /// </summary>

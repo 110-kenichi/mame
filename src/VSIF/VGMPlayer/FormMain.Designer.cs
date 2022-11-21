@@ -280,8 +280,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel4.AutoSize = true;
             this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel4.ColumnCount = 2;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.92085F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.07915F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 61.73184F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.26816F));
             this.tableLayoutPanel4.Controls.Add(this.comboBoxSCC, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.comboBoxSccSlot, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -304,7 +304,7 @@ namespace zanac.VGMPlayer
             this.comboBoxSCC.Location = new System.Drawing.Point(4, 4);
             this.comboBoxSCC.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxSCC.Name = "comboBoxSCC";
-            this.comboBoxSCC.Size = new System.Drawing.Size(242, 23);
+            this.comboBoxSCC.Size = new System.Drawing.Size(212, 23);
             this.comboBoxSCC.TabIndex = 0;
             // 
             // comboBoxSccSlot
@@ -313,12 +313,32 @@ namespace zanac.VGMPlayer
             this.comboBoxSccSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSccSlot.FormattingEnabled = true;
             this.comboBoxSccSlot.Items.AddRange(new object[] {
+            "ID1",
             "ID0",
-            "ID1"});
-            this.comboBoxSccSlot.Location = new System.Drawing.Point(254, 4);
+            "Slot0_Basic",
+            "Slot0_Ext0",
+            "Slot0_Ext1",
+            "Slot0_Ext2",
+            "Slot0_Ext3",
+            "Slot1_Basic",
+            "Slot1_Ext0",
+            "Slot1_Ext1",
+            "Slot1_Ext2",
+            "Slot1_Ext3",
+            "Slot2_Basic",
+            "Slot2_Ext0",
+            "Slot2_Ext1",
+            "Slot2_Ext2",
+            "Slot2_Ext3",
+            "Slot3_Basic",
+            "Slot3_Ext0",
+            "Slot3_Ext1",
+            "Slot3_Ext2",
+            "Slot3_Ext3"});
+            this.comboBoxSccSlot.Location = new System.Drawing.Point(224, 4);
             this.comboBoxSccSlot.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxSccSlot.Name = "comboBoxSccSlot";
-            this.comboBoxSccSlot.Size = new System.Drawing.Size(100, 23);
+            this.comboBoxSccSlot.Size = new System.Drawing.Size(125, 23);
             this.comboBoxSccSlot.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.SCC_Slot;
             // 
             // numericUpDownClkWidthDCSG
@@ -2350,8 +2370,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel5.AutoSize = true;
             this.tableLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.88636F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.11364F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 61.93182F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.06818F));
             this.tableLayoutPanel5.Controls.Add(this.comboBoxOPM, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.comboBoxOpmSlot, 1, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2372,21 +2392,22 @@ namespace zanac.VGMPlayer
             this.comboBoxOPM.Location = new System.Drawing.Point(4, 4);
             this.comboBoxOPM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPM.Name = "comboBoxOPM";
-            this.comboBoxOPM.Size = new System.Drawing.Size(237, 23);
+            this.comboBoxOPM.Size = new System.Drawing.Size(210, 23);
             this.comboBoxOPM.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_IF;
             // 
             // comboBoxOpmSlot
             // 
             this.comboBoxOpmSlot.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPM_Slot", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxOpmSlot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxOpmSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOpmSlot.FormattingEnabled = true;
             this.comboBoxOpmSlot.Items.AddRange(new object[] {
             "ID0",
             "ID1"});
-            this.comboBoxOpmSlot.Location = new System.Drawing.Point(249, 4);
+            this.comboBoxOpmSlot.Location = new System.Drawing.Point(222, 4);
             this.comboBoxOpmSlot.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOpmSlot.Name = "comboBoxOpmSlot";
-            this.comboBoxOpmSlot.Size = new System.Drawing.Size(99, 23);
+            this.comboBoxOpmSlot.Size = new System.Drawing.Size(126, 23);
             this.comboBoxOpmSlot.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Slot;
             // 
             // tableLayoutPanelButton

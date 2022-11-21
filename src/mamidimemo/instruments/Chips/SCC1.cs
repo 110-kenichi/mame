@@ -175,7 +175,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [DefaultValue(SCCSlotNo.No0)]
-        [Description("Specify the SCC/SCC-I ID number for VSIF(MSX).")]
+        [Description("Specify the SCC/SCC-I ID or slot number for VSIF(MSX).\r\n" +
+            "*WANRING* Be sure to specify a valid slot to avoid crashing.")]
         public SCCSlotNo ExtSCCSlot
         {
             get
@@ -186,13 +187,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_extSCCSlot != value)
                 {
-                    switch (value)
-                    {
-                        case SCCSlotNo.No0:
-                        case SCCSlotNo.No1:
-                            f_extSCCSlot = value;
-                            break;
-                    }
+                    f_extSCCSlot = value;
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.VSIF_MSX_FTDI:
@@ -241,7 +236,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             lock (sndEnginePtrLock)
             {
-                vsifClient?.WriteData(3, (byte)(type), (byte)slot, f_ftdiClkWidth);
+                if((int)slot < 0)
+                    vsifClient?.WriteData(3, (byte)(type), (byte)(-((int)slot + 1)), f_ftdiClkWidth);    //自動選択方式
+                else
+                    vsifClient?.WriteData(3, (byte)(type+4), (byte)(slot), f_ftdiClkWidth);   //従来方式
+                if (clearCache)
+                    vsifClient?.ClearDataCache();
             }
             if (clearCache)
                 ClearWrittenDataCache();
@@ -1799,8 +1799,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum SCCSlotNo
         {
-            No0 = 0,
-            No1 = 1,
+            No0 = -1,
+            No1 = -2,
+            Slot0_Basic = 0b0000_0000,
+            Slot0_Ext0 = 0b1000_0000,
+            Slot0_Ext1 = 0b1000_0100,
+            Slot0_Ext2 = 0b1000_1000,
+            Slot0_Ext3 = 0b1000_1100,
+
+            Slot1_Basic = 0b0000_0001,
+            Slot1_Ext0 = 0b1000_0001,
+            Slot1_Ext1 = 0b1000_0101,
+            Slot1_Ext2 = 0b1000_1001,
+            Slot1_Ext3 = 0b1000_1101,
+
+            Slot2_Basic = 0b0000_0010,
+            Slot2_Ext0 = 0b1000_0010,
+            Slot2_Ext1 = 0b1000_0110,
+            Slot2_Ext2 = 0b1000_1010,
+            Slot2_Ext3 = 0b1000_1110,
+
+            Slot3_Basic = 0b0000_0011,
+            Slot3_Ext0 = 0b1000_0011,
+            Slot3_Ext1 = 0b1000_0111,
+            Slot3_Ext2 = 0b1000_1011,
+            Slot3_Ext3 = 0b1000_1111,
         }
 
     }

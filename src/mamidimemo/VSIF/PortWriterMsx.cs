@@ -40,14 +40,31 @@ namespace zanac.MAmidiMEmo.VSIF
         private byte lastDataType = 0xff;
         private byte lastWriteSccAddress;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        /// <param name="wait"></param>
-        public override void Write(PortWriteData[] data)
+        public override void ClearDataCache()
+        {
+            base.ClearDataCache();
+
+            lastSccType = -1;
+            lastSccSlot = -1;
+
+            lastOpllType = -1;
+            lastOpllSlot = -1;
+
+            lastOpmType = -1;
+            lastOpmSlot = -1;
+
+            lastDataType = 0xff;
+            lastWriteSccAddress = 0;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="address"></param>
+    /// <param name="data"></param>
+    /// <param name="wait"></param>
+    public override void Write(PortWriteData[] data)
         {
             List<byte> ds = new List<byte>();
             foreach (var dt in data)
@@ -90,7 +107,10 @@ namespace zanac.MAmidiMEmo.VSIF
                             ds.AddRange(sd);
 
                             //dummy wait
-                            ds.AddRange(new byte[3] { 0, 0, 0 });
+                            if (dt.Address < 4)
+                                ds.AddRange(new byte[3] { 0, 0, 0 });   //自動選択方式
+                            else
+                                ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });  //従来方式
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;

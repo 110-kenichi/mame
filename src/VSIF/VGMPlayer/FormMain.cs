@@ -31,7 +31,7 @@ namespace zanac.VGMPlayer
             comboBoxOPNA2.SelectedIndex = 0;
             comboBoxSCC.SelectedIndex = 0;
             comboBoxSccType.SelectedIndex = 0;
-            comboBoxSccSlot.SelectedIndex = 0;
+            comboBoxSccSlot.SelectedIndex = 1;
             comboBoxY8910.SelectedIndex = 0;
             comboBoxOPM.SelectedIndex = 0;
             comboBoxOpmSlot.SelectedIndex = 0;
@@ -740,7 +740,10 @@ namespace zanac.VGMPlayer
                         if (comPortSCC != null)
                         {
                             comPortSCC.Tag = (SCCType)(comboBoxSccType.SelectedIndex + 1);
-                            enableScc((SCCType)comPortSCC.Tag, comboBoxSccSlot.SelectedIndex);
+                            if (comboBoxSccSlot.SelectedIndex < 2)
+                                enableScc((SCCType)comPortSCC.Tag, comboBoxSccSlot.SelectedIndex - 2);
+                            else
+                                enableScc((SCCType)comPortSCC.Tag, SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2]);
                         }
                         break;
                 }
@@ -761,6 +764,33 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private byte[] SCCSlotNo = new byte[]
+        {
+            0b0000_0000,
+            0b1000_0000,
+            0b1000_0100,
+            0b1000_1000,
+            0b1000_1100,
+
+            0b0000_0001,
+            0b1000_0001,
+            0b1000_0101,
+            0b1000_1001,
+            0b1000_1101,
+
+            0b0000_0010,
+            0b1000_0010,
+            0b1000_0110,
+            0b1000_1010,
+            0b1000_1110,
+
+            0b0000_0011,
+            0b1000_0011,
+            0b1000_0111,
+            0b1000_1011,
+            0b1000_1111,
+        };
+
         /// <summary>
         /// 
         /// </summary>
@@ -773,7 +803,10 @@ namespace zanac.VGMPlayer
 
         private void enableScc(SCCType type, int slot)
         {
-            comPortSCC.WriteData(3, (byte)(type), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
+            if ((int)slot < 0)
+                comPortSCC.WriteData(3, (byte)(type), (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);    //自動選択方式
+            else
+                comPortSCC.WriteData(3, (byte)(type + 4), (byte)(slot), (int)Settings.Default.BitBangWaitSCC);   //従来方式
         }
 
         private void enableOpm(int slot)
