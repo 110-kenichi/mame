@@ -12,7 +12,7 @@ all: depend $(PROGRAM)
 
 #ihx2bin http://www5d.biglobe.ne.jp/~hra/note/msx_game/chapter0B.htm
 
-$(PROGRAM): $(OBJS) uart-4800.rel SARCHFM.rel start.rel
+$(PROGRAM): $(OBJS) uart-4800.rel uart-4800_p2.rel SARCHFM.rel start.rel
 	$(CC) -o VGMPlay_msx.hex -mz80 --no-std-crt0 --code-loc 0x4100 --data-loc 0x5000 $^
 	makebin.exe -s 65536 VGMPlay_msx.hex > VGMPlay_msx.bin
 #	./ihx2bin.exe VGMPlay_msx.hex VGMPlay_msx.bin
@@ -24,16 +24,18 @@ $(PROGRAM): $(OBJS) uart-4800.rel SARCHFM.rel start.rel
 .PHONY: run
 run:
 	cmd.exe /C copy.bat
-	/mnt/e/Emu/blueMSX/blueMSX.exe "E:\mame_src\mami_dev\mame\src\VSIF\VGMPlay_MSX\VGMPlay_msx.rom"
-#	/mnt/e/Emu/Fusion/Fusion.exe VGMPlay_sms.sms
+#	/mnt/e/Emu/blueMSX/blueMSX.exe "E:\mame_src\mami_dev\mame\src\VSIF\VGMPlay_MSX\VGMPlay_msx.rom"
 
-start.rel:
+start.rel: start.asm
 	sdasz80.exe -y -o start.rel start.asm
 
-uart-4800.rel: uart-4800.asm
+uart-4800.rel: uart-4800.asm const.inc 
 	sdasz80.exe -y -o uart-4800.rel uart-4800.asm
 
-SARCHFM.rel: SARCHFM.asm
+uart-4800_p2.rel: uart-4800_p2.asm const.inc macro.inc
+	sdasz80.exe -y -o uart-4800_p2.rel uart-4800_p2.asm
+
+SARCHFM.rel: SARCHFM.asm const.inc 
 	sdasz80.exe -y -o SARCHFM.rel SARCHFM.asm
 
 .c.rel: 

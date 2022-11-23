@@ -5,6 +5,8 @@ void processPlayer();
 //SDCCでMSXのクロス開発環境を作る
 //https://aburi6800.hatenablog.com/entry/2019/04/29/010151
 
+//https://w.atwiki.jp/msx-sdcc/pages/49.html
+
 void main(void)
 {
     //BIOS List

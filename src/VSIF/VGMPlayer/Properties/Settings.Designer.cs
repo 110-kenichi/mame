@@ -417,5 +417,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["OPM_Slot"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPLL_Slot {
+            get {
+                return ((int)(this["OPLL_Slot"]));
+            }
+            set {
+                this["OPLL_Slot"] = value;
+            }
+        }
     }
 }

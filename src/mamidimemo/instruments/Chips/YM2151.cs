@@ -230,11 +230,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private OPMSlotNo f_extOPMSlot = OPMSlotNo.No0;
+        private OPMSlotNo f_extOPMSlot = OPMSlotNo.Id0;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [DefaultValue(OPLLSlotNo.No0)]
+        [DefaultValue(OPMSlotNo.Id0)]
         [Description("Specify the OPM ID number for VSIF(MSX).")]
         public OPMSlotNo ExtOPMSlot
         {
@@ -248,8 +248,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     switch (value)
                     {
-                        case OPMSlotNo.No0:
-                        case OPMSlotNo.No1:
+                        case OPMSlotNo.Id0:
+                        case OPMSlotNo.Id1:
                             f_extOPMSlot = value;
                             break;
                     }
@@ -269,7 +269,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="slot"></param>
         private void enableOpm(OPMSlotNo slot, bool clearCache)
         {
-            if (slot == OPMSlotNo.No0 || slot == OPMSlotNo.No1)
+            if (slot == OPMSlotNo.Id0 || slot == OPMSlotNo.Id1)
             {
                 lock (sndEnginePtrLock)
                 {
@@ -2434,8 +2434,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum OPMSlotNo
         {
-            No0 = 0,
-            No1 = 1,
+            Id0 = 0,
+            Id1 = 1,
         }
     }
 

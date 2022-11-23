@@ -170,11 +170,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private SCCSlotNo f_extSCCSlot = SCCSlotNo.No0;
+        private SCCSlotNo f_extSCCSlot = SCCSlotNo.Id0;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [DefaultValue(SCCSlotNo.No0)]
+        [DefaultValue(SCCSlotNo.Id0)]
         [Description("Specify the SCC/SCC-I ID or slot number for VSIF(MSX).\r\n" +
             "*WANRING* Be sure to specify a valid slot to avoid crashing.")]
         public SCCSlotNo ExtSCCSlot
@@ -1799,8 +1799,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum SCCSlotNo
         {
-            No0 = -1,
-            No1 = -2,
+            Id0 = -1,
+            Id1 = -2,
             Slot0_Basic = 0b0000_0000,
             Slot0_Ext0 = 0b1000_0000,
             Slot0_Ext1 = 0b1000_0100,

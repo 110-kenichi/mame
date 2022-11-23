@@ -674,18 +674,39 @@ namespace zanac.VGMPlayer
                     case 1:
                         comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPLL_Port, false);
+                        if (comPortOPLL != null)
+                        {
+                            if (comboBoxOpllSlot.SelectedIndex < 2)
+                                enableOpll(comboBoxSccSlot.SelectedIndex - 2);
+                            else
+                                enableOpll(SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2]);
+                        }
                         break;
                 }
 
                 checkBoxConnOPLL.Checked = comPortOPLL != null;
                 comboBoxOPLL.Enabled = comPortOPLL == null;
                 comboBoxPortYm2413.Enabled = comPortOPLL == null;
+                comboBoxOpllSlot.Enabled = comPortOPLL == null;
             }
             else
             {
                 comboBoxOPLL.Enabled = true;
                 comboBoxPortYm2413.Enabled = true;
                 comPortOPLL?.Dispose();
+                comboBoxOpllSlot.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot"></param>
+        private void enableOpll(int slot)
+        {
+            if (slot == 1 || slot == 2)
+            {
+                comPortOPLL.WriteData(2, (byte)0, (byte)(slot - 1), (int)Settings.Default.BitBangWaitOPLL);
             }
         }
 

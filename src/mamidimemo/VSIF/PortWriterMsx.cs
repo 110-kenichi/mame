@@ -55,16 +55,16 @@ namespace zanac.MAmidiMEmo.VSIF
 
             lastDataType = 0xff;
             lastWriteSccAddress = 0;
-    }
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="address"></param>
-    /// <param name="data"></param>
-    /// <param name="wait"></param>
-    public override void Write(PortWriteData[] data)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void Write(PortWriteData[] data)
         {
             List<byte> ds = new List<byte>();
             foreach (var dt in data)
@@ -78,8 +78,6 @@ namespace zanac.MAmidiMEmo.VSIF
                     case 2:
                         if (lastOpllType != dt.Address || lastOpllSlot != dt.Data)
                         {
-                            lastOpllType = dt.Address;
-                            lastOpllSlot = dt.Data;
                             byte[] sd = new byte[5] {
                                     (byte)(dt.Type           | 0x20),
                                     (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
@@ -87,18 +85,25 @@ namespace zanac.MAmidiMEmo.VSIF
                             };
                             ds.AddRange(sd);
 
-                            //dummy wait
-                            ds.AddRange(new byte[] { 0, 0 });
+                            //バンク切り替えが必要な分のウエイト
+                            ds.AddRange(new byte[5] { 0, 0, 0, 0, 0 });
+                            //バンク切り替えが必要な分のウエイト
+                            if (lastOpllType < 0)
+                                ds.AddRange(new byte[4] { 0, 0, 0, 0 });
+
+                            lastOpllType = dt.Address;
+                            lastOpllSlot = dt.Data;
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;
+
+                            lastSccType = -1;
+                            lastSccSlot = -1;
                         }
                         break;
                     case 3:
                         if (lastSccType != dt.Address || lastSccSlot != dt.Data)
                         {
-                            lastSccType = dt.Address;
-                            lastSccSlot = dt.Data;
                             byte[] sd = new byte[5] {
                                 (byte)(dt.Type           | 0x20),
                                 (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
@@ -106,14 +111,23 @@ namespace zanac.MAmidiMEmo.VSIF
                             };
                             ds.AddRange(sd);
 
-                            //dummy wait
+                            //バンク切り替えが必要な分のウエイト
                             if (dt.Address < 4)
-                                ds.AddRange(new byte[3] { 0, 0, 0 });   //自動選択方式
+                                ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });   //自動選択方式
                             else
                                 ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });  //従来方式
+                            //バンク切り替えが必要な分のウエイト
+                            if (lastSccType < 0)
+                                ds.AddRange(new byte[4] { 0, 0, 0, 0 });
+
+                            lastSccType = dt.Address;
+                            lastSccSlot = dt.Data;
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;
+
+                            lastOpllType = -1;
+                            lastOpllSlot = -1;
                         }
                         break;
                     case 0xd:
@@ -128,8 +142,8 @@ namespace zanac.MAmidiMEmo.VSIF
                             };
                             ds.AddRange(sd);
 
-                            //dummy wait
-                            ds.AddRange(new byte[] { 0, 0 });
+                            //バンク切り替えが必要な分のウエイト
+                            ds.AddRange(new byte[5] { 0, 0, 0, 0, 0 });   //自動選択方式
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;

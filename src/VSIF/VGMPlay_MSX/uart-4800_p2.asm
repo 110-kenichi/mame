@@ -21,13 +21,14 @@
 
 .INCLUDE "macro.inc"
 
-    JPOFST = 0x60
+    JPOFST = 0xA0
 
-    .area   _HEADER (ABS)
+    .area   _HEADER2 (ABS)
 ;=======================================================
-    .ORG 0x5800
-_uart_processVgm::
-	; LD	A,#'0'
+    .ORG 0x9800
+    .globl _uart_processVgm_P2
+_uart_processVgm_P2:
+	; LD	A,#'1'
  	; CALL	CHPUT
 
     DI
@@ -36,15 +37,10 @@ _uart_processVgm::
     LD  A,#0xCF      ; 
     OUT (PSGWR),A    ;    Set Joy2 Pin Input Mode
 
-    ; JOY2 Pin Read Mode
     LD  C,#14           ; 7 14
+    ; JOY2 Pin Read Mode
     LD  A,C             ; 
     OUT (PSGAD),A       ; 
-
-    ; LD   A,(ROM_S)
-    ; CALL P2_CHG          ; 48 + 300
-    ; .globl _uart_processVgm_P2
-    ; JP  _uart_processVgm_P2  ; 11
 
 __VGM_LOOP:
 __VGM_TYPE:
@@ -59,242 +55,190 @@ __VGM_TYPE:
     JP  (HL)            ;  5 77
 
 _END_VGM:
-    JP  _END_VGM 
+    JP  _END_VGM
 
     _P0_CHG
     _P1_CHG
-    _P2_CHG
 
 ;=======================================================
-    .ORG 0x6000
+    .ORG 0xA000
     __WRITE_PSG_IO
 
 ;=======================================================
-    .ORG 0x6100
+    .ORG 0xA100
     __WRITE_OPLL_IO
 
 ;=======================================================
-    .ORG 0x6200
+    .ORG 0xA200
+    .globl __SELECT_OPLL_SLOT_P2
 __SELECT_OPLL_SLOT:
     READ_ADRS           ;61
     READ_DATA           ;55
+__SELECT_OPLL_SLOT_P2:
+    INC D               ; 
+    DEC D               ; 
+    JP  NZ,OPLL1_P2     ;21 76
 
 ;================================= 1,2,3,4
-    PUSH BC
-    LD   A,(ROM_S)
-    CALL P2_CHG          ; 48 + 300
-    POP  BC              ; 11
-    .globl __SELECT_OPLL_SLOT_P2
-    JP  __SELECT_OPLL_SLOT_P2  ; 11
-
-;=======================================================
-    .ORG 0x6300
-    ;https://www.msx.org/forum/msx-talk/software/scc-music-altera-de-1
-    .globl __SELECT_SCC_SLOT_P2
-__SELECT_SCC_SLOT:
-    READ_ADRS           ;61
-    READ_DATA           ;55
-;================================= 1
-__SELECT_SCC_SLOT_P2:
-    LD  A,B
-    CP  #4
-    JP  NC,CALL_P2_CHG  ;24 85 ;4または4以上で従来のスロット選択方式
-    INC D               ;
-    DEC D               ;
-    JP  NZ,SCC1_P2      ;45 100
-
-;================================= 2,3,4,5
-;SCC0のスロットのPAGE2を表に出す(要DI,P1上で実行)
-SCC0_P2:
-    LD  A,(SCC0_S+3)
+;OPLL0のスロットのPAGE1を表に出す(要DI,P2上で実行)
+OPLL0_P2:
+    LD  A,(OPLL0_S+3)
     OR  A
     JP  Z,__VGM_LOOP    ;
 
-    PUSH BC
-	LD	A,(SCC0_S)
-    CALL    P2_CHG;      ; 300
-    POP  BC              ; 11
-
-	; LD	HL,(SCC0_S+1)   ;
-	; OUT	(#0xA8),A	    ;    ;P2+P3をSCC0の基本スロットに切り替え
-	; LD	A,L             ;
-	; LD	(#0xFFFF),A	    ;    ;拡張スロット切り替え
-	; LD	A,H             ;
-	; OUT	(#0xA8),A	    ;    ;P3をRAMに戻す
-
-    JP  _ENA_SCC        ; 106
-;SCC1のスロットのPAGE2を表に出す(要DI,P1上で実行)
-;================================= 2,3,4,5
-SCC1_P2:
-    LD  A,(SCC1_S+3)
-    OR  A
-    JP  Z,__VGM_LOOP    ;
-
-    PUSH BC
-	LD	A,(SCC1_S)
-    CALL    P2_CHG;      ; 300
-    POP  BC              ; 11
-
-	; LD	HL,(SCC1_S+1)   ;
-	; OUT	(#0xA8),A   	;      ;P2+P3をSCC1の基本スロットに切り替え
+	LD	A,(OPLL0_S)
+    CALL    P1_CHG;
+	; LD	HL,(OPLL0_S+1)
+    ; OUT	(#0xA8),A	    ;   P2+P3をOPLL0の基本スロットに切り替え
 	; LD	A,L
-	; LD	(#0xFFFF),A	    ;      ;拡張スロット切り替え
+	; LD	(#0xFFFF),A	    ;   拡張スロット切り替え
 	; LD	A,H
-	; OUT	(#0xA8),A	    ;  95  ;P3をRAMに戻す
+	; OUT	(#0xA8),A	    ;   P3をRAMに戻す
 
-    JP  _ENA_SCC        ; 106
+    JP  __VGM_LOOP      ; 89
 
-;================================= 2,3,4,5
-CALL_P2_CHG:
-    SUB  #4
-    LD   B,A
-    LD   A,D
-    PUSH BC
-    CALL P2_CHG          ; 48 + 300
-    POP  BC              ; 11
-;================================= 6
-_ENA_SCC:
-    LD      A,B          ; 
-    DEC     A            ; 
-    JP      Z,__ENA_SCC1 ; 
-    DEC     A            ; 
-    JP      Z,__ENA_SCC1_COMPAT ;
-    DEC     A            ; 
-    JP      Z,__ENA_SCC  ; 
-    JP      __VGM_LOOP   ; 64
+;================================= 1,2,3,4
+;OPLL1のスロットのPAGE1を表に出す(要DI,P2上で実行)
+OPLL1_P2:
+    LD  A,(OPLL1_S+3)
+    OR  A
+    JP  Z,__VGM_LOOP    ;
 
-__ENA_SCC1:
-    LD      HL,#0xBFFE   ;
-    LD      A,#0x20      ;
-    LD      (HL),A       ;
+	LD	A,(OPLL1_S)
+    CALL    P1_CHG;
+	; LD	HL,(OPLL1_S+1)
+	; OUT	(#0xA8),A	    ;   P2+P3をOPLL1の基本スロットに切り替え
+	; LD	A,L
+	; LD	(#0xFFFF),A	    ;   拡張スロット切り替え
+	; LD	A,H
+	; OUT	(#0xA8),A	    ;   P3をRAMに戻す
 
-    LD      HL,#0xB000   ;
-    LD      A,#0x80      ;
-    LD      (HL),A       ;
-    JP  __VGM_LOOP       ; 65
-;================================= 6
-
-__ENA_SCC1_COMPAT:       ;
-    LD      HL,#0xBFFE
-    LD      A,#0x00
-    LD      (HL),A
-__ENA_SCC:
-    LD      HL,#0x9000
-    LD      A,#0x3F
-    LD      (HL),A
-    JP  __VGM_LOOP       ; 65
+    JP  __VGM_LOOP      ;106
 ;=================================
 
 ;=======================================================
-    .ORG 0x6400
+    .ORG 0xA300
+__SELECT_SCC_SLOT:
+    READ_ADRS           ;61
+    READ_DATA           ;55
+
+    PUSH BC
+    LD   A,(ROM_S)
+    CALL P1_CHG          ; 48 + 300
+    POP  BC              ; 11
+    .globl __SELECT_SCC_SLOT_P2
+    JP  __SELECT_SCC_SLOT_P2  ; 11
+
+;=======================================================
+    .ORG 0xA400
     __WRITE_SCC1
 
 ;=======================================================
-    .ORG 0x6500
+    .ORG 0xA500
     __WRITE_SCC
 
 ;=======================================================
-    .ORG 0x6600
+    .ORG 0xA600
     __WRITE_SCC1_2BYTES
 
 ;=======================================================
-    .ORG 0x6700
+    .ORG 0xA700
     __WRITE_SCC_2BYTES
 
 ;=======================================================
-    .ORG 0x6800
+    .ORG 0xA800
     __WRITE_SCC1_32_BYTES
 
 ;=======================================================
-    .ORG 0x6900
+    .ORG 0xA900
     __WRITE_SCC_32_BYTES
 
 ;=======================================================
-    .ORG 0x6A00
+    .ORG 0xAA00
     __WRITE_OPL3_IO1
 
 ;=======================================================
-    .ORG 0x6B00
+    .ORG 0xAB00
     __WRITE_OPL3_IO2
 
 ;=======================================================
-    .ORG 0x6C00
+    .ORG 0xAC00
     __WRITE_OPLL_MEM
 
 ;=======================================================
-    .ORG 0x6D00
+    .ORG 0xAD00
     __SELECT_OPM_SLOT
 
 ;=======================================================
-    .ORG 0x6E00
+    .ORG 0xAE00
     __WRITE_OPM_MEM
 
 ;=======================================================
-    .ORG 0x6F00
+    .ORG 0xAF00
     __WRITE_DCSG
 
 ;=======================================================
-    .ORG 0x7000
+    .ORG 0xB000
     __WRITE_OPN2_IO1
 
 ;=======================================================
-    .ORG 0x7100
+    .ORG 0xB100
     __WRITE_OPN2_IO2
 
 ;=======================================================
-    .ORG 0x7200
+    .ORG 0xB200
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7300
+    .ORG 0xB300
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7400
+    .ORG 0xB400
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7500
+    .ORG 0xB500
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7600
+    .ORG 0xB600
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7700
+    .ORG 0xB700
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7800
+    .ORG 0xB800
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7900
+    .ORG 0xB900
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7A00
+    .ORG 0xBA00
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7B00
+    .ORG 0xBB00
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7C00
+    .ORG 0xBC00
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7D00
+    .ORG 0xBD00
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7E00
+    .ORG 0xBE00
     JP __VGM_LOOP       ; 
 
 ;=======================================================
-    .ORG 0x7F00
+    .ORG 0xBF00
     JP __VGM_LOOP       ; 10 69
 
 ;=======================================================

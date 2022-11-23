@@ -206,11 +206,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
 
-        private OPLLSlotNo f_extOPLLSlot = OPLLSlotNo.No0;
+        private OPLLSlotNo f_extOPLLSlot = OPLLSlotNo.IO;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [DefaultValue(OPLLSlotNo.No0)]
+        [DefaultValue(OPLLSlotNo.IO)]
         [Description("Specify the OPLL ID number for VSIF(MSX).")]
         public OPLLSlotNo ExtOPLLSlot
         {
@@ -224,9 +224,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     switch (value)
                     {
-                        case OPLLSlotNo.No0:
-                        //case OPLLSlotNo.ExternalNo0:
-                        //case OPLLSlotNo.ExternalNo1:
+                        case OPLLSlotNo.IO:
+                        case OPLLSlotNo.MMIO_1:
+                        case OPLLSlotNo.MMIO_2:
                             f_extOPLLSlot = value;
                             break;
                     }
@@ -246,13 +246,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="slot"></param>
         private void enableOpll(OPLLSlotNo slot, bool clearCache)
         {
-            //if (slot == OPLLSlotNo.ExternalNo0 || slot == OPLLSlotNo.ExternalNo1)
-            //{
-            //    lock (sndEnginePtrLock)
-            //    {
-            //        vsifClient?.WriteData(2, 0, (byte)(slot - 1), f_ftdiClkWidth);
-            //    }
-            //}
+            if (slot == OPLLSlotNo.MMIO_1 || slot == OPLLSlotNo.MMIO_2)
+            {
+                lock (sndEnginePtrLock)
+                {
+                    vsifClient?.WriteData(2, (byte)0, (byte)(slot - 1), f_ftdiClkWidth);
+                }
+            }
             if (clearCache)
                 ClearWrittenDataCache();
         }
@@ -508,10 +508,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                             enableOpll(f_extOPLLSlot, false);
-                            if (f_extOPLLSlot == OPLLSlotNo.No0)
+                            if (f_extOPLLSlot == OPLLSlotNo.IO)
                                 vsifClient.WriteData(1, address, data, f_ftdiClkWidth);
                             else
-                                vsifClient.WriteData(0xc, address, data, f_ftdiClkWidth);
+                                vsifClient.WriteData(0xC, address, data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -3358,9 +3358,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum OPLLSlotNo
         {
-            No0 = 0,
-            //ExternalNo0 = 1,
-            //ExternalNo1 = 2,
+            IO = 0,
+            MMIO_1 = 1,
+            MMIO_2 = 2,
         }
 
     }

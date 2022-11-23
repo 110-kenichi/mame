@@ -1,53 +1,9 @@
-LF	= #0xa
-CR	= #0xd
-
-;--- MAIN-ROM内
-RDSLT	= #0x000C
-WRSLT	= #0x0014
-ENASLT	= #0x0024
-VER_NO	= #0x002D
-INT_NO	= #0x002B
-RDRES	= #0x017A		;ﾘｾｯﾄｽﾃｰﾀｽをAﾚｼﾞｽﾀｰに転送するＢＩＯＳ
-RWRES	= #0x017D		;Aﾚｼﾞｽﾀｰをﾘｾｯﾄｽﾃｰﾀｽに転送するＢＩＯＳ
-INIT32	= #0x006F		;スプライトＯＦＦ（スクリーン１へ）
-
-CHGMOD	= #0x005F		;SCREEN MODEを変更
-CHGCLR	= #0x0062		;画面の色を変える
-INITXT	= #0x006C		;TEXT1 MODE
-CLS	=     #0x0C3		;CLS
-CHPUT	= #0x0A2		;1文字出力
-
-;ワークエリアラベル定義
-EXPTBL	= #0xFCC1		;拡張スロット存在テーブル 4bytes
-LINL40	= #0xF3AE		;TEXT1モードの1行の幅
-FORCLR	= #0xF3E9		;前景色
-HIMEM	= #0xFC4A		;メモリ上限
-H_TIMI	= #0xFD9F		;タイマー割り込みフック
-
-
-;ユーザー定義のワークリア
-SCC0_S	= #0xE000		;+0 SCC0 スロット番号
-						;+1 SCC0 切り替え用拡張スロットレジスタ
-						;+2 SCC0 運用時基本スロットレジスタ
-						;+3 SCC0 P2+P3切り替え用基本スロットレジスタ
-SCC1_S	= #0xE004		;以下同様
-
-OPLL0_S	= #0xE008
-
-OPLL1_S	= #0xE00C
-
-OPM0_S	= #0xE010
-
-OPM1_S	= #0xE014
-
-ROM_S	= #0xE018
-
-DCSG_F	= #0xE01C		;発見された音源の数
-OPLL_F	= #0xE01D		;OPLLは bit7:1 = EXT / bit0 = INT
-SCC_F	= #0xE01E
-OPM_F	= #0xE01F
-
+	.INCLUDE "const.inc"
 ;===============ROMヘッダ
+; A ;音源の存在するスロット番号
+; B ;ターゲットの拡張スロットレジスタの値（音源が存在する基本スロットのFFFFhに書き込む値）
+; C ;ターゲットの基本スロットレジスタの値（音源アクセス時の基本スロットの状態）
+; D ;ターゲットとP3の基本スロットレジスタの値（拡張スロット選択レジスタに値を書き込むときの基本スロットの状態）
 
 	; ORG	04000H
 
@@ -58,10 +14,42 @@ OPM_F	= #0xE01F
 	; DEFB	0,0		;TEXT
 	; DEFB	0,0,0,0,0,0	;RESERVE
 
+;http://ngs.no.coocan.jp/doc/wiki.cgi/TechHan?page=7%BE%CF+%A5%B9%A5%ED%A5%C3%A5%C8%A4%C8%A5%AB%A1%BC%A5%C8%A5%EA%A5%C3%A5%B8
+ENASLT	=	#0x0024		;enable slot
+RSLREG	=	#0x0138		;read primary slot select register
+EXPTBL	=	#0xFCC1		;slot is expanded or not
 
+;----- program start -----
+
+ENAP2:
+	CALL	RSLREG		;read primary slot #
+	RRCA			;move it to bit 0,1 of [Acc]
+	RRCA
+	AND	#0b00000011
+	LD	C,A
+	LD	B,#0
+	LD	HL,#EXPTBL	;see if this slot is expanded or not
+	ADD	HL,BC
+	LD	C,A		;save primary slot #
+	LD	A,(HL)		;get the slot is expanded or not
+	AND	#0x80
+	OR	C		;set MSB if so
+	LD	C,A		;save it to [C]
+	INC	HL		;Point to SLTTBL entry
+	INC	HL
+	INC	HL
+	INC	HL
+	LD	A,(HL)		;Get what  is  currently  output
+				;to expansion   slot    register
+	AND	#0b00001100
+	OR	C		;Finaly form slot address
+
+	LD	HL,#ROM_S
+	LD	(HL),A		;ROMの存在するスロット番号
+
+	LD	H,#0x80
+	JP	ENASLT		;enable page 2
 ;==============初期化
-
-	; ORG	04010H
 
 _SARCHFM::
 	DI
@@ -89,10 +77,22 @@ _SARCHFM::
 	; CALL	INITXT		;テキスト画面を初期化
 	; CALL	CLS
 
+	CALL	ENAP2
+
 	LD	HL,#STR_VER	;バージョン表示
 	CALL	STRPUT
 
-	CALL	P2_ROM		;ROM情報表示
+	LD	HL,#ROM_S
+	LD	A, (HL)		;ROMの存在するスロット番号
+	PUSH	AF
+	LD	HL,#STR_ROM
+	CALL	STRPUT
+	POP		AF
+	CALL	_PUT_A
+	LD	HL,#STR_CRLF
+	CALL	STRPUT
+
+	;CALL	P2_ROM		;ROM情報表示
 
 ;===================================
 ;スロットスキャン開始
@@ -203,15 +203,15 @@ OPLL_INI:
 
 	;----------OPLL0=メモリマップドIOで初期化
 	LD	A,(OPLL0_S)
-;   HACK: 元のコード
-;	LD	E,#0		;IO disable
-;	LD	HL,#0x7FF6
-;	CALL	WRSLT
-
-;	HACK: 暫定コード 7FF6Hから値をとってきてbit1を立てI/O enableにする
+;   元のコード
+	; LD	E,#0		;IO disable
+	; LD	HL,#0x7FF6
+	; CALL	WRSLT
+;	HACK: 7FF6Hから値をとってきてbit1を立てI/O disableにする
 	LD	HL,#0x7FF6
 	CALL	RDSLT
 	OR	#1
+;	AND	#0xff-1
 	LD	E, A
 	LD	HL,#0x7FF6
 	LD	A,(OPLL0_S)
@@ -224,15 +224,15 @@ OPLL_INI:
 
 	;----------OPLL1=メモリマップドIOで初期化
 	LD	A,(OPLL1_S)
-;   HACK: 元のコード
+;   元のコード
 ;	LD	E,#0		;IO dsiable
 ;	LD	HL,#0x7FF6
 ;	CALL	WRSLT
-
-;	HACK: 暫定コード 7FF6Hから値をとってきてbit1を立てI/O enableにする
+;	HACK: 7FF6Hから値をとってきてbit1を立てI/O disableにする
 	LD	HL,#0x7FF6
 	CALL	RDSLT
 	OR	#1
+;	AND	#0xff-1
 	LD	E, A
 	LD	HL,#0x7FF6
 	LD	A,(OPLL1_S)
@@ -247,7 +247,7 @@ OPLL_INI1:
 ;	LD	E,#1		;IO enable
 ;	LD	HL,#0x7FF6
 ;	CALL	WRSLT
-;	7FF6Hから値をとってきてbit1を立てI/O enableにする
+;	HACK: 7FF6Hから値をとってきてbit1を立てI/O enableにする
 	LD	HL,#0x7FF6
 	CALL	RDSLT
 	OR	#1
@@ -265,7 +265,7 @@ OPLL_INI2:
 ;	LD	E,#1		;IO enable
 ;	LD	HL,#0x7FF6
 ;	CALL	WRSLT
-;	7FF6Hから値をとってきてbit1を立てI/O enableにする
+;	HACK: 7FF6Hから値をとってきてbit1を立てI/O enableにする
 	LD	HL,#0x7FF6
 	CALL	RDSLT
 	OR	#1
@@ -304,7 +304,7 @@ CKSLT:
 	PUSH	AF		;スロット番号をスタックに退避
 	ld	h,#0x80
 	call	ENASLT		;ページ２のスロットをターゲットに
-	;DI
+	DI
 
 	;-------RAMを除外
 	ld	hl,#0x8000
@@ -318,7 +318,7 @@ CKSLT:
 
 S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 
-	;DI
+	DI
 	LD	A,#0x80
 	OUT	(#0x3C),A	;MMM mapped IO enable
 	LD	HL,#0x80FE
@@ -501,13 +501,13 @@ S_OPM0:
 S_HIT:	LD	B,A
 	POP	AF
 	SCF
-	;EI
+	EI
 	RET
 
 S_END:	POP	AF
 	SCF
 	CCF
-	;EI
+	EI
 	RET
 
 ;============================================================
@@ -540,7 +540,7 @@ FM_INI:
 
 	LD	A,(OPM_F)
 	CP	#3
-	JR	NC,FM_INI4	;3個目以上は無視
+	JP	NC,FM_INI4	;3個目以上は無視
 	DEC	A
 	ADD	A,A
 	ADD	A,A
@@ -568,10 +568,18 @@ FM_INI1:
 	LD	HL,#OPLL0_S
 	ADD	HL,BC		;ワークエリアのアドレス算出
 
+	;HACK: P1_CALを呼ぶ前にスロットを変更する必要がある
+	PUSH	AF
+	PUSH	BC
+	LD   A,(ROM_S)
+    CALL 	P2_CHG          ; 48 + 300
+    POP  	BC              ; 11
+	POP		AF
+	;;;;;
+
 	POP	AF
 	PUSH	AF
-	;HACK: FMPACで暴走防止
-	;CALL	P1_CAL		;スロット選択レジスタ事前計算
+	CALL	P1_CAL		;スロット選択レジスタ事前計算
 	JR	FM_INI3	
 
 ;	JR	FM_INI4
@@ -606,36 +614,28 @@ FM_INI3:
 	;----------パラメータ表示
 	LD	HL,#STR_A
 	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	POP	AF
 	PUSH	AF
-	;HACK:
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_B
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,B
-	;HACK:
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_C
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,C
-	;HACK:
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_D
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,D
-	;HACK:
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_CRLF
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 
 FM_INI4:
 	POP	AF
@@ -672,7 +672,7 @@ P0_CAL:	PUSH	AF
 	AND	#0b00111111
 	OR	B
 	LD	D,A	    	;D = P0+P3ターゲットの基本スロットレジスタ
-	;DI	    		;（以下スタック使用不可）
+	DI	    		;（以下スタック使用不可）
 	OUT	(#0xA8),A	;一旦P0+P3をターゲットの基本スロットにする
 
 	EX	AF,AF'		;裏Aからスロット番号を復帰
@@ -688,7 +688,7 @@ P0_CAL:	PUSH	AF
 
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
-	;EI			;（以下スタック使用可）
+	EI			;（以下スタック使用可）
 
 	POP	AF
 	RET
@@ -728,7 +728,7 @@ P2_CAL:	PUSH	AF
 	AND	#0b00111111
 	OR	B
 	LD	D,A		;D = P2+P3ターゲットの基本スロットレジスタ
-	;DI			;（以下スタック使用不可）
+	DI			;（以下スタック使用不可）
 	OUT	(#0xA8),A	;一旦P2+P3をターゲットの基本スロットにする
 
 	EX	AF,AF'		;裏Aからスロット番号を復帰
@@ -744,7 +744,7 @@ P2_CAL:	PUSH	AF
 
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
-	;EI			;（以下スタック使用可）
+	EI			;（以下スタック使用可）
 
 	POP	AF
 	RET
@@ -802,7 +802,7 @@ P2_ROM:
 	AND	#0b00111111
 	OR	B
 	LD	D,A		;D = P1,P2,P3 = ROMの基本スロットレジスタ
-	;DI			;（以下スタック使用不可）
+	DI			;（以下スタック使用不可）
 	OUT	(#0xA8),A	;一旦P1,P2,P3をROMの基本スロットにする
 
 	LD	A,(#0xFFFF)	;拡張スロット情報を読む
@@ -819,7 +819,7 @@ P2_ROM:
 
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
-	;EI			;（以下スタック使用可）
+	EI			;（以下スタック使用可）
 
 	EX	AF,AF'		;ROMのスロット番号を裏Aから復帰
 
@@ -838,85 +838,28 @@ P2_ROM:
 	PUSH	AF
 	LD	HL,#STR_ROM	;ROM SLOT:
 	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	POP	AF
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_B
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,B
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_C
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,C
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_D
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,D
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_CRLF
-	;CALL	STRPUT
+	CALL	STRPUT
 
-	RET
-
-;============================================================
-;スロット選択レジスタの事前計算　PAGE1(OPLL)用
-;
-;注意！	このプログラムはP2上で実行しないと暴走する
-;
-;============================================================
-;準備 :A :スロット　(Aは保存される)
-;
-;戻り：	B = P1   ターゲットの拡張スロットレジスタの値
-;	C = P1   ターゲットの基本スロットレジスタの値
-;	D = P1+P3ターゲットの基本スロットレジスタの値
-;
-;注：	裏AF、Eは破壊される
-;============================================================
-
-P1_CAL:	PUSH	AF
-	LD	B,A
-	EX	AF,AF'		;裏Aにスロット番号をコピー
-	LD	A,B
-
-	RLCA
-	RLCA
-	AND	#0b00001100	;基本スロット番号をP1の位置に
-	LD	B,A
-	IN	A,(#0xA8)	;基本スロットレジスタを読む
-	LD	E,A		;Eに元の基本スロットレジスタを保存
-	AND	#0b11110011
-	OR	B
-	LD	C,A		;C = P1ターゲットの基本スロットレジスタ
-
-	RLC	B
-	RLC	B
-	RLC	B
-	RLC	B		;基本スロット番号をP3の位置に
-	LD	A,C
-	AND	#0b00111111
-	OR	B
-	LD	D,A		;D = P1+P3ターゲットの基本スロットレジスタ
-	;DI			;（以下スタック使用不可）
-	OUT	(#0xA8),A	;一旦P1+P3をターゲットの基本スロットにする
-
-	EX	AF,AF'		;裏Aからスロット番号を復帰
-	AND	#0b00001100
-	LD	B,A		;拡張スロット番号をP1の位置に
-	LD	A,(#0xFFFF)	;拡張スロット情報を読む
-	CPL
-	AND	#0b11110011
-	OR	B
-	LD	B,A		;B = P1ターゲットの拡張スロットレジスタ
-
-	LD	A,E
-	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
-	;EI			;（以下スタック使用可）
-
-	POP	AF
 	RET
 
 ;=======================================
@@ -987,50 +930,50 @@ PutL01:	LD	E,A
 ;	DIしてからコールする
 ;=======================================
 
-P0_CHG:
-	PUSH	AF
+; P0_CHG:
+; 	PUSH	AF
 
-	AND	#0b00000011
-	LD	B,A
-	IN	A,(#0xA8)	;基本スロット情報を読む
-	AND	#0b11111100
-	OR	B
-	OUT	(#0xA8),A	;基本スロットP0をターゲットにする
-	LD	C,A		;P3をRAMに戻す情報をCに入れる
+; 	AND	#0b00000011
+; 	LD	B,A
+; 	IN	A,(#0xA8)	;基本スロット情報を読む
+; 	AND	#0b11111100
+; 	OR	B
+; 	OUT	(#0xA8),A	;基本スロットP0をターゲットにする
+; 	LD	C,A		;P3をRAMに戻す情報をCに入れる
 
-	POP	AF
-	BIT	7,A		;拡張スロット指定か？
-	RET	Z
+; 	POP	AF
+; 	BIT	7,A		;拡張スロット指定か？
+; 	RET	Z
 
-	;==============P3切り替え
-	PUSH	AF
-	EX	AF,AF'		;スロット番号を裏Aに退避
-	RRC	B
-	RRC	B		;基本スロット番号をP3の位置に
+; 	;==============P3切り替え
+; 	PUSH	AF
+; 	EX	AF,AF'		;スロット番号を裏Aに退避
+; 	RRC	B
+; 	RRC	B		;基本スロット番号をP3の位置に
 	
-	LD	A,C
-	AND	#0b00111111
-	OR	B		;（以下スタック使用不可）
-	OUT	(#0xA8),A	;P3をターゲットの基本スロットにする
+; 	LD	A,C
+; 	AND	#0b00111111
+; 	OR	B		;（以下スタック使用不可）
+; 	OUT	(#0xA8),A	;P3をターゲットの基本スロットにする
 
-	EX	AF,AF'		;裏Aからスロット番号を復帰
-	RRCA
-	RRCA
-	AND	#0b00000011
-	LD	B,A		;拡張スロット番号をP0の位置に
-	LD	A,(#0xFFFF)	;拡張スロット情報を読む
-	CPL
-	AND	#0b11111100
-	OR	B
-	LD	(#0xFFFF),A	;拡張スロットをP0ターゲットにする
+; 	EX	AF,AF'		;裏Aからスロット番号を復帰
+; 	RRCA
+; 	RRCA
+; 	AND	#0b00000011
+; 	LD	B,A		;拡張スロット番号をP0の位置に
+; 	LD	A,(#0xFFFF)	;拡張スロット情報を読む
+; 	CPL
+; 	AND	#0b11111100
+; 	OR	B
+; 	LD	(#0xFFFF),A	;拡張スロットをP0ターゲットにする
 
-	LD	A,C
-	OUT	(#0xA8),A	;P3をRAMに戻す
+; 	LD	A,C
+; 	OUT	(#0xA8),A	;P3をRAMに戻す
 
-	;=============P3 切り替え完了（以下スタック使用可）
+; 	;=============P3 切り替え完了（以下スタック使用可）
 
-	POP	AF
-	RET
+; 	POP	AF
+; 	RET
 
 ;=======================================
 ;Page2 切り替えサブ
@@ -1039,7 +982,6 @@ P0_CHG:
 ;注）	A BCと裏AFは破壊される
 ;	DIしてからコールする
 ;=======================================
-    .globl P2_CHG
 P2_CHG:
 	PUSH	AF
 	RLCA
@@ -1175,3 +1117,62 @@ STR_D:		.ascii	" D:$"
 STR_CRLF:	.ascii	"\r\n\r\n$"
 STR_COMP:	.ascii	"\r\nOPLL initialize completed.$"
 
+
+;============================================================
+;スロット選択レジスタの事前計算　PAGE1(OPLL)用
+;
+;注意！	このプログラムはP2上で実行しないと暴走する
+;
+;============================================================
+;準備 :A :スロット　(Aは保存される)
+;
+;戻り：	B = P1   ターゲットの拡張スロットレジスタの値
+;	C = P1   ターゲットの基本スロットレジスタの値
+;	D = P1+P3ターゲットの基本スロットレジスタの値
+;
+;注：	裏AF、Eは破壊される
+;============================================================
+    .area   _HEADER3 (ABS)
+	.ORG 0x9000
+P1_CAL:
+	PUSH	AF
+	LD	B,A
+	EX	AF,AF'		;裏Aにスロット番号をコピー
+	LD	A,B
+
+	RLCA
+	RLCA
+	AND	#0b00001100	;基本スロット番号をP1の位置に
+	LD	B,A
+	IN	A,(#0xA8)	;基本スロットレジスタを読む
+	LD	E,A		;Eに元の基本スロットレジスタを保存
+	AND	#0b11110011
+	OR	B
+	LD	C,A		;C = P1ターゲットの基本スロットレジスタ
+
+	RLC	B
+	RLC	B
+	RLC	B
+	RLC	B		;基本スロット番号をP3の位置に
+	LD	A,C
+	AND	#0b00111111
+	OR	B
+	LD	D,A		;D = P1+P3ターゲットの基本スロットレジスタ
+	DI			;（以下スタック使用不可）
+	OUT	(#0xA8),A	;一旦P1+P3をターゲットの基本スロットにする
+
+	EX	AF,AF'		;裏Aからスロット番号を復帰
+	AND	#0b00001100
+	LD	B,A		;拡張スロット番号をP1の位置に
+	LD	A,(#0xFFFF)	;拡張スロット情報を読む
+	CPL
+	AND	#0b11110011
+	OR	B
+	LD	B,A		;B = P1ターゲットの拡張スロットレジスタ
+
+	LD	A,E
+	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
+	EI			;（以下スタック使用可）
+
+	POP	AF
+	RET
