@@ -1244,7 +1244,7 @@ PutL01:	LD	E,A
 ;=================================
 ;文字列データ
 ;=================================
-STR_VER:	.ascii	"SoundCatridge detctor ver.0.03++\r\n"
+STR_VER:	.ascii	"SoundCatridge detctor ver.0.03+\r\n"
 		    .ascii	"Copyright (C)2022 Niga\r\n\r\n$"
 STR_APRL:	.ascii	"APRLOPLL"
 STR_OPM:	.ascii	"MCHFM0"
