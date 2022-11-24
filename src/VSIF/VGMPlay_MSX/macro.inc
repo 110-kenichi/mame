@@ -401,12 +401,19 @@ __SELECT_OPM_SLOT:
 
 ;OPM0のスロットのPAGE0を表に出す(要DIで実行)
 OPM0_P0:
-    LD  A,(OPM0_S+3)
+    LD  A,(OPM0_S)
     OR  A
-    JP  Z,__VGM_LOOP    ;
+    JP  Z,__VGM_LOOP
+	LD	HL,(OPM0_S+2)       ; 47
+    P0_CHG2                 ;143 200
 
-	LD	A,(OPM0_S)
-    CALL    P0_CHG;
+    ; LD  A,(OPM0_S+3)
+    ; OR  A
+    ; JP  Z,__VGM_LOOP    ;
+
+	; LD	A,(OPM0_S)
+    ; CALL    P0_CHG;
+
 	; LD	HL,(OPM0_S+1)
 	; OUT	(#0xA8),A	    ;   P0+P3をOPM0の基本スロットに切り替え
 	; LD	A,L
@@ -414,16 +421,23 @@ OPM0_P0:
 	; LD	A,H
 	; OUT	(#0xA8),A	    ;   P3をRAMに戻す
 
-    JP __VGM_LOOP       ;111
+    JP __VGM_LOOP           ; 11 211
 
 ;OPM1のスロットのPAGE0を表に出す(要DIで実行)
 OPM1_P0:
-    LD  A,(OPM1_S+3)
+    LD  A,(OPM1_S)
     OR  A
-    JP  Z,__VGM_LOOP    ;
+    JP  Z,__VGM_LOOP
+	LD	HL,(OPM1_S+2)
+    P0_CHG2
 
-	LD	A,(OPM1_S)
-    CALL    P0_CHG;     ;300
+    ; LD  A,(OPM1_S+3)
+    ; OR  A
+    ; JP  Z,__VGM_LOOP    ;
+
+	; LD	A,(OPM1_S)
+    ; CALL    P0_CHG;     ;300
+
 	; LD	HL,(OPM1_S+1)
 	; OUT	(#0xA8),A	    ;   P0+P3をOPM1の基本スロットに切り替え
 	; LD	A,L
@@ -718,4 +732,94 @@ P2_CHG:
 
 	POP	AF
 	RET
+    .endm
+
+;=======================================
+;Page0 切り替えサブ
+;入力：H,L Page0に割り当てる基本スロット(+3),拡張スロット(+2)
+;
+;注）  A,Cは破壊される
+;	DIしてからコールする
+;=======================================
+
+    .macro P0_CHG2  ; 143
+	in	a,(#0xA8)	;Read primary slots register
+	ld	C,a		;Store current configuration
+	and	#0b00111100	;Resets the bits of pages 0000h-03FFFh and C000h-0FFFFh
+    OR  H
+	out	(#0xA8),a	;Select primary slot H for the pages 0000h-03FFFh and C000h-0FFFFh
+
+	ld	a,(#0xFFFF)	;Read secondary slots register of selected primary slot
+	cpl			;Reverses the bits
+	and	#0b11111100	;Resets the bits of page 0000h-03FFFh
+    OR  L
+	ld	(#0xFFFF),a	;Select secondary slot H-L
+
+	ld	a,C		;Restore initial configuration of primary slots to A
+	and	#0b11000000	;Keep only the bits of page C000h-0FFFFh
+	ld	C,a		;Store the bits of page C000h-0FFFFh to C
+	in	a,(#0xA8)	;Read primary slots register
+	and	#0b00111111	;Resets the bits of page C000h-0FFFFh
+	or	C		;Sets the bits of page C000h-0FFFF to initial value
+	out	(#0xA8),a	;Select initial primary slot for the page C000h-0FFFFh
+    .endm
+
+;=======================================
+;Page1 切り替えサブ
+;入力：H,L Page1に割り当てる基本スロット(+3),拡張スロット(+2)
+;
+;注）  A,Cは破壊される
+;	DIしてからコールする
+;=======================================
+
+    .macro P1_CHG2  ; 143
+	in	a,(#0xA8)	;Read primary slots register
+	ld	C,a		;Store current configuration
+	and	#0b00110011	;Resets the bits of pages 4000h-07FFFh and C000h-0FFFFh
+    OR  H
+	out	(#0xA8),a	;Select primary slot H for the pages 4000h-07FFFh and C000h-0FFFFh
+
+	ld	a,(#0xFFFF)	;Read secondary slots register of selected primary slot
+	cpl			;Reverses the bits
+	and	#0b11110011	;Resets the bits of page 4000h-07FFFh 
+    OR  L
+	ld	(#0xFFFF),a	;Select secondary slot H-L
+
+	ld	a,C		;Restore initial configuration of primary slots to A
+	and	#0b11000000	;Keep only the bits of page C000h-0FFFFh
+	ld	C,a		;Store the bits of page C000h-0FFFFh to C
+	in	a,(#0xA8)	;Read primary slots register
+	and	#0b00111111	;Resets the bits of page C000h-0FFFFh
+	or	C		;Sets the bits of page C000h-0FFFF to initial value
+	out	(#0xA8),a	;Select initial primary slot for the page C000h-0FFFFh
+    .endm
+
+;=======================================
+;Page2 切り替えサブ
+;入力：H,L Page2に割り当てる基本スロット(+3),拡張スロット(+2)
+;
+;注）  A,Cは破壊される
+;	DIしてからコールする
+;=======================================
+
+    .macro P2_CHG2  ; 143
+	in	a,(#0xA8)	;Read primary slots register
+	ld	C,a		;Store current configuration
+	and	#0b00001111	;Resets the bits of pages 8000h-0BFFFh and C000h-0FFFFh
+    OR  H
+	out	(#0xA8),a	;Select primary slot H for the pages 8000h-0BFFFh and C000h-0FFFFh
+
+	ld	a,(#0xFFFF)	;Read secondary slots register of selected primary slot
+	cpl			;Reverses the bits
+	and	#0b11001111	;Resets the bits of page 8000h-0BFFFh 
+    OR  L
+	ld	(#0xFFFF),a	;Select secondary slot H-L
+
+	ld	a,C		;Restore initial configuration of primary slots to A
+	and	#0b11000000	;Keep only the bits of page C000h-0FFFFh
+	ld	C,a		;Store the bits of page C000h-0FFFFh to C
+	in	a,(#0xA8)	;Read primary slots register
+	and	#0b00111111	;Resets the bits of page C000h-0FFFFh
+	or	C		;Sets the bits of page C000h-0FFFF to initial value
+	out	(#0xA8),a	;Select initial primary slot for the page C000h-0FFFFh
     .endm

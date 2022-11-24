@@ -25,7 +25,7 @@
 
     .area   _HEADER (ABS)
 ;=======================================================
-    .ORG 0x5800
+    .ORG 0x5000
 _uart_processVgm::
 	; LD	A,#'0'
  	; CALL	CHPUT
@@ -41,7 +41,7 @@ _uart_processVgm::
     LD  A,C             ; 
     OUT (PSGAD),A       ; 
 
-    ; LD   A,(ROM_S)
+    ; LD   A,(ROM2_S)
     ; CALL P2_CHG          ; 48 + 300
     ; .globl _uart_processVgm_P2
     ; JP  _uart_processVgm_P2  ; 11
@@ -61,8 +61,7 @@ __VGM_TYPE:
 _END_VGM:
     JP  _END_VGM 
 
-    _P0_CHG
-    _P1_CHG
+    ;_P0_CHG
     _P2_CHG
 
 ;=======================================================
@@ -80,10 +79,12 @@ __SELECT_OPLL_SLOT:
     READ_DATA           ;55
 
 ;================================= 1,2,3,4
-    PUSH BC
-    LD   A,(ROM_S)
-    CALL P2_CHG          ; 48 + 300
-    POP  BC              ; 11
+	LD	HL,(ROM2_S+2)   ; 17
+    P2_CHG2             ;143
+    ; PUSH BC
+    ; LD   A,(ROM2_S)
+    ; CALL P2_CHG          ; 48 + 300
+    ; POP  BC              ; 11
     .globl __SELECT_OPLL_SLOT_P2
     JP  __SELECT_OPLL_SLOT_P2  ; 11
 
@@ -103,17 +104,23 @@ __SELECT_SCC_SLOT_P2:
     DEC D               ;
     JP  NZ,SCC1_P2      ;45 100
 
-;================================= 2,3,4,5
+;================================= 2,3
 ;SCC0のスロットのPAGE2を表に出す(要DI,P1上で実行)
 SCC0_P2:
-    LD  A,(SCC0_S+3)
+    LD  A,(SCC0_S)
     OR  A
-    JP  Z,__VGM_LOOP    ;
+    JP  Z,__VGM_LOOP
+	LD	HL,(SCC0_S+2)   ; 47
+    P2_CHG2             ;143 190
 
-    PUSH BC
-	LD	A,(SCC0_S)
-    CALL    P2_CHG;      ; 300
-    POP  BC              ; 11
+    ; LD  A,(SCC0_S+3)
+    ; OR  A
+    ; JP  Z,__VGM_LOOP    ;
+
+    ; PUSH BC
+	; LD	A,(SCC0_S)
+    ; CALL    P2_CHG;      ; 300
+    ; POP  BC              ; 11
 
 	; LD	HL,(SCC0_S+1)   ;
 	; OUT	(#0xA8),A	    ;    ;P2+P3をSCC0の基本スロットに切り替え
@@ -124,16 +131,22 @@ SCC0_P2:
 
     JP  _ENA_SCC        ; 106
 ;SCC1のスロットのPAGE2を表に出す(要DI,P1上で実行)
-;================================= 2,3,4,5
+;================================= 2,3
 SCC1_P2:
-    LD  A,(SCC1_S+3)
+    LD  A,(SCC1_S)
     OR  A
-    JP  Z,__VGM_LOOP    ;
+    JP  Z,__VGM_LOOP
+	LD	HL,(SCC1_S+2)
+    P2_CHG2
 
-    PUSH BC
-	LD	A,(SCC1_S)
-    CALL    P2_CHG;      ; 300
-    POP  BC              ; 11
+    ; LD  A,(SCC1_S+3)
+    ; OR  A
+    ; JP  Z,__VGM_LOOP    ;
+
+    ; PUSH BC
+	; LD	A,(SCC1_S)
+    ; CALL    P2_CHG;      ; 300
+    ; POP  BC              ; 11
 
 	; LD	HL,(SCC1_S+1)   ;
 	; OUT	(#0xA8),A   	;      ;P2+P3をSCC1の基本スロットに切り替え
@@ -149,10 +162,10 @@ CALL_P2_CHG:
     SUB  #4
     LD   B,A
     LD   A,D
-    PUSH BC
-    CALL P2_CHG          ; 48 + 300
+    PUSH BC              ; 30
+    CALL P2_CHG          ; 18 + 300
     POP  BC              ; 11
-;================================= 6
+;================================= 4/6
 _ENA_SCC:
     LD      A,B          ; 
     DEC     A            ; 
@@ -172,7 +185,7 @@ __ENA_SCC1:
     LD      A,#0x80      ;
     LD      (HL),A       ;
     JP  __VGM_LOOP       ; 65
-;================================= 6
+;================================= 4/6
 
 __ENA_SCC1_COMPAT:       ;
     LD      HL,#0xBFFE
@@ -219,7 +232,10 @@ __ENA_SCC:
 
 ;=======================================================
     .ORG 0x6C00
-    __WRITE_OPLL_MEM
+__WRITE_OPLL_MEM_DUMMY:
+    READ_ADRS           ;61
+    READ_DATA           ;55
+    JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x6D00
@@ -243,58 +259,100 @@ __ENA_SCC:
 
 ;=======================================================
     .ORG 0x7200
+__DUMMY_0x7200:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7300
+__DUMMY_0x7300:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7400
+__DUMMY_0x7400:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7500
+__DUMMY_0x7500:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7600
+__DUMMY_0x7600:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7700
+__DUMMY_0x7700:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7800
+__DUMMY_0x7800:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7900
+__DUMMY_0x7900:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7A00
+__DUMMY_0x7A00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7B00
+__DUMMY_0x7B00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7C00
+__DUMMY_0x7C00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7D00
+__DUMMY_0x7D00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7E00
+__DUMMY_0x7E00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7F00
-    JP __VGM_LOOP       ; 10 69
+__DUMMY_0x7F00:
+    READ_ADRS           ;61
+    READ_DATA           ;55
+    JP __VGM_LOOP       ; 
 
 ;=======================================================

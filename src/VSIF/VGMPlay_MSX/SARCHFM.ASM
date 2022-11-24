@@ -1,4 +1,6 @@
 	.INCLUDE "const.inc"
+	.INCLUDE "macro.inc"
+
 ;===============ROMヘッダ
 ; A ;音源の存在するスロット番号
 ; B ;ターゲットの拡張スロットレジスタの値（音源が存在する基本スロットのFFFFhに書き込む値）
@@ -20,6 +22,8 @@ RSLREG	=	#0x0138		;read primary slot select register
 EXPTBL	=	#0xFCC1		;slot is expanded or not
 
 ;----- program start -----
+
+    _P2_CHG
 
 ENAP2:
 	CALL	RSLREG		;read primary slot #
@@ -44,7 +48,9 @@ ENAP2:
 	AND	#0b00001100
 	OR	C		;Finaly form slot address
 
-	LD	HL,#ROM_S
+	LD	HL,#ROM1_S
+	LD	(HL),A		;ROMの存在するスロット番号
+	LD	HL,#ROM2_S
 	LD	(HL),A		;ROMの存在するスロット番号
 
 	LD	H,#0x80
@@ -82,17 +88,19 @@ _SARCHFM::
 	LD	HL,#STR_VER	;バージョン表示
 	CALL	STRPUT
 
-	LD	HL,#ROM_S
+	LD	HL,#ROM2_S
 	LD	A, (HL)		;ROMの存在するスロット番号
 	PUSH	AF
 	LD	HL,#STR_ROM
 	CALL	STRPUT
 	POP		AF
+	PUSH	AF
 	CALL	_PUT_A
 	LD	HL,#STR_CRLF
 	CALL	STRPUT
+	POP		AF
 
-	;CALL	P2_ROM		;ROM情報表示
+	CALL	P2_ROM		;ROM情報表示
 
 ;===================================
 ;スロットスキャン開始
@@ -571,7 +579,7 @@ FM_INI1:
 	;HACK: P1_CALを呼ぶ前にスロットを変更する必要がある
 	PUSH	AF
 	PUSH	BC
-	LD   A,(ROM_S)
+	LD   A,(ROM2_S)
     CALL 	P2_CHG          ; 48 + 300
     POP  	BC              ; 11
 	POP		AF
@@ -611,31 +619,32 @@ FM_INI3:
 	INC	HL
 	LD	(HL),D		;Px+P3ターゲットの基本スロットレジスタの値
 
+	;HACK:
+	JP	FM_INI4
 	;----------パラメータ表示
 	LD	HL,#STR_A
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	POP	AF
 	PUSH	AF
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_B
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,B
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_C
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,C
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_D
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,D
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_CRLF
-	;CALL	STRPUT
+	CALL	STRPUT
 
 FM_INI4:
 	POP	AF
@@ -689,6 +698,14 @@ P0_CAL:	PUSH	AF
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
 	EI			;（以下スタック使用可）
+
+	;HACK:
+	LD	A,B
+	AND	#0b00000011
+	LD	C,A
+	LD	A,D
+	AND	#0b11000011
+	LD	D,A
 
 	POP	AF
 	RET
@@ -745,6 +762,15 @@ P2_CAL:	PUSH	AF
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
 	EI			;（以下スタック使用可）
+
+	;HACK:
+	LD	A,B
+	AND	#0b00110000
+	LD	C,A
+	LD	A,D
+	AND	#0b11110000
+	LD	D,A
+	;;
 
 	POP	AF
 	RET
@@ -824,9 +850,18 @@ P2_ROM:
 	EX	AF,AF'		;ROMのスロット番号を裏Aから復帰
 
 	;----------ワークエリアに値を書き込む
-	LD	HL,#ROM_S
+	LD	HL,#ROM2_S
 
-	LD	(HL),A		;ROMの存在するスロット番号
+	;HACK:
+	LD	A,B
+	AND	#0b00110000
+	LD	C,A
+	LD	A,D
+	AND	#0b11110000
+	LD	D,A
+	;;
+
+	;LD	(HL),A		;ROMの存在するスロット番号
 	INC	HL
 	LD	(HL),B		;P1,P2 = ROMの拡張スロットレジスタの値
 	INC	HL
@@ -834,31 +869,142 @@ P2_ROM:
 	INC	HL
 	LD	(HL),D		;P1,P2,P3 = ROMの基本スロットレジスタの値
 
+	;HACK:
+	JP	P1_ROM
 	;----------パラメータ表示
 	PUSH	AF
 	LD	HL,#STR_ROM	;ROM SLOT:
-	;HACK:
-	;CALL	STRPUT
+	CALL	STRPUT
 	POP	AF
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_B
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,B
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_C
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,C
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_D
-	;CALL	STRPUT
+	CALL	STRPUT
 	LD	A,D
-	;CALL	_PUT_A
+	CALL	_PUT_A
 
 	LD	HL,#STR_CRLF
-	;CALL	STRPUT
+	CALL	STRPUT
+
+;-----------
+P1_ROM:
+	IN	A,(#0xA8)	;基本スロットレジスタを読む
+	LD	E,A		;Eに保存
+	RRCA
+	RRCA
+	AND	#0b00000011	;P1 ROMの基本スロット番号をP0の位置に
+	LD	C,A
+	LD	B,#0
+	LD	HL,#EXPTBL
+	ADD	HL,BC
+	LD	A,(HL)
+	AND	#0b10000000
+	OR	C		;拡張スロットフラグを付加
+	LD	C,A
+	INC	HL
+	INC	HL
+	INC	HL
+	INC	HL
+	LD	A,(HL)		;ワークエリアの拡張スロットレジスタを読む
+	AND	#0b00001100	;P1の拡張スロット番号を抜き出す
+	OR	C
+	EX	AF,AF'		;ROMのスロット番号を裏Aに退避
+
+	LD	A,E		;基本スロットレジスタを復帰
+	; RLCA
+	; RLCA
+	AND	#0b00001100	;P1 ROMの基本スロット番号をP2の位置に
+	LD	B,A
+	LD	A,E
+	AND	#0b11110011
+	OR	B
+	LD	C,A		;C = P1,P2 = ROMの基本スロットレジスタ
+
+	RLC	B
+	RLC	B		;P1 ROMの基本スロット番号をP3の位置に
+	RLC	B
+	RLC	B		;P1 ROMの基本スロット番号をP3の位置に
+	LD	A,C
+	AND	#0b00111111
+	OR	B
+	LD	D,A		;D = P1,P2,P3 = ROMの基本スロットレジスタ
+	DI			;（以下スタック使用不可）
+	OUT	(#0xA8),A	;一旦P1,P2,P3をROMの基本スロットにする
+
+	LD	A,(#0xFFFF)	;拡張スロット情報を読む
+	CPL
+	; SLA	A
+	; SLA	A
+	AND	#0b00001100	;P1 ROMの拡張スロット番号をP2の位置に
+	LD	B,A
+	LD	A,(#0xFFFF)
+	CPL
+	AND	#0b11111111
+	OR	B
+	LD	B,A		;B = P1,P2 = ROMの拡張スロットレジスタ
+
+	LD	A,E
+	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
+	EI			;（以下スタック使用可）
+
+	EX	AF,AF'		;ROMのスロット番号を裏Aから復帰
+
+	;----------ワークエリアに値を書き込む
+	LD	HL,#ROM1_S
+
+	;HACK:
+	LD	A,B
+	AND	#0b00001100
+	LD	C,A
+	LD	A,D
+	AND	#0b11001100
+	LD	D,A
+	;;
+
+	;LD	(HL),A		;ROMの存在するスロット番号
+	INC	HL
+	LD	(HL),B		;P1,P2 = ROMの拡張スロットレジスタの値
+	INC	HL
+	LD	(HL),C		;P1,P2 = ROMの基本スロットレジスタの値
+	INC	HL
+	LD	(HL),D		;P1,P2,P3 = ROMの基本スロットレジスタの値
+
+	;HACK:
+	RET
+	;----------パラメータ表示
+	PUSH	AF
+	LD	HL,#STR_ROM	;ROM SLOT:
+	CALL	STRPUT
+	POP	AF
+	CALL	_PUT_A
+
+	LD	HL,#STR_B
+	CALL	STRPUT
+	LD	A,B
+	CALL	_PUT_A
+
+	LD	HL,#STR_C
+	CALL	STRPUT
+	LD	A,C
+	CALL	_PUT_A
+
+	LD	HL,#STR_D
+	CALL	STRPUT
+	LD	A,D
+	CALL	_PUT_A
+
+	LD	HL,#STR_CRLF
+	CALL	STRPUT
 
 	RET
 
@@ -982,53 +1128,53 @@ PutL01:	LD	E,A
 ;注）	A BCと裏AFは破壊される
 ;	DIしてからコールする
 ;=======================================
-P2_CHG:
-	PUSH	AF
-	RLCA
-	RLCA
-	RLCA
-	RLCA
-	AND	#0b00110000
-	LD	B,A
-	IN	A,(#0xA8)	;基本スロット情報を読む
-	AND	#0b11001111
-	OR	B
-	OUT	(#0xA8),A	;基本スロットP2をターゲットにする
-	LD	C,A		;P3をRAMに戻す情報をCに入れる
+; P2_CHG:
+; 	PUSH	AF
+; 	RLCA
+; 	RLCA
+; 	RLCA
+; 	RLCA
+; 	AND	#0b00110000
+; 	LD	B,A
+; 	IN	A,(#0xA8)	;基本スロット情報を読む
+; 	AND	#0b11001111
+; 	OR	B
+; 	OUT	(#0xA8),A	;基本スロットP2をターゲットにする
+; 	LD	C,A		;P3をRAMに戻す情報をCに入れる
 
-	POP	AF
-	BIT	7,A		;拡張スロット指定か？
-	RET	Z
+; 	POP	AF
+; 	BIT	7,A		;拡張スロット指定か？
+; 	RET	Z
 
-	;==============P3切り替え
-	PUSH	AF
-	EX	AF,AF'		;スロット番号を裏Aに退避
-	RLC	B
-	RLC	B		;基本スロット番号をP3の位置に
+; 	;==============P3切り替え
+; 	PUSH	AF
+; 	EX	AF,AF'		;スロット番号を裏Aに退避
+; 	RLC	B
+; 	RLC	B		;基本スロット番号をP3の位置に
 	
-	LD	A,C
-	AND	#0b00111111
-	OR	B		;（以下スタック使用不可）
-	OUT	(#0xA8),A	;P3をターゲットの基本スロットにする
+; 	LD	A,C
+; 	AND	#0b00111111
+; 	OR	B		;（以下スタック使用不可）
+; 	OUT	(#0xA8),A	;P3をターゲットの基本スロットにする
 
-	EX	AF,AF'		;裏Aからスロット番号を復帰
-	RLCA
-	RLCA
-	AND	#0b00110000
-	LD	B,A		;拡張スロット番号をP2の位置に
-	LD	A,(#0xFFFF)	;拡張スロット情報を読む
-	CPL
-	AND	#0b11001111
-	OR	B
-	LD	(#0xFFFF),A	;拡張スロットをP2ターゲットにする
+; 	EX	AF,AF'		;裏Aからスロット番号を復帰
+; 	RLCA
+; 	RLCA
+; 	AND	#0b00110000
+; 	LD	B,A		;拡張スロット番号をP2の位置に
+; 	LD	A,(#0xFFFF)	;拡張スロット情報を読む
+; 	CPL
+; 	AND	#0b11001111
+; 	OR	B
+; 	LD	(#0xFFFF),A	;拡張スロットをP2ターゲットにする
 
-	LD	A,C
-	OUT	(#0xA8),A	;P3をRAMに戻す
+; 	LD	A,C
+; 	OUT	(#0xA8),A	;P3をRAMに戻す
 
-	;=============P3 切り替え完了（以下スタック使用可）
+; 	;=============P3 切り替え完了（以下スタック使用可）
 
-	POP	AF
-	RET
+; 	POP	AF
+; 	RET
 
 
 ;====================================================================
@@ -1098,7 +1244,7 @@ P2_CHG:
 ;=================================
 ;文字列データ
 ;=================================
-STR_VER:	.ascii	"SoundCatridge detctor ver.0.03\r\n"
+STR_VER:	.ascii	"SoundCatridge detctor ver.0.03++\r\n"
 		    .ascii	"Copyright (C)2022 Niga\r\n\r\n$"
 STR_APRL:	.ascii	"APRLOPLL"
 STR_OPM:	.ascii	"MCHFM0"
@@ -1173,6 +1319,15 @@ P1_CAL:
 	LD	A,E
 	OUT	(#0xA8),A	;元の基本スロットの状態に戻す
 	EI			;（以下スタック使用可）
+
+	;HACK:
+	LD	A,B
+	AND	#0b00001100
+	LD	C,A
+	LD	A,D
+	AND	#0b11001100
+	LD	D,A
+	;;
 
 	POP	AF
 	RET

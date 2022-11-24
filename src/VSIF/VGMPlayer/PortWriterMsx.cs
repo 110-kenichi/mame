@@ -70,10 +70,10 @@ namespace zanac.VGMPlayer
                             ds.AddRange(sd);
 
                             //バンク切り替えが必要な分のウエイト
-                            ds.AddRange(new byte[5] { 0, 0, 0, 0, 0 });
+                            ds.AddRange(new byte[2] { 0, 0 });
                             //バンク切り替えが必要な分のウエイト
                             if (lastOpllType < 0)
-                                ds.AddRange(new byte[4] { 0, 0, 0, 0 });
+                                ds.AddRange(new byte[2] { 0, 0 });
 
                             lastOpllType = dt.Address;
                             lastOpllSlot = dt.Data;
@@ -99,12 +99,12 @@ namespace zanac.VGMPlayer
 
                             //バンク切り替えが必要な分のウエイト
                             if (dt.Address < 4)
-                                ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });   //自動選択方式
+                                ds.AddRange(new byte[4] { 0, 0, 0, 0 });   //自動選択方式
                             else
-                                ds.AddRange(new byte[7] { 0, 0, 0, 0, 0, 0, 0 });  //従来方式
+                                ds.AddRange(new byte[6] { 0, 0, 0, 0, 0, 0 });  //従来方式
                             //バンク切り替えが必要な分のウエイト
                             if (lastSccType < 0)
-                                ds.AddRange(new byte[4] { 0, 0, 0, 0 });
+                                ds.AddRange(new byte[2] { 0, 0 });
 
                             lastSccType = dt.Address;
                             lastSccSlot = dt.Data;
@@ -129,7 +129,7 @@ namespace zanac.VGMPlayer
                             ds.AddRange(sd);
 
                             //バンク切り替えが必要な分のウエイト
-                            ds.AddRange(new byte[5] { 0, 0, 0, 0, 0 });   //自動選択方式
+                            ds.AddRange(new byte[2] { 0, 0 });   //自動選択方式
 
                             lastDataType = dt.Type;
                             lastWriteSccAddress = dt.Address;

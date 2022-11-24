@@ -29,13 +29,13 @@ run:
 start.rel: start.asm
 	sdasz80.exe -y -o start.rel start.asm
 
-uart-4800.rel: uart-4800.asm const.inc 
+uart-4800.rel: uart-4800.asm const.inc macro.inc
 	sdasz80.exe -y -o uart-4800.rel uart-4800.asm
 
 uart-4800_p2.rel: uart-4800_p2.asm const.inc macro.inc
 	sdasz80.exe -y -o uart-4800_p2.rel uart-4800_p2.asm
 
-SARCHFM.rel: SARCHFM.asm const.inc 
+SARCHFM.rel: SARCHFM.asm const.inc macro.inc
 	sdasz80.exe -y -o SARCHFM.rel SARCHFM.asm
 
 .c.rel: 

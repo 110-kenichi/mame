@@ -64,12 +64,14 @@ OPM0_S	= #0xE010
 
 OPM1_S	= #0xE014
 
-ROM_S	= #0xE018
+ROM2_S	= #0xE018
 
-DCSG_F	= #0xE01C		;発見された音源の数
-OPLL_F	= #0xE01D		;OPLLは bit7:1 = EXT / bit0 = INT
-SCC_F	= #0xE01E
-OPM_F	= #0xE01F
+ROM1_S	= #0xE01C
+
+DCSG_F	= #0xE020		;発見された音源の数
+OPLL_F	= #0xE021		;OPLLは bit7:1 = EXT / bit0 = INT
+SCC_F	= #0xE022
+OPM_F	= #0xE023
 
 
 ; LD  A, H
