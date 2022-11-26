@@ -41,10 +41,7 @@ _uart_processVgm::
     LD  A,C             ; 
     OUT (PSGAD),A       ; 
 
-    ; LD   A,(ROM2_S)
-    ; CALL P2_CHG          ; 48 + 300
-    ; .globl _uart_processVgm_P2
-    ; JP  _uart_processVgm_P2  ; 11
+    ;JP  TEST_CHG_P2
 
 __VGM_LOOP:
 __VGM_TYPE:
@@ -61,8 +58,18 @@ __VGM_TYPE:
 _END_VGM:
     JP  _END_VGM 
 
-    ;_P0_CHG
     _P2_CHG
+
+TEST_CHG_P2:
+    LD   A,(ROM2_S)
+    LD   HL,#0x8000
+    CALL    ENASLT
+    .globl _uart_processVgm_P2
+    JP  _uart_processVgm_P2  ; 11
+    ; LD   HL,(ROM2_S+2)
+    ; P2_CHG2          ; 48 + 300
+    ; .globl _uart_processVgm_P2
+    ; JP  _uart_processVgm_P2  ; 11
 
 ;=======================================================
     .ORG 0x6000
@@ -232,9 +239,6 @@ __ENA_SCC:
 
 ;=======================================================
     .ORG 0x6C00
-__WRITE_OPLL_MEM_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
@@ -259,100 +263,59 @@ __WRITE_OPLL_MEM_DUMMY:
 
 ;=======================================================
     .ORG 0x7200
-__DUMMY_0x7200:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7300
-__DUMMY_0x7300:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7400
-__DUMMY_0x7400:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7500
-__DUMMY_0x7500:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7600
-__DUMMY_0x7600:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7700
-__DUMMY_0x7700:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7800
-__DUMMY_0x7800:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7900
-__DUMMY_0x7900:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7A00
-__DUMMY_0x7A00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7B00
-__DUMMY_0x7B00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7C00
-__DUMMY_0x7C00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7D00
 __DUMMY_0x7D00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7E00
-__DUMMY_0x7E00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0x7F00
-__DUMMY_0x7F00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================

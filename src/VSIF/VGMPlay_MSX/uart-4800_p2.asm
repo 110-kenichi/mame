@@ -148,44 +148,26 @@ __SELECT_SCC_SLOT:
 
 ;=======================================================
     .ORG 0xA400
-__WRITE_SCC1_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xA500
-__WRITE_SCC_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xA600
-__WRITE_SCC1_2BYTES_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xA700
-__WRITE_SCC_2BYTES_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xA800
-__WRITE_SCC1_32_BYTES_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xA900
-__WRITE_SCC_32_BYTES_DUMMY:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
@@ -222,100 +204,58 @@ __WRITE_SCC_32_BYTES_DUMMY:
 
 ;=======================================================
     .ORG 0xB200
-__DUMMY_0xB200:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB300
-__DUMMY_0xB300:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB400
-__DUMMY_0xB400:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB500
-__DUMMY_0xB500:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB600
-__DUMMY_0xB600:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB700
-__DUMMY_0xB700:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB800
-__DUMMY_0xB800:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xB900
-__DUMMY_0xB900:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBA00
-__DUMMY_0xBA00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBB00
-__DUMMY_0xBB00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBC00
-__DUMMY_0xBC00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBD00
-__DUMMY_0xBD00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBE00
-__DUMMY_0xBE00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================
     .ORG 0xBF00
-__DUMMY_0xBF00:
-    READ_ADRS           ;61
-    READ_DATA           ;55
     JP __VGM_LOOP       ; 
 
 ;=======================================================

@@ -121,6 +121,10 @@ SSCAN_1:
 
 	;========拡張スロット検索ループ
 SSCAN_2:
+	LD	HL,#ROM2_S
+	CP	(HL)
+	JP	Z,SSCAN_6	;ROMの場合はスキップで良い
+
 	CALL	CKSLT		;カートリッジチェックへ
 	JP	NC,SSCAN_6	;音源は見つからず
 
@@ -287,9 +291,13 @@ OPLL_INI2:
 ;===================================
 
 _END:
-	LD	HL,#STR_COMP	;complete MES
-	;HACK:
+	;LD	HL,#STR_COMP	;complete MES
+	;LD	HL,#STR_SCC
 	;CALL	STRPUT
+
+	LD	A,(ROM2_S)
+	LD	H,#0x80
+	call	ENASLT
 
 	.globl _uart_processVgm
 	JP	_uart_processVgm
@@ -324,109 +332,162 @@ CKSLT:
 	ld	(hl),a
 	jp	NZ,S_SCC	;RAMでない＝SCC検索へ
 
+	JP	S_END
+
 S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
-
 	DI
-	LD	A,#0x80
-	OUT	(#0x3C),A	;MMM mapped IO enable
-	LD	HL,#0x80FE
 
-	LD	A,#0x13
-	OUT	(#0xFE),A	;Page2 mapper register write
-	LD	B,A
-	LD	A,(HL)
-	AND	#0b00111111
-	XOR	B
-	JP	NZ,S_MMM3
-
-	LD	A,#0x2F
-	OUT	(#0xFE),A	;Page2 mapper register write
-	LD	B,A
-	LD	A,(HL)
-	AND	#0b00111111
-	XOR	B
-	JP	NZ,S_MMM3
-
-	LD	A,#0x3D
-	OUT	(#0xFE),A	;Page2 mapper register write
-	LD	B,A
-	LD	A,(HL)
-	AND	#0b00111111
-	XOR	B
-	JP	NZ,S_MMM3
-
-S_MMM2:	LD	A,#0x40
-	LD	(#0x803C),A	;DCSG 有効化
-	XOR	A
-	OUT	(#0x3C),A	;MMM mapped IO disable
-
-	LD      A,#0x9F		;DCSG VOLUME=0に初期化
-	OUT     (#0x3F),A
-	LD      A,#0xBF
-	OUT     (#0x3F),A
-	LD      A,#0xDF
-	OUT     (#0x3F),A
-	LD      A,#0xFF
-	OUT     (#0x3F),A
-
-	LD	A,(DCSG_F)
-	INC	A
-	LD	(DCSG_F),A
-
+	;https://www.msx.org/wiki/Popolon_Musical_Memory_Mapper
+	ld a,#0x080
+	out (#0x3C),a ; Enables access to registers by addressing
+	ld a,(hl) ; The value read in address 080FFh (or 040FFh)
+	and #0b00011111 ;
+	inc a ; must be
+	;
+	out	(#0xFF),a ; equal to the value
+	or	#0b11000000 ;
+	cp	(hl) ; written to the port 0FFh
+	ld	a,#0
+	out	(#0x3C),a ; Disables access to the registers by addressing
+	out	(#0xFF),a ; Restore the page of system working area
+	ei
+	ld	a,c ; Slot Number in the form F000SSPP
+	jr	z,mmm_found
+	;or	#0xFF ; MMM not found -> A = 0FFh R = bit Z à 0
+	JP	S_END
+mmm_found:
 	XOR	A		;A=0 DCSG発見
 	JP	S_HIT
 
-S_MMM3:	XOR	A
-	OUT	(#0x3C),A	;MMM mapped IO disable
-	JP	S_END
+; 	DI
+; 	LD	A,#0x80
+; 	OUT	(#0x3C),A	;MMM mapped IO enable
+; 	LD	HL,#0x80FE
+
+; 	LD	A,#0x13
+; 	OUT	(#0xFE),A	;Page2 mapper register write
+; 	LD	B,A
+; 	LD	A,(HL)
+; 	AND	#0b00111111
+; 	XOR	B
+; 	JP	NZ,S_MMM3
+
+; 	LD	A,#0x2F
+; 	OUT	(#0xFE),A	;Page2 mapper register write
+; 	LD	B,A
+; 	LD	A,(HL)
+; 	AND	#0b00111111
+; 	XOR	B
+; 	JP	NZ,S_MMM3
+
+; 	LD	A,#0x3D
+; 	OUT	(#0xFE),A	;Page2 mapper register write
+; 	LD	B,A
+; 	LD	A,(HL)
+; 	AND	#0b00111111
+; 	XOR	B
+; 	JP	NZ,S_MMM3
+
+; S_MMM2:	LD	A,#0x40
+; 	LD	(#0x803C),A	;DCSG 有効化
+; 	XOR	A
+; 	OUT	(#0x3C),A	;MMM mapped IO disable
+
+; 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
+; 	OUT     (#0x3F),A
+; 	LD      A,#0xBF
+; 	OUT     (#0x3F),A
+; 	LD      A,#0xDF
+; 	OUT     (#0x3F),A
+; 	LD      A,#0xFF
+; 	OUT     (#0x3F),A
+
+; 	LD	A,(DCSG_F)
+; 	INC	A
+; 	LD	(DCSG_F),A
+
+; 	XOR	A		;A=0 DCSG発見
+; 	JP	S_HIT
+
+; S_MMM3:	XOR	A
+; 	OUT	(#0x3C),A	;MMM mapped IO disable
+
+; 	JP	S_END
 
 S_SCC:	;-----------------------SCCがあるか調べる
-	XOR	A
-	LD	(#0xBFFE),A
+	LD	A,(#0x9000)
+	LD	H,A
+	LD	A,(#0x9800)
+	LD	L,A
+	PUSH	HL
+
+		;SCC enable
+		LD      HL,#0x9000
+		LD      A,#0x3F
+		LD      (HL),A
+
+		LD	HL,#0x9800
+		LD	A,(HL)		;9800hに書き込めたらSCC
+		CPL
+		LD	(HL),A
+		CP	(HL)
+		CPL
+		LD	(HL),A
+
+	POP	HL
+	LD	A,H
 	LD	(#0x9000),A
-	LD	HL,#0x9800
-	LD	A,(HL)		;9800hに書き込めたらSCCなし
-	CPL
-	LD	(HL),A
-	CP	(HL)
-	CPL
-	LD	(HL),A
-	JP	Z,S_OPLL	;書き込めればSCC無し
+	LD	A,L
+	LD	(#0x9800),A
 
-	LD	A,#0x3F
-	LD	(#0x9000),A	;SCCを表に出す
-	LD	HL,#0x9800
-	LD	A,(HL)		;9800hに書き込めればSCCあり
-	CPL
-	LD	(HL),A
-	CP	(HL)
-	CPL
-	LD	(HL),A
-	JP	NZ,S_OPLL	;書き込めないのでSCC無し
-	
-	;-------------------SCCかSCC-1か調べる
-	LD	A,(SCC_F)
-	INC	A
-	LD	(SCC_F),A
+	JP	NZ,NO_SCC	;書き込めなければSCC無し
 
-	LD	A,#0x20
+		LD	A,(SCC_F)
+		INC	A
+		LD	(SCC_F),A
+
+		LD	B,#2		;A=2 SCC発見
+		JP	S_HIT		;書き込めればSCC
+
+NO_SCC:
+	LD	A,(#0xBFFE)
+	LD	H,A
+	LD	A,(#0xB000)
+	LD	L,A
+	PUSH	HL
+
+		;SCC+ enable
+		LD      HL,#0xBFFE   ;
+		LD      A,#0x20      ;
+		LD      (HL),A       ;
+		LD      HL,#0xB000   ;
+		LD      A,#0x80      ;
+		LD      (HL),A       ;
+
+		LD	HL,#0xB800
+		LD	A,(HL)		;B800hに書き込めたらSCC-1
+		CPL
+		LD	(HL),A
+		CP	(HL)
+		CPL
+		LD	(HL),A
+
+	POP	HL
+	LD	A,H
 	LD	(#0xBFFE),A
-	LD	A,#0x80	
-	LD	(#0xB000),A	;SCC-1を固有モードにする
-	LD	HL,#0xB800
+	LD	A,L
+	LD	(#0xB000),A
 
-	LD	A,(HL)		;B800hに書き込めればSCC-1あり
-	CPL
-	LD	(HL),A
-	CP	(HL)
-	CPL
-	LD	(HL),A
-	LD	A,#1		;A=1 SCC-1発見
-	JP	Z,S_HIT		;書き込めればSCC-1
+	JP	NZ,NO_SCC1	;書き込めなければSCC無し
 
-	INC	A		;A=2 SCC発見
-	JP	S_HIT
+		LD	A,(SCC_F)
+		INC	A
+		LD	(SCC_F),A
 
+		LD	B,#1		;A=1 SCC-1発見
+		JP	S_HIT		;書き込めればSCC
+
+NO_SCC1:
 S_OPLL:	;------------------------ OPLLか調べる
 	LD	HL,#0x4018
 	EXX
@@ -579,7 +640,7 @@ FM_INI1:
 	;HACK: P1_CALを呼ぶ前にスロットを変更する必要がある
 	PUSH	AF
 	PUSH	BC
-	LD   A,(ROM2_S)
+	LD   	A,(ROM2_S)
     CALL 	P2_CHG          ; 48 + 300
     POP  	BC              ; 11
 	POP		AF
@@ -1262,7 +1323,7 @@ STR_C:		.ascii	" C:$"
 STR_D:		.ascii	" D:$"
 STR_CRLF:	.ascii	"\r\n\r\n$"
 STR_COMP:	.ascii	"\r\nOPLL initialize completed.$"
-
+STR_SCC:	.ascii	"\r\n*If SCC not detected, please specify the slot No. manually.$"
 
 ;============================================================
 ;スロット選択レジスタの事前計算　PAGE1(OPLL)用
@@ -1279,7 +1340,7 @@ STR_COMP:	.ascii	"\r\nOPLL initialize completed.$"
 ;注：	裏AF、Eは破壊される
 ;============================================================
     .area   _HEADER3 (ABS)
-	.ORG 0x9000
+	.ORG 0x9800
 P1_CAL:
 	PUSH	AF
 	LD	B,A
