@@ -31,6 +31,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortSCC;
         private VsifClient comPortY8910;
         private VsifClient comPortOPM;
+        private VsifClient comPortOPL3;
 
         private BinaryReader vgmReader;
 
@@ -205,6 +206,23 @@ namespace zanac.VGMPlayer
 
                 comPortOPM.FlushDeferredWriteData();
             }
+            if (comPortOPL3 != null)
+            {
+                comPortOPL3.ClearDeferredWriteData();
+
+                //KOFF
+                for (int i = 0; i < 9; i++)
+                    YMF262WriteData((byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
+                for (int i = 0; i < 9; i++)
+                    YMF262WriteData((byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
+                for (int i = 0; i < 18; i++)
+                    for (int op = 0; op < 2; op++)
+                        YMF262WriteData(0x40, op, i, 0, 0, 63);
+
+
+                comPortOPL3.FlushDeferredWriteData();
+            }
+
             //SCC
             comPortSCC?.DeferredWriteData(4, (byte)0xaf, (byte)00, (int)Settings.Default.BitBangWaitSCC);
             comPortSCC?.DeferredWriteData(5, (byte)0x8f, (byte)00, (int)Settings.Default.BitBangWaitSCC);
@@ -220,6 +238,89 @@ namespace zanac.VGMPlayer
             Thread.Sleep(50);
         }
 
+        private static byte[] chAddressOffset = new byte[] { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 };
+
+        private static byte[,] op2chConselTable = new byte[,] {
+            { 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 },
+            { 01, 02, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00 ,00 },
+            { 02, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00, 00, 00, 00 },
+            { 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 10, 11, 13, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 11, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+            { 06, 07, 08, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
+        };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void YMF262WriteData(uint address, int op, int slot, byte opmode, int consel, byte data)
+        {
+            //useCache = false;
+            var adrL = address & 0xff;
+            var adrH = (address & 0x100) >> 7;  // 0 or 2
+            switch (opmode)
+            {
+                //Channel        0   1   2   3   4   5   6   7   8
+                //Operator 1    00  01  02  06  07  09  0C  0D  0E
+                //Operator 2    03  04  05  09  0A  0B  0F  10  11
+                case 0:
+                case 1:
+                    slot = op2chConselTable[consel, slot];
+                    if (slot >= 9)
+                    {
+                        adrH = 2;
+                        slot = slot - 9;
+                    }
+                    break;
+                //Channel        0   1   2    
+                //Operator 1    00  01  02  
+                //Operator 2    03  04  05  
+                //Operator 3    07  08  09  
+                //Operator 4    0A  0B  0C  
+                default:
+                    if (slot >= 3)
+                    {
+                        adrH = 2;
+                        slot -= 3;
+                    }
+                    if (op >= 2)
+                    {
+                        op -= 2;
+                        slot += 3;
+                    }
+                    break;
+            }
+
+            byte chofst = 0;
+            switch (adrL)
+            {
+                case 0x20:
+                case 0x40:
+                case 0x60:
+                case 0x80:
+                case 0xe0:
+                    chofst = chAddressOffset[slot];
+                    break;
+                case 0xa0:
+                case 0xb0:
+                case 0xc0:
+                    chofst = (byte)slot;
+                    break;
+            }
+
+            var adr = (byte)(adrL + (op * 3) + chofst);
+            address = (adrH << 8) | adr;
+
+            switch (adrH)
+            {
+                case 0:
+                    comPortOPL3.WriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                    break;
+                case 2:
+                    comPortOPL3.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                    break;
+            }
+        }
 
         /// <summary>
         /// 
@@ -404,6 +505,16 @@ namespace zanac.VGMPlayer
                     case 0:
                         comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPM_Port);
+                        break;
+                }
+            }
+            if (curHead.lngHzYMF262 != 0)
+            {
+                switch (Settings.Default.OPL3_IF)
+                {
+                    case 0:
+                        comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPL3_Port);
                         break;
                 }
             }
@@ -798,6 +909,45 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
+                                    case 0x5E: //YMF262
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortOPL3 != null)
+                                            {
+                                                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                {
+                                                    comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
+                                                }
+                                            }
+                                        }
+                                        break;
+
+                                    case 0x5F: //YMF262
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortOPL3 != null)
+                                            {
+                                                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                {
+                                                    comPortOPL3.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
+                                                }
+                                            }
+                                        }
+                                        break;
+
+
                                     case 0x61: //Wait N samples
                                         {
                                             ushort time = vgmReader.ReadUInt16();
@@ -1188,6 +1338,8 @@ namespace zanac.VGMPlayer
                 comPortY8910 = null;
                 comPortOPM?.Dispose();
                 comPortOPM = null;
+                comPortOPL3?.Dispose();
+                comPortOPL3 = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

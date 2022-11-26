@@ -429,5 +429,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["OPLL_Slot"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPL3_IF {
+            get {
+                return ((int)(this["OPL3_IF"]));
+            }
+            set {
+                this["OPL3_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OPL3_Enable {
+            get {
+                return ((bool)(this["OPL3_Enable"]));
+            }
+            set {
+                this["OPL3_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPL3_Slot {
+            get {
+                return ((int)(this["OPL3_Slot"]));
+            }
+            set {
+                this["OPL3_Slot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPL3_Port {
+            get {
+                return ((int)(this["OPL3_Port"]));
+            }
+            set {
+                this["OPL3_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("18")]
+        public decimal BitBangWaitOPL3 {
+            get {
+                return ((decimal)(this["BitBangWaitOPL3"]));
+            }
+            set {
+                this["BitBangWaitOPL3"] = value;
+            }
+        }
     }
 }

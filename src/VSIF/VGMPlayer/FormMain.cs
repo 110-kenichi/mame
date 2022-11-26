@@ -35,6 +35,7 @@ namespace zanac.VGMPlayer
             comboBoxY8910.SelectedIndex = 0;
             comboBoxOPM.SelectedIndex = 0;
             comboBoxOpmSlot.SelectedIndex = 0;
+            comboBoxOPL3.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -51,6 +52,7 @@ namespace zanac.VGMPlayer
             checkBoxConnSCC.Checked = false;
             checkBoxConnY8910.Checked = false;
             checkBoxConnOPM.Checked = false;
+            checkBoxConnOPL3.Checked = false;
 
             //checkBoxConnDCSG_CheckedChanged(null, null);
             //checkBoxConnOPLL_CheckedChanged(null, null);
@@ -132,6 +134,7 @@ namespace zanac.VGMPlayer
             comPortSCC?.Dispose();
             comPortY8910?.Dispose();
             comPortOPM?.Dispose();
+            comPortOPL3?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -894,6 +897,31 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private VsifClient comPortOPL3;
+
+        private void checkBoxConnOPL3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnOPL3.Checked)
+            {
+                switch (Settings.Default.OPL3_IF)
+                {
+                    case 0:
+                        comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPL3_Port, false);
+                        break;
+                }
+                checkBoxConnOPL3.Checked = comPortOPL3 != null;
+                comboBoxOPL3.Enabled = comPortOPL3 == null;
+                comboBoxPortOPL3.Enabled = comPortOPL3 == null;
+            }
+            else
+            {
+                comboBoxOPL3.Enabled = true;
+                comboBoxPortOPL3.Enabled = true;
+                comPortOPL3?.Dispose();
+            }
+        }
+
         private void listViewList_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             switch (listViewList.Sorting)
@@ -1016,6 +1044,8 @@ namespace zanac.VGMPlayer
             ab.Text = this.Text;
             ab.ShowDialog();
         }
+
+
     }
 
     internal static class NativeConstants
