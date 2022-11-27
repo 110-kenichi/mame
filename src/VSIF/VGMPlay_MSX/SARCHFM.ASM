@@ -332,10 +332,12 @@ CKSLT:
 	ld	(hl),a
 	jp	NZ,S_SCC	;RAMでない＝SCC検索へ
 
-	JP	S_END
+;	↓ つづく	JP	S_END
 
 S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	DI
+	
+	ld	hl,#0x80FF	; The value read in address 080FFh (or 040FFh)
 
 	;https://www.msx.org/wiki/Popolon_Musical_Memory_Mapper
 	ld a,#0x080
@@ -359,60 +361,66 @@ mmm_found:
 	XOR	A		;A=0 DCSG発見
 	JP	S_HIT
 
-; 	DI
-; 	LD	A,#0x80
-; 	OUT	(#0x3C),A	;MMM mapped IO enable
-; 	LD	HL,#0x80FE
+ 	DI
+ 	LD	A,#0x80
+ 	OUT	(#0x3C),A	;MMM mapped IO enable
+ 	LD	HL,#0x80FE
 
-; 	LD	A,#0x13
-; 	OUT	(#0xFE),A	;Page2 mapper register write
-; 	LD	B,A
-; 	LD	A,(HL)
-; 	AND	#0b00111111
-; 	XOR	B
-; 	JP	NZ,S_MMM3
+ 	LD	A,#0x13
+ 	OUT	(#0xFE),A	;Page2 mapper register write
+ 	LD	B,A
+ 	LD	A,(HL)
+ 	AND	#0b00111111
+ 	XOR	B
+ 	JP	NZ,S_MMM3
 
-; 	LD	A,#0x2F
-; 	OUT	(#0xFE),A	;Page2 mapper register write
-; 	LD	B,A
-; 	LD	A,(HL)
-; 	AND	#0b00111111
-; 	XOR	B
-; 	JP	NZ,S_MMM3
+ 	LD	A,#0x2F
+ 	OUT	(#0xFE),A	;Page2 mapper register write
+ 	LD	B,A
+ 	LD	A,(HL)
+ 	AND	#0b00111111
+ 	XOR	B
+ 	JP	NZ,S_MMM3
 
-; 	LD	A,#0x3D
-; 	OUT	(#0xFE),A	;Page2 mapper register write
-; 	LD	B,A
-; 	LD	A,(HL)
-; 	AND	#0b00111111
-; 	XOR	B
-; 	JP	NZ,S_MMM3
+ 	LD	A,#0x3D
+ 	OUT	(#0xFE),A	;Page2 mapper register write
+ 	LD	B,A
+ 	LD	A,(HL)
+ 	AND	#0b00111111
+ 	XOR	B
+ 	JP	NZ,S_MMM3
 
-; S_MMM2:	LD	A,#0x40
-; 	LD	(#0x803C),A	;DCSG 有効化
-; 	XOR	A
-; 	OUT	(#0x3C),A	;MMM mapped IO disable
+ S_MMM2:
+ 	LD	A,#0x40
+ 	LD	(#0x803C),A	;DCSG 有効化
+ 	XOR	A
+ 	OUT	(#0x3C),A	;MMM mapped IO disable
+ 	INC	A			;A = 1
+ 	OUT	(#0xFE),A	;Page2 mapper register = default
 
-; 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
-; 	OUT     (#0x3F),A
-; 	LD      A,#0xBF
-; 	OUT     (#0x3F),A
-; 	LD      A,#0xDF
-; 	OUT     (#0x3F),A
-; 	LD      A,#0xFF
-; 	OUT     (#0x3F),A
+ 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
+ 	OUT     (#0x3F),A
+ 	LD      A,#0xBF
+ 	OUT     (#0x3F),A
+ 	LD      A,#0xDF
+ 	OUT     (#0x3F),A
+ 	LD      A,#0xFF
+ 	OUT     (#0x3F),A
 
-; 	LD	A,(DCSG_F)
-; 	INC	A
-; 	LD	(DCSG_F),A
+ 	LD	A,(DCSG_F)
+ 	INC	A
+ 	LD	(DCSG_F),A
 
-; 	XOR	A		;A=0 DCSG発見
-; 	JP	S_HIT
+ 	XOR	A		;A=0 DCSG発見
+ 	JP	S_HIT
 
-; S_MMM3:	XOR	A
-; 	OUT	(#0x3C),A	;MMM mapped IO disable
+ S_MMM3:	
+ 	XOR	A
+ 	OUT	(#0x3C),A	;MMM mapped IO disable
+ 	INC	A			;A = 1
+ 	OUT	(#0xFE),A	;Page2 mapper register = default
 
-; 	JP	S_END
+ 	JP	S_END
 
 S_SCC:	;-----------------------SCCがあるか調べる
 	LD	A,(#0x9000)
