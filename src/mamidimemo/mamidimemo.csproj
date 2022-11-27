@@ -637,38 +637,38 @@
     <Compile Include="VSIF\PortWriter.cs" />
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
-    <None Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
+    <Content Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
       <Link>VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.bin">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.bin">
       <Link>VGMPlay_msx.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
       <Link>VGMPlay_msx.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
       <Link>VGMPlay_nes.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_fds.fds">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_fds.fds">
       <Link>VGMPlay_nes_fds.fds</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_mmc5.nes">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_mmc5.nes">
       <Link>VGMPlay_nes_mmc5.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_vrc6.nes">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_vrc6.nes">
       <Link>VGMPlay_nes_vrc6.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="Data\cm32p_user_internal_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
