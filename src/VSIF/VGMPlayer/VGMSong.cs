@@ -1291,6 +1291,7 @@ namespace zanac.VGMPlayer
             comPortSCC?.FlushDeferredWriteData();
             comPortY8910?.FlushDeferredWriteData();
             comPortOPM?.FlushDeferredWriteData();
+            comPortOPL3?.FlushDeferredWriteData();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;

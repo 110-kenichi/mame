@@ -303,7 +303,7 @@ __WRITE_OPL3_IO1:
     READ_DATA           ; 55
 
     LD  A,D             ; 
-    OUT (OPL3WR),A      ; 17 72
+    OUT (OPL3WR1),A      ; 17 72
 
     ; Continuous Write
     INC B               ; 
@@ -335,7 +335,7 @@ __WRITE_OPL3_IO2:
     READ_DATA           ; 55
 
     LD  A,D             ; 
-    OUT (OPL3WR),A      ; 
+    OUT (OPL3WR2),A      ; 
 
     ; Continuous Write
     INC B               ; 

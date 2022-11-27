@@ -117,7 +117,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitOPL3" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">18</Value>
+      <Value Profile="(Default)">21</Value>
     </Setting>
   </Settings>
 </SettingsFile>

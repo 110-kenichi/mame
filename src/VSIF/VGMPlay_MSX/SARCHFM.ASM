@@ -293,7 +293,8 @@ OPLL_INI2:
 _END:
 	;LD	HL,#STR_COMP	;complete MES
 	;LD	HL,#STR_SCC
-	;CALL	STRPUT
+	LD	HL,#STR_NOTE
+	CALL	STRPUT
 
 	LD	A,(ROM2_S)
 	LD	H,#0x80
@@ -332,95 +333,68 @@ CKSLT:
 	ld	(hl),a
 	jp	NZ,S_SCC	;RAMでない＝SCC検索へ
 
-;	↓ つづく	JP	S_END
-
 S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
+
 	DI
-	
-	ld	hl,#0x80FF	; The value read in address 080FFh (or 040FFh)
+	LD	A,#0x80
+	OUT	(#0x3C),A	;MMM mapped IO enable
+	LD	HL,#0x80FE
 
-	;https://www.msx.org/wiki/Popolon_Musical_Memory_Mapper
-	ld a,#0x080
-	out (#0x3C),a ; Enables access to registers by addressing
-	ld a,(hl) ; The value read in address 080FFh (or 040FFh)
-	and #0b00011111 ;
-	inc a ; must be
-	;
-	out	(#0xFF),a ; equal to the value
-	or	#0b11000000 ;
-	cp	(hl) ; written to the port 0FFh
-	ld	a,#0
-	out	(#0x3C),a ; Disables access to the registers by addressing
-	out	(#0xFF),a ; Restore the page of system working area
-	ei
-	ld	a,c ; Slot Number in the form F000SSPP
-	jr	z,mmm_found
-	;or	#0xFF ; MMM not found -> A = 0FFh R = bit Z à 0
-	JP	S_END
-mmm_found:
-	XOR	A		;A=0 DCSG発見
-	JP	S_HIT
+	LD	A,#0x13
+	OUT	(#0xFE),A	;Page2 mapper register write
+	LD	B,A
+	LD	A,(HL)
+	AND	#0b00111111
+	XOR	B
+	JP	NZ,S_MMM3
 
- 	DI
- 	LD	A,#0x80
- 	OUT	(#0x3C),A	;MMM mapped IO enable
- 	LD	HL,#0x80FE
+	LD	A,#0x2F
+	OUT	(#0xFE),A	;Page2 mapper register write
+	LD	B,A
+	LD	A,(HL)
+	AND	#0b00111111
+	XOR	B
+	JP	NZ,S_MMM3
 
- 	LD	A,#0x13
- 	OUT	(#0xFE),A	;Page2 mapper register write
- 	LD	B,A
- 	LD	A,(HL)
- 	AND	#0b00111111
- 	XOR	B
- 	JP	NZ,S_MMM3
-
- 	LD	A,#0x2F
- 	OUT	(#0xFE),A	;Page2 mapper register write
- 	LD	B,A
- 	LD	A,(HL)
- 	AND	#0b00111111
- 	XOR	B
- 	JP	NZ,S_MMM3
-
- 	LD	A,#0x3D
- 	OUT	(#0xFE),A	;Page2 mapper register write
- 	LD	B,A
- 	LD	A,(HL)
- 	AND	#0b00111111
- 	XOR	B
- 	JP	NZ,S_MMM3
+	LD	A,#0x3D
+	OUT	(#0xFE),A	;Page2 mapper register write
+	LD	B,A
+	LD	A,(HL)
+	AND	#0b00111111
+	XOR	B
+	JP	NZ,S_MMM3
 
  S_MMM2:
  	LD	A,#0x40
- 	LD	(#0x803C),A	;DCSG 有効化
- 	XOR	A
- 	OUT	(#0x3C),A	;MMM mapped IO disable
+	LD	(#0x803C),A	;DCSG 有効化
+	XOR	A
+	OUT	(#0x3C),A	;MMM mapped IO disable
  	INC	A			;A = 1
  	OUT	(#0xFE),A	;Page2 mapper register = default
 
- 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
- 	OUT     (#0x3F),A
- 	LD      A,#0xBF
- 	OUT     (#0x3F),A
- 	LD      A,#0xDF
- 	OUT     (#0x3F),A
- 	LD      A,#0xFF
- 	OUT     (#0x3F),A
+	LD      A,#0x9F		;DCSG VOLUME=0に初期化
+	OUT     (#0x3F),A
+	LD      A,#0xBF
+	OUT     (#0x3F),A
+	LD      A,#0xDF
+	OUT     (#0x3F),A
+	LD      A,#0xFF
+	OUT     (#0x3F),A
 
- 	LD	A,(DCSG_F)
- 	INC	A
- 	LD	(DCSG_F),A
+	LD	A,(DCSG_F)
+	INC	A
+	LD	(DCSG_F),A
 
- 	XOR	A		;A=0 DCSG発見
- 	JP	S_HIT
+	XOR	A		;A=0 DCSG発見
+	JP	S_HIT
 
  S_MMM3:	
  	XOR	A
- 	OUT	(#0x3C),A	;MMM mapped IO disable
+	OUT	(#0x3C),A	;MMM mapped IO disable
  	INC	A			;A = 1
  	OUT	(#0xFE),A	;Page2 mapper register = default
 
- 	JP	S_END
+	JP	S_END
 
 S_SCC:	;-----------------------SCCがあるか調べる
 	LD	A,(#0x9000)
@@ -1332,6 +1306,7 @@ STR_D:		.ascii	" D:$"
 STR_CRLF:	.ascii	"\r\n\r\n$"
 STR_COMP:	.ascii	"\r\nOPLL initialize completed.$"
 STR_SCC:	.ascii	"\r\n*If SCC not detected, please specify the slot No. manually.$"
+STR_NOTE:	.ascii	"\r\n*OPN2,OPL3 is not subject to detection.$"
 
 ;============================================================
 ;スロット選択レジスタの事前計算　PAGE1(OPLL)用

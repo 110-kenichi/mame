@@ -480,7 +480,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("18")]
+        [global::System.Configuration.DefaultSettingValueAttribute("21")]
         public decimal BitBangWaitOPL3 {
             get {
                 return ((decimal)(this["BitBangWaitOPL3"]));
