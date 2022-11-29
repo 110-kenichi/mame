@@ -397,79 +397,57 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	JP	S_END
 
 S_SCC:	;-----------------------SCCがあるか調べる
-	LD	A,(#0x9000)
-	LD	H,A
-	LD	A,(#0x9800)
-	LD	L,A
-	PUSH	HL
-
-		;SCC enable
-		LD      HL,#0x9000
-		LD      A,#0x3F
-		LD      (HL),A
-
-		LD	HL,#0x9800
-		LD	A,(HL)		;9800hに書き込めたらSCC
-		CPL
-		LD	(HL),A
-		CP	(HL)
-		CPL
-		LD	(HL),A
-
-	POP	HL
-	LD	A,H
-	LD	(#0x9000),A
-	LD	A,L
-	LD	(#0x9800),A
-
-	JP	NZ,NO_SCC	;書き込めなければSCC無し
-
-		LD	A,(SCC_F)
-		INC	A
-		LD	(SCC_F),A
-
-		LD	A,#2		;A=2 SCC発見
-		JP	S_HIT		;書き込めればSCC
-
-NO_SCC:
-	LD	A,(#0xBFFE)
-	LD	H,A
-	LD	A,(#0xB000)
-	LD	L,A
-	PUSH	HL
-
-		;SCC+ enable
-		LD      HL,#0xBFFE   ;
-		LD      A,#0x20      ;
-		LD      (HL),A       ;
-		LD      HL,#0xB000   ;
-		LD      A,#0x80      ;
-		LD      (HL),A       ;
-
-		LD	HL,#0xB800
-		LD	A,(HL)		;B800hに書き込めたらSCC-1
+	XOR	A
+	LD	HL,#0xBFFE
+	LD	(HL),A
+	LD	HL,#0x9000
+	LD	(HL),A
+	LD	HL,#0x9800
+	LD	A,(HL)		;9800hに書き込めたらSCCなし
 	CPL
 	LD	(HL),A
 	CP	(HL)
-		CPL
-		LD	(HL),A
+	CPL
+	LD	(HL),A
+	JP	Z,S_OPLL	;書き込めればSCC無し
 
-	POP	HL
-	LD	A,H
-	LD	(#0xBFFE),A
-	LD	A,L
-	LD	(#0xB000),A
+	LD	A,#0x3F
+	LD	HL,#0x9000
+	LD	(HL),A	;SCCを表に出す
+	LD	HL,#0x9800
+	LD	A,(HL)		;9800hに書き込めればSCCあり
+	CPL
+	LD	(HL),A
+	CP	(HL)
+	CPL
+	LD	(HL),A
+	JP	NZ,S_OPLL	;書き込めないのでSCC無し
+	
+	;-------------------SCCかSCC-1か調べる
+	LD	A,(SCC_F)
+	INC	A
+	LD	(SCC_F),A
 
-	JP	NZ,NO_SCC1	;書き込めなければSCC無し
+	LD	A,#0x20
+	LD	HL,#0xBFFE
+	LD	(HL),A
+	LD	A,#0x80
+	LD	HL,#0xB000
+	LD	(HL),A	;SCC-1を固有モードにする
+	LD	HL,#0xB800
 
-		LD	A,(SCC_F)
-		INC	A
-		LD	(SCC_F),A
+	LD	A,(HL)		;B800hに書き込めればSCC-1あり
+	CPL
+	LD	(HL),A
+	CP	(HL)
+	CPL
+	LD	(HL),A
+	LD	A,#1		;A=1 SCC-1発見
+	JP	Z,S_HIT		;書き込めればSCC-1
 
-		LD	A,#1		;A=1 SCC-1発見
-		JP	S_HIT		;書き込めればSCC
+	INC	A		;A=2 SCC発見
+	JP	S_HIT
 
-NO_SCC1:
 S_OPLL:	;------------------------ OPLLか調べる
 	LD	HL,#0x4018
 	EXX
