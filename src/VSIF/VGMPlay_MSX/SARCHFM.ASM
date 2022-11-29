@@ -338,10 +338,10 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	DI
 	LD	A,#0x80
 	OUT	(#0x3C),A	;MMM mapped IO enable
-	LD	HL,#0x80FE
+	LD	HL,#0x80FC
 
 	LD	A,#0x13
-	OUT	(#0xFE),A	;Page2 mapper register write
+	OUT	(#0xFC),A	;Page0 mapper register write
 	LD	B,A
 	LD	A,(HL)
 	AND	#0b00111111
@@ -349,7 +349,7 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	JP	NZ,S_MMM3
 
 	LD	A,#0x2F
-	OUT	(#0xFE),A	;Page2 mapper register write
+	OUT	(#0xFC),A	;Page0 mapper register write
 	LD	B,A
 	LD	A,(HL)
 	AND	#0b00111111
@@ -357,7 +357,7 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	JP	NZ,S_MMM3
 
 	LD	A,#0x3D
-	OUT	(#0xFE),A	;Page2 mapper register write
+	OUT	(#0xFC),A	;Page0 mapper register write
 	LD	B,A
 	LD	A,(HL)
 	AND	#0b00111111
@@ -370,7 +370,7 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	XOR	A
 	OUT	(#0x3C),A	;MMM mapped IO disable
  	INC	A			;A = 1
- 	OUT	(#0xFE),A	;Page2 mapper register = default
+ 	OUT	(#0xFC),A	;Page2 mapper register = default
 
 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
 	OUT     (#0x3F),A
@@ -428,7 +428,7 @@ S_SCC:	;-----------------------SCCがあるか調べる
 		INC	A
 		LD	(SCC_F),A
 
-		LD	B,#2		;A=2 SCC発見
+		LD	A,#2		;A=2 SCC発見
 		JP	S_HIT		;書き込めればSCC
 
 NO_SCC:
@@ -448,9 +448,9 @@ NO_SCC:
 
 		LD	HL,#0xB800
 		LD	A,(HL)		;B800hに書き込めたらSCC-1
-		CPL
-		LD	(HL),A
-		CP	(HL)
+	CPL
+	LD	(HL),A
+	CP	(HL)
 		CPL
 		LD	(HL),A
 
@@ -466,7 +466,7 @@ NO_SCC:
 		INC	A
 		LD	(SCC_F),A
 
-		LD	B,#1		;A=1 SCC-1発見
+		LD	A,#1		;A=1 SCC-1発見
 		JP	S_HIT		;書き込めればSCC
 
 NO_SCC1:
@@ -485,8 +485,9 @@ S_OPLL_IN:
 	INC	HL
 	EXX
 
+;===================以下　v0.04差分
 	CP	(HL)
-	JP	NZ,S_OPLL_EX
+	JP	NZ,S_OPL3
 	INC	HL
 	DJNZ	S_OPLL_IN
 
@@ -495,6 +496,30 @@ S_OPLL_IN:
 	LD	(OPLL_F),A
 	LD	A,#3		;A=3 OPLL(INT)発見
 	JP	S_HIT
+
+S_OPL3:		;------------------------ OPL3か調べる
+	LD	HL,#0x4018
+	EXX
+	LD	HL,#STR_OPL3
+	LD	B,#8
+
+S_OPL3_1:
+	POP	AF		;スロット番号を復帰
+	PUSH	AF
+
+	EXX
+	CALL	RDSLT		;SLOT A の4018H-を読む
+	INC	HL
+	EXX
+
+	CP	(HL)
+	JP	NZ,S_OPLL_EX
+	INC	HL
+	DJNZ	S_OPL3_1
+
+	LD	A,#6		;A=6 OPL3発見
+	JP	S_HIT
+;===================以上　v0.04差分
 
 S_OPLL_EX:
 	LD	HL,#0x0401C
@@ -523,13 +548,14 @@ S_OPLL_EX2:
 	LD	A,#4		;A=4 OPLL(EXT)発見
 	JP	S_HIT
 
-S_OPM:	;------------------------ OPMか調べる
+	;------------------------ OPMか調べる 
+S_OPM:
 	LD	HL,#0x0080
 	EXX
 	LD	HL,#STR_OPM
 	LD	B,#6
 
-S_OPM0:
+S_OPM1:
 	POP	AF		;スロット番号を復帰
 	PUSH	AF
 	
@@ -541,7 +567,7 @@ S_OPM0:
 	CP	(HL)
 	JP	NZ,S_END
 	INC	HL
-	DJNZ	S_OPM0
+	DJNZ	S_OPM1
 
 	LD	A,(OPM_F)
 	INC	A
@@ -561,11 +587,12 @@ S_END:	POP	AF
 	EI
 	RET
 
+
 ;============================================================
 ;音源の割り当て
 ;============================================================
 ;準備 :	A :スロット　(Aは保存される)
-;	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM
+;	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM 6:OPL3
 ;
 ;戻り：	ワークエリアの各スロット選択レジスタの値
 ;
@@ -586,6 +613,11 @@ FM_INI:
 	JP	Z,FM_INI4	;OPLL(I)は何もしない
 	DEC	A
 	JP	Z,FM_INI1	;OPLL(E)
+
+	;==========以下v0.04差分
+	DEC	A
+	JP	NZ,FM_INI4	;OPL3は何もしない
+	;==========以上v0.04差分
 
 	;========OPM
 
@@ -1287,9 +1319,10 @@ PutL01:	LD	E,A
 ;=================================
 ;文字列データ
 ;=================================
-STR_VER:	.ascii	"SoundCatridge detctor ver.0.03+\r\n"
+STR_VER:	.ascii	"SoundCatridge detctor ver.0.04+\r\n"
 		    .ascii	"Copyright (C)2022 Niga\r\n\r\n$"
 STR_APRL:	.ascii	"APRLOPLL"
+STR_OPL3:	.ascii	"AUD3OPLL"
 STR_OPM:	.ascii	"MCHFM0"
 STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"SCC-1    $"
@@ -1297,6 +1330,7 @@ STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"OPLL(INT)$"
 	    	.ascii	"OPLL(EXT)$"
 	    	.ascii	"OPM (SFG)$"
+			.ascii	"OPL3     $"
 STR_DTCT:	.ascii	" detected on SLOT #$"
 STR_ROM:	.ascii	"ROM SLOT:$\r\n"
 STR_A:		.ascii	" A:$"
@@ -1306,7 +1340,7 @@ STR_D:		.ascii	" D:$"
 STR_CRLF:	.ascii	"\r\n\r\n$"
 STR_COMP:	.ascii	"\r\nOPLL initialize completed.$"
 STR_SCC:	.ascii	"\r\n*If SCC not detected, please specify the slot No. manually.$"
-STR_NOTE:	.ascii	"\r\n*OPN2,OPL3 is not subject to detection.$"
+STR_NOTE:	.ascii	"\r\n*OPN2 is not subject to detection.$"
 
 ;============================================================
 ;スロット選択レジスタの事前計算　PAGE1(OPLL)用

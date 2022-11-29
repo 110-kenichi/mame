@@ -26,6 +26,8 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.VSIF;
 using zanac.MAmidiMEmo.Util;
 using System.Threading;
+using zanac.MAmidiMEmo.Scci;
+using FM_SoundConvertor;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
@@ -423,6 +425,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             { 06, 07, 08, 11, 14, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
             { 06, 07, 08, 15, 16 ,17 ,00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 },
         };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            YMF262WriteData(UnitNumber, address, 0, 0, 0, 0, (byte)data, !(0xB0 <= (address & 0xff) && (address & 0xff) <= 0xB8));
+        }
 
         private void YMF262WriteData(uint unitNumber, uint address, int op, int slot, byte opmode, int consel, byte data)
         {

@@ -413,7 +413,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 port1 = 2;
             address = address & 0xff;
 
-            WriteData(address, data, data != 0x28, new Action(() =>
+            WriteData(address, data, address != 0x28, new Action(() =>
             {
                 lock (sndEnginePtrLock)
                 {

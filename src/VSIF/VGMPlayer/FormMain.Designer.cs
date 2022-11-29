@@ -2459,7 +2459,7 @@ namespace zanac.VGMPlayer
             // checkBoxConnOPL3
             // 
             this.checkBoxConnOPL3.AutoSize = true;
-            this.checkBoxConnOPL3.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Enable;
+            this.checkBoxConnOPL3.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPL3_Enable;
             this.checkBoxConnOPL3.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxConnOPL3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBoxConnOPL3.Location = new System.Drawing.Point(8, 229);
@@ -3224,7 +3224,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.27";
+            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.28";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

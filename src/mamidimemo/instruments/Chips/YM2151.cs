@@ -593,24 +593,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="data"></param>
         internal override void DirectAccessToChip(uint address, uint data)
         {
-            WriteData(address, data, address != 0x8, new Action(() =>
-            {
-                lock (sndEnginePtrLock)
-                {
-                    switch (CurrentSoundEngine)
-                    {
-                        case SoundEngineType.SPFM:
-                            ScciManager.SetRegister(spfmPtr, address, data, false);
-                            break;
-                        case SoundEngineType.VSIF_MSX_FTDI:
-                            enableOpm(f_extOPMSlot, false);
-                            vsifClient.WriteData(0xe, (byte)address, (byte)data, f_ftdiClkWidth);
-                            break;
-                    }
-                }
-                DeferredWriteData(Ym2151_write, UnitNumber, (uint)0, address);
-                DeferredWriteData(Ym2151_write, UnitNumber, (uint)1, data);
-            }));
+            Ym2151WriteData(UnitNumber, (byte)address, 0, 0, (byte)data, address != 0x08);
         }
 
         /// <summary>

@@ -111,8 +111,8 @@ namespace zanac.VGMPlayer
                         break;
                     case VsifSoundModuleType.MSX_FTDI:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0xc, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
-                        comPortDCSG.WriteData(0xc, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                            comPortDCSG.WriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.WriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                 }
                 comPortDCSG.FlushDeferredWriteData();
@@ -176,21 +176,15 @@ namespace zanac.VGMPlayer
                     comPortOPNA2.DeferredWriteData(0, 8, 0x00, (int)Settings.Default.BitBangWaitOPNA2);
                 }
 
-                for (int slot = 0; slot < 6; slot++)
+                if (volumeOff)
                 {
-                    uint reg = (uint)(slot / 3) * 2;
-                    Ym2612WriteData(0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(slot % 3)));
-
                     //TL
-                    if (volumeOff)
+                    for (int slot = 0; slot < 6; slot++)
+                    {
                         for (int op = 0; op < 4; op++)
                             Ym2612WriteData(0x40, op, slot, 127);
+                    }
                 }
-
-                //if (volumeOff)
-                //    for (int slot = 0; slot < 6; slot++)
-                //        for (int op = 0; op < 4; op++)
-                //            Ym2612WriteData(0x80, op, slot, 0x0ff);
 
                 comPortOPNA2.FlushDeferredWriteData();
             }
@@ -225,8 +219,8 @@ namespace zanac.VGMPlayer
                 else
                 {
                     uint yreg = (uint)(0 / 3) * 2;
-                    comPortOPNA2?.DeferredWriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), (int)Settings.Default.BitBangWaitOPNA2);
-                    comPortOPNA2?.DeferredWriteData(0, (byte)((1 + (yreg + 1)) * 4), data, (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), (int)Settings.Default.BitBangWaitOPNA2);
+                    comPortOPNA2.DeferredWriteData(0, (byte)((1 + (yreg + 1)) * 4), data, (int)Settings.Default.BitBangWaitOPNA2);
                 }
             }
         }
@@ -304,47 +298,53 @@ namespace zanac.VGMPlayer
 
                 xgmReader = new BinaryReader(new MemoryStream(vgmData));
 
-                switch (Settings.Default.DCSG_IF)
+                if (Settings.Default.DCSG_Enable)
                 {
-                    case 0:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 1:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 2:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 3:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
-                    case 4:
-                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                            (PortId)Settings.Default.DCSG_Port);
-                        break;
+                    switch (Settings.Default.DCSG_IF)
+                    {
+                        case 0:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 1:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 2:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 3:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                        case 4:
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.DCSG_Port);
+                            break;
+                    }
                 }
-                switch (Settings.Default.OPNA2_IF)
+                if (Settings.Default.OPNA2_Enable)
                 {
-                    case 0:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (PortId)Settings.Default.OPNA2_Port);
-                        break;
-                    case 1:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (PortId)Settings.Default.OPNA2_Port);
-                        break;
-                    case 2:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (PortId)Settings.Default.OPNA2_Port);
-                        break;
-                    case 3:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                            (PortId)Settings.Default.OPNA2_Port);
-                        break;
+                    switch (Settings.Default.OPNA2_IF)
+                    {
+                        case 0:
+                            comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 1:
+                            comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 2:
+                            comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 3:
+                            comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                    }
                 }
 
                 return true;
@@ -547,6 +547,7 @@ namespace zanac.VGMPlayer
                                 if (Looped == false || LoopCount == 0)
                                 {
                                     State = SoundState.Stopped;
+                                    StopAllSounds(true);
                                     NotifyFinished();
                                     break;
                                 }
@@ -594,6 +595,7 @@ namespace zanac.VGMPlayer
                         if (Looped == false || LoopCount == 0)
                         {
                             State = SoundState.Stopped;
+                            StopAllSounds(true);
                             NotifyFinished();
                             break;
                         }
