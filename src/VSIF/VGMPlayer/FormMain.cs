@@ -22,6 +22,12 @@ namespace zanac.VGMPlayer
 
         private ListViewItem currentSongItem;
 
+        public static FormMain TopForm
+        {
+            get;
+            private set;
+        }
+
         public FormMain()
         {
             InitializeComponent();
@@ -36,10 +42,14 @@ namespace zanac.VGMPlayer
             comboBoxOPM.SelectedIndex = 0;
             comboBoxOpmSlot.SelectedIndex = 0;
             comboBoxOPL3.SelectedIndex = 0;
+            comboBoxOPNA.SelectedIndex = 0;
+            comboBoxY8950.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
             listViewList.ListViewItemSorter = new ListViewIndexComparer(listViewList);
+
+            TopForm = this;
         }
 
         protected override void OnShown(EventArgs e)
@@ -53,6 +63,8 @@ namespace zanac.VGMPlayer
             checkBoxConnY8910.Checked = false;
             checkBoxConnOPM.Checked = false;
             checkBoxConnOPL3.Checked = false;
+            checkBoxConnOPNA.Checked = false;
+            checkBoxConnY8950.Checked = false;
 
             //checkBoxConnDCSG_CheckedChanged(null, null);
             //checkBoxConnOPLL_CheckedChanged(null, null);
@@ -130,11 +142,13 @@ namespace zanac.VGMPlayer
 
             comPortDCSG?.Dispose();
             comPortOPLL?.Dispose();
-            comPortOPNA2?.Dispose();
+            comPortOPN2?.Dispose();
             comPortSCC?.Dispose();
             comPortY8910?.Dispose();
             comPortOPM?.Dispose();
             comPortOPL3?.Dispose();
+            comPortOPNA?.Dispose();
+            comPortY8950?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -679,10 +693,7 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPLL_Port, false);
                         if (comPortOPLL != null)
                         {
-                            if (comboBoxOpllSlot.SelectedIndex < 2)
-                                enableOpll(comboBoxSccSlot.SelectedIndex - 2);
-                            else
-                                enableOpll(SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2]);
+                            enableOpll(comPortOPLL, comboBoxOpllSlot.SelectedIndex);
                         }
                         break;
                 }
@@ -701,19 +712,36 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private static int lastOpllSlot;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="slot"></param>
-        private void enableOpll(int slot)
+        private static void enableOpll(VsifClient comPortOPLL, int slot)
         {
+            comPortOPLL.Tag = slot;
+            lastOpllSlot = slot;
             if (slot == 1 || slot == 2)
             {
                 comPortOPLL.WriteData(2, (byte)0, (byte)(slot - 1), (int)Settings.Default.BitBangWaitOPLL);
+                lastSccOpll = 1;
             }
         }
 
-        private VsifClient comPortOPNA2;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slot"></param>
+        internal static void ReenableOpll(VsifClient comPortOPLL)
+        {
+            if (lastSccOpll != 1)
+            {
+                enableOpll(comPortOPLL, lastOpllSlot);
+            }
+        }
+
+        private VsifClient comPortOPN2;
 
         private void checkBoxConnOPNA2_CheckedChanged(object sender, EventArgs e)
         {
@@ -722,31 +750,31 @@ namespace zanac.VGMPlayer
                 switch (Settings.Default.OPNA2_IF)
                 {
                     case 0:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
                             (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                     case 1:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
                             (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                     case 2:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
                             (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                     case 3:
-                        comPortOPNA2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPNA2_Port, false);
                         break;
                 }
-                checkBoxConnOPNA2.Checked = comPortOPNA2 != null;
-                comboBoxOPNA2.Enabled = comPortOPNA2 == null;
-                comboBoxPortYM2612.Enabled = comPortOPNA2 == null;
+                checkBoxConnOPNA2.Checked = comPortOPN2 != null;
+                comboBoxOPNA2.Enabled = comPortOPN2 == null;
+                comboBoxPortYM2612.Enabled = comPortOPN2 == null;
             }
             else
             {
                 comboBoxOPNA2.Enabled = true;
                 comboBoxPortYM2612.Enabled = true;
-                comPortOPNA2?.Dispose();
+                comPortOPN2?.Dispose();
             }
         }
 
@@ -763,11 +791,10 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.SCC_Port, false);
                         if (comPortSCC != null)
                         {
-                            comPortSCC.Tag = (SCCType)(comboBoxSccType.SelectedIndex + 1);
                             if (comboBoxSccSlot.SelectedIndex < 2)
-                                enableScc((SCCType)comPortSCC.Tag, comboBoxSccSlot.SelectedIndex - 2);
+                                enableScc(comPortSCC, (SCCType)(comboBoxSccType.SelectedIndex + 1), comboBoxSccSlot.SelectedIndex - 2);
                             else
-                                enableScc((SCCType)comPortSCC.Tag, SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2]);
+                                enableScc(comPortSCC, (SCCType)(comboBoxSccType.SelectedIndex + 1), SCCSlotNo[comboBoxSccSlot.SelectedIndex - 2]);
                         }
                         break;
                 }
@@ -825,16 +852,39 @@ namespace zanac.VGMPlayer
             SCC = 3,
         }
 
-        private void enableScc(SCCType type, int slot)
+        private static int lastSccOpll = -1;
+        private static SCCType lastSccType;
+        private static int lastSccSlot;
+
+        private static void enableScc(VsifClient comPortSCC, SCCType type, int slot)
         {
             if ((int)slot < 0)
-                comPortSCC.WriteData(3, (byte)(type), (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);    //自動選択方式
+            {
+                //自動選択方式
+                comPortSCC.WriteData(3, (byte)type, (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
+            }
             else
-                comPortSCC.WriteData(3, (byte)(type + 4), (byte)(slot), (int)Settings.Default.BitBangWaitSCC);   //従来方式
+            {
+                //従来方式
+                comPortSCC.WriteData(3, (byte)(type + 4), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
+            }
+            lastSccOpll = 0;
+            comPortSCC.Tag = type;
+            lastSccType = type;
+            lastSccSlot = slot;
+        }
+
+        internal static void ReenableScc(VsifClient comPortSCC)
+        {
+            if (lastSccOpll != 0)
+            {
+                enableScc(comPortSCC, lastSccType, lastSccSlot);
+            }
         }
 
         private void enableOpm(int slot)
         {
+            comPortOPM.Tag = slot;
             comPortOPM.WriteData(0xd, 0, (byte)slot, (int)Settings.Default.BitBangWaitOPM);
         }
 
@@ -919,6 +969,62 @@ namespace zanac.VGMPlayer
                 comboBoxOPL3.Enabled = true;
                 comboBoxPortOPL3.Enabled = true;
                 comPortOPL3?.Dispose();
+            }
+        }
+
+        private VsifClient comPortOPNA;
+
+        private void checkBoxOPNA_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnOPNA.Checked)
+            {
+                switch (Settings.Default.OPNA_IF)
+                {
+                    case 0:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPNA_Port, false);
+                        break;
+                }
+                checkBoxConnOPNA.Checked = comPortOPNA != null;
+                comboBoxOPNA.Enabled = comPortOPNA == null;
+                comboBoxPortOPNA.Enabled = comPortOPNA == null;
+            }
+            else
+            {
+                comboBoxOPNA.Enabled = true;
+                comboBoxPortOPNA.Enabled = true;
+                comPortOPNA?.Dispose();
+            }
+        }
+
+        private VsifClient comPortY8950;
+
+        private void checkBoxConnY8950_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnY8950.Checked)
+            {
+                switch (Settings.Default.Y8950_IF)
+                {
+                    case 0:
+                        comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.Y8950_Port, false);
+                        if (comPortY8950 != null)
+                        {
+                            comPortY8950.Tag = comboBoxY8950Slot.SelectedIndex;
+                        }
+                        break;
+                }
+                checkBoxConnY8950.Checked = comPortY8950 != null;
+                comboBoxY8950.Enabled = comPortY8950 == null;
+                comboBoxPortY8950.Enabled = comPortY8950 == null;
+                comboBoxY8950Slot.Enabled = comPortY8950 == null;
+            }
+            else
+            {
+                comboBoxY8950.Enabled = true;
+                comboBoxPortY8950.Enabled = true;
+                comboBoxY8950Slot.Enabled = true;
+                comPortY8950?.Dispose();
             }
         }
 
@@ -1045,6 +1151,20 @@ namespace zanac.VGMPlayer
             ab.ShowDialog();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        public void SetStatusText(string text)
+        {
+            BeginInvoke(new MethodInvoker(() =>
+            {
+                if (!IsDisposed)
+                {
+                    toolStripStatusLabel.Text = text;
+                }
+            }));
+        }
 
     }
 

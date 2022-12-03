@@ -489,5 +489,137 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWaitOPL3"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNA_IF {
+            get {
+                return ((int)(this["OPNA_IF"]));
+            }
+            set {
+                this["OPNA_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OPNA_Enable {
+            get {
+                return ((bool)(this["OPNA_Enable"]));
+            }
+            set {
+                this["OPNA_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNA_Slot {
+            get {
+                return ((int)(this["OPNA_Slot"]));
+            }
+            set {
+                this["OPNA_Slot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPNA_Port {
+            get {
+                return ((int)(this["OPNA_Port"]));
+            }
+            set {
+                this["OPNA_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("18")]
+        public decimal BitBangWaitOPNA {
+            get {
+                return ((decimal)(this["BitBangWaitOPNA"]));
+            }
+            set {
+                this["BitBangWaitOPNA"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8950_IF {
+            get {
+                return ((int)(this["Y8950_IF"]));
+            }
+            set {
+                this["Y8950_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Y8950_Enable {
+            get {
+                return ((bool)(this["Y8950_Enable"]));
+            }
+            set {
+                this["Y8950_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8950_Slot {
+            get {
+                return ((int)(this["Y8950_Slot"]));
+            }
+            set {
+                this["Y8950_Slot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8950_Port {
+            get {
+                return ((int)(this["Y8950_Port"]));
+            }
+            set {
+                this["Y8950_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("21")]
+        public decimal BitBangWaitY8950 {
+            get {
+                return ((decimal)(this["BitBangWaitY8950"]));
+            }
+            set {
+                this["BitBangWaitY8950"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Y8950_Type {
+            get {
+                return ((int)(this["Y8950_Type"]));
+            }
+            set {
+                this["Y8950_Type"] = value;
+            }
+        }
     }
 }

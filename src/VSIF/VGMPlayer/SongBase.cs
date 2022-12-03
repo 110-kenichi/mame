@@ -113,6 +113,7 @@ namespace zanac.VGMPlayer
             if (State == SoundState.Playing)
                 return;
 
+            FormMain.TopForm.SetStatusText("Playing");
             State = SoundState.Playing;
 
             Thread t = new Thread(new ThreadStart(StreamSong));
@@ -125,6 +126,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public virtual void Pause()
         {
+            FormMain.TopForm.SetStatusText("Paused");
             State = SoundState.Paused;
             StopAllSounds(false);
         }
@@ -134,6 +136,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public virtual void Freeze()
         {
+            FormMain.TopForm.SetStatusText("Freezed");
             State = SoundState.Paused;
         }
 
@@ -142,6 +145,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public virtual void Resume()
         {
+            FormMain.TopForm.SetStatusText("Resumed");
             State = SoundState.Playing;
         }
 
@@ -150,6 +154,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public virtual void Stop()
         {
+            FormMain.TopForm.SetStatusText("Stopped");
             State = SoundState.Stopped;
             StopAllSounds(true);
         }

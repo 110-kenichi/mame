@@ -1532,8 +1532,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     for (int op = 0; op < 4; op++)
                         parentModule.YM2608WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
+                //SSG
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x07, 0, 0, (byte)0xff);
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 0, (byte)0xff);
                 //ADPCM
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01, false);   //RESET
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00, false);   //STOP

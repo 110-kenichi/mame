@@ -74,6 +74,9 @@ OPLL_F	= #0xE021		;OPLLは bit7:1 = EXT / bit0 = INT
 SCC_F	= #0xE022
 OPM_F	= #0xE023
 
+;==========以下v0.05差分
+AUDIO_F	= #0xE024
+;==========以上v0.05差分
 
 ; LD  A, H
 ; ADD A, #0x30

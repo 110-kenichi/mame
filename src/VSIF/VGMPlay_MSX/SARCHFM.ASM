@@ -312,6 +312,7 @@ _END:
 ;準備 :A :スロット　(Aは保存される)
 ;
 ;戻り：	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM
+;	　6:OPL3 7:MSX-AUDIO
 ;	Cy=1 音源発見／　Cy=0 音源無し
 ;
 ;	注：PAGE2はターゲットスロットに切り替わる
@@ -463,7 +464,7 @@ S_OPLL_IN:
 	INC	HL
 	EXX
 
-;===================以下　v0.04差分
+;=============以下　v0.04差分
 	CP	(HL)
 	JP	NZ,S_OPL3
 	INC	HL
@@ -497,7 +498,7 @@ S_OPL3_1:
 
 	LD	A,#6		;A=6 OPL3発見
 	JP	S_HIT
-;===================以上　v0.04差分
+;=============以上　v0.04差分
 
 S_OPLL_EX:
 	LD	HL,#0x0401C
@@ -542,8 +543,9 @@ S_OPM1:
 	INC	HL
 	EXX
 
+;==========以下v0.05差分
 	CP	(HL)
-	JP	NZ,S_END
+	JP	NZ,S_AUDIO
 	INC	HL
 	DJNZ	S_OPM1
 
@@ -551,6 +553,41 @@ S_OPM1:
 	INC	A
 	LD	(OPM_F),A
 	LD	A,#5		;A=5 OPM発見
+	JP	S_HIT
+
+	;------------------------ MSX-AUDIOか調べる 
+S_AUDIO:
+	LD	HL,#0x0080
+	EXX
+	LD	HL,#STR_AUDIO
+	LD	B,#5
+
+S_AUD1:	POP	AF		;スロット番号を復帰
+	PUSH	AF
+	
+	EXX
+	CALL	RDSLT		;SLOT A の0080H-を読む
+	INC	HL
+	EXX
+
+	CP	(HL)
+	JP	NZ,S_END
+	INC	HL
+	DJNZ	S_AUD1
+
+	LD	A,(AUDIO_F)
+	INC	A
+	LD	(AUDIO_F),A
+	CP	#3
+	JP	NC,S_END	;3つ目以上は無視する
+	
+	LD	HL,#0x3FFF
+	LD	E,A		;E=Ch1/Ch2
+	POP	AF		;スロット番号を復帰
+	PUSH	AF
+	CALL	WRSLT		;音源有効化
+	LD	A,#7		;A=7 MSX-AUDIO発見
+;==========以上v0.05差分
 
 	;----------戻り処理
 S_HIT:	LD	B,A
@@ -570,7 +607,8 @@ S_END:	POP	AF
 ;音源の割り当て
 ;============================================================
 ;準備 :	A :スロット　(Aは保存される)
-;	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM 6:OPL3
+;	B=0:DCSG 1:SCC-1 2:SCC 3:OPLL(I) 4:OPLL(E) 5:OPM
+;		 6:OPL3  7:MSX-AUDIO
 ;
 ;戻り：	ワークエリアの各スロット選択レジスタの値
 ;
@@ -594,7 +632,7 @@ FM_INI:
 
 	;==========以下v0.04差分
 	DEC	A
-	JP	NZ,FM_INI4	;OPL3は何もしない
+	JP	NZ,FM_INI4	;OPL3,MSX-AUDIOは何もしない
 	;==========以上v0.04差分
 
 	;========OPM
@@ -1297,11 +1335,12 @@ PutL01:	LD	E,A
 ;=================================
 ;文字列データ
 ;=================================
-STR_VER:	.ascii	"SoundCatridge detctor ver.0.04+\r\n"
+STR_VER:	.ascii	"SoundCatridge detctor ver.0.05+\r\n"
 		    .ascii	"Copyright (C)2022 Niga\r\n\r\n$"
 STR_APRL:	.ascii	"APRLOPLL"
 STR_OPL3:	.ascii	"AUD3OPLL"
 STR_OPM:	.ascii	"MCHFM0"
+STR_AUDIO:	.ascii	"AUDIO"
 STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"SCC-1    $"
 	    	.ascii	"SCC      $"
@@ -1309,6 +1348,7 @@ STR_NAME:	.ascii	"DCSG(MMM)$"
 	    	.ascii	"OPLL(EXT)$"
 	    	.ascii	"OPM (SFG)$"
 			.ascii	"OPL3     $"
+			.ascii	"MSX-AUDIO$"
 STR_DTCT:	.ascii	" detected on SLOT #$"
 STR_ROM:	.ascii	"ROM SLOT:$\r\n"
 STR_A:		.ascii	" A:$"

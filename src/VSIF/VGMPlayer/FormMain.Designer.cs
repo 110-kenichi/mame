@@ -44,6 +44,11 @@ namespace zanac.VGMPlayer
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tableLayoutPanelPort = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBoxSCC = new System.Windows.Forms.ComboBox();
             this.comboBoxSccSlot = new System.Windows.Forms.ComboBox();
@@ -53,11 +58,6 @@ namespace zanac.VGMPlayer
             this.label6 = new System.Windows.Forms.Label();
             this.comboBoxDCSG = new System.Windows.Forms.ComboBox();
             this.comboBoxPortSN76489 = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.comboBoxPortSCC = new System.Windows.Forms.ComboBox();
             this.numericUpDownOPLL = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownSCC = new System.Windows.Forms.NumericUpDown();
@@ -91,6 +91,18 @@ namespace zanac.VGMPlayer
             this.comboBoxOPL3 = new System.Windows.Forms.ComboBox();
             this.numericUpDownOPL3 = new System.Windows.Forms.NumericUpDown();
             this.comboBoxPortOPL3 = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnOPNA = new System.Windows.Forms.CheckBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.comboBoxOPNA = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPNA = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortOPNA = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnY8950 = new System.Windows.Forms.CheckBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.numericUpDownY8950 = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortY8950 = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxY8950 = new System.Windows.Forms.ComboBox();
+            this.comboBoxY8950Slot = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
             this.buttonPrev = new System.Windows.Forms.Button();
             this.imageListSmall = new System.Windows.Forms.ImageList(this.components);
@@ -118,15 +130,18 @@ namespace zanac.VGMPlayer
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelPort.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidthDCSG)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            this.tableLayoutPanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidthDCSG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPLL)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSCC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY8910)).BeginInit();
@@ -135,11 +150,15 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPL3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY8950)).BeginInit();
+            this.tableLayoutPanel7.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.contextMenuStripList.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -159,7 +178,7 @@ namespace zanac.VGMPlayer
             this.fILEToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // eXITToolStripMenuItem
@@ -171,7 +190,7 @@ namespace zanac.VGMPlayer
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
@@ -192,9 +211,9 @@ namespace zanac.VGMPlayer
             this.label2.Location = new System.Drawing.Point(227, 8);
             this.label2.Margin = new System.Windows.Forms.Padding(4);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(241, 15);
+            this.label2.Size = new System.Drawing.Size(213, 15);
             this.label2.TabIndex = 2;
-            this.label2.Text = "VSIF Type(Select slot type for MSX)";
+            this.label2.Text = "VSIF Type, Slot type (MSX only)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label3
@@ -216,7 +235,7 @@ namespace zanac.VGMPlayer
             this.label4.Location = new System.Drawing.Point(100, 93);
             this.label4.Margin = new System.Windows.Forms.Padding(4);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(119, 29);
+            this.label4.Size = new System.Drawing.Size(119, 23);
             this.label4.TabIndex = 16;
             this.label4.Text = "YM2&413:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -230,6 +249,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelPort.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 133F));
             this.tableLayoutPanelPort.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));
+            this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel3, 2, 10);
             this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel4, 2, 4);
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownClkWidthDCSG, 3, 2);
             this.tableLayoutPanelPort.Controls.Add(this.label9, 3, 0);
@@ -241,7 +261,6 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.label6, 4, 0);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxDCSG, 2, 2);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortSN76489, 4, 2);
-            this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel3, 2, 8);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortSCC, 4, 4);
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPLL, 3, 3);
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownSCC, 3, 4);
@@ -271,12 +290,24 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxOPL3, 2, 7);
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPL3, 3, 7);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortOPL3, 4, 7);
+            this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnOPNA, 0, 8);
+            this.tableLayoutPanelPort.Controls.Add(this.label15, 1, 8);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxOPNA, 2, 8);
+            this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPNA, 3, 8);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortOPNA, 4, 8);
+            this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnY8950, 0, 9);
+            this.tableLayoutPanelPort.Controls.Add(this.label16, 1, 9);
+            this.tableLayoutPanelPort.Controls.Add(this.numericUpDownY8950, 3, 9);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortY8950, 4, 9);
+            this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel7, 2, 9);
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanelPort.RowCount = 10;
+            this.tableLayoutPanelPort.RowCount = 12;
+            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -290,6 +321,81 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Size = new System.Drawing.Size(899, 276);
             this.tableLayoutPanelPort.TabIndex = 1;
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.AutoSize = true;
+            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel3.ColumnCount = 7;
+            this.tableLayoutPanelPort.SetColumnSpan(this.tableLayoutPanel3, 3);
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.Controls.Add(this.numericUpDown2, 6, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label13, 5, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label10, 2, 0);
+            this.tableLayoutPanel3.Controls.Add(this.numericUpDown3, 3, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(227, 310);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(643, 30);
+            this.tableLayoutPanel3.TabIndex = 35;
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "KSS_Max", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown2.Location = new System.Drawing.Point(455, 4);
+            this.numericUpDown2.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(160, 22);
+            this.numericUpDown2.TabIndex = 1;
+            this.numericUpDown2.Value = global::zanac.VGMPlayer.Properties.Settings.Default.KSS_Max;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label13.Location = new System.Drawing.Point(316, 0);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(131, 30);
+            this.label13.TabIndex = 0;
+            this.label13.Text = "MGS Play Time [S]:";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Location = new System.Drawing.Point(4, 0);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(136, 30);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Cmd Wait [Samples]:";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "VGMWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDown3.Location = new System.Drawing.Point(148, 4);
+            this.numericUpDown3.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(160, 22);
+            this.numericUpDown3.TabIndex = 1;
+            this.numericUpDown3.Value = global::zanac.VGMPlayer.Properties.Settings.Default.VGMWait;
+            // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.AutoSize = true;
@@ -300,7 +406,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel4.Controls.Add(this.comboBoxSCC, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.comboBoxSccSlot, 1, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(223, 126);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(223, 120);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
@@ -325,6 +431,7 @@ namespace zanac.VGMPlayer
             // comboBoxSccSlot
             // 
             this.comboBoxSccSlot.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "SCC_Slot", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxSccSlot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxSccSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSccSlot.FormattingEnabled = true;
             this.comboBoxSccSlot.Items.AddRange(new object[] {
@@ -353,8 +460,8 @@ namespace zanac.VGMPlayer
             this.comboBoxSccSlot.Location = new System.Drawing.Point(224, 4);
             this.comboBoxSccSlot.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxSccSlot.Name = "comboBoxSccSlot";
-            this.comboBoxSccSlot.Size = new System.Drawing.Size(125, 23);
-            this.comboBoxSccSlot.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.SCC_Slot;
+            this.comboBoxSccSlot.Size = new System.Drawing.Size(130, 23);
+            this.comboBoxSccSlot.TabIndex = 1;
             // 
             // numericUpDownClkWidthDCSG
             // 
@@ -651,7 +758,7 @@ namespace zanac.VGMPlayer
             this.comboBoxPortYm2413.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortYm2413.Name = "comboBoxPortYm2413";
             this.comboBoxPortYm2413.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortYm2413.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_Port;
+            this.comboBoxPortYm2413.TabIndex = 23;
             // 
             // label6
             // 
@@ -681,7 +788,7 @@ namespace zanac.VGMPlayer
             this.comboBoxDCSG.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxDCSG.Name = "comboBoxDCSG";
             this.comboBoxDCSG.Size = new System.Drawing.Size(350, 23);
-            this.comboBoxDCSG.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_IF;
+            this.comboBoxDCSG.TabIndex = 24;
             // 
             // comboBoxPortSN76489
             // 
@@ -950,82 +1057,7 @@ namespace zanac.VGMPlayer
             this.comboBoxPortSN76489.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortSN76489.Name = "comboBoxPortSN76489";
             this.comboBoxPortSN76489.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortSN76489.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.DCSG_Port;
-            // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 7;
-            this.tableLayoutPanelPort.SetColumnSpan(this.tableLayoutPanel3, 3);
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.Controls.Add(this.numericUpDown2, 6, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label13, 5, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label10, 2, 0);
-            this.tableLayoutPanel3.Controls.Add(this.numericUpDown3, 3, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(227, 260);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(643, 30);
-            this.tableLayoutPanel3.TabIndex = 35;
-            // 
-            // numericUpDown2
-            // 
-            this.numericUpDown2.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "KSS_Max", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDown2.Location = new System.Drawing.Point(455, 4);
-            this.numericUpDown2.Margin = new System.Windows.Forms.Padding(4);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(160, 22);
-            this.numericUpDown2.TabIndex = 1;
-            this.numericUpDown2.Value = global::zanac.VGMPlayer.Properties.Settings.Default.KSS_Max;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label13.Location = new System.Drawing.Point(316, 0);
-            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(131, 30);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "MGS Play Time [S]:";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(4, 0);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(136, 30);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Cmd Wait [Samples]:";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "VGMWait", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDown3.Location = new System.Drawing.Point(148, 4);
-            this.numericUpDown3.Margin = new System.Windows.Forms.Padding(4);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(160, 22);
-            this.numericUpDown3.TabIndex = 1;
-            this.numericUpDown3.Value = global::zanac.VGMPlayer.Properties.Settings.Default.VGMWait;
+            this.comboBoxPortSN76489.TabIndex = 25;
             // 
             // comboBoxPortSCC
             // 
@@ -1290,11 +1322,11 @@ namespace zanac.VGMPlayer
             "254",
             "255",
             "256"});
-            this.comboBoxPortSCC.Location = new System.Drawing.Point(718, 130);
+            this.comboBoxPortSCC.Location = new System.Drawing.Point(718, 124);
             this.comboBoxPortSCC.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortSCC.Name = "comboBoxPortSCC";
             this.comboBoxPortSCC.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortSCC.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.SCC_Port;
+            this.comboBoxPortSCC.TabIndex = 36;
             // 
             // numericUpDownOPLL
             // 
@@ -1316,7 +1348,7 @@ namespace zanac.VGMPlayer
             // 
             this.numericUpDownSCC.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitSCC", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDownSCC.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDownSCC.Location = new System.Drawing.Point(585, 130);
+            this.numericUpDownSCC.Location = new System.Drawing.Point(585, 124);
             this.numericUpDownSCC.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownSCC.Minimum = new decimal(new int[] {
             1,
@@ -1332,7 +1364,7 @@ namespace zanac.VGMPlayer
             // 
             this.label12.AutoSize = true;
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label12.Location = new System.Drawing.Point(100, 161);
+            this.label12.Location = new System.Drawing.Point(100, 155);
             this.label12.Margin = new System.Windows.Forms.Padding(4);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(119, 23);
@@ -1349,17 +1381,17 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.Items.AddRange(new object[] {
             "VSIF - MSX(FTDI2XX)",
             "VSIF - Generic(UART 115Kbps)"});
-            this.comboBoxY8910.Location = new System.Drawing.Point(227, 161);
+            this.comboBoxY8910.Location = new System.Drawing.Point(227, 155);
             this.comboBoxY8910.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxY8910.Name = "comboBoxY8910";
             this.comboBoxY8910.Size = new System.Drawing.Size(350, 23);
-            this.comboBoxY8910.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_IF;
+            this.comboBoxY8910.TabIndex = 37;
             // 
             // numericUpDownY8910
             // 
             this.numericUpDownY8910.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitAY8910", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDownY8910.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDownY8910.Location = new System.Drawing.Point(585, 161);
+            this.numericUpDownY8910.Location = new System.Drawing.Point(585, 155);
             this.numericUpDownY8910.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownY8910.Minimum = new decimal(new int[] {
             1,
@@ -1633,7 +1665,7 @@ namespace zanac.VGMPlayer
             "254",
             "255",
             "256"});
-            this.comboBoxPortY8910.Location = new System.Drawing.Point(718, 161);
+            this.comboBoxPortY8910.Location = new System.Drawing.Point(718, 155);
             this.comboBoxPortY8910.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortY8910.Name = "comboBoxPortY8910";
             this.comboBoxPortY8910.Size = new System.Drawing.Size(152, 23);
@@ -1674,7 +1706,7 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPLL.Location = new System.Drawing.Point(8, 93);
             this.checkBoxConnOPLL.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxConnOPLL.Name = "checkBoxConnOPLL";
-            this.checkBoxConnOPLL.Size = new System.Drawing.Size(84, 29);
+            this.checkBoxConnOPLL.Size = new System.Drawing.Size(84, 23);
             this.checkBoxConnOPLL.TabIndex = 15;
             this.checkBoxConnOPLL.Text = "Connect";
             this.checkBoxConnOPLL.UseVisualStyleBackColor = true;
@@ -1686,7 +1718,7 @@ namespace zanac.VGMPlayer
             this.checkBoxConnSCC.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.SCC_Enable;
             this.checkBoxConnSCC.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "SCC_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxConnSCC.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnSCC.Location = new System.Drawing.Point(8, 130);
+            this.checkBoxConnSCC.Location = new System.Drawing.Point(8, 124);
             this.checkBoxConnSCC.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxConnSCC.Name = "checkBoxConnSCC";
             this.checkBoxConnSCC.Size = new System.Drawing.Size(84, 23);
@@ -1701,7 +1733,7 @@ namespace zanac.VGMPlayer
             this.checkBoxConnY8910.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.Y8910_Enable;
             this.checkBoxConnY8910.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8910_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxConnY8910.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnY8910.Location = new System.Drawing.Point(8, 161);
+            this.checkBoxConnY8910.Location = new System.Drawing.Point(8, 155);
             this.checkBoxConnY8910.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxConnY8910.Name = "checkBoxConnY8910";
             this.checkBoxConnY8910.Size = new System.Drawing.Size(84, 23);
@@ -1752,7 +1784,7 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA2.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA2.Name = "comboBoxOPNA2";
             this.comboBoxOPNA2.Size = new System.Drawing.Size(350, 23);
-            this.comboBoxOPNA2.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_IF;
+            this.comboBoxOPNA2.TabIndex = 38;
             // 
             // numericUpDownOPNA2
             // 
@@ -2037,7 +2069,7 @@ namespace zanac.VGMPlayer
             this.comboBoxPortYM2612.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortYM2612.Name = "comboBoxPortYM2612";
             this.comboBoxPortYM2612.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortYM2612.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_Port;
+            this.comboBoxPortYM2612.TabIndex = 39;
             // 
             // comboBoxSccType
             // 
@@ -2048,7 +2080,7 @@ namespace zanac.VGMPlayer
             "SCC1",
             "SCC1(SCC mode)",
             "SCC"});
-            this.comboBoxSccType.Location = new System.Drawing.Point(99, 129);
+            this.comboBoxSccType.Location = new System.Drawing.Point(99, 123);
             this.comboBoxSccType.Name = "comboBoxSccType";
             this.comboBoxSccType.Size = new System.Drawing.Size(121, 23);
             this.comboBoxSccType.TabIndex = 21;
@@ -2059,10 +2091,10 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPM.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Enable;
             this.checkBoxConnOPM.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPM_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxConnOPM.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnOPM.Location = new System.Drawing.Point(8, 192);
+            this.checkBoxConnOPM.Location = new System.Drawing.Point(8, 186);
             this.checkBoxConnOPM.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxConnOPM.Name = "checkBoxConnOPM";
-            this.checkBoxConnOPM.Size = new System.Drawing.Size(84, 29);
+            this.checkBoxConnOPM.Size = new System.Drawing.Size(84, 23);
             this.checkBoxConnOPM.TabIndex = 30;
             this.checkBoxConnOPM.Text = "Connect";
             this.checkBoxConnOPM.UseVisualStyleBackColor = true;
@@ -2072,10 +2104,10 @@ namespace zanac.VGMPlayer
             // 
             this.label11.AutoSize = true;
             this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label11.Location = new System.Drawing.Point(100, 192);
+            this.label11.Location = new System.Drawing.Point(100, 186);
             this.label11.Margin = new System.Windows.Forms.Padding(4);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(119, 29);
+            this.label11.Size = new System.Drawing.Size(119, 23);
             this.label11.TabIndex = 31;
             this.label11.Text = "YM21&51:";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2084,7 +2116,7 @@ namespace zanac.VGMPlayer
             // 
             this.numericUpDownOPM.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitOPM", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDownOPM.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDownOPM.Location = new System.Drawing.Point(585, 192);
+            this.numericUpDownOPM.Location = new System.Drawing.Point(585, 186);
             this.numericUpDownOPM.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownOPM.Minimum = new decimal(new int[] {
             1,
@@ -2359,11 +2391,11 @@ namespace zanac.VGMPlayer
             "254",
             "255",
             "256"});
-            this.comboBoxPortOPM.Location = new System.Drawing.Point(718, 192);
+            this.comboBoxPortOPM.Location = new System.Drawing.Point(718, 186);
             this.comboBoxPortOPM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortOPM.Name = "comboBoxPortOPM";
             this.comboBoxPortOPM.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortOPM.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Port;
+            this.comboBoxPortOPM.TabIndex = 40;
             // 
             // tableLayoutPanel5
             // 
@@ -2374,17 +2406,17 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.06818F));
             this.tableLayoutPanel5.Controls.Add(this.comboBoxOPM, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.comboBoxOpmSlot, 1, 0);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(226, 191);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(223, 182);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(352, 31);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(358, 31);
             this.tableLayoutPanel5.TabIndex = 36;
             // 
             // comboBoxOPM
             // 
-            this.comboBoxOPM.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPLL_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxOPM.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPM_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.comboBoxOPM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPM.FormattingEnabled = true;
             this.comboBoxOPM.Items.AddRange(new object[] {
@@ -2393,7 +2425,7 @@ namespace zanac.VGMPlayer
             this.comboBoxOPM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPM.Name = "comboBoxOPM";
             this.comboBoxOPM.Size = new System.Drawing.Size(210, 23);
-            this.comboBoxOPM.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_IF;
+            this.comboBoxOPM.TabIndex = 0;
             // 
             // comboBoxOpmSlot
             // 
@@ -2404,11 +2436,11 @@ namespace zanac.VGMPlayer
             this.comboBoxOpmSlot.Items.AddRange(new object[] {
             "ID0",
             "ID1"});
-            this.comboBoxOpmSlot.Location = new System.Drawing.Point(222, 4);
+            this.comboBoxOpmSlot.Location = new System.Drawing.Point(225, 4);
             this.comboBoxOpmSlot.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOpmSlot.Name = "comboBoxOpmSlot";
-            this.comboBoxOpmSlot.Size = new System.Drawing.Size(126, 23);
-            this.comboBoxOpmSlot.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Slot;
+            this.comboBoxOpmSlot.Size = new System.Drawing.Size(129, 23);
+            this.comboBoxOpmSlot.TabIndex = 1;
             // 
             // tableLayoutPanel6
             // 
@@ -2419,11 +2451,12 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel6.Controls.Add(this.comboBoxOPLL, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.comboBoxOpllSlot, 1, 0);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(226, 92);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(223, 89);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(352, 31);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(358, 31);
             this.tableLayoutPanel6.TabIndex = 37;
             // 
             // comboBoxOPLL
@@ -2438,34 +2471,34 @@ namespace zanac.VGMPlayer
             this.comboBoxOPLL.Location = new System.Drawing.Point(4, 4);
             this.comboBoxOPLL.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPLL.Name = "comboBoxOPLL";
-            this.comboBoxOPLL.Size = new System.Drawing.Size(209, 23);
-            this.comboBoxOPLL.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_IF;
+            this.comboBoxOPLL.Size = new System.Drawing.Size(212, 23);
+            this.comboBoxOPLL.TabIndex = 0;
             // 
             // comboBoxOpllSlot
             // 
             this.comboBoxOpllSlot.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPLL_Slot", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxOpllSlot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxOpllSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOpllSlot.FormattingEnabled = true;
             this.comboBoxOpllSlot.Items.AddRange(new object[] {
             "IO",
             "MMIO_1",
             "MMIO_2"});
-            this.comboBoxOpllSlot.Location = new System.Drawing.Point(221, 4);
+            this.comboBoxOpllSlot.Location = new System.Drawing.Point(224, 4);
             this.comboBoxOpllSlot.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOpllSlot.Name = "comboBoxOpllSlot";
-            this.comboBoxOpllSlot.Size = new System.Drawing.Size(125, 23);
-            this.comboBoxOpllSlot.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPLL_Slot;
+            this.comboBoxOpllSlot.Size = new System.Drawing.Size(130, 23);
+            this.comboBoxOpllSlot.TabIndex = 1;
             // 
             // checkBoxConnOPL3
             // 
             this.checkBoxConnOPL3.AutoSize = true;
             this.checkBoxConnOPL3.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPL3_Enable;
             this.checkBoxConnOPL3.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxConnOPL3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxConnOPL3.Location = new System.Drawing.Point(8, 229);
+            this.checkBoxConnOPL3.Location = new System.Drawing.Point(8, 217);
             this.checkBoxConnOPL3.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxConnOPL3.Name = "checkBoxConnOPL3";
-            this.checkBoxConnOPL3.Size = new System.Drawing.Size(84, 23);
+            this.checkBoxConnOPL3.Size = new System.Drawing.Size(84, 19);
             this.checkBoxConnOPL3.TabIndex = 30;
             this.checkBoxConnOPL3.Text = "Connect";
             this.checkBoxConnOPL3.UseVisualStyleBackColor = true;
@@ -2475,7 +2508,7 @@ namespace zanac.VGMPlayer
             // 
             this.label14.AutoSize = true;
             this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label14.Location = new System.Drawing.Point(100, 229);
+            this.label14.Location = new System.Drawing.Point(100, 217);
             this.label14.Margin = new System.Windows.Forms.Padding(4);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(119, 23);
@@ -2486,22 +2519,21 @@ namespace zanac.VGMPlayer
             // comboBoxOPL3
             // 
             this.comboBoxOPL3.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.comboBoxOPL3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxOPL3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPL3.FormattingEnabled = true;
             this.comboBoxOPL3.Items.AddRange(new object[] {
             "VSIF - MSX(FTDI2XX)"});
-            this.comboBoxOPL3.Location = new System.Drawing.Point(227, 229);
+            this.comboBoxOPL3.Location = new System.Drawing.Point(227, 217);
             this.comboBoxOPL3.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPL3.Name = "comboBoxOPL3";
             this.comboBoxOPL3.Size = new System.Drawing.Size(350, 23);
-            this.comboBoxOPL3.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA2_IF;
+            this.comboBoxOPL3.TabIndex = 41;
             // 
             // numericUpDownOPL3
             // 
             this.numericUpDownOPL3.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitOPL3", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDownOPL3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDownOPL3.Location = new System.Drawing.Point(585, 229);
+            this.numericUpDownOPL3.Location = new System.Drawing.Point(585, 217);
             this.numericUpDownOPL3.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownOPL3.Minimum = new decimal(new int[] {
             1,
@@ -2776,11 +2808,697 @@ namespace zanac.VGMPlayer
             "254",
             "255",
             "256"});
-            this.comboBoxPortOPL3.Location = new System.Drawing.Point(718, 229);
+            this.comboBoxPortOPL3.Location = new System.Drawing.Point(718, 217);
             this.comboBoxPortOPL3.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxPortOPL3.Name = "comboBoxPortOPL3";
             this.comboBoxPortOPL3.Size = new System.Drawing.Size(152, 23);
-            this.comboBoxPortOPL3.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.OPM_Port;
+            this.comboBoxPortOPL3.TabIndex = 42;
+            // 
+            // checkBoxConnOPNA
+            // 
+            this.checkBoxConnOPNA.AutoSize = true;
+            this.checkBoxConnOPNA.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.OPNA_Enable;
+            this.checkBoxConnOPNA.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNA_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnOPNA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnOPNA.Location = new System.Drawing.Point(8, 248);
+            this.checkBoxConnOPNA.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxConnOPNA.Name = "checkBoxConnOPNA";
+            this.checkBoxConnOPNA.Size = new System.Drawing.Size(84, 23);
+            this.checkBoxConnOPNA.TabIndex = 30;
+            this.checkBoxConnOPNA.Text = "Connect";
+            this.checkBoxConnOPNA.UseVisualStyleBackColor = true;
+            this.checkBoxConnOPNA.CheckedChanged += new System.EventHandler(this.checkBoxOPNA_CheckedChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label15.Location = new System.Drawing.Point(100, 248);
+            this.label15.Margin = new System.Windows.Forms.Padding(4);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(119, 23);
+            this.label15.TabIndex = 31;
+            this.label15.Text = "YM260&8:";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // comboBoxOPNA
+            // 
+            this.comboBoxOPNA.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxOPNA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxOPNA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxOPNA.FormattingEnabled = true;
+            this.comboBoxOPNA.Items.AddRange(new object[] {
+            "VSIF - MSX(FTDI2XX)"});
+            this.comboBoxOPNA.Location = new System.Drawing.Point(227, 248);
+            this.comboBoxOPNA.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxOPNA.Name = "comboBoxOPNA";
+            this.comboBoxOPNA.Size = new System.Drawing.Size(350, 23);
+            this.comboBoxOPNA.TabIndex = 43;
+            // 
+            // numericUpDownOPNA
+            // 
+            this.numericUpDownOPNA.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitOPNA", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownOPNA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDownOPNA.Location = new System.Drawing.Point(585, 248);
+            this.numericUpDownOPNA.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownOPNA.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownOPNA.Name = "numericUpDownOPNA";
+            this.numericUpDownOPNA.Size = new System.Drawing.Size(125, 22);
+            this.numericUpDownOPNA.TabIndex = 33;
+            this.numericUpDownOPNA.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWaitOPNA;
+            // 
+            // comboBoxPortOPNA
+            // 
+            this.comboBoxPortOPNA.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_Port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxPortOPNA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPortOPNA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPortOPNA.FormattingEnabled = true;
+            this.comboBoxPortOPNA.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105",
+            "106",
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123",
+            "124",
+            "125",
+            "126",
+            "127",
+            "128",
+            "129",
+            "130",
+            "131",
+            "132",
+            "133",
+            "134",
+            "135",
+            "136",
+            "137",
+            "138",
+            "139",
+            "140",
+            "141",
+            "142",
+            "143",
+            "144",
+            "145",
+            "146",
+            "147",
+            "148",
+            "149",
+            "150",
+            "151",
+            "152",
+            "153",
+            "154",
+            "155",
+            "156",
+            "157",
+            "158",
+            "159",
+            "160",
+            "161",
+            "162",
+            "163",
+            "164",
+            "165",
+            "166",
+            "167",
+            "168",
+            "169",
+            "170",
+            "171",
+            "172",
+            "173",
+            "174",
+            "175",
+            "176",
+            "177",
+            "178",
+            "179",
+            "180",
+            "181",
+            "182",
+            "183",
+            "184",
+            "185",
+            "186",
+            "187",
+            "188",
+            "189",
+            "190",
+            "191",
+            "192",
+            "193",
+            "194",
+            "195",
+            "196",
+            "197",
+            "198",
+            "199",
+            "200",
+            "201",
+            "202",
+            "203",
+            "204",
+            "205",
+            "206",
+            "207",
+            "208",
+            "209",
+            "210",
+            "211",
+            "212",
+            "213",
+            "214",
+            "215",
+            "216",
+            "217",
+            "218",
+            "219",
+            "220",
+            "221",
+            "222",
+            "223",
+            "224",
+            "225",
+            "226",
+            "227",
+            "228",
+            "229",
+            "230",
+            "231",
+            "232",
+            "233",
+            "234",
+            "235",
+            "236",
+            "237",
+            "238",
+            "239",
+            "240",
+            "241",
+            "242",
+            "243",
+            "244",
+            "245",
+            "246",
+            "247",
+            "248",
+            "249",
+            "250",
+            "251",
+            "252",
+            "253",
+            "254",
+            "255",
+            "256"});
+            this.comboBoxPortOPNA.Location = new System.Drawing.Point(718, 248);
+            this.comboBoxPortOPNA.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxPortOPNA.Name = "comboBoxPortOPNA";
+            this.comboBoxPortOPNA.Size = new System.Drawing.Size(152, 23);
+            this.comboBoxPortOPNA.TabIndex = 44;
+            // 
+            // checkBoxConnY8950
+            // 
+            this.checkBoxConnY8950.AutoSize = true;
+            this.checkBoxConnY8950.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.Y8950_Enable;
+            this.checkBoxConnY8950.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8950_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnY8950.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnY8950.Location = new System.Drawing.Point(8, 279);
+            this.checkBoxConnY8950.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxConnY8950.Name = "checkBoxConnY8950";
+            this.checkBoxConnY8950.Size = new System.Drawing.Size(84, 23);
+            this.checkBoxConnY8950.TabIndex = 30;
+            this.checkBoxConnY8950.Text = "Connect";
+            this.checkBoxConnY8950.UseVisualStyleBackColor = true;
+            this.checkBoxConnY8950.CheckedChanged += new System.EventHandler(this.checkBoxConnY8950_CheckedChanged);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label16.Location = new System.Drawing.Point(100, 279);
+            this.label16.Margin = new System.Windows.Forms.Padding(4);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(119, 23);
+            this.label16.TabIndex = 31;
+            this.label16.Text = "&Y8950:";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // numericUpDownY8950
+            // 
+            this.numericUpDownY8950.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitY8950", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownY8950.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDownY8950.Location = new System.Drawing.Point(585, 279);
+            this.numericUpDownY8950.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownY8950.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownY8950.Name = "numericUpDownY8950";
+            this.numericUpDownY8950.Size = new System.Drawing.Size(125, 22);
+            this.numericUpDownY8950.TabIndex = 33;
+            this.numericUpDownY8950.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWaitY8950;
+            // 
+            // comboBoxPortY8950
+            // 
+            this.comboBoxPortY8950.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8950_Port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxPortY8950.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPortY8950.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPortY8950.FormattingEnabled = true;
+            this.comboBoxPortY8950.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105",
+            "106",
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123",
+            "124",
+            "125",
+            "126",
+            "127",
+            "128",
+            "129",
+            "130",
+            "131",
+            "132",
+            "133",
+            "134",
+            "135",
+            "136",
+            "137",
+            "138",
+            "139",
+            "140",
+            "141",
+            "142",
+            "143",
+            "144",
+            "145",
+            "146",
+            "147",
+            "148",
+            "149",
+            "150",
+            "151",
+            "152",
+            "153",
+            "154",
+            "155",
+            "156",
+            "157",
+            "158",
+            "159",
+            "160",
+            "161",
+            "162",
+            "163",
+            "164",
+            "165",
+            "166",
+            "167",
+            "168",
+            "169",
+            "170",
+            "171",
+            "172",
+            "173",
+            "174",
+            "175",
+            "176",
+            "177",
+            "178",
+            "179",
+            "180",
+            "181",
+            "182",
+            "183",
+            "184",
+            "185",
+            "186",
+            "187",
+            "188",
+            "189",
+            "190",
+            "191",
+            "192",
+            "193",
+            "194",
+            "195",
+            "196",
+            "197",
+            "198",
+            "199",
+            "200",
+            "201",
+            "202",
+            "203",
+            "204",
+            "205",
+            "206",
+            "207",
+            "208",
+            "209",
+            "210",
+            "211",
+            "212",
+            "213",
+            "214",
+            "215",
+            "216",
+            "217",
+            "218",
+            "219",
+            "220",
+            "221",
+            "222",
+            "223",
+            "224",
+            "225",
+            "226",
+            "227",
+            "228",
+            "229",
+            "230",
+            "231",
+            "232",
+            "233",
+            "234",
+            "235",
+            "236",
+            "237",
+            "238",
+            "239",
+            "240",
+            "241",
+            "242",
+            "243",
+            "244",
+            "245",
+            "246",
+            "247",
+            "248",
+            "249",
+            "250",
+            "251",
+            "252",
+            "253",
+            "254",
+            "255",
+            "256"});
+            this.comboBoxPortY8950.Location = new System.Drawing.Point(718, 279);
+            this.comboBoxPortY8950.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxPortY8950.Name = "comboBoxPortY8950";
+            this.comboBoxPortY8950.Size = new System.Drawing.Size(152, 23);
+            this.comboBoxPortY8950.TabIndex = 44;
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.AutoSize = true;
+            this.tableLayoutPanel7.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel7.ColumnCount = 2;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 61.93182F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.06818F));
+            this.tableLayoutPanel7.Controls.Add(this.comboBoxY8950, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.comboBoxY8950Slot, 1, 0);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(223, 275);
+            this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 1;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(358, 31);
+            this.tableLayoutPanel7.TabIndex = 36;
+            // 
+            // comboBoxY8950
+            // 
+            this.comboBoxY8950.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8950_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxY8950.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxY8950.FormattingEnabled = true;
+            this.comboBoxY8950.Items.AddRange(new object[] {
+            "VSIF - MSX(FTDI2XX)"});
+            this.comboBoxY8950.Location = new System.Drawing.Point(4, 4);
+            this.comboBoxY8950.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxY8950.Name = "comboBoxY8950";
+            this.comboBoxY8950.Size = new System.Drawing.Size(210, 23);
+            this.comboBoxY8950.TabIndex = 0;
+            // 
+            // comboBoxY8950Slot
+            // 
+            this.comboBoxY8950Slot.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8950_Slot", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxY8950Slot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxY8950Slot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxY8950Slot.FormattingEnabled = true;
+            this.comboBoxY8950Slot.Items.AddRange(new object[] {
+            "ID0 64K RAM",
+            "ID0 256K RAM",
+            "ID1 64K RAM",
+            "ID1 256K RAM"});
+            this.comboBoxY8950Slot.Location = new System.Drawing.Point(225, 4);
+            this.comboBoxY8950Slot.Margin = new System.Windows.Forms.Padding(4);
+            this.comboBoxY8950Slot.Name = "comboBoxY8950Slot";
+            this.comboBoxY8950Slot.Size = new System.Drawing.Size(129, 23);
+            this.comboBoxY8950Slot.TabIndex = 1;
             // 
             // tableLayoutPanelButton
             // 
@@ -2809,7 +3527,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelButton.Controls.Add(this.buttonClear, 10, 0);
             this.tableLayoutPanelButton.Controls.Add(this.buttonEject, 9, 0);
             this.tableLayoutPanelButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 630);
+            this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 657);
             this.tableLayoutPanelButton.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelButton.Name = "tableLayoutPanelButton";
             this.tableLayoutPanelButton.RowCount = 2;
@@ -3092,12 +3810,12 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel1.Controls.Add(this.labelLoad, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.progressBarLoad, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 736);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 763);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(899, 40);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(899, 24);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // labelLoad
@@ -3107,7 +3825,7 @@ namespace zanac.VGMPlayer
             this.labelLoad.Location = new System.Drawing.Point(4, 0);
             this.labelLoad.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLoad.Name = "labelLoad";
-            this.labelLoad.Size = new System.Drawing.Size(37, 40);
+            this.labelLoad.Size = new System.Drawing.Size(37, 24);
             this.labelLoad.TabIndex = 0;
             this.labelLoad.Text = "Load";
             this.labelLoad.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -3118,7 +3836,7 @@ namespace zanac.VGMPlayer
             this.progressBarLoad.Location = new System.Drawing.Point(49, 4);
             this.progressBarLoad.Margin = new System.Windows.Forms.Padding(4);
             this.progressBarLoad.Name = "progressBarLoad";
-            this.progressBarLoad.Size = new System.Drawing.Size(846, 32);
+            this.progressBarLoad.Size = new System.Drawing.Size(846, 16);
             this.progressBarLoad.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarLoad.TabIndex = 1;
             // 
@@ -3135,7 +3853,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel2.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.textBoxTitle, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 598);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 625);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -3174,6 +3892,34 @@ namespace zanac.VGMPlayer
             this.openFileDialog.Multiselect = true;
             this.openFileDialog.Title = "Select VGM/XGM files";
             // 
+            // splitter1
+            // 
+            this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.splitter1.Location = new System.Drawing.Point(0, 304);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(899, 8);
+            this.splitter1.TabIndex = 6;
+            this.splitter1.TabStop = false;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 787);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(899, 26);
+            this.statusStrip1.TabIndex = 7;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(89, 20);
+            this.toolStripStatusLabel.Text = "(Status Text)";
+            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // listViewList
             // 
             this.listViewList.AllowDrop = true;
@@ -3186,10 +3932,10 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 304);
+            this.listViewList.Location = new System.Drawing.Point(0, 312);
             this.listViewList.Margin = new System.Windows.Forms.Padding(4);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(899, 294);
+            this.listViewList.Size = new System.Drawing.Size(899, 313);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
@@ -3212,13 +3958,15 @@ namespace zanac.VGMPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(899, 776);
+            this.ClientSize = new System.Drawing.Size(899, 813);
             this.Controls.Add(this.listViewList);
+            this.Controls.Add(this.splitter1);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanelButton);
             this.Controls.Add(this.tableLayoutPanelPort);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.statusStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
@@ -3230,12 +3978,12 @@ namespace zanac.VGMPlayer
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanelPort.ResumeLayout(false);
             this.tableLayoutPanelPort.PerformLayout();
-            this.tableLayoutPanel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidthDCSG)).EndInit();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            this.tableLayoutPanel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidthDCSG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPLL)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSCC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY8910)).EndInit();
@@ -3244,6 +3992,9 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPL3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownY8950)).EndInit();
+            this.tableLayoutPanel7.ResumeLayout(false);
             this.tableLayoutPanelButton.ResumeLayout(false);
             this.tableLayoutPanelButton.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -3252,6 +4003,8 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3344,5 +4097,20 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.ComboBox comboBoxOPL3;
         private System.Windows.Forms.NumericUpDown numericUpDownOPL3;
         private System.Windows.Forms.ComboBox comboBoxPortOPL3;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.CheckBox checkBoxConnOPNA;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox comboBoxOPNA;
+        private System.Windows.Forms.NumericUpDown numericUpDownOPNA;
+        private System.Windows.Forms.ComboBox comboBoxPortOPNA;
+        private System.Windows.Forms.CheckBox checkBoxConnY8950;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown numericUpDownY8950;
+        private System.Windows.Forms.ComboBox comboBoxPortY8950;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.ComboBox comboBoxY8950;
+        private System.Windows.Forms.ComboBox comboBoxY8950Slot;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }
