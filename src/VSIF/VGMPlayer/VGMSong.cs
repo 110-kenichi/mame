@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Drawing;
+using Microsoft.Win32;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -795,6 +796,7 @@ namespace zanac.VGMPlayer
                         case 0:
                             comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                 (PortId)Settings.Default.OPL3_Port);
+                            comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
                             break;
                     }
                 }
@@ -818,6 +820,7 @@ namespace zanac.VGMPlayer
                         case 0:
                             comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                 (PortId)Settings.Default.OPL3_Port);
+                            comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
                             break;
                     }
                 }
@@ -844,18 +847,34 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
-                else if (Settings.Default.Y8950_Enable)
+            }
+            if (curHead.lngHzYM2203 != 0)
+            {
+                if (Settings.Default.OPNA_Enable)
                 {
-                    switch (Settings.Default.Y8950_IF)
+                    switch (Settings.Default.OPNA_IF)
                     {
                         case 0:
-                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.Y8950_Port);
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.OPNA_Port);
                             break;
                     }
                 }
             }
             if (curHead.lngHzYM2608 != 0)
+            {
+                if (Settings.Default.OPNA_Enable)
+                {
+                    switch (Settings.Default.OPNA_IF)
+                    {
+                        case 0:
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.OPNA_Port);
+                            break;
+                    }
+                }
+            }
+            if (curHead.lngHzYM2610 != 0)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
@@ -1087,6 +1106,11 @@ namespace zanac.VGMPlayer
                                     case -1:
                                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                         break;
+
+                                    case 0x31:  //AY8910 stereo mask
+                                        readByte();
+                                        break;
+
                                     case 0x4F:
                                         {
                                             var data = readByte();
@@ -1112,102 +1136,6 @@ namespace zanac.VGMPlayer
                                                     break;
                                                 case VsifSoundModuleType.MSX_FTDI:
                                                     comPortDCSG?.DeferredWriteData(0xF, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-
-                                    case 0xA0:  //Y8910
-                                        {
-                                            var aa = readByte();
-                                            if (aa < 0)
-                                                break;
-                                            var dd = readByte();
-                                            if (dd < 0)
-                                                break;
-                                            switch (comPortY8910?.SoundModuleType)
-                                            {
-                                                case VsifSoundModuleType.MSX_FTDI:
-                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
-                                                    break;
-                                                case VsifSoundModuleType.Generic_UART:
-                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
-                                                    break;
-                                            }
-                                        }
-                                        break;
-
-                                    case 0xD2:  //SCC1
-                                        {
-                                            var pp = readByte();
-                                            if (pp < 0)
-                                                break;
-                                            var aa = readByte();
-                                            if (aa < 0)
-                                                break;
-                                            var dd = readByte();
-                                            if (dd < 0)
-                                                break;
-
-                                            switch (comPortSCC?.SoundModuleType)
-                                            {
-                                                case VsifSoundModuleType.MSX_FTDI:
-                                                    {
-                                                        if (comPortSCC?.Tag != null)
-                                                        {
-                                                            SCCType st = (SCCType)comPortSCC?.Tag;
-                                                            switch (st)
-                                                            {
-                                                                case SCCType.SCC1:
-                                                                    {
-                                                                        switch (pp)
-                                                                        {
-                                                                            case 1: //Freq
-                                                                                aa += 0xa0;
-                                                                                break;
-                                                                            case 2: //Vol
-                                                                                aa += 0xaa;
-                                                                                break;
-                                                                            case 3: //Ena
-                                                                                aa = 0xaf;
-                                                                                break;
-                                                                            case 5: //
-                                                                                aa += 0xe0;
-                                                                                break;
-                                                                            default:
-                                                                                break;
-                                                                        }
-                                                                        FormMain.ReenableScc(comPortSCC);
-                                                                        comPortSCC.DeferredWriteData(4, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
-                                                                    }
-                                                                    break;
-                                                                case SCCType.SCC1_Compat:
-                                                                case SCCType.SCC:
-                                                                    {
-                                                                        switch (pp)
-                                                                        {
-                                                                            case 1: //Freq
-                                                                                aa += 0x80;
-                                                                                break;
-                                                                            case 2: //Vol
-                                                                                aa += 0x8a;
-                                                                                break;
-                                                                            case 3: //Ena
-                                                                                aa = 0x8f;
-                                                                                break;
-                                                                            case 5: //
-                                                                                aa += 0xe0;
-                                                                                break;
-                                                                            default:
-                                                                                break;
-                                                                        }
-                                                                        FormMain.ReenableScc(comPortSCC);
-                                                                        comPortSCC.DeferredWriteData(5, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
-                                                                    }
-                                                                    break;
-                                                            }
-                                                        }
-                                                    }
                                                     break;
                                             }
                                         }
@@ -1309,7 +1237,9 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
+                                    case 0x55: //YM2413
                                     case 0x56: //YM2608 Write Port 0
+                                    case 0x58: //YM2610
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -1329,6 +1259,7 @@ namespace zanac.VGMPlayer
                                         break;
 
                                     case 0x57: //YM2608 Write Port 1
+                                    case 0x59: //YM2610
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -1382,6 +1313,15 @@ namespace zanac.VGMPlayer
                                             goto case 0x5E;
                                         else if (comPortY8950 != null)
                                             goto case 0x5C;
+                                        else
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
                                         break;
 
                                     case 0x5C: //Y8950
@@ -1469,6 +1409,17 @@ namespace zanac.VGMPlayer
                                                     comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
                                                 }
                                             }
+                                        }
+                                        break;
+
+                                    case 0x5D: //YMZ280B
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
                                         }
                                         break;
 
@@ -1599,9 +1550,47 @@ namespace zanac.VGMPlayer
                                                             //));
                                                         }
                                                         break;
+                                                    default:
+                                                        vgmReader.ReadBytes((int)size);
+                                                        break;
                                                 }
                                             }
                                             //_vgmReader.BaseStream.Position += size;
+                                        }
+                                        break;
+
+                                    case 0x68: //PCM RAM Write
+                                        {
+                                            //compatibility command to
+                                            readByte();
+                                            //chip type
+                                            int ct = readByte();
+                                            //read offset in data block
+                                            int rofset = readByte() | (readByte() << 8) | (readByte() << 16);
+                                            //write offset in chip's ram (affected by chip's registers)
+                                            int wofset = readByte() | (readByte() << 8) | (readByte() << 16);
+                                            //size of data, in bytes
+                                            int size = readByte() | (readByte() << 8) | (readByte() << 16);
+                                            vgmReader.ReadBytes((int)size);
+                                        }
+                                        break;
+
+                                    case int cmd when 0x70 <= cmd && cmd <= 0x7F:
+                                        {
+                                            var time = (cmd & 15) + 1;
+                                            vgmWaitDelta += time;
+                                        }
+                                        break;
+
+                                    case int cmd when 0x80 <= cmd && cmd <= 0x8F:
+                                        {
+                                            var time = (command & 15);
+                                            vgmWaitDelta += time;
+                                            //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
+
+                                            comPortOPN2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
+                                            comPortOPN2?.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPNA2);
+                                            dacOffset++;
                                         }
                                         break;
 
@@ -1629,6 +1618,7 @@ namespace zanac.VGMPlayer
                                                 streamTable.Add(sid, new StreamData(sid));
                                         }
                                         break;
+
                                     case 0x91: //Set Stream Data:
                                         {
                                             //stream id
@@ -1647,6 +1637,7 @@ namespace zanac.VGMPlayer
                                             }
                                         }
                                         break;
+
                                     case 0x92: //Set Stream Frequency:
                                         {
                                             //stream id
@@ -1658,6 +1649,7 @@ namespace zanac.VGMPlayer
                                                 streamTable[sid].Frequency = sfreq;
                                         }
                                         break;
+
                                     case 0x93: //Start Stream:
                                         {
                                             //stream id
@@ -1680,6 +1672,7 @@ namespace zanac.VGMPlayer
                                             }
                                         }
                                         break;
+
                                     case 0x94:  //Stop Stream
                                         {
                                             //stream id
@@ -1687,6 +1680,7 @@ namespace zanac.VGMPlayer
                                             streamParam = null;
                                         }
                                         break;
+
                                     case 0x95: //Start Stream (fast call):
                                         {
                                             //stream id
@@ -1709,23 +1703,140 @@ namespace zanac.VGMPlayer
                                             streamParam = param;
                                         }
                                         break;
-                                    case int cmd when 0x70 <= cmd && cmd <= 0x7F:
+
+                                    case 0xA0:  //Y8910
                                         {
-                                            var time = (cmd & 15) + 1;
-                                            vgmWaitDelta += time;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                            switch (comPortY8910?.SoundModuleType)
+                                            {
+                                                case VsifSoundModuleType.MSX_FTDI:
+                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
+                                                    break;
+                                                case VsifSoundModuleType.Generic_UART:
+                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
+                                                    break;
+                                            }
                                         }
                                         break;
-                                    case int cmd when 0x80 <= cmd && cmd <= 0x8F:
+
+                                    case 0xB0 - 0xBF:
                                         {
-                                            var time = (command & 15);
-                                            vgmWaitDelta += time;
-                                            //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
-
-                                            comPortOPN2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
-                                            comPortOPN2?.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPNA2);
-                                            dacOffset++;
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
                                         }
+                                        break;
 
+                                    case 0xC0 - 0xD1:
+                                        {
+                                            var pp = readByte();
+                                            if (pp < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xD2:  //SCC1
+                                        {
+                                            var pp = readByte();
+                                            if (pp < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+
+                                            switch (comPortSCC?.SoundModuleType)
+                                            {
+                                                case VsifSoundModuleType.MSX_FTDI:
+                                                    {
+                                                        if (comPortSCC?.Tag != null)
+                                                        {
+                                                            SCCType st = (SCCType)comPortSCC?.Tag;
+                                                            switch (st)
+                                                            {
+                                                                case SCCType.SCC1:
+                                                                    {
+                                                                        switch (pp)
+                                                                        {
+                                                                            case 1: //Freq
+                                                                                aa += 0xa0;
+                                                                                break;
+                                                                            case 2: //Vol
+                                                                                aa += 0xaa;
+                                                                                break;
+                                                                            case 3: //Ena
+                                                                                aa = 0xaf;
+                                                                                break;
+                                                                            case 5: //
+                                                                                aa += 0xe0;
+                                                                                break;
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                        FormMain.ReenableScc(comPortSCC);
+                                                                        comPortSCC.DeferredWriteData(4, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
+                                                                    }
+                                                                    break;
+                                                                case SCCType.SCC1_Compat:
+                                                                case SCCType.SCC:
+                                                                    {
+                                                                        switch (pp)
+                                                                        {
+                                                                            case 1: //Freq
+                                                                                aa += 0x80;
+                                                                                break;
+                                                                            case 2: //Vol
+                                                                                aa += 0x8a;
+                                                                                break;
+                                                                            case 3: //Ena
+                                                                                aa = 0x8f;
+                                                                                break;
+                                                                            case 5: //
+                                                                                aa += 0xe0;
+                                                                                break;
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                        FormMain.ReenableScc(comPortSCC);
+                                                                        comPortSCC.DeferredWriteData(5, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitSCC);
+                                                                    }
+                                                                    break;
+                                                            }
+                                                        }
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                        break;
+
+                                    case 0xD3 - 0xD6:
+                                        {
+                                            var pp = readByte();
+                                            if (pp < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                        }
                                         break;
 
                                     case 0xE0: //Seek to offset in PCM databank
@@ -1733,8 +1844,24 @@ namespace zanac.VGMPlayer
                                         dacOffset = (int)offset;
                                         break;
 
-                                    default:
+                                    case 0xE1:
+                                        {
+                                            var mm = readByte();
+                                            if (mm < 0)
+                                                break;
+                                            var ll = readByte();
+                                            if (ll < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa   < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                        }
+                                        break;
 
+                                    default:
                                         break;
                                 }
 

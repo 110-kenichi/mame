@@ -90,31 +90,33 @@ namespace ListViewInsertionDrag
 
                         dragItem = (ListViewItem)drgevent.Data.GetData(typeof(ListViewItem));
                         dropIndex = dropItem.Index;
-
-                        if (dragItem.Index < dropIndex)
+                        if (dragItem != null)
                         {
-                            dropIndex--;
-                        }
-                        if (this.InsertionMode == InsertionMode.After && dragItem.Index < this.Items.Count - 1)
-                        {
-                            dropIndex++;
-                        }
-
-                        if (dropIndex != dragItem.Index)
-                        {
-                            ListViewItemDragEventArgs args;
-                            Point clientPoint;
-
-                            clientPoint = this.PointToClient(new Point(drgevent.X, drgevent.Y));
-                            args = new ListViewItemDragEventArgs(dragItem, dropItem, dropIndex, this.InsertionMode, clientPoint.X, clientPoint.Y);
-
-                            this.OnItemDragDrop(args);
-
-                            if (!args.Cancel)
+                            if (dragItem.Index < dropIndex)
                             {
-                                this.Items.Remove(dragItem);
-                                this.Items.Insert(dropIndex, dragItem);
-                                this.SelectedItem = dragItem;
+                                dropIndex--;
+                            }
+                            if (this.InsertionMode == InsertionMode.After && dragItem.Index < this.Items.Count - 1)
+                            {
+                                dropIndex++;
+                            }
+
+                            if (dropIndex != dragItem.Index)
+                            {
+                                ListViewItemDragEventArgs args;
+                                Point clientPoint;
+
+                                clientPoint = this.PointToClient(new Point(drgevent.X, drgevent.Y));
+                                args = new ListViewItemDragEventArgs(dragItem, dropItem, dropIndex, this.InsertionMode, clientPoint.X, clientPoint.Y);
+
+                                this.OnItemDragDrop(args);
+
+                                if (!args.Cancel)
+                                {
+                                    this.Items.Remove(dragItem);
+                                    this.Items.Insert(dropIndex, dragItem);
+                                    this.SelectedItem = dragItem;
+                                }
                             }
                         }
                     }

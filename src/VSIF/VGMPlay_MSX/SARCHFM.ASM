@@ -370,8 +370,8 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
 	LD	(#0x803C),A	;DCSG 有効化
 	XOR	A
 	OUT	(#0x3C),A	;MMM mapped IO disable
- 	INC	A			;A = 1
- 	OUT	(#0xFC),A	;Page2 mapper register = default
+ 	; INC	A			;A = 1
+ 	; OUT	(#0xFC),A	;Page2 mapper register = default
 
 	LD      A,#0x9F		;DCSG VOLUME=0に初期化
 	OUT     (#0x3F),A
@@ -392,8 +392,8 @@ S_MMM:	;------------------------P2=RAMだったのでMMMかどうか調べる
  S_MMM3:	
  	XOR	A
 	OUT	(#0x3C),A	;MMM mapped IO disable
- 	INC	A			;A = 1
- 	OUT	(#0xFE),A	;Page2 mapper register = default
+ 	; INC	A			;A = 1
+ 	; OUT	(#0xFE),A	;Page2 mapper register = default
 
 	JP	S_END
 
@@ -414,7 +414,7 @@ S_SCC:	;-----------------------SCCがあるか調べる
 
 	LD	A,#0x3F
 	LD	HL,#0x9000
-	LD	(HL),A	;SCCを表に出す
+	LD	(HL),A		;SCCを表に出す
 	LD	HL,#0x9800
 	LD	A,(HL)		;9800hに書き込めればSCCあり
 	CPL
@@ -434,7 +434,7 @@ S_SCC:	;-----------------------SCCがあるか調べる
 	LD	(HL),A
 	LD	A,#0x80
 	LD	HL,#0xB000
-	LD	(HL),A	;SCC-1を固有モードにする
+	LD	(HL),A		;SCC-1を固有モードにする
 	LD	HL,#0xB800
 
 	LD	A,(HL)		;B800hに書き込めればSCC-1あり
@@ -501,7 +501,7 @@ S_OPL3_1:
 ;=============以上　v0.04差分
 
 S_OPLL_EX:
-	LD	HL,#0x0401C
+	LD	HL,#0x401C
 	EXX
 	LD	HL,#STR_APRL+4
 	LD	B,#4
