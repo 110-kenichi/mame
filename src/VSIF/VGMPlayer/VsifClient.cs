@@ -173,18 +173,25 @@ namespace zanac.VGMPlayer
                 while (!disposedValue)
                 {
                     autoResetEvent.WaitOne();
-
-                    PortWriteData[] dd;
-                    lock (lockObject)
+                    try
                     {
-                        if (deferredWriteAdrAndData.Count == 0)
-                            continue;
+                        PortWriteData[] dd;
+                        lock (lockObject)
+                        {
+                            if (deferredWriteAdrAndData.Count == 0)
+                                continue;
 
-                        dd = deferredWriteAdrAndData.ToArray();
-                        deferredWriteAdrAndData.Clear();
+                            dd = deferredWriteAdrAndData.ToArray();
+                            deferredWriteAdrAndData.Clear();
+
+                            if (dd.Length != 0)
+                                DataWriter?.Write(dd);
+                        }
                     }
-                    if(dd.Length != 0)
-                        DataWriter?.Write(dd);
+                    finally
+                    {
+                        autoResetEvent.Set();
+                    }
                 }
             }
             catch (Exception ex)

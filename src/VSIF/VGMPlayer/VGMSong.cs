@@ -710,24 +710,29 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.DCSG_IF)
                     {
                         case 0:
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG == null)
+                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                    (PortId)Settings.Default.DCSG_Port);
                             break;
                         case 1:
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG == null)
+                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                    (PortId)Settings.Default.DCSG_Port);
                             break;
                         case 2:
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG == null)
+                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                    (PortId)Settings.Default.DCSG_Port);
                             break;
                         case 3:
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG == null)
+                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                    (PortId)Settings.Default.DCSG_Port);
                             break;
                         case 4:
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG == null)
+                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                   (PortId)Settings.Default.DCSG_Port);
                             break;
                     }
                 }
@@ -739,12 +744,14 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPLL_IF)
                     {
                         case 0:
-                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                (PortId)Settings.Default.OPLL_Port);
+                            if (comPortOPLL == null)
+                                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                    (PortId)Settings.Default.OPLL_Port);
                             break;
                         case 1:
-                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPLL_Port);
+                            if (comPortOPLL == null)
+                                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPLL_Port);
                             break;
                     }
                 }
@@ -756,20 +763,24 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPNA2_IF)
                     {
                         case 0:
-                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                (PortId)Settings.Default.OPNA2_Port);
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                    (PortId)Settings.Default.OPNA2_Port);
                             break;
                         case 1:
-                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                (PortId)Settings.Default.OPNA2_Port);
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
                             break;
                         case 2:
-                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                (PortId)Settings.Default.OPNA2_Port);
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                    (PortId)Settings.Default.OPNA2_Port);
                             break;
                         case 3:
-                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPNA2_Port);
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
                             break;
                     }
                 }
@@ -781,8 +792,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPM_IF)
                     {
                         case 0:
-                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPM_Port);
+                            if (comPortOPM == null)
+                                comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                   (PortId)Settings.Default.OPM_Port);
                             break;
                     }
                 }
@@ -794,8 +806,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPL3_IF)
                     {
                         case 0:
-                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPL3_Port);
+                            if (comPortOPL3 == null)
+                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPL3_Port);
                             comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
                             break;
                     }
@@ -805,8 +818,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.Y8950_IF)
                     {
                         case 0:
-                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.Y8950_Port);
+                            if(comPortY8950 == null)
+                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.Y8950_Port);
                             break;
                     }
                 }
@@ -818,8 +832,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPL3_IF)
                     {
                         case 0:
-                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPL3_Port);
+                            if (comPortOPL3 == null)
+                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                   (PortId)Settings.Default.OPL3_Port);
                             comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
                             break;
                     }
@@ -829,8 +844,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.Y8950_IF)
                     {
                         case 0:
-                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.Y8950_Port);
+                            if (comPortY8950 == null)
+                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.Y8950_Port);
                             break;
                     }
                 }
@@ -842,8 +858,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPL3_IF)
                     {
                         case 0:
-                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPL3_Port);
+                            if (comPortOPL3 == null)
+                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPL3_Port);
                             break;
                     }
                 }
@@ -855,8 +872,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPNA_IF)
                     {
                         case 0:
-                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPNA_Port);
+                            if(comPortOPNA == null)
+                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA_Port);
                             break;
                     }
                 }
@@ -868,8 +886,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPNA_IF)
                     {
                         case 0:
-                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPNA_Port);
+                            if (comPortOPNA == null)
+                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA_Port);
                             break;
                     }
                 }
@@ -881,8 +900,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPNA_IF)
                     {
                         case 0:
-                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPNA_Port);
+                            if (comPortOPNA == null)
+                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA_Port);
                             break;
                     }
                 }
@@ -904,8 +924,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPL3_IF)
                     {
                         case 0:
-                            comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPL3_Port);
+                            if (comPortOPL3 == null)
+                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPL3_Port);
                             break;
                     }
                 }
@@ -1724,7 +1745,7 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case 0xB0 - 0xBF:
+                                    case int cmd when 0xB0 <= cmd && cmd <= 0xBF:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -1735,7 +1756,7 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case 0xC0 - 0xD1:
+                                    case int cmd when 0xC0 <= cmd && cmd <= 0xD1:
                                         {
                                             var pp = readByte();
                                             if (pp < 0)
@@ -1825,7 +1846,7 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case 0xD3 - 0xD6:
+                                    case int cmd when 0xD3 <= cmd && cmd <= 0xD6:
                                         {
                                             var pp = readByte();
                                             if (pp < 0)

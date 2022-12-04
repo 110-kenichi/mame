@@ -178,7 +178,7 @@ namespace zanac.VGMPlayer
             this.fILEToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // eXITToolStripMenuItem
@@ -190,7 +190,7 @@ namespace zanac.VGMPlayer
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
