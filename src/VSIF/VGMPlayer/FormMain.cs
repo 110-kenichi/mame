@@ -177,7 +177,7 @@ namespace zanac.VGMPlayer
             }
             else
             {
-                if (currentSong?.State == SoundState.Paused)
+                if (currentSong?.State == SoundState.Paused || currentSong?.State == SoundState.Freezed)
                     currentSong?.Resume();
                 else if (currentSong?.State == SoundState.Playing)
                     currentSong?.Pause();
@@ -216,7 +216,7 @@ namespace zanac.VGMPlayer
         private void checkBoxLoop_CheckedChanged(object sender, EventArgs e)
         {
             if (currentSong != null)
-                currentSong.Looped = checkBoxLoop.Checked;
+                currentSong.LoopByCount = checkBoxLoop.Checked;
         }
 
         private void listViewList_DragDrop(object sender, DragEventArgs e)
@@ -373,16 +373,18 @@ namespace zanac.VGMPlayer
                         break;
                     case ".KSS":
                     case ".MGS":
-                        currentSong = new MGSSong(fileName, checkBoxLoop.Checked ? (int)numericUpDown1.Value : 0);
+                        currentSong = new MGSSong(fileName, checkBoxLoop.Checked ? (int)numericUpDownLooped.Value : 0);
                         break;
                 }
-                currentSong.Looped = checkBoxLoop.Checked;
-                currentSong.LoopCount = (int)numericUpDown1.Value;
+                currentSong.LoopByCount = checkBoxLoop.Checked;
+                currentSong.LoopedCount = (int)numericUpDownLooped.Value;
+                currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
+                currentSong.LoopTimes = new TimeSpan(dateTimePickerLoopTimes.Value.Hour, dateTimePickerLoopTimes.Value.Minute, dateTimePickerLoopTimes.Value.Second);
                 currentSong.ProcessLoadOccurred += CurrentSong_ProcessLoadOccurred;
                 currentSong.PlayStatusChanged += CurrentSong_PlayStatusChanged;
                 currentSong.SpeedChanged += CurrentSong_SpeedChanged;
                 currentSong.Finished += CurrentSong_Finished;
-                labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00");
+                labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
                 textBoxTitle.Text = currentSong.FileName;
                 currentSong.Play();
             }
@@ -420,7 +422,7 @@ namespace zanac.VGMPlayer
             if (sender != currentSong)
                 return;
 
-            labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00");
+            labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
         }
 
         private void CurrentSong_PlayStatusChanged(object sender, EventArgs e)
@@ -1166,6 +1168,38 @@ namespace zanac.VGMPlayer
             }));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        public void SetElapsedTime(TimeSpan timeSpan)
+        {
+            BeginInvoke(new MethodInvoker(() =>
+            {
+                if (!IsDisposed)
+                {
+                    labelElapsed.Text = timeSpan.ToString(@"hh\:mm\:ss");
+                }
+            }));
+        }
+
+        private void numericUpDownLooped_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentSong != null)
+                currentSong.LoopedCount = (int)numericUpDownLooped.Value;
+        }
+
+        private void dateTimePickerLoopTimes_ValueChanged(object sender, EventArgs e)
+        {
+            if (currentSong != null)
+                currentSong.LoopTimes = new TimeSpan(dateTimePickerLoopTimes.Value.Hour, dateTimePickerLoopTimes.Value.Minute, dateTimePickerLoopTimes.Value.Second);
+        }
+
+        private void checkBoxLoopTimes_CheckedChanged(object sender, EventArgs e)
+        {
+            if (currentSong != null)
+                currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
+        }
     }
 
     internal static class NativeConstants

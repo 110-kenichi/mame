@@ -68,7 +68,7 @@ namespace zanac.VGMPlayer
         {
             if (comPortDCSG != null)
             {
-                comPortDCSG.ClearDeferredWriteData();
+                //comPortDCSG.ClearDeferredWriteData();
 
                 switch (comPortDCSG.SoundModuleType)
                 {
@@ -95,7 +95,7 @@ namespace zanac.VGMPlayer
             if (comPortOPLL != null)
             {
                 byte type = comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_FTDI ? (byte)1 : (byte)0;  //type OPLL for MSX
-                comPortOPLL.ClearDeferredWriteData();
+                //comPortOPLL.ClearDeferredWriteData();
 
                 //KOFF
                 for (int i = 0; i < 9; i++)
@@ -106,12 +106,12 @@ namespace zanac.VGMPlayer
                 //TL
                 if (volumeOff)
                 {
-                    //for (int i = 0; i < 9; i++)
-                    //    comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 0xf, (int)Settings.Default.BitBangWaitOPLL);
+                    for (int i = 0; i < 9; i++)
+                        comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 0xf, (int)Settings.Default.BitBangWaitOPLL);
 
-                    //comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    //comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    //comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
+                    comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
 
                     //RR
                     //comPortOPLL.DeferredWriteData(type, 0x06, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
@@ -123,7 +123,7 @@ namespace zanac.VGMPlayer
 
             if (comPortOPN2 != null)
             {
-                comPortOPN2.ClearDeferredWriteData();
+                //comPortOPN2.ClearDeferredWriteData();
 
                 if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
@@ -169,7 +169,7 @@ namespace zanac.VGMPlayer
 
             if (comPortOPNA != null)
             {
-                comPortOPNA.ClearDeferredWriteData();
+                //comPortOPNA.ClearDeferredWriteData();
 
                 if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
@@ -205,7 +205,7 @@ namespace zanac.VGMPlayer
 
             if (comPortOPM != null)
             {
-                comPortOPM.ClearDeferredWriteData();
+                //comPortOPM.ClearDeferredWriteData();
 
                 //KOFF
                 for (int i = 0; i < 8; i++)
@@ -225,7 +225,7 @@ namespace zanac.VGMPlayer
             }
             if (comPortOPL3 != null)
             {
-                comPortOPL3.ClearDeferredWriteData();
+                //comPortOPL3.ClearDeferredWriteData();
 
                 if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
@@ -245,7 +245,7 @@ namespace zanac.VGMPlayer
 
             if (comPortY8950 != null)
             {
-                comPortY8950.ClearDeferredWriteData();
+                //comPortY8950.ClearDeferredWriteData();
 
                 if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
@@ -498,18 +498,36 @@ namespace zanac.VGMPlayer
 
             //File.WriteAllBytes(transferData.Length.ToString(), transferData);
 
-            //flag
-            YM2608WriteData(0x10, 0, 3, 0x13);   //CLEAR MASK
-            YM2608WriteData(0x10, 0, 3, 0x80);   //IRQ RESET
-                                                 //Ctrl1
-            YM2608WriteData(0x00, 0, 3, 0x01, false);   //RESET
-            YM2608WriteData(0x00, 0, 3, 0x60, false);   //REC, EXTMEM
-                                                        //Ctrl2
-            YM2608WriteData(0x01, 0, 3, 0x02);   //LR, 8bit DRAM
+            YM2608WriteData(0x00, 0, 3, 0x20, false);
+            YM2608WriteData(0x00, 0, 3, 0x21, false);
+            YM2608WriteData(0x00, 0, 3, 0x00, false);
 
+            YM2608WriteData(0x10, 0, 3, 0x00, false);
+            YM2608WriteData(0x10, 0, 3, 0x80, false);
+
+            YM2608WriteData(0x00, 0, 3, 0x61, false);
+            YM2608WriteData(0x00, 0, 3, 0x68, false);
+
+            ////flag
+            //YM2608WriteData(0x10, 0, 3, 0x13);   //CLEAR MASK
+            //YM2608WriteData(0x10, 0, 3, 0x80);   //IRQ RESET
+            //                                     //Ctrl1
+            //YM2608WriteData(0x00, 0, 3, 0x01, false);   //RESET
+            //YM2608WriteData(0x00, 0, 3, 0x60, false);   //REC, EXTMEM
+            //Ctrl2
             //START
-            YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff));
-            YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff));
+            if (ym2608_adpcmbit8)
+            {
+                YM2608WriteData(0x01, 0, 3, 0x02);   //LR, 8bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff));
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff));
+            }
+            else
+            {
+                YM2608WriteData(0x01, 0, 3, 0x00);   //LR, 1bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 2) & 0xff));
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff));
+            }
             //STOP
             YM2608WriteData(0x04, 0, 3, 0xff);
             YM2608WriteData(0x05, 0, 3, 0xff);
@@ -518,36 +536,46 @@ namespace zanac.VGMPlayer
             YM2608WriteData(0x0D, 0, 3, 0xff);
 
             //Transfer
-            int startAddress = saddr & 0xffffe0;
-            int endAddress = startAddress + transferData.Length;
-            //int len = endAddress - startAddress;
-            //int index = 0;
-            //int percentage = 0;
-            //int lastPercentage = 0;
+            int startAddress = 0;
+            if (ym2608_adpcmbit8)
+                startAddress = saddr & 0xffffe0;
+            else
+                startAddress = saddr & 0xfffffc;
+            int endAddress = saddr + transferData.Length;
+            int len = endAddress - startAddress;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
             for (int adr = startAddress; adr < endAddress; adr++)
             {
                 YM2608WriteData(0x08, 0, 3, adpcData2608[adr], false);
 
-                //percentage = (100 * index) / len;
-                //if (percentage != lastPercentage)
-                //{
-                //    fp.Percentage = percentage;
-                //}
-                //lastPercentage = percentage;
-                //index++;
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                }
+                lastPercentage = percentage;
+                index++;
+                if (RequestedStat == SoundState.Stopped)
+                    break;
             }
+            FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
 
-            //Zero padding
-            //for (int j = endAddress; j < endAddress + ((0x20 - (endAddress & 0x1f)) & 0x1f); j++)
-            //    YM2608WriteData(0x08, 0, 3, 0x80, false);   //Adds silent data
 
             // Finish
-            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
+            //YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
+            //YM2608WriteData(0x00, 0, 3, 0x00, false);
             YM2608WriteData(0x00, 0, 3, 0x00, false);
+            YM2608WriteData(0x10, 0, 3, 0x80, false);
         }
 
         private void sendAdpcmDataY8950(byte[] transferData, int saddr, FormProgress fp)
         {
+            if (transferData.Length == 0)
+                return;
+
             //File.WriteAllBytes(transferData.Length.ToString(), transferData);
             int slot = 0;
             if (comPortY8950 != null)
@@ -565,94 +593,139 @@ namespace zanac.VGMPlayer
                 }
             }
 
-
-            //3.音声分析(AUDIO→EXT.MEMORY)
             //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
 
             //各フラグをイネーブルにする。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x08);
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00);
             //各フラグをリセット。
             YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80);
 
-            //ADPCM分析をイネーブルにする。
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x68);
+            //メモリライトモードにする。
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60);
 
             if (comPortY8950 != null)
             {
-                switch ((int)comPortY8950.Tag)
+                //switch ((int)comPortY8950.Tag)
+                //{
+                //    case 0:
+                //    case 2:
+                //        //RAMタイプの指定。64Kbit
+                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
+
+                //        if ((saddr & 0b1000) == 0b1000)
+                //            saddr += 0b1000;
+                //        if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                //            saddr += 0b1_0000_0000_0000;
+
+                //        //START
+                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
+                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
+                //        //STOP
+                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(0xff - 0b1000));
+                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)(0xff - 0b10000));
+                //        break;
+                //    case 1:
+                //    case 3:
+                //        //RAMタイプの指定。256Kbit
+                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
+                //        //START
+                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
+                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
+                //        //STOP
+                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)0xff);
+                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)0xff);
+                //        break;
+                //}
+                int eaddr = saddr + transferData.Length - 1;
+                saddr = saddr >> 2;
+                eaddr = eaddr >> 2;
+
+                if (y8950_adpcmbit64k)
                 {
-                    case 0:
-                    case 2:
-                        //RAMタイプの指定。64Kbit
-                        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
+                    //メモリのタイプ指定。64Kbit
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
 
-                        if ((saddr & 0b1000) == 0b1000)
-                            saddr += 0b1000;
-                        if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                            saddr += 0b1_0000_0000_0000;
+                    if ((saddr & 0b1000) == 0b1000)
+                        saddr += 0b1000;
+                    if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                        saddr += 0b1_0000_0000_0000;
+                    if ((eaddr & 0b1000) == 0b1000)
+                        eaddr += 0b1000;
+                    if ((eaddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                        eaddr += 0b1_0000_0000_0000;
 
-                        //START
-                        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
-                        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
-                        //STOP
-                        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(0xff - 0b1000));
-                        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)(0xff - 0b10000));
-                        break;
-                    case 1:
-                    case 3:
-                        //RAMタイプの指定。256Kbit
-                        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
-                        //START
-                        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
-                        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
-                        //STOP
-                        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)0xff);
-                        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)0xff);
-                        break;
+                    //START
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff));
+                    //STOP
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff));
+                }
+                else
+                {
+                    //メモリのタイプ指定。256Kbit
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
+                    //START
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff));
+                    //STOP
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff));
                 }
             }
 
-            //サンプリングレートを16KHz(NPRE= 255)。
-            YMF262WriteData(comPortY8950, 0x0d, 0, slot, 0, 0, (byte)0xe1);
-            YMF262WriteData(comPortY8950, 0x0e, 0, slot, 0, 0, (byte)0x00);
-
-            //分析スタート
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0xe8);
-
             //Transfer
-            int endAddress = saddr;
+            //int endAddress = saddr;
+
+            int len = transferData.Length;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
             for (int i = 0; i < transferData.Length; i++)
             {
                 YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i]);
 
-                endAddress++;
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                }
+                lastPercentage = percentage;
+                index++;
+
+                //endAddress++;
                 if (comPortY8950 != null)
                 {
-                    switch ((int)comPortY8950.Tag)
-                    {
-                        case 0:
-                        case 2:
-                            //RAMタイプの指定。64Kbit
-                            if ((endAddress & 0b1000) == 0b1000)
-                                endAddress += 0b1000;
-                            if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                                endAddress += 0b1_0000_0000_0000;
-                            break;
-                        case 1:
-                        case 3:
-                            break;
-                    }
+                    //switch ((int)comPortY8950.Tag)
+                    //{
+                    //    case 0:
+                    //    case 2:
+                    //        //RAMタイプの指定。64Kbit
+                    //        if ((endAddress & 0b1000) == 0b1000)
+                    //            endAddress += 0b1000;
+                    //        if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                    //            endAddress += 0b1_0000_0000_0000;
+                    //        break;
+                    //    case 1:
+                    //    case 3:
+                    //        break;
+                    //}
+                    //if (y8950_adpcmbit64k)
+                    //{
+                    //    if ((endAddress & 0b1000) == 0b1000)
+                    //        endAddress += 0b1000;
+                    //    if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                    //        endAddress += 0b1_0000_0000_0000;
+                    //}
                 }
+                if (RequestedStat == SoundState.Stopped)
+                    break;
             }
+            FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
 
-#if DEBUG
-            Console.WriteLine("ADPCM: " +
-                (saddr).ToString("x") + " - " + endAddress.ToString("x") +
-                " (" + transferData.Length.ToString("x") + ")");
-#endif
-
-            //ADPCM分析終了
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x68);
+            //○リセット
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80);
             //$07レジスタリセット
             YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x00);
         }
@@ -818,7 +891,7 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.Y8950_IF)
                     {
                         case 0:
-                            if(comPortY8950 == null)
+                            if (comPortY8950 == null)
                                 comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                     (PortId)Settings.Default.Y8950_Port);
                             break;
@@ -872,7 +945,7 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.OPNA_IF)
                     {
                         case 0:
-                            if(comPortOPNA == null)
+                            if (comPortOPNA == null)
                                 comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                     (PortId)Settings.Default.OPNA_Port);
                             break;
@@ -914,8 +987,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.Y8950_IF)
                     {
                         case 0:
-                            comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.Y8950_Port);
+                            if (comPortY8950 == null)
+                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.Y8950_Port);
                             break;
                     }
                 }
@@ -938,8 +1012,9 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.SCC_IF)
                     {
                         case 0:
-                            comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.SCC_Port);
+                            if (comPortSCC == null)
+                                comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                  (PortId)Settings.Default.SCC_Port);
                             break;
                     }
                 }
@@ -951,12 +1026,14 @@ namespace zanac.VGMPlayer
                     switch (Settings.Default.Y8910_IF)
                     {
                         case 0:
-                            comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.Y8910_Port);
+                            if (comPortY8910 == null)
+                                comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.Y8910_Port);
                             break;
                         case 1:
-                            comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
-                                (PortId)Settings.Default.Y8910_Port);
+                            if (comPortY8910 == null)
+                                comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
+                                    (PortId)Settings.Default.Y8910_Port);
                             break;
                     }
                 }
@@ -1065,7 +1142,161 @@ namespace zanac.VGMPlayer
             vgmReader.ReadBytes(offset);
             vgmData = vgmReader.ReadBytes((int)(fileSize - offset));
 
+            if (comPortOPNA != null)
+                ym2608_adpcmbit8 = searchOpnaRamType(vgmData);
+
+            if (comPortY8950 != null)
+                y8950_adpcmbit64k = searchY8950RamType(vgmData);
+
             vgmReader = new BinaryReader(new MemoryStream(vgmData));
+        }
+
+        //https://github.com/kuma4649/MDPlayer/blob/stable/LICENSE.txt
+        //https://github.com/kuma4649/MDPlayer/blob/stable/MDPlayer/MDPlayer/Driver/vgm.cs
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vgmBuf"></param>
+        /// <param name="adr"></param>
+        /// <returns></returns>
+        private UInt32 getLE32(byte[] vgmBuf, UInt32 adr)
+        {
+            UInt32 dat;
+            dat = (UInt32)vgmBuf[adr] + (UInt32)vgmBuf[adr + 1] * 0x100 + (UInt32)vgmBuf[adr + 2] * 0x10000 + (UInt32)vgmBuf[adr + 3] * 0x1000000;
+
+            return dat;
+        }
+
+        /// <summary>
+        /// OPNAのRAMTypeをデータから調べる
+        /// </summary>
+        /// <returns>true:x8bit false:x1bit</returns>
+        private bool searchOpnaRamType(byte[] vgmBuf)
+        {
+            try
+            {
+                long adr = 0;
+
+                while (adr < vgmBuf.Length && vgmBuf[adr] != 0x66)
+                {
+                    byte dat = vgmBuf[adr];
+                    if (dat <= 0x31) adr++;
+                    else if (0x4f <= dat && dat < 0x51) adr += 2;
+                    else if (dat < 0x57) adr += 3;
+                    else if (dat == 0x57)
+                    {
+                        byte reg = vgmBuf[adr + 1];
+                        byte val = vgmBuf[adr + 2];
+                        adr += 3;
+                        if (reg == 1)
+                        {
+                            if ((val & 2) != 0)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (dat < 0x62) adr += 3;
+                    else if (dat < 0x64) adr++;
+                    else if (dat == 0x64) adr += 4;
+                    else if (dat == 0x66) adr++;
+                    else if (dat == 0x67)
+                    {
+                        uint bLen = getLE32(vgmBuf, (uint)(adr + 3));
+                        bLen &= 0x7fffffff;
+                        adr += bLen + 7;
+                    }
+                    else if (dat == 0x68)
+                    {
+                        adr += 12;
+                    }
+                    else if (dat < 0x90) adr++;
+                    else if (dat == 0x90) adr += 5;
+                    else if (dat == 0x91) adr += 5;
+                    else if (dat == 0x92) adr += 6;
+                    else if (dat == 0x93) adr += 11;
+                    else if (dat == 0x94) adr += 2;
+                    else if (dat == 0x95) adr += 5;
+                    else if (dat < 0xc0) adr += 3;
+                    else if (dat < 0xe0) adr += 4;
+                    else if (dat == 0xe0) adr += 5;
+                    else if (dat == 0xe1) adr += 4;
+                    else adr++;
+                }
+            }
+            catch
+            {
+                ;
+            }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// Y8950のRAMTypeをデータから調べる
+        /// </summary>
+        /// <returns>true:64kbit false:256kbit</returns>
+        private bool searchY8950RamType(byte[] vgmBuf)
+        {
+            try
+            {
+                long adr = 0;
+
+                while (adr < vgmBuf.Length && vgmBuf[adr] != 0x66)
+                {
+                    byte dat = vgmBuf[adr];
+                    if (dat <= 0x31) adr++;
+                    else if (0x4f <= dat && dat < 0x51) adr += 2;
+                    else if (dat < 0x5c) adr += 3;
+                    else if (dat == 0x5c)
+                    {
+                        byte reg = vgmBuf[adr + 1];
+                        byte val = vgmBuf[adr + 2];
+                        adr += 3;
+                        if (reg == 8)
+                        {
+                            if ((val & 2) != 0)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (dat < 0x62) adr += 3;
+                    else if (dat < 0x64) adr++;
+                    else if (dat == 0x64) adr += 4;
+                    else if (dat == 0x66) adr++;
+                    else if (dat == 0x67)
+                    {
+                        uint bLen = getLE32(vgmBuf, (uint)(adr + 3));
+                        bLen &= 0x7fffffff;
+                        adr += bLen + 7;
+                    }
+                    else if (dat == 0x68)
+                    {
+                        adr += 12;
+                    }
+                    else if (dat < 0x90) adr++;
+                    else if (dat == 0x90) adr += 5;
+                    else if (dat == 0x91) adr += 5;
+                    else if (dat == 0x92) adr += 6;
+                    else if (dat == 0x93) adr += 11;
+                    else if (dat == 0x94) adr += 2;
+                    else if (dat == 0x95) adr += 5;
+                    else if (dat < 0xc0) adr += 3;
+                    else if (dat < 0xe0) adr += 4;
+                    else if (dat == 0xe0) adr += 5;
+                    else if (dat == 0xe1) adr += 4;
+                    else adr++;
+                }
+            }
+            catch
+            {
+                ;
+            }
+
+            return false;
         }
 
         private int readByte()
@@ -1078,11 +1309,16 @@ namespace zanac.VGMPlayer
             byte data = vgmReader.ReadByte();
             return data;
         }
-#if DEBUG
-        bool adpcmbit8;
-        int lstart = 0;
-        int lstop = 0;
-#endif
+
+        bool ym2608_adpcmbit8;
+        int ym2608_pcm_start;
+        int ym2608_pcm_stop;
+
+        string y8950_adpcmbit64kString;
+        bool y8950_adpcmbit64k;
+        bool y8950_adpcm_ram;
+        int y8950_pcm_start;
+        int y8950_pcm_stop;
 
         protected override void StreamSong()
         {
@@ -1106,15 +1342,28 @@ namespace zanac.VGMPlayer
                 {
                     QueryPerformanceCounter(out before);
 
-                    if (State == SoundState.Stopped)
+                    if (RequestedStat == SoundState.Stopped)
                     {
                         break;
                     }
-                    else if (State == SoundState.Paused)
+                    else if (RequestedStat == SoundState.Paused)
                     {
+                        if (State != SoundState.Paused)
+                        {
+                            State = SoundState.Paused;
+                            StopAllSounds(false);
+                        }
                         Thread.Sleep(1);
                         continue;
                     }
+                    else if (RequestedStat == SoundState.Freezed)
+                    {
+                        if (State != SoundState.Freezed)
+                            State = SoundState.Freezed;
+                        Thread.Sleep(1);
+                        continue;
+                    }
+                    State = SoundState.Playing;
                     try
                     {
                         if (vgmWaitDelta <= 0)
@@ -1288,36 +1537,58 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
-#if DEBUG
+
                                             if (adrs >= 0 && adrs <= 0x10)
                                             {
                                                 if (adrs == 0x1)
                                                 {
                                                     if ((dt & 1) == 0)
-                                                        adpcmbit8 = (dt & 2) == 2;
+                                                    {
+                                                        ym2608_adpcmbit8 = (dt & 2) == 2;
+
+                                                        if (ym2608_adpcmbit8)
+                                                        {
+                                                            //FormMain.TopForm.SetStatusText("YM2608: Set 8bit ADPCM mode");
+#if DEBUG
+                                                            Console.WriteLine("YM2608: Set 8bit ADPCM mode");
+#endif
+                                                        }
+                                                        else
+                                                        {
+                                                            //FormMain.TopForm.SetStatusText("YM2608: Set 1bit ADPCM mode");
+#if DEBUG
+                                                            Console.WriteLine("YM2608: Set 1bit ADPCM mode");
+#endif
+                                                        }
+                                                    }
                                                 }
-                                                if (adrs == 0x2)
+                                                else if (adrs == 0x2)
                                                 {
-                                                    lstart = (lstart & 0xff00) | dt;
+                                                    ym2608_pcm_start = (ym2608_pcm_start & 0xff00) | dt;
                                                 }
-                                                if (adrs == 0x3)
+                                                else if (adrs == 0x3)
                                                 {
-                                                    lstart = (lstart & 0xff) | (dt << 8);
+                                                    ym2608_pcm_start = (ym2608_pcm_start & 0xff) | (dt << 8);
                                                 }
-                                                if (adrs == 0x4)
+                                                else if (adrs == 0x4)
                                                 {
-                                                    lstop = (lstop & 0xff00) | dt;
+                                                    ym2608_pcm_stop = (ym2608_pcm_stop & 0xff00) | dt;
                                                 }
-                                                if (adrs == 0x5)
+                                                else if (adrs == 0x5)
                                                 {
-                                                    lstop = (lstop & 0xff) | (dt << 8);
-                                                    if (adpcmbit8)
-                                                        Console.WriteLine("S-E: " + (lstart << 5).ToString("x") + " - " + ((lstop << 5) | 0x1f).ToString("x"));
+                                                    ym2608_pcm_stop = (ym2608_pcm_stop & 0xff) | (dt << 8);
+                                                    if (ym2608_adpcmbit8)
+                                                    {
+#if DEBUG
+                                                        Console.WriteLine("YM2608: Play 8bit ADPCM(" + (ym2608_pcm_start << 5).ToString("x") + " - " + ((ym2608_pcm_stop << 5) | 0x1f).ToString("x") + ")");
+#endif
+                                                    }
                                                     else
-                                                        Console.WriteLine("S-E: " + (lstart << 2).ToString("x") + " - " + ((lstop << 2) | 0x3).ToString("x"));
+                                                    {
+                                                        Console.WriteLine("YM2608: Play 1bit ADPCM mode(" + (ym2608_pcm_start << 2).ToString("x") + " - " + ((ym2608_pcm_stop << 2) | 0x3).ToString("x") + ")");
+                                                    }
                                                 }
                                             }
-#endif
                                             if (comPortOPNA != null)
                                             {
                                                 if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
@@ -1356,55 +1627,85 @@ namespace zanac.VGMPlayer
 
                                             if (adrs == 0x8)
                                             {
+                                                y8950_adpcmbit64k = (dt & 2) == 2;
                                                 if ((dt & 1) == 1)
                                                 {
                                                     //HACK: ROM -> RAM
                                                     if (comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                                                     {
                                                         dt -= 1;
-                                                        if ((dt & 2) == 2)
-                                                            FormMain.TopForm.SetStatusText("Y8950 64Kbit ROM -> RAM DATA");
+                                                        if (y8950_adpcmbit64k)
+                                                            y8950_adpcmbit64kString = "64Kbit Fake RAM mode";
                                                         else
-                                                            FormMain.TopForm.SetStatusText("Y8950 256Kbit ROM -> RAM DATA");
+                                                            y8950_adpcmbit64kString = "256Kbit Fake RAM mode";
                                                     }
                                                     else
                                                     {
                                                         if ((dt & 2) == 2)
-                                                            FormMain.TopForm.SetStatusText("Y8950 64Kbit ROM DATA");
+                                                            y8950_adpcmbit64kString = "64Kbit ROM mode";
                                                         else
-                                                            FormMain.TopForm.SetStatusText("Y8950 256Kbit ROM DATA");
+                                                            y8950_adpcmbit64kString = "256Kbit ROM mode";
                                                     }
+                                                    y8950_adpcm_ram = false;
                                                 }
                                                 else
                                                 {
-                                                    if ((dt & 2) == 2)
-                                                        FormMain.TopForm.SetStatusText("Y8950 64Kbit RAM DATA");
+                                                    if (y8950_adpcmbit64k)
+                                                        y8950_adpcmbit64kString = "64Kbit RAM mode";
                                                     else
-                                                        FormMain.TopForm.SetStatusText("Y8950 256Kbit RAM DATA");
+                                                        y8950_adpcmbit64kString = "256Kbit RAM mode";
+                                                    y8950_adpcm_ram = true;
                                                 }
-                                            }
 #if DEBUG
+                                                Console.WriteLine("Y8950: Set " + y8950_adpcmbit64kString);
+#endif
+                                            }
+
                                             if (adrs >= 0 && adrs <= 0x10)
                                             {
                                                 if (adrs == 0x9)
                                                 {
-                                                    lstart = (lstart & 0xff00) | dt;
+                                                    y8950_pcm_start = (y8950_pcm_start & 0xff00) | dt;
+                                                    if (!y8950_adpcm_ram && comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                    {
+                                                        var dt2 = ((y8950_pcm_start << 3) & 0xff00) >> 8;
+                                                        writePcmAddressData(dt2, 0xa);
+
+                                                        dt = (y8950_pcm_start << 3) & 0xff;
+                                                    }
                                                 }
-                                                if (adrs == 0xa)
+                                                else if (adrs == 0xa)
                                                 {
-                                                    lstart = (lstart & 0xff) | (dt << 8);
+                                                    y8950_pcm_start = (y8950_pcm_start & 0xff) | (dt << 8);
+                                                    if (!y8950_adpcm_ram && comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                    {
+                                                        dt = ((y8950_pcm_start << 3) & 0xff00) >> 8;
+                                                    }
                                                 }
-                                                if (adrs == 0xb)
+                                                else if (adrs == 0xb)
                                                 {
-                                                    lstop = (lstop & 0xff00) | dt;
+                                                    y8950_pcm_stop = (y8950_pcm_stop & 0xff00) | dt;
+                                                    if (!y8950_adpcm_ram && comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                    {
+                                                        var dt2 = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
+                                                        writePcmAddressData(dt2, 0xc);
+
+                                                        dt = ((y8950_pcm_stop << 3) | 0b111) & 0xff;
+                                                    }
                                                 }
-                                                if (adrs == 0xc)
+                                                else if (adrs == 0xc)
                                                 {
-                                                    lstop = (lstop & 0xff) | (dt << 8);
-                                                    Console.WriteLine("S-E: " + (lstart << 5).ToString("x") + " - " + ((lstop << 5) | 0x1f).ToString("x"));
+                                                    y8950_pcm_stop = (y8950_pcm_stop & 0xff) | (dt << 8);
+                                                    if (!y8950_adpcm_ram && comPortY8950?.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                    {
+                                                        dt = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
+                                                    }
+#if DEBUG
+                                                    Console.WriteLine("Y8950: Play " + y8950_adpcmbit64kString + "(" + (y8950_pcm_start << 5).ToString("x") + " - " + ((y8950_pcm_stop << 5) | 0x1f).ToString("x") + ")");
+#endif
                                                 }
                                             }
-#endif
+
                                             if (comPortY8950 != null)
                                             {
                                                 if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
@@ -1501,7 +1802,7 @@ namespace zanac.VGMPlayer
                                     case 0x66:
                                         //End of song
                                         flushDeferredWriteData();
-                                        if (Looped == false)
+                                        if (!LoopByCount && !LoopByElapsed)
                                         {
                                             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                             break;
@@ -1542,11 +1843,13 @@ namespace zanac.VGMPlayer
                                                             uint romSize = vgmReader.ReadUInt32();
                                                             uint saddr = vgmReader.ReadUInt32();
                                                             size -= 8;
+
 #if DEBUG
-                                                            Console.WriteLine("ADPCM: " +
+                                                            Console.WriteLine("YM2608: Transferring ADPCM(" +
                                                                 (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
                                                                 " (" + size.ToString("x") + ")");
 #endif
+
                                                             //FormProgress.RunDialog("Updating ADPCM data",
                                                             //    new Action<FormProgress>((f) =>
                                                             {
@@ -1554,6 +1857,14 @@ namespace zanac.VGMPlayer
                                                                     sendAdpcmDataYM2608(vgmReader.ReadBytes((int)size), (int)saddr, null);
                                                             }
                                                             //));
+
+
+
+#if DEBUG
+                                                            Console.WriteLine("YM2608: Transferred ADPCM(" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+#endif
                                                         }
                                                         break;
                                                     case 0x88:  //YM8950
@@ -1562,6 +1873,15 @@ namespace zanac.VGMPlayer
                                                             uint saddr = vgmReader.ReadUInt32();
                                                             size -= 8;
 
+                                                            FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+
+#if DEBUG
+                                                            Console.WriteLine("Y8950: Transferring ADPCM(" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+#endif
                                                             //FormProgress.RunDialog("Updating ADPCM data",
                                                             //    new Action<FormProgress>((f) =>
                                                             {
@@ -1569,6 +1889,16 @@ namespace zanac.VGMPlayer
                                                                     sendAdpcmDataY8950(vgmReader.ReadBytes((int)size), (int)saddr, null);
                                                             }
                                                             //));
+
+                                                            FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM(" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+
+#if DEBUG
+                                                            Console.WriteLine("Y8950: Transferred ADPCM(" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+#endif
                                                         }
                                                         break;
                                                     default:
@@ -1874,7 +2204,7 @@ namespace zanac.VGMPlayer
                                             if (ll < 0)
                                                 break;
                                             var aa = readByte();
-                                            if (aa   < 0)
+                                            if (aa < 0)
                                                 break;
                                             var dd = readByte();
                                             if (dd < 0)
@@ -1893,14 +2223,13 @@ namespace zanac.VGMPlayer
                             if ((command == 0x66 || command == -1))
                             {
                                 flushDeferredWriteData();
-                                if (Looped == false || LoopCount == 0)
+                                if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                                    && !LoopByElapsed)
                                 {
-                                    State = SoundState.Stopped;
-                                    StopAllSounds(true);
-                                    NotifyFinished();
                                     break;
                                 }
-                                LoopCount--;
+                                if (CurrentLoopedCount >= 0)
+                                    CurrentLoopedCount++;
                             }
                         }
 
@@ -1973,14 +2302,13 @@ namespace zanac.VGMPlayer
                             throw;
 
                         flushDeferredWriteData();
-                        if (Looped == false || LoopCount == 0)
+                        if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                            && !LoopByElapsed)
                         {
-                            State = SoundState.Stopped;
-                            StopAllSounds(true);
-                            NotifyFinished();
                             break;
                         }
-                        LoopCount--;
+                        if (CurrentLoopedCount >= 0)
+                            CurrentLoopedCount++;
                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
@@ -2035,6 +2363,32 @@ namespace zanac.VGMPlayer
                     }
                 }
             }
+
+            StopAllSounds(true);
+            State = SoundState.Stopped;
+            NotifyFinished();
+        }
+
+        private void writePcmAddressData(int dt2, int adrs2)
+        {
+            if (comPortY8950 != null)
+            {
+                if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                {
+                    int ytype = (int)comPortY8950.Tag;
+                    switch (ytype)
+                    {
+                        case 0:
+                        case 1:
+                            comPortY8950.DeferredWriteData(10, (byte)adrs2, (byte)dt2, (int)Settings.Default.BitBangWaitY8950);
+                            break;
+                        case 2:
+                        case 3:
+                            comPortY8950.DeferredWriteData(11, (byte)adrs2, (byte)dt2, (int)Settings.Default.BitBangWaitY8950);
+                            break;
+                    }
+                }
+            }
         }
 
 
@@ -2043,14 +2397,15 @@ namespace zanac.VGMPlayer
         /// </summary>
         private void flushDeferredWriteData()
         {
-            comPortOPLL?.FlushDeferredWriteData();
             comPortDCSG?.FlushDeferredWriteData();
+            comPortOPLL?.FlushDeferredWriteData();
             comPortOPN2?.FlushDeferredWriteData();
             comPortSCC?.FlushDeferredWriteData();
             comPortY8910?.FlushDeferredWriteData();
             comPortOPM?.FlushDeferredWriteData();
             comPortOPL3?.FlushDeferredWriteData();
             comPortOPNA?.FlushDeferredWriteData();
+            comPortY8950?.FlushDeferredWriteData();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -2108,6 +2463,7 @@ namespace zanac.VGMPlayer
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
             }
+            base.Dispose(disposing);
         }
 
         private class StreamParam

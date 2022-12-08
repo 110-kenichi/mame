@@ -173,8 +173,8 @@ namespace zanac.VGMPlayer
                 while (!disposedValue)
                 {
                     autoResetEvent.WaitOne();
-                    try
-                    {
+                    //try
+                    //{
                         PortWriteData[] dd;
                         lock (lockObject)
                         {
@@ -187,11 +187,11 @@ namespace zanac.VGMPlayer
                             if (dd.Length != 0)
                                 DataWriter?.Write(dd);
                         }
-                    }
-                    finally
-                    {
-                        autoResetEvent.Set();
-                    }
+                    //}
+                    //finally
+                    //{
+                    //    autoResetEvent.Set();
+                    //}
                 }
             }
             catch (Exception ex)

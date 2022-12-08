@@ -380,15 +380,28 @@ namespace zanac.VGMPlayer
                 {
                     QueryPerformanceCounter(out before);
 
-                    if (State == SoundState.Stopped)
+                    if (RequestedStat == SoundState.Stopped)
                     {
                         break;
                     }
-                    else if (State == SoundState.Paused)
+                    else if (RequestedStat == SoundState.Paused)
                     {
+                        if (State != SoundState.Paused)
+                        {
+                            State = SoundState.Paused;
+                            StopAllSounds(false);
+                        }
                         Thread.Sleep(1);
                         continue;
                     }
+                    else if (RequestedStat == SoundState.Freezed)
+                    {
+                        if (State != SoundState.Freezed)
+                            State = SoundState.Freezed;
+                        Thread.Sleep(1);
+                        continue;
+                    }
+                    State = SoundState.Playing;
                     try
                     {
                         if (xgmWaitDelta <= 0)
@@ -544,14 +557,13 @@ namespace zanac.VGMPlayer
                             if ((command == 0x7E || command == 0x7F || command == -1))
                             {
                                 flushDeferredWriteData();
-                                if (Looped == false || LoopCount == 0)
+                                if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                                    && !LoopByElapsed)
                                 {
-                                    State = SoundState.Stopped;
-                                    StopAllSounds(true);
-                                    NotifyFinished();
                                     break;
                                 }
-                                LoopCount--;
+                                if (CurrentLoopedCount >= 0)
+                                    CurrentLoopedCount++;
                             }
                         }
 
@@ -592,14 +604,13 @@ namespace zanac.VGMPlayer
                             throw;
 
                         flushDeferredWriteData();
-                        if (Looped == false || LoopCount == 0)
+                        if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                            && !LoopByElapsed)
                         {
-                            State = SoundState.Stopped;
-                            StopAllSounds(true);
-                            NotifyFinished();
                             break;
                         }
-                        LoopCount--;
+                        if (CurrentLoopedCount >= 0)
+                            CurrentLoopedCount++;
                         xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
@@ -654,6 +665,10 @@ namespace zanac.VGMPlayer
                     }
                 }
             }
+
+            State = SoundState.Stopped;
+            StopAllSounds(true);
+            NotifyFinished();
         }
 
         private void flushDeferredWriteData()
@@ -704,6 +719,7 @@ namespace zanac.VGMPlayer
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
             }
+            base.Dispose(disposing);
         }
 
         // 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします

@@ -621,5 +621,41 @@ namespace zanac.VGMPlayer.Properties {
                 this["Y8950_Type"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public decimal LoopCount {
+            get {
+                return ((decimal)(this["LoopCount"]));
+            }
+            set {
+                this["LoopCount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LoopTime {
+            get {
+                return ((bool)(this["LoopTime"]));
+            }
+            set {
+                this["LoopTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("01/01/1753 00:05:00")]
+        public global::System.DateTime LoopTimes {
+            get {
+                return ((global::System.DateTime)(this["LoopTimes"]));
+            }
+            set {
+                this["LoopTimes"] = value;
+            }
+        }
     }
 }

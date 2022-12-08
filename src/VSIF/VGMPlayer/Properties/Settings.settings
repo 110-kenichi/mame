@@ -152,5 +152,14 @@
     <Setting Name="Y8950_Type" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="LoopCount" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="LoopTime" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LoopTimes" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">01/01/1753 00:05:00</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

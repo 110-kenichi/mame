@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace zanac.VGMPlayer
 {
@@ -41,7 +44,7 @@ namespace zanac.VGMPlayer
             {
                 return state;
             }
-            set
+            protected set
             {
                 if (state != value)
                 {
@@ -51,10 +54,27 @@ namespace zanac.VGMPlayer
             }
         }
 
+        protected SoundState RequestedStat
+        {
+            set;
+            get;
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        public virtual bool Looped
+        /// <param name="state"></param>
+        public void SetStateRequest(SoundState state)
+        {
+            RequestedStat = state;
+            while (State != state)
+                Thread.Sleep(1);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool LoopByCount
         {
             get;
             set;
@@ -63,7 +83,34 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        public virtual int LoopCount
+        public virtual int LoopedCount
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual int CurrentLoopedCount
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool LoopByElapsed
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual TimeSpan LoopTimes
         {
             get;
             set;
@@ -105,58 +152,101 @@ namespace zanac.VGMPlayer
             FileName = fileName;
         }
 
+        private Timer playTicTimer;
+
+        private Stopwatch stopwatch;
+
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Play()
+        public void Play()
         {
             if (State == SoundState.Playing)
                 return;
 
-            FormMain.TopForm.SetStatusText("Playing");
-            State = SoundState.Playing;
+            playTicTimer = new Timer(250);
+            playTicTimer.Elapsed += LoopTimer_Elapsed;
+            //playTicTimer.Enabled = true;
+
+            stopwatch = new Stopwatch();
 
             Thread t = new Thread(new ThreadStart(StreamSong));
-            t.Priority = ThreadPriority.AboveNormal;
+            t.Priority = ThreadPriority.Highest;
             t.Start();
+            playTicTimer.Start();
+            stopwatch.Start();
+
+            FormMain.TopForm.SetElapsedTime(new TimeSpan(0));
+            FormMain.TopForm.SetStatusText("Playing");
+        }
+
+        private void LoopTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            FormMain.TopForm.SetElapsedTime(stopwatch.Elapsed);
+            if (stopwatch.Elapsed > LoopTimes && LoopByElapsed)
+            {
+                if (!LoopByCount || (LoopByCount && LoopedCount == 0))
+                {
+                    Stop();
+                    NotifyFinished();
+                }
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Pause()
+        public void Pause()
         {
+            if (State == SoundState.Paused)
+                return;
+
+            SetStateRequest(SoundState.Paused);
+            playTicTimer?.Stop();
+            stopwatch?.Stop();
             FormMain.TopForm.SetStatusText("Paused");
-            State = SoundState.Paused;
-            StopAllSounds(false);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Freeze()
+        public void Freeze()
         {
+            if (State == SoundState.Freezed)
+                return;
+
+            SetStateRequest(SoundState.Freezed);
+            playTicTimer?.Stop();
+            stopwatch?.Stop();
             FormMain.TopForm.SetStatusText("Freezed");
-            State = SoundState.Paused;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Resume()
+        public void Resume()
         {
+            if (State == SoundState.Playing)
+                return;
+
+            SetStateRequest(SoundState.Playing);
+            playTicTimer?.Start();
+            stopwatch?.Start();
             FormMain.TopForm.SetStatusText("Resumed");
-            State = SoundState.Playing;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public virtual void Stop()
+        public void Stop()
         {
+            if (State == SoundState.Stopped)
+                return;
+
+            SetStateRequest(SoundState.Stopped);
+            playTicTimer?.Stop();
+            stopwatch?.Stop();
             FormMain.TopForm.SetStatusText("Stopped");
-            State = SoundState.Stopped;
-            StopAllSounds(true);
         }
 
         /// <summary>
@@ -173,6 +263,11 @@ namespace zanac.VGMPlayer
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                playTicTimer?.Dispose();
+                playTicTimer = null;
+            }
         }
 
         public virtual void Dispose()
@@ -202,5 +297,6 @@ namespace zanac.VGMPlayer
         Playing,
         Stopped,
         Paused,
+        Freezed,
     }
 }
