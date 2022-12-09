@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace zanac.VGMPlayer
 {
@@ -155,6 +156,11 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte type, byte address, byte data, int wait)
         {
+            if (type == 0x11 && address == 0x8 && data == 0x7c)
+            {
+            }
+            Console.WriteLine(string.Format("FM P1 Out:Prt[{0:x02}] Adr[{1:x02}] val[{2:x02}]", (int)(type), (int)(address & 0xff), (int)data));
+
             lock (lockObject)
             {
                 if (disposedValue)
