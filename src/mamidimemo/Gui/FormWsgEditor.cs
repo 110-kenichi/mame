@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -294,8 +295,16 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (var val in vals)
             {
                 byte v = 0;
-                if (byte.TryParse(val, out v))
-                    vs.Add(v);
+                if (checkBoxHex.Checked)
+                {
+                    if (byte.TryParse(val, NumberStyles.HexNumber, null, out v))
+                        vs.Add(v);
+                }
+                else
+                {
+                    if (byte.TryParse(val, out v))
+                        vs.Add(v);
+                }
             }
 
             for (int i = 0; i < Math.Min(ByteWsgData.Length, vs.Count); i++)
@@ -311,7 +320,10 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 if (sb.Length != 0)
                     sb.Append(' ');
-                sb.Append(graphControl.ResultOfWsgData[i].ToString((IFormatProvider)null));
+                if (checkBoxHex.Checked)
+                    sb.Append(graphControl.ResultOfWsgData[i].ToString("X2"));
+                else
+                    sb.Append(graphControl.ResultOfWsgData[i].ToString((IFormatProvider)null));
             }
             try
             {
@@ -516,6 +528,11 @@ namespace zanac.MAmidiMEmo.Gui
             graphControl.Invalidate();
 
             ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void checkBoxHex_CheckedChanged(object sender, EventArgs e)
+        {
+            updateText();
         }
     }
 }

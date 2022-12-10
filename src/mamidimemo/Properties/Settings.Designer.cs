@@ -597,5 +597,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["OutMidiIF"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool WsgHex {
+            get {
+                return ((bool)(this["WsgHex"]));
+            }
+            set {
+                this["WsgHex"] = value;
+            }
+        }
     }
 }
