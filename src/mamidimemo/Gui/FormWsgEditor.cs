@@ -31,6 +31,12 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        public bool WsgSigned
+        {
+            get;
+            set;
+        }
+
         private int f_WsgMaxValue = 15;
 
         public byte[] ByteWsgData
@@ -74,6 +80,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             Size = Settings.Default.WsgEdSize;
             graphControl.Editor = this;
+            checkBoxTransparent_CheckedChanged(null, null);
         }
 
         /// <summary>
@@ -292,18 +299,38 @@ namespace zanac.MAmidiMEmo.Gui
 
             string[] vals = textBoxWsgDataText.Text.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             List<byte> vs = new List<byte>();
+            int max = ((1 << WsgBitWide) - 1) / 2;
             foreach (var val in vals)
             {
-                byte v = 0;
                 if (checkBoxHex.Checked)
                 {
-                    if (byte.TryParse(val, NumberStyles.HexNumber, null, out v))
-                        vs.Add(v);
+                    if (WsgSigned)
+                    {
+                        sbyte v = 0;
+                        if (sbyte.TryParse(val, NumberStyles.HexNumber, null, out v))
+                            vs.Add((byte)((int)v + (max + 1)));
+                    }
+                    else
+                    {
+                        byte v = 0;
+                        if (byte.TryParse(val, NumberStyles.HexNumber, null, out v))
+                            vs.Add(v);
+                    }
                 }
                 else
                 {
-                    if (byte.TryParse(val, out v))
-                        vs.Add(v);
+                    if (WsgSigned)
+                    {
+                        sbyte v = 0;
+                        if (sbyte.TryParse(val, out v))
+                            vs.Add((byte)((int)v + (max + 1)));
+                    }
+                    else
+                    {
+                        byte v = 0;
+                        if (byte.TryParse(val, out v))
+                            vs.Add(v);
+                    }
                 }
             }
 
@@ -315,15 +342,28 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void updateText()
         {
+            int max = ((1 << WsgBitWide) - 1) / 2;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < graphControl.ResultOfWsgData.Length; i++)
             {
                 if (sb.Length != 0)
                     sb.Append(' ');
-                if (checkBoxHex.Checked)
-                    sb.Append(graphControl.ResultOfWsgData[i].ToString("X2"));
+                var val = graphControl.ResultOfWsgData[i];
+                if (WsgSigned)
+                {
+                    sbyte sval = (sbyte)((int)val - max - 1);
+                    if (checkBoxHex.Checked)
+                        sb.Append(sval.ToString("X2"));
+                    else
+                        sb.Append(sval.ToString((IFormatProvider)null));
+                }
                 else
-                    sb.Append(graphControl.ResultOfWsgData[i].ToString((IFormatProvider)null));
+                {
+                    if (checkBoxHex.Checked)
+                        sb.Append(val.ToString("X2"));
+                    else
+                        sb.Append(val.ToString((IFormatProvider)null));
+                }
             }
             try
             {
@@ -533,6 +573,14 @@ namespace zanac.MAmidiMEmo.Gui
         private void checkBoxHex_CheckedChanged(object sender, EventArgs e)
         {
             updateText();
+        }
+
+        private void checkBoxTransparent_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTransparent.Checked)
+                Opacity = 0.75;
+            else
+                Opacity = 1.0;
         }
     }
 }

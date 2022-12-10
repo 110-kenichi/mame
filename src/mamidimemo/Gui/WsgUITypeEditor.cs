@@ -68,6 +68,7 @@ namespace zanac.MAmidiMEmo.Gui
                 }
                 else if (value.GetType() == typeof(sbyte[]))
                 {
+                    frm.WsgSigned = true;
                     frm.SbyteWsgData = (sbyte[])value;
                     frm.ValueChanged += Frm_ValueChangedSbyte;
                 }
@@ -85,7 +86,10 @@ namespace zanac.MAmidiMEmo.Gui
                     if (value.GetType() == typeof(byte[]))
                         value = ((byte[])value).Clone();
                     else if (value.GetType() == typeof(sbyte[]))
+                    {
                         value = ((sbyte[])value).Clone();
+                        frm.WsgSigned = true;
+                    }
                 }
             }
             return value;

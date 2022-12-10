@@ -609,5 +609,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["WsgHex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool WsgTransparent {
+            get {
+                return ((bool)(this["WsgTransparent"]));
+            }
+            set {
+                this["WsgTransparent"] = value;
+            }
+        }
     }
 }

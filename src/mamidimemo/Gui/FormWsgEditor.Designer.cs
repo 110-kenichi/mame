@@ -43,6 +43,7 @@
             this.metroButtonSq = new MetroFramework.Controls.MetroButton();
             this.metroButtonTri = new MetroFramework.Controls.MetroButton();
             this.checkBoxHex = new System.Windows.Forms.CheckBox();
+            this.checkBoxTransparent = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,7 +95,7 @@
             // 
             // 
             this.textBoxWsgDataText.CustomButton.Image = null;
-            this.textBoxWsgDataText.CustomButton.Location = new System.Drawing.Point(766, 1);
+            this.textBoxWsgDataText.CustomButton.Location = new System.Drawing.Point(763, 1);
             this.textBoxWsgDataText.CustomButton.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxWsgDataText.CustomButton.Name = "";
             this.textBoxWsgDataText.CustomButton.Size = new System.Drawing.Size(23, 23);
@@ -104,7 +105,7 @@
             this.textBoxWsgDataText.CustomButton.UseSelectable = true;
             this.textBoxWsgDataText.CustomButton.Visible = false;
             this.textBoxWsgDataText.Lines = new string[0];
-            this.textBoxWsgDataText.Location = new System.Drawing.Point(112, 517);
+            this.textBoxWsgDataText.Location = new System.Drawing.Point(115, 517);
             this.textBoxWsgDataText.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxWsgDataText.MaxLength = 32767;
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
@@ -114,7 +115,7 @@
             this.textBoxWsgDataText.SelectionLength = 0;
             this.textBoxWsgDataText.SelectionStart = 0;
             this.textBoxWsgDataText.ShortcutsEnabled = true;
-            this.textBoxWsgDataText.Size = new System.Drawing.Size(790, 25);
+            this.textBoxWsgDataText.Size = new System.Drawing.Size(787, 25);
             this.textBoxWsgDataText.TabIndex = 2;
             this.textBoxWsgDataText.UseSelectable = true;
             this.textBoxWsgDataText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -159,6 +160,7 @@
             this.tableLayoutPanel1.Controls.Add(this.metroButtonSq, 4, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonTri, 5, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxHex, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxTransparent, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 94);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -175,7 +177,7 @@
             // metroButtonRandom2
             // 
             this.metroButtonRandom2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonRandom2.Location = new System.Drawing.Point(112, 550);
+            this.metroButtonRandom2.Location = new System.Drawing.Point(115, 550);
             this.metroButtonRandom2.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonRandom2.Name = "metroButtonRandom2";
             this.metroButtonRandom2.Size = new System.Drawing.Size(100, 29);
@@ -203,7 +205,7 @@
             // 
             // 
             this.metroTextBoxFirWeight.CustomButton.Image = null;
-            this.metroTextBoxFirWeight.CustomButton.Location = new System.Drawing.Point(762, 1);
+            this.metroTextBoxFirWeight.CustomButton.Location = new System.Drawing.Point(759, 1);
             this.metroTextBoxFirWeight.CustomButton.Margin = new System.Windows.Forms.Padding(4);
             this.metroTextBoxFirWeight.CustomButton.Name = "";
             this.metroTextBoxFirWeight.CustomButton.Size = new System.Drawing.Size(27, 27);
@@ -216,7 +218,7 @@
             this.metroTextBoxFirWeight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxFirWeight.Lines = new string[] {
         " 1, 1, 1, 1, 1 "};
-            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(112, 587);
+            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(115, 587);
             this.metroTextBoxFirWeight.Margin = new System.Windows.Forms.Padding(4);
             this.metroTextBoxFirWeight.MaxLength = 32767;
             this.metroTextBoxFirWeight.Name = "metroTextBoxFirWeight";
@@ -227,7 +229,7 @@
             this.metroTextBoxFirWeight.SelectionLength = 0;
             this.metroTextBoxFirWeight.SelectionStart = 0;
             this.metroTextBoxFirWeight.ShortcutsEnabled = true;
-            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(790, 29);
+            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(787, 29);
             this.metroTextBoxFirWeight.TabIndex = 11;
             this.metroTextBoxFirWeight.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.WsgFirWeight;
             this.metroTextBoxFirWeight.UseSelectable = true;
@@ -250,7 +252,7 @@
             // metroButtonSin
             // 
             this.metroButtonSin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSin.Location = new System.Drawing.Point(220, 550);
+            this.metroButtonSin.Location = new System.Drawing.Point(223, 550);
             this.metroButtonSin.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSin.Name = "metroButtonSin";
             this.metroButtonSin.Size = new System.Drawing.Size(100, 29);
@@ -262,7 +264,7 @@
             // metroButtonSaw
             // 
             this.metroButtonSaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSaw.Location = new System.Drawing.Point(328, 550);
+            this.metroButtonSaw.Location = new System.Drawing.Point(331, 550);
             this.metroButtonSaw.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSaw.Name = "metroButtonSaw";
             this.metroButtonSaw.Size = new System.Drawing.Size(100, 29);
@@ -274,7 +276,7 @@
             // metroButtonSq
             // 
             this.metroButtonSq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSq.Location = new System.Drawing.Point(436, 550);
+            this.metroButtonSq.Location = new System.Drawing.Point(439, 550);
             this.metroButtonSq.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSq.Name = "metroButtonSq";
             this.metroButtonSq.Size = new System.Drawing.Size(100, 29);
@@ -286,7 +288,7 @@
             // metroButtonTri
             // 
             this.metroButtonTri.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonTri.Location = new System.Drawing.Point(544, 550);
+            this.metroButtonTri.Location = new System.Drawing.Point(547, 550);
             this.metroButtonTri.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonTri.Name = "metroButtonTri";
             this.metroButtonTri.Size = new System.Drawing.Size(100, 29);
@@ -303,11 +305,25 @@
             this.checkBoxHex.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBoxHex.Location = new System.Drawing.Point(3, 516);
             this.checkBoxHex.Name = "checkBoxHex";
-            this.checkBoxHex.Size = new System.Drawing.Size(102, 27);
+            this.checkBoxHex.Size = new System.Drawing.Size(105, 27);
             this.checkBoxHex.TabIndex = 1;
             this.checkBoxHex.Text = "&Hex";
             this.checkBoxHex.UseVisualStyleBackColor = true;
             this.checkBoxHex.CheckedChanged += new System.EventHandler(this.checkBoxHex_CheckedChanged);
+            // 
+            // checkBoxTransparent
+            // 
+            this.checkBoxTransparent.AutoSize = true;
+            this.checkBoxTransparent.Checked = global::zanac.MAmidiMEmo.Properties.Settings.Default.WsgTransparent;
+            this.checkBoxTransparent.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.MAmidiMEmo.Properties.Settings.Default, "WsgTransparent", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxTransparent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxTransparent.Location = new System.Drawing.Point(3, 623);
+            this.checkBoxTransparent.Name = "checkBoxTransparent";
+            this.checkBoxTransparent.Size = new System.Drawing.Size(105, 31);
+            this.checkBoxTransparent.TabIndex = 14;
+            this.checkBoxTransparent.Text = "Trans&parent";
+            this.checkBoxTransparent.UseVisualStyleBackColor = true;
+            this.checkBoxTransparent.CheckedChanged += new System.EventHandler(this.checkBoxTransparent_CheckedChanged);
             // 
             // FormWsgEditor
             // 
@@ -349,5 +365,6 @@
         private MetroFramework.Controls.MetroButton metroButtonSq;
         private MetroFramework.Controls.MetroButton metroButtonTri;
         private System.Windows.Forms.CheckBox checkBoxHex;
+        private System.Windows.Forms.CheckBox checkBoxTransparent;
     }
 }
