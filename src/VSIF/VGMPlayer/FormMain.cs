@@ -694,9 +694,7 @@ namespace zanac.VGMPlayer
                         comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPLL_Port, false);
                         if (comPortOPLL != null)
-                        {
                             enableOpll(comPortOPLL, comboBoxOpllSlot.SelectedIndex);
-                        }
                         break;
                 }
 
@@ -714,21 +712,15 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private static int lastOpllSlot;
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="slot"></param>
         private static void enableOpll(VsifClient comPortOPLL, int slot)
         {
-            comPortOPLL.Tag = slot;
-            lastOpllSlot = slot;
+            comPortOPLL.Tag["OPLL.Slot"] = slot;
             if (slot == 1 || slot == 2)
-            {
-                comPortOPLL.WriteData(2, (byte)0, (byte)(slot - 1), (int)Settings.Default.BitBangWaitOPLL);
-                lastSccOpll = 1;
-            }
+                comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), (int)Settings.Default.BitBangWaitOPLL);
         }
 
         /// <summary>
@@ -737,10 +729,7 @@ namespace zanac.VGMPlayer
         /// <param name="slot"></param>
         internal static void ReenableOpll(VsifClient comPortOPLL)
         {
-            if (lastSccOpll != 1)
-            {
-                enableOpll(comPortOPLL, lastOpllSlot);
-            }
+            enableOpll(comPortOPLL, (int)comPortOPLL.Tag["OPLL.Slot"]);
         }
 
         private VsifClient comPortOPN2;
@@ -854,39 +843,32 @@ namespace zanac.VGMPlayer
             SCC = 3,
         }
 
-        private static int lastSccOpll = -1;
-        private static SCCType lastSccType;
-        private static int lastSccSlot;
-
         private static void enableScc(VsifClient comPortSCC, SCCType type, int slot)
         {
-            if ((int)slot < 0)
-            {
-                //自動選択方式
-                comPortSCC.WriteData(3, (byte)type, (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
-            }
-            else
-            {
-                //従来方式
-                comPortSCC.WriteData(3, (byte)(type + 4), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
-            }
-            lastSccOpll = 0;
-            comPortSCC.Tag = type;
-            lastSccType = type;
-            lastSccSlot = slot;
+            comPortSCC.Tag["SCC.Type"] = type;
+            comPortSCC.Tag["SCC.Slot"] = slot;
+            ReenableScc(comPortSCC);
         }
 
         internal static void ReenableScc(VsifClient comPortSCC)
         {
-            if (lastSccOpll != 0)
+            var type = (SCCType)comPortSCC.Tag["SCC.Type"];
+            var slot = (int)comPortSCC.Tag["SCC.Slot"];
+            if ((int)slot < 0)
             {
-                enableScc(comPortSCC, lastSccType, lastSccSlot);
+                //自動選択方式
+                comPortSCC.DeferredWriteData(3, (byte)type, (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
+            }
+            else
+            {
+                //従来方式
+                comPortSCC.DeferredWriteData(3, (byte)(type + 4), (byte)slot, (int)Settings.Default.BitBangWaitSCC);
             }
         }
 
         private void enableOpm(int slot)
         {
-            comPortOPM.Tag = slot;
+            comPortOPM.Tag["OPM.Slot"] = slot;
             comPortOPM.WriteData(0xd, 0, (byte)slot, (int)Settings.Default.BitBangWaitOPM);
         }
 
@@ -1012,7 +994,7 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.Y8950_Port, false);
                         if (comPortY8950 != null)
                         {
-                            comPortY8950.Tag = comboBoxY8950Slot.SelectedIndex;
+                            comPortY8950.Tag["Y8950.Slot"] = comboBoxY8950Slot.SelectedIndex;
                         }
                         break;
                 }

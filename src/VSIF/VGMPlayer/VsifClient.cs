@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace zanac.VGMPlayer
 {
@@ -16,7 +17,7 @@ namespace zanac.VGMPlayer
     /// </summary>
     public class VsifClient : IDisposable
     {
-        public object Tag
+        public Dictionary<string, object> Tag
         {
             get;
             set;
@@ -67,6 +68,7 @@ namespace zanac.VGMPlayer
         /// <param name="type"></param>
         public VsifClient(VsifSoundModuleType type, PortWriter dataWriter)
         {
+            Tag = new Dictionary<string, object>();
             SoundModuleType = type;
             DataWriter = dataWriter;
 
@@ -156,11 +158,6 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte type, byte address, byte data, int wait)
         {
-            if (type == 0x11 && address == 0x8 && data == 0x7c)
-            {
-            }
-            Console.WriteLine(string.Format("FM P1 Out:Prt[{0:x02}] Adr[{1:x02}] val[{2:x02}]", (int)(type), (int)(address & 0xff), (int)data));
-
             lock (lockObject)
             {
                 if (disposedValue)
@@ -179,25 +176,17 @@ namespace zanac.VGMPlayer
                 while (!disposedValue)
                 {
                     autoResetEvent.WaitOne();
-                    //try
-                    //{
-                        PortWriteData[] dd;
-                        lock (lockObject)
-                        {
-                            if (deferredWriteAdrAndData.Count == 0)
-                                continue;
+                    PortWriteData[] dd;
+                    lock (lockObject)
+                    {
+                        if (deferredWriteAdrAndData.Count == 0)
+                            continue;
 
-                            dd = deferredWriteAdrAndData.ToArray();
-                            deferredWriteAdrAndData.Clear();
-
-                            if (dd.Length != 0)
-                                DataWriter?.Write(dd);
-                        }
-                    //}
-                    //finally
-                    //{
-                    //    autoResetEvent.Set();
-                    //}
+                        dd = deferredWriteAdrAndData.ToArray();
+                        deferredWriteAdrAndData.Clear();
+                    }
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)

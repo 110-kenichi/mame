@@ -185,6 +185,13 @@ namespace zanac.VGMPlayer
                             comPortOPNA.DeferredWriteData(0x11, (byte)(0x40 + slot), 0x7f, (int)Settings.Default.BitBangWaitOPNA);
                         }
                     }
+
+                    //SSG
+                    comPortOPNA.DeferredWriteData(0x10, 8, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x10, 9, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x10,10, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
+                    //ADPCM
+                    comPortOPNA.DeferredWriteData(0x11, 0, (byte)0x08, (int)Settings.Default.BitBangWaitOPNA);
                 }
 
                 comPortOPNA.FlushDeferredWriteData();
@@ -230,12 +237,11 @@ namespace zanac.VGMPlayer
             {
                 if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
-                    int ytype = (int)comPortY8950.Tag;
+                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
                     //KOFF
                     switch (ytype)
                     {
                         case 0:
-                        case 1:
                             for (int i = 0; i < 9; i++)
                                 YMF262WriteData(comPortY8950, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
                             if (volumeOff)
@@ -243,8 +249,7 @@ namespace zanac.VGMPlayer
                                     for (int op = 0; op < 2; op++)
                                         YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63);
                             break;
-                        case 2:
-                        case 3:
+                        case 1:
                             for (int i = 0; i < 9; i++)
                                 YMF262WriteData(comPortY8950, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
                             if (volumeOff)
@@ -527,14 +532,12 @@ namespace zanac.VGMPlayer
             int slot = 0;
             if (comPortY8950 != null)
             {
-                switch ((int)comPortY8950.Tag)
+                switch ((int)comPortY8950.Tag["Y8950.Slot"])
                 {
                     case 0:
-                    case 1:
                         slot = 0;
                         break;
-                    case 2:
-                    case 3:
+                    case 1:
                         slot = 9;
                         break;
                 }
@@ -555,7 +558,7 @@ namespace zanac.VGMPlayer
 
             if (comPortY8950 != null)
             {
-                //switch ((int)comPortY8950.Tag)
+                //switch ((int)comPortY8950.Tag["Y8950.Slot"])
                 //{
                 //    case 0:
                 //    case 2:
@@ -648,7 +651,7 @@ namespace zanac.VGMPlayer
                 address++;
                 if (comPortY8950 != null)
                 {
-                    //switch ((int)comPortY8950.Tag)
+                    //switch ((int)comPortY8950.Tag["Y8950.Slot"])
                     //{
                     //    case 0:
                     //    case 2:
@@ -1398,7 +1401,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case VsifSoundModuleType.MSX_FTDI:
                                                         FormMain.ReenableOpll(comPortOPLL);
-                                                        if ((int)comPortOPLL.Tag == 0)
+                                                        if ((int)comPortOPLL.Tag["OPLL.Slot"] == 0)
                                                             comPortOPLL.DeferredWriteData(1, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPLL);
                                                         else
                                                             comPortOPLL.DeferredWriteData(0xC, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPLL);
@@ -1691,15 +1694,13 @@ namespace zanac.VGMPlayer
                                             {
                                                 if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                                                 {
-                                                    int ytype = (int)comPortY8950.Tag;
+                                                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
                                                     switch (ytype)
                                                     {
                                                         case 0:
-                                                        case 1:
                                                             comPortY8950.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
                                                             break;
-                                                        case 2:
-                                                        case 3:
+                                                        case 1:
                                                             comPortY8950.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
                                                             break;
                                                     }
@@ -2097,9 +2098,8 @@ namespace zanac.VGMPlayer
                                             {
                                                 case VsifSoundModuleType.MSX_FTDI:
                                                     {
-                                                        if (comPortSCC?.Tag != null)
                                                         {
-                                                            SCCType st = (SCCType)comPortSCC?.Tag;
+                                                            SCCType st = (SCCType)comPortSCC?.Tag["SCC.Type"];
                                                             switch (st)
                                                             {
                                                                 case SCCType.SCC1:
@@ -2356,15 +2356,13 @@ namespace zanac.VGMPlayer
             {
                 if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
-                    int ytype = (int)comPortY8950.Tag;
+                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
                     switch (ytype)
                     {
                         case 0:
-                        case 1:
                             comPortY8950.DeferredWriteData(10, (byte)adrs2, (byte)dt2, (int)Settings.Default.BitBangWaitY8950);
                             break;
-                        case 2:
-                        case 3:
+                        case 1:
                             comPortY8950.DeferredWriteData(11, (byte)adrs2, (byte)dt2, (int)Settings.Default.BitBangWaitY8950);
                             break;
                     }
