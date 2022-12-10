@@ -101,21 +101,20 @@ namespace zanac.VGMPlayer
                     case VsifSoundModuleType.Genesis_Low:
                     case VsifSoundModuleType.Genesis_FTDI:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0, 0x14, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
-                        comPortDCSG.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                            comPortDCSG.DeferredWriteData(0, 0x14, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.DeferredWriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                     case VsifSoundModuleType.SMS:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitOPNA2);
-                        comPortDCSG.WriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitOPNA2);
+                            comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitOPNA2);
+                        comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitOPNA2);
                         break;
                     case VsifSoundModuleType.MSX_FTDI:
                         for (int i = 0; i < 3; i++)
-                            comPortDCSG.WriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
-                        comPortDCSG.WriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                            comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                 }
-                comPortDCSG.FlushDeferredWriteData();
             }
             if (comPortOPN2 != null)
             {
@@ -185,11 +184,10 @@ namespace zanac.VGMPlayer
                             Ym2612WriteData(0x40, op, slot, 127);
                     }
                 }
-
-                comPortOPN2.FlushDeferredWriteData();
             }
 
-            Thread.Sleep(50);
+            flushDeferredWriteData();
+            Thread.Sleep(500);
         }
 
         private void Ym2612WriteData(byte address, int op, int slot, byte data)
