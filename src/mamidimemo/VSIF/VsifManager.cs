@@ -149,20 +149,9 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetBaudRate(FTDI_BAUDRATE_GEN * FTDI_BAUDRATE_GEN_MUL);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
-                                    //byte ps = 0;
-                                    //ftdi.GetPinStates(ref ps);
-                                    //if ((ps & 0x40) == 0)
-                                    //{
-                                    //    uint dummy = 0;
-                                    //    ftdi.Write(new byte[] { 0x40 }, 1, ref dummy);
-                                    //}
 
                                     var client = new VsifClient(soundModule, new PortWriterGenesis(ftdi, comPort));
-
-                                    //ftdi.Write(new byte[] { (byte)(((0x07 << 1) & 0xe) | 0) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { (byte)(((0x38 >> 2) & 0xe) | 1) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { (byte)(((0xC0 >> 5) & 0xe) | 0) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { 1 }, 1, ref dummy);
+                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
 
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
@@ -181,12 +170,9 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
-                                    //{
-                                    //    uint dummy = 0x00;
-                                    //    ftdi.Write(new byte[] { (byte)dummy }, 1, ref dummy);
-                                    //}
 
                                     var client = new VsifClient(soundModule, new PortWriterMsx(ftdi, comPort));
+                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
 
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
