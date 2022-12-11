@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -85,40 +86,32 @@ namespace ListViewInsertionDrag
 
                     if (dropItem != null)
                     {
-                        ListViewItem dragItem;
-                        int dropIndex;
+                        int dropIndex = dropItem.Index;
+                        if (this.InsertionMode == InsertionMode.After)
+                            dropIndex++;
 
-                        dragItem = (ListViewItem)drgevent.Data.GetData(typeof(ListViewItem));
-                        dropIndex = dropItem.Index;
-                        if (dragItem != null)
+                        ArrayList insertItems = new ArrayList(base.SelectedItems.Count);
+                        ListViewItem focusedItem = null;
+                        foreach (ListViewItem item in base.SelectedItems)
                         {
-                            if (dragItem.Index < dropIndex)
-                            {
-                                dropIndex--;
-                            }
-                            if (this.InsertionMode == InsertionMode.After && dragItem.Index < this.Items.Count - 1)
-                            {
-                                dropIndex++;
-                            }
-
-                            if (dropIndex != dragItem.Index)
-                            {
-                                ListViewItemDragEventArgs args;
-                                Point clientPoint;
-
-                                clientPoint = this.PointToClient(new Point(drgevent.X, drgevent.Y));
-                                args = new ListViewItemDragEventArgs(dragItem, dropItem, dropIndex, this.InsertionMode, clientPoint.X, clientPoint.Y);
-
-                                this.OnItemDragDrop(args);
-
-                                if (!args.Cancel)
-                                {
-                                    this.Items.Remove(dragItem);
-                                    this.Items.Insert(dropIndex, dragItem);
-                                    this.SelectedItem = dragItem;
-                                }
-                            }
+                            var citem = item.Clone();
+                            if (item.Focused)
+                                focusedItem = (ListViewItem)citem;
+                            insertItems.Add(citem);
                         }
+                        for (int i = insertItems.Count - 1; i >= 0; i--)
+                        {
+                            ListViewItem insertItem = (ListViewItem)insertItems[i];
+                            base.Items.Insert(dropIndex, insertItem);
+                        }
+                        foreach (ListViewItem removeItem in base.SelectedItems)
+                            base.Items.Remove(removeItem);
+                        for (int i = insertItems.Count - 1; i >= 0; i--)
+                        {
+                            ListViewItem insertItem = (ListViewItem)insertItems[i];
+                            insertItem.Selected = true;
+                        }
+                        focusedItem.Focused = true;
                     }
                 }
                 finally
