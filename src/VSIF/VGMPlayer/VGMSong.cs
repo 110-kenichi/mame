@@ -272,7 +272,7 @@ namespace zanac.VGMPlayer
             //Y8910
             if (comPortY8910 != null)
             {
-                if (comPortSCC.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                if (comPortY8910.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
                     //comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
                     comPortY8910.DeferredWriteData(0, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
@@ -282,7 +282,7 @@ namespace zanac.VGMPlayer
             }
 
             flushDeferredWriteData();
-            Thread.Sleep(500);
+            Thread.Sleep(250);
         }
 
         private static byte[] chAddressOffset = new byte[] { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 };
@@ -361,10 +361,10 @@ namespace zanac.VGMPlayer
             switch (adrH)
             {
                 case 0:
-                    comPort?.DeferredWriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                    comPort?.WriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
                     break;
                 case 2:
-                    comPort?.DeferredWriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                    comPort?.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
                     break;
             }
         }
@@ -464,7 +464,7 @@ namespace zanac.VGMPlayer
             {
                 if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
-                    comPortOPNA.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
                 }
             }
         }
@@ -472,6 +472,8 @@ namespace zanac.VGMPlayer
         private void sendAdpcmDataYM2608(byte[] transferData, int saddr, FormProgress fp)
         {
             //File.WriteAllBytes(transferData.Length.ToString(), transferData);
+
+            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
 
             //flag
             YM2608WriteData(0x10, 0, 3, 0x13);   //CLEAR MASK
@@ -513,7 +515,7 @@ namespace zanac.VGMPlayer
                 {
                     FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
                     //fp.Percentage = percentage;
-                    comPortOPNA?.FlushDeferredWriteData();
+                    //comPortOPNA?.FlushDeferredWriteData();
                 }
                 lastPercentage = percentage;
                 index++;
@@ -527,8 +529,8 @@ namespace zanac.VGMPlayer
             YM2608WriteData(0x10, 0, 3, 0x80, false);
             YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
 
-            comPortOPNA?.FlushDeferredWriteData();
-            System.Threading.Thread.Sleep(1000);
+            //comPortOPNA?.FlushDeferredWriteData();
+            //System.Threading.Thread.Sleep(1000);
         }
 
         private void sendAdpcmDataY8950(byte[] transferData, int saddr, FormProgress fp)
@@ -552,6 +554,9 @@ namespace zanac.VGMPlayer
             }
 
             //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
+
+            //$07レジスタリセット
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01);
 
             //各フラグをイネーブルにする。
             YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00);
@@ -648,7 +653,7 @@ namespace zanac.VGMPlayer
                 {
                     FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" + percentage + "%)");
                     //fp.Percentage = percentage;
-                    comPortY8950?.FlushDeferredWriteData();
+                    //comPortY8950?.FlushDeferredWriteData();
                 }
                 lastPercentage = percentage;
                 index++;
@@ -689,13 +694,8 @@ namespace zanac.VGMPlayer
             //$07レジスタリセット
             YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01);
 
-            YMF262WriteData(comPortY8950, 0x00, 0, slot, 0, 0, (byte)0x00);
-            YMF262WriteData(comPortY8950, 0x00, 0, slot, 0, 0, (byte)0x00);
-            YMF262WriteData(comPortY8950, 0x00, 0, slot, 0, 0, (byte)0x00);
-            YMF262WriteData(comPortY8950, 0x00, 0, slot, 0, 0, (byte)0x00);
-
-            comPortY8950?.FlushDeferredWriteData();
-            System.Threading.Thread.Sleep(1000);
+            //comPortY8950?.FlushDeferredWriteData();
+            //System.Threading.Thread.Sleep(1000);
         }
 
         private void updateStatusForDataTransfer()
