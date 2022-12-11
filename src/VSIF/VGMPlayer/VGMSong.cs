@@ -253,15 +253,18 @@ namespace zanac.VGMPlayer
             //SCC
             if (comPortSCC != null)
             {
-                comPortSCC.DeferredWriteData(4, (byte)0xaf, (byte)00, (int)Settings.Default.BitBangWaitSCC);
-                comPortSCC.DeferredWriteData(5, (byte)0x8f, (byte)00, (int)Settings.Default.BitBangWaitSCC);
-
-                if (volumeOff)
+                if (comPortSCC.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
-                    for (int i = 0; i < 6; i++)
+                    comPortSCC.DeferredWriteData(4, (byte)0xaf, (byte)00, (int)Settings.Default.BitBangWaitSCC);
+                    comPortSCC.DeferredWriteData(5, (byte)0x8f, (byte)00, (int)Settings.Default.BitBangWaitSCC);
+
+                    if (volumeOff)
                     {
-                        comPortSCC.DeferredWriteData(4, (byte)(0xaa + i), (byte)00, (int)Settings.Default.BitBangWaitSCC);
-                        comPortSCC.DeferredWriteData(5, (byte)(0x8a + i), (byte)00, (int)Settings.Default.BitBangWaitSCC);
+                        for (int i = 0; i < 6; i++)
+                        {
+                            comPortSCC.DeferredWriteData(4, (byte)(0xaa + i), (byte)00, (int)Settings.Default.BitBangWaitSCC);
+                            comPortSCC.DeferredWriteData(5, (byte)(0x8a + i), (byte)00, (int)Settings.Default.BitBangWaitSCC);
+                        }
                     }
                 }
             }
@@ -269,10 +272,13 @@ namespace zanac.VGMPlayer
             //Y8910
             if (comPortY8910 != null)
             {
-                //comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
-                comPortY8910.DeferredWriteData(0, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
-                comPortY8910.DeferredWriteData(0, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
-                comPortY8910.DeferredWriteData(0, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                if (comPortSCC.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                {
+                    //comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                }
             }
 
             flushDeferredWriteData();

@@ -21,8 +21,6 @@ namespace zanac.VGMPlayer
         private int lastOpmType = -1;
         private int lastOpmSlot = -1;
 
-        private bool sccHack = false;
-
         /// <summary>
         /// 
         /// </summary>
@@ -108,16 +106,6 @@ namespace zanac.VGMPlayer
                             //バンク切り替えが必要な分のウエイト
                             if (lastSccType < 0)
                                 ds.AddRange(new byte[2] { 0, 0 });
-
-                            if (!sccHack)
-                            {
-                                ds.AddRange(sd);
-                                if (dt.Address < 4)
-                                    ds.AddRange(new byte[4] { 0, 0, 0, 0 });   //自動選択方式
-                                else
-                                    ds.AddRange(new byte[6] { 0, 0, 0, 0, 0, 0 });  //従来方式
-                                sccHack = true;
-                            }
 
                             lastSccType = dt.Address;
                             lastSccSlot = dt.Data;
