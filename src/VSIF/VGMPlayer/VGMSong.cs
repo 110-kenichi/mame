@@ -480,260 +480,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void sendAdpcmDataYM2608(byte[] transferData, int saddr, FormProgress fp)
-        {
-            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
-
-            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
-
-            //flag
-            YM2608WriteData(0x10, 0, 3, 0x13, false);   //CLEAR MASK
-            YM2608WriteData(0x10, 0, 3, 0x80, false);   //IRQ RESET
-                                                        //Ctrl1
-            YM2608WriteData(0x00, 0, 3, 0x60, false);   //REC, EXTMEM
-            //Ctrl2
-            //START
-            if (ym2608_adpcmbit8)
-            {
-                YM2608WriteData(0x01, 0, 3, 0x02, false);   //LR, 8bit DRAM
-                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff), false);
-                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff), false);
-            }
-            else
-            {
-                YM2608WriteData(0x01, 0, 3, 0x00, false);   //LR, 1bit DRAM
-                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 2) & 0xff), false);
-                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff), false);
-            }
-            //STOP
-            YM2608WriteData(0x04, 0, 3, 0xff, false);
-            YM2608WriteData(0x05, 0, 3, 0xff, false);
-            //LIMIT
-            YM2608WriteData(0x0C, 0, 3, 0xff, false);
-            YM2608WriteData(0x0D, 0, 3, 0xff, false);
-
-            //Transfer
-            int len = transferData.Length;
-            int index = 0;
-            int percentage = 0;
-            int lastPercentage = 0;
-            for (int i = 0; i < len; i++)
-            {
-                YM2608WriteData(0x08, 0, 3, transferData[i], true);
-
-                //for (int wi = 0; wi < 2; wi++)
-                //    comPortOPNA?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
-
-                percentage = (100 * index) / len;
-                if (percentage != lastPercentage)
-                {
-                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
-                    //fp.Percentage = percentage;
-                    comPortOPNA?.FlushDeferredWriteDataAndWait();
-                }
-                lastPercentage = percentage;
-                index++;
-                if (RequestedStat == SoundState.Stopped)
-                    break;
-                else updateStatusForDataTransfer();
-            }
-            FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
-
-            // Finish
-            YM2608WriteData(0x10, 0, 3, 0x80, false);
-            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
-
-            //comPortOPNA?.FlushDeferredWriteData();
-            //System.Threading.Thread.Sleep(1000);
-        }
-
-        private void sendAdpcmDataY8950(byte[] transferData, int saddr, FormProgress fp)
-        {
-            if (transferData.Length == 0)
-                return;
-
-            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
-            int slot = 0;
-            if (comPortY8950 != null)
-            {
-                switch ((int)comPortY8950.Tag["Y8950.Slot"])
-                {
-                    case 0:
-                        slot = 0;
-                        break;
-                    case 1:
-                        slot = 9;
-                        break;
-                }
-            }
-
-            //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
-
-            //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
-
-            //各フラグをイネーブルにする。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false);
-            //各フラグをリセット。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false);
-
-            //メモリライトモードにする。
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false);
-
-            if (comPortY8950 != null)
-            {
-                //switch ((int)comPortY8950.Tag["Y8950.Slot"])
-                //{
-                //    case 0:
-                //    case 2:
-                //        //RAMタイプの指定。64Kbit
-                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
-
-                //        if ((saddr & 0b1000) == 0b1000)
-                //            saddr += 0b1000;
-                //        if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                //            saddr += 0b1_0000_0000_0000;
-
-                //        //START
-                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
-                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
-                //        //STOP
-                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(0xff - 0b1000));
-                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)(0xff - 0b10000));
-                //        break;
-                //    case 1:
-                //    case 3:
-                //        //RAMタイプの指定。256Kbit
-                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
-                //        //START
-                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
-                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
-                //        //STOP
-                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)0xff);
-                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)0xff);
-                //        break;
-                //}
-                int eaddr = saddr + transferData.Length - 1;
-                saddr = saddr >> 2;
-                eaddr = eaddr >> 2;
-
-                if (y8950_adpcmbit64k)
-                {
-                    //メモリのタイプ指定。64Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false);
-
-                    if ((saddr & 0b1000) == 0b1000)
-                        saddr += 0b1000;
-                    if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                        saddr += 0b1_0000_0000_0000;
-                    if ((eaddr & 0b1000) == 0b1000)
-                        eaddr += 0b1000;
-                    if ((eaddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                        eaddr += 0b1_0000_0000_0000;
-
-                    //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
-                    //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
-                }
-                else
-                {
-                    //メモリのタイプ指定。256Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false);
-                    //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
-                    //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
-                }
-            }
-
-            //Transfer
-            int address = saddr;
-
-            int len = transferData.Length;
-            int index = 0;
-            int percentage = 0;
-            int lastPercentage = 0;
-            for (int i = 0; i < transferData.Length; i++)
-            {
-                YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true);
-
-                //for (int wi = 0; wi < 2; wi++)
-                //    comPortY8950?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
-
-                percentage = (100 * index) / len;
-                if (percentage != lastPercentage)
-                {
-                    FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" + percentage + "%)");
-                    //fp.Percentage = percentage;
-                    comPortY8950?.FlushDeferredWriteDataAndWait();
-                }
-                lastPercentage = percentage;
-                index++;
-
-                address++;
-                if (comPortY8950 != null)
-                {
-                    //switch ((int)comPortY8950.Tag["Y8950.Slot"])
-                    //{
-                    //    case 0:
-                    //    case 2:
-                    //        //RAMタイプの指定。64Kbit
-                    //        if ((endAddress & 0b1000) == 0b1000)
-                    //            endAddress += 0b1000;
-                    //        if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                    //            endAddress += 0b1_0000_0000_0000;
-                    //        break;
-                    //    case 1:
-                    //    case 3:
-                    //        break;
-                    //}
-                    //if (y8950_adpcmbit64k)
-                    //{
-                    //    if ((endAddress & 0b1000) == 0b1000)
-                    //        endAddress += 0b1000;
-                    //    if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
-                    //        endAddress += 0b1_0000_0000_0000;
-                    //}
-                }
-                if (RequestedStat == SoundState.Stopped)
-                    break;
-                else updateStatusForDataTransfer();
-            }
-            FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
-
-            //○リセット
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false);
-            //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
-
-            //comPortY8950?.FlushDeferredWriteData();
-            //System.Threading.Thread.Sleep(1000);
-        }
-
-        private void updateStatusForDataTransfer()
-        {
-            if (RequestedStat == SoundState.Paused)
-            {
-                if (State != SoundState.Paused)
-                    State = SoundState.Paused;
-            }
-            else if (RequestedStat == SoundState.Freezed)
-            {
-                if (State != SoundState.Freezed)
-                    State = SoundState.Freezed;
-            }
-            else if (RequestedStat == SoundState.Playing)
-            {
-                if (State != SoundState.Playing)
-                    State = SoundState.Freezed;
-            }
-        }
-
         private VGM_HEADER readVGMHeader(BinaryReader hFile)
         {
             VGM_HEADER curHead = new VGM_HEADER();
@@ -865,7 +611,20 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                else if (Settings.Default.OPNA_Enable)
+                {
+                    switch (Settings.Default.OPNA_IF)
+                    {
+                        case 0:
+                            if (comPortOPNA == null)
+                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA_Port);
+                            break;
+                    }
+                }
                 if (comPortOPN2 != null)
+                    Accepted = true;
+                if (comPortOPNA != null)
                     Accepted = true;
             }
             if (curHead.lngHzYM2151 != 0)
@@ -989,7 +748,35 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                else if (Settings.Default.OPNA2_Enable)
+                {
+                    switch (Settings.Default.OPNA2_IF)
+                    {
+                        case 0:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 1:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 2:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 3:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                    }
+                }
                 if (comPortOPNA != null)
+                    Accepted = true;
+                if (comPortOPN2 != null)
                     Accepted = true;
             }
             if (curHead.lngHzYM2610 != 0)
@@ -1005,7 +792,35 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                else if (Settings.Default.OPNA2_Enable)
+                {
+                    switch (Settings.Default.OPNA2_IF)
+                    {
+                        case 0:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 1:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 2:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                        case 3:
+                            if (comPortOPN2 == null)
+                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                    (PortId)Settings.Default.OPNA2_Port);
+                            break;
+                    }
+                }
                 if (comPortOPNA != null)
+                    Accepted = true;
+                if (comPortOPN2 != null)
                     Accepted = true;
             }
             if (curHead.lngHzY8950 != 0)
@@ -1491,15 +1306,11 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPN2 != null)
                                             {
-                                                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                                                {
-                                                    comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
-                                                }
-                                                else
-                                                {
-                                                    comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
-                                                    comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
-                                                }
+                                                deferredWriteOPN2_P0(adrs, dt);
+                                            }
+                                            else if (comPortOPNA != null)
+                                            {
+                                                deferredWriteOPNA_P0(adrs, dt);
                                             }
                                         }
                                         break;
@@ -1515,15 +1326,11 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPN2 != null)
                                             {
-                                                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                                                {
-                                                    comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
-                                                }
-                                                else
-                                                {
-                                                    comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
-                                                    comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
-                                                }
+                                                deferredWriteOPN2_P1(adrs, dt);
+                                            }
+                                            else if (comPortOPNA != null)
+                                            {
+                                                deferredWriteOPNA_P1(adrs, dt);
                                             }
                                         }
                                         break;
@@ -1560,10 +1367,11 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPNA != null)
                                             {
-                                                if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                                                {
-                                                    comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
-                                                }
+                                                deferredWriteOPNA_P0(adrs, dt);
+                                            }
+                                            else if (comPortOPN2 != null)
+                                            {
+                                                deferredWriteOPN2_P0(adrs, dt);
                                             }
                                         }
                                         break;
@@ -1629,11 +1437,15 @@ namespace zanac.VGMPlayer
                                                     }
                                                 }
                                             }
-                                            if (comPortOPNA != null)
+                                            if (adrs != 0x8)    //ignore ADPCM adrs
                                             {
-                                                if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                if (comPortOPNA != null)
                                                 {
-                                                    comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                                                    deferredWriteOPNA_P1(adrs, dt);
+                                                }
+                                                else if (comPortOPN2 != null)
+                                                {
+                                                    deferredWriteOPN2_P1(adrs, dt);
                                                 }
                                             }
                                         }
@@ -1653,6 +1465,7 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
+
                                         }
                                         break;
 
@@ -1752,28 +1565,15 @@ namespace zanac.VGMPlayer
 #endif
                                                 }
                                             }
-
-                                            if (comPortY8950 != null)
+                                            if (adrs != 0x10)   //ignore ADPCM adrs
                                             {
-                                                if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                if (comPortY8950 != null)
                                                 {
-                                                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
-                                                    switch (ytype)
-                                                    {
-                                                        case 0:
-                                                            comPortY8950.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
-                                                            break;
-                                                        case 1:
-                                                            comPortY8950.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
-                                                            break;
-                                                    }
+                                                    deferredWriteY8950(adrs, dt);
                                                 }
-                                            }
-                                            else if (comPortOPL3 != null)
-                                            {
-                                                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                                                else if (comPortOPL3 != null)
                                                 {
-                                                    comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
+                                                    deferredWriteOPL3_P0(adrs, dt);
                                                 }
                                             }
                                         }
@@ -1801,10 +1601,7 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPL3 != null)
                                             {
-                                                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                                                {
-                                                    comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
-                                                }
+                                                deferredWriteOPL3_P0(adrs, dt);
                                             }
                                         }
                                         break;
@@ -1820,10 +1617,7 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPL3 != null)
                                             {
-                                                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                                                {
-                                                    comPortOPL3.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
-                                                }
+                                                deferredWriteOPL3_P1(adrs, dt);
                                             }
                                         }
                                         break;
@@ -2414,6 +2208,389 @@ namespace zanac.VGMPlayer
             NotifyFinished();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        private void sendAdpcmDataYM2608(byte[] transferData, int saddr, FormProgress fp)
+        {
+            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
+
+            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
+
+            //flag
+            YM2608WriteData(0x10, 0, 3, 0x13, false);   //CLEAR MASK
+            YM2608WriteData(0x10, 0, 3, 0x80, false);   //IRQ RESET
+                                                        //Ctrl1
+            YM2608WriteData(0x00, 0, 3, 0x60, false);   //REC, EXTMEM
+            //Ctrl2
+            //START
+            if (ym2608_adpcmbit8)
+            {
+                YM2608WriteData(0x01, 0, 3, 0x02, false);   //LR, 8bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff), false);
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff), false);
+            }
+            else
+            {
+                YM2608WriteData(0x01, 0, 3, 0x00, false);   //LR, 1bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 2) & 0xff), false);
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff), false);
+            }
+            //STOP
+            YM2608WriteData(0x04, 0, 3, 0xff, false);
+            YM2608WriteData(0x05, 0, 3, 0xff, false);
+            //LIMIT
+            YM2608WriteData(0x0C, 0, 3, 0xff, false);
+            YM2608WriteData(0x0D, 0, 3, 0xff, false);
+
+            //Transfer
+            int len = transferData.Length;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int i = 0; i < len; i++)
+            {
+                YM2608WriteData(0x08, 0, 3, transferData[i], true);
+
+                //for (int wi = 0; wi < 2; wi++)
+                //    comPortOPNA?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                    comPortOPNA?.FlushDeferredWriteDataAndWait();
+                }
+                lastPercentage = percentage;
+                index++;
+                if (RequestedStat == SoundState.Stopped)
+                    break;
+                else updateStatusForDataTransfer();
+            }
+            FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
+
+            // Finish
+            YM2608WriteData(0x10, 0, 3, 0x80, false);
+            YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
+
+            //comPortOPNA?.FlushDeferredWriteData();
+            //System.Threading.Thread.Sleep(1000);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        private void sendAdpcmDataY8950(byte[] transferData, int saddr, FormProgress fp)
+        {
+            if (transferData.Length == 0)
+                return;
+
+            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
+            int slot = 0;
+            if (comPortY8950 != null)
+            {
+                switch ((int)comPortY8950.Tag["Y8950.Slot"])
+                {
+                    case 0:
+                        slot = 0;
+                        break;
+                    case 1:
+                        slot = 9;
+                        break;
+                }
+            }
+
+            //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
+
+            //$07レジスタリセット
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
+
+            //各フラグをイネーブルにする。
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false);
+            //各フラグをリセット。
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false);
+
+            //メモリライトモードにする。
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false);
+
+            if (comPortY8950 != null)
+            {
+                //switch ((int)comPortY8950.Tag["Y8950.Slot"])
+                //{
+                //    case 0:
+                //    case 2:
+                //        //RAMタイプの指定。64Kbit
+                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
+
+                //        if ((saddr & 0b1000) == 0b1000)
+                //            saddr += 0b1000;
+                //        if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                //            saddr += 0b1_0000_0000_0000;
+
+                //        //START
+                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
+                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
+                //        //STOP
+                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(0xff - 0b1000));
+                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)(0xff - 0b10000));
+                //        break;
+                //    case 1:
+                //    case 3:
+                //        //RAMタイプの指定。256Kbit
+                //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
+                //        //START
+                //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
+                //        YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> (5 + 8)) & 0xff));
+                //        //STOP
+                //        YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)0xff);
+                //        YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)0xff);
+                //        break;
+                //}
+                int eaddr = saddr + transferData.Length - 1;
+                saddr = saddr >> 2;
+                eaddr = eaddr >> 2;
+
+                if (y8950_adpcmbit64k)
+                {
+                    //メモリのタイプ指定。64Kbit
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false);
+
+                    if ((saddr & 0b1000) == 0b1000)
+                        saddr += 0b1000;
+                    if ((saddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                        saddr += 0b1_0000_0000_0000;
+                    if ((eaddr & 0b1000) == 0b1000)
+                        eaddr += 0b1000;
+                    if ((eaddr & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                        eaddr += 0b1_0000_0000_0000;
+
+                    //START
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
+                    //STOP
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
+                }
+                else
+                {
+                    //メモリのタイプ指定。256Kbit
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false);
+                    //START
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
+                    //STOP
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
+                }
+            }
+
+            //Transfer
+            int address = saddr;
+
+            int len = transferData.Length;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int i = 0; i < transferData.Length; i++)
+            {
+                YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true);
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                    comPortY8950?.FlushDeferredWriteDataAndWait();
+                }
+                lastPercentage = percentage;
+                index++;
+
+                address++;
+                if (comPortY8950 != null)
+                {
+                    //switch ((int)comPortY8950.Tag["Y8950.Slot"])
+                    //{
+                    //    case 0:
+                    //    case 2:
+                    //        //RAMタイプの指定。64Kbit
+                    //        if ((endAddress & 0b1000) == 0b1000)
+                    //            endAddress += 0b1000;
+                    //        if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                    //            endAddress += 0b1_0000_0000_0000;
+                    //        break;
+                    //    case 1:
+                    //    case 3:
+                    //        break;
+                    //}
+                    //if (y8950_adpcmbit64k)
+                    //{
+                    //    if ((endAddress & 0b1000) == 0b1000)
+                    //        endAddress += 0b1000;
+                    //    if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
+                    //        endAddress += 0b1_0000_0000_0000;
+                    //}
+                }
+                if (RequestedStat == SoundState.Stopped)
+                    break;
+                else updateStatusForDataTransfer();
+            }
+            FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
+
+            //○リセット
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false);
+            //$07レジスタリセット
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
+
+            //comPortY8950?.FlushDeferredWriteData();
+            //System.Threading.Thread.Sleep(1000);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void updateStatusForDataTransfer()
+        {
+            if (RequestedStat == SoundState.Paused)
+            {
+                if (State != SoundState.Paused)
+                    State = SoundState.Paused;
+            }
+            else if (RequestedStat == SoundState.Freezed)
+            {
+                if (State != SoundState.Freezed)
+                    State = SoundState.Freezed;
+            }
+            else if (RequestedStat == SoundState.Playing)
+            {
+                if (State != SoundState.Playing)
+                    State = SoundState.Freezed;
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteY8950(int adrs, int dt)
+        {
+            if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
+                switch (ytype)
+                {
+                    case 0:
+                        comPortY8950.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
+                        break;
+                    case 1:
+                        comPortY8950.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitY8950);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPL3_P0(int adrs, int dt)
+        {
+            if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                if(adrs != 0x10)
+                    comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPL3_P1(int adrs, int dt)
+        {
+            if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPL3.DeferredWriteData(11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPN2_P0(int adrs, int dt)
+        {
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
+            }
+            else //Genesis
+            {
+                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
+                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPN2_P1(int adrs, int dt)
+        {
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
+            }
+            else
+            {
+                comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPNA2);
+                comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPNA2);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPNA_P0(int adrs, int dt)
+        {
+            if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        private void deferredWriteOPNA_P1(int adrs, int dt)
+        {
+            if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dt2"></param>
+        /// <param name="adrs2"></param>
         private void writePcmAddressData(int dt2, int adrs2)
         {
             if (comPortY8950 != null)

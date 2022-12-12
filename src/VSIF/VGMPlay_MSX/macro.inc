@@ -299,11 +299,13 @@ __WRITE_OPL3_IO1:
 0$:
     LD  A,B             ; 
     OUT (OPL3AD1),A     ; 17 78
+    CP  #0x0F           ;  8 86
+    JP  Z, __WRITE_OPL3_IO1_ADPCM           ; 11 97
 ;=======================
     READ_DATA           ; 55
 
     LD  A,D             ; 
-    OUT (OPL3WR1),A      ; 17 72
+    OUT (OPL3WR1),A     ; 17 72
 
     ; Continuous Write
     INC B               ; 
@@ -322,6 +324,32 @@ __WRITE_OPL3_IO1:
     LD  H,A             ; 
     LD  L,#0            ; 
     JP  (HL)            ; 90  ; Jump to other ID
+
+;=======================  ADPCM burst write mode
+__WRITE_OPL3_IO1_ADPCM:
+0$:
+    READ_DATA           ; 55
+
+    LD  A,D             ; 
+    OUT (OPL3WR1),A     ; 17 72
+
+    ; Continuous Write
+    LD  E,#0x1F         ; 13 85
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+
     .endm
 ;=======================================================
 
@@ -331,6 +359,8 @@ __WRITE_OPL3_IO2:
 0$:
     LD  A,B             ; 
     OUT (OPL3AD2),A     ; 17 78
+    CP  #0x0F           ;  8 86
+    JP  Z, __WRITE_OPL3_IO2_ADPCM           ; 11 97
 ;=======================
     READ_DATA           ; 55
 
@@ -354,6 +384,32 @@ __WRITE_OPL3_IO2:
     LD  H,A             ; 
     LD  L,#0            ; 
     JP  (HL)            ; 90  ; Jump to other ID
+
+;=======================
+__WRITE_OPL3_IO2_ADPCM:
+0$:
+    READ_DATA           ; 55
+
+    LD  A,D             ; 
+    OUT (OPL3WR2),A      ; 
+
+    ; Continuous Write
+    LD  E,#0x1F         ; 30 85
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+
     .endm
 
 	.macro __WRITE_OPLL_MEM
@@ -532,6 +588,8 @@ __WRITE_OPN2_IO2:
 0$:
     LD  A,B             ; 
     OUT (OPN2AD2),A     ; 17 78
+    CP  #0x08           ;  8 86
+    JP  Z, __WRITE_OPN2_IO2_ADPCM           ; 11 97
 ;=======================
     READ_DATA           ; 55
 
@@ -555,6 +613,32 @@ __WRITE_OPN2_IO2:
     LD  H,A             ; 
     LD  L,#0            ; 
     JP  (HL)            ; 90  ; Jump to other ID
+
+;=======================  ADPCM burst write mode
+__WRITE_OPN2_IO2_ADPCM:
+0$:
+    READ_DATA           ; 55
+
+    LD  A,D             ; 
+    OUT (OPN2WR2),A     ; 17 72
+
+    ; Continuous Write
+    LD  E,#0x1F         ; 13 85
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+
     .endm
 ;=======================================================
 

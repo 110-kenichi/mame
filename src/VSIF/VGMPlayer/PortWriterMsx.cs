@@ -38,7 +38,7 @@ namespace zanac.VGMPlayer
         }
 
         private byte lastDataType = 0xff;
-        private byte lastWriteSccAddress;
+        private byte lastWriteAddress;
 
         /// <summary>
         /// 
@@ -79,7 +79,7 @@ namespace zanac.VGMPlayer
                             lastOpllSlot = dt.Data;
 
                             lastDataType = dt.Type;
-                            lastWriteSccAddress = dt.Address;
+                            lastWriteAddress = dt.Address;
 
                             lastSccType = -1;
                             lastSccSlot = -1;
@@ -111,7 +111,7 @@ namespace zanac.VGMPlayer
                             lastSccSlot = dt.Data;
 
                             lastDataType = dt.Type;
-                            lastWriteSccAddress = dt.Address;
+                            lastWriteAddress = dt.Address;
 
                             lastOpllType = -1;
                             lastOpllSlot = -1;
@@ -133,18 +133,36 @@ namespace zanac.VGMPlayer
                             ds.AddRange(new byte[2] { 0, 0 });   //自動選択方式
 
                             lastDataType = dt.Type;
-                            lastWriteSccAddress = dt.Address;
+                            lastWriteAddress = dt.Address;
                         }
                         break;
                     default:
                         {
-                            if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
+                            if ((dt.Type == 0xa || dt.Type == 0xb) && lastWriteAddress == 0xf && //YM8950 ADPCM write
+                                lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type == 0x11 && lastWriteAddress == 0x8 && //OPNA ADPCM write
+                                lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
                                 dt.Type == 4 || dt.Type == 5 || //SCC
                                 dt.Type == 0xa || dt.Type == 0xb || //OPL3
                                 dt.Type == 0xe || //OPM
                                 dt.Type == 0x10 || dt.Type == 0x11  //OPN2 or OPNA
                                 )
-                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteSccAddress + 1))
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
                             {
                                 byte[] sd = new byte[3] {
                                     (byte)(0x1f              | 0x20),
@@ -162,7 +180,7 @@ namespace zanac.VGMPlayer
                                 ds.AddRange(sd);
                             }
                             lastDataType = dt.Type;
-                            lastWriteSccAddress = dt.Address;
+                            lastWriteAddress = dt.Address;
                             break;
                         }
                 }
