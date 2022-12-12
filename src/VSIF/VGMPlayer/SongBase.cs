@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -143,6 +144,12 @@ namespace zanac.VGMPlayer
             private set;
         }
 
+        public bool Accepted
+        {
+            get;
+            protected set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -161,6 +168,13 @@ namespace zanac.VGMPlayer
         /// </summary>
         public void Play()
         {
+            if (!Accepted)
+            {
+                FormMain.TopForm.SetStatusText($"The {Path.GetFileName(FileName)} could not be played due to the lack of a compatible chip.");
+                NotifyFinished();
+                return;
+            }
+
             if (State == SoundState.Playing)
                 return;
 

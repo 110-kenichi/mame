@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -208,6 +209,38 @@ namespace zanac.VGMPlayer
             autoResetEvent.Set();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void FlushDeferredWriteDataAndWait()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    if (disposedValue)
+                        return;
+
+                    if (deferredWriteAdrAndData.Count != 0)
+                    {
+                        PortWriteData[] dd = deferredWriteAdrAndData.ToArray();
+                        deferredWriteAdrAndData.Clear();
+                        if (dd.Length != 0)
+                            DataWriter?.Write(dd);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -223,7 +256,14 @@ namespace zanac.VGMPlayer
                     if (disposedValue)
                         return;
 
-                    FlushDeferredWriteData();
+                    if (deferredWriteAdrAndData.Count != 0)
+                    {
+                        PortWriteData[] dd = deferredWriteAdrAndData.ToArray();
+                        deferredWriteAdrAndData.Clear();
+                        if (dd.Length != 0)
+                            DataWriter?.Write(dd);
+                    }
+
                     DataWriter?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
                 }
             }

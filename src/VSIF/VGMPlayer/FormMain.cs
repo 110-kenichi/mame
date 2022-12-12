@@ -390,7 +390,7 @@ namespace zanac.VGMPlayer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.Message);
             }
         }
 

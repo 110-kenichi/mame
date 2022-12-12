@@ -321,6 +321,8 @@ namespace zanac.VGMPlayer
                                 (PortId)Settings.Default.DCSG_Port);
                             break;
                     }
+                    if (comPortDCSG != null)
+                        Accepted = true;
                 }
                 if (Settings.Default.OPNA2_Enable)
                 {
@@ -343,6 +345,8 @@ namespace zanac.VGMPlayer
                                 (PortId)Settings.Default.OPNA2_Port);
                             break;
                     }
+                    if (comPortOPN2 != null)
+                        Accepted = true;
                 }
 
                 return true;

@@ -212,14 +212,15 @@ namespace zanac.VGMPlayer
                 {
                     //KOFF
                     for (int i = 0; i < 9; i++)
-                        YMF262WriteData(comPortOPL3, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
+                        YMF262WriteData(comPortOPL3, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0), true);
                     for (int i = 0; i < 9; i++)
-                        YMF262WriteData(comPortOPL3, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
+                        YMF262WriteData(comPortOPL3, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0), true);
                     if (volumeOff)
                         for (int i = 0; i < 18; i++)
                             for (int op = 0; op < 2; op++)
-                                YMF262WriteData(comPortOPL3, 0x40, op, i, 0, 0, 63);
+                                YMF262WriteData(comPortOPL3, 0x40, op, i, 0, 0, 63, true);
                 }
+                comPortOPL3.FlushDeferredWriteData();
             }
 
             if (comPortY8950 != null)
@@ -232,22 +233,23 @@ namespace zanac.VGMPlayer
                     {
                         case 0:
                             for (int i = 0; i < 9; i++)
-                                YMF262WriteData(comPortY8950, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0));
+                                YMF262WriteData(comPortY8950, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0), true);
                             if (volumeOff)
                                 for (int i = 0; i < 9; i++)
                                     for (int op = 0; op < 2; op++)
-                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63);
+                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63, true);
                             break;
                         case 1:
                             for (int i = 0; i < 9; i++)
-                                YMF262WriteData(comPortY8950, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0));
+                                YMF262WriteData(comPortY8950, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0), true);
                             if (volumeOff)
                                 for (int i = 9; i < 18; i++)
                                     for (int op = 0; op < 2; op++)
-                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63);
+                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63, true);
                             break;
                     }
                 }
+                comPortY8950.FlushDeferredWriteData();
             }
 
             //SCC
@@ -300,7 +302,7 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        private void YMF262WriteData(VsifClient comPort, uint address, int op, int slot, byte opmode, int consel, byte data)
+        private void YMF262WriteData(VsifClient comPort, uint address, int op, int slot, byte opmode, int consel, byte data, bool defferred)
         {
             //useCache = false;
             var adrL = address & 0xff;
@@ -358,14 +360,29 @@ namespace zanac.VGMPlayer
             var adr = (byte)(adrL + (op * 3) + chofst);
             address = (adrH << 8) | adr;
 
-            switch (adrH)
+            if (defferred)
             {
-                case 0:
-                    comPort?.WriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
-                    break;
-                case 2:
-                    comPort?.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
-                    break;
+                switch (adrH)
+                {
+                    case 0:
+                        comPort?.DeferredWriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        break;
+                    case 2:
+                        comPort?.DeferredWriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        break;
+                }
+            }
+            else
+            {
+                switch (adrH)
+                {
+                    case 0:
+                        comPort?.WriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        break;
+                    case 2:
+                        comPort?.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        break;
+                }
             }
         }
 
@@ -433,16 +450,10 @@ namespace zanac.VGMPlayer
             }
         }
 
-
-        private void YM2608WriteData(byte address, int op, int slot, byte data)
-        {
-            YM2608WriteData(address, op, slot, data, true);
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        private void YM2608WriteData(byte address, int op, int slot, byte data, bool useCache)
+        private void YM2608WriteData(byte address, int op, int slot, byte data, bool deferred)
         {
             switch (op)
             {
@@ -464,7 +475,7 @@ namespace zanac.VGMPlayer
             {
                 if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
-                    comPortOPNA.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
                 }
             }
         }
@@ -476,30 +487,30 @@ namespace zanac.VGMPlayer
             YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
 
             //flag
-            YM2608WriteData(0x10, 0, 3, 0x13);   //CLEAR MASK
-            YM2608WriteData(0x10, 0, 3, 0x80);   //IRQ RESET
-                                                 //Ctrl1
-            YM2608WriteData(0x00, 0, 3, 0x60);   //REC, EXTMEM
+            YM2608WriteData(0x10, 0, 3, 0x13, false);   //CLEAR MASK
+            YM2608WriteData(0x10, 0, 3, 0x80, false);   //IRQ RESET
+                                                        //Ctrl1
+            YM2608WriteData(0x00, 0, 3, 0x60, false);   //REC, EXTMEM
             //Ctrl2
             //START
             if (ym2608_adpcmbit8)
             {
-                YM2608WriteData(0x01, 0, 3, 0x02);   //LR, 8bit DRAM
-                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff));
-                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff));
+                YM2608WriteData(0x01, 0, 3, 0x02, false);   //LR, 8bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 5) & 0xff), false);
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff), false);
             }
             else
             {
-                YM2608WriteData(0x01, 0, 3, 0x00);   //LR, 1bit DRAM
-                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 2) & 0xff));
-                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff));
+                YM2608WriteData(0x01, 0, 3, 0x00, false);   //LR, 1bit DRAM
+                YM2608WriteData(0x02, 0, 3, (byte)((saddr >> 2) & 0xff), false);
+                YM2608WriteData(0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff), false);
             }
             //STOP
-            YM2608WriteData(0x04, 0, 3, 0xff);
-            YM2608WriteData(0x05, 0, 3, 0xff);
+            YM2608WriteData(0x04, 0, 3, 0xff, false);
+            YM2608WriteData(0x05, 0, 3, 0xff, false);
             //LIMIT
-            YM2608WriteData(0x0C, 0, 3, 0xff);
-            YM2608WriteData(0x0D, 0, 3, 0xff);
+            YM2608WriteData(0x0C, 0, 3, 0xff, false);
+            YM2608WriteData(0x0D, 0, 3, 0xff, false);
 
             //Transfer
             int len = transferData.Length;
@@ -508,14 +519,17 @@ namespace zanac.VGMPlayer
             int lastPercentage = 0;
             for (int i = 0; i < len; i++)
             {
-                YM2608WriteData(0x08, 0, 3, transferData[i], false);
+                YM2608WriteData(0x08, 0, 3, transferData[i], true);
+
+                //for (int wi = 0; wi < 2; wi++)
+                //    comPortOPNA?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
                 {
                     FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
                     //fp.Percentage = percentage;
-                    //comPortOPNA?.FlushDeferredWriteData();
+                    comPortOPNA?.FlushDeferredWriteDataAndWait();
                 }
                 lastPercentage = percentage;
                 index++;
@@ -556,15 +570,15 @@ namespace zanac.VGMPlayer
             //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
 
             //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01);
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
 
             //各フラグをイネーブルにする。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00);
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false);
             //各フラグをリセット。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80);
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false);
 
             //メモリライトモードにする。
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60);
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false);
 
             if (comPortY8950 != null)
             {
@@ -606,7 +620,7 @@ namespace zanac.VGMPlayer
                 if (y8950_adpcmbit64k)
                 {
                     //メモリのタイプ指定。64Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false);
 
                     if ((saddr & 0b1000) == 0b1000)
                         saddr += 0b1000;
@@ -618,22 +632,22 @@ namespace zanac.VGMPlayer
                         eaddr += 0b1_0000_0000_0000;
 
                     //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff));
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff));
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
                     //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff));
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
                 }
                 else
                 {
                     //メモリのタイプ指定。256Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
+                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false);
                     //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff));
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff));
+                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
                     //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff));
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff));
+                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
+                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
                 }
             }
 
@@ -646,14 +660,17 @@ namespace zanac.VGMPlayer
             int lastPercentage = 0;
             for (int i = 0; i < transferData.Length; i++)
             {
-                YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i]);
+                YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true);
+
+                //for (int wi = 0; wi < 2; wi++)
+                //    comPortY8950?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
                 {
                     FormMain.TopForm.SetStatusText("Y8950: Transferring ADPCM(" + percentage + "%)");
                     //fp.Percentage = percentage;
-                    //comPortY8950?.FlushDeferredWriteData();
+                    comPortY8950?.FlushDeferredWriteDataAndWait();
                 }
                 lastPercentage = percentage;
                 index++;
@@ -690,9 +707,9 @@ namespace zanac.VGMPlayer
             FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
 
             //○リセット
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80);
+            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false);
             //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01);
+            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
 
             //comPortY8950?.FlushDeferredWriteData();
             //System.Threading.Thread.Sleep(1000);
@@ -796,6 +813,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortDCSG != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2413 != 0)
             {
@@ -815,6 +834,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPLL != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2612 != 0)
             {
@@ -844,6 +865,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPN2 != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2151 != 0)
             {
@@ -858,6 +881,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPM != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM3812 != 0)
             {
@@ -884,6 +909,10 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPL3 != null)
+                    Accepted = true;
+                if (comPortY8950 != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM3526 != 0)
             {
@@ -910,6 +939,10 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPL3 != null)
+                    Accepted = true;
+                if (comPortY8950 != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYMF262 != 0)
             {
@@ -924,6 +957,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPL3 != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2203 != 0)
             {
@@ -938,6 +973,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPNA != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2608 != 0)
             {
@@ -952,6 +989,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPNA != null)
+                    Accepted = true;
             }
             if (curHead.lngHzYM2610 != 0)
             {
@@ -966,6 +1005,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortOPNA != null)
+                    Accepted = true;
             }
             if (curHead.lngHzY8950 != 0)
             {
@@ -991,6 +1032,10 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortY8950 != null)
+                    Accepted = true;
+                if (comPortOPL3 != null)
+                    Accepted = true;
             }
             if (curHead.lngHzK051649 != 0)
             {
@@ -1005,6 +1050,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortSCC != null)
+                    Accepted = true;
             }
             if (curHead.lngHzAY8910 != 0)
             {
@@ -1024,6 +1071,8 @@ namespace zanac.VGMPlayer
                             break;
                     }
                 }
+                if (comPortY8910 != null)
+                    Accepted = true;
             }
 
             return curHead;

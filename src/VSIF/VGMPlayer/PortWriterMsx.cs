@@ -211,10 +211,7 @@ namespace zanac.VGMPlayer
                         MemSet(new IntPtr(bp), osd[i], (int)wait);
                 }
             }
-            uint writtenBytes = 0;
-            var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
-            if (stat != FTDI.FT_STATUS.FT_OK)
-                Debug.WriteLine(stat);
+            SendData(sd);
         }
 
     }
