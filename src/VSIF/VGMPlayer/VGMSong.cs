@@ -530,367 +530,295 @@ namespace zanac.VGMPlayer
 
                 if (Settings.Default.DCSG_Enable)
                 {
-                    switch (Settings.Default.DCSG_IF)
-                    {
-                        case 0:
-                            if (comPortDCSG == null)
-                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                    (PortId)Settings.Default.DCSG_Port);
-                            break;
-                        case 1:
-                            if (comPortDCSG == null)
-                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                    (PortId)Settings.Default.DCSG_Port);
-                            break;
-                        case 2:
-                            if (comPortDCSG == null)
-                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                    (PortId)Settings.Default.DCSG_Port);
-                            break;
-                        case 3:
-                            if (comPortDCSG == null)
-                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                    (PortId)Settings.Default.DCSG_Port);
-                            break;
-                        case 4:
-                            if (comPortDCSG == null)
-                                comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                   (PortId)Settings.Default.DCSG_Port);
-                            break;
-                    }
+                    coonectToDCSG();
                 }
-                if (comPortDCSG != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM2413 != 0)
             {
                 if (Settings.Default.OPLL_Enable)
                 {
-                    switch (Settings.Default.OPLL_IF)
-                    {
-                        case 0:
-                            if (comPortOPLL == null)
-                                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                    (PortId)Settings.Default.OPLL_Port);
-                            break;
-                        case 1:
-                            if (comPortOPLL == null)
-                                comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPLL_Port);
-                            break;
-                    }
+                    connectToOPLL();
                 }
-                if (comPortOPLL != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM2612 != 0)
             {
                 if (Settings.Default.OPNA2_Enable)
                 {
-                    switch (Settings.Default.OPNA2_IF)
-                    {
-                        case 0:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 1:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 2:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 3:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                    }
+                    connectToOPN2();
                 }
                 else if (Settings.Default.OPNA_Enable)
                 {
-                    switch (Settings.Default.OPNA_IF)
-                    {
-                        case 0:
-                            if (comPortOPNA == null)
-                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA_Port);
-                            break;
-                    }
+                    connectToOPNA();
                 }
-                if (comPortOPN2 != null)
-                    Accepted = true;
-                if (comPortOPNA != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM2151 != 0)
             {
                 if (Settings.Default.OPM_Enable)
                 {
-                    switch (Settings.Default.OPM_IF)
-                    {
-                        case 0:
-                            if (comPortOPM == null)
-                                comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                   (PortId)Settings.Default.OPM_Port);
-                            break;
-                    }
+                    connectToOPM();
                 }
-                if (comPortOPM != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM3812 != 0)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
-                    switch (Settings.Default.OPL3_IF)
-                    {
-                        case 0:
-                            if (comPortOPL3 == null)
-                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPL3_Port);
-                            comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
-                            break;
-                    }
+                    connectToOPL3();
                 }
                 else if (Settings.Default.Y8950_Enable)
                 {
-                    switch (Settings.Default.Y8950_IF)
-                    {
-                        case 0:
-                            if (comPortY8950 == null)
-                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.Y8950_Port);
-                            break;
-                    }
+                    connectToMsxAudio();
                 }
-                if (comPortOPL3 != null)
-                    Accepted = true;
-                if (comPortY8950 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM3526 != 0)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
-                    switch (Settings.Default.OPL3_IF)
-                    {
-                        case 0:
-                            if (comPortOPL3 == null)
-                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                   (PortId)Settings.Default.OPL3_Port);
-                            comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
-                            break;
-                    }
+                    connectToOPL3();
                 }
                 else if (Settings.Default.Y8950_Enable)
                 {
-                    switch (Settings.Default.Y8950_IF)
-                    {
-                        case 0:
-                            if (comPortY8950 == null)
-                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.Y8950_Port);
-                            break;
-                    }
+                    connectToMsxAudio();
                 }
-                if (comPortOPL3 != null)
-                    Accepted = true;
-                if (comPortY8950 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYMF262 != 0)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
-                    switch (Settings.Default.OPL3_IF)
-                    {
-                        case 0:
-                            if (comPortOPL3 == null)
-                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPL3_Port);
-                            break;
-                    }
+                    connectToOPL3();
                 }
-                if (comPortOPL3 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM2203 != 0)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
-                    switch (Settings.Default.OPNA_IF)
-                    {
-                        case 0:
-                            if (comPortOPNA == null)
-                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA_Port);
-                            break;
-                    }
+                    connectToOPNA();
                 }
-                if (comPortOPNA != null)
-                    Accepted = true;
+                else if (Settings.Default.OPNA2_Enable)
+                {
+                    connectToOPN2();
+                }
             }
             if (curHead.lngHzYM2608 != 0)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
-                    switch (Settings.Default.OPNA_IF)
-                    {
-                        case 0:
-                            if (comPortOPNA == null)
-                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA_Port);
-                            break;
-                    }
+                    connectToOPNA();
                 }
                 else if (Settings.Default.OPNA2_Enable)
                 {
-                    switch (Settings.Default.OPNA2_IF)
-                    {
-                        case 0:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 1:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 2:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 3:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                    }
+                    connectToOPN2();
                 }
-                if (comPortOPNA != null)
-                    Accepted = true;
-                if (comPortOPN2 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzYM2610 != 0)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
-                    switch (Settings.Default.OPNA_IF)
-                    {
-                        case 0:
-                            if (comPortOPNA == null)
-                                comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA_Port);
-                            break;
-                    }
+                    connectToOPNA();
                 }
                 else if (Settings.Default.OPNA2_Enable)
                 {
-                    switch (Settings.Default.OPNA2_IF)
-                    {
-                        case 0:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 1:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 2:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                        case 3:
-                            if (comPortOPN2 == null)
-                                comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPNA2_Port);
-                            break;
-                    }
+                    connectToOPN2();
                 }
-                if (comPortOPNA != null)
-                    Accepted = true;
-                if (comPortOPN2 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzY8950 != 0)
             {
                 if (Settings.Default.Y8950_Enable)
                 {
-                    switch (Settings.Default.Y8950_IF)
-                    {
-                        case 0:
-                            if (comPortY8950 == null)
-                                comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.Y8950_Port);
-                            break;
-                    }
+                    connectToMsxAudio();
                 }
                 else if (Settings.Default.OPL3_Enable)
                 {
-                    switch (Settings.Default.OPL3_IF)
-                    {
-                        case 0:
-                            if (comPortOPL3 == null)
-                                comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.OPL3_Port);
-                            break;
-                    }
+                    connectToOPL3();
                 }
-                if (comPortY8950 != null)
-                    Accepted = true;
-                if (comPortOPL3 != null)
-                    Accepted = true;
             }
             if (curHead.lngHzK051649 != 0)
             {
                 if (Settings.Default.SCC_Enable)
                 {
-                    switch (Settings.Default.SCC_IF)
-                    {
-                        case 0:
-                            if (comPortSCC == null)
-                                comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                  (PortId)Settings.Default.SCC_Port);
-                            break;
-                    }
+                    connectToSCC();
                 }
-                if (comPortSCC != null)
-                    Accepted = true;
             }
             if (curHead.lngHzAY8910 != 0)
             {
                 if (Settings.Default.Y8910_Enable)
                 {
-                    switch (Settings.Default.Y8910_IF)
-                    {
-                        case 0:
-                            if (comPortY8910 == null)
-                                comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                    (PortId)Settings.Default.Y8910_Port);
-                            break;
-                        case 1:
-                            if (comPortY8910 == null)
-                                comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
-                                    (PortId)Settings.Default.Y8910_Port);
-                            break;
-                    }
+                    connectToPSG();
                 }
-                if (comPortY8910 != null)
-                    Accepted = true;
             }
 
             return curHead;
+        }
+
+        private void connectToPSG()
+        {
+            switch (Settings.Default.Y8910_IF)
+            {
+                case 0:
+                    if (comPortY8910 == null)
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.Y8910_Port);
+                    break;
+                case 1:
+                    if (comPortY8910 == null)
+                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
+                            (PortId)Settings.Default.Y8910_Port);
+                    break;
+            }
+            if (comPortY8910 != null)
+                Accepted = true;
+        }
+
+        private void connectToSCC()
+        {
+            switch (Settings.Default.SCC_IF)
+            {
+                case 0:
+                    if (comPortSCC == null)
+                        comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                          (PortId)Settings.Default.SCC_Port);
+                    break;
+            }
+            if (comPortSCC != null)
+                Accepted = true;
+        }
+
+        private void connectToMsxAudio()
+        {
+            switch (Settings.Default.Y8950_IF)
+            {
+                case 0:
+                    if (comPortY8950 == null)
+                        comPortY8950 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.Y8950_Port);
+                    break;
+            }
+            if (comPortY8950 != null)
+                Accepted = true;
+        }
+
+        private void connectToOPL3()
+        {
+            switch (Settings.Default.OPL3_IF)
+            {
+                case 0:
+                    if (comPortOPL3 == null)
+                        comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPL3_Port);
+                    comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
+                    break;
+            }
+            if (comPortOPL3 != null)
+                Accepted = true;
+        }
+
+        private void connectToOPM()
+        {
+            switch (Settings.Default.OPM_IF)
+            {
+                case 0:
+                    if (comPortOPM == null)
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                           (PortId)Settings.Default.OPM_Port);
+                    break;
+            }
+            if (comPortOPM != null)
+                Accepted = true;
+        }
+
+        private void connectToOPNA()
+        {
+            switch (Settings.Default.OPNA_IF)
+            {
+                case 0:
+                    if (comPortOPNA == null)
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPNA_Port);
+                    break;
+            }
+            if (comPortOPNA != null)
+                Accepted = true;
+        }
+
+        private void connectToOPN2()
+        {
+            switch (Settings.Default.OPNA2_IF)
+            {
+                case 0:
+                    if (comPortOPN2 == null)
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                            (PortId)Settings.Default.OPNA2_Port);
+                    break;
+                case 1:
+                    if (comPortOPN2 == null)
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                            (PortId)Settings.Default.OPNA2_Port);
+                    break;
+                case 2:
+                    if (comPortOPN2 == null)
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                            (PortId)Settings.Default.OPNA2_Port);
+                    break;
+                case 3:
+                    if (comPortOPN2 == null)
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPNA2_Port);
+                    break;
+            }
+            if (comPortOPN2 != null)
+                Accepted = true;
+        }
+
+        private void connectToOPLL()
+        {
+            switch (Settings.Default.OPLL_IF)
+            {
+                case 0:
+                    if (comPortOPLL == null)
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                            (PortId)Settings.Default.OPLL_Port);
+                    break;
+                case 1:
+                    if (comPortOPLL == null)
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPLL_Port);
+                    break;
+            }
+            if (comPortOPLL != null)
+                Accepted = true;
+        }
+
+        private void coonectToDCSG()
+        {
+            switch (Settings.Default.DCSG_IF)
+            {
+                case 0:
+                    if (comPortDCSG == null)
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                            (PortId)Settings.Default.DCSG_Port);
+                    break;
+                case 1:
+                    if (comPortDCSG == null)
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                            (PortId)Settings.Default.DCSG_Port);
+                    break;
+                case 2:
+                    if (comPortDCSG == null)
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                            (PortId)Settings.Default.DCSG_Port);
+                    break;
+                case 3:
+                    if (comPortDCSG == null)
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                            (PortId)Settings.Default.DCSG_Port);
+                    break;
+                case 4:
+                    if (comPortDCSG == null)
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                           (PortId)Settings.Default.DCSG_Port);
+                    break;
+            }
+            if (comPortDCSG != null)
+                Accepted = true;
         }
 
         bool checkIfZip(string filepath, int signatureSize, string expectedSignature)
@@ -1354,7 +1282,7 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case 0x55: //YM2413
+                                    case 0x55: //YM2203
                                     case 0x56: //YM2608 Write Port 0
                                     case 0x58: //YM2610
                                         {
@@ -1776,9 +1704,11 @@ namespace zanac.VGMPlayer
                                             var time = (command & 15);
                                             vgmWaitDelta += time;
                                             //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
-
-                                            comPortOPN2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
-                                            comPortOPN2?.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPNA2);
+                                            if (dacData != null && dacOffset < dacData.Count)
+                                            {
+                                                comPortOPN2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPNA2);
+                                                comPortOPN2?.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPNA2);
+                                            }
                                             dacOffset++;
                                         }
                                         break;
@@ -2254,9 +2184,6 @@ namespace zanac.VGMPlayer
             for (int i = 0; i < len; i++)
             {
                 YM2608WriteData(0x08, 0, 3, transferData[i], true);
-
-                //for (int wi = 0; wi < 2; wi++)
-                //    comPortOPNA?.DeferredWriteData(0, (byte)0x10, (byte)0x00, (int)Settings.Default.BitBangWaitY8950);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)

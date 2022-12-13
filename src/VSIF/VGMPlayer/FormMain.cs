@@ -1136,6 +1136,20 @@ namespace zanac.VGMPlayer
             if (currentSong != null)
                 currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            int row = tableLayoutPanelPort.GetRow((Control)sender);
+            CheckBox cb = (CheckBox)tableLayoutPanelPort.GetControlFromPosition(0, row);
+            cb.Checked = !cb.Checked;
+        }
+
+        private void label3_DoubleClick(object sender, EventArgs e)
+        {
+            int row = tableLayoutPanelPort.GetRow((Control)sender);
+            CheckBox cb = (CheckBox)tableLayoutPanelPort.GetControlFromPosition(0, row);
+            cb.Checked = !cb.Checked;
+        }
     }
 
     internal static class NativeConstants
