@@ -521,7 +521,7 @@ namespace zanac.VGMPlayer
                 curHead.lngHzYM2151 = curHead.lngHzYM2413;
             }
 
-            if (curHead.lngHzPSG != 0)
+            if (curHead.lngHzDCSG != 0)
             {
                 if (curHead.shtPSG_Feedback == 0)
                     curHead.shtPSG_Feedback = 0x0009;
@@ -540,7 +540,7 @@ namespace zanac.VGMPlayer
                     connectToOPLL();
                 }
             }
-            if (curHead.lngHzYM2612 != 0)
+            if (curHead.lngHzYM2612 != 0 && curHead.lngVersion >= 0x00000110)
             {
                 if (Settings.Default.OPNA2_Enable)
                 {
@@ -551,14 +551,14 @@ namespace zanac.VGMPlayer
                     connectToOPNA();
                 }
             }
-            if (curHead.lngHzYM2151 != 0)
+            if (curHead.lngHzYM2151 != 0 && curHead.lngVersion >= 0x00000110)
             {
                 if (Settings.Default.OPM_Enable)
                 {
                     connectToOPM();
                 }
             }
-            if (curHead.lngHzYM3812 != 0)
+            if (curHead.lngHzYM3812 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
@@ -569,7 +569,7 @@ namespace zanac.VGMPlayer
                     connectToMsxAudio();
                 }
             }
-            if (curHead.lngHzYM3526 != 0)
+            if (curHead.lngHzYM3526 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
@@ -580,14 +580,14 @@ namespace zanac.VGMPlayer
                     connectToMsxAudio();
                 }
             }
-            if (curHead.lngHzYMF262 != 0)
+            if (curHead.lngHzYMF262 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPL3_Enable)
                 {
                     connectToOPL3();
                 }
             }
-            if (curHead.lngHzYM2203 != 0)
+            if (curHead.lngHzYM2203 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
@@ -598,7 +598,7 @@ namespace zanac.VGMPlayer
                     connectToOPN2();
                 }
             }
-            if (curHead.lngHzYM2608 != 0)
+            if (curHead.lngHzYM2608 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
@@ -609,7 +609,7 @@ namespace zanac.VGMPlayer
                     connectToOPN2();
                 }
             }
-            if (curHead.lngHzYM2610 != 0)
+            if (curHead.lngHzYM2610 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.OPNA_Enable)
                 {
@@ -620,7 +620,7 @@ namespace zanac.VGMPlayer
                     connectToOPN2();
                 }
             }
-            if (curHead.lngHzY8950 != 0)
+            if (curHead.lngHzY8950 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.Y8950_Enable)
                 {
@@ -631,14 +631,14 @@ namespace zanac.VGMPlayer
                     connectToOPL3();
                 }
             }
-            if (curHead.lngHzK051649 != 0)
+            if (curHead.lngHzK051649 != 0 && curHead.lngVersion >= 0x00000161)
             {
                 if (Settings.Default.SCC_Enable)
                 {
                     connectToSCC();
                 }
             }
-            if (curHead.lngHzAY8910 != 0)
+            if (curHead.lngHzAY8910 != 0 && curHead.lngVersion >= 0x00000151)
             {
                 if (Settings.Default.Y8910_Enable)
                 {
@@ -2433,7 +2433,7 @@ namespace zanac.VGMPlayer
         {
             if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
-                if(adrs != 0x10)
+                if (adrs != 0x10)
                     comPortOPL3.DeferredWriteData(10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPL3);
             }
         }
@@ -2715,7 +2715,7 @@ namespace zanac.VGMPlayer
     {
         public uint lngEOFOffset;
         public uint lngVersion;
-        public uint lngHzPSG;
+        public uint lngHzDCSG;
         public uint lngHzYM2413;
         public uint lngGD3Offset;
         public uint lngTotalSamples;
