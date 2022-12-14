@@ -72,18 +72,26 @@ namespace zanac.VGMPlayer
             //checkBoxConnSCC_CheckedChanged(null, null);
             //checkBoxConnY8910_CheckedChanged(null, null);
 
-            if (Settings.Default.Files != null)
+            try
             {
-                foreach (string fn in Settings.Default.Files)
-                    listViewList.Items.Add(fn);
-
-                int idx = Settings.Default.FocusedItem;
-                if (0 <= idx && idx < listViewList.Items.Count)
+                listViewList.BeginUpdate();
+                if (Settings.Default.Files != null)
                 {
-                    listViewList.Items[idx].Focused = true;
-                    listViewList.Items[idx].Selected = true;
-                    listViewList.Items[idx].EnsureVisible();
+                    foreach (string fn in Settings.Default.Files)
+                        listViewList.Items.Add(fn);
+
+                    int idx = Settings.Default.FocusedItem;
+                    if (0 <= idx && idx < listViewList.Items.Count)
+                    {
+                        listViewList.Items[idx].Focused = true;
+                        listViewList.Items[idx].Selected = true;
+                        listViewList.Items[idx].EnsureVisible();
+                    }
                 }
+            }
+            finally
+            {
+                listViewList.EndUpdate();
             }
         }
 
@@ -995,21 +1003,30 @@ namespace zanac.VGMPlayer
 
         private void buttonPlay_DragDrop(object sender, DragEventArgs e)
         {
-            listViewList.Items.Clear();
-
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            ListViewItem lvi = null;
             try
             {
                 listViewList.BeginUpdate();
 
-                listViewList.SelectedItems.Clear();
-                lvi = addAllFiles(files, lvi);
+                listViewList.Items.Clear();
+
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+                ListViewItem lvi = null;
+                try
+                {
+                    listViewList.BeginUpdate();
+
+                    listViewList.SelectedItems.Clear();
+                    lvi = addAllFiles(files, lvi);
+                }
+                finally
+                {
+                    listViewList.EndUpdate();
+                    lvi?.EnsureVisible();
+                }
             }
             finally
             {
                 listViewList.EndUpdate();
-                lvi?.EnsureVisible();
             }
 
             playSelectedItem();
@@ -1017,7 +1034,15 @@ namespace zanac.VGMPlayer
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            listViewList.Items.Clear();
+            try
+            {
+                listViewList.BeginUpdate();
+                listViewList.Items.Clear();
+            }
+            finally
+            {
+                listViewList.EndUpdate();
+            }
         }
 
         private void playToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1110,12 +1135,12 @@ namespace zanac.VGMPlayer
         /// <param name="text"></param>
         public void SetElapsedTime(TimeSpan timeSpan)
         {
-            BeginInvoke(new MethodInvoker(() =>
+            string time = timeSpan.ToString(@"hh\:mm\:ss");
+
+            labelElapsed.BeginInvoke(new MethodInvoker(() =>
             {
-                if (!IsDisposed)
-                {
-                    labelElapsed.Text = timeSpan.ToString(@"hh\:mm\:ss");
-                }
+                if (!labelElapsed.IsDisposed)
+                    labelElapsed.Text = time;
             }));
         }
 
@@ -1149,6 +1174,16 @@ namespace zanac.VGMPlayer
             int row = tableLayoutPanelPort.GetRow((Control)sender);
             CheckBox cb = (CheckBox)tableLayoutPanelPort.GetControlFromPosition(0, row);
             cb.Checked = !cb.Checked;
+        }
+
+        private void label8_DoubleClick(object sender, EventArgs e)
+        {
+            for (int i = 0; i < tableLayoutPanelPort.RowCount; i++)
+            {
+                CheckBox cb = tableLayoutPanelPort.GetControlFromPosition(0, i) as CheckBox;
+                if (cb != null)
+                    cb.Checked = !cb.Checked;
+            }
         }
     }
 

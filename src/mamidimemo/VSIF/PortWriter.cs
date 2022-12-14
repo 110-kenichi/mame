@@ -101,6 +101,26 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        protected void SendData(byte[] sd)
+        {
+            while (true)
+            {
+                uint writtenBytes = 0;
+                var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
+                if (stat != FTDI.FT_STATUS.FT_OK)
+                {
+                    Debug.WriteLine(stat);
+                    break;
+                }
+                if (sd.Length == writtenBytes)
+                    break;
+
+                byte[] nsd = new byte[sd.Length - writtenBytes];
+                Array.Copy(sd, writtenBytes, nsd, 0, nsd.Length);
+                sd = nsd;
+            }
+        }
+
         // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
         // ~PortWriter()
         // {

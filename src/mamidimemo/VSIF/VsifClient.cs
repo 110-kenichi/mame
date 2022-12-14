@@ -38,8 +38,6 @@ namespace zanac.MAmidiMEmo.VSIF
             Thread.Sleep(millisecondsTimeout);
         }
 
-        private List<byte> deferredWriteData;
-
         private bool disposedValue;
 
         /// <summary>
@@ -81,7 +79,6 @@ namespace zanac.MAmidiMEmo.VSIF
             SerialPort = serialPort;
 
             ReferencedCount = 1;
-            deferredWriteData = new List<byte>();
         }
 
         protected virtual void Dispose(bool disposing)

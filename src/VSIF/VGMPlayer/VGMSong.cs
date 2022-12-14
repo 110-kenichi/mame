@@ -549,6 +549,8 @@ namespace zanac.VGMPlayer
                 else if (Settings.Default.OPNA_Enable)
                 {
                     connectToOPNA();
+                    //Force 6ch mode
+                    comPortOPNA?.DeferredWriteData(0x10, (byte)0x29, (byte)0x80, (int)Settings.Default.BitBangWaitOPNA2);
                 }
             }
             if (curHead.lngHzYM2151 != 0 && curHead.lngVersion >= 0x00000110)
@@ -679,7 +681,39 @@ namespace zanac.VGMPlayer
                     break;
             }
             if (comPortSCC != null)
+            {
                 Accepted = true;
+
+                switch (comPortSCC.SoundModuleType)
+                {
+                    case VsifSoundModuleType.MSX_FTDI:
+                        SCCType type = (SCCType)comPortSCC.Tag["SCC.Type"];
+                        var slot = (int)comPortSCC.Tag["SCC.Slot"];
+                        if ((int)slot < 0)
+                            //自動選択方式
+                            comPortSCC.DeferredWriteData(3, (byte)type,
+                                (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
+                        else
+                            //従来方式
+                            comPortSCC.DeferredWriteData(3, (byte)(type + 4),
+                                (byte)slot, (int)Settings.Default.BitBangWaitSCC);
+
+                        for (int i = 0; i < 0xFF; i++)
+                        {
+                            switch (type)
+                            {
+                                case SCCType.SCC1:
+                                    comPortSCC.DeferredWriteData(4, (byte)i, (byte)0, (int)Settings.Default.BitBangWaitSCC);
+                                    break;
+                                case SCCType.SCC1_Compat:
+                                case SCCType.SCC:
+                                    comPortSCC.DeferredWriteData(5, (byte)i, (byte)0, (int)Settings.Default.BitBangWaitSCC);
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            }
         }
 
         private void connectToMsxAudio()
@@ -704,6 +738,9 @@ namespace zanac.VGMPlayer
                     if (comPortOPL3 == null)
                         comPortOPL3 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPL3_Port);
+                    //Force 2op mode
+                    comPortOPL3?.DeferredWriteData(11, (byte)0x4, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
+                    //Force OPL mode
                     comPortOPL3?.DeferredWriteData(11, (byte)0x5, (byte)0, (int)Settings.Default.BitBangWaitOPL3);
                     break;
             }
@@ -736,7 +773,17 @@ namespace zanac.VGMPlayer
                     break;
             }
             if (comPortOPNA != null)
+            {
                 Accepted = true;
+
+                switch (comPortOPNA.SoundModuleType)
+                {
+                    case VsifSoundModuleType.MSX_FTDI:
+                        //Force OPN mode
+                        comPortOPNA.DeferredWriteData(0x10, (byte)0x29, (byte)0, (int)Settings.Default.BitBangWaitOPNA2);
+                        break;
+                }
+            }
         }
 
         private void connectToOPN2()
@@ -765,7 +812,11 @@ namespace zanac.VGMPlayer
                     break;
             }
             if (comPortOPN2 != null)
+            {
                 Accepted = true;
+
+                deferredWriteOPN2_P0(0x2B, 0);  //DAC OFF
+            }
         }
 
         private void connectToOPLL()
@@ -1228,8 +1279,11 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
+
                                             //ignore test and unknown registers
-                                            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c <= adrs && adrs < 0x30))
+                                            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                                                break;
+                                            if (adrs > 0xb6)
                                                 break;
 
                                             if (comPortOPN2 != null)
@@ -1250,6 +1304,12 @@ namespace zanac.VGMPlayer
                                                 break;
                                             var dt = readByte();
                                             if (dt < 0)
+                                                break;
+
+                                            //ignore test and unknown registers
+                                            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                                                break;
+                                            if (adrs > 0xb6)
                                                 break;
 
                                             if (comPortOPN2 != null)
@@ -1299,6 +1359,12 @@ namespace zanac.VGMPlayer
                                             }
                                             else if (comPortOPN2 != null)
                                             {
+                                                //ignore test and unknown registers
+                                                if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                                                    break;
+                                                if (adrs > 0xb6)
+                                                    break;
+
                                                 deferredWriteOPN2_P0(adrs, dt);
                                             }
                                         }
@@ -1373,6 +1439,12 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPN2 != null)
                                                 {
+                                                    //ignore test and unknown registers
+                                                    if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                                                        break;
+                                                    if (adrs > 0xb6)
+                                                        break;
+
                                                     deferredWriteOPN2_P1(adrs, dt);
                                                 }
                                             }
@@ -1393,7 +1465,6 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
-
                                         }
                                         break;
 
@@ -1922,15 +1993,19 @@ namespace zanac.VGMPlayer
                                                             switch (pp)
                                                             {
                                                                 case 1: //Freq
+                                                                    //Console.WriteLine("Freq " + aa / 2 + "ch: " + dd);
                                                                     aa += 0x80;
                                                                     break;
                                                                 case 2: //Vol
+                                                                    //Console.WriteLine("Vol  " + aa / 2 + "ch: " + dd);
                                                                     aa += 0x8a;
                                                                     break;
                                                                 case 3: //Ena
+                                                                    //Console.WriteLine("En   " + Convert.ToString((int)dd, 2));
                                                                     aa = 0x8f;
                                                                     break;
                                                                 case 5: //
+                                                                    //Console.WriteLine("Mode " + aa / 2 + "ch: " + dd);
                                                                     aa += 0xe0;
                                                                     break;
                                                                 default:

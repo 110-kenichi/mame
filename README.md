@@ -1,4 +1,4 @@
-MAmidiMEmo 4.5.4.4 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.5.5.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.5.5.0 Supported Y8950 for VGMPlayer.
+		Improved VGM playback routine for VGMPlayer.
 4.5.4.4 Improved SCC, OPL3 checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)
 		Fixed sound off routine for YM2612, DCSG. (Thanks Niga-san!)
 4.5.4.3 Improved MMM(DCSG) checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)

@@ -25,6 +25,9 @@ namespace zanac.VGMPlayer
         [STAThread]
         static void Main(string[] args)
         {
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+
             Settings.Default.Reload();
 
             NtQueryTimerResolution(out MaximumResolution, out MinimumResolution, out CurrentResolution);
