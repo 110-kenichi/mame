@@ -26,7 +26,7 @@ namespace zanac.VGMPlayer
         static void Main(string[] args)
         {
             //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetCompatibleTextRenderingDefault(false);
 
             Settings.Default.Reload();
 

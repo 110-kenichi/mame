@@ -3,9 +3,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 // Dragging items in a ListView control with visual insertion guides
 // http://www.cyotek.com/blog/dragging-items-in-a-listview-control-with-visual-insertion-guides
@@ -14,9 +12,17 @@ namespace ListViewInsertionDrag
 {
     public class DraggableListView : System.Windows.Forms.ListView
     {
+        #region Constants
+
+        private const int WM_PAINT = 0xF;
+
+        #endregion
+
         #region Instance Fields
 
         private bool _allowItemDrag;
+
+        private Color _insertionLineColor;
 
         #endregion
 
@@ -27,7 +33,9 @@ namespace ListViewInsertionDrag
         /// </summary>
         public DraggableListView()
         {
-            this.InsertionMark.Index = -1;
+            this.DoubleBuffered = true;
+            this.InsertionLineColor = Color.Red;
+            this.InsertionIndex = -1;
         }
 
         #endregion
@@ -39,6 +47,12 @@ namespace ListViewInsertionDrag
         /// </summary>
         [Category("Property Changed")]
         public event EventHandler AllowItemDragChanged;
+
+        /// <summary>
+        /// Occurs when the InsertionLineColor property value changes.
+        /// </summary>
+        [Category("Property Changed")]
+        public event EventHandler InsertionLineColorChanged;
 
         /// <summary>
         /// Occurs when a drag-and-drop operation for an item is completed.
@@ -54,16 +68,6 @@ namespace ListViewInsertionDrag
 
         #endregion
 
-        [DllImport("uxtheme.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-        private static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-
-            SetWindowTheme(Handle, "Explorer", null);
-        }
-
         #region Overridden Methods
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace ListViewInsertionDrag
                 {
                     ListViewItem dropItem;
 
-                    dropItem = this.InsertionMark.Index != -1 ? this.Items[this.InsertionMark.Index] : null;
+                    dropItem = this.InsertionIndex != -1 ? this.Items[this.InsertionIndex] : null;
 
                     if (dropItem != null)
                     {
@@ -112,8 +116,9 @@ namespace ListViewInsertionDrag
                 }
                 finally
                 {
-                    this.InsertionMark.Index = -1;
+                    this.InsertionIndex = -1;
                     this.IsRowDragInProgress = false;
+                    this.Invalidate();
                 }
             }
 
@@ -126,7 +131,8 @@ namespace ListViewInsertionDrag
         /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
         protected override void OnDragLeave(EventArgs e)
         {
-            this.InsertionMark.Index = -1;
+            this.InsertionIndex = -1;
+            this.Invalidate();
 
             base.OnDragLeave(e);
         }
@@ -162,22 +168,21 @@ namespace ListViewInsertionDrag
                     insertionIndex = -1;
                     insertionMode = this.InsertionMode;
 
-                    InsertionMark.Index = -1;
-
                     drgevent.Effect = DragDropEffects.None;
                 }
 
-                if (insertionIndex != this.InsertionMark.Index || insertionMode != this.InsertionMode)
+                if (insertionIndex != this.InsertionIndex || insertionMode != this.InsertionMode)
                 {
                     this.InsertionMode = insertionMode;
-                    this.InsertionMark.Index = insertionIndex;
+                    this.InsertionIndex = insertionIndex;
+                    this.Invalidate();
                 }
             }
 
             // Scroll top or bottom for dragging item
-            if (this.InsertionMark.Index > -1 && this.InsertionMark.Index < this.Items.Count)
+            if (this.InsertionIndex > -1 && this.InsertionIndex < this.Items.Count)
             {
-                EnsureVisible(this.InsertionMark.Index);
+                EnsureVisible(this.InsertionIndex);
             }
 
             base.OnDragOver(drgevent);
@@ -207,6 +212,32 @@ namespace ListViewInsertionDrag
             base.OnItemDrag(e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.Paint"/> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs"/> that contains the event data. </param>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+        }
+
+        /// <summary>
+        /// Overrides <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)" />.
+        /// </summary>
+        /// <param name="m">The Windows <see cref="T:System.Windows.Forms.Message" /> to process.</param>
+        [DebuggerStepThrough]
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            switch (m.Msg)
+            {
+                case WM_PAINT:
+                    this.OnWmPaint(ref m);
+                    break;
+            }
+        }
+
         #endregion
 
         #region Public Properties
@@ -223,6 +254,26 @@ namespace ListViewInsertionDrag
                     _allowItemDrag = value;
 
                     this.OnAllowItemDragChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the color of the insertion line drawn when dragging items within the control.
+        /// </summary>
+        /// <value>The color of the insertion line.</value>
+        [Category("Appearance")]
+        [DefaultValue(typeof(Color), "Red")]
+        public virtual Color InsertionLineColor
+        {
+            get { return _insertionLineColor; }
+            set
+            {
+                if (this.InsertionLineColor != value)
+                {
+                    _insertionLineColor = value;
+
+                    this.OnInsertionLineColorChanged(EventArgs.Empty);
                 }
             }
         }
@@ -251,23 +302,9 @@ namespace ListViewInsertionDrag
 
         #region Protected Properties
 
-        private InsertionMode insertionMode;
+        protected int InsertionIndex { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected InsertionMode InsertionMode
-        {
-            get
-            {
-                return insertionMode;
-            }
-            set
-            {
-                insertionMode = value;
-                InsertionMark.AppearsAfterItem = insertionMode == InsertionMode.After;
-            }
-        }
+        protected InsertionMode InsertionMode { get; set; }
 
         protected bool IsRowDragInProgress { get; set; }
 
@@ -284,6 +321,22 @@ namespace ListViewInsertionDrag
             EventHandler handler;
 
             handler = this.AllowItemDragChanged;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="InsertionLineColorChanged" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        protected virtual void OnInsertionLineColorChanged(EventArgs e)
+        {
+            EventHandler handler;
+
+            handler = this.InsertionLineColorChanged;
 
             if (handler != null)
             {
@@ -320,6 +373,73 @@ namespace ListViewInsertionDrag
             if (handler != null)
             {
                 handler(this, e);
+            }
+        }
+
+        protected virtual void OnWmPaint(ref Message m)
+        {
+            this.DrawInsertionLine();
+        }
+
+        #endregion
+
+        #region Private Members
+
+        private void DrawInsertionLine()
+        {
+            if (this.InsertionIndex != -1)
+            {
+                int index;
+
+                index = this.InsertionIndex;
+
+                if (index >= 0 && index < this.Items.Count)
+                {
+                    Rectangle bounds;
+                    int x;
+                    int y;
+                    int width;
+
+                    bounds = this.Items[index].GetBounds(ItemBoundsPortion.Entire);
+                    x = 0; // aways fit the line to the client area, regardless of how the user is scrolling
+                    y = this.InsertionMode == InsertionMode.Before ? bounds.Top : bounds.Bottom;
+                    width = Math.Min(bounds.Width - bounds.Left, this.ClientSize.Width); // again, make sure the full width fits in the client area
+
+                    this.DrawInsertionLine(x, y, width);
+                }
+            }
+        }
+
+        private void DrawInsertionLine(int x1, int y, int width)
+        {
+            using (Graphics g = this.CreateGraphics())
+            {
+                Point[] leftArrowHead;
+                Point[] rightArrowHead;
+                int arrowHeadSize;
+                int x2;
+
+                x2 = x1 + width;
+                arrowHeadSize = 7;
+                leftArrowHead = new[]
+                                {
+                          new Point(x1, y - (arrowHeadSize / 2)), new Point(x1 + arrowHeadSize, y), new Point(x1, y + (arrowHeadSize / 2))
+                        };
+                rightArrowHead = new[]
+                                 {
+                           new Point(x2, y - (arrowHeadSize / 2)), new Point(x2 - arrowHeadSize, y), new Point(x2, y + (arrowHeadSize / 2))
+                         };
+
+                using (Pen pen = new Pen(this.InsertionLineColor))
+                {
+                    g.DrawLine(pen, x1, y, x2 - 1, y);
+                }
+
+                using (Brush brush = new SolidBrush(this.InsertionLineColor))
+                {
+                    g.FillPolygon(brush, leftArrowHead);
+                    g.FillPolygon(brush, rightArrowHead);
+                }
             }
         }
 
