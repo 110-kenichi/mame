@@ -732,10 +732,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 get { return _frequency; }
                 set
                 {
-                    if (SampleRate < value * 2)
-                    {
-                        throw new ArgumentOutOfRangeException("value", "The samplerate has to be bigger than 2 * frequency.");
-                    }
                     _frequency = value;
                     CalculateBiQuadCoefficients();
                 }
@@ -827,6 +823,9 @@ namespace zanac.MAmidiMEmo.Instruments
             /// <returns>The result of the processed <paramref name="inputL"/> sample.</returns>
             public void Process(ref int inputL, ref int inputR)
             {
+                if (SampleRate < Frequency * 2)
+                    return;
+
                 double o = inputL * A0 + Z1_L;
                 Z1_L = inputL * A1 + Z2_L - B1 * o;
                 Z2_L = inputL * A2 - B2 * o;
