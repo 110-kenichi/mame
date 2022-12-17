@@ -641,10 +641,6 @@
       <Link>VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.bin">
-      <Link>VGMPlay_msx.bin</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
       <Link>VGMPlay_msx.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -667,6 +663,10 @@
     </Content>
     <Content Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx_Vkey.rom">
+      <Link>VGMPlay_msx_Vkey.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Data\cm32p_user_internal_tone.tbl">

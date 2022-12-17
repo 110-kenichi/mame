@@ -9,6 +9,21 @@ void processPlayer();
 
 void main(void)
 {
+
+#ifdef VKEY
+__asm
+	IN      A,(#0xAA)	//PPIレジスタCを読む
+	AND     #0xF0		//キーマトリクス以外を残して
+				        //キーボードRow選択bit=0000にする
+	OR      #5		    //マトリクス#5を指定
+	OUT     (#0xAA),A	
+	NOP
+	IN	    A,(#0xA9)	//キーマトリクスの列を読む
+	AND     #0b00001000 //V押下を調べる(bit3)
+	RET     NZ		    //Vキー押下されていなければROM起動しない
+__endasm;
+#endif
+
     //BIOS List
     //http://ngs.no.coocan.jp/doc/wiki.cgi/TechHan?page=Appendix+A%2E1+BIOS+%B0%EC%CD%F7
 __asm

@@ -181,13 +181,17 @@ namespace zanac.VGMPlayer
                     lock (lockObject)
                     {
                         if (deferredWriteAdrAndData.Count == 0)
+                        {
+                            DeferredDataFlushed = true;
                             continue;
+                        }
 
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
                     }
                     if (dd.Length != 0)
                         DataWriter?.Write(dd);
+                    DeferredDataFlushed = true;
                 }
             }
             catch (Exception ex)
@@ -206,6 +210,7 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void FlushDeferredWriteData()
         {
+            DeferredDataFlushed = false;
             autoResetEvent.Set();
         }
 
@@ -241,6 +246,11 @@ namespace zanac.VGMPlayer
             }
         }
 
+        public bool DeferredDataFlushed
+        {
+            get;
+            set;
+        } = true;
 
         /// <summary>
         /// 

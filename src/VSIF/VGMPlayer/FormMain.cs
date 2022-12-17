@@ -148,6 +148,8 @@ namespace zanac.VGMPlayer
         {
             base.OnClosed(e);
 
+            stopCurrentSong();
+
             comPortDCSG?.Dispose();
             comPortOPLL?.Dispose();
             comPortOPN2?.Dispose();

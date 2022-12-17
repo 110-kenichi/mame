@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +28,7 @@ namespace zanac.VGMPlayer
 
         private byte[] vgmData;
         private int vgmDataOffset;
+        private int vgmDataCurrentOffset;
         private uint vgmDataLen;
         private VGM_HEADER vgmHead;
 
@@ -91,27 +92,20 @@ namespace zanac.VGMPlayer
             }
             if (comPortOPLL != null)
             {
-                byte type = comPortOPLL.SoundModuleType == VsifSoundModuleType.MSX_FTDI ? (byte)1 : (byte)0;  //type OPLL for MSX
-
                 //KOFF
-                for (int i = 0; i < 9; i++)
-                    comPortOPLL.DeferredWriteData(type, (byte)(0x20 + i), (byte)(0), (int)Settings.Default.BitBangWaitOPLL);
+                for (int i = 0x20; i < 0x28; i++)
+                    deferredWriteOPLL(i, 0);
 
                 //comPortOPLL.DeferredWriteData(type, 0xe, (byte)(0x20), (int)Settings.Default.BitBangWaitOPLL);
 
-                //TL
                 if (volumeOff)
                 {
-                    for (int i = 0; i < 9; i++)
-                        comPortOPLL.DeferredWriteData(type, (byte)(0x30 + i), 0xf, (int)Settings.Default.BitBangWaitOPLL);
-
-                    comPortOPLL.DeferredWriteData(type, 0x36, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    comPortOPLL.DeferredWriteData(type, 0x37, 64, (int)Settings.Default.BitBangWaitOPLL);
-                    comPortOPLL.DeferredWriteData(type, 0x38, 64, (int)Settings.Default.BitBangWaitOPLL);
-
+                    //TL
+                    for (int i = 0x30; i <= 0x38; i++)
+                        deferredWriteOPLL(i, 0xFF);
                     //RR
-                    //comPortOPLL.DeferredWriteData(type, 0x06, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
-                    //comPortOPLL.DeferredWriteData(type, 0x07, 0xFF, (int)Settings.Default.BitBangWaitOPLL);
+                    for (int i = 0x6; i <= 0x7; i++)
+                        deferredWriteOPLL(i, 0xFF);
                 }
             }
 
@@ -122,32 +116,23 @@ namespace zanac.VGMPlayer
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
                     {
-                        comPortOPN2.DeferredWriteData(0x10, 0x28, (byte)(0x00 | i), (int)Settings.Default.BitBangWaitOPNA2);
-                        comPortOPN2.DeferredWriteData(0x10, 0x28, (byte)(0x04 | i), (int)Settings.Default.BitBangWaitOPNA2);
+                        deferredWriteOPN2_P0(0x28, i);
+                        deferredWriteOPN2_P0(0x28, 0x4 | i);
                     }
                 }
 
                 if (volumeOff)
                 {
                     //TL
-                    if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                    {
-                        for (int slot = 0; slot < 16; slot++)
-                        {
-                            comPortOPN2.DeferredWriteData(0x10, (byte)(0x40 + slot), 0x7f, (int)Settings.Default.BitBangWaitOPNA2);
-                            comPortOPN2.DeferredWriteData(0x11, (byte)(0x40 + slot), 0x7f, (int)Settings.Default.BitBangWaitOPNA2);
-                        }
-                    }
-                    else
-                    {
-                        for (int slot = 0; slot < 16; slot++)
-                        {
-                            comPortOPN2.DeferredWriteData(0, 4, (byte)(0x40 + slot), (int)Settings.Default.BitBangWaitOPNA2);
-                            comPortOPN2.DeferredWriteData(0, 8, 0x7f, (int)Settings.Default.BitBangWaitOPNA2);
-                            comPortOPN2.DeferredWriteData(0, 12, (byte)(0x40 + slot), (int)Settings.Default.BitBangWaitOPNA2);
-                            comPortOPN2.DeferredWriteData(0, 16, 0x7f, (int)Settings.Default.BitBangWaitOPNA2);
-                        }
-                    }
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPN2_P0(i, 0xFF);
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPN2_P1(i, 0xFF);
+                    //RR
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPN2_P0(i, 0xFF);
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPN2_P1(i, 0xFF);
                 }
             }
 
@@ -158,35 +143,37 @@ namespace zanac.VGMPlayer
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
                     {
-                        comPortOPNA.DeferredWriteData(0x10, 0x28, (byte)(0x00 | i), (int)Settings.Default.BitBangWaitOPNA);
-                        comPortOPNA.DeferredWriteData(0x10, 0x28, (byte)(0x04 | i), (int)Settings.Default.BitBangWaitOPNA);
+                        deferredWriteOPNA_P0(0x28, i);
+                        deferredWriteOPNA_P0(0x28, 0x4 | i);
                     }
-
+                    //RHYTHM
+                    deferredWriteOPNA_P0(0x10, 0x80);
                     //SSG
-                    comPortOPNA.DeferredWriteData(0x10, 7, (byte)0xff, (int)Settings.Default.BitBangWaitOPNA);
+                    deferredWriteOPNA_P0(0x07, 0xFF);
                     //ADPCM
-                    comPortOPNA.DeferredWriteData(0x11, 0, (byte)0x01, (int)Settings.Default.BitBangWaitOPNA);   //RESET
-                    comPortOPNA.DeferredWriteData(0x11, 0, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);   //STOP
+                    deferredWriteOPNA_P1(0x00, 1);
                 }
 
                 if (volumeOff)
                 {
                     //TL
-                    if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                    {
-                        for (int slot = 0; slot < 16; slot++)
-                        {
-                            comPortOPNA.DeferredWriteData(0x10, (byte)(0x40 + slot), 0x7f, (int)Settings.Default.BitBangWaitOPNA);
-                            comPortOPNA.DeferredWriteData(0x11, (byte)(0x40 + slot), 0x7f, (int)Settings.Default.BitBangWaitOPNA);
-                        }
-                    }
-
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPNA_P0(i, 0xFF);
+                    for (int i = 0x40; i <= 0x4F; i++)
+                        deferredWriteOPNA_P1(i, 0xFF);
+                    //RR
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPNA_P0(i, 0xFF);
+                    for (int i = 0x80; i <= 0x8F; i++)
+                        deferredWriteOPNA_P1(i, 0xFF);
+                    //RHYTHM
+                    deferredWriteOPNA_P0(0x11, 0xFF);
                     //SSG
-                    comPortOPNA.DeferredWriteData(0x10, 8, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
-                    comPortOPNA.DeferredWriteData(0x10, 9, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
-                    comPortOPNA.DeferredWriteData(0x10, 10, (byte)0x00, (int)Settings.Default.BitBangWaitOPNA);
+                    deferredWriteOPNA_P0(0x08, 0);
+                    deferredWriteOPNA_P0(0x09, 0);
+                    deferredWriteOPNA_P0(0x0A, 0);
                     //ADPCM
-                    comPortOPNA.DeferredWriteData(0x11, 0, (byte)0x08, (int)Settings.Default.BitBangWaitOPNA);
+                    deferredWriteOPNA_P1(0x00, 1);
                 }
             }
 
@@ -194,62 +181,56 @@ namespace zanac.VGMPlayer
             {
                 //KOFF
                 for (int i = 0; i < 8; i++)
-                {
-                    if (comPortOPM.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                    {
-                        Ym2151WriteData(0x08, 0, 0, (byte)(0x00 | i), false);
+                    deferredWriteOPM(0x08, i);
 
-                        //TL
-                        if (volumeOff)
-                            for (int op = 0; op < 4; op++)
-                                Ym2151WriteData(0x60, op, i, 127, false);
-                    }
+                if (volumeOff)
+                {
+                    //TL
+                    for (int i = 0x60; i <= 0x7f; i++)
+                        deferredWriteOPM(i, 0xFF);
+                    //RR
+                    for (int i = 0xE0; i <= 0xFF; i++)
+                        deferredWriteOPM(i, 0xFF);
                 }
             }
             if (comPortOPL3 != null)
             {
-                if (comPortOPL3.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                //KOFF
+                for (int i = 0; i < 9; i++)
+                    deferredWriteOPL3_P0(0xB0 + i, 0);
+                for (int i = 0; i < 9; i++)
+                    deferredWriteOPL3_P1(0xB0 + i, 0);
+
+                if (volumeOff)
                 {
-                    //KOFF
-                    for (int i = 0; i < 9; i++)
-                        YMF262WriteData(comPortOPL3, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0), true);
-                    for (int i = 0; i < 9; i++)
-                        YMF262WriteData(comPortOPL3, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0), true);
-                    if (volumeOff)
-                        for (int i = 0; i < 18; i++)
-                            for (int op = 0; op < 2; op++)
-                                YMF262WriteData(comPortOPL3, 0x40, op, i, 0, 0, 63, true);
+                    //TL
+                    for (int i = 0x40; i <= 0x55; i++)
+                        deferredWriteOPL3_P0(i, 0xFF);
+                    for (int i = 0x40; i <= 0x55; i++)
+                        deferredWriteOPL3_P1(i, 0xFF);
+                    //RR
+                    for (int i = 0x80; i <= 0x95; i++)
+                        deferredWriteOPL3_P0(i, 0xFF);
+                    for (int i = 0x80; i <= 0x95; i++)
+                        deferredWriteOPL3_P1(i, 0xFF);
                 }
-                comPortOPL3.FlushDeferredWriteData();
             }
 
             if (comPortY8950 != null)
             {
-                if (comPortY8950.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+                //KOFF
+                for (int i = 0; i < 9; i++)
+                    deferredWriteY8950(0xB0 + i, 0);
+
+                if (volumeOff)
                 {
-                    int ytype = (int)comPortY8950.Tag["Y8950.Slot"];
-                    //KOFF
-                    switch (ytype)
-                    {
-                        case 0:
-                            for (int i = 0; i < 9; i++)
-                                YMF262WriteData(comPortY8950, (byte)(0xB0 + i), 0, 0, 0, 0, (byte)(0), true);
-                            if (volumeOff)
-                                for (int i = 0; i < 9; i++)
-                                    for (int op = 0; op < 2; op++)
-                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63, true);
-                            break;
-                        case 1:
-                            for (int i = 0; i < 9; i++)
-                                YMF262WriteData(comPortY8950, (byte)(0x1B0 + i), 0, 0, 0, 0, (byte)(0), true);
-                            if (volumeOff)
-                                for (int i = 9; i < 18; i++)
-                                    for (int op = 0; op < 2; op++)
-                                        YMF262WriteData(comPortY8950, 0x40, op, i, 0, 0, 63, true);
-                            break;
-                    }
+                    //TL
+                    for (int i = 0x40; i <= 0x55; i++)
+                        deferredWriteY8950(i, 0xFF);
+                    //RR
+                    for (int i = 0x80; i <= 0x95; i++)
+                        deferredWriteY8950(i, 0xFF);
                 }
-                comPortY8950.FlushDeferredWriteData();
             }
 
             //SCC
@@ -283,7 +264,7 @@ namespace zanac.VGMPlayer
                 }
             }
 
-            flushDeferredWriteData();
+            flushDeferredWriteDataAndWait();
             Thread.Sleep(250);
         }
 
@@ -382,70 +363,6 @@ namespace zanac.VGMPlayer
                     case 2:
                         comPort?.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
                         break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void Ym2151WriteData(byte address, int op, int slot, byte data, bool useCache)
-        {
-            switch (op)
-            {
-                case 0:
-                    op = 0;
-                    break;
-                case 1:
-                    op = 2;
-                    break;
-                case 2:
-                    op = 1;
-                    break;
-                case 3:
-                    op = 3;
-                    break;
-            }
-            byte adr = (byte)(address + (op * 8) + slot);
-
-            if (comPortOPM != null)
-            {
-                if (comPortOPM.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                {
-                    comPortOPM.DeferredWriteData(0xe, adr, data, (int)Settings.Default.BitBangWaitOPM);
-                }
-            }
-        }
-
-        private void Ym2612WriteData(byte address, int op, int slot, byte data)
-        {
-            switch (op)
-            {
-                case 0:
-                    op = 0;
-                    break;
-                case 1:
-                    op = 2;
-                    break;
-                case 2:
-                    op = 1;
-                    break;
-                case 3:
-                    op = 3;
-                    break;
-            }
-
-            if (comPortOPN2 != null)
-            {
-                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-                {
-                    comPortOPN2.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA2);
-                }
-                else
-                {
-                    uint yreg = (uint)(slot / 3) * 2;
-                    comPortOPN2.DeferredWriteData(0, (byte)((1 + (yreg + 0)) * 4), (byte)(address + (op * 4) + (slot % 3)), (int)Settings.Default.BitBangWaitOPNA2);
-                    comPortOPN2.DeferredWriteData(0, (byte)((1 + (yreg + 1)) * 4), data, (int)Settings.Default.BitBangWaitOPNA2);
                 }
             }
         }
@@ -599,7 +516,13 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA2_Enable)
                 {
-                    connectToOPN2();
+                    if (connectToOPN2())
+                    {
+                        if (Settings.Default.Y8910_Enable)
+                        {
+                            connectToPSG();
+                        }
+                    }
                 }
             }
             if (curHead.lngHzYM2608 != 0 && curHead.lngVersion >= 0x00000151)
@@ -610,7 +533,13 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA2_Enable)
                 {
-                    connectToOPN2();
+                    if (connectToOPN2())
+                    {
+                        if (Settings.Default.Y8910_Enable)
+                        {
+                            connectToPSG();
+                        }
+                    }
                 }
             }
             if (curHead.lngHzYM2610 != 0 && curHead.lngVersion >= 0x00000151)
@@ -621,7 +550,13 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA2_Enable)
                 {
-                    connectToOPN2();
+                    if (connectToOPN2())
+                    {
+                        if (Settings.Default.Y8910_Enable)
+                        {
+                            connectToPSG();
+                        }
+                    }
                 }
             }
             if (curHead.lngHzY8950 != 0 && curHead.lngVersion >= 0x00000151)
@@ -649,8 +584,6 @@ namespace zanac.VGMPlayer
                     connectToPSG();
                 }
             }
-
-            StopAllSounds(true);
 
             return curHead;
         }
@@ -704,11 +637,11 @@ namespace zanac.VGMPlayer
                             SCCType type = (SCCType)comPortSCC.Tag["SCC.Type"];
                             var slot = (int)comPortSCC.Tag["SCC.Slot"];
                             if ((int)slot < 0)
-                                //è‡ªå‹•é¸æŠæ–¹å¼
+                                //©“®‘I‘ğ•û®
                                 comPortSCC.DeferredWriteData(3, (byte)type,
                                     (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
                             else
-                                //å¾“æ¥æ–¹å¼
+                                //]—ˆ•û®
                                 comPortSCC.DeferredWriteData(3, (byte)(type + 4),
                                     (byte)slot, (int)Settings.Default.BitBangWaitSCC);
 
@@ -822,8 +755,12 @@ namespace zanac.VGMPlayer
                 {
                     Accepted = true;
 
-                    for (int i = 0x00; i <= 0x5F; i++)
-                        deferredWriteOPM(i, 0);
+                    for (int i = 0x00; i <= 0x1F; i++)
+                        deferredWriteOPM(i, 0x00);
+                    for (int i = 0x20; i <= 0x27; i++)
+                        deferredWriteOPM(i, 0xC0);
+                    for (int i = 0x28; i <= 0x5F; i++)
+                        deferredWriteOPM(i, 0x00);
                     //for (int i = 0x60; i <= 0x7F; i++)
                     //    deferredWriteOPM(i, 0xff);
                     for (int i = 0x80; i <= 0xFF; i++)
@@ -851,22 +788,30 @@ namespace zanac.VGMPlayer
                 {
                     Accepted = true;
 
-                    ////Force OPN mode
-                    //deferredWriteOPNA_P0(0x29, 0x0);
+                    //LFO
+                    deferredWriteOPNA_P0(0x22, 0x00);
+                    //channel 3 mode
+                    deferredWriteOPNA_P0(0x27, 0x00);
+                    //Force OPN mode
+                    deferredWriteOPNA_P0(0x29, 0x00);
 
-                    for (int i = 0x20; i <= 0x3F; i++)
+                    for (int i = 0x30; i <= 0x3F; i++)
                         deferredWriteOPNA_P0(i, 0);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPNA_P0(i, 0xff);
-                    for (int i = 0x50; i <= 0xB6; i++)
+                    for (int i = 0x50; i <= 0xB3; i++)
                         deferredWriteOPNA_P0(i, 0);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPNA_P0(i, 0xC0);
 
-                    for (int i = 0x20; i <= 0x3F; i++)
+                    for (int i = 0x30; i <= 0x3F; i++)
                         deferredWriteOPNA_P1(i, 0);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPNA_P1(i, 0xff);
-                    for (int i = 0x50; i <= 0xB6; i++)
+                    for (int i = 0x50; i <= 0xB3; i++)
                         deferredWriteOPNA_P1(i, 0);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPNA_P1(i, 0xC0);
 
                     return true;
                 }
@@ -905,22 +850,30 @@ namespace zanac.VGMPlayer
                 {
                     Accepted = true;
 
-                    ////DAC OFF
-                    //deferredWriteOPN2_P0(0x2B, 0);
+                    //LFO
+                    deferredWriteOPN2_P0(0x22, 0x00);
+                    //channel 3 mode
+                    deferredWriteOPN2_P0(0x27, 0x00);
+                    //DAC OFF
+                    deferredWriteOPN2_P0(0x2B, 0x00);
 
-                    for (int i = 0x20; i <= 0x3F; i++)
-                        deferredWriteOPN2_P0(i, 0);
+                    for (int i = 0x30; i <= 0x3F; i++)
+                        deferredWriteOPN2_P0(i, 0x00);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPN2_P0(i, 0xff);
-                    for (int i = 0x50; i <= 0xFF; i++)
-                        deferredWriteOPN2_P0(i, 0);
+                    for (int i = 0x50; i <= 0xB3; i++)
+                        deferredWriteOPN2_P0(i, 0x00);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPN2_P0(i, 0xC0);
 
-                    for (int i = 0x20; i <= 0x3F; i++)
-                        deferredWriteOPN2_P1(i, 0);
+                    for (int i = 0x30; i <= 0x3F; i++)
+                        deferredWriteOPN2_P1(i, 0x00);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPN2_P1(i, 0xff);
-                    for (int i = 0x50; i <= 0xFF; i++)
-                        deferredWriteOPN2_P1(i, 0);
+                    for (int i = 0x50; i <= 0xB3; i++)
+                        deferredWriteOPN2_P1(i, 0x00);
+                    for (int i = 0xB4; i <= 0xB6; i++)
+                        deferredWriteOPN2_P1(i, 0xC0);
 
                     return true;
                 }
@@ -1085,7 +1038,7 @@ namespace zanac.VGMPlayer
             if (offset == 0 || offset == 0x0000000C)
                 offset = 0x40;
             vgmDataOffset = offset;
-
+            vgmDataCurrentOffset = vgmDataOffset;
             //}
             //using (FileStream vgmFile = File.Open(fileName, FileMode.Open))
             //{
@@ -1130,7 +1083,7 @@ namespace zanac.VGMPlayer
         }
 
         /// <summary>
-        /// OPNAã®RAMTypeã‚’ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰èª¿ã¹ã‚‹
+        /// OPNA‚ÌRAMType‚ğƒf[ƒ^‚©‚ç’²‚×‚é
         /// </summary>
         /// <returns>true:x8bit false:x1bit</returns>
         private bool searchOpnaRamType(byte[] vgmBuf)
@@ -1196,7 +1149,7 @@ namespace zanac.VGMPlayer
 
 
         /// <summary>
-        /// Y8950ã®RAMTypeã‚’ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰èª¿ã¹ã‚‹
+        /// Y8950‚ÌRAMType‚ğƒf[ƒ^‚©‚ç’²‚×‚é
         /// </summary>
         /// <returns>true:64kbit false:256kbit</returns>
         private bool searchY8950RamType(byte[] vgmBuf)
@@ -1262,6 +1215,8 @@ namespace zanac.VGMPlayer
 
         private int readByte()
         {
+            vgmDataCurrentOffset++;
+
             if (vgmReader.BaseStream == null)
                 return -1;
             if (vgmReader.BaseStream.Position == vgmReader.BaseStream.Length)
@@ -1271,16 +1226,16 @@ namespace zanac.VGMPlayer
             return data;
         }
 
-        bool ym2608_adpcmbit8;
-        int ym2608_pcm_start;
-        int ym2608_pcm_stop;
+        private bool ym2608_adpcmbit8;
+        private int ym2608_pcm_start;
+        private int ym2608_pcm_stop;
 #if DEBUG
-        string y8950_adpcmbit64kString;
+        private string y8950_adpcmbit64kString;
 #endif
-        bool y8950_adpcmbit64k;
-        bool y8950_adpcm_ram;
-        int y8950_pcm_start;
-        int y8950_pcm_stop;
+        private bool y8950_adpcmbit64k;
+        private bool y8950_adpcm_ram;
+        private int y8950_pcm_start;
+        private int y8950_pcm_stop;
 
         protected override void StreamSong()
         {
@@ -1471,6 +1426,14 @@ namespace zanac.VGMPlayer
                                             }
                                             else if (comPortOPN2 != null)
                                             {
+                                                if (adrs <= 0xd)
+                                                {
+                                                    if (adrs == 7)
+                                                        dt &= 0x3f;
+                                                    if (comPortY8910 != null)
+                                                        deferredWritePSG(adrs, dt);
+                                                }
+
                                                 //ignore test and unknown registers
                                                 if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
                                                     break;
@@ -2014,15 +1977,8 @@ namespace zanac.VGMPlayer
                                             var dd = readByte();
                                             if (dd < 0)
                                                 break;
-                                            switch (comPortY8910?.SoundModuleType)
-                                            {
-                                                case VsifSoundModuleType.MSX_FTDI:
-                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
-                                                    break;
-                                                case VsifSoundModuleType.Generic_UART:
-                                                    comPortY8910?.DeferredWriteData(0, (byte)aa, (byte)dd, (int)Settings.Default.BitBangWaitAY8910);
-                                                    break;
-                                            }
+                                            if (comPortY8910 != null)
+                                                deferredWritePSG(aa, dd);
                                         }
                                         break;
 
@@ -2069,11 +2025,11 @@ namespace zanac.VGMPlayer
                                                     SCCType type = (SCCType)comPortSCC.Tag["SCC.Type"];
                                                     var slot = (int)comPortSCC.Tag["SCC.Slot"];
                                                     if ((int)slot < 0)
-                                                        //è‡ªå‹•é¸æŠæ–¹å¼
+                                                        //©“®‘I‘ğ•û®
                                                         comPortSCC.DeferredWriteData(3, (byte)type,
                                                             (byte)(-((int)slot + 1)), (int)Settings.Default.BitBangWaitSCC);
                                                     else
-                                                        //å¾“æ¥æ–¹å¼
+                                                        //]—ˆ•û®
                                                         comPortSCC.DeferredWriteData(3, (byte)(type + 4),
                                                             (byte)slot, (int)Settings.Default.BitBangWaitSCC);
 
@@ -2300,14 +2256,22 @@ namespace zanac.VGMPlayer
                     if (wait <= (double)Settings.Default.VGMWait)
                         continue;
 
+                    //while (!IsDeferredDataFlushed()) ;
+
                     flushDeferredWriteData();
 
                     QueryPerformanceCounter(out after);
+
+#if DEBUG
+                    //Console.WriteLine(vgmDataCurrentOffset.ToString("X"));
+#endif
+
                     double pwait = (wait / PlaybackSpeed);
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
                         wait = -(lastDiff * 44.1 * 1000);
+                        //wait = 0;
                         NotifyProcessLoadOccurred();
                     }
                     else
@@ -2323,6 +2287,19 @@ namespace zanac.VGMPlayer
             StopAllSounds(true);
             State = SoundState.Stopped;
             NotifyFinished();
+        }
+
+        private void deferredWritePSG(int adrs, int dt)
+        {
+            switch (comPortY8910.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                    comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
+                    break;
+                case VsifSoundModuleType.Generic_UART:
+                    comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
+                    break;
+            }
         }
 
         private void deferredWriteOPM(int adrs, int dt)
@@ -2417,9 +2394,6 @@ namespace zanac.VGMPlayer
             // Finish
             YM2608WriteData(0x10, 0, 3, 0x80, false);
             YM2608WriteData(0x00, 0, 3, 0x01, false);  //RESET
-
-            //comPortOPNA?.FlushDeferredWriteData();
-            //System.Threading.Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -2450,15 +2424,15 @@ namespace zanac.VGMPlayer
 
             //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
 
-            //$07ãƒ¬ã‚¸ã‚¹ã‚¿ãƒªã‚»ãƒƒãƒˆ
+            //$07ƒŒƒWƒXƒ^ƒŠƒZƒbƒg
             YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
 
-            //å„ãƒ•ãƒ©ã‚°ã‚’ã‚¤ãƒãƒ¼ãƒ–ãƒ«ã«ã™ã‚‹ã€‚
+            //Šeƒtƒ‰ƒO‚ğƒCƒl[ƒuƒ‹‚É‚·‚éB
             YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false);
-            //å„ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆã€‚
+            //Šeƒtƒ‰ƒO‚ğƒŠƒZƒbƒgB
             YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false);
 
-            //ãƒ¡ãƒ¢ãƒªãƒ©ã‚¤ãƒˆãƒ¢ãƒ¼ãƒ‰ã«ã™ã‚‹ã€‚
+            //ƒƒ‚ƒŠƒ‰ƒCƒgƒ‚[ƒh‚É‚·‚éB
             YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false);
 
             if (comPortY8950 != null)
@@ -2467,7 +2441,7 @@ namespace zanac.VGMPlayer
                 //{
                 //    case 0:
                 //    case 2:
-                //        //RAMã‚¿ã‚¤ãƒ—ã®æŒ‡å®šã€‚64Kbit
+                //        //RAMƒ^ƒCƒv‚Ìw’èB64Kbit
                 //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02);
 
                 //        if ((saddr & 0b1000) == 0b1000)
@@ -2484,7 +2458,7 @@ namespace zanac.VGMPlayer
                 //        break;
                 //    case 1:
                 //    case 3:
-                //        //RAMã‚¿ã‚¤ãƒ—ã®æŒ‡å®šã€‚256Kbit
+                //        //RAMƒ^ƒCƒv‚Ìw’èB256Kbit
                 //        YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00);
                 //        //START
                 //        YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)((saddr >> 5) & 0xff));
@@ -2500,7 +2474,7 @@ namespace zanac.VGMPlayer
 
                 if (y8950_adpcmbit64k)
                 {
-                    //ãƒ¡ãƒ¢ãƒªã®ã‚¿ã‚¤ãƒ—æŒ‡å®šã€‚64Kbit
+                    //ƒƒ‚ƒŠ‚Ìƒ^ƒCƒvw’èB64Kbit
                     YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false);
 
                     if ((saddr & 0b1000) == 0b1000)
@@ -2521,7 +2495,7 @@ namespace zanac.VGMPlayer
                 }
                 else
                 {
-                    //ãƒ¡ãƒ¢ãƒªã®ã‚¿ã‚¤ãƒ—æŒ‡å®šã€‚256Kbit
+                    //ƒƒ‚ƒŠ‚Ìƒ^ƒCƒvw’èB256Kbit
                     YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false);
                     //START
                     YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
@@ -2560,7 +2534,7 @@ namespace zanac.VGMPlayer
                     //{
                     //    case 0:
                     //    case 2:
-                    //        //RAMã‚¿ã‚¤ãƒ—ã®æŒ‡å®šã€‚64Kbit
+                    //        //RAMƒ^ƒCƒv‚Ìw’èB64Kbit
                     //        if ((endAddress & 0b1000) == 0b1000)
                     //            endAddress += 0b1000;
                     //        if ((endAddress & 0b1_0000_0000_0000) == 0b1_0000_0000_0000)
@@ -2584,13 +2558,10 @@ namespace zanac.VGMPlayer
             }
             FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
 
-            //â—‹ãƒªã‚»ãƒƒãƒˆ
+            //›ƒŠƒZƒbƒg
             YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false);
-            //$07ãƒ¬ã‚¸ã‚¹ã‚¿ãƒªã‚»ãƒƒãƒˆ
+            //$07ƒŒƒWƒXƒ^ƒŠƒZƒbƒg
             YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
-
-            //comPortY8950?.FlushDeferredWriteData();
-            //System.Threading.Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -2769,6 +2740,50 @@ namespace zanac.VGMPlayer
             comPortY8950?.FlushDeferredWriteData();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void flushDeferredWriteDataAndWait()
+        {
+            comPortDCSG?.FlushDeferredWriteDataAndWait();
+            comPortOPLL?.FlushDeferredWriteDataAndWait();
+            comPortOPN2?.FlushDeferredWriteDataAndWait();
+            comPortSCC?.FlushDeferredWriteDataAndWait();
+            comPortY8910?.FlushDeferredWriteDataAndWait();
+            comPortOPM?.FlushDeferredWriteDataAndWait();
+            comPortOPL3?.FlushDeferredWriteDataAndWait();
+            comPortOPNA?.FlushDeferredWriteDataAndWait();
+            comPortY8950?.FlushDeferredWriteDataAndWait();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private bool IsDeferredDataFlushed()
+        {
+            if (comPortDCSG != null && !comPortDCSG.DeferredDataFlushed)
+                return false;
+            if (comPortOPLL != null && !comPortOPLL.DeferredDataFlushed)
+                return false;
+            if (comPortOPN2 != null && !comPortOPN2.DeferredDataFlushed)
+                return false;
+            if (comPortSCC != null && !comPortSCC.DeferredDataFlushed)
+                return false;
+            if (comPortY8910 != null && !comPortY8910.DeferredDataFlushed)
+                return false;
+            if (comPortOPM != null && !comPortOPM.DeferredDataFlushed)
+                return false;
+            if (comPortOPL3 != null && !comPortOPL3.DeferredDataFlushed)
+                return false;
+            if (comPortOPNA != null && !comPortOPNA.DeferredDataFlushed)
+                return false;
+            if (comPortY8950 != null && !comPortY8950.DeferredDataFlushed)
+                return false;
+
+            return true;
+        }
+
+
         private const int WAIT_TIMEOUT = 120 * 1000;
 
 
@@ -2795,13 +2810,13 @@ namespace zanac.VGMPlayer
             {
                 if (disposing)
                 {
-                    // ãƒãƒãƒ¼ã‚¸ãƒ‰çŠ¶æ…‹ã‚’ç ´æ£„ã—ã¾ã™ (ãƒãƒãƒ¼ã‚¸ãƒ‰ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ)
+                    // ƒ}ƒl[ƒWƒhó‘Ô‚ğ”jŠü‚µ‚Ü‚· (ƒ}ƒl[ƒWƒh ƒIƒuƒWƒFƒNƒg)
                     Stop();
                 }
 
                 vgmReader?.Dispose();
 
-                // ã‚¢ãƒ³ãƒãƒãƒ¼ã‚¸ãƒ‰ ãƒªã‚½ãƒ¼ã‚¹ (ã‚¢ãƒ³ãƒãƒãƒ¼ã‚¸ãƒ‰ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ) ã‚’è§£æ”¾ã—ã€ãƒ•ã‚¡ã‚¤ãƒŠãƒ©ã‚¤ã‚¶ãƒ¼ã‚’ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã—ã¾ã™
+                // ƒAƒ“ƒ}ƒl[ƒWƒh ƒŠƒ\[ƒX (ƒAƒ“ƒ}ƒl[ƒWƒh ƒIƒuƒWƒFƒNƒg) ‚ğ‰ğ•ú‚µAƒtƒ@ƒCƒiƒ‰ƒCƒU[‚ğƒI[ƒo[ƒ‰ƒCƒh‚µ‚Ü‚·
                 comPortDCSG?.Dispose();
                 comPortDCSG = null;
                 comPortOPLL?.Dispose();
@@ -2821,7 +2836,7 @@ namespace zanac.VGMPlayer
                 comPortY8950?.Dispose();
                 comPortY8950 = null;
 
-                // å¤§ããªãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’ null ã«è¨­å®šã—ã¾ã™
+                // ‘å‚«‚ÈƒtƒB[ƒ‹ƒh‚ğ null ‚Éİ’è‚µ‚Ü‚·
                 disposedValue = true;
             }
             base.Dispose(disposing);
@@ -2843,16 +2858,16 @@ namespace zanac.VGMPlayer
             Reverse = 0x02,
         }
 
-        // 'Dispose(bool disposing)' ã«ã‚¢ãƒ³ãƒãƒãƒ¼ã‚¸ãƒ‰ ãƒªã‚½ãƒ¼ã‚¹ã‚’è§£æ”¾ã™ã‚‹ã‚³ãƒ¼ãƒ‰ãŒå«ã¾ã‚Œã‚‹å ´åˆã«ã®ã¿ã€ãƒ•ã‚¡ã‚¤ãƒŠãƒ©ã‚¤ã‚¶ãƒ¼ã‚’ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã—ã¾ã™
+        // 'Dispose(bool disposing)' ‚ÉƒAƒ“ƒ}ƒl[ƒWƒh ƒŠƒ\[ƒX‚ğ‰ğ•ú‚·‚éƒR[ƒh‚ªŠÜ‚Ü‚ê‚éê‡‚É‚Ì‚İAƒtƒ@ƒCƒiƒ‰ƒCƒU[‚ğƒI[ƒo[ƒ‰ƒCƒh‚µ‚Ü‚·
         ~VGMSong()
         {
-            // ã“ã®ã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ— ã‚³ãƒ¼ãƒ‰ã‚’ 'Dispose(bool disposing)' ãƒ¡ã‚½ãƒƒãƒ‰ã«è¨˜è¿°ã—ã¾ã™
+            // ‚±‚ÌƒR[ƒh‚ğ•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢BƒNƒŠ[ƒ“ƒAƒbƒv ƒR[ƒh‚ğ 'Dispose(bool disposing)' ƒƒ\ƒbƒh‚É‹Lq‚µ‚Ü‚·
             Dispose(disposing: false);
         }
 
         public override void Dispose()
         {
-            // ã“ã®ã‚³ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ãªã„ã§ãã ã•ã„ã€‚ã‚¯ãƒªãƒ¼ãƒ³ã‚¢ãƒƒãƒ— ã‚³ãƒ¼ãƒ‰ã‚’ 'Dispose(bool disposing)' ãƒ¡ã‚½ãƒƒãƒ‰ã«è¨˜è¿°ã—ã¾ã™
+            // ‚±‚ÌƒR[ƒh‚ğ•ÏX‚µ‚È‚¢‚Å‚­‚¾‚³‚¢BƒNƒŠ[ƒ“ƒAƒbƒv ƒR[ƒh‚ğ 'Dispose(bool disposing)' ƒƒ\ƒbƒh‚É‹Lq‚µ‚Ü‚·
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
