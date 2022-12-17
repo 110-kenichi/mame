@@ -18,6 +18,18 @@ namespace zanac.VGMPlayer
     /// </summary>
     public class VsifClient : IDisposable
     {
+        public Dictionary<string, double> ChipClockHz
+        {
+            get;
+            set;
+        } = new Dictionary<string, double>();
+
+        public Dictionary<int, int> RegTable
+        {
+            get;
+            set;
+        } = new Dictionary<int, int>();
+
         public Dictionary<string, object> Tag
         {
             get;
@@ -80,6 +92,9 @@ namespace zanac.VGMPlayer
             writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
             writeThread.Priority = ThreadPriority.Highest;
             writeThread.Start();
+
+            for (int i = 0; i < 0x1ff; i++)
+                RegTable.Add(i, 0);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -301,6 +301,249 @@ namespace zanac.VGMPlayer
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool QueryPerformanceFrequency(out long frequency);
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="frequency_as_hz"></param>
+        /// <returns></returns>
+        protected static double calcNoteNumberFromFrequency(double frequency)
+        {
+            return 12.0 * Math.Log(frequency / 440.0, 2) + 69.0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected static double calcFrequencyFromNoteNumber(double noteNum)
+        {
+            double nn = Math.Pow(2.0, (noteNum - 69.0) / 12.0);
+            double freq = 440.0 * nn;
+            return freq;
+        }
+
+        protected byte convertFromOpmNoteNum(int noteNum)
+        {
+            byte nn = 0;
+            switch (noteNum)
+            {
+                case 14:
+                    nn = 12;
+                    break;
+                case 0:
+                    nn = 1;
+                    break;
+                case 1:
+                    nn = 2;
+                    break;
+                case 2:
+                    nn = 3;
+                    break;
+                case 4:
+                    nn = 4;
+                    break;
+                case 5:
+                    nn = 5;
+                    break;
+                case 6:
+                    nn = 6;
+                    break;
+                case 8:
+                    nn = 7;
+                    break;
+                case 9:
+                    nn = 8;
+                    break;
+                case 10:
+                    nn = 9;
+                    break;
+                case 12:
+                    nn = 10;
+                    break;
+                case 13:
+                    nn = 11;
+                    break;
+                default:
+                    break;
+            }
+
+            return nn;
+        }
+
+        protected byte convertToOpmNoteNum(int noteNum)
+        {
+            byte nn = 0;
+            switch (noteNum)
+            {
+                case 0:
+                    nn = 14;
+                    break;
+                case 1:
+                    nn = 0;
+                    break;
+                case 2:
+                    nn = 1;
+                    break;
+                case 3:
+                    nn = 2;
+                    break;
+                case 4:
+                    nn = 4;
+                    break;
+                case 5:
+                    nn = 5;
+                    break;
+                case 6:
+                    nn = 6;
+                    break;
+                case 7:
+                    nn = 8;
+                    break;
+                case 8:
+                    nn = 9;
+                    break;
+                case 9:
+                    nn = 10;
+                    break;
+                case 10:
+                    nn = 12;
+                    break;
+                case 11:
+                    nn = 13;
+                    break;
+            }
+
+            return nn;
+        }
+
+        protected (byte Hi, byte Lo) convertAy8910Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * dataClock / chipClock);
+            if (freq > 0xfff)
+                freq = 0xfff;
+
+            return ((byte)(freq >> 8), (byte)(freq & 0xff));
+        }
+
+        protected (byte Hi, byte Lo) convertOpmFrequency(int KF, int KC, double chipClock, double dataClock)
+        {
+            var oct = (KC >> 4) & 0x7;
+            var note = KC & 0xf;
+            var kf = KF >> 2;
+
+            var fout = calcFrequencyFromNoteNumber((oct * 12) + convertFromOpmNoteNum(note));
+            fout += (calcFrequencyFromNoteNumber((oct * 12) + convertFromOpmNoteNum(note) + 1) - fout) * kf / 64d;
+
+            //convert
+            fout *= dataClock / chipClock;
+
+            var noted = calcNoteNumberFromFrequency(fout);
+
+            oct = (int)noted / 12;
+            note = convertToOpmNoteNum((int)noted % 12);
+            if (note == 14)
+                oct -= 1;
+            if (oct < 0)
+            {
+                oct = 0;
+                note = 0;
+            }
+            if (oct > 7)
+            {
+                oct = 7;
+                note = 14;
+            }
+
+            kf = (int)Math.Round((noted - (int)noted) * 64d);
+
+            if (oct > 7)
+            {
+                oct = 7;
+                note = 14;
+            }
+
+            return ((byte)(kf << 2), (byte)((oct << 4) | note));
+        }
+
+        protected (byte Hi, byte Lo) convertOpnFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (freqValueHi << 8) | freqValueLo;
+            var block = (freq >> 11) & 0x7;
+            var fnum = freq & 0x7ff;
+
+            fnum = (int)Math.Round(fnum * dataClock / chipClock);
+            if (fnum > 0x7ff)
+            {
+                block++;
+                fnum = (int)Math.Round(fnum / 2d);
+            }
+            if (block > 7)
+            {
+                block = 7;
+                fnum = 0x7ff;
+            }
+            freq = (block << 11) | fnum;
+
+            return ((byte)(freq >> 8), (byte)(freq & 0xff));
+        }
+
+        protected (byte Hi, byte Lo) convertDcsgFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (int)Math.Round((freqValueHi << 4 | freqValueLo) * dataClock / chipClock);
+            if (freq > 0x3ff)
+                freq = 0x3ff;
+
+            return ((byte)(freq >> 4), (byte)(freq & 0xf));
+        }
+
+        protected (byte Hi, byte Lo) convertOpllFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (freqValueHi << 8) | freqValueLo;
+            var block = (freq >> 9) & 0x7;
+            var fnum = freq & 0x1ff;
+            var skon = freqValueHi & 0x30;
+
+            fnum = (int)Math.Round(fnum * dataClock / chipClock);
+            if (fnum > 0x1ff)
+            {
+                block++;
+                fnum = (int)Math.Round(fnum / 2d);
+            }
+            if (block > 7)
+            {
+                block = 7;
+                fnum = 0x1ff;
+            }
+            freq = (block << 9) | fnum;
+
+            return ((byte)((freq >> 8) | skon), (byte)(freq & 0xff));
+        }
+
+
+        protected (byte Hi, byte Lo) convertOplFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (freqValueHi << 8) | freqValueLo;
+            var block = (freq >> 10) & 0x7;
+            var fnum = freq & 0x3ff;
+            var kon = freqValueHi & 0x20;
+
+            fnum = (int)Math.Round(fnum * dataClock / chipClock);
+            if (fnum > 0x3ff)
+            {
+                block++;
+                fnum = (int)Math.Round(fnum / 2d);
+            }
+            if (block > 7)
+            {
+                block = 7;
+                fnum = 0x3ff;
+            }
+            freq = (block << 10) | fnum;
+
+            return ((byte)((freq >> 8) | kon), (byte)(freq & 0xff));
+        }
+
     }
 
     /// <summary>
