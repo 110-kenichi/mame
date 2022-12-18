@@ -227,6 +227,50 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private void deferredWriteOPNA_P0(int adrs, int dt, uint dclk)
+        {
+            comPortOPNA.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P0(adrs + 4, ret.Hi);
+                        deferredWriteOPNA_P0(adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P0(adrs, dt);
+                        deferredWriteOPNA_P0(adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNA_P0(adrs, dt);
+                    break;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -607,7 +651,7 @@ namespace zanac.VGMPlayer
                                         }
                                     case int cmd when 0x10 <= cmd && cmd <= 0x1F:
                                         {
-                                            var dclk = 3.579545 * 1000 * 1000;
+                                            uint dclk = 3579545;
 
                                             int size = cmd & 0xf;
                                             for (int i = 0; i <= size; i++)
@@ -617,48 +661,7 @@ namespace zanac.VGMPlayer
                                                     break;
                                                 if (comPortDCSG != null)
                                                 {
-                                                    byte adrs = (byte)(data >> 4);
-                                                    if ((data & 0x80) != 0)
-                                                        comPortDCSG.Tag["Last1stAddress"] = adrs;
-                                                    else if (comPortDCSG.Tag.ContainsKey("Last1stAddress"))
-                                                        adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress"] & 0x7);
-
-                                                    if (comPortDCSG != null)
-                                                    {
-                                                        switch (adrs)
-                                                        {
-                                                            case 0:
-                                                            case 2:
-                                                            case 4:
-                                                                if ((double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
-                                                                    goto default;
-                                                                {
-                                                                    comPortDCSG.RegTable[adrs] = data & 0x3f;
-                                                                    //HI
-                                                                    var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8], comPortDCSG.ChipClockHz["DCSG"], dclk);
-                                                                    deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo);
-                                                                    deferredWriteDCSG(ret.Hi);
-                                                                }
-                                                                break;
-                                                            case 0x8:
-                                                            case 0x8 + 2:
-                                                            case 0x8 + 4:
-                                                                if ((double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
-                                                                    goto default;
-                                                                {
-                                                                    comPortDCSG.RegTable[adrs] = data & 0xf;
-                                                                    //LO
-                                                                    var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8], data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
-                                                                    deferredWriteDCSG((adrs << 4) + ret.Lo);
-                                                                    deferredWriteDCSG(ret.Hi);
-                                                                }
-                                                                break;
-                                                            default:
-                                                                comPortDCSG.RegTable[adrs] = data;
-                                                                deferredWriteDCSG(data);
-                                                                break;
-                                                        }
-                                                    }
+                                                    deferredWriteDCSG(data, dclk);
                                                 }
                                             }
                                         }
@@ -666,7 +669,7 @@ namespace zanac.VGMPlayer
 
                                     case int cmd when 0x20 <= cmd && cmd <= 0x2F: //YM2612 Write Port 0
                                         {
-                                            var dclk = 7.670453 * 1000 * 1000;
+                                            uint dclk = 7670453;
 
                                             int size = cmd & 0xf;
                                             for (int i = 0; i <= size; i++)
@@ -686,90 +689,11 @@ namespace zanac.VGMPlayer
 
                                                 if (comPortOPN2 != null)
                                                 {
-                                                    comPortOPN2.RegTable[adrs] = dt;
-
-                                                    switch (adrs)
-                                                    {
-                                                        case 0xa0:
-                                                        case 0xa1:
-                                                        case 0xa2:
-                                                        case 0xa8:
-                                                        case 0xa9:
-                                                        case 0xaa:
-                                                            if ((double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //LO
-                                                                var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
-                                                                dt = ret.Lo;
-                                                                deferredWriteOPN2_P0(adrs + 4, ret.Hi);
-                                                                deferredWriteOPN2_P0(adrs, dt);
-                                                            }
-                                                            break;
-                                                        case 0xa4:
-                                                        case 0xa5:
-                                                        case 0xa6:
-                                                        case 0xac:
-                                                        case 0xad:
-                                                        case 0xae:
-                                                            if ((double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //HI
-                                                                var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4], comPortOPN2.ChipClockHz["OPN2"], dclk);
-                                                                dt = ret.Hi;
-                                                                deferredWriteOPN2_P0(adrs, dt);
-                                                                deferredWriteOPN2_P0(adrs - 4, ret.Lo);
-                                                            }
-                                                            break;
-                                                        default:
-                                                            deferredWriteOPN2_P0(adrs, dt);
-                                                            break;
-                                                    }
-                                                    deferredWriteOPN2_P0(adrs, dt);
+                                                    deferredWriteOPN2_P0(adrs, dt, dclk);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    comPortOPNA.RegTable[adrs] = dt;
-
-                                                    switch (adrs)
-                                                    {
-                                                        case 0xa0:
-                                                        case 0xa1:
-                                                        case 0xa2:
-                                                        case 0xa8:
-                                                        case 0xa9:
-                                                        case 0xaa:
-                                                            if ((double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //LO
-                                                                var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
-                                                                dt = ret.Lo;
-                                                                deferredWriteOPNA_P0(adrs + 4, ret.Hi);
-                                                                deferredWriteOPNA_P0(adrs, dt);
-                                                            }
-                                                            break;
-                                                        case 0xa4:
-                                                        case 0xa5:
-                                                        case 0xa6:
-                                                        case 0xac:
-                                                        case 0xad:
-                                                        case 0xae:
-                                                            if ((double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //HI
-                                                                var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4], comPortOPNA.ChipClockHz["OPNA"], dclk);
-                                                                dt = ret.Hi;
-                                                                deferredWriteOPNA_P0(adrs, dt);
-                                                                deferredWriteOPNA_P0(adrs - 4, ret.Lo);
-                                                            }
-                                                            break;
-                                                        default:
-                                                            deferredWriteOPNA_P0(adrs, dt);
-                                                            break;
-                                                    }
+                                                    deferredWriteOPNA_P0(adrs, dt, dclk);
                                                 }
                                             }
                                         }
@@ -777,7 +701,7 @@ namespace zanac.VGMPlayer
 
                                     case int cmd when 0x30 <= cmd && cmd <= 0x3F: //YM2612 Write Port 1
                                         {
-                                            var dclk = 7.670453 * 1000 * 1000;
+                                            uint dclk = 7670453;
 
                                             int size = cmd & 0xf;
                                             for (int i = 0; i <= size; i++)
@@ -798,95 +722,11 @@ namespace zanac.VGMPlayer
 
                                                 if (comPortOPN2 != null)
                                                 {
-                                                    comPortOPN2.RegTable[adrs + 0x100] = dt;
-
-                                                    //ignore test and unknown registers
-                                                    if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
-                                                        break;
-                                                    if (adrs > 0xb6)
-                                                        break;
-
-                                                    switch (adrs)
-                                                    {
-                                                        case 0xa0:
-                                                        case 0xa1:
-                                                        case 0xa2:
-                                                        case 0xa8:
-                                                        case 0xa9:
-                                                        case 0xaa:
-                                                            if ((double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //LO
-                                                                var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4 + 0x100], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
-                                                                dt = ret.Lo;
-                                                                deferredWriteOPN2_P1(adrs + 4, ret.Hi);
-                                                                deferredWriteOPN2_P1(adrs, dt);
-                                                            }
-                                                            break;
-                                                        case 0xa4:
-                                                        case 0xa5:
-                                                        case 0xa6:
-                                                        case 0xac:
-                                                        case 0xad:
-                                                        case 0xae:
-                                                            if ((double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //HI
-                                                                var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4 + 0x100], comPortOPN2.ChipClockHz["OPN2"], dclk);
-                                                                dt = ret.Hi;
-                                                                deferredWriteOPN2_P1(adrs, dt);
-                                                                deferredWriteOPNA_P1(adrs - 4, ret.Lo);
-                                                            }
-                                                            break;
-                                                        default:
-                                                            deferredWriteOPN2_P1(adrs, dt);
-                                                            break;
-                                                    }
+                                                    deferredWriteOPN2_P1(adrs, dt, dclk);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    comPortOPNA.RegTable[adrs + 0x100] = dt;
-
-                                                    switch (adrs)
-                                                    {
-                                                        case 0xa0:
-                                                        case 0xa1:
-                                                        case 0xa2:
-                                                        case 0xa8:
-                                                        case 0xa9:
-                                                        case 0xaa:
-                                                            if ((double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //LO
-                                                                var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4 + 0x100], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
-                                                                dt = ret.Lo;
-                                                                deferredWriteOPNA_P1(adrs + 4, ret.Hi);
-                                                                deferredWriteOPNA_P1(adrs, dt);
-                                                            }
-                                                            break;
-                                                        case 0xa4:
-                                                        case 0xa5:
-                                                        case 0xa6:
-                                                        case 0xac:
-                                                        case 0xad:
-                                                        case 0xae:
-                                                            if ((double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                                                                goto default;
-                                                            {
-                                                                //HI
-                                                                var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4 + 0x100], comPortOPNA.ChipClockHz["OPNA"], dclk);
-                                                                dt = ret.Hi;
-                                                                deferredWriteOPNA_P1(adrs, dt);
-                                                                deferredWriteOPNA_P1(adrs - 4, ret.Lo);
-                                                            }
-                                                            break;
-                                                        default:
-                                                            deferredWriteOPNA_P1(adrs, dt);
-                                                            break;
-                                                    }
+                                                    deferredWriteOPNA_P1(adrs, dt, dclk);
                                                 }
                                             }
                                         }
@@ -1059,6 +899,189 @@ namespace zanac.VGMPlayer
             StopAllSounds(true);
             State = SoundState.Stopped;
             NotifyFinished();
+        }
+
+        private int deferredWriteOPN2_P1(int adrs, int dt, uint dclk)
+        {
+            comPortOPN2.RegTable[adrs + 0x100] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4 + 0x100], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        dt = ret.Lo;
+                        deferredWriteOPN2_P1(adrs + 4, ret.Hi);
+                        deferredWriteOPN2_P1(adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4 + 0x100], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        dt = ret.Hi;
+                        deferredWriteOPN2_P1(adrs, dt);
+                        deferredWriteOPNA_P1(adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPN2_P1(adrs, dt);
+                    break;
+            }
+
+            return dt;
+        }
+
+        private void deferredWriteOPN2_P0(int adrs, int dt, uint dclk)
+        {
+            comPortOPN2.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        dt = ret.Lo;
+                        deferredWriteOPN2_P0(adrs + 4, ret.Hi);
+                        deferredWriteOPN2_P0(adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        dt = ret.Hi;
+                        deferredWriteOPN2_P0(adrs, dt);
+                        deferredWriteOPN2_P0(adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPN2_P0(adrs, dt);
+                    break;
+            }
+            deferredWriteOPN2_P0(adrs, dt);
+        }
+
+        private int deferredWriteOPNA_P1(int adrs, int dt, uint dclk)
+        {
+            comPortOPNA.RegTable[adrs + 0x100] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4 + 0x100], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P1(adrs + 4, ret.Hi);
+                        deferredWriteOPNA_P1(adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4 + 0x100], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P1(adrs, dt);
+                        deferredWriteOPNA_P1(adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNA_P1(adrs, dt);
+                    break;
+            }
+
+            return dt;
+        }
+
+        private void deferredWriteDCSG(int data, uint dclk)
+        {
+            byte adrs = (byte)(data >> 4);
+            if ((data & 0x80) != 0)
+                comPortDCSG.Tag["Last1stAddress"] = adrs;
+            else if (comPortDCSG.Tag.ContainsKey("Last1stAddress"))
+                adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress"] & 0x7);
+
+            if (comPortDCSG != null)
+            {
+                switch (adrs)
+                {
+                    case 0:
+                    case 2:
+                    case 4:
+                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                            goto default;
+                        {
+                            comPortDCSG.RegTable[adrs] = data & 0x3f;
+                            //HI
+                            var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8], comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo);
+                            deferredWriteDCSG(ret.Hi);
+                        }
+                        break;
+                    case 0x8:
+                    case 0x8 + 2:
+                    case 0x8 + 4:
+                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                            goto default;
+                        {
+                            comPortDCSG.RegTable[adrs] = data & 0xf;
+                            //LO
+                            var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8], data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            deferredWriteDCSG((adrs << 4) + ret.Lo);
+                            deferredWriteDCSG(ret.Hi);
+                        }
+                        break;
+                    default:
+                        comPortDCSG.RegTable[adrs] = data;
+                        deferredWriteDCSG(data);
+                        break;
+                }
+            }
         }
 
         protected void deferredWriteDCSG(int data)

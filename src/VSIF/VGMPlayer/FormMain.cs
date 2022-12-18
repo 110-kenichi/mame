@@ -386,6 +386,7 @@ namespace zanac.VGMPlayer
                         currentSong = new MGSSong(fileName, checkBoxLoop.Checked ? (int)numericUpDownLooped.Value : 0);
                         break;
                 }
+                currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
                 currentSong.LoopByCount = checkBoxLoop.Checked;
                 currentSong.LoopedCount = (int)numericUpDownLooped.Value;
                 currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
@@ -1186,6 +1187,12 @@ namespace zanac.VGMPlayer
                 if (cb != null)
                     cb.Checked = !cb.Checked;
             }
+        }
+
+        private void checkBoxCnvClk_CheckedChanged(object sender, EventArgs e)
+        {
+            if (currentSong != null)
+                currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
         }
     }
 

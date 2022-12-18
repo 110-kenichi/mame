@@ -103,6 +103,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBoxY8950 = new System.Windows.Forms.ComboBox();
             this.comboBoxY8950Slot = new System.Windows.Forms.ComboBox();
+            this.checkBoxCnvClk = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
             this.buttonPrev = new System.Windows.Forms.Button();
             this.imageListSmall = new System.Windows.Forms.ImageList(this.components);
@@ -309,6 +310,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownY8950, 3, 9);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortY8950, 4, 9);
             this.tableLayoutPanelPort.Controls.Add(this.tableLayoutPanel7, 2, 9);
+            this.tableLayoutPanelPort.Controls.Add(this.checkBoxCnvClk, 1, 10);
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
@@ -3519,6 +3521,20 @@ namespace zanac.VGMPlayer
             this.comboBoxY8950Slot.Size = new System.Drawing.Size(131, 23);
             this.comboBoxY8950Slot.TabIndex = 1;
             // 
+            // checkBoxCnvClk
+            // 
+            this.checkBoxCnvClk.AutoSize = true;
+            this.checkBoxCnvClk.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.ConvertClock;
+            this.checkBoxCnvClk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "ConvertClock", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxCnvClk.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxCnvClk.Location = new System.Drawing.Point(56, 309);
+            this.checkBoxCnvClk.Name = "checkBoxCnvClk";
+            this.checkBoxCnvClk.Size = new System.Drawing.Size(151, 32);
+            this.checkBoxCnvClk.TabIndex = 51;
+            this.checkBoxCnvClk.Text = "Convert chip clk";
+            this.checkBoxCnvClk.UseVisualStyleBackColor = true;
+            this.checkBoxCnvClk.CheckedChanged += new System.EventHandler(this.checkBoxCnvClk_CheckedChanged);
+            // 
             // tableLayoutPanelButton
             // 
             this.tableLayoutPanelButton.ColumnCount = 12;
@@ -4054,7 +4070,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.30";
+            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.31";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -4198,5 +4214,6 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.DateTimePicker dateTimePickerLoopTimes;
         private System.Windows.Forms.Label labelElapsed;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox checkBoxCnvClk;
     }
 }

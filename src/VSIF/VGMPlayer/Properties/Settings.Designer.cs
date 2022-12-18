@@ -657,5 +657,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["LoopTimes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConvertClock {
+            get {
+                return ((bool)(this["ConvertClock"]));
+            }
+            set {
+                this["ConvertClock"] = value;
+            }
+        }
     }
 }

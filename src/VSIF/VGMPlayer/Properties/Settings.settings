@@ -161,5 +161,8 @@
     <Setting Name="LoopTimes" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">01/01/1753 00:05:00</Value>
     </Setting>
+    <Setting Name="ConvertClock" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

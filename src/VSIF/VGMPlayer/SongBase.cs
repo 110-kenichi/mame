@@ -75,6 +75,15 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
+        public virtual bool ConvertChipClock
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual bool LoopByCount
         {
             get;
