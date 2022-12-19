@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.VGMPlayer.Properties;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace zanac.VGMPlayer
 {
@@ -309,7 +310,15 @@ namespace zanac.VGMPlayer
         {
             int idx = 0;
             if (currentSongItem != null)
+            {
                 idx = currentSongItem.Index;
+                TimeSpan? ts = labelElapsed.Tag as TimeSpan?;
+                if (ts != null && ts.Value.Seconds > 3)
+                {
+                    playItem(currentSongItem.Index);
+                    return;
+                }
+            }
             if (idx < 0 && listViewList.Items.Count != 0)
             {
                 playItem(0);
@@ -383,7 +392,7 @@ namespace zanac.VGMPlayer
                         break;
                     case ".KSS":
                     case ".MGS":
-                        currentSong = new MGSSong(fileName, checkBoxLoop.Checked ? (int)numericUpDownLooped.Value : 0);
+                        currentSong = new MGSSong(fileName);
                         break;
                 }
                 currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
@@ -1138,12 +1147,14 @@ namespace zanac.VGMPlayer
         /// <param name="text"></param>
         public void SetElapsedTime(TimeSpan timeSpan)
         {
-            string time = timeSpan.ToString(@"hh\:mm\:ss");
-
             labelElapsed.BeginInvoke(new MethodInvoker(() =>
             {
                 if (!labelElapsed.IsDisposed)
-                    labelElapsed.Text = time;
+                {
+                    labelElapsed.Text = timeSpan.ToString(@"hh\:mm\:ss");
+                    labelElapsed.Tag = timeSpan;
+                    toolStripStatusLabel.Text = "Playing";
+                }
             }));
         }
 

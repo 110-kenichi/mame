@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using zanac.VGMPlayer.Properties;
 using Timer = System.Timers.Timer;
 
 namespace zanac.VGMPlayer
@@ -270,6 +271,7 @@ namespace zanac.VGMPlayer
             playTicTimer?.Stop();
             stopwatch?.Stop();
             FormMain.TopForm.SetStatusText("Stopped");
+            FormMain.TopForm.SetElapsedTime(new TimeSpan(0));
         }
 
         /// <summary>
@@ -426,16 +428,20 @@ namespace zanac.VGMPlayer
             return nn;
         }
 
-        protected (byte Hi, byte Lo) convertAy8910Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertAy8910Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
-            var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * dataClock / chipClock);
+            var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * chipClock / dataClock);
+
             if (freq > 0xfff)
                 freq = 0xfff;
 
-            return ((byte)(freq >> 8), (byte)(freq & 0xff));
+            var ret = ((byte)(freq >> 8), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
         }
 
-        protected (byte Hi, byte Lo) convertOpmFrequency(int KF, int KC, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertOpmFrequency(int KF, int KC, double chipClock, double dataClock)
         {
             var oct = (KC >> 4) & 0x7;
             var note = KC & 0xf;
@@ -472,10 +478,13 @@ namespace zanac.VGMPlayer
                 note = 14;
             }
 
-            return ((byte)(kf << 2), (byte)((oct << 4) | note));
+            var ret = ((byte)(kf << 2), (byte)((oct << 4) | note), false);
+            if (ret.Item1 == KF && ret.Item2 == KC)
+                ret.Item3 = true;
+            return ret;
         }
 
-        protected (byte Hi, byte Lo) convertOpnFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertOpnFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
             var freq = (freqValueHi << 8) | freqValueLo;
             var block = (freq >> 11) & 0x7;
@@ -494,19 +503,25 @@ namespace zanac.VGMPlayer
             }
             freq = (block << 11) | fnum;
 
-            return ((byte)(freq >> 8), (byte)(freq & 0xff));
+            var ret = ((byte)(freq >> 8), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
         }
 
-        protected (byte Hi, byte Lo) convertDcsgFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertDcsgFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
-            var freq = (int)Math.Round((freqValueHi << 4 | freqValueLo) * dataClock / chipClock);
+            var freq = (int)Math.Round((freqValueHi << 4 | freqValueLo) * chipClock / dataClock);
             if (freq > 0x3ff)
                 freq = 0x3ff;
 
-            return ((byte)(freq >> 4), (byte)(freq & 0xf));
+            var ret = ((byte)(freq >> 4), (byte)(freq & 0xf), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
         }
 
-        protected (byte Hi, byte Lo) convertOpllFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertOpllFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
             var freq = (freqValueHi << 8) | freqValueLo;
             var block = (freq >> 9) & 0x7;
@@ -526,11 +541,14 @@ namespace zanac.VGMPlayer
             }
             freq = (block << 9) | fnum;
 
-            return ((byte)((freq >> 8) | skon), (byte)(freq & 0xff));
+            var ret = ((byte)((freq >> 8) | skon), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
         }
 
 
-        protected (byte Hi, byte Lo) convertOplFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        protected (byte Hi, byte Lo, bool noConverted) convertOplFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
             var freq = (freqValueHi << 8) | freqValueLo;
             var block = (freq >> 10) & 0x7;
@@ -550,7 +568,10 @@ namespace zanac.VGMPlayer
             }
             freq = (block << 10) | fnum;
 
-            return ((byte)((freq >> 8) | kon), (byte)(freq & 0xff));
+            var ret = ((byte)((freq >> 8) | kon), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
         }
 
     }

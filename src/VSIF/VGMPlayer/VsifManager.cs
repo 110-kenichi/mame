@@ -161,7 +161,7 @@ namespace zanac.VGMPlayer
                                     ftdi.SetLatency(0);
 
                                     var client = new VsifClient(soundModule, new PortWriterGenesis(ftdi, comPort));
-                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
+                                    //client.WriteData(0, 0, 0, (int)100);  //Dummy
 
                                     //ftdi.Write(new byte[] { (byte)(((0x07 << 1) & 0xe) | 0) }, 1, ref dummy);
                                     //ftdi.Write(new byte[] { (byte)(((0x38 >> 2) & 0xe) | 1) }, 1, ref dummy);

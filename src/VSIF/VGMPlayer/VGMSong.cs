@@ -601,7 +601,7 @@ namespace zanac.VGMPlayer
                                 (PortId)Settings.Default.Y8910_Port);
 
                             if (comPortY8910 != null)
-                                comPortY8910.ChipClockHz["Y8910"] = 1789772;
+                                comPortY8910.ChipClockHz["Y8910"] = 1789773;
                         }
                         break;
                     case 1:
@@ -611,7 +611,7 @@ namespace zanac.VGMPlayer
                                 (PortId)Settings.Default.Y8910_Port);
 
                             if (comPortY8910 != null)
-                                comPortY8910.ChipClockHz["Y8910"] = 1789772;
+                                comPortY8910.ChipClockHz["Y8910"] = 1789773;
                         }
                         break;
                 }
@@ -1510,7 +1510,7 @@ namespace zanac.VGMPlayer
                                                 if (adrs <= 0xd)
                                                 {
                                                     if (comPortY8910 != null)
-                                                        deferredWriteY8910(adrs, dt, dclk /4);
+                                                        deferredWriteY8910(adrs, dt, dclk / 3);
                                                     break;
                                                 }
 
@@ -2152,6 +2152,10 @@ namespace zanac.VGMPlayer
                                 //    _wait -= 1;
 
                             }
+                            else
+                            {
+                                break;
+                            }
                             if ((command == 0x66 || command == -1))
                             {
                                 flushDeferredWriteData();
@@ -2316,22 +2320,26 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock || (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOplFrequency(comPortY8950.RegTable[adrs + 0x10], dt, comPortY8950.ChipClockHz["Y8950"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteY8950(adrs + 0x10, ret.Hi);
                         deferredWriteY8950(adrs, dt);
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock || (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOplFrequency(dt, comPortY8950.RegTable[adrs - 0x10], comPortY8950.ChipClockHz["Y8950"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteY8950(adrs, dt);
                         deferredWriteY8950(adrs - 0x10, ret.Lo);
@@ -2357,11 +2365,13 @@ namespace zanac.VGMPlayer
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
-                    if (!ConvertChipClock || (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
                         goto default;
                     {
                         //KC
                         var ret = convertOpmFrequency(comPortOPM.RegTable[adrs + 8], dt, comPortOPM.ChipClockHz["OPM"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPM(adrs + 8, ret.Hi);
                         deferredWriteOPM(adrs, dt);
@@ -2375,11 +2385,13 @@ namespace zanac.VGMPlayer
                 case 0x35:
                 case 0x36:
                 case 0x37:
-                    if (!ConvertChipClock || (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
                         goto default;
                     {
                         //KF
                         var ret = convertOpmFrequency(dt, comPortOPM.RegTable[adrs - 8], comPortOPM.ChipClockHz["OPM"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPM(adrs, dt);
                         deferredWriteOPM(adrs - 8, ret.Lo);
@@ -2400,22 +2412,26 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0x10 <= adrs && adrs <= 0x18:
-                    if (!ConvertChipClock || (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOpllFrequency(comPortOPLL.RegTable[adrs + 0x10], dt, comPortOPLL.ChipClockHz["OPLL"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPLL(adrs + 0x10, ret.Hi);
                         deferredWriteOPLL(adrs, dt);
                     }
                     break;
                 case var adrs2 when 0x20 <= adrs && adrs <= 0x28:
-                    if (!ConvertChipClock || (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOpllFrequency(dt, comPortOPLL.RegTable[adrs - 0x10], comPortOPLL.ChipClockHz["OPLL"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPLL(adrs, dt);
                         deferredWriteOPLL(adrs - 0x10, ret.Lo);
@@ -2511,11 +2527,13 @@ namespace zanac.VGMPlayer
                 case 0:
                 case 2:
                 case 4:
-                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertAy8910Frequency(comPortY8910.RegTable[adrs + 1], dt, comPortY8910.ChipClockHz["Y8910"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteY8910(adrs, dt);
                         deferredWriteY8910(adrs + 1, ret.Hi);
@@ -2524,18 +2542,20 @@ namespace zanac.VGMPlayer
                 case 1:
                 case 3:
                 case 5:
-                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertAy8910Frequency(dt, comPortY8910.RegTable[adrs - 1], comPortY8910.ChipClockHz["Y8910"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteY8910(adrs - 1, ret.Lo);
                         deferredWriteY8910(adrs, dt);
                     }
                     break;
                 case 6:
-                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         var data = (int)Math.Round(dt * (dclk) / (double)comPortY8910.ChipClockHz["Y8910"]);
@@ -2565,12 +2585,14 @@ namespace zanac.VGMPlayer
                     case 0:
                     case 2:
                     case 4:
-                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                        if (!ConvertChipClock ||  (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
                             goto default;
                         {
                             comPortDCSG.RegTable[adrs] = data & 0x3f;
                             //HI
                             var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8], comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            if (ret.noConverted)
+                                goto default;
                             deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo);
                             deferredWriteDCSG(ret.Hi);
                         }
@@ -2578,12 +2600,14 @@ namespace zanac.VGMPlayer
                     case 0x8:
                     case 0x8 + 2:
                     case 0x8 + 4:
-                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                        if (!ConvertChipClock ||  (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
                             goto default;
                         {
                             comPortDCSG.RegTable[adrs] = data & 0xf;
                             //LO
                             var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8], data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            if (ret.noConverted)
+                                goto default;
                             deferredWriteDCSG((adrs << 4) + ret.Lo);
                             deferredWriteDCSG(ret.Hi);
                         }
@@ -2941,22 +2965,26 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOplFrequency(comPortOPL3.RegTable[adrs + 0x10], dt, comPortOPL3.ChipClockHz["OPL3"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPL3_P0(adrs + 0x10, ret.Hi);
                         deferredWriteOPL3_P0(adrs, dt);
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOplFrequency(dt, comPortOPL3.RegTable[adrs - 0x10], comPortOPL3.ChipClockHz["OPL3"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPL3_P0(adrs, dt);
                         deferredWriteOPL3_P0(adrs - 0x10, ret.Lo);
@@ -2989,22 +3017,26 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOplFrequency(comPortOPL3.RegTable[adrs + 0x10 + 0x100], dt, comPortOPL3.ChipClockHz["OPL3"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPL3_P1(adrs + 0x10, ret.Hi);
                         deferredWriteOPL3_P1(adrs, dt);
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOplFrequency(dt, comPortOPL3.RegTable[adrs - 0x10 + 0x100], comPortOPL3.ChipClockHz["OPL3"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPL3_P1(adrs, dt);
                         deferredWriteOPL3_P1(adrs - 0x10, ret.Lo);
@@ -3047,11 +3079,13 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPN2_P0(adrs + 4, ret.Hi);
                         deferredWriteOPN2_P0(adrs, dt);
@@ -3063,11 +3097,13 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPN2_P0(adrs, dt);
                         deferredWriteOPN2_P0(adrs - 4, ret.Lo);
@@ -3115,11 +3151,13 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4 + 0x100], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPN2_P1(adrs + 4, ret.Hi);
                         deferredWriteOPN2_P1(adrs, dt);
@@ -3131,11 +3169,13 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4 + 0x100], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPN2_P1(adrs, dt);
                         deferredWriteOPN2_P1(adrs - 4, ret.Lo);
@@ -3177,11 +3217,13 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPNA_P0(adrs + 4, ret.Hi);
                         deferredWriteOPNA_P0(adrs, dt);
@@ -3193,11 +3235,13 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPNA_P0(adrs, dt);
                         deferredWriteOPNA_P0(adrs - 4, ret.Lo);
@@ -3234,11 +3278,13 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //LO
                         var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4 + 0x100], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Lo;
                         deferredWriteOPNA_P1(adrs + 4, ret.Hi);
                         deferredWriteOPNA_P1(adrs, dt);
@@ -3250,11 +3296,13 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //HI
                         var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4 + 0x100], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
                         dt = ret.Hi;
                         deferredWriteOPNA_P1(adrs, dt);
                         deferredWriteOPNA_P1(adrs - 4, ret.Lo);
