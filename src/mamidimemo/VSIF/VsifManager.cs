@@ -151,7 +151,11 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetLatency(0);
 
                                     var client = new VsifClient(soundModule, new PortWriterGenesis(ftdi, comPort));
-                                    //client.WriteData(0, 0, 0, (int)100);  //Dummy
+                                    
+                                    client.WriteData(0, 0x14, (byte)(0x80 | 0 << 5 | 0x1f), 100);
+                                    client.WriteData(0, 0x14, (byte)(0x80 | 1 << 5 | 0x1f), 100);
+                                    client.WriteData(0, 0x14, (byte)(0x80 | 2 << 5 | 0x1f), 100);
+                                    client.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), 100);
 
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
