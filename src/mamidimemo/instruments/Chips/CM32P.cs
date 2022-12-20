@@ -243,15 +243,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Browsable(false)]
         public override CombinedTimbre[] CombinedTimbres
         {
-            get;
-            set;
+            get
+            {
+                return base.CombinedTimbres;
+            }
+            set
+            {
+                base.CombinedTimbres = value;
+            }
         }
 
         [Browsable(false)]
         public override DrumTimbre[] DrumTimbres
         {
-            get;
-            set;
+            get
+            {
+                return base.DrumTimbres;
+            }
+            set
+            {
+                base.DrumTimbres = value;
+            }
         }
 
         /// <summary>
@@ -277,8 +289,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Browsable(false)]
         public override ArpSettings GlobalARP
         {
-            get;
-            set;
+            get
+            {
+                return base.GlobalARP;
+            }
+            set
+            {
+                base.GlobalARP = value;
+            }
         }
 
 

@@ -365,6 +365,7 @@ namespace zanac.VGMPlayer
                 //read dac
                 dacData = xgmReader.ReadBytes(xgmMHead.shtSampleDataBlkSize * 256);
 
+                //Music data bloc size.
                 uint mlen = xgmReader.ReadUInt32();
                 if (mlen < 0)
                     return false;
@@ -775,11 +776,17 @@ namespace zanac.VGMPlayer
                                         break;
                                     case 0x7E:
                                         flushDeferredWriteData();
-                                        uint ofst = xgmReader.ReadUInt32();
-                                        if (ofst < 0)
+                                        int ofst1 = readByte();
+                                        if (ofst1 < 0)
                                             xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-                                        else
-                                            xgmReader.BaseStream?.Seek((int)ofst, SeekOrigin.Begin);
+                                        int ofst2 = readByte();
+                                        if (ofst2 < 0)
+                                            xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+                                        int ofst3 = readByte();
+                                        if (ofst3 < 0)
+                                            xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
+
+                                        xgmReader.BaseStream?.Seek((int)((ofst1 << 16)  | (ofst2 << 8) | ofst3), SeekOrigin.Begin);
                                         break;
                                     case 0x7F:
                                         flushDeferredWriteData();

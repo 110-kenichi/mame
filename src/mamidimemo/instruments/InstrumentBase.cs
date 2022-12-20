@@ -621,7 +621,7 @@ namespace zanac.MAmidiMEmo.Instruments
             return ev.BaseTimbreIndexes;
         }
 
-        private DrumTimbre[] f_DrumTimbres;
+        private DrumTimbre[] f_DrumTimbres ;
 
         [DataMember]
         [Category(" Timbres")]
