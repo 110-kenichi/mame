@@ -200,7 +200,6 @@ namespace zanac.VGMPlayer
                             DeferredDataFlushed = true;
                             continue;
                         }
-
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
                     }
@@ -238,19 +237,19 @@ namespace zanac.VGMPlayer
         {
             try
             {
+                PortWriteData[] dd;
                 lock (lockObject)
                 {
                     if (disposedValue)
                         return;
 
-                    if (deferredWriteAdrAndData.Count != 0)
-                    {
-                        PortWriteData[] dd = deferredWriteAdrAndData.ToArray();
-                        deferredWriteAdrAndData.Clear();
-                        if (dd.Length != 0)
-                            DataWriter?.Write(dd);
-                    }
+                    if (deferredWriteAdrAndData.Count == 0)
+                        return;
+                    dd = deferredWriteAdrAndData.ToArray();
+                    deferredWriteAdrAndData.Clear();
                 }
+                if (dd.Length != 0)
+                    DataWriter?.Write(dd);
             }
             catch (Exception ex)
             {
@@ -276,21 +275,17 @@ namespace zanac.VGMPlayer
         {
             try
             {
+                PortWriteData[] dd;
                 lock (lockObject)
                 {
                     if (disposedValue)
                         return;
 
-                    if (deferredWriteAdrAndData.Count != 0)
-                    {
-                        PortWriteData[] dd = deferredWriteAdrAndData.ToArray();
-                        deferredWriteAdrAndData.Clear();
-                        if (dd.Length != 0)
-                            DataWriter?.Write(dd);
-                    }
-
-                    DataWriter?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
+                    deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
+                    dd = deferredWriteAdrAndData.ToArray();
+                    deferredWriteAdrAndData.Clear();
                 }
+                DataWriter?.Write(dd);
             }
             catch (Exception ex)
             {

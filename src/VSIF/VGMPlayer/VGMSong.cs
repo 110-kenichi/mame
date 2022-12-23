@@ -2291,6 +2291,8 @@ namespace zanac.VGMPlayer
 #endif
 
                     double pwait = (wait / PlaybackSpeed);
+                    if (vgmHead.lngRate > 0)
+                        pwait *= (double)vgmHead.lngRate / 60d;
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
@@ -2300,7 +2302,7 @@ namespace zanac.VGMPlayer
                     }
                     else
                     {
-                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                        while (((double)(after - before) / freq) < (pwait / (44.1 * 1000)))
                             QueryPerformanceCounter(out after);
                         wait = 0;
                         HighLoad = false;
@@ -2320,7 +2322,7 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock ||  (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -2333,7 +2335,7 @@ namespace zanac.VGMPlayer
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock ||  (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortY8950.ChipClockHz["Y8950"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -2365,7 +2367,7 @@ namespace zanac.VGMPlayer
                 case 0x2d:
                 case 0x2e:
                 case 0x2f:
-                    if (!ConvertChipClock ||  (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
                         goto default;
                     {
                         //KC
@@ -2385,7 +2387,7 @@ namespace zanac.VGMPlayer
                 case 0x35:
                 case 0x36:
                 case 0x37:
-                    if (!ConvertChipClock ||  (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPM.ChipClockHz["OPM"] == (double)dclk)
                         goto default;
                     {
                         //KF
@@ -2412,7 +2414,7 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0x10 <= adrs && adrs <= 0x18:
-                    if (!ConvertChipClock ||  (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -2425,7 +2427,7 @@ namespace zanac.VGMPlayer
                     }
                     break;
                 case var adrs2 when 0x20 <= adrs && adrs <= 0x28:
-                    if (!ConvertChipClock ||  (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPLL.ChipClockHz["OPLL"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -2527,7 +2529,7 @@ namespace zanac.VGMPlayer
                 case 0:
                 case 2:
                 case 4:
-                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -2542,7 +2544,7 @@ namespace zanac.VGMPlayer
                 case 1:
                 case 3:
                 case 5:
-                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -2555,7 +2557,7 @@ namespace zanac.VGMPlayer
                     }
                     break;
                 case 6:
-                    if (!ConvertChipClock ||  (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortY8910.ChipClockHz["Y8910"] == (double)dclk)
                         goto default;
                     {
                         var data = (int)Math.Round(dt * (dclk) / (double)comPortY8910.ChipClockHz["Y8910"]);
@@ -2585,7 +2587,7 @@ namespace zanac.VGMPlayer
                     case 0:
                     case 2:
                     case 4:
-                        if (!ConvertChipClock ||  (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
                             goto default;
                         {
                             comPortDCSG.RegTable[adrs] = data & 0x3f;
@@ -2600,7 +2602,7 @@ namespace zanac.VGMPlayer
                     case 0x8:
                     case 0x8 + 2:
                     case 0x8 + 4:
-                        if (!ConvertChipClock ||  (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
+                        if (!ConvertChipClock || (double)comPortDCSG.ChipClockHz["DCSG"] == (double)dclk)
                             goto default;
                         {
                             comPortDCSG.RegTable[adrs] = data & 0xf;
@@ -2965,7 +2967,7 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -2978,7 +2980,7 @@ namespace zanac.VGMPlayer
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -3017,7 +3019,7 @@ namespace zanac.VGMPlayer
             switch (adrs)
             {
                 case var adrs2 when 0xa0 <= adrs && adrs <= 0xa8:
-                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -3030,7 +3032,7 @@ namespace zanac.VGMPlayer
                     }
                     break;
                 case var adrs2 when 0xb0 <= adrs && adrs <= 0xb8:
-                    if (!ConvertChipClock ||  (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPL3.ChipClockHz["OPL3"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -3079,7 +3081,7 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -3097,7 +3099,7 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -3151,7 +3153,7 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -3169,7 +3171,7 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock ||  (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -3217,7 +3219,7 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -3235,7 +3237,7 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //HI
@@ -3278,7 +3280,7 @@ namespace zanac.VGMPlayer
                 case 0xa8:
                 case 0xa9:
                 case 0xaa:
-                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //LO
@@ -3296,7 +3298,7 @@ namespace zanac.VGMPlayer
                 case 0xac:
                 case 0xad:
                 case 0xae:
-                    if (!ConvertChipClock ||  (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
                         goto default;
                     {
                         //HI

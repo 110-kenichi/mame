@@ -97,23 +97,36 @@ namespace zanac.VGMPlayer
             }
         }
 
-        protected void SendData(byte[] sd)
+        protected void SendData(byte[] sd2)
         {
-            while (true)
+            for (int i = 0; i < sd2.Length; i += 64)
             {
-                uint writtenBytes = 0;
-                var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
-                if (stat != FTDI.FT_STATUS.FT_OK)
+                byte[] sd = new byte[64];
+                if (i + 64 < sd2.Length)
+                    Buffer.BlockCopy(sd2, i, sd, 0, 64);
+                else
                 {
-                    Debug.WriteLine(stat);
-                    break;
+                    Buffer.BlockCopy(sd2, i, sd, 0, sd2.Length - i);
+                    for (int j = sd2.Length - i; j < sd2.Length; j++)
+                        sd2[j] = sd2[sd2.Length - i - 1];
                 }
-                if (sd.Length == writtenBytes)
-                    break;
 
-                byte[] nsd = new byte[sd.Length - writtenBytes];
-                Array.Copy(sd, writtenBytes, nsd, 0, nsd.Length);
-                sd = nsd;
+                while (true)
+                {
+                    uint writtenBytes = 0;
+                    var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
+                    if (stat != FTDI.FT_STATUS.FT_OK)
+                    {
+                        Debug.WriteLine(stat);
+                        break;
+                    }
+                    if (sd.Length == writtenBytes)
+                        break;
+
+                    byte[] nsd = new byte[sd.Length - writtenBytes];
+                    Buffer.BlockCopy(sd, (int)writtenBytes, nsd, 0, nsd.Length);
+                    sd = nsd;
+                }
             }
         }
 

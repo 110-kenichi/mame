@@ -786,7 +786,7 @@ namespace zanac.VGMPlayer
                                         if (ofst3 < 0)
                                             xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
 
-                                        xgmReader.BaseStream?.Seek((int)((ofst1 << 16)  | (ofst2 << 8) | ofst3), SeekOrigin.Begin);
+                                        xgmReader.BaseStream?.Seek((int)(ofst1 | (ofst2 << 8) | (ofst3 << 16)), SeekOrigin.Begin);
                                         break;
                                     case 0x7F:
                                         flushDeferredWriteData();
