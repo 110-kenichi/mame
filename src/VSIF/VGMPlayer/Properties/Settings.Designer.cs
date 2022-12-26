@@ -669,5 +669,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["ConvertClock"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPN_IF {
+            get {
+                return ((int)(this["OPN_IF"]));
+            }
+            set {
+                this["OPN_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OPN_Enable {
+            get {
+                return ((bool)(this["OPN_Enable"]));
+            }
+            set {
+                this["OPN_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPN_Slot {
+            get {
+                return ((int)(this["OPN_Slot"]));
+            }
+            set {
+                this["OPN_Slot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OPN_Port {
+            get {
+                return ((int)(this["OPN_Port"]));
+            }
+            set {
+                this["OPN_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("21")]
+        public decimal BitBangWaitOPN {
+            get {
+                return ((decimal)(this["BitBangWaitOPN"]));
+            }
+            set {
+                this["BitBangWaitOPN"] = value;
+            }
+        }
     }
 }

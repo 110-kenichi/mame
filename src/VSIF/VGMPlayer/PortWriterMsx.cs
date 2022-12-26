@@ -160,7 +160,8 @@ namespace zanac.VGMPlayer
                                 dt.Type == 4 || dt.Type == 5 || //SCC
                                 dt.Type == 0xa || dt.Type == 0xb || //OPL3
                                 dt.Type == 0xe || //OPM
-                                dt.Type == 0x10 || dt.Type == 0x11  //OPN2 or OPNA
+                                dt.Type == 0x10 || dt.Type == 0x11 || //OPN2 or OPNA
+                                dt.Type == 0x12 //OPN
                                 )
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
                             {

@@ -164,5 +164,20 @@
     <Setting Name="ConvertClock" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="OPN_IF" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OPN_Enable" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OPN_Slot" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OPN_Port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="BitBangWaitOPN" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">21</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

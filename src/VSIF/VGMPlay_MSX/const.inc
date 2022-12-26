@@ -17,6 +17,9 @@ OPN2WR1 = #0x15 ;:OPN2 ch1-3 data(W)
 OPN2AD2 = #0x16 ;:OPN2 ch4-6 address(W)
 OPN2WR2 = #0x17 ;:OPN2 ch4-6 data(W)
 
+OPNAD = #0x12 ;:OPN ch1-3 address(W) / status(R)
+OPNWR = #0x13 ;:OPN ch1-3 data(W)
+
 WRSLT = #0x14
 RDSLT = #0x0c
 ENASLT = #0x24

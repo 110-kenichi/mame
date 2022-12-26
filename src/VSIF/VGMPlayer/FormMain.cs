@@ -45,6 +45,7 @@ namespace zanac.VGMPlayer
             comboBoxOPL3.SelectedIndex = 0;
             comboBoxOPNA.SelectedIndex = 0;
             comboBoxY8950.SelectedIndex = 0;
+            comboBoxOPN.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -66,6 +67,7 @@ namespace zanac.VGMPlayer
             checkBoxConnOPL3.Checked = false;
             checkBoxConnOPNA.Checked = false;
             checkBoxConnY8950.Checked = false;
+            checkBoxConnOPN.Checked = false;
 
             //checkBoxConnDCSG_CheckedChanged(null, null);
             //checkBoxConnOPLL_CheckedChanged(null, null);
@@ -160,6 +162,7 @@ namespace zanac.VGMPlayer
             comPortOPL3?.Dispose();
             comPortOPNA?.Dispose();
             comPortY8950?.Dispose();
+            comPortOPN?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -769,6 +772,31 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private VsifClient comPortOPN;
+
+        private void checkBoxConnOPN_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnOPN.Checked)
+            {
+                switch (Settings.Default.OPN_IF)
+                {
+                    case 0:
+                        comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPN_Port, false);
+                        break;
+                }
+                checkBoxConnOPN.Checked = comPortOPN != null;
+                comboBoxOPN.Enabled = comPortOPN == null;
+                comboBoxPortOPN.Enabled = comPortOPN == null;
+            }
+            else
+            {
+                comboBoxOPN.Enabled = true;
+                comboBoxPortOPN.Enabled = true;
+                comPortOPN?.Dispose();
+            }
+        }
+
         private VsifClient comPortSCC;
 
         private void checkBoxConnSCC_CheckedChanged(object sender, EventArgs e)
@@ -1205,6 +1233,7 @@ namespace zanac.VGMPlayer
             if (currentSong != null)
                 currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
         }
+
     }
 
     internal static class NativeConstants
