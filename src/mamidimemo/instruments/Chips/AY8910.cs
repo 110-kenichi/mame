@@ -121,7 +121,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
                     value == SoundEngineType.SPFM ||
-                    value == SoundEngineType.VSIF_MSX_FTDI))
+                    value == SoundEngineType.VSIF_MSX_FTDI ||
+                    value == SoundEngineType.VSIF_P6_FTDI))
                 {
                     setSoundEngine(value);
                 }
@@ -136,6 +137,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.Software,
                     SoundEngineType.SPFM,
                     SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.VSIF_P6_FTDI,
                 });
 
                 return sc;
@@ -193,6 +195,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_P6_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
                 PrepareSound();
             }
@@ -209,13 +224,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private int f_ftdiClkWidth = 18;
+        private int f_ftdiClkWidth = 21;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(18)]
+        [DefaultValue(21)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {
@@ -482,6 +497,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             ScciManager.SetRegister(spfmPtr, offset, data, false);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
+                        case SoundEngineType.VSIF_P6_FTDI:
                             vsifClient.WriteData(0, (byte)offset, (byte)data, f_ftdiClkWidth);
                             break;
                     }

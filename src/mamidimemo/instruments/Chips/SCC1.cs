@@ -254,13 +254,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             enableScc(f_sccType, f_extSCCSlot, false);
         }
 
-        private int f_ftdiClkWidth = 18;
+        private int f_ftdiClkWidth = 21;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(18)]
+        [DefaultValue(21)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {

@@ -311,6 +311,7 @@ Reset_FTDI2XX:
     clr.l   %d0                        | for Recv Addr Idx(Lo 4bit)
     move.b  #0xC0,%d1                  | for And Data(Hi 2bit)
     move.b  #6,%d2                     | for Check Bit 6
+    move.l  #_VGM_ADDRESS_FTDI2XX, %a3 | Jmp Address
 
 _VGM_ADDRESS_FTDI2XX:
 
@@ -321,7 +322,7 @@ _VGM_ADDRESS_FTDI2XX_LOOP:
     | Get Write Address
     | 0CDDAAAA -> DDAAAA00
     lsl.b   #2,%d0                            |+10 34   Shift Left
-    move.l  (%d0, %a1), %a2                   |+16 50   Get Register Address
+    move.l  (%d0, %a1), %a2                   |+18 52   Get Register Address
 
 _VGM_DATA_FTDI2XX_LOOP:
     btst.b  %d2,(%a0)                         | +8 8    Check CLK
@@ -329,9 +330,9 @@ _VGM_DATA_FTDI2XX_LOOP:
     and.b   %d1,%d0                           |+ 4 20   
     or.b    (%a0),%d0                         |  8 28   Get Data(Hi 2bit | Lo 6bit)
     | Write Data to Address
-    move.b  %d0,(%a2)                         |+12 40   Write DATA to register
+    move.b  %d0,(%a2)                         |+ 8 36   Write DATA to register
 
-    bra.w _VGM_ADDRESS_FTDI2XX                |+10 50   Loop
+    jmp     (%a3)                             |+ 8 44   Loop
 
 |    move.l #0xC00011, %a6
 |    move.b #0x80,(%a6)

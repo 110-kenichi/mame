@@ -669,6 +669,10 @@
       <Link>VGMPlay_msx_Vkey.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\VSIF\VGMPlay_P6\VGM_P6.ROM">
+      <Link>VGM_P6.ROM</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Data\cm32p_user_internal_tone.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

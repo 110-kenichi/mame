@@ -164,6 +164,7 @@ namespace zanac.MAmidiMEmo.VSIF
                             }
                             break;
                         case VsifSoundModuleType.MSX_FTDI:
+                        case VsifSoundModuleType.P6_FTDI:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
                                 var stat = ftdi.OpenByIndex((uint)comPort);
@@ -291,6 +292,7 @@ namespace zanac.MAmidiMEmo.VSIF
         NES_FTDI_DIRECT,
         MSX_FTDI,
         C64_FTDI,
+        P6_FTDI,
     }
 
 

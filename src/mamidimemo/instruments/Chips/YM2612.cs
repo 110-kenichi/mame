@@ -203,6 +203,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_P6_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
             PrepareSound();
@@ -426,6 +439,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0, (byte)(8 * port1), (byte)data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
+                        case SoundEngineType.VSIF_P6_FTDI:
                             vsifClient.WriteData((byte)(0x10 + (port1 - 1)), (byte)address, (byte)data, f_ftdiClkWidth);
                             break;
                     }
@@ -487,6 +501,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0, (byte)((1 + (yreg + 1)) * 4), data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
+                        case SoundEngineType.VSIF_P6_FTDI:
                             vsifClient.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, f_ftdiClkWidth);
                             break;
                     }
@@ -2219,6 +2234,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,
                     SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.VSIF_P6_FTDI,
                 });
 
                 return sc;

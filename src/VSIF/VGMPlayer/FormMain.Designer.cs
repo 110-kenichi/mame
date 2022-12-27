@@ -1372,6 +1372,7 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.FormattingEnabled = true;
             this.comboBoxY8910.Items.AddRange(new object[] {
             "VSIF - MSX(FTDI2XX)",
+            "VSIF - PC-6001(FTDI2XX)",
             "VSIF - Generic(UART 115Kbps)"});
             this.comboBoxY8910.Location = new System.Drawing.Point(214, 155);
             this.comboBoxY8910.Margin = new System.Windows.Forms.Padding(4);
@@ -1773,7 +1774,8 @@ namespace zanac.VGMPlayer
             "VSIF - Genesis(UART 163Kbps)",
             "VSIF - Genesis(FTDI2XX)",
             "VSIF - Genesis(UART 115Kbps)",
-            "VSIF - MSX(FTDI2XX)"});
+            "VSIF - MSX(FTDI2XX)",
+            "VSIF - PC-6001(FTDI2XX)"});
             this.comboBoxOPNA2.Location = new System.Drawing.Point(214, 31);
             this.comboBoxOPNA2.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA2.Name = "comboBoxOPNA2";
@@ -2850,7 +2852,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPNA.FormattingEnabled = true;
             this.comboBoxOPNA.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)"});
+            "VSIF - MSX(FTDI2XX)",
+            "VSIF - PC-6001(FTDI2XX)"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(214, 248);
             this.comboBoxOPNA.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA.Name = "comboBoxOPNA";
@@ -3550,7 +3553,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPN.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPN.FormattingEnabled = true;
             this.comboBoxOPN.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)"});
+            "VSIF - MSX(FTDI2XX)",
+            "VSIF - PC-6001(FTDI2XX)"});
             this.comboBoxOPN.Location = new System.Drawing.Point(214, 310);
             this.comboBoxOPN.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPN.Name = "comboBoxOPN";

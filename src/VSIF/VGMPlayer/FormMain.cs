@@ -784,6 +784,10 @@ namespace zanac.VGMPlayer
                         comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPN_Port, false);
                         break;
+                    case 1:
+                        comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
+                            (PortId)Settings.Default.OPN_Port, false);
+                        break;
                 }
                 checkBoxConnOPN.Checked = comPortOPN != null;
                 comboBoxOPN.Enabled = comPortOPN == null;
