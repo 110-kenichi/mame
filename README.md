@@ -1,4 +1,4 @@
-MAmidiMEmo 4.5.6.0 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
+MAmidiMEmo 4.5.6.1 Itoken (c)2019, 2020, 2021, 2022 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.5.6.1 Fixed a SCC port error for VGMPlayer.
 4.5.6.0 Supported OPN chip for VGMPlayer.  Please update VGMPlay_msx.rom, too. (Thanks Niga-san!)
 		Supported PC-6001 for VSIF(FTDI). VSIF(FTDI) spec is same as MSX. (Thanks Niga-san!)
 4.5.5.4 Fixed an exception occuring on Serialize property for CM32P & MT32.

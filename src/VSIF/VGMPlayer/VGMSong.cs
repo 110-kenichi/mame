@@ -2198,7 +2198,7 @@ namespace zanac.VGMPlayer
                                             if (dd < 0)
                                                 break;
 
-                                            if (comPortY8910 != null)
+                                            if (aa <= 0xd && comPortY8910 != null)
                                                 deferredWriteY8910(aa, dd, dclk);
                                         }
                                         break;

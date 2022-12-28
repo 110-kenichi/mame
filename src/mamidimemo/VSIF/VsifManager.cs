@@ -155,7 +155,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                     client.WriteData(0, 0x14, (byte)(0x80 | 0 << 5 | 0x1f), 100);
                                     client.WriteData(0, 0x14, (byte)(0x80 | 1 << 5 | 0x1f), 100);
                                     client.WriteData(0, 0x14, (byte)(0x80 | 2 << 5 | 0x1f), 100);
-                                    client.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), 100);
+https://twitter.com/home                                    client.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), 100);
 
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);

@@ -839,7 +839,7 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private byte[] SCCSlotNo = new byte[]
+        private int[] SCCSlotNo = new int[]
         {
             0b0000_0000,
             0b1000_0000,
