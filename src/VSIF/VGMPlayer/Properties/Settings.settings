@@ -36,13 +36,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="BitBangWaitDCSG" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">6</Value>
     </Setting>
     <Setting Name="FocusedItem" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="VGMWait" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">66000</Value>
     </Setting>
     <Setting Name="LastDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -54,16 +54,16 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="BitBangWaitOPNA2" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">6</Value>
     </Setting>
     <Setting Name="BitBangWaitOPLL" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="BitBangWaitSCC" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="BitBangWaitAY8910" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="Y8910_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -90,7 +90,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitOPM" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="OPM_Enable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -117,7 +117,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitOPL3" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="OPNA_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -132,7 +132,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitOPNA" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="Y8950_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -147,7 +147,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitY8950" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="Y8950_Type" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -177,7 +177,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="BitBangWaitOPN" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">21</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
   </Settings>
 </SettingsFile>

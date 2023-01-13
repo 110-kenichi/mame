@@ -92,6 +92,8 @@ namespace zanac.VGMPlayer
 
         protected override void StopAllSounds(bool volumeOff)
         {
+            abort();
+
             if (comPortDCSG != null)
             {
                 comPortDCSG.ClearDeferredWriteData();
@@ -181,7 +183,7 @@ namespace zanac.VGMPlayer
                 }
             }
 
-            flushDeferredWriteData();
+            flushDeferredWriteDataAndWait();
             Thread.Sleep(250);
         }
 
@@ -901,8 +903,9 @@ namespace zanac.VGMPlayer
                         }
                     }
 
-                    if (wait <= (double)Settings.Default.VGMWait)
-                        continue;
+                    //if (wait <= (double)Settings.Default.VGMWait)
+                    if (wait <= 0)
+                            continue;
 
                     flushDeferredWriteData();
 
@@ -1150,6 +1153,24 @@ namespace zanac.VGMPlayer
         {
             comPortOPN2?.FlushDeferredWriteData();
             comPortDCSG?.FlushDeferredWriteData();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void flushDeferredWriteDataAndWait()
+        {
+            comPortDCSG?.FlushDeferredWriteDataAndWait();
+            comPortOPN2?.FlushDeferredWriteDataAndWait();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void abort()
+        {
+            comPortDCSG?.Abort();
+            comPortOPN2?.Abort();
         }
 
         [DllImport("kernel32.dll")]

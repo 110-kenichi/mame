@@ -97,36 +97,98 @@ namespace zanac.VGMPlayer
             }
         }
 
-        protected void SendData(byte[] sd2)
+        private bool abortRequested;
+
+        public void Abort()
         {
-            for (int i = 0; i < sd2.Length; i += 64)
+            abortRequested = true;
+        }
+
+        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
+
+        /*
+         *  long before, after;
+            byte[] osd = new byte[1024];
+            for (int i = 0; i < osd.Length; i++)
+                osd[i] = (byte)(i & 0xff);
+            int wait = 25;
+
+            QueryPerformanceCounter(out before);
             {
-                byte[] sd = new byte[64];
-                if (i + 64 < sd2.Length)
-                    Buffer.BlockCopy(sd2, i, sd, 0, 64);
-                else
+                byte[] sd = new byte[1024 * (int)wait];
+                unsafe
                 {
-                    Buffer.BlockCopy(sd2, i, sd, 0, sd2.Length - i);
-                    for (int j = sd2.Length - i; j < sd2.Length; j++)
-                        sd2[j] = sd2[sd2.Length - i - 1];
-                }
-
-                while (true)
-                {
-                    uint writtenBytes = 0;
-                    var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
-                    if (stat != FTDI.FT_STATUS.FT_OK)
+                    fixed (byte* bp2 = sd)
                     {
-                        Debug.WriteLine(stat);
-                        break;
+                        byte* bp = bp2;
+                        for (int i = 0; i < osd.Length; i++)
+                        {
+                            var dt = osd[i];
+                            for (int j = 0; j < wait; j++)
+                                *bp++ = dt;
+                        }
                     }
-                    if (sd.Length == writtenBytes)
-                        break;
-
-                    byte[] nsd = new byte[sd.Length - writtenBytes];
-                    Buffer.BlockCopy(sd, (int)writtenBytes, nsd, 0, nsd.Length);
-                    sd = nsd;
                 }
+            }
+            QueryPerformanceCounter(out after);
+            Console.WriteLine(after - before);
+
+            QueryPerformanceCounter(out before);
+            {
+                byte[] sd = new byte[1024 * (int)25];
+                unsafe
+                {
+                    fixed (byte* bp2 = sd)
+                    {
+                        byte* bp = bp2;
+                        for (int i = 0; i < osd.Length; i++)
+                        {
+                            var dt = osd[i];
+                            MemSet((IntPtr)bp, dt, (int)wait);
+                            bp += (int)wait;
+                        }
+                    }
+                }
+            }
+            QueryPerformanceCounter(out after);
+            Console.WriteLine(after - before);
+         */
+
+        protected void SendData(byte[] sendData, int wait)
+        {
+            var rawSendData = new byte[sendData.Length * (int)wait];
+            unsafe
+            {
+                fixed (byte* sdp = rawSendData)
+                {
+                    byte* tsdp = sdp;
+                    foreach (var data in sendData)
+                    {
+                        for (int j = 0; j < wait; j++)
+                            *tsdp++ = data;
+                        //MemSet((IntPtr)bp, dt, (int)wait);
+                        //tsdp += (int)wait;
+                    }
+                }
+            }
+
+            var sendBuffer = new Span<byte>(rawSendData);
+            while (true)
+            {
+                uint writtenBytes = 0;
+                var stat = FtdiPort.Write(sendBuffer.ToArray(), sendBuffer.Length, ref writtenBytes);
+                if (stat != FTDI.FT_STATUS.FT_OK)
+                    break;
+                if (sendBuffer.Length == writtenBytes)
+                    break;
+
+                if (abortRequested)
+                {
+                    abortRequested = false;
+                    break;
+                }
+                sendBuffer = sendBuffer.Slice((int)writtenBytes, (int)(sendBuffer.Length - writtenBytes));
             }
         }
 
@@ -140,6 +202,7 @@ namespace zanac.VGMPlayer
         public void Dispose()
         {
             // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            abortRequested = true;
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

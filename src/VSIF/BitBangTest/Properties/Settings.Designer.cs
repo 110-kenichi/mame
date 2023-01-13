@@ -49,13 +49,25 @@ namespace BitBangTest.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
         public decimal Num {
             get {
                 return ((decimal)(this["Num"]));
             }
             set {
                 this["Num"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public decimal ClkWidth {
+            get {
+                return ((decimal)(this["ClkWidth"]));
+            }
+            set {
+                this["ClkWidth"] = value;
             }
         }
     }

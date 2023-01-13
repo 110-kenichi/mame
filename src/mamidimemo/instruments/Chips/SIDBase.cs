@@ -184,13 +184,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             D4E0 = 0xE0,
         }
 
-        private int f_ftdiClkWidth = 45;
+        private int f_ftdiClkWidth = 40;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(45)]
+        [DefaultValue(40)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {
@@ -817,6 +817,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private SIDTimbre timbre;
 
             private Waveforms lastWaveform;
+
+            protected override int ModulationInterval
+            {
+                get
+                {
+                    return 10;
+                }
+            }
+
+            protected override int PortamentInterval
+            {
+                get
+                {
+                    return 10;
+                }
+            }
 
             /// <summary>
             /// 

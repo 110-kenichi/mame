@@ -518,7 +518,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed && PortamentoEnabled && PortamentoDeltaNoteNumber != 0)
             {
-                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] / 100;
+                double delta = -portStartNoteDeltSign * PortamentSpeedTable[ParentModule.PortamentoTimes[NoteOnEvent.Channel]] / (100 / PortamentInterval);
                 PortamentoDeltaNoteNumber += delta;
 
                 if (portStartNoteDeltSign < 0 && PortamentoDeltaNoteNumber >= 0)
@@ -529,7 +529,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnPitchUpdated();
 
                 if (PortamentoDeltaNoteNumber != 0)
-                    return 1;
+                    return PortamentInterval;
 
                 PortamentoEnabled = false;
             }
@@ -540,15 +540,15 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed && ModulationEnabled)
             {
-                double radian = 2 * Math.PI * (modulationStep / HighPrecisionTimer.TIMER_BASIC_1KHZ);
+                double radian = 2 * Math.PI * (modulationStep / (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval));
 
                 double mdepth = 0;
                 if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64)
                 {
-                    if (modulationStartCounter < 10d * HighPrecisionTimer.TIMER_BASIC_1KHZ)
+                    if (modulationStartCounter < 10d * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval))
                         modulationStartCounter += 1.0;
 
-                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * HighPrecisionTimer.TIMER_BASIC_1KHZ)
+                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval))
                         mdepth = (double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] / 127d;
                 }
                 //急激な変化を抑制
@@ -570,7 +570,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (modHz > 2 * Math.PI)
                     modulationStep = 0;
 
-                return 1;
+                return ModulationInterval;
             }
             return -1;
         }
@@ -657,10 +657,22 @@ namespace zanac.MAmidiMEmo.Instruments
                         f_modulationEnabled = value;
                     }
                     if (f_modulationEnabled)
-                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), 1, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processModulation), ModulationInterval, null);
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual int ModulationInterval
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
 
         #endregion
 
@@ -692,8 +704,19 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_portamentoEnabled = value;
 
                     if (f_portamentoEnabled)
-                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), 1, null);
+                        HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processPortamento), PortamentInterval, null);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual int PortamentInterval
+        {
+            get
+            {
+                return 1;
             }
         }
 

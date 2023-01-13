@@ -168,3 +168,5 @@ Release(but Debug .NET)
 /src/CMI8738OPL3/CMI8738OPL3Library/CMI8738OPL3Library.vcxproj.user
 /src/CMI8738OPL3/CMI8738OPL3Library/CMI8738OPL3Library.vcxproj.filters
 /src/CMI8738OPL3/YMF724OPL3/x64
+obj
+bin

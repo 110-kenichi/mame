@@ -1369,6 +1369,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.5</Version>
+    </PackageReference>
     <PackageReference Include="ValueInjecter">
       <Version>3.2.0</Version>
     </PackageReference>

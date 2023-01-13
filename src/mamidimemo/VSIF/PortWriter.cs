@@ -101,23 +101,38 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
-        protected void SendData(byte[] sd)
+        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
+        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
+
+        protected void SendData(byte[] sendData, int wait)
         {
+            var rawSendData = new byte[sendData.Length * (int)wait];
+            unsafe
+            {
+                fixed (byte* sdp = rawSendData)
+                {
+                    byte* tsdp = sdp;
+                    foreach (var data in sendData)
+                    {
+                        for (int j = 0; j < wait; j++)
+                            *tsdp++ = data;
+                        //MemSet((IntPtr)bp, dt, (int)wait);
+                        //tsdp += (int)wait;
+                    }
+                }
+            }
+
+            var sendBuffer = new Span<byte>(rawSendData);
             while (true)
             {
                 uint writtenBytes = 0;
-                var stat = FtdiPort.Write(sd, sd.Length, ref writtenBytes);
+                var stat = FtdiPort.Write(sendBuffer.ToArray(), sendBuffer.Length, ref writtenBytes);
                 if (stat != FTDI.FT_STATUS.FT_OK)
-                {
-                    Debug.WriteLine(stat);
                     break;
-                }
-                if (sd.Length == writtenBytes)
+                if (sendBuffer.Length == writtenBytes)
                     break;
 
-                byte[] nsd = new byte[sd.Length - writtenBytes];
-                Array.Copy(sd, writtenBytes, nsd, 0, nsd.Length);
-                sd = nsd;
+                sendBuffer = sendBuffer.Slice((int)writtenBytes, (int)(sendBuffer.Length - writtenBytes));
             }
         }
 

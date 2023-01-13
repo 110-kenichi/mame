@@ -9,7 +9,10 @@
       <Value Profile="(Default)">31250</Value>
     </Setting>
     <Setting Name="Num" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">100</Value>
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="ClkWidth" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">20</Value>
     </Setting>
   </Settings>
 </SettingsFile>

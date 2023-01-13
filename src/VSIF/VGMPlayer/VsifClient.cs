@@ -322,7 +322,24 @@ namespace zanac.VGMPlayer
             }
         }
 
-
+        public void Abort()
+        {
+            try
+            {
+                lock (lockObject)
+                {
+                    deferredWriteAdrAndData.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            DataWriter?.Abort();
+        }
 
     }
 

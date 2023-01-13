@@ -1185,7 +1185,7 @@ namespace zanac.VGMPlayer
                 {
                     labelElapsed.Text = timeSpan.ToString(@"hh\:mm\:ss");
                     labelElapsed.Tag = timeSpan;
-                    toolStripStatusLabel.Text = "Playing";
+                    //toolStripStatusLabel.Text = "Playing";
                 }
             }));
         }

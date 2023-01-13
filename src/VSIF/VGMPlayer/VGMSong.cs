@@ -68,6 +68,8 @@ namespace zanac.VGMPlayer
 
         protected override void StopAllSounds(bool volumeOff)
         {
+            abort();
+
             if (comPortDCSG != null)
             {
                 switch (comPortDCSG.SoundModuleType)
@@ -316,7 +318,7 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        private void YMF262WriteData(VsifClient comPort, uint address, int op, int slot, byte opmode, int consel, byte data, bool defferred)
+        private void Y8950WriteData(VsifClient comPort, uint address, int op, int slot, byte opmode, int consel, byte data, bool defferred, int wait)
         {
             //useCache = false;
             var adrL = address & 0xff;
@@ -379,10 +381,10 @@ namespace zanac.VGMPlayer
                 switch (adrH)
                 {
                     case 0:
-                        comPort?.DeferredWriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        comPort?.DeferredWriteData(10, adr, data, wait);
                         break;
                     case 2:
-                        comPort?.DeferredWriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        comPort?.DeferredWriteData(11, adr, data, wait);
                         break;
                 }
             }
@@ -391,10 +393,10 @@ namespace zanac.VGMPlayer
                 switch (adrH)
                 {
                     case 0:
-                        comPort?.WriteData(10, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        comPort?.WriteData(10, adr, data, wait);
                         break;
                     case 2:
-                        comPort?.WriteData(11, adr, data, (int)Settings.Default.BitBangWaitOPL3);
+                        comPort?.WriteData(11, adr, data, wait);
                         break;
                 }
             }
@@ -2037,6 +2039,9 @@ namespace zanac.VGMPlayer
                                                 }
                                             }
                                             //_vgmReader.BaseStream.Position += size;
+
+                                            //HACK:
+                                            QueryPerformanceCounter(out before);
                                         }
                                         break;
 
@@ -2413,7 +2418,9 @@ namespace zanac.VGMPlayer
                         }
                     }
 
-                    if (wait <= (double)Settings.Default.VGMWait)
+                    //if (wait <= (double)Settings.Default.VGMWait)
+                    //    continue;
+                    if (wait <= 0)
                         continue;
 
                     //while (!IsDeferredDataFlushed()) ;
@@ -2728,7 +2735,7 @@ namespace zanac.VGMPlayer
                         {
                             comPortDCSG.RegTable[adrs] = data & 0x3f;
                             //HI
-                            var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8], comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8] & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
                             deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo);
@@ -2743,7 +2750,7 @@ namespace zanac.VGMPlayer
                         {
                             comPortDCSG.RegTable[adrs] = data & 0xf;
                             //LO
-                            var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8], data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
+                            var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8] & 0x3f, data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
                             deferredWriteDCSG((adrs << 4) + ret.Lo);
@@ -2911,16 +2918,18 @@ namespace zanac.VGMPlayer
 
             //http://ngs.no.coocan.jp/doc/wiki.cgi/datapack?page=4%2E5+Y8950%28MSX%2DAUDIO%29
 
+            int wait = (int)Settings.Default.BitBangWaitY8950;
+
             //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
+            Y8950WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false, wait);
 
             //各フラグをイネーブルにする。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false);
+            Y8950WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x00, false, wait);
             //各フラグをリセット。
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false);
+            Y8950WriteData(comPortY8950, 0x04, 0, slot, 0, 0, 0x80, false, wait);
 
             //メモリライトモードにする。
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false);
+            Y8950WriteData(comPortY8950, 0x07, 0, slot, 0, 0, 0x60, false, wait);
 
             if (comPortY8950 != null)
             {
@@ -2962,7 +2971,7 @@ namespace zanac.VGMPlayer
                 if (y8950_adpcmbit64k)
                 {
                     //メモリのタイプ指定。64Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false);
+                    Y8950WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x02, false, wait);
 
                     if ((saddr & 0b1000) == 0b1000)
                         saddr += 0b1000;
@@ -2974,22 +2983,22 @@ namespace zanac.VGMPlayer
                         eaddr += 0b1_0000_0000_0000;
 
                     //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
+                    Y8950WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false, wait);
+                    Y8950WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false, wait);
                     //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
+                    Y8950WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false, wait);
+                    Y8950WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false, wait);
                 }
                 else
                 {
                     //メモリのタイプ指定。256Kbit
-                    YMF262WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false);
+                    Y8950WriteData(comPortY8950, 0x08, 0, slot, 0, 0, 0x00, false, wait);
                     //START
-                    YMF262WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false);
+                    Y8950WriteData(comPortY8950, 0x09, 0, slot, 0, 0, (byte)(saddr & 0xff), false, wait);
+                    Y8950WriteData(comPortY8950, 0x0a, 0, slot, 0, 0, (byte)((saddr >> 8) & 0xff), false, wait);
                     //STOP
-                    YMF262WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false);
-                    YMF262WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false);
+                    Y8950WriteData(comPortY8950, 0x0b, 0, slot, 0, 0, (byte)(eaddr & 0xff), false, wait);
+                    Y8950WriteData(comPortY8950, 0x0c, 0, slot, 0, 0, (byte)((eaddr >> 8) & 0xff), false, wait);
                 }
             }
 
@@ -3002,7 +3011,7 @@ namespace zanac.VGMPlayer
             int lastPercentage = 0;
             for (int i = 0; i < transferData.Length; i++)
             {
-                YMF262WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true);
+                Y8950WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true, wait);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -3046,9 +3055,9 @@ namespace zanac.VGMPlayer
             FormMain.TopForm.SetStatusText("Y8950: Transferred ADPCM");
 
             //○リセット
-            YMF262WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false);
+            Y8950WriteData(comPortY8950, 0x04, 0, slot, 0, 0, (byte)0x80, false, wait);
             //$07レジスタリセット
-            YMF262WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false);
+            Y8950WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false, wait);
         }
 
         /// <summary>
@@ -3619,6 +3628,22 @@ namespace zanac.VGMPlayer
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private void abort()
+        {
+            comPortDCSG?.Abort();
+            comPortOPLL?.Abort();
+            comPortOPN2?.Abort();
+            comPortSCC?.Abort();
+            comPortY8910?.Abort();
+            comPortOPM?.Abort();
+            comPortOPL3?.Abort();
+            comPortOPNA?.Abort();
+            comPortY8950?.Abort();
+            comPortOPN?.Abort();
+        }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
 

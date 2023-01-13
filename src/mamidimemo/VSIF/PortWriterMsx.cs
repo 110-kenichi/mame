@@ -223,17 +223,7 @@ namespace zanac.MAmidiMEmo.VSIF
         {
             wait = (int)(VsifManager.FTDI_BAUDRATE_MSX_MUL * wait) / 100;
 
-            var osd = sendData.ToArray();
-            byte[] sd = new byte[osd.Length * (int)wait];
-            unsafe
-            {
-                for (int i = 0; i < osd.Length; i++)
-                {
-                    fixed (byte* bp = &sd[i * (int)wait])
-                        MemSet(new IntPtr(bp), osd[i], (int)wait);
-                }
-            }
-            SendData(sd);
+            SendData(sendData, wait);
         }
 
     }
