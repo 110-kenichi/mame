@@ -27,10 +27,10 @@ namespace zanac.VGMPlayer
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 200;
 
-        //public const int FTDI_BAUDRATE_MSX = 9600 / 16;
         //public const int FTDI_BAUDRATE_MSX = 66000;
         public const int FTDI_BAUDRATE_MSX = 38400 / 16;
-        public const int FTDI_BAUDRATE_MSX_MUL = 200;
+        public const int FTDI_BAUDRATE_MSX_MUL = 100;
+        //public const int FTDI_BAUDRATE_MSX_MUL = 200;
 
         private static object lockObject = new object();
 
@@ -188,11 +188,13 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
+                                    //ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
                                     //uint rate = (uint)Settings.Default.VGMWait;
                                     //if (rate < 1)
                                     //    rate = 1;
                                     //ftdi.SetBaudRate(rate);
+                                    //ftdi.SetBaudRate(rate);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 

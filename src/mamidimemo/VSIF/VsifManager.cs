@@ -34,7 +34,6 @@ namespace zanac.MAmidiMEmo.VSIF
         public const int FTDI_BAUDRATE_C64 = 31250 / 16;
         public const int FTDI_BAUDRATE_C64_MUL = 200;
 
-        //public const int FTDI_BAUDRATE_MSX = 9600 / 16;
         public const int FTDI_BAUDRATE_MSX = 38400 / 16;
         public const int FTDI_BAUDRATE_MSX_MUL = 100;
 

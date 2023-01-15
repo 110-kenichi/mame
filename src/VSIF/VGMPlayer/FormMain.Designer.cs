@@ -374,6 +374,7 @@ namespace zanac.VGMPlayer
             this.label10.TabIndex = 1;
             this.label10.Text = "Cmd Wait [Samples]:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10.Visible = false;
             // 
             // numericUpDown3
             // 
@@ -389,6 +390,7 @@ namespace zanac.VGMPlayer
             this.numericUpDown3.Size = new System.Drawing.Size(160, 22);
             this.numericUpDown3.TabIndex = 2;
             this.numericUpDown3.Value = global::zanac.VGMPlayer.Properties.Settings.Default.VGMWait;
+            this.numericUpDown3.Visible = false;
             // 
             // tableLayoutPanel4
             // 
@@ -4386,7 +4388,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.35";
+            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.36";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

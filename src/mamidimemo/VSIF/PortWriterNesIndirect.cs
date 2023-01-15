@@ -61,9 +61,6 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
-        [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
-        private static extern IntPtr MemSet(IntPtr dest, int c, int count);
-
         private void sendData(byte[] sendData, int wait)
         {
             wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * wait) / 100;
