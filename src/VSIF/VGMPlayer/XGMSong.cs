@@ -722,7 +722,7 @@ namespace zanac.VGMPlayer
                                                     break;
 
                                                 //ignore test and unknown registers
-                                                if (adrs < 0x30 && adrs != 0x22 && adrs != 0x27 && adrs != 0x28)
+                                                if (adrs < 0x30 && adrs != 0x22 && adrs != 0x27 && adrs != 0x28 && adrs != 0x2a && adrs != 0x2b)
                                                     break;
                                                 if (adrs > 0xb6)
                                                     break;
@@ -733,7 +733,8 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                    if (adrs != 0x2a || adrs != 0x2b)
+                                                        deferredWriteOPNA_P0(adrs, dt, dclk);
                                                 }
                                             }
                                         }
