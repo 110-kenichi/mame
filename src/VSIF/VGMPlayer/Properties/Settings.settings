@@ -11,7 +11,7 @@
     <Setting Name="OPLL_Port" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="OPNA2_Port" Type="System.Int32" Scope="User">
+    <Setting Name="OPN2_Port" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Loop" Type="System.Boolean" Scope="User">
@@ -20,13 +20,13 @@
     <Setting Name="OPLL_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="OPNA2_IF" Type="System.Int32" Scope="User">
+    <Setting Name="OPN2_IF" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OPLL_Enable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="OPNA2_Enable" Type="System.Boolean" Scope="User">
+    <Setting Name="OPN2_Enable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DCSG_Enable" Type="System.Boolean" Scope="User">
@@ -36,7 +36,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="BitBangWaitDCSG" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">6</Value>
+      <Value Profile="(Default)">8</Value>
     </Setting>
     <Setting Name="FocusedItem" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
@@ -53,8 +53,8 @@
     <Setting Name="SCC_Enable" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="BitBangWaitOPNA2" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">6</Value>
+    <Setting Name="BitBangWaitOPN2" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">8</Value>
     </Setting>
     <Setting Name="BitBangWaitOPLL" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">15</Value>

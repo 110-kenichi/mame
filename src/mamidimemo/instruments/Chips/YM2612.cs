@@ -221,13 +221,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             PrepareSound();
         }
 
-        private int f_ftdiClkWidth = 8;
+        private int f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(8)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {
@@ -239,6 +238,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 f_ftdiClkWidth = value;
             }
+        }
+
+        public bool ShouldSerializeFtdiClkWidth()
+        {
+            switch (f_SoundEngineType)
+            {
+                case SoundEngineType.VSIF_MSX_FTDI:
+                case SoundEngineType.VSIF_P6_FTDI:
+                    return f_ftdiClkWidth != VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;
+            }
+            return f_ftdiClkWidth != VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
+
+        public void ResetFtdiClkWidth()
+        {
+            switch (f_SoundEngineType)
+            {
+                case SoundEngineType.VSIF_MSX_FTDI:
+                case SoundEngineType.VSIF_P6_FTDI:
+                    f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;
+                    return;
+            }
+            f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
         }
 
         /// <summary>

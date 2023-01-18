@@ -195,7 +195,7 @@ namespace zanac.VGMPlayer
             stopwatch = new Stopwatch();
 
             Thread t = new Thread(new ThreadStart(StreamSong));
-            t.Priority = ThreadPriority.AboveNormal;
+            t.Priority = ThreadPriority.Highest;
             t.Start();
             playTicTimer.Start();
             stopwatch.Start();

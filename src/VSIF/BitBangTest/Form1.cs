@@ -19,6 +19,8 @@ namespace BitBangTest
         public Form1()
         {
             InitializeComponent();
+
+            numericUpDown1_ValueChanged(null, null);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -37,7 +39,10 @@ namespace BitBangTest
             {
                 ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                 ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                ftdi.SetBaudRate((uint)numericUpDownBps.Value);
+
+                double rate = Math.Round(3000000d / ((double)numericUpDownDiv1.Value + (double)numericUpDownDiv2.Value));
+                ftdi.SetBaudRate((uint)rate);
+
                 ftdi.SetTimeouts(500, 500);
                 ftdi.SetLatency(0);
                 List<byte> sd = new List<byte>();
@@ -57,6 +62,38 @@ namespace BitBangTest
 
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
+
+        protected void SendData(FTDI ftdi, byte[] sendData, int wait)
+        {
+            var rawSendData = new byte[sendData.Length * (int)wait];
+            unsafe
+            {
+                fixed (byte* sdp = rawSendData)
+                {
+                    byte* tsdp = sdp;
+                    foreach (var data in sendData)
+                    {
+                        for (int j = 0; j < wait; j++)
+                            *tsdp++ = data;
+                        //MemSet((IntPtr)bp, dt, (int)wait);
+                        //tsdp += (int)wait;
+                    }
+                }
+            }
+
+            var sendBuffer = new Span<byte>(rawSendData);
+            while (true)
+            {
+                uint writtenBytes = 0;
+                var stat = ftdi.Write(sendBuffer.ToArray(), sendBuffer.Length, ref writtenBytes);
+                if (stat != FTDI.FT_STATUS.FT_OK)
+                    break;
+                if (sendBuffer.Length == writtenBytes)
+                    break;
+
+                sendBuffer = sendBuffer.Slice((int)writtenBytes, (int)(sendBuffer.Length - writtenBytes));
+            }
+        }
 
         private void sendData(FTDI ftdi, byte[] sendData, int wait)
         {
@@ -124,6 +161,12 @@ namespace BitBangTest
                     sd = nsd;
                 }
             }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            double rate = Math.Round(3000000d / ((double)numericUpDownDiv1.Value + (double)numericUpDownDiv2.Value));
+            textBoxBaudrate.Text = ((uint)rate).ToString();
         }
     }
 }

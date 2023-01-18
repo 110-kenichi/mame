@@ -21,16 +21,12 @@ namespace zanac.VGMPlayer
         //http://analoghome.blogspot.com/2017/08/ftdi-ft232r-usb-to-serial-bridge.html
         //The maximum BAUD rate for the FT232R chip is 3M BAUD
 
-        public const int FTDI_BAUDRATE_GEN = 115200 / 16;
-        public const int FTDI_BAUDRATE_GEN_MUL = 200;
+        public const int FTDI_BAUDRATE_GEN = 272727;
 
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
-        public const int FTDI_BAUDRATE_NES_MUL = 200;
+        public const int FTDI_BAUDRATE_NES_MUL = 100;
 
-        //public const int FTDI_BAUDRATE_MSX = 66000;
-        public const int FTDI_BAUDRATE_MSX = 38400 / 16;
-        public const int FTDI_BAUDRATE_MSX_MUL = 100;
-        //public const int FTDI_BAUDRATE_MSX_MUL = 200;
+        public const int FTDI_BAUDRATE_MSX = 96774;
 
         private static object lockObject = new object();
 
@@ -157,7 +153,8 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_GEN * FTDI_BAUDRATE_GEN_MUL);
+                                    //ftdi.SetBaudRate(FTDI_BAUDRATE_GEN * FTDI_BAUDRATE_GEN_MUL);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_GEN);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -188,12 +185,6 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    //ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
-                                    //uint rate = (uint)Settings.Default.VGMWait;
-                                    //if (rate < 1)
-                                    //    rate = 1;
-                                    //ftdi.SetBaudRate(rate);
-                                    //ftdi.SetBaudRate(rate);
                                     ftdi.SetBaudRate(FTDI_BAUDRATE_MSX);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);

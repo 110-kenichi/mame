@@ -62,12 +62,12 @@ namespace zanac.VGMPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OPNA2_Port {
+        public int OPN2_Port {
             get {
-                return ((int)(this["OPNA2_Port"]));
+                return ((int)(this["OPN2_Port"]));
             }
             set {
-                this["OPNA2_Port"] = value;
+                this["OPN2_Port"] = value;
             }
         }
         
@@ -98,12 +98,12 @@ namespace zanac.VGMPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int OPNA2_IF {
+        public int OPN2_IF {
             get {
-                return ((int)(this["OPNA2_IF"]));
+                return ((int)(this["OPN2_IF"]));
             }
             set {
-                this["OPNA2_IF"] = value;
+                this["OPN2_IF"] = value;
             }
         }
         
@@ -122,12 +122,12 @@ namespace zanac.VGMPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OPNA2_Enable {
+        public bool OPN2_Enable {
             get {
-                return ((bool)(this["OPNA2_Enable"]));
+                return ((bool)(this["OPN2_Enable"]));
             }
             set {
-                this["OPNA2_Enable"] = value;
+                this["OPN2_Enable"] = value;
             }
         }
         
@@ -156,7 +156,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
         public decimal BitBangWaitDCSG {
             get {
                 return ((decimal)(this["BitBangWaitDCSG"]));
@@ -228,13 +228,13 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6")]
-        public decimal BitBangWaitOPNA2 {
+        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        public decimal BitBangWaitOPN2 {
             get {
-                return ((decimal)(this["BitBangWaitOPNA2"]));
+                return ((decimal)(this["BitBangWaitOPN2"]));
             }
             set {
-                this["BitBangWaitOPNA2"] = value;
+                this["BitBangWaitOPN2"] = value;
             }
         }
         

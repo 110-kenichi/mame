@@ -227,13 +227,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private int f_ftdiClkWidth = 15;
+        private int f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue(15)]
+        [DefaultValue(VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH)]
         [Description("Set FTDI Clock Width[%].")]
         public int FtdiClkWidth
         {

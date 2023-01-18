@@ -35,7 +35,7 @@ namespace zanac.VGMPlayer
 
             comboBoxDCSG.SelectedIndex = 0;
             comboBoxOPLL.SelectedIndex = 0;
-            comboBoxOPNA2.SelectedIndex = 0;
+            comboBoxOPN2.SelectedIndex = 0;
             comboBoxSCC.SelectedIndex = 0;
             comboBoxSccType.SelectedIndex = 0;
             comboBoxSccSlot.SelectedIndex = 1;
@@ -60,7 +60,7 @@ namespace zanac.VGMPlayer
 
             checkBoxConnDCSG.Checked = false;
             checkBoxConnOPLL.Checked = false;
-            checkBoxConnOPNA2.Checked = false;
+            checkBoxConnOPN2.Checked = false;
             checkBoxConnSCC.Checked = false;
             checkBoxConnY8910.Checked = false;
             checkBoxConnOPM.Checked = false;
@@ -68,12 +68,6 @@ namespace zanac.VGMPlayer
             checkBoxConnOPNA.Checked = false;
             checkBoxConnY8950.Checked = false;
             checkBoxConnOPN.Checked = false;
-
-            //checkBoxConnDCSG_CheckedChanged(null, null);
-            //checkBoxConnOPLL_CheckedChanged(null, null);
-            //checkBoxConnOPNA2_CheckedChanged(null, null);
-            //checkBoxConnSCC_CheckedChanged(null, null);
-            //checkBoxConnY8910_CheckedChanged(null, null);
 
             try
             {
@@ -737,36 +731,36 @@ namespace zanac.VGMPlayer
 
         private VsifClient comPortOPN2;
 
-        private void checkBoxConnOPNA2_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxConnOPN2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxConnOPNA2.Checked)
+            if (checkBoxConnOPN2.Checked)
             {
-                switch (Settings.Default.OPNA2_IF)
+                switch (Settings.Default.OPN2_IF)
                 {
                     case 0:
                         comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                            (PortId)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPN2_Port, false);
                         break;
                     case 1:
                         comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                            (PortId)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPN2_Port, false);
                         break;
                     case 2:
                         comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                            (PortId)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPN2_Port, false);
                         break;
                     case 3:
                         comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                            (PortId)Settings.Default.OPNA2_Port, false);
+                            (PortId)Settings.Default.OPN2_Port, false);
                         break;
                 }
-                checkBoxConnOPNA2.Checked = comPortOPN2 != null;
-                comboBoxOPNA2.Enabled = comPortOPN2 == null;
+                checkBoxConnOPN2.Checked = comPortOPN2 != null;
+                comboBoxOPN2.Enabled = comPortOPN2 == null;
                 comboBoxPortYM2612.Enabled = comPortOPN2 == null;
             }
             else
             {
-                comboBoxOPNA2.Enabled = true;
+                comboBoxOPN2.Enabled = true;
                 comboBoxPortYM2612.Enabled = true;
                 comPortOPN2?.Dispose();
             }

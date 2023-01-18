@@ -25,17 +25,18 @@ namespace zanac.MAmidiMEmo.VSIF
         //http://analoghome.blogspot.com/2017/08/ftdi-ft232r-usb-to-serial-bridge.html
         //The maximum BAUD rate for the FT232R chip is 3M BAUD
 
-        public const int FTDI_BAUDRATE_GEN = 115200 / 16;
-        public const int FTDI_BAUDRATE_GEN_MUL = 100;
+        public const int FTDI_BAUDRATE_GEN = 272727;
+        public const int FTDI_BAUDRATE_GEN_CLK_WIDTH = 8;
 
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 100;
+        public const int FTDI_BAUDRATE_NES_CLK_WIDTH = 15;
 
-        public const int FTDI_BAUDRATE_C64 = 31250 / 16;
-        public const int FTDI_BAUDRATE_C64_MUL = 200;
+        public const int FTDI_BAUDRATE_C64 = 73171;
+        public const int FTDI_BAUDRATE_C64_CLK_WIDTH = 25;
 
-        public const int FTDI_BAUDRATE_MSX = 38400 / 16;
-        public const int FTDI_BAUDRATE_MSX_MUL = 100;
+        public const int FTDI_BAUDRATE_MSX = 96774;
+        public const int FTDI_BAUDRATE_MSX_CLK_WIDTH = 15;
 
         private static object lockObject = new object();
 
@@ -145,7 +146,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_GEN * FTDI_BAUDRATE_GEN_MUL);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_GEN);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -171,7 +172,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX * FTDI_BAUDRATE_MSX_MUL);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -229,7 +230,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_C64 * FTDI_BAUDRATE_C64_MUL);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_C64);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
                                     {

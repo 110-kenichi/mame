@@ -6,13 +6,19 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Baudrate" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">31250</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="Num" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="ClkWidth" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="Divider1" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="Divider2" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

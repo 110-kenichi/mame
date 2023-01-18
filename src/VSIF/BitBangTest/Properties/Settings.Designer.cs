@@ -37,7 +37,7 @@ namespace BitBangTest.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("31250")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public decimal Baudrate {
             get {
                 return ((decimal)(this["Baudrate"]));
@@ -68,6 +68,30 @@ namespace BitBangTest.Properties {
             }
             set {
                 this["ClkWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public decimal Divider1 {
+            get {
+                return ((decimal)(this["Divider1"]));
+            }
+            set {
+                this["Divider1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal Divider2 {
+            get {
+                return ((decimal)(this["Divider2"]));
+            }
+            set {
+                this["Divider2"] = value;
             }
         }
     }

@@ -90,7 +90,7 @@ namespace zanac.VGMPlayer
 
             autoResetEvent = new AutoResetEvent(false);
             writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
-            writeThread.Priority = ThreadPriority.Highest;
+            writeThread.Priority = ThreadPriority.AboveNormal;
             writeThread.Start();
 
             for (int i = 0; i < 0x1ff; i++)
