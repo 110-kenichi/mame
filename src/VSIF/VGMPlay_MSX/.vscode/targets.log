@@ -1,0 +1,449 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.82
+# Built for i686-pc-mingw32
+# Copyright (C) 2010  Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Tue Aug 16 22:47:18 2022
+
+# Variables
+
+# environment
+POWERSHELL_DISTRIBUTION_CHANNEL = MSI:Windows 10 Pro
+# automatic
+?F = $(notdir $?)
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# default
+.SHELLFLAGS := -c
+# makefile
+MAKEFLAGS = Rrqp
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+HOMEDRIVE = C:
+# automatic
+@F = $(notdir $@)
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# makefile
+CURDIR := e:/mame_src/mami_dev/mame/src/VSIF/VGMPlay_MSX
+# default
+SHELL := sh.exe
+# environment
+WINDIR = C:\WINDOWS
+# environment
+VSCODE_NLS_CONFIG = {"locale":"ja","availableLanguages":{"*":"ja"},"_languagePackId":"e6c586e25df759b7fd1d7a26b78d86d4.ja","_translationsConfigFile":"C:\\Users\\zanac2\\AppData\\Roaming\\Code\\clp\\e6c586e25df759b7fd1d7a26b78d86d4.ja\\tcf.json","_cacheRoot":"C:\\Users\\zanac2\\AppData\\Roaming\\Code\\clp\\e6c586e25df759b7fd1d7a26b78d86d4.ja","_resolvedLanguagePackCoreLocation":"C:\\Users\\zanac2\\AppData\\Roaming\\Code\\clp\\e6c586e25df759b7fd1d7a26b78d86d4.ja\\6d9b74a70ca9c7733b29f0456fd8195364076dda","_corruptedFile":"C:\\Users\\zanac2\\AppData\\Roaming\\Code\\clp\\e6c586e25df759b7fd1d7a26b78d86d4.ja\\corrupted.info","_languagePackSupport":true}
+# makefile (from `Makefile', line 5)
+CFLAGS = -c -mz80 --std-c2x --opt-code-speed --debug 
+# environment
+ONEDRIVE = C:\Users\zanac2\OneDrive
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+# makefile (from `depend.inc', line 1)
+MAKEFILE_LIST :=  Makefile depend.inc
+# environment
+FPS_BROWSER_USER_PROFILE_STRING = Default
+# environment
+TMP = C:\Users\zanac2\AppData\Local\Temp
+# environment
+PROGRAMW6432 = C:\Program Files
+# makefile (from `Makefile', line 6)
+OBJS = main.rel player_code.rel 
+# environment
+PROGRAMDATA = C:\ProgramData
+# environment
+VSCODE_CWD = C:\WINDOWS\system32
+# makefile (from `Makefile', line 1)
+PATH := C:\Users\zanac2\AppData\Local\Vivaldi\Application;C:\Program Files (x86)\VMware\VMware Player\bin\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\Microsoft\jdk-11.0.12.7-hotspot\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\zanac2\AppData\Local\Microsoft\WindowsApps;C:\Users\zanac2\.dotnet\tools;C:\Users\zanac2\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\SDCC\bin;C:\adb;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\TortoiseGit\bin;C:\SysGCC\m68k-elf\bin;C:\Program Files\PowerShell\7\;C:\Users\zanac2\AppData\Local\Microsoft\WindowsApps;C:\Users\zanac2\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\zanac2\.dotnet\tools;C:\Program Files\SDCC\bin:"/mnt/c/Program Files/SDCC/bin"
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# environment
+USERPROFILE = C:\Users\zanac2
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+NUMBER_OF_PROCESSORS = 16
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine archives
+# automatic
+%F = $(notdir $%)
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_16480_GEBBWXHXTGOMDVWO
+# environment
+COMPUTERNAME = PC1
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERNAME = zanac2
+# environment
+PUBLIC = C:\Users\Public
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\zanac2\AppData\Roaming\Code\CachedData\6d9b74a70ca9c7733b29f0456fd8195364076dda
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# environment
+LOGONSERVER = \\PC1
+# environment
+ONEDRIVECONSUMER = C:\Users\zanac2\OneDrive
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+USERDOMAIN = PC1
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# makefile (from `Makefile', line 4)
+CC = sdcc.exe
+# default
+MAKE_VERSION := 3.82
+# makefile
+.DEFAULT_GOAL := all
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+LOCALAPPDATA = C:\Users\zanac2\AppData\Local
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+# default
+MAKE_COMMAND := make.exe
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+PROCESSOR_IDENTIFIER = AMD64 Family 23 Model 113 Stepping 0, AuthenticAMD
+# environment
+OS = Windows_NT
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\307a0163040699e9f56d00ff7833f198-1.70.1-main-sock
+# makefile (from `Makefile', line 3)
+PROGRAM = VGMPlay_msx.rom
+# environment
+HOMEPATH = \Users\zanac2
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+PROMPT = $P$G
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+SYSTEMROOT = C:\WINDOWS
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+APPDATA = C:\Users\zanac2\AppData\Roaming
+# environment
+TEMP = C:\Users\zanac2\AppData\Local\Temp
+# environment
+AMDRMPATH = C:\Program Files\AMD\RyzenMaster\
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+SYSTEMDRIVE = C:
+# environment
+SESSIONNAME = Console
+# environment
+PROCESSOR_REVISION = 7100
+# default
+.RECIPEPREFIX := 
+# environment
+LANG = C
+# environment
+PROCESSOR_LEVEL = 23
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
+# environment
+VSCODE_PID = 16480
+# environment
+CHROME_RESTART = Vivaldi|�G���[: Vivaldi �Ŗ�肪�������܂����B�������ċN�����܂����H|LEFT_TO_RIGHT
+# environment
+USERDOMAIN_ROAMINGPROFILE = PC1
+# variable set hash-table stats:
+# Load=93/1024=9%, Rehash=0, Collisions=15/122=12%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# \Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C: could not be stat'd.
+# \Program Files\Microsoft SQL Server\150\Tools\Binn\;C: could not be stat'd.
+# \Program Files (x86)\NVIDIA Corporation\PhysX\Common;C: could not be stat'd.
+# \Program Files\Git\cmd;C: could not be stat'd.
+# \WINDOWS\System32\OpenSSH\;C: could not be stat'd.
+# \Users\zanac2\AppData\Local\Programs\Microsoft VS Code\bin;C: could not be stat'd.
+# \Program Files (x86)\VMware\VMware Player\bin\;C: could not be stat'd.
+# \Users\zanac2\.dotnet\tools;C: could not be stat'd.
+# . (key e:/mame_src/mami_dev/mame/src/VSIF/VGMPlay_MSX, mtime 1660052793): 30 files, no impossibilities.
+# \WINDOWS;C: could not be stat'd.
+# C: could not be stat'd.
+# \Program Files\Microsoft\jdk-11.0.12.7-hotspot\bin;C: could not be stat'd.
+# "/mnt/c/Program Files/SDCC/bin": could not be stat'd.
+# \WINDOWS\System32\Wbem;C: could not be stat'd.
+# \adb;C: could not be stat'd.
+# \Program Files\SDCC\bin;C: could not be stat'd.
+# \Program Files\dotnet\;C: could not be stat'd.
+# \Program Files\TortoiseGit\bin;C: could not be stat'd.
+# \Program Files\PowerShell\7\;C: could not be stat'd.
+# \WINDOWS\system32;C: could not be stat'd.
+# \Users\zanac2\AppData\Local\Vivaldi\Application;C: could not be stat'd.
+# \Program Files\SDCC\bin: could not be stat'd.
+# \SysGCC\m68k-elf\bin;C: could not be stat'd.
+# \Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C: could not be stat'd.
+# \WINDOWS\System32\WindowsPowerShell\v1.0\;C: could not be stat'd.
+# \Users\zanac2\AppData\Local\Microsoft\WindowsApps;C: could not be stat'd.
+# \Program Files (x86)\Common Files\Oracle\Java\javapath;C: could not be stat'd.
+# \Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C: could not be stat'd.
+# \Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C: could not be stat'd.
+
+# 30 files, no impossibilities in 29 directories.
+
+# Implicit Rules
+
+%.c:
+
+%.rel: %.c
+#  recipe to execute (from `Makefile', line 31):
+	$(CC) $(CFLAGS) $<
+
+%.rel:
+
+%.asm:
+
+# 4 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+uart-4800.rel: uart-4800.asm
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 29):
+	sdasz80.exe -y -o uart-4800.rel uart-4800.asm
+
+all: depend VGMPlay_msx.rom
+#  Phony target (prerequisite of .PHONY).
+#  Command line target.
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/3=0%
+
+.PHONY: all run clean depend
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+uart-4800.asm:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+main.c:
+#  Implicit rule search has been done.
+#  Last modified 2021-08-14 17:24:12
+#  File has been updated.
+#  Successfully updated.
+
+.c.rel:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 31):
+	$(CC) $(CFLAGS) $<
+
+.SUFFIXES: .c .rel .asm
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2021-08-15 17:17:00
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+main.h:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+player_code.rel:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+depend.inc:
+#  Implicit rule search has been done.
+#  Last modified 2022-08-09 22:46:34
+#  File has been updated.
+#  Successfully updated.
+
+VGMPlay_msx.rom: main.rel player_code.rel uart-4800.rel
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 16):
+	$(CC) -o VGMPlay_msx.hex -mz80 --no-std-crt0 --code-loc 0x4010 --data-loc 0x7000 $^
+	./hex2rom.exe VGMPlay_msx.hex VGMPlay_msx.rom
+	./ihx2bin.exe VGMPlay_msx.hex VGMPlay_msx.bin
+	cmd.exe /C copy.bat
+
+# Not a target:
+.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+depend: main.c player_code.c
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: `'
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := depend
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := main.c player_code.c
+# automatic
+# | := 
+# automatic
+# < := main.c
+# automatic
+# ^ := main.c player_code.c
+# automatic
+# ? := main.c player_code.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/12=8%
+#  recipe to execute (from `Makefile', line 39):
+	-@ rm depend.inc
+	-@ for i in $^; do cpp -MM $$i | sed "s/\ [_a-zA-Z0-9][_a-zA-Z0-9]*\.c//g" >> depend.inc; done
+
+# Not a target:
+main.rel:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+player_code.o: main.h
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+run:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 24):
+	cmd.exe /C copy.bat
+	/mnt/e/Emu/blueMSX/blueMSX.exe "E:\mame_src\mami_dev\mame\src\VSIF\VGMPlay_MSX\VGMPlay_msx.rom"
+
+clean:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  recipe to execute (from `Makefile', line 35):
+	rm $(PROGRAM) $(OBJS) *.lst *.sym *.asm
+
+main.o: main.h
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.rel:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+player_code.c:
+#  Implicit rule search has been done.
+#  Last modified 2021-08-17 17:32:22
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.asm:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=23/1024=2%, Rehash=0, Collisions=1/68=1%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 0 / lookups = 117 / hits = 117
+# # of strcache buffers: 1 (* 8176 B/buffer = 8176 B)
+# strcache used: total = 0 (1523) / max = 0 / min = 8176 / avg = 0
+# strcache free: total = 0 (6653) / max = 0 / min = 8176 / avg = 0
+
+# strcache hash-table stats:
+# Load=74/8192=1%, Rehash=0, Collisions=6/117=5%
+# Finished Make data base on Tue Aug 16 22:47:18 2022
+
+ 

@@ -1,0 +1,82 @@
+;
+; YMF724OPL3.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=MEDIA ; TODO: specify appropriate Class
+ClassGuid={4D36E96C-E325-11CE-BFC1-08002BE10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=YMF724OPL3.cat
+DriverVer = 02/21/2022,10.6.43.888
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+;YMF724OPL3_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+YMF724OPL3.sys  = 1,,
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, Root\YMF724OPL3 ; TODO: edit hw-id
+
+[YMF724OPL3_Device.NT]
+Include=YMF724OPL3.inf
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+YMF724OPL3.sys
+
+;-------------- Service installation
+[DefaultInstall.Services]
+AddService = YMF724OPL3,%SPSVCINST_ASSOCSERVICE%, YMF724OPL3_Service_Inst
+
+[YMF724OPL3_Device.NT.Services]
+AddService = YMF724OPL3,%SPSVCINST_ASSOCSERVICE%, YMF724OPL3_Service_Inst
+
+; -------------- YMF724OPL3 driver install sections
+[YMF724OPL3_Service_Inst]
+DisplayName    = %YMF724OPL3.DeviceDesc%
+Description    = %YMF724OPL3.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 1               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\YMF724OPL3.sys
+
+;
+;--- YMF724OPL3_Device Coinstaller installation ------
+;
+
+;[YMF724OPL3_Device.NT.CoInstallers]
+;AddReg=YMF724OPL3_Device_CoInstaller_AddReg
+;CopyFiles=YMF724OPL3_Device_CoInstaller_CopyFiles
+
+;[YMF724OPL3_Device_CoInstaller_AddReg]
+;HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+;[YMF724OPL3_Device_CoInstaller_CopyFiles]
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[YMF724OPL3_Device.NT.Wdf]
+KmdfService =  YMF724OPL3, YMF724OPL3_wdfsect
+[YMF724OPL3_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="itokwn" ;TODO: Replace with your manufacturer name
+DiskName = "YMF724 OPL3 Installation Disk"
+YMF724OPL3.DeviceDesc = "YMF724 OPL3 Device"
+YMF724OPL3.SVCDESC = "YMF724 OPL3 Service"

@@ -673,10 +673,10 @@
       <Link>VGM_P6.ROM</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Data\cm32p_user_internal_tone.tbl">
+    <None Include="Data\cm32p_user_internal_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\cm32p_user_card_tone.tbl">
+    <None Include="Data\cm32p_user_card_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Instruments\Chips\TMS5220_Data\Talkie-master\src\Vocab_Toms_Diner.cs" />

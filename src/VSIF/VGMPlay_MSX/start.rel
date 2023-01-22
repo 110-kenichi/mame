@@ -1,0 +1,16 @@
+XL3
+H 3 areas 2 global symbols
+M start
+S _main Ref000000
+S .__.ABS. Def000000
+A _CODE size 0 flags 0 addr 0
+A _ROM_HDR size 0 flags 8 addr 0
+A _ROM_HDR0 size 1D flags 8 addr 4000
+T 00 40 00
+R 00 00 02 00
+T 00 40 00 41 42 00 00 00 00 00 00 00 00 00 00
+R 00 00 02 00 02 05 00 00
+T 0C 40 00 00 00 00 00 45 4E 44 20 52 4F 4D 48 45
+R 00 00 02 00
+T 19 40 00 41 44 45 52
+R 00 00 02 00

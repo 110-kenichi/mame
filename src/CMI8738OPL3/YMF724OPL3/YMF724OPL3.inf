@@ -1,0 +1,152 @@
+;
+; YMF724OPL3.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=MEDIA ; TODO: specify appropriate Class
+ClassGuid={4D36E96C-E325-11CE-BFC1-08002BE10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=YMF724OPL3.cat
+DriverVer=02/21/2022,1.00.00.00 ; TODO: set DriverVer in stampinf property pages
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+;YMF724OPL3_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+YMF724OPL3.sys  = 1,,
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+;%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, *PNPB020
+; <Generic SSID&SSVID Settings>
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0004&SUBSYS_00041073 ; YMF724E(DS-1)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0005&SUBSYS_00051073 ; 
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0006&SUBSYS_00061073 ;
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0008&SUBSYS_00081073 ;
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000A&SUBSYS_000A1073 ; YMF740A(DS-1L)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000C&SUBSYS_000C1073 ; YMF740C(DS-1L)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000D&SUBSYS_000D1073 ; YMF724F(DS-1)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0010&SUBSYS_00101073 ; YMF744B(DS-1S)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0012&SUBSYS_00121073 ; YMF754(DS-1E)
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0020&SUBSYS_00201073 ;
+
+;-----------------------------
+;YMF724 and OEMs
+;-----------------------------
+;Intel and Intel OEMs
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000D&SUBSYS_41528086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000D&SUBSYS_53458086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0004&SUBSYS_41528086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0004&SUBSYS_53458086
+;Labway
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000D&SUBSYS_47501483
+;AOpen
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000D&SUBSYS_0005A0A0
+;-----------------------------
+;YMF40 and OEMs
+;-----------------------------
+;Intel and Intel OEMs
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000C&SUBSYS_4D558086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000C&SUBSYS_53328086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000C&SUBSYS_53458086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000C&SUBSYS_41428086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000A&SUBSYS_4D558086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000A&SUBSYS_53328086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000A&SUBSYS_53458086
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_000A&SUBSYS_41428086
+;-----------------------------
+;YMF744 and OEMs
+;-----------------------------
+;Gateway
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0010&SUBSYS_2550107b
+;Labway
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0010&SUBSYS_52101483
+;-----------------------------
+;YMF754 and OEMs
+;-----------------------------
+;Labway
+%YMF724OPL3.DeviceDesc%=YMF724OPL3_Device, PCI\VEN_1073&DEV_0012&SUBSYS_4E601483
+
+
+
+[YMF724OPL3_Device.NT]
+Include=YMF724OPL3.inf
+CopyFiles=Drivers_Dir
+
+;[YMF724OPL3_Device.NT.LogConfigOverride]
+;LogConfig=YMF724OPL3.LC2
+
+[Drivers_Dir]
+YMF724OPL3.sys
+
+
+;[YMF724OPL3.FactDef]
+;;ConfigPriority=HARDWIRED
+;ConfigPriority=NORMAL
+;;IOConfig=220-22f
+;IOConfig=388-38b
+;;IOConfig=330-331
+
+;[YMF724OPL3.LC2]
+;;ConfigPriority=HARDRECONFIG
+;ConfigPriority=NORMAL
+;;IOConfig=220-22f,240-24f,260-26f,280-28f(3ff::)
+;;IOConfig=388-38b,398-39b,3a0-3a3,3a8-3ab(3ff::)
+;IOConfig=388-38b,398-39b,3a0-3a3,3a8-3ab(ffff::)
+;;IOConfig=330-331,300-301,332-333,334-335(3ff::)
+
+;-------------- Service installation
+[DefaultInstall.Services]
+AddService = YMF724OPL3,%SPSVCINST_ASSOCSERVICE%, YMF724OPL3_Service_Inst
+
+[YMF724OPL3_Device.NT.Services]
+AddService = YMF724OPL3,%SPSVCINST_ASSOCSERVICE%, YMF724OPL3_Service_Inst
+
+; -------------- YMF724OPL3 driver install sections
+[YMF724OPL3_Service_Inst]
+DisplayName    = %YMF724OPL3.DeviceDesc%
+Description    = %YMF724OPL3.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+;StartType      = 0               ; SERVICE_BOOT_START
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\YMF724OPL3.sys
+
+;
+;--- YMF724OPL3_Device Coinstaller installation ------
+;
+
+;[YMF724OPL3_Device.NT.CoInstallers]
+;AddReg=YMF724OPL3_Device_CoInstaller_AddReg
+;CopyFiles=YMF724OPL3_Device_CoInstaller_CopyFiles
+
+;[YMF724OPL3_Device_CoInstaller_AddReg]
+;HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+;[YMF724OPL3_Device_CoInstaller_CopyFiles]
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[YMF724OPL3_Device.NT.Wdf]
+KmdfService =  YMF724OPL3, YMF724OPL3_wdfsect
+[YMF724OPL3_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="itoken" ;TODO: Replace with your manufacturer name
+DiskName = "YMF724 OPL3 Installation Disk"
+YMF724OPL3.DeviceDesc = "YMF724 OPL3 Device"
+YMF724OPL3.SVCDESC = "YMF724 OPL3 Service"

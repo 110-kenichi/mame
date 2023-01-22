@@ -1,0 +1,14 @@
+-mjwx
+-i VGMPlay_msx_Vkey.hex
+-b _CODE = 0x4100
+-b _DATA = 0x5000
+-k C:\Program Files\SDCC\bin\..\lib\z80
+-l z80
+main_v.rel
+player_code.rel
+uart-4800.rel
+uart-4800_p2.rel
+SARCHFM.rel
+start.rel
+
+-e

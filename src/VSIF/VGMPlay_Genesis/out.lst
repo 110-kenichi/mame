@@ -1,0 +1,7 @@
+1   0000             
+2   0000             		ORG $0000
+3   0000             Init:
+4   0000 F3          		DI 				; disable ints
+5   0001 76          		HALT
+6   0002             LOOP:
+7   0002 C3 02 00    		JP	LOOP

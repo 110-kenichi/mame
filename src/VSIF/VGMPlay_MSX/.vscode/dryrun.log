@@ -1,0 +1,13 @@
+make.exe --dry-run --always-make --keep-going --print-directory
+make.exe: Entering directory `e:/mame_src/mami_dev/mame/src/VSIF/VGMPlay_MSX'
+rm depend.inc
+for i in main.c player_code.c; do cpp -MM $i | sed "s/\ [_a-zA-Z0-9][_a-zA-Z0-9]*\.c//g" >> depend.inc; done
+sdcc.exe -c -mz80 --std-c2x --opt-code-speed --debug  main.c
+sdcc.exe -c -mz80 --std-c2x --opt-code-speed --debug  player_code.c
+sdasz80.exe -y -o uart-4800.rel uart-4800.asm
+sdcc.exe -o VGMPlay_msx.hex -mz80 --no-std-crt0 --code-loc 0x4010 --data-loc 0x7000 main.rel player_code.rel uart-4800.rel
+./hex2rom.exe VGMPlay_msx.hex VGMPlay_msx.rom
+./ihx2bin.exe VGMPlay_msx.hex VGMPlay_msx.bin
+cmd.exe /C copy.bat
+make.exe: Leaving directory `e:/mame_src/mami_dev/mame/src/VSIF/VGMPlay_MSX'
+ 

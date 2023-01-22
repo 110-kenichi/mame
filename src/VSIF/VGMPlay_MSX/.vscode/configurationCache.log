@@ -1,0 +1,1 @@
+{"buildTargets":[".PHONY",".SUFFIXES",".c.rel","VGMPlay_msx.rom","all","clean","depend","main.o","player_code.o","run","uart-4800.rel"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}

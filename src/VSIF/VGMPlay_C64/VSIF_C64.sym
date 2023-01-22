@@ -1,0 +1,27 @@
+.label get_data_Hi2=$8b7 {
+}
+.label get_data_Mid2=$8c9 {
+}
+.label data=$80e
+.label get_data_Lo2=$8db {
+}
+.label data2=$80f
+.label sprint=$8f5
+.label main=$810
+.label get_address_Hi=$85d {
+}
+.label get_address_Lo=$843
+.label wait_start_bit=$83c
+.label get_address_Mid=$84a {
+}
+.label text1=$906
+.label sprint02=$905
+.label get_data_Hi=$86f {
+}
+.label wait_next_data2=$8ae
+.label get_data_Mid=$881 {
+}
+.label get_data_Lo=$893 {
+}
+.label addr=$80d
+.label sprint01=$8fb

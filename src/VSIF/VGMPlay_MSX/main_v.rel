@@ -1,0 +1,85 @@
+;!FILE main_v.asm
+XL3
+H 9 areas 33 global symbols
+M main
+O -mz80
+S _processPlayer Ref000000
+S .__.ABS. Def000000
+A _CODE size 31 flags 0 addr 0
+S G$print$0$0 Def00001F
+S _main Def000000
+S G$putchar$0$0 Def00002C
+S _print Def00001F
+S XG$main$0$0 Def00001C
+S C$main.c$10$0_0$56 Def000000
+S A$main_v$110 Def000025
+S A$main_v$111 Def000028
+S A$main_v$102 Def000020
+S _putchar Def00002C
+S A$main_v$103 Def000021
+S C$main.c$52$1_0$61 Def00002C
+S A$main_v$104 Def000022
+S XG$print$0$0 Def00002A
+S A$main_v$123 Def00002A
+S A$main_v$105 Def000023
+S C$main.c$41$1_0$56 Def00001C
+S A$main_v$115 Def000029
+S C$main.c$42$1_0$56 Def00001C
+S C$main.c$24$1_0$56 Def000000
+S C$main.c$57$1_0$61 Def00002C
+S C$main.c$51$1_0$58 Def00002A
+S A$main_v$145 Def000030
+S A$main_v$136 Def00002C
+S A$main_v$109 Def000024
+S C$main.c$58$1_0$61 Def000030
+S A$main_v$137 Def00002D
+S C$main.c$44$1_0$58 Def00001F
+S C$main.c$46$1_0$58 Def000020
+S C$main.c$39$1_0$56 Def00000E
+S XG$putchar$0$0 Def000030
+S C$main.c$48$2_0$59 Def000024
+S C$main.c$49$2_0$59 Def000029
+S A$main_v$60 Def000004
+S A$main_v$70 Def00000E
+S A$main_v$61 Def000006
+S A$main_v$62 Def000008
+S A$main_v$63 Def000009
+S A$main_v$73 Def000011
+S A$main_v$64 Def00000B
+S A$main_v$74 Def000013
+S A$main_v$65 Def00000D
+S A$main_v$75 Def000016
+S A$main_v$76 Def000019
+S A$main_v$58 Def000000
+S A$main_v$59 Def000002
+S A$main_v$87 Def00001C
+S A$main_v$97 Def00001F
+S G$main$0$0 Def000000
+A _DATA size 0 flags 0 addr 0
+A _INITIALIZED size 0 flags 0 addr 0
+A _DABS size 0 flags 8 addr 0
+A _HOME size 0 flags 0 addr 0
+A _GSINIT size 0 flags 0 addr 0
+A _GSFINAL size 0 flags 0 addr 0
+A _INITIALIZER size 0 flags 0 addr 0
+A _CABS size 0 flags 8 addr 0
+T 00 00 00
+R 00 00 00 00
+T 00 00 00 DB AA E6 F0 F6 05 D3 AA 00 DB A9 E6 08
+R 00 00 00 00
+T 0D 00 00 C0 31 80 F3 3E 20 32 AE F3 CD 6C 00 CD
+R 00 00 00 00
+T 1A 00 00 C3 00 C3 00 00
+R 00 00 00 00 02 06 00 00
+T 1F 00 00
+R 00 00 00 00
+T 1F 00 00 EB
+R 00 00 00 00
+T 20 00 00
+R 00 00 00 00
+T 20 00 00 1A 6F B7 C8 D5 CD 2C 00 D1 13 18 F4
+R 00 00 00 00 00 09 00 00
+T 2C 00 00
+R 00 00 00 00
+T 2C 00 00 7D CD A2 00 C9
+R 00 00 00 00
