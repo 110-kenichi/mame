@@ -2,5 +2,5 @@
 # **You need to restart MAmidiMEmo to apply changes**
 # 1. 1st line: Specify the sound font file name.
 # 2. After the 2nd line: Specify <MIDI Bank No>:<MIDI Program No>,<SF Bank No>:<SF Prog No>
-# 3. Rename this file to the "cm32p_user_card_tone.tbl" from the "cm32p_user_card_tone_memo.tbl"
+# 3. Rename this file to the "cm32p_user_internal_tone.tbl" from the "cm32p_user_internal_tone_memo.tbl"
 # Please see existing tbl files
