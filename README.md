@@ -270,7 +270,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 4.5.8.0 Renamed CM-32P user soundfont table sample file name. You need to remove "_memo" from tbl file name to use properly.
         Changed MSX rom filename for for VSIF(FTDI) to VGM_msx*.rom from VGMPlay_msx*.rom.
-		Added wav file for VSIF(FTDI) for PC-6001.
+		Added tape(wav) files for VSIF(FTDI) for PC-6001.
+		Supported the m3u playlist file for VGMPlayer.
 4.5.7.2.1 Fixed VGMPlayer for YM2612 DAC.
 4.5.7.2 Improved VSIF(FTDI) transfer speed. Please re-adjust FTDI CLK.
 4.5.7.1 Fixed a minor bug.

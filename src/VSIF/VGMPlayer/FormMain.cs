@@ -69,6 +69,10 @@ namespace zanac.VGMPlayer
             checkBoxConnY8950.Checked = false;
             checkBoxConnOPN.Checked = false;
 
+            //HACK: To avoid layout glith
+            tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
+            tableLayoutPanelPort.Height = tableLayoutPanelPort.Height - 1;
+
             try
             {
                 listViewList.BeginUpdate();
@@ -90,6 +94,7 @@ namespace zanac.VGMPlayer
             {
                 listViewList.EndUpdate();
             }
+
         }
 
         protected override void WndProc(ref Message m)
@@ -272,6 +277,64 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private List<ListViewItem> readM3U(string m3uPath)
+        {
+
+            var playlist = new List<ListViewItem>();
+            bool ext = false;
+            string inf = "";
+            int nr = 0;
+            foreach (string line in File.ReadAllLines(m3uPath))
+            {
+                nr++;
+                if (line.ToLower() == "#extm3u")
+                    ext = true;
+                else if (ext && line.ToLower().StartsWith("#extinf:"))
+                    inf = line.Substring(8);
+                else if (line.StartsWith("#") || line == "")
+                    continue;
+                else
+                {
+                    string fp = line;
+
+                    string exts = Path.GetExtension(fp);
+                    switch (exts.ToUpper())
+                    {
+                        case ".VGM":
+                        case ".VGZ":
+                        case ".XGM":
+                        case ".KSS":
+                        case ".MGS":
+                            //string length = "";
+                            //string artist = "";
+                            //string title = "";
+                            //if (inf != "")
+                            //{
+                            //    if (!inf.Contains(","))
+                            //        continue;
+                            //    string[] split = inf.Split(',');
+                            //    length = split[0];
+                            //    if (split[1].Contains("-"))
+                            //    {
+                            //        artist = split[1].Split('-')[0];
+                            //        title = split[1].Split('-')[1];
+                            //    }
+                            //    else
+                            //        title = split[1];
+                            //}
+                            //string t = title;
+                            //if (!string.IsNullOrWhiteSpace(artist))
+                            //    t = artist + "," + t;
+                            //if (!string.IsNullOrWhiteSpace(length))
+                            //    t = length + "," + t;
+                            playlist.Add(new ListViewItem(Path.GetFullPath(Path.Combine(Path.GetDirectoryName(m3uPath), fp))));
+                            break;
+                    }
+                }
+            }
+            return playlist;
+        }
+
         private ListViewItem addAllFiles(IEnumerable<string> files, ListViewItem lvi)
         {
             foreach (var fileName in files)
@@ -291,6 +354,17 @@ namespace zanac.VGMPlayer
                             listViewList.Items.Add(lvi);
                             lvi.Selected = true;
                             break;
+                        case ".M3U":
+                            {
+                                var m3u = readM3U(fp);
+                                foreach (ListViewItem lvi2 in m3u)
+                                {
+                                    lvi = lvi2;
+                                    listViewList.Items.Add(lvi);
+                                    lvi.Selected = true;
+                                }
+                                break;
+                            }
                     }
                 }
                 if (Directory.Exists(fp))
@@ -1072,13 +1146,19 @@ namespace zanac.VGMPlayer
 
         private void buttonPlay_DragDrop(object sender, DragEventArgs e)
         {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            addFilesAndPlay(files);
+        }
+
+        private void addFilesAndPlay(string[] files)
+        {
             try
             {
                 listViewList.BeginUpdate();
 
                 listViewList.Items.Clear();
 
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
                 ListViewItem lvi = null;
                 try
                 {
@@ -1103,7 +1183,7 @@ namespace zanac.VGMPlayer
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Are you sure want to clear all list items?", "Confirmation", MessageBoxButtons.OKCancel);
+            DialogResult result = MessageBox.Show("Are you sure want to clear all list items?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
                 try
@@ -1265,6 +1345,57 @@ namespace zanac.VGMPlayer
         {
             if (currentSong != null)
                 currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
+        }
+
+
+        private void loadPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(openFileDialog.InitialDirectory))
+            {
+                if (String.IsNullOrEmpty(Settings.Default.LastDir) || !Directory.Exists(Settings.Default.LastDir))
+                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                else
+                    openFileDialog.InitialDirectory = Settings.Default.LastDir;
+            }
+
+            //ダイアログを表示する
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                addFilesAndPlay(openFileDialog.FileNames);
+
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+                Settings.Default.LastDir = openFileDialog.InitialDirectory;
+            }
+        }
+
+        private void addPlaylistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            buttonEject_Click(null, null);
+        }
+
+        private void saveAsThePlaylistToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(saveFileDialogM3U.InitialDirectory))
+            {
+                if (String.IsNullOrEmpty(Settings.Default.LastDir) || !Directory.Exists(Settings.Default.LastDir))
+                    saveFileDialogM3U.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                else
+                    saveFileDialogM3U.InitialDirectory = Settings.Default.LastDir;
+            }
+
+            var r = saveFileDialogM3U.ShowDialog(this);
+            if (r == DialogResult.OK)
+            {
+                string f = saveFileDialogM3U.FileName;
+                using (var sw = File.CreateText(f))
+                {
+                    foreach (ListViewItem item in listViewList.Items)
+                        sw.WriteLine(item.Text);
+                }
+
+                saveFileDialogM3U.InitialDirectory = Path.GetDirectoryName(saveFileDialogM3U.FileName);
+                Settings.Default.LastDir = saveFileDialogM3U.InitialDirectory;
+            }
         }
 
     }

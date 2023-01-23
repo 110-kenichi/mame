@@ -131,7 +131,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAD+
-        ZQAAAk1TRnQBSQFMAgEBCgEAASABEwEgARMBIAEAASABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAGA
+        ZQAAAk1TRnQBSQFMAgEBCgEAAZABEwGQARMBIAEAASABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAGA
         AwABYAMAAQEBAAEgBgABwMIAA3kB/wNbAf8BTQFMAU0B/wNLAf8BTQFMAU0B/wNZAf8DdwH/A6IB//8A
         1QADcwH/A0wB/wNLAf8DSwH/A0sB/wNLAf8DSwH/A0sB/wNLAf8DSwH/A0sB/wNLAf8DbQH//wDFAAN+
         Af8DSwH/A0sB/wNLAf8DTwH/A3QB/wOaAf8MAAKaAZsB/wN4Af8DUAH/A0sB/wNLAf8DSwH/A3kB//8A
@@ -569,6 +569,9 @@
         Av8CAAL/AgAC/wIAAf8L
 </value>
   </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>925, 18</value>
+  </metadata>
   <metadata name="imageListBig.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>219, 18</value>
   </metadata>
@@ -577,7 +580,7 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAB6
-        aQAAAk1TRnQBSQFMAgEBAgEAASABEwEgARMBQAEAAUABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgEAAEB
+        aQAAAk1TRnQBSQFMAgEBAgEAAZABEwGQARMBQAEAAUABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgEAAEB
         AgABQAMAAQEBAAEgBwABAWUAAwYBBwMSARcDHAEnAyUBNgM+AWoDRwGBA04BmANVAa8DWwHFA14B3QNg
         AfMDYAHzA14B3QNbAcUDVQGvA04BmANHAYEDPgFqAyUBNgMcAScDEgEXAwYBB6gAAwYBBwMSARcDHAEn
         AyUBNgM+AWoDRwGBA04BmANVAa8DWwHFA14B3QNgAfMDYAHzA14B3QNbAcUDVQGvA04BmANHAYEDPgFq
@@ -1041,6 +1044,9 @@
   </metadata>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>788, 18</value>
+  </metadata>
+  <metadata name="saveFileDialogM3U.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1038, 18</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
