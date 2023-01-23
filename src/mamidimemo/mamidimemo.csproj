@@ -641,8 +641,8 @@
       <Link>VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx.rom">
-      <Link>VGMPlay_msx.rom</Link>
+    <Content Include="..\VSIF\VGMPlay_MSX\VGM_msx.rom">
+      <Link>VGM_msx.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
@@ -661,12 +661,20 @@
       <Link>VGMPlay_nes_vrc6.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\VSIF\VGMPlay_P6\VGM_P6T_01.wav">
+      <Link>VGM_P6T_01.wav</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_P6\VGM_P6T_02.wav">
+      <Link>VGM_P6T_02.wav</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\VSIF\VGMPlay_MSX\VGMPlay_msx_Vkey.rom">
-      <Link>VGMPlay_msx_Vkey.rom</Link>
+    <Content Include="..\VSIF\VGMPlay_MSX\VGM_msx_Vkey.rom">
+      <Link>VGM_msx_Vkey.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_P6\VGM_P6.ROM">
