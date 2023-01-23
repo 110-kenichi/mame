@@ -159,7 +159,7 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_GEN + offset)));
+                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_GEN + (offset*2))));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -190,7 +190,7 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_MSX + offset)));
+                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_MSX + (offset * 2))));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
