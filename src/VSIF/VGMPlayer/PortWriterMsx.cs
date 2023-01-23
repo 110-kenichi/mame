@@ -215,8 +215,6 @@ namespace zanac.VGMPlayer
 
         private void sendData(byte[] sendData, int wait)
         {
-            //wait = (int)(VsifManager.FTDI_BAUDRATE_MSX_MUL * wait) / 100;
-
             SendData(sendData, wait);
         }
 

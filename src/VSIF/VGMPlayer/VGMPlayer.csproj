@@ -113,11 +113,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="SongBase.cs" />
     <Compile Include="VsifClient.cs" />
     <Compile Include="XGMSong.cs" />
@@ -125,27 +120,31 @@
     <Compile Include="VsifManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\VGMPlay_C64\VSIF_C64.prg">
+      <Link>VSIF_C64.prg</Link>
+    </None>
     <None Include="..\VGMPlay_Genesis\VGMPlay_md.bin">
       <Link>VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\VGMPlay_MSX\VGM_msx.rom">
+      <Link>VGM_msx.rom</Link>
+    </None>
+    <None Include="..\VGMPlay_MSX\VGM_msx_Vkey.rom">
+      <Link>VGM_msx_Vkey.rom</Link>
+    </None>
+    <None Include="..\VGMPlay_P6\VGM_P6.ROM">
+      <Link>VGM_P6.ROM</Link>
+    </None>
     <None Include="..\VGMPlay_SMS\VGMPlay_sms.sms">
       <Link>VGMPlay_sms.sms</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VGMPlay_MSX\VGMPlay_msx.bin">
-      <Link>VGMPlay_msx.bin</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\VGMPlay_MSX\VGMPlay_msx.rom">
-      <Link>VGMPlay_msx.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +193,12 @@
     <None Include="Resources\Fast.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\VGMPlay_P6\VGM_P6T_01.wav">
+      <Link>VGM_P6T_01.wav</Link>
+    </Content>
+    <Content Include="..\VGMPlay_P6\VGM_P6T_02.wav">
+      <Link>VGM_P6T_02.wav</Link>
+    </Content>
     <Content Include="FTD2XX_NET.XML" />
     <Content Include="Icon.ico" />
     <Content Include="kss2vgm.exe">

@@ -729,5 +729,137 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWaitOPN"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPN2Div {
+            get {
+                return ((decimal)(this["OPN2Div"]));
+            }
+            set {
+                this["OPN2Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal DCSGDiv {
+            get {
+                return ((decimal)(this["DCSGDiv"]));
+            }
+            set {
+                this["DCSGDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPLLDiv {
+            get {
+                return ((decimal)(this["OPLLDiv"]));
+            }
+            set {
+                this["OPLLDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal SCCDiv {
+            get {
+                return ((decimal)(this["SCCDiv"]));
+            }
+            set {
+                this["SCCDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal PSGDiv {
+            get {
+                return ((decimal)(this["PSGDiv"]));
+            }
+            set {
+                this["PSGDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPMDiv {
+            get {
+                return ((decimal)(this["OPMDiv"]));
+            }
+            set {
+                this["OPMDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPL3Div {
+            get {
+                return ((decimal)(this["OPL3Div"]));
+            }
+            set {
+                this["OPL3Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPNADiv {
+            get {
+                return ((decimal)(this["OPNADiv"]));
+            }
+            set {
+                this["OPNADiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal Y8950Div {
+            get {
+                return ((decimal)(this["Y8950Div"]));
+            }
+            set {
+                this["Y8950Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal OPNDiv {
+            get {
+                return ((decimal)(this["OPNDiv"]));
+            }
+            set {
+                this["OPNDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("899, 200")]
+        public global::System.Drawing.Size PaneHeight {
+            get {
+                return ((global::System.Drawing.Size)(this["PaneHeight"]));
+            }
+            set {
+                this["PaneHeight"] = value;
+            }
+        }
     }
 }
