@@ -1,4 +1,4 @@
-MAmidiMEmo 4.5.8.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.5.8.2 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.5.8.2 Fixed typo F#9 for CombinedTimbre KeyRange. (Thanks D.M.88-san!)
+		Fixed no-sounding when playing a VGM file contains dual chip mode.
 4.5.8.1 Added FTDI baudrate change UI for VGMPlayer. 
 4.5.8.0 Renamed CM-32P user soundfont table sample file name. You need to remove "_memo" from tbl file name to use properly.
         Changed MSX rom filename for for VSIF(FTDI) to VGM_msx*.rom from VGMPlay_msx*.rom.

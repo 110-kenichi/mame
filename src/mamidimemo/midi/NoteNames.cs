@@ -277,7 +277,7 @@ namespace zanac.MAmidiMEmo.Midi
         E9,
         [Description("F9")]
         F9,
-        [Description("F#8")]
+        [Description("F#9")]
         FS9,
         [Description("G9")]
         G9,

@@ -432,27 +432,43 @@ namespace zanac.VGMPlayer
         private VGM_HEADER readVGMHeader(BinaryReader hFile)
         {
             VGM_HEADER curHead = new VGM_HEADER();
+            curHead.lngDataOffset = 0x100;
             FieldInfo[] fields = typeof(VGM_HEADER).GetFields();
+            //int position = 4;
             foreach (FieldInfo field in fields)
             {
                 if (field.FieldType == typeof(uint))
                 {
                     uint val = hFile.ReadUInt32();
+                    //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
+                    //    val = 0;
+                    //position += 4;
+                    if (field.Name.StartsWith("lngHz"))
+                        val = (uint)(val & ~0x40000000);
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(ushort))
                 {
                     ushort val = hFile.ReadUInt16();
+                    //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
+                    //    val = 0;
+                    //position += 2;
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(sbyte))
                 {
                     sbyte val = hFile.ReadSByte();
+                    //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
+                    //    val = 0;
+                    //position += 1;
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(byte))
                 {
                     byte val = hFile.ReadByte();
+                    //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
+                    //    val = 0;
+                    //position += 1;
                     field.SetValue(curHead, val);
                 }
             }
@@ -1482,8 +1498,43 @@ namespace zanac.VGMPlayer
                                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                         break;
 
+                                    case 0x30:
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                        }
+                                        break;
+
                                     case 0x31:  //AY8910 stereo mask
-                                        readByte();
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case int cmd when 0x32 <= cmd && cmd <= 0x3F:
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case int cmd when 0x40 <= cmd && cmd <= 0x4E:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+
+                                            if (vgmHead.lngVersion < 0x00000160)
+                                                break;
+
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
                                         break;
 
                                     case 0x4F:
@@ -1545,7 +1596,7 @@ namespace zanac.VGMPlayer
                                                 break;
 
                                             //ignore test and unknown registers
-                                            if (adrs < 0x30 && adrs != 0x22 && adrs != 0x27 && adrs != 0x28 && adrs != 0x2a && adrs != 0x2b)
+                                            if (adrs < 0x2a && adrs != 0x22 && adrs != 0x27 && adrs != 0x28)
                                                 break;
                                             if (adrs > 0xb6)
                                                 break;
@@ -1679,16 +1730,27 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            //if (adrs == 0x28)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
+                                            if (command == 0x55)
+                                            {
+                                                //ignore test and unknown registers
+                                                if (adrs == 0xe || adrs == 0xf)
+                                                    break;
+                                                if (adrs > 0x20 && adrs < 0x30 && adrs != 0x27 && adrs != 0x28)
+                                                    break;
+                                                if (adrs > 0xb2)
+                                                    break;
+                                            }
+
+                                            if (adrs == 0x28)
+                                            {
+                                                //    if (firstKeyon)
+                                                //    {
+                                                //        firstKeyon = false;
+                                                //        //HACK:
+                                                //        flushDeferredWriteDataAndWait();
+                                                //        QueryPerformanceCounter(out before);
+                                                //    }
+                                            }
 
                                             if (comPortOPNA != null)
                                             {
@@ -2291,6 +2353,55 @@ namespace zanac.VGMPlayer
                                                 deferredWriteY8910(aa, dd, dclk);
                                         }
                                         break;
+                                    case 0xA5:  //2nd YM2203
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortOPNA != null)
+                                            {
+                                                uint dclk = vgmHead.lngHzYM2203 * 2;
+
+                                                if (adrs == 0x28)
+                                                    dt |= 0b100;
+                                                else if (adrs < 0x30)
+                                                    break;
+
+                                                if (adrs < 0x30)
+                                                    deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                else
+                                                    deferredWriteOPNA_P1(adrs, dt, dclk);
+                                            }
+                                            else if (comPortOPN2 != null)
+                                            {
+                                                uint dclk = vgmHead.lngHzYM2203 * 2;
+
+                                                if (adrs == 0x28)
+                                                    dt |= 0b100;
+                                                else if (adrs < 0x30)
+                                                    break;
+
+                                                if (adrs < 0x30)
+                                                    deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                else
+                                                    deferredWriteOPN2_P1(adrs, dt, dclk);
+                                            }
+                                            break;
+                                        }
+                                    case int cmd when 0xA1 <= cmd && cmd <= 0xAF:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
 
                                     case int cmd when 0xB0 <= cmd && cmd <= 0xBF:
                                         {
@@ -2352,7 +2463,7 @@ namespace zanac.VGMPlayer
                                         dacOffset = (int)offset;
                                         break;
 
-                                    case 0xE1:
+                                    case int cmd when 0xE1 <= cmd && cmd <= 0xFF:
                                         {
                                             var mm = readByte();
                                             if (mm < 0)

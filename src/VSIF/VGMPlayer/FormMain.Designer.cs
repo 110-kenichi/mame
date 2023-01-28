@@ -4628,7 +4628,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.37";
+            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.38";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

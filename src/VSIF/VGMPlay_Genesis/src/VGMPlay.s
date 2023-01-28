@@ -322,7 +322,7 @@ _VGM_ADDRESS_FTDI2XX_LOOP:
     | Get Write Address
     | 0CDDAAAA -> DDAAAA00
     lsl.b   #2,%d0                            |+10 34   Shift Left
-    move.l  (%d0, %a1), %a2                   |+18 52   Get Register Address
+    move.l  (%d0, %a1), %a2                   |+16 50   Get Register Address
 
 _VGM_DATA_FTDI2XX_LOOP:
     btst.b  %d2,(%a0)                         | +8 8    Check CLK
