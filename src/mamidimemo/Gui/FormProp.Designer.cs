@@ -500,7 +500,7 @@
             this.MinimizeBox = false;
             this.Name = "FormProp";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = true;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "FormProp";
             this.contextMenuStripProp.ResumeLayout(false);

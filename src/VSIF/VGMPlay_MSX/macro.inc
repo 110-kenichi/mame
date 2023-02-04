@@ -675,6 +675,35 @@ __WRITE_OPN_IO:
     .endm
 ;=======================================================
 
+    .macro __WRITE_OPNA_DAC
+__WRITE_OPNA_DAC:
+    LD  A,#0x8          ;  8
+    OUT (OPN2AD2),A     ; 12 20
+0$:
+;=======================
+    READ_DATA           ; 55
+
+    LD  A,D             ;  5
+    OUT (OPN2WR2),A     ; 12 17 
+
+    ; Continuous Write
+    LD  E,#0x1F         ; 30 85
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+    .endm
+;=======================================================
 
 ;====================================================================
 ;（参考）P0/P2のBIOSコールを使わないスロット切り替えルーチン

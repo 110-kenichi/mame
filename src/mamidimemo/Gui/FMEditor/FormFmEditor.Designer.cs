@@ -700,7 +700,7 @@
             this.Name = "FormFmEditor";
             this.Padding = new System.Windows.Forms.Padding(9, 94, 9, 15);
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = true;
             this.Text = "FM Synthesis Editor";
             this.panelPiano.ResumeLayout(false);
             this.panelPiano.PerformLayout();

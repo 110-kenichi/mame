@@ -441,6 +441,19 @@ namespace zanac.VGMPlayer
             return ret;
         }
 
+        protected (byte Hi, byte Lo, bool noConverted) convertAy8910EnvFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * chipClock / dataClock);
+
+            if (freq > 0xffff)
+                freq = 0xffff;
+
+            var ret = ((byte)(freq >> 8), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
+        }
+
         protected (byte Hi, byte Lo, bool noConverted) convertOpmFrequency(int KF, int KC, double chipClock, double dataClock)
         {
             var oct = (KC >> 4) & 0x7;
@@ -572,6 +585,214 @@ namespace zanac.VGMPlayer
             if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
                 ret.Item3 = true;
             return ret;
+        }
+
+
+
+        bool lastEnabled = false;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        protected void EnableDacYM2608(VsifClient comPort, bool enable)
+        {
+            YM2608WriteData(comPort, 0x00, 0, 3, 0x01, false);  //RESET
+            if (enable && !lastEnabled)
+            {
+                YM2608WriteData(comPort, 0x10, 0, 3, 0x17, false);   //ENA FLAG BRDY
+                YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
+                YM2608WriteData(comPort, 0x00, 0, 3, 0x80, false);   //CPU->OPNA
+                YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //LR
+                YM2608WriteData(comPort, 0x09, 0, 3, 0x93, false);   //14KHz
+                YM2608WriteData(comPort, 0x0A, 0, 3, 0x40, false);   //14KHz
+                YM2608WriteData(comPort, 0x0B, 0, 3, 0xFF, false);   //MAX Vol
+
+                /*
+                //flag
+                YM2608WriteData(comPort, 0x10, 0, 3, 0x1B, false);   //ENA FLAG EOS
+                YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
+                YM2608WriteData(comPort, 0x09, 0, 3, 0xFA, false);   //16KHz
+                YM2608WriteData(comPort, 0x0A, 0, 3, 0x00, false);   //16KHz
+
+                YM2608WriteData(comPort, 0x01, 0, 3, 0xCC, false);   //Sart
+                */
+            }
+            else if (!enable && lastEnabled)
+            {
+                YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //Sart
+
+                YM2608WriteData(comPort, 0x00, 0, 3, 0x00, false);   //Finish
+                YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
+            }
+            lastEnabled = enable;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void YM2608WriteData(VsifClient comPort, byte address, int op, int slot, byte data, bool deferred)
+        {
+            if (comPort != null)
+            {
+                switch (op)
+                {
+                    case 0:
+                        op = 0;
+                        break;
+                    case 1:
+                        op = 2;
+                        break;
+                    case 2:
+                        op = 1;
+                        break;
+                    case 3:
+                        op = 3;
+                        break;
+                }
+
+                if (comPort.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
+                    comPort.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+                {
+                    comPort.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// PCM値
+        /// </summary>
+        int pcmValue = 0;
+        /// <summary>
+        /// 予測変化量
+        /// </summary>
+        int predictValue = 127;
+        /// <summary>
+        /// 8bitデータの1つ目(上位4bit)かどうか
+        /// </summary>
+        bool firstData = true;
+        /// <summary>
+        /// 実際のADPCM出力値
+        /// </summary>
+        byte outputValue = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="inputValue"></param>
+        protected void DeferredWriteOPNA_DAC(VsifClient comPort, int inputValue)
+        {
+            if (comPort.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
+                comPort.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+            {
+                //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
+                //変化量 <- PCM入力値 - PCM値
+                int deltaValue = (inputValue * 256) - pcmValue;
+                //ADPCM値
+                int adpcmData = 0;
+                //予測変化値に対する変化量の比率によってADPCM値を決定
+                if (predictValue * 14 / 8 <= deltaValue)
+                    adpcmData = 7;
+                else if (predictValue * 12 / 8 <= deltaValue && deltaValue < predictValue * 14 / 8)
+                    adpcmData = 6;
+                else if (predictValue * 10 / 8 <= deltaValue && deltaValue < predictValue * 12 / 8)
+                    adpcmData = 5;
+                else if (predictValue * 8 / 8 <= deltaValue && deltaValue < predictValue * 10 / 8)
+                    adpcmData = 4;
+                else if (predictValue * 6 / 8 <= deltaValue && deltaValue < predictValue * 8 / 8)
+                    adpcmData = 3;
+                else if (predictValue * 4 / 8 <= deltaValue && deltaValue < predictValue * 6 / 8)
+                    adpcmData = 2;
+                else if (predictValue * 2 / 8 <= deltaValue && deltaValue < predictValue * 4 / 8)
+                    adpcmData = 1;
+                else if (predictValue * 0 / 8 <= deltaValue && deltaValue < predictValue * 2 / 8)
+                    adpcmData = 0;
+                else if (predictValue * -2 / 8 <= deltaValue && deltaValue < predictValue * 0 / 8)
+                    adpcmData = 8;
+                else if (predictValue * -4 / 8 <= deltaValue && deltaValue < predictValue * -2 / 8)
+                    adpcmData = 9;
+                else if (predictValue * -6 / 8 <= deltaValue && deltaValue < predictValue * -4 / 8)
+                    adpcmData = 10;
+                else if (predictValue * -8 / 8 <= deltaValue && deltaValue < predictValue * -6 / 8)
+                    adpcmData = 11;
+                else if (predictValue * -10 / 8 <= deltaValue && deltaValue < predictValue * -8 / 8)
+                    adpcmData = 12;
+                else if (predictValue * -12 / 8 <= deltaValue && deltaValue < predictValue * -10 / 8)
+                    adpcmData = 13;
+                else if (predictValue * -14 / 8 <= deltaValue && deltaValue < predictValue * -12 / 8)
+                    adpcmData = 14;
+                else if (deltaValue < predictValue * -14 / 8)
+                    adpcmData = 15;
+
+                //出力
+                if (firstData)
+                {
+                    outputValue = (byte)(adpcmData << 4);
+                    firstData = false;
+                }
+                else
+                {
+                    outputValue |= (byte)adpcmData;
+                    comPort.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    outputValue = 0;
+                    firstData = true;
+                }
+
+                //変化率 = ADPCM値のbit2-0
+                int factor = adpcmData & 0x7;
+                //変化量 <- 予測変化量 x (変化率 x 2 + 1) / 8
+                deltaValue = predictValue * (factor * 2 + 1) / 8;
+                if ((adpcmData & 0x8) == 0)
+                {
+                    //増加
+                    pcmValue = pcmValue + deltaValue;
+                }
+                else
+                {
+                    //減少
+                    pcmValue = pcmValue - deltaValue;
+                }
+                //変化率によって次回の予測変化量を更新
+                switch (factor)
+                {
+                    case 0:
+                        predictValue = predictValue * 57 / 64;
+                        break;
+                    case 1:
+                        predictValue = predictValue * 57 / 64;
+                        break;
+                    case 2:
+                        predictValue = predictValue * 57 / 64;
+                        break;
+                    case 3:
+                        predictValue = predictValue * 57 / 64;
+                        break;
+                    case 4:
+                        predictValue = predictValue * 77 / 64;
+                        break;
+                    case 5:
+                        predictValue = predictValue * 102 / 64;
+                        break;
+                    case 6:
+                        predictValue = predictValue * 128 / 64;
+                        break;
+                    case 7:
+                        predictValue = predictValue * 153 / 64;
+                        break;
+                }
+                //
+                if (predictValue < 127)
+                    predictValue = 127;
+                else if (predictValue > 24576)
+                    predictValue = 24576;
+
+                //DAC mode
+                //comPortOPNA.DeferredWriteData(0x13, (byte)0xe, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+            }
         }
 
     }

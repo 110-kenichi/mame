@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define ENABLE_OPNA_DAC_FOR_OPN2_DAC
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -187,6 +189,10 @@ namespace zanac.VGMPlayer
                     deferredWriteOPNA_P0(0x0A, 0);
                     //ADPCM
                     deferredWriteOPNA_P1(0x00, 1);
+
+#if ENABLE_OPNA_DAC_FOR_OPN2_DAC
+                    EnableDacYM2608(comPortOPNA, false);
+#endif
                 }
             }
 
@@ -232,6 +238,7 @@ namespace zanac.VGMPlayer
                 comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
         }
+
 
         private void deferredWriteOPNA_P0(int adrs, int dt, uint dclk)
         {
@@ -458,6 +465,11 @@ namespace zanac.VGMPlayer
                     for (int i = 0xB4; i <= 0xB6; i++)
                         deferredWriteOPNA_P1(i, 0xC0);
 
+                    //Force OPN mode
+                    deferredWriteOPNA_P0(0x29, 0x80);
+#if ENABLE_OPNA_DAC_FOR_OPN2_DAC
+                    EnableDacYM2608(comPortOPNA, true);
+#endif
                     return true;
                 }
             }
@@ -733,8 +745,21 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    if (adrs != 0x2a || adrs != 0x2b)
-                                                        deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                    switch (adrs)
+                                                    {
+                                                        case 0x2a:
+                                                            //output DAC
+#if ENABLE_OPNA_DAC_FOR_OPN2_DAC
+                                                            DeferredWriteOPNA_DAC(comPortOPNA, (int)dt - 0x80);
+#endif
+                                                            break;
+                                                        case 0x2b:
+                                                            //Enable DAC
+                                                            break;
+                                                        default:
+                                                            deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                            break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -872,9 +897,18 @@ namespace zanac.VGMPlayer
                                     dacData = sbyte.MinValue;
                                 dacData += 0x80;
 
-                                comPortOPN2?.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
-                                comPortOPN2?.DeferredWriteData(0, 0x08, (byte)dacData, (int)Settings.Default.BitBangWaitOPN2);
 
+                                if (comPortOPN2 != null)
+                                {
+                                    comPortOPN2.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
+                                    comPortOPN2.DeferredWriteData(0, 0x08, (byte)dacData, (int)Settings.Default.BitBangWaitOPN2);
+                                }
+                                else if (comPortOPNA != null)
+                                {
+#if ENABLE_OPNA_DAC_FOR_OPN2_DAC
+                                    DeferredWriteOPNA_DAC(comPortOPNA, dacData - 0x80);
+#endif
+                                }
                                 streamWaitDelta += 44.1d / 14d;
                             }
                         }
