@@ -677,7 +677,7 @@ __WRITE_OPN_IO:
 
     .macro __WRITE_OPNA_DAC
 __WRITE_OPNA_DAC:
-    LD  A,#0x8          ;  8
+    LD  A,#0xB          ;  8
     OUT (OPN2AD2),A     ; 12 20
 0$:
 ;=======================

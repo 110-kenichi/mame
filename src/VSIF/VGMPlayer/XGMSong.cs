@@ -1,4 +1,4 @@
-﻿//#define ENABLE_OPNA_DAC_FOR_OPN2_DAC
+﻿#define ENABLE_OPNA_DAC_FOR_OPN2_DAC
 
 using System;
 using System.Collections.Generic;

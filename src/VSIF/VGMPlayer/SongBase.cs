@@ -602,15 +602,29 @@ namespace zanac.VGMPlayer
             YM2608WriteData(comPort, 0x00, 0, 3, 0x01, false);  //RESET
             if (enable && !lastEnabled)
             {
+                //ADPCM mode
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x17, false);   //ENA FLAG BRDY
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
                 YM2608WriteData(comPort, 0x00, 0, 3, 0x80, false);   //CPU->OPNA
                 YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //LR
-                YM2608WriteData(comPort, 0x09, 0, 3, 0x93, false);   //14KHz
-                YM2608WriteData(comPort, 0x0A, 0, 3, 0x40, false);   //14KHz
                 YM2608WriteData(comPort, 0x0B, 0, 3, 0xFF, false);   //MAX Vol
+                // (f / 55.5) * 65536
+                // 8KHz = 9447
 
-                /*
+                //int f = (int)Math.Round((14 / 55.5) * 65536);
+                //YM2608WriteData(comPort, 0x09, 0, 3, (byte)(f & 0xff), false);   //14KHz
+                //YM2608WriteData(comPort, 0x0A, 0, 3, (byte)((f >> 8) & 0xff), false);   //14KHz
+
+                YM2608WriteData(comPort, 0x09, 0, 3, 0xff, false);   //55.5KHz
+                YM2608WriteData(comPort, 0x0A, 0, 3, 0xff, false);   //55.5KHz
+
+                //MAX Attenuation
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x08, false);
+
+                /* DAC mode
                 //flag
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x1B, false);   //ENA FLAG EOS
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
@@ -689,112 +703,116 @@ namespace zanac.VGMPlayer
             if (comPort.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
                 comPort.SoundModuleType == VsifSoundModuleType.P6_FTDI)
             {
-                //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
-                //変化量 <- PCM入力値 - PCM値
-                int deltaValue = (inputValue * 256) - pcmValue;
-                //ADPCM値
-                int adpcmData = 0;
-                //予測変化値に対する変化量の比率によってADPCM値を決定
-                if (predictValue * 14 / 8 <= deltaValue)
-                    adpcmData = 7;
-                else if (predictValue * 12 / 8 <= deltaValue && deltaValue < predictValue * 14 / 8)
-                    adpcmData = 6;
-                else if (predictValue * 10 / 8 <= deltaValue && deltaValue < predictValue * 12 / 8)
-                    adpcmData = 5;
-                else if (predictValue * 8 / 8 <= deltaValue && deltaValue < predictValue * 10 / 8)
-                    adpcmData = 4;
-                else if (predictValue * 6 / 8 <= deltaValue && deltaValue < predictValue * 8 / 8)
-                    adpcmData = 3;
-                else if (predictValue * 4 / 8 <= deltaValue && deltaValue < predictValue * 6 / 8)
-                    adpcmData = 2;
-                else if (predictValue * 2 / 8 <= deltaValue && deltaValue < predictValue * 4 / 8)
-                    adpcmData = 1;
-                else if (predictValue * 0 / 8 <= deltaValue && deltaValue < predictValue * 2 / 8)
-                    adpcmData = 0;
-                else if (predictValue * -2 / 8 <= deltaValue && deltaValue < predictValue * 0 / 8)
-                    adpcmData = 8;
-                else if (predictValue * -4 / 8 <= deltaValue && deltaValue < predictValue * -2 / 8)
-                    adpcmData = 9;
-                else if (predictValue * -6 / 8 <= deltaValue && deltaValue < predictValue * -4 / 8)
-                    adpcmData = 10;
-                else if (predictValue * -8 / 8 <= deltaValue && deltaValue < predictValue * -6 / 8)
-                    adpcmData = 11;
-                else if (predictValue * -10 / 8 <= deltaValue && deltaValue < predictValue * -8 / 8)
-                    adpcmData = 12;
-                else if (predictValue * -12 / 8 <= deltaValue && deltaValue < predictValue * -10 / 8)
-                    adpcmData = 13;
-                else if (predictValue * -14 / 8 <= deltaValue && deltaValue < predictValue * -12 / 8)
-                    adpcmData = 14;
-                else if (deltaValue < predictValue * -14 / 8)
-                    adpcmData = 15;
+                //Set volume for pseudo DAC
+                comPort.DeferredWriteData(0x13, (byte)0xb, (byte)(inputValue + 0x80), (int)Settings.Default.BitBangWaitOPNA);
 
-                //出力
-                if (firstData)
-                {
-                    outputValue = (byte)(adpcmData << 4);
-                    firstData = false;
-                }
-                else
-                {
-                    outputValue |= (byte)adpcmData;
-                    comPort.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
-                    outputValue = 0;
-                    firstData = true;
-                }
-
-                //変化率 = ADPCM値のbit2-0
-                int factor = adpcmData & 0x7;
-                //変化量 <- 予測変化量 x (変化率 x 2 + 1) / 8
-                deltaValue = predictValue * (factor * 2 + 1) / 8;
-                if ((adpcmData & 0x8) == 0)
-                {
-                    //増加
-                    pcmValue = pcmValue + deltaValue;
-                }
-                else
-                {
-                    //減少
-                    pcmValue = pcmValue - deltaValue;
-                }
-                //変化率によって次回の予測変化量を更新
-                switch (factor)
-                {
-                    case 0:
-                        predictValue = predictValue * 57 / 64;
-                        break;
-                    case 1:
-                        predictValue = predictValue * 57 / 64;
-                        break;
-                    case 2:
-                        predictValue = predictValue * 57 / 64;
-                        break;
-                    case 3:
-                        predictValue = predictValue * 57 / 64;
-                        break;
-                    case 4:
-                        predictValue = predictValue * 77 / 64;
-                        break;
-                    case 5:
-                        predictValue = predictValue * 102 / 64;
-                        break;
-                    case 6:
-                        predictValue = predictValue * 128 / 64;
-                        break;
-                    case 7:
-                        predictValue = predictValue * 153 / 64;
-                        break;
-                }
-                //
-                if (predictValue < 127)
-                    predictValue = 127;
-                else if (predictValue > 24576)
-                    predictValue = 24576;
-
-                //DAC mode
-                //comPortOPNA.DeferredWriteData(0x13, (byte)0xe, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                //outputAdpcm(comPort, inputValue);
             }
         }
 
+        private void outputAdpcm(VsifClient comPort, int inputValue)
+        {
+            //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
+            //変化量 <- PCM入力値 - PCM値
+            int deltaValue = (inputValue * 256) - pcmValue;
+            //ADPCM値
+            int adpcmData = 0;
+            //予測変化値に対する変化量の比率によってADPCM値を決定
+            if (predictValue * 14 / 8 <= deltaValue)
+                adpcmData = 7;
+            else if (predictValue * 12 / 8 <= deltaValue && deltaValue < predictValue * 14 / 8)
+                adpcmData = 6;
+            else if (predictValue * 10 / 8 <= deltaValue && deltaValue < predictValue * 12 / 8)
+                adpcmData = 5;
+            else if (predictValue * 8 / 8 <= deltaValue && deltaValue < predictValue * 10 / 8)
+                adpcmData = 4;
+            else if (predictValue * 6 / 8 <= deltaValue && deltaValue < predictValue * 8 / 8)
+                adpcmData = 3;
+            else if (predictValue * 4 / 8 <= deltaValue && deltaValue < predictValue * 6 / 8)
+                adpcmData = 2;
+            else if (predictValue * 2 / 8 <= deltaValue && deltaValue < predictValue * 4 / 8)
+                adpcmData = 1;
+            else if (predictValue * 0 / 8 <= deltaValue && deltaValue < predictValue * 2 / 8)
+                adpcmData = 0;
+            else if (predictValue * -2 / 8 <= deltaValue && deltaValue < predictValue * 0 / 8)
+                adpcmData = 8;
+            else if (predictValue * -4 / 8 <= deltaValue && deltaValue < predictValue * -2 / 8)
+                adpcmData = 9;
+            else if (predictValue * -6 / 8 <= deltaValue && deltaValue < predictValue * -4 / 8)
+                adpcmData = 10;
+            else if (predictValue * -8 / 8 <= deltaValue && deltaValue < predictValue * -6 / 8)
+                adpcmData = 11;
+            else if (predictValue * -10 / 8 <= deltaValue && deltaValue < predictValue * -8 / 8)
+                adpcmData = 12;
+            else if (predictValue * -12 / 8 <= deltaValue && deltaValue < predictValue * -10 / 8)
+                adpcmData = 13;
+            else if (predictValue * -14 / 8 <= deltaValue && deltaValue < predictValue * -12 / 8)
+                adpcmData = 14;
+            else if (deltaValue < predictValue * -14 / 8)
+                adpcmData = 15;
+
+            //出力
+            if (firstData)
+            {
+                outputValue = (byte)(adpcmData << 4);
+                firstData = false;
+            }
+            else
+            {
+                outputValue |= (byte)adpcmData;
+                comPort.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
+                outputValue = 0;
+                firstData = true;
+            }
+
+            //変化率 = ADPCM値のbit2-0
+            int factor = adpcmData & 0x7;
+            //変化量 <- 予測変化量 x (変化率 x 2 + 1) / 8
+            deltaValue = predictValue * (factor * 2 + 1) / 8;
+            if ((adpcmData & 0x8) == 0)
+            {
+                //増加
+                pcmValue = pcmValue + deltaValue;
+            }
+            else
+            {
+                //減少
+                pcmValue = pcmValue - deltaValue;
+            }
+            //変化率によって次回の予測変化量を更新
+            switch (factor)
+            {
+                case 0:
+                    predictValue = predictValue * 57 / 64;
+                    break;
+                case 1:
+                    predictValue = predictValue * 57 / 64;
+                    break;
+                case 2:
+                    predictValue = predictValue * 57 / 64;
+                    break;
+                case 3:
+                    predictValue = predictValue * 57 / 64;
+                    break;
+                case 4:
+                    predictValue = predictValue * 77 / 64;
+                    break;
+                case 5:
+                    predictValue = predictValue * 102 / 64;
+                    break;
+                case 6:
+                    predictValue = predictValue * 128 / 64;
+                    break;
+                case 7:
+                    predictValue = predictValue * 153 / 64;
+                    break;
+            }
+            //
+            if (predictValue < 127)
+                predictValue = 127;
+            else if (predictValue > 24576)
+                predictValue = 24576;
+        }
     }
 
     /// <summary>
