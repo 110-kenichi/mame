@@ -96,6 +96,8 @@
     <Compile Include="ListViewItemDragEventArgs.cs" />
     <Compile Include="PortWriteData.cs" />
     <Compile Include="PortWriter.cs" />
+    <Compile Include="PortWriterSpfm.cs" />
+    <Compile Include="PortWriterSpfmLight.cs" />
     <Compile Include="PortWriterGenericUart.cs" />
     <Compile Include="PortWriterGenesis.cs" />
     <Compile Include="PortWriterMsx.cs" />

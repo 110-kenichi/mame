@@ -146,37 +146,37 @@ namespace zanac.VGMPlayer
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
                     {
-                        deferredWriteOPNA_P0(0x28, i);
-                        deferredWriteOPNA_P0(0x28, 0x4 | i);
+                        deferredWriteOPNA_P0(comPortOPNA, 0x28, i);
+                        deferredWriteOPNA_P0(comPortOPNA, 0x28, 0x4 | i);
                     }
                     //RHYTHM
-                    deferredWriteOPNA_P0(0x10, 0x80);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x10, 0x80);
                     //SSG
-                    deferredWriteOPNA_P0(0x07, 0xFF);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x07, 0xFF);
                     //ADPCM
-                    deferredWriteOPNA_P1(0x00, 1);
+                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
                 }
 
                 if (volumeOff)
                 {
                     //TL
                     for (int i = 0x40; i <= 0x4F; i++)
-                        deferredWriteOPNA_P0(i, 0xFF);
+                        deferredWriteOPNA_P0(comPortOPNA, i, 0xFF);
                     for (int i = 0x40; i <= 0x4F; i++)
-                        deferredWriteOPNA_P1(i, 0xFF);
+                        deferredWriteOPNA_P1(comPortOPNA, i, 0xFF);
                     //RR
                     for (int i = 0x80; i <= 0x8F; i++)
-                        deferredWriteOPNA_P0(i, 0xFF);
+                        deferredWriteOPNA_P0(comPortOPNA, i, 0xFF);
                     for (int i = 0x80; i <= 0x8F; i++)
-                        deferredWriteOPNA_P1(i, 0xFF);
+                        deferredWriteOPNA_P1(comPortOPNA, i, 0xFF);
                     //RHYTHM
-                    deferredWriteOPNA_P0(0x11, 0xFF);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x11, 0xFF);
                     //SSG
-                    deferredWriteOPNA_P0(0x08, 0);
-                    deferredWriteOPNA_P0(0x09, 0);
-                    deferredWriteOPNA_P0(0x0A, 0);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x08, 0);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x09, 0);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x0A, 0);
                     //ADPCM
-                    deferredWriteOPNA_P1(0x00, 1);
+                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
 
 #if ENABLE_OPNA_DAC_FOR_OPN2_DAC
                     EnableDacYM2608(comPortOPNA, false);
@@ -493,7 +493,7 @@ namespace zanac.VGMPlayer
                     {
                         comPortOPNA.Tag["ProxyOPN2"] = true;
                         //Force OPN mode
-                        deferredWriteOPNA_P0(0x29, 0x80);
+                        deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
                         //Enable DAC
 #if ENABLE_OPNA_DAC_FOR_OPN2_DAC
                         EnableDacYM2608(comPortOPNA, true);
@@ -864,6 +864,30 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 1:
+                        if (comPortOPM == null)
+                        {
+                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
+                               (PortId)Settings.Default.OPM_Port);
+                            if (comPortOPM != null)
+                            {
+                                comPortOPM.ChipClockHz["OPM"] = 3579545;
+                                comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (comPortOPM == null)
+                        {
+                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
+                               (PortId)Settings.Default.OPM_Port);
+                            if (comPortOPM != null)
+                            {
+                                comPortOPM.ChipClockHz["OPM"] = 3579545;
+                                comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPM != null)
                 {
@@ -918,35 +942,61 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 2:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
+                                (PortId)Settings.Default.OPNA_Port);
+                            if (comPortOPNA != null)
+                            {
+                                comPortOPNA.ChipClockHz["OPNA"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
+                                (PortId)Settings.Default.OPNA_Port);
+                            if (comPortOPNA != null)
+                            {
+                                comPortOPNA.ChipClockHz["OPNA"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPNA != null)
                 {
                     Accepted = true;
 
                     //LFO
-                    deferredWriteOPNA_P0(0x22, 0x00);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x22, 0x00);
                     //channel 3 mode
-                    deferredWriteOPNA_P0(0x27, 0x00);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x27, 0x00);
                     //Force OPN mode
-                    deferredWriteOPNA_P0(0x29, 0x00);
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x00);
 
                     for (int i = 0x30; i <= 0x3F; i++)
-                        deferredWriteOPNA_P0(i, 0);
+                        deferredWriteOPNA_P0(comPortOPNA, i, 0);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPNA_P0(i, 0xff);
                     for (int i = 0x50; i <= 0xB3; i++)
-                        deferredWriteOPNA_P0(i, 0);
+                        deferredWriteOPNA_P0(comPortOPNA, i, 0);
                     for (int i = 0xB4; i <= 0xB6; i++)
-                        deferredWriteOPNA_P0(i, 0xC0);
+                        deferredWriteOPNA_P0(comPortOPNA, i, 0xC0);
 
                     for (int i = 0x30; i <= 0x3F; i++)
-                        deferredWriteOPNA_P1(i, 0);
+                        deferredWriteOPNA_P1(comPortOPNA, i, 0);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPNA_P1(i, 0xff);
                     for (int i = 0x50; i <= 0xB3; i++)
-                        deferredWriteOPNA_P1(i, 0);
+                        deferredWriteOPNA_P1(comPortOPNA, i, 0);
                     for (int i = 0xB4; i <= 0xB6; i++)
-                        deferredWriteOPNA_P1(i, 0xC0);
+                        deferredWriteOPNA_P1(comPortOPNA, i, 0xC0);
 
                     return true;
                 }
@@ -1313,8 +1363,8 @@ namespace zanac.VGMPlayer
             vgmHead = readVGMHeader(vgmReader);
 
             //Figure out header offset
-            offset = (int)vgmHead.lngDataOffset;
-            if (offset == 0 || offset == 0x0000000C)
+            offset = (int)vgmHead.lngDataOffset + 0x34;
+            if (offset == 0 || offset == 0x0000000C || vgmHead.lngVersion < 0x150)
                 offset = 0x40;
             vgmDataOffset = offset;
             vgmDataCurrentOffset = vgmDataOffset;
@@ -1518,6 +1568,7 @@ namespace zanac.VGMPlayer
         {
             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
             double wait = 0;
+            double lastWaitRemain = 0;
             double vgmWaitDelta = 0;
             double streamWaitDelta = 0;
             double lastDiff = 0;
@@ -1532,10 +1583,10 @@ namespace zanac.VGMPlayer
                 StreamData currentStreamData = null;
                 StreamParam streamParam = null;
                 StreamParam currentStreamParam = null;
+                QueryPerformanceCounter(out before);
 
                 while (true)
                 {
-                    QueryPerformanceCounter(out before);
 
                     if (RequestedStat == SoundState.Stopped)
                     {
@@ -1549,6 +1600,7 @@ namespace zanac.VGMPlayer
                             StopAllSounds(false);
                         }
                         Thread.Sleep(1);
+                        QueryPerformanceCounter(out before);
                         continue;
                     }
                     else if (RequestedStat == SoundState.Freezed)
@@ -1556,6 +1608,7 @@ namespace zanac.VGMPlayer
                         if (State != SoundState.Freezed)
                             State = SoundState.Freezed;
                         Thread.Sleep(1);
+                        QueryPerformanceCounter(out before);
                         continue;
                     }
                     State = SoundState.Playing;
@@ -1642,17 +1695,6 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            //if (0x20 <= adrs && adrs <= 0x28)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
-
                                             if (comPortOPLL != null)
                                                 deferredWriteOPLL(dclk, adrs, dt);
                                         }
@@ -1675,20 +1717,25 @@ namespace zanac.VGMPlayer
                                             if (adrs > 0xb6)
                                                 break;
 
-                                            //if (adrs == 0x28)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
-
                                             if (comPortOPN2 != null)
                                             {
-                                                deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                switch (adrs)
+                                                {
+                                                    case 0x2a:
+                                                        //output DAC
+                                                        DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
+                                                        break;
+                                                    case 0x2b:
+                                                        //Enable DAC
+                                                        if ((dt & 0x80) != 0)
+                                                            DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
+                                                        else
+                                                            deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                        break;
+                                                    default:
+                                                        deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                        break;
+                                                }
                                             }
                                             else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
                                             {
@@ -1697,14 +1744,14 @@ namespace zanac.VGMPlayer
                                                     case 0x2a:
                                                         //output DAC
 #if ENABLE_OPNA_DAC_FOR_OPN2_DAC
-                                                        DeferredWriteOPNA_DAC(comPortOPNA, (int)dt - 0x80);
+                                                        DeferredWriteOPNA_DAC(comPortOPNA, dt);
 #endif
                                                         break;
                                                     case 0x2b:
                                                         //Enable DAC
                                                         break;
                                                     default:
-                                                        deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
                                                         break;
                                                 }
                                             }
@@ -1732,7 +1779,7 @@ namespace zanac.VGMPlayer
                                             }
                                             else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
                                             {
-                                                deferredWriteOPNA_P1(adrs, dt, dclk);
+                                                deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
                                             }
                                         }
                                         break;
@@ -1747,17 +1794,6 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
-
-                                            //if (adrs == 0x8)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
 
                                             if (comPortOPM != null)
                                             {
@@ -1798,17 +1834,6 @@ namespace zanac.VGMPlayer
                                                     }
                                                 }
 
-                                                //if (adrs == 0x28)
-                                                //{
-                                                //    if (firstKeyon)
-                                                //    {
-                                                //        firstKeyon = false;
-                                                //        //HACK:
-                                                //        flushDeferredWriteDataAndWait();
-                                                //        QueryPerformanceCounter(out before);
-                                                //    }
-                                                //}
-
                                                 if (comPortOPN != null)
                                                 {
                                                     deferredWriteOPN_P0(adrs, dt, dclk);
@@ -1824,7 +1849,7 @@ namespace zanac.VGMPlayer
                                             break;
                                         }
                                     case 0x56: //YM2608 Write Port 0
-                                    case 0x58: //YM2610
+                                    case 0x58: //YM2610 Write Port 0
                                         {
                                             uint dclk = vgmHead.lngHzYM2608;
                                             if (command == 0x55)
@@ -1869,20 +1894,9 @@ namespace zanac.VGMPlayer
                                                     break;
                                             }
 
-                                            if (adrs == 0x28)
-                                            {
-                                                //    if (firstKeyon)
-                                                //    {
-                                                //        firstKeyon = false;
-                                                //        //HACK:
-                                                //        flushDeferredWriteDataAndWait();
-                                                //        QueryPerformanceCounter(out before);
-                                                //    }
-                                            }
-
                                             if (comPortOPNA != null)
                                             {
-                                                deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
                                             }
                                             else if (comPortOPN2 != null)
                                             {
@@ -1899,7 +1913,7 @@ namespace zanac.VGMPlayer
                                         break;
 
                                     case 0x57: //YM2608 Write Port 1
-                                    case 0x59: //YM2610
+                                    case 0x59: //YM2610 Write Port 1
                                         {
                                             uint dclk = vgmHead.lngHzYM2608;
                                             if (command == 0x59)
@@ -1959,7 +1973,9 @@ namespace zanac.VGMPlayer
                                                     }
                                                     else
                                                     {
+#if DEBUG
                                                         Console.WriteLine("YM2608: Play 1bit ADPCM mode(" + (ym2608_pcm_start << 2).ToString("x") + " - " + ((ym2608_pcm_stop << 2) | 0x3).ToString("x") + ")");
+#endif
                                                     }
                                                 }
                                             }
@@ -1967,11 +1983,21 @@ namespace zanac.VGMPlayer
                                             {
                                                 if (comPortOPNA != null)
                                                 {
-                                                    deferredWriteOPNA_P1(adrs, dt, dclk);
+                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
                                                 }
                                                 else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNA"))
                                                 {
                                                     deferredWriteOPN2_P1(adrs, dt, dclk);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (comPortOPNA != null)
+                                                {
+                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
+                                                    comPortOPNA.FlushDeferredWriteDataAndWait();
+                                                    //HACK:
+                                                    QueryPerformanceCounter(out before);
                                                 }
                                             }
                                         }
@@ -2073,7 +2099,7 @@ namespace zanac.VGMPlayer
                                                             if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI && !y8950_adpcmbit64k)
                                                             {
                                                                 var dt2 = ((y8950_pcm_start << 3) & 0xff00) >> 8;
-                                                                deferredWriteOPNA_P1(0x03, dt2, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x03, dt2, dclk);
 
                                                                 dt = (y8950_pcm_start << 3) & 0xff;
                                                             }
@@ -2122,8 +2148,8 @@ namespace zanac.VGMPlayer
                                                             if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI && !y8950_adpcmbit64k)
                                                             {
                                                                 var dt2 = (((y8950_pcm_stop << 3) | 0b111) & 0xff00) >> 8;
-                                                                deferredWriteOPNA_P1(0x05, dt2, dclk);
-                                                                deferredWriteOPNA_P1(0x0d, dt2, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x05, dt2, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x0d, dt2, dclk);
 
                                                                 dt = ((y8950_pcm_stop << 3) | 0b111) & 0xff;
                                                             }
@@ -2158,17 +2184,6 @@ namespace zanac.VGMPlayer
                                             }
                                             if (adrs != 0xf)   //ignore ADPCM adrs
                                             {
-                                                //if (0xb0 <= adrs && adrs <= 0xb8)
-                                                //{
-                                                //    if (firstKeyon)
-                                                //    {
-                                                //        firstKeyon = false;
-                                                //        //HACK:
-                                                //        flushDeferredWriteDataAndWait();
-                                                //        QueryPerformanceCounter(out before);
-                                                //    }
-                                                //}
-
                                                 if (comPortY8950 != null)
                                                 {
                                                     deferredWriteY8950(adrs, dt, dclk);
@@ -2186,42 +2201,52 @@ namespace zanac.VGMPlayer
                                                         switch (adrs)
                                                         {
                                                             case 0x7:   //ctrl1
-                                                                deferredWriteOPNA_P1(0x00, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x00, dt, dclk);
                                                                 break;
                                                             case 0x8:   //ctrl2
-                                                                deferredWriteOPNA_P1(0x01, 0xc0, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0xc0, dclk);
                                                                 break;
                                                             case 0x9:   //start l
-                                                                deferredWriteOPNA_P1(0x02, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x02, dt, dclk);
                                                                 break;
                                                             case 0xa:   //start h
-                                                                deferredWriteOPNA_P1(0x03, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x03, dt, dclk);
                                                                 break;
                                                             case 0xb:   //stop l
-                                                                deferredWriteOPNA_P1(0x04, dt, dclk);
-                                                                deferredWriteOPNA_P1(0x0c, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x04, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x0c, dt, dclk);
                                                                 break;
                                                             case 0xc:   //stop h
-                                                                deferredWriteOPNA_P1(0x05, dt, dclk);
-                                                                deferredWriteOPNA_P1(0x0d, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x05, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x0d, dt, dclk);
                                                                 break;
                                                             case 0xd:   //prescale l
-                                                                deferredWriteOPNA_P1(0x06, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x06, dt, dclk);
                                                                 break;
                                                             case 0xe:   //prescale h
-                                                                deferredWriteOPNA_P1(0x07, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x07, dt, dclk);
                                                                 break;
                                                             case 0x10:   //delta h
-                                                                deferredWriteOPNA_P1(0x09, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x09, dt, dclk);
                                                                 break;
                                                             case 0x11:   //delta h
-                                                                deferredWriteOPNA_P1(0x0a, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x0a, dt, dclk);
                                                                 break;
                                                             case 0x12:   //EG
-                                                                deferredWriteOPNA_P1(0x0b, dt, dclk);
+                                                                deferredWriteOPNA_P1(comPortOPNA, 0x0b, dt, dclk);
                                                                 break;
                                                         }
                                                     }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (comPortY8950 != null)
+                                                {
+                                                    deferredWriteY8950(adrs, dt, dclk);
+                                                    comPortY8950.FlushDeferredWriteDataAndWait();
+                                                    //HACK:
+                                                    QueryPerformanceCounter(out before);
                                                 }
                                             }
                                         }
@@ -2253,17 +2278,6 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            //if (0xb0 <= adrs && adrs <= 0xb8)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
-
                                             if (comPortOPL3 != null)
                                                 deferredWriteOPL3_P0(adrs, dt, dclk);
                                         }
@@ -2279,17 +2293,6 @@ namespace zanac.VGMPlayer
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
-
-                                            //if (0xb0 <= adrs && adrs <= 0xb8)
-                                            //{
-                                            //    if (firstKeyon)
-                                            //    {
-                                            //        firstKeyon = false;
-                                            //        //HACK:
-                                            //        flushDeferredWriteDataAndWait();
-                                            //        QueryPerformanceCounter(out before);
-                                            //    }
-                                            //}
 
                                             if (comPortOPL3 != null)
                                                 deferredWriteOPL3_P1(adrs, dt, dclk);
@@ -2465,13 +2468,12 @@ namespace zanac.VGMPlayer
                                             {
                                                 if (comPortOPN2 != null)
                                                 {
-                                                    comPortOPN2.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
-                                                    comPortOPN2.DeferredWriteData(0, 0x08, (byte)dacData[dacOffset], (int)Settings.Default.BitBangWaitOPN2);
+                                                    DeferredWriteOPN2_DAC(comPortOPN2, 0x2a, (byte)dacData[dacOffset]);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
 #if ENABLE_OPNA_DAC_FOR_OPN2_DAC
-                                                    DeferredWriteOPNA_DAC(comPortOPNA, (short)dacData[dacOffset] - 0x80);
+                                                    DeferredWriteOPNA_DAC(comPortOPNA, (short)dacData[dacOffset]);
 #endif
                                                 }
                                             }
@@ -2494,8 +2496,14 @@ namespace zanac.VGMPlayer
                                                 case 2:   //YM2612
                                                     if (port == 0x00 && cmd == 0x2a)    //PCM
                                                     {
-                                                        comPortOPN2?.DeferredWriteData(0, 0x04, 0x2b, (int)Settings.Default.BitBangWaitOPN2);
-                                                        comPortOPN2?.DeferredWriteData(0, 0x08, 0x80, (int)Settings.Default.BitBangWaitOPN2);
+                                                        if (comPortOPN2 != null)
+                                                        {
+                                                            deferredWriteOPN2_P0(0x2b, 0x80, 0);
+                                                        }
+                                                        else if (comPortOPNA != null)
+                                                        {
+                                                            //nop
+                                                        }
                                                     }
                                                     break;
                                             }
@@ -2623,9 +2631,9 @@ namespace zanac.VGMPlayer
                                                     break;
 
                                                 if (adrs < 0x30)
-                                                    deferredWriteOPNA_P0(adrs, dt, dclk);
+                                                    deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
                                                 else
-                                                    deferredWriteOPNA_P1(adrs, dt, dclk);
+                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
                                             }
                                             else if (comPortOPN2 != null)
                                             {
@@ -2811,13 +2819,12 @@ namespace zanac.VGMPlayer
 
                                     if (comPortOPN2 != null)
                                     {
-                                        comPortOPN2.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
-                                        comPortOPN2.DeferredWriteData(0, 0x08, data, (int)Settings.Default.BitBangWaitOPN2);
+                                        DeferredWriteOPN2_DAC(comPortOPN2, 0x2a, data);
                                     }
                                     else if (comPortOPNA != null)
                                     {
 #if ENABLE_OPNA_DAC_FOR_OPN2_DAC
-                                        DeferredWriteOPNA_DAC(comPortOPNA, (short)data - 0x80);
+                                        DeferredWriteOPNA_DAC(comPortOPNA, data);
 #endif
                                     }
                                     streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
@@ -2874,27 +2881,23 @@ namespace zanac.VGMPlayer
 
                     //if (wait <= (double)Settings.Default.VGMWait)
                     //    continue;
-                    if (wait <= 0)
+                    if (wait + lastWaitRemain <= 0)
                         continue;
 
                     //while (!IsDeferredDataFlushed()) ;
 
                     flushDeferredWriteData();
+                    lastWaitRemain = 0;
 
                     QueryPerformanceCounter(out after);
-
-#if DEBUG
-                    //Console.WriteLine(vgmDataCurrentOffset.ToString("X"));
-#endif
-
-                    double pwait = (wait / PlaybackSpeed);
+                    double pwait = ((wait + lastWaitRemain) / PlaybackSpeed);
                     if (vgmHead.lngRate > 0)
                         pwait *= (double)vgmHead.lngRate / 60d;
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
-                        wait = -(lastDiff * 44.1 * 1000);
-                        //wait = 0;
+                        lastWaitRemain = -(lastDiff * 44.1 * 1000);
+                        wait = 0;
                         NotifyProcessLoadOccurred();
                     }
                     else
@@ -2902,8 +2905,10 @@ namespace zanac.VGMPlayer
                         while (((double)(after - before) / freq) < (pwait / (44.1 * 1000)))
                             QueryPerformanceCounter(out after);
                         wait = 0;
+                        lastWaitRemain = 0;
                         HighLoad = false;
                     }
+                    before = after;
                 }
             }
 
@@ -3278,9 +3283,15 @@ namespace zanac.VGMPlayer
 
         protected void deferredWriteOPM(int adrs, int dt)
         {
-            if (comPortOPM.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            switch (comPortOPM.SoundModuleType)
             {
-                comPortOPM.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                case VsifSoundModuleType.MSX_FTDI:
+                    comPortOPM.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                    break;
+                case VsifSoundModuleType.SpfmLight:
+                case VsifSoundModuleType.Spfm:
+                    comPortOPM.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                    break;
             }
         }
 
@@ -3319,7 +3330,7 @@ namespace zanac.VGMPlayer
             //flag
             YM2608WriteData(comPortOPNA, 0x10, 0, 3, 0x13, false);   //CLEAR MASK
             YM2608WriteData(comPortOPNA, 0x10, 0, 3, 0x80, false);   //IRQ RESET
-                                                        //Ctrl1
+                                                                     //Ctrl1
             YM2608WriteData(comPortOPNA, 0x00, 0, 3, 0x60, false);   //REC, EXTMEM
             //Ctrl2
             //START
@@ -3350,6 +3361,15 @@ namespace zanac.VGMPlayer
             for (int i = 0; i < len; i++)
             {
                 YM2608WriteData(comPortOPNA, 0x08, 0, 3, transferData[i], true);
+
+                //HACK: WAIT
+                switch (comPortOPNA?.SoundModuleType)
+                {
+                    case VsifSoundModuleType.Spfm:
+                    case VsifSoundModuleType.SpfmLight:
+                        comPortOPNA?.FlushDeferredWriteDataAndWait();
+                        break;
+                }
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -3493,6 +3513,15 @@ namespace zanac.VGMPlayer
             for (int i = 0; i < transferData.Length; i++)
             {
                 Y8950WriteData(comPortY8950, 0x0f, 0, slot, 0, 0, (byte)transferData[i], true, wait);
+
+                //HACK: WAIT
+                switch (comPortY8950?.SoundModuleType)
+                {
+                    case VsifSoundModuleType.Spfm:
+                    case VsifSoundModuleType.SpfmLight:
+                        comPortY8950?.FlushDeferredWriteDataAndWait();
+                        break;
+                }
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -3833,137 +3862,12 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void deferredWriteOPNA_P0(int adrs, int dt, uint dclk)
-        {
-            if (adrs == 7)
-                dt &= 0x3f;
-            comPortOPNA.RegTable[adrs] = dt;
-
-            switch (adrs)
-            {
-                case 0:
-                case 2:
-                case 4:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertAy8910Frequency(comPortOPNA.RegTable[adrs + 1], dt, comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPNA_P0(adrs, dt);
-                        deferredWriteOPNA_P0(adrs + 1, ret.Hi);
-                    }
-                    break;
-                case 1:
-                case 3:
-                case 5:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertAy8910Frequency(dt, comPortOPNA.RegTable[adrs - 1], comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPNA_P0(adrs - 1, ret.Lo);
-                        deferredWriteOPNA_P0(adrs, dt);
-                    }
-                    break;
-                case 6:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
-                        goto default;
-                    {
-                        var data = (int)Math.Round(dt * (dclk) / (double)comPortOPNA.ChipClockHz["OPNA_SSG"]);
-                        if (data > 32)
-                            data = 32;
-                        deferredWriteOPNA_P0(adrs, (byte)data);
-                    }
-                    break;
-                case 0xB:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertAy8910EnvFrequency(comPortOPNA.RegTable[adrs + 1], dt, comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPNA_P0(adrs, dt);
-                        deferredWriteOPNA_P0(adrs + 1, ret.Hi);
-                    }
-                    break;
-                case 0xC:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertAy8910EnvFrequency(dt, comPortOPNA.RegTable[adrs - 1], comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPNA_P0(adrs - 1, ret.Lo);
-                        deferredWriteOPNA_P0(adrs, dt);
-                    }
-                    break;
-
-                case 0xa0:
-                case 0xa1:
-                case 0xa2:
-                case 0xa8:
-                case 0xa9:
-                case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPNA_P0(adrs + 4, ret.Hi);
-                        deferredWriteOPNA_P0(adrs, dt);
-                    }
-                    break;
-                case 0xa4:
-                case 0xa5:
-                case 0xa6:
-                case 0xac:
-                case 0xad:
-                case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4], comPortOPNA.ChipClockHz["OPNA"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPNA_P0(adrs, dt);
-                        deferredWriteOPNA_P0(adrs - 4, ret.Lo);
-                    }
-                    break;
-                default:
-                    deferredWriteOPNA_P0(adrs, dt);
-                    break;
-            }
-        }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="dt"></param>
-        private void deferredWriteOPNA_P0(int adrs, int dt)
-        {
-            if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-            {
-                comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
-            }
-        }
-
-
+        /// <param name="dclk"></param>
         private void deferredWriteOPN_P0(int adrs, int dt, uint dclk)
         {
             if (adrs == 7)
@@ -4092,71 +3996,6 @@ namespace zanac.VGMPlayer
                 comPortOPN.SoundModuleType == VsifSoundModuleType.P6_FTDI)
             {
                 comPortOPN.DeferredWriteData(0x12, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN);
-            }
-        }
-
-        private void deferredWriteOPNA_P1(int adrs, int dt, uint dclk)
-        {
-            comPortOPNA.RegTable[adrs + 0x100] = dt;
-
-            switch (adrs)
-            {
-                case 0x0e:
-
-                    break;
-                case 0xa0:
-                case 0xa1:
-                case 0xa2:
-                case 0xa8:
-                case 0xa9:
-                case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4 + 0x100], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPNA_P1(adrs + 4, ret.Hi);
-                        deferredWriteOPNA_P1(adrs, dt);
-                    }
-                    break;
-                case 0xa4:
-                case 0xa5:
-                case 0xa6:
-                case 0xac:
-                case 0xad:
-                case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4 + 0x100], comPortOPNA.ChipClockHz["OPNA"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPNA_P1(adrs, dt);
-                        deferredWriteOPNA_P1(adrs - 4, ret.Lo);
-                    }
-                    break;
-                default:
-                    deferredWriteOPNA_P1(adrs, dt);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="adrs"></param>
-        /// <param name="dt"></param>
-        private void deferredWriteOPNA_P1(int adrs, int dt)
-        {
-            if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPNA.SoundModuleType == VsifSoundModuleType.P6_FTDI)
-            {
-                comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
             }
         }
 

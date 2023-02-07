@@ -37,8 +37,8 @@ namespace zanac.VGMPlayer
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fILEToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadPlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadPlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsThePlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.eXITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -214,6 +214,14 @@ namespace zanac.VGMPlayer
             this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
+            // addPlaylistToolStripMenuItem
+            // 
+            this.addPlaylistToolStripMenuItem.Name = "addPlaylistToolStripMenuItem";
+            this.addPlaylistToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
+            this.addPlaylistToolStripMenuItem.Size = new System.Drawing.Size(356, 26);
+            this.addPlaylistToolStripMenuItem.Text = "&Add music files...";
+            this.addPlaylistToolStripMenuItem.Click += new System.EventHandler(this.addPlaylistToolStripMenuItem_Click);
+            // 
             // loadPlaylistToolStripMenuItem
             // 
             this.loadPlaylistToolStripMenuItem.Name = "loadPlaylistToolStripMenuItem";
@@ -223,31 +231,23 @@ namespace zanac.VGMPlayer
             this.loadPlaylistToolStripMenuItem.Text = "&Load and play music files...";
             this.loadPlaylistToolStripMenuItem.Click += new System.EventHandler(this.loadPlaylistToolStripMenuItem_Click);
             // 
-            // addPlaylistToolStripMenuItem
-            // 
-            this.addPlaylistToolStripMenuItem.Name = "addPlaylistToolStripMenuItem";
-            this.addPlaylistToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-            this.addPlaylistToolStripMenuItem.Size = new System.Drawing.Size(356, 26);
-            this.addPlaylistToolStripMenuItem.Text = "&Add music files...";
-            this.addPlaylistToolStripMenuItem.Click += new System.EventHandler(this.addPlaylistToolStripMenuItem_Click);
-            // 
             // saveAsThePlaylistToolStripMenuItem
             // 
             this.saveAsThePlaylistToolStripMenuItem.Name = "saveAsThePlaylistToolStripMenuItem";
             this.saveAsThePlaylistToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAsThePlaylistToolStripMenuItem.Size = new System.Drawing.Size(316, 26);
+            this.saveAsThePlaylistToolStripMenuItem.Size = new System.Drawing.Size(356, 26);
             this.saveAsThePlaylistToolStripMenuItem.Text = "&Save playlist...";
             this.saveAsThePlaylistToolStripMenuItem.Click += new System.EventHandler(this.saveAsThePlaylistToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(313, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(353, 6);
             // 
             // eXITToolStripMenuItem
             // 
             this.eXITToolStripMenuItem.Name = "eXITToolStripMenuItem";
-            this.eXITToolStripMenuItem.Size = new System.Drawing.Size(316, 26);
+            this.eXITToolStripMenuItem.Size = new System.Drawing.Size(356, 26);
             this.eXITToolStripMenuItem.Text = "&Exit";
             // 
             // aBOUTToolStripMenuItem
@@ -2444,7 +2444,9 @@ namespace zanac.VGMPlayer
             this.comboBoxOPM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPM.FormattingEnabled = true;
             this.comboBoxOPM.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)"});
+            "VSIF - MSX(FTDI2XX)",
+            "SPFM Light - 4759 Player",
+            "SPFM - 4759 Player"});
             this.comboBoxOPM.Location = new System.Drawing.Point(4, 4);
             this.comboBoxOPM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPM.Name = "comboBoxOPM";
@@ -2879,7 +2881,9 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA.FormattingEnabled = true;
             this.comboBoxOPNA.Items.AddRange(new object[] {
             "VSIF - MSX(FTDI2XX)",
-            "VSIF - PC-6001(FTDI2XX)"});
+            "VSIF - PC-6001(FTDI2XX)",
+            "SPFM Light - 4759 Player",
+            "SPFM - 4759 Player"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(204, 248);
             this.comboBoxOPNA.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA.Name = "comboBoxOPNA";
@@ -4628,7 +4632,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VSIF Checker (VGM/XGM/MGS Player) V1.42";
+            this.Text = "VGM/XGM/MGS Player V1.43";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

@@ -240,6 +240,43 @@ namespace zanac.VGMPlayer
                                 }
                             }
                             break;
+                        case VsifSoundModuleType.Spfm:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 100;
+                                sp.ReadTimeout = 100;
+                                sp.BaudRate = 3 * 1000 * 1000;
+                                sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.None;
+                                sp.WriteBufferSize = 4;
+                                sp.Open();
+                                sp.Write(new byte[] { 0xff }, 0, 1);
+                                var client = new VsifClient(soundModule, new PortWriterSpfm(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
+                        case VsifSoundModuleType.SpfmLight:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 100;
+                                sp.ReadTimeout = 100;
+                                sp.BaudRate = 3 * 1000 * 1000;
+                                sp.StopBits = StopBits.One;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.None;
+                                sp.WriteBufferSize = 4;
+                                sp.Open();
+                                sp.Write(new byte[] { 0xff }, 0, 1);
+                                sp.Write(new byte[] { 0xfe }, 0, 1);
+                                var client = new VsifClient(soundModule, new PortWriterSpfmLight(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -257,6 +294,11 @@ namespace zanac.VGMPlayer
                 }
                 return null;
             }
+        }
+
+        private static void Sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private static void Client_Disposed(object sender, EventArgs e)
@@ -287,6 +329,8 @@ namespace zanac.VGMPlayer
         MSX_FTDI,
         Generic_UART,
         P6_FTDI,
+        Spfm,
+        SpfmLight,
     }
 
 

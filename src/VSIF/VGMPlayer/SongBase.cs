@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -611,18 +612,20 @@ namespace zanac.VGMPlayer
                 // (f / 55.5) * 65536
                 // 8KHz = 9447
 
-                //int f = (int)Math.Round((14 / 55.5) * 65536);
+                //int f = (int)Math.Round((44.1 / 55.5) * 65536);
                 //YM2608WriteData(comPort, 0x09, 0, 3, (byte)(f & 0xff), false);   //14KHz
                 //YM2608WriteData(comPort, 0x0A, 0, 3, (byte)((f >> 8) & 0xff), false);   //14KHz
 
                 YM2608WriteData(comPort, 0x09, 0, 3, 0xff, false);   //55.5KHz
                 YM2608WriteData(comPort, 0x0A, 0, 3, 0xff, false);   //55.5KHz
 
+                YM2608WriteData(comPort, 0x0B, 0, 3, 0x00, false);   // Volume 0
+
                 //MAX Attenuation
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x08, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x60, false);
+                //YM2608WriteData(comPort, 0x08, 0, 3, 0x80, false);
 
                 /* DAC mode
                 //flag
@@ -647,9 +650,9 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        protected void YM2608WriteData(VsifClient comPort, byte address, int op, int slot, byte data, bool deferred)
+        protected void YM2608WriteData(VsifClient comPortOPNA, byte address, int op, int slot, byte data, bool deferred)
         {
-            if (comPort != null)
+            if (comPortOPNA != null)
             {
                 switch (op)
                 {
@@ -667,14 +670,240 @@ namespace zanac.VGMPlayer
                         break;
                 }
 
-                if (comPort.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPort.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+                switch (comPortOPNA.SoundModuleType)
                 {
-                    comPort.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                    case VsifSoundModuleType.MSX_FTDI:
+                    case VsifSoundModuleType.P6_FTDI:
+                        comPortOPNA.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                        break;
+                    case VsifSoundModuleType.SpfmLight:
+                    case VsifSoundModuleType.Spfm:
+                        //comPortOPNA.DataWriter.RawWrite(new byte[] { 0, (byte)(slot / 3), (byte)(address + (op * 4) + (slot % 3)), data }, 0);
+                        comPortOPNA.DeferredWriteData((byte)(slot / 3), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
+                        break;
                 }
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="comPortOPNA"></param>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        /// <param name="dclk"></param>
+        protected void deferredWriteOPNA_P0(VsifClient comPortOPNA, int adrs, int dt, uint dclk)
+        {
+            if (adrs == 7)
+                dt &= 0x3f;
+            comPortOPNA.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0:
+                case 2:
+                case 4:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertAy8910Frequency(comPortOPNA.RegTable[adrs + 1], dt, comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs + 1, ret.Hi);
+                    }
+                    break;
+                case 1:
+                case 3:
+                case 5:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertAy8910Frequency(dt, comPortOPNA.RegTable[adrs - 1], comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs - 1, ret.Lo);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                    }
+                    break;
+                case 6:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        var data = (int)Math.Round(dt * (dclk) / (double)comPortOPNA.ChipClockHz["OPNA_SSG"]);
+                        if (data > 32)
+                            data = 32;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, (byte)data);
+                    }
+                    break;
+                case 0xB:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertAy8910EnvFrequency(comPortOPNA.RegTable[adrs + 1], dt, comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs + 1, ret.Hi);
+                    }
+                    break;
+                case 0xC:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA_SSG"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertAy8910EnvFrequency(dt, comPortOPNA.RegTable[adrs - 1], comPortOPNA.ChipClockHz["OPNA_SSG"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs - 1, ret.Lo);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                    }
+                    break;
+
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs + 4, ret.Hi);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                        deferredWriteOPNA_P0(comPortOPNA, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNA_P0(comPortOPNA, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPNA_P0(VsifClient comPortOPNA, int adrs, int dt)
+        {
+            switch (comPortOPNA.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.P6_FTDI:
+                    //Set volume for pseudo DAC
+                    comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    //outputAdpcm(comPort, inputValue);
+                    break;
+                case VsifSoundModuleType.SpfmLight:
+                case VsifSoundModuleType.Spfm:
+                    //comPortOPNA.DataWriter.RawWrite(new byte[] { 0x00, 0x00, (byte)adrs, (byte)dt }, 0);
+                    comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
+            }
+        }
+
+
+        protected void deferredWriteOPNA_P1(VsifClient comPortOPNA, int adrs, int dt, uint dclk)
+        {
+            comPortOPNA.RegTable[adrs + 0x100] = dt;
+
+            switch (adrs)
+            {
+                case 0x0e:
+
+                    break;
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPNA.RegTable[adrs + 4 + 0x100], dt, comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPNA_P1(comPortOPNA, adrs + 4, ret.Hi);
+                        deferredWriteOPNA_P1(comPortOPNA, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPNA.ChipClockHz["OPNA"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPNA.RegTable[adrs - 4 + 0x100], comPortOPNA.ChipClockHz["OPNA"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPNA_P1(comPortOPNA, adrs, dt);
+                        deferredWriteOPNA_P1(comPortOPNA, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPNA_P1(VsifClient comPortOPNA, int adrs, int dt)
+        {
+            switch (comPortOPNA.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.P6_FTDI:
+                    comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
+                case VsifSoundModuleType.SpfmLight:
+                case VsifSoundModuleType.Spfm:
+                    //comPortOPNA.DataWriter.RawWrite(new byte[] { 0x01, 0x00, (byte)adrs, (byte)dt }, 0);
+                    comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
+            }
+        }
 
         /// <summary>
         /// PCM値
@@ -697,20 +926,50 @@ namespace zanac.VGMPlayer
         /// 
         /// </summary>
         /// <param name="adrs"></param>
-        /// <param name="inputValue"></param>
-        protected void DeferredWriteOPNA_DAC(VsifClient comPort, int inputValue)
+        /// <param name="dt"></param>
+        protected void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int adrs, int dt)
         {
-            if (comPort.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPort.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
-                //Set volume for pseudo DAC
-                comPort.DeferredWriteData(0x13, (byte)0xb, (byte)(inputValue + 0x80), (int)Settings.Default.BitBangWaitOPNA);
+                //comPortOPN2.DeferredWriteDataPrior(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                
+                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+            }
+            else //Genesis
+            {
+                //comPortOPN2.DeferredWriteDataPrior(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                //comPortOPN2.DeferredWriteDataPrior(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
 
-                //outputAdpcm(comPort, inputValue);
+                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 
-        private void outputAdpcm(VsifClient comPort, int inputValue)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="inputValue"></param>
+        protected void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
+        {
+            switch (comPortOPNA.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.P6_FTDI:
+                    //Set volume for pseudo DAC
+                    //comPortOPNA.DeferredWriteDataPrior(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    //outputAdpcm(comPort, inputValue);
+                    break;
+                case VsifSoundModuleType.SpfmLight:
+                case VsifSoundModuleType.Spfm:
+                    //comPortOPNA.DeferredWriteDataPrior(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
+            }
+        }
+
+        private void outputAdpcm(VsifClient comPortOPNA, int inputValue)
         {
             //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
             //変化量 <- PCM入力値 - PCM値
@@ -760,7 +1019,7 @@ namespace zanac.VGMPlayer
             else
             {
                 outputValue |= (byte)adpcmData;
-                comPort.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
+                comPortOPNA.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
                 outputValue = 0;
                 firstData = true;
             }

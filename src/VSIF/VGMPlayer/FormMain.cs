@@ -1010,6 +1010,22 @@ namespace zanac.VGMPlayer
                             comPortOPM.DeferredWriteData(0xd, 0, (byte)comboBoxOpmSlot.SelectedIndex, (int)Settings.Default.BitBangWaitOPM);
                         }
                         break;
+                    case 1:
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
+                            (PortId)Settings.Default.OPM_Port, (int)Settings.Default.OPMDiv, false);
+                        if (comPortOPM != null)
+                        {
+                            comPortOPM.Tag["OPM.Slot"] = comboBoxOpmSlot.SelectedIndex;
+                        }
+                        break;
+                    case 2:
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
+                            (PortId)Settings.Default.OPM_Port, (int)Settings.Default.OPMDiv, false);
+                        if (comPortOPM != null)
+                        {
+                            comPortOPM.Tag["OPM.Slot"] = comboBoxOpmSlot.SelectedIndex;
+                        }
+                        break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
                 comboBoxOPM.Enabled = comPortOPM == null;
@@ -1066,6 +1082,18 @@ namespace zanac.VGMPlayer
                 {
                     case 0:
                         comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
+                        break;
+                    case 1:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
+                            (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
+                        break;
+                    case 2:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
+                            (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
+                        break;
+                    case 3:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
                             (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
                         break;
                 }

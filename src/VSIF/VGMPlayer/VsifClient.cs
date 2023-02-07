@@ -185,6 +185,21 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void DeferredWriteDataPrior(byte type, byte address, byte data, int wait)
+        {
+            lock (lockObject)
+            {
+                if (disposedValue)
+                    return;
+                deferredWriteAdrAndData.Insert(0, new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void deferredWriteDataTask()
         {
             try
