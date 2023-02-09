@@ -802,6 +802,12 @@ namespace zanac.VGMPlayer
                                                 else if (comPortOPNA != null)
                                                 {
                                                     deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
+                                                    if (adrs == 0xb6)
+                                                    {
+#if ENABLE_OPNA_DAC_FOR_OPN2_DAC
+                                                        deferredWriteOPNA_P1(comPortOPNA, 0x01, (byte)(dt & 0xC0));   //LR
+#endif
+                                                    }
                                                 }
                                             }
                                         }

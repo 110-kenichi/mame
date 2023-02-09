@@ -588,10 +588,6 @@ namespace zanac.VGMPlayer
             return ret;
         }
 
-
-
-        bool lastEnabled = false;
-
         /// <summary>
         /// 
         /// </summary>
@@ -601,7 +597,8 @@ namespace zanac.VGMPlayer
         protected void EnableDacYM2608(VsifClient comPort, bool enable)
         {
             YM2608WriteData(comPort, 0x00, 0, 3, 0x01, false);  //RESET
-            if (enable && !lastEnabled)
+            comPort.FlushDeferredWriteDataAndWait();
+            if (enable)
             {
                 //ADPCM mode
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x17, false);   //ENA FLAG BRDY
@@ -624,8 +621,10 @@ namespace zanac.VGMPlayer
                 //MAX Attenuation
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0xff, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x60, false);
-                //YM2608WriteData(comPort, 0x08, 0, 3, 0x80, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x80, false);
 
                 /* DAC mode
                 //flag
@@ -637,14 +636,6 @@ namespace zanac.VGMPlayer
                 YM2608WriteData(comPort, 0x01, 0, 3, 0xCC, false);   //Sart
                 */
             }
-            else if (!enable && lastEnabled)
-            {
-                YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //Sart
-
-                YM2608WriteData(comPort, 0x00, 0, 3, 0x00, false);   //Finish
-                YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
-            }
-            lastEnabled = enable;
         }
 
         /// <summary>
