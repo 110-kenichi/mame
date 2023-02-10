@@ -73,6 +73,7 @@ namespace zanac.VGMPlayer
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height - 1;
 
+            ListViewItem lvi = null;
             try
             {
                 listViewList.BeginUpdate();
@@ -87,6 +88,7 @@ namespace zanac.VGMPlayer
                         listViewList.Items[idx].Focused = true;
                         listViewList.Items[idx].Selected = true;
                         listViewList.Items[idx].EnsureVisible();
+                        lvi = listViewList.Items[idx];
                     }
                 }
             }
@@ -94,7 +96,8 @@ namespace zanac.VGMPlayer
             {
                 listViewList.EndUpdate();
             }
-
+            if(lvi != null)
+                listViewList.TopItem = lvi;
         }
 
         protected override void WndProc(ref Message m)

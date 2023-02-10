@@ -597,15 +597,14 @@ namespace zanac.VGMPlayer
         protected void EnableDacYM2608(VsifClient comPort, bool enable)
         {
             YM2608WriteData(comPort, 0x00, 0, 3, 0x01, false);  //RESET
-            comPort.FlushDeferredWriteDataAndWait();
             if (enable)
             {
+                //*
                 //ADPCM mode
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x17, false);   //ENA FLAG BRDY
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
                 YM2608WriteData(comPort, 0x00, 0, 3, 0x80, false);   //CPU->OPNA
                 YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //LR
-                YM2608WriteData(comPort, 0x0B, 0, 3, 0xFF, false);   //MAX Vol
                 // (f / 55.5) * 65536
                 // 8KHz = 9447
 
@@ -619,22 +618,22 @@ namespace zanac.VGMPlayer
                 YM2608WriteData(comPort, 0x0B, 0, 3, 0x00, false);   // Volume 0
 
                 //MAX Attenuation
+                YM2608WriteData(comPort, 0x08, 0, 3, 0xff, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0xff, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x60, false);
+                YM2608WriteData(comPort, 0x08, 0, 3, 0x70, false);
                 YM2608WriteData(comPort, 0x08, 0, 3, 0x80, false);
-
+                //*/
                 /* DAC mode
                 //flag
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x1B, false);   //ENA FLAG EOS
                 YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
-                YM2608WriteData(comPort, 0x09, 0, 3, 0xFA, false);   //16KHz
-                YM2608WriteData(comPort, 0x0A, 0, 3, 0x00, false);   //16KHz
-
+                YM2608WriteData(comPort, 0x06, 0, 3, 0xF4, false);   //16KHz
+                YM2608WriteData(comPort, 0x07, 0, 3, 0x01, false);   //16KHz
                 YM2608WriteData(comPort, 0x01, 0, 3, 0xCC, false);   //Sart
-                */
+                //*/
             }
         }
 
@@ -923,7 +922,7 @@ namespace zanac.VGMPlayer
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
                 //comPortOPN2.DeferredWriteDataPrior(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-                
+
                 comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
             else //Genesis
@@ -956,6 +955,7 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.Spfm:
                     //comPortOPNA.DeferredWriteDataPrior(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
                     comPortOPNA.DeferredWriteData(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    //comPortOPNA.DeferredWriteData(0x01, 0x0E, (byte)(inputValue-0x80), (int)Settings.Default.BitBangWaitOPNA);
                     break;
             }
         }
