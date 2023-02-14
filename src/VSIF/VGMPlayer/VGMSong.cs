@@ -3296,7 +3296,7 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
-                    comPortOPM.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                    comPortOPM.DeferredWriteData(0x10, (byte)adrs, (byte)dt, 0);
                     break;
             }
         }
@@ -3331,33 +3331,33 @@ namespace zanac.VGMPlayer
         {
             //File.WriteAllBytes(transferData.Length.ToString(), transferData);
 
-            YM2608WriteData(comPortOPNA, 0x00, 0, 3, 0x01, false);  //RESET
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
 
             //flag
-            YM2608WriteData(comPortOPNA, 0x10, 0, 3, 0x13, false);   //CLEAR MASK
-            YM2608WriteData(comPortOPNA, 0x10, 0, 3, 0x80, false);   //IRQ RESET
-                                                                     //Ctrl1
-            YM2608WriteData(comPortOPNA, 0x00, 0, 3, 0x60, false);   //REC, EXTMEM
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x13);   //CLEAR MASK
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);   //IRQ RESET
+                                                                          //Ctrl1
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x60);   //REC, EXTMEM
             //Ctrl2
             //START
             if (ym2608_adpcmbit8)
             {
-                YM2608WriteData(comPortOPNA, 0x01, 0, 3, 0x02, false);   //LR, 8bit DRAM
-                YM2608WriteData(comPortOPNA, 0x02, 0, 3, (byte)((saddr >> 5) & 0xff), false);
-                YM2608WriteData(comPortOPNA, 0x03, 0, 3, (byte)((saddr >> (5 + 8)) & 0xff), false);
+                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x02);   //LR, 8bit DRAM
+                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 5) & 0xff));
+                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (5 + 8)) & 0xff));
             }
             else
             {
-                YM2608WriteData(comPortOPNA, 0x01, 0, 3, 0x00, false);   //LR, 1bit DRAM
-                YM2608WriteData(comPortOPNA, 0x02, 0, 3, (byte)((saddr >> 2) & 0xff), false);
-                YM2608WriteData(comPortOPNA, 0x03, 0, 3, (byte)((saddr >> (2 + 8)) & 0xff), false);
+                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x00);   //LR, 1bit DRAM
+                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 2) & 0xff));
+                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (2 + 8)) & 0xff));
             }
             //STOP
-            YM2608WriteData(comPortOPNA, 0x04, 0, 3, 0xff, false);
-            YM2608WriteData(comPortOPNA, 0x05, 0, 3, 0xff, false);
+            deferredWriteOPNA_P1(comPortOPNA, 0x04, 0xff);
+            deferredWriteOPNA_P1(comPortOPNA, 0x05, 0xff);
             //LIMIT
-            YM2608WriteData(comPortOPNA, 0x0C, 0, 3, 0xff, false);
-            YM2608WriteData(comPortOPNA, 0x0D, 0, 3, 0xff, false);
+            deferredWriteOPNA_P1(comPortOPNA, 0x0C, 0xff);
+            deferredWriteOPNA_P1(comPortOPNA, 0x0D, 0xff);
 
             //Transfer
             int len = transferData.Length;
@@ -3366,7 +3366,7 @@ namespace zanac.VGMPlayer
             int lastPercentage = 0;
             for (int i = 0; i < len; i++)
             {
-                YM2608WriteData(comPortOPNA, 0x08, 0, 3, transferData[i], true);
+                deferredWriteOPNA_P1(comPortOPNA, 0x08, transferData[i]);
 
                 //HACK: WAIT
                 switch (comPortOPNA?.SoundModuleType)
@@ -3393,8 +3393,8 @@ namespace zanac.VGMPlayer
             FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
 
             // Finish
-            YM2608WriteData(comPortOPNA, 0x10, 0, 3, 0x80, false);
-            YM2608WriteData(comPortOPNA, 0x00, 0, 3, 0x01, false);  //RESET
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
         }
 
         /// <summary>
@@ -3408,7 +3408,6 @@ namespace zanac.VGMPlayer
             if (transferData.Length == 0)
                 return;
 
-            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
             int slot = 0;
             if (comPortY8950 != null)
             {

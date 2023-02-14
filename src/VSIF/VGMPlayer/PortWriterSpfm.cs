@@ -30,6 +30,8 @@ namespace zanac.VGMPlayer
         {
         }
 
+        bool lastDataIsDac;
+
         /// <summary>
         /// 
         /// </summary>
@@ -48,17 +50,40 @@ namespace zanac.VGMPlayer
                     {
                         case 0x00:  //OPNA P0
                             ds.Add(0x60);
+                            ds.Add(dt.Address);
+                            ds.Add(dt.Data);
+                            ds.Add(0x80);
+                            lastDataIsDac = false;
                             break;
                         case 0x01:  //OPNA P1
                             ds.Add(0x61);
+                            ds.Add(dt.Address);
+                            ds.Add(dt.Data);
+                            ds.Add(0x80);
+                            lastDataIsDac = false;
+                            break;
+                        case 0x02:  //OPNA P1 Pseudo DAC
+                            if (lastDataIsDac)
+                            {
+                                //dummy wait
+                                //ds.Add(0x61);
+                                //ds.Add(0x20);
+                                //ds.Add(0x00);
+                                //ds.Add(0x80);
+                            }
+                            ds.Add(0x61);
+                            ds.Add(dt.Address);
+                            ds.Add(dt.Data);
+                            ds.Add(0x80);
+                            lastDataIsDac = true;
                             break;
                         case 0x10:  //OPM
                             ds.Add(0x50);
+                            ds.Add(dt.Address);
+                            ds.Add(dt.Data);
+                            ds.Add(0x80);
                             break;
                     }
-                    ds.Add(dt.Address);
-                    ds.Add(dt.Data);
-                    ds.Add(0x80);
                 }
                 byte[] dsa = ds.ToArray();
                 lock (LockObject)

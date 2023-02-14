@@ -641,7 +641,6 @@ namespace zanac.VGMPlayer
             double xgmWaitDelta = 0;
             double streamWaitDelta = 0;
             double lastDiff = 0;
-            using (SafeWaitHandle handle = CreateWaitableTimer(IntPtr.Zero, false, null))
             {
                 //bool firstKeyon = false;    //TODO: true
                 long freq, before, after;
@@ -981,6 +980,7 @@ namespace zanac.VGMPlayer
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
                         lastWaitRemain = -(lastDiff * 44.1 * 1000);
+                        lastWaitRemain = 0;
                         wait = 0;
                         NotifyProcessLoadOccurred();
                     }

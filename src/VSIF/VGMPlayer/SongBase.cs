@@ -596,15 +596,15 @@ namespace zanac.VGMPlayer
         /// <param name="fp"></param>
         protected void EnableDacYM2608(VsifClient comPort, bool enable)
         {
-            YM2608WriteData(comPort, 0x00, 0, 3, 0x01, false);  //RESET
+            deferredWriteOPNA_P1(comPort, 0x00, 3, 0x01);  //RESET
             if (enable)
             {
                 //*
                 //ADPCM mode
-                YM2608WriteData(comPort, 0x10, 0, 3, 0x17, false);   //ENA FLAG BRDY
-                YM2608WriteData(comPort, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
-                YM2608WriteData(comPort, 0x00, 0, 3, 0x80, false);   //CPU->OPNA
-                YM2608WriteData(comPort, 0x01, 0, 3, 0xC0, false);   //LR
+                deferredWriteOPNA_P1(comPort, 0x10, 0x17);   //ENA FLAG BRDY
+                deferredWriteOPNA_P1(comPort, 0x10, 0x80);   //RESET FLAGS
+                deferredWriteOPNA_P1(comPort, 0x00, 0x80);   //CPU->OPNA
+                deferredWriteOPNA_P1(comPort, 0x01, 0xC0);   //LR
                 // (f / 55.5) * 65536
                 // 8KHz = 9447
 
@@ -612,19 +612,19 @@ namespace zanac.VGMPlayer
                 //YM2608WriteData(comPort, 0x09, 0, 3, (byte)(f & 0xff), false);   //14KHz
                 //YM2608WriteData(comPort, 0x0A, 0, 3, (byte)((f >> 8) & 0xff), false);   //14KHz
 
-                YM2608WriteData(comPort, 0x09, 0, 3, 0xff, false);   //55.5KHz
-                YM2608WriteData(comPort, 0x0A, 0, 3, 0xff, false);   //55.5KHz
+                deferredWriteOPNA_P1(comPort, 0x09, 0xff);   //55.5KHz
+                deferredWriteOPNA_P1(comPort, 0x0A, 0xff);   //55.5KHz
 
-                YM2608WriteData(comPort, 0x0B, 0, 3, 0x00, false);   // Volume 0
+                deferredWriteOPNA_P1(comPort, 0x0B, 0x00);   // Volume 0
 
                 //MAX Attenuation
-                YM2608WriteData(comPort, 0x08, 0, 3, 0xff, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x77, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0xff, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x70, false);
-                YM2608WriteData(comPort, 0x08, 0, 3, 0x80, false);
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);
+                deferredWriteOPNA_P1(comPort, 0x08, 0x70);
+                deferredWriteOPNA_P1(comPort, 0x08, 0x80);
                 //*/
                 /* DAC mode
                 //flag
@@ -634,44 +634,6 @@ namespace zanac.VGMPlayer
                 YM2608WriteData(comPort, 0x07, 0, 3, 0x01, false);   //16KHz
                 YM2608WriteData(comPort, 0x01, 0, 3, 0xCC, false);   //Sart
                 //*/
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected void YM2608WriteData(VsifClient comPortOPNA, byte address, int op, int slot, byte data, bool deferred)
-        {
-            if (comPortOPNA != null)
-            {
-                switch (op)
-                {
-                    case 0:
-                        op = 0;
-                        break;
-                    case 1:
-                        op = 2;
-                        break;
-                    case 2:
-                        op = 1;
-                        break;
-                    case 3:
-                        op = 3;
-                        break;
-                }
-
-                switch (comPortOPNA.SoundModuleType)
-                {
-                    case VsifSoundModuleType.MSX_FTDI:
-                    case VsifSoundModuleType.P6_FTDI:
-                        comPortOPNA.DeferredWriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
-                        break;
-                    case VsifSoundModuleType.SpfmLight:
-                    case VsifSoundModuleType.Spfm:
-                        //comPortOPNA.DataWriter.RawWrite(new byte[] { 0, (byte)(slot / 3), (byte)(address + (op * 4) + (slot % 3)), data }, 0);
-                        comPortOPNA.DeferredWriteData((byte)(slot / 3), (byte)(address + (op * 4) + (slot % 3)), data, (int)Settings.Default.BitBangWaitOPNA);
-                        break;
-                }
             }
         }
 
@@ -890,7 +852,7 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
                     //comPortOPNA.DataWriter.RawWrite(new byte[] { 0x01, 0x00, (byte)adrs, (byte)dt }, 0);
-                    comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, 0);
                     break;
             }
         }
@@ -921,15 +883,10 @@ namespace zanac.VGMPlayer
         {
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
-                //comPortOPN2.DeferredWriteDataPrior(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-
                 comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
             else //Genesis
             {
-                //comPortOPN2.DeferredWriteDataPrior(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-                //comPortOPN2.DeferredWriteDataPrior(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-
                 comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
                 comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -947,14 +904,12 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.P6_FTDI:
                     //Set volume for pseudo DAC
-                    //comPortOPNA.DeferredWriteDataPrior(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
                     comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
                     //outputAdpcm(comPort, inputValue);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
-                    //comPortOPNA.DeferredWriteDataPrior(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
-                    comPortOPNA.DeferredWriteData(0x01, 0x0b, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x02, 0x0b, (byte)inputValue, 0);
                     //comPortOPNA.DeferredWriteData(0x01, 0x0E, (byte)(inputValue-0x80), (int)Settings.Default.BitBangWaitOPNA);
                     break;
             }
