@@ -36,7 +36,7 @@ namespace zanac.MAmidiMEmo.VSIF
         public const int FTDI_BAUDRATE_C64_CLK_WIDTH = 25;
 
         public const int FTDI_BAUDRATE_MSX = 240000;
-        public const int FTDI_BAUDRATE_MSX_CLK_WIDTH = 20;
+        public const int FTDI_BAUDRATE_MSX_CLK_WIDTH = 25;
 
         private static object lockObject = new object();
 
