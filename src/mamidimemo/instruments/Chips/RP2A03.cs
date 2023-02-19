@@ -1516,6 +1516,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateFdsPitch()
             {
+                if (IsSoundOff)
+                    return;
                 double freq = CalcCurrentFrequency();
                 // p = 65536 * f / 1789773d
                 freq = Math.Round(64 * 65536 * freq / parentModule.MasterClock);

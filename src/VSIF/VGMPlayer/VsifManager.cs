@@ -25,14 +25,14 @@ namespace zanac.VGMPlayer
         //                double rate = Math.Round(3000000d / ((double)numericUpDownDiv1.Value + (double)numericUpDownDiv2.Value));
 
 
-        // 272727 = 3000000 / 11
+        // 260870 = 3000000 / 11.5
         public const int FTDI_BAUDRATE_GEN = 11;
 
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 100;
 
-        // 96774 = 3000000 / 31
-        public const int FTDI_BAUDRATE_MSX = 31;
+        // 240000 = 3000000 / 12.5
+        public const int FTDI_BAUDRATE_MSX = 12;
 
         private static object lockObject = new object();
 
@@ -159,7 +159,7 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_GEN + (offset*2))));
+                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_GEN + offset + 0.5)));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -190,7 +190,7 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_MSX + (offset * 2))));
+                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_MSX + offset + 0.5)));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -294,11 +294,6 @@ namespace zanac.VGMPlayer
                 }
                 return null;
             }
-        }
-
-        private static void Sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private static void Client_Disposed(object sender, EventArgs e)

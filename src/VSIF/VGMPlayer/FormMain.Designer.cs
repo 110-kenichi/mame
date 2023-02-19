@@ -43,82 +43,6 @@ namespace zanac.VGMPlayer
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.eXITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBOUTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tableLayoutPanelPort = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBoxSCC = new System.Windows.Forms.ComboBox();
-            this.comboBoxSccSlot = new System.Windows.Forms.ComboBox();
-            this.numericUpDownClkWidthDCSG = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.comboBoxPortYm2413 = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.comboBoxDCSG = new System.Windows.Forms.ComboBox();
-            this.comboBoxPortSN76489 = new System.Windows.Forms.ComboBox();
-            this.comboBoxPortSCC = new System.Windows.Forms.ComboBox();
-            this.numericUpDownOPLL = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownSCC = new System.Windows.Forms.NumericUpDown();
-            this.label12 = new System.Windows.Forms.Label();
-            this.comboBoxY8910 = new System.Windows.Forms.ComboBox();
-            this.numericUpDownY8910 = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortY8910 = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.checkBoxConnDCSG = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnOPLL = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnSCC = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnY8910 = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnOPN2 = new System.Windows.Forms.CheckBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboBoxOPN2 = new System.Windows.Forms.ComboBox();
-            this.numericUpDownOPN2 = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortYM2612 = new System.Windows.Forms.ComboBox();
-            this.comboBoxSccType = new System.Windows.Forms.ComboBox();
-            this.checkBoxConnOPM = new System.Windows.Forms.CheckBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.numericUpDownOPM = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortOPM = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBoxOPM = new System.Windows.Forms.ComboBox();
-            this.comboBoxOpmSlot = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBoxOPLL = new System.Windows.Forms.ComboBox();
-            this.comboBoxOpllSlot = new System.Windows.Forms.ComboBox();
-            this.checkBoxConnOPL3 = new System.Windows.Forms.CheckBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.comboBoxOPL3 = new System.Windows.Forms.ComboBox();
-            this.numericUpDownOPL3 = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortOPL3 = new System.Windows.Forms.ComboBox();
-            this.checkBoxConnOPNA = new System.Windows.Forms.CheckBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.comboBoxOPNA = new System.Windows.Forms.ComboBox();
-            this.numericUpDownOPNA = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortOPNA = new System.Windows.Forms.ComboBox();
-            this.checkBoxConnY8950 = new System.Windows.Forms.CheckBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.numericUpDownY8950 = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortY8950 = new System.Windows.Forms.ComboBox();
-            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBoxY8950 = new System.Windows.Forms.ComboBox();
-            this.comboBoxY8950Slot = new System.Windows.Forms.ComboBox();
-            this.checkBoxCnvClk = new System.Windows.Forms.CheckBox();
-            this.checkBoxConnOPN = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.comboBoxOPN = new System.Windows.Forms.ComboBox();
-            this.numericUpDownOPN = new System.Windows.Forms.NumericUpDown();
-            this.comboBoxPortOPN = new System.Windows.Forms.ComboBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.numericUpDownOPN2Div = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownDCSGDiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownOPLLDiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownSCCDiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownPSGDiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownOPMDiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownOPL3Div = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownOPNADiv = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown8950Div = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownOPNDiv = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
             this.buttonPrev = new System.Windows.Forms.Button();
             this.imageListSmall = new System.Windows.Forms.ImageList(this.components);
@@ -153,10 +77,92 @@ namespace zanac.VGMPlayer
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label12 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             this.saveFileDialogM3U = new System.Windows.Forms.SaveFileDialog();
+            this.tableLayoutPanelPort = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxSCC = new System.Windows.Forms.ComboBox();
+            this.comboBoxSccSlot = new System.Windows.Forms.ComboBox();
+            this.numericUpDownClkWidthDCSG = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.comboBoxPortYm2413 = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBoxDCSG = new System.Windows.Forms.ComboBox();
+            this.comboBoxPortSN76489 = new System.Windows.Forms.ComboBox();
+            this.comboBoxPortSCC = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPLL = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSCC = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxY8910 = new System.Windows.Forms.ComboBox();
+            this.numericUpDownY8910 = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortY8910 = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkBoxConnDCSG = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnOPLL = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnSCC = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnY8910 = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnOPN2 = new System.Windows.Forms.CheckBox();
+            this.comboBoxOPN2 = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPN2 = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortYM2612 = new System.Windows.Forms.ComboBox();
+            this.comboBoxSccType = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnOPM = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.numericUpDownOPM = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortOPM = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxOPM = new System.Windows.Forms.ComboBox();
+            this.comboBoxOpmSlot = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxOPLL = new System.Windows.Forms.ComboBox();
+            this.comboBoxOpllSlot = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnOPL3 = new System.Windows.Forms.CheckBox();
+            this.comboBoxOPL3 = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPL3 = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortOPL3 = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnOPNA = new System.Windows.Forms.CheckBox();
+            this.comboBoxOPNA = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPNA = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortOPNA = new System.Windows.Forms.ComboBox();
+            this.checkBoxConnY8950 = new System.Windows.Forms.CheckBox();
+            this.numericUpDownY8950 = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortY8950 = new System.Windows.Forms.ComboBox();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxY8950 = new System.Windows.Forms.ComboBox();
+            this.comboBoxY8950Slot = new System.Windows.Forms.ComboBox();
+            this.checkBoxCnvClk = new System.Windows.Forms.CheckBox();
+            this.checkBoxConnOPN = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.comboBoxOPN = new System.Windows.Forms.ComboBox();
+            this.numericUpDownOPN = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortOPN = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.numericUpDownOPN2Div = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownDCSGDiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownOPLLDiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSCCDiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownPSGDiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownOPMDiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownOPL3Div = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownOPNADiv = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown8950Div = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownOPNDiv = new System.Windows.Forms.NumericUpDown();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
+            this.tableLayoutPanelButton.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
+            this.contextMenuStripList.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.tableLayoutPanelPort.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownClkWidthDCSG)).BeginInit();
@@ -182,12 +188,6 @@ namespace zanac.VGMPlayer
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNADiv)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8950Div)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNDiv)).BeginInit();
-            this.tableLayoutPanelButton.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
-            this.contextMenuStripList.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -198,7 +198,7 @@ namespace zanac.VGMPlayer
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(899, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(899, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -211,7 +211,7 @@ namespace zanac.VGMPlayer
             this.toolStripSeparator1,
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // addPlaylistToolStripMenuItem
@@ -253,61 +253,574 @@ namespace zanac.VGMPlayer
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
-            // label1
+            // tableLayoutPanelButton
             // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(57, 8);
-            this.label1.Margin = new System.Windows.Forms.Padding(4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(139, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Chip";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tableLayoutPanelButton.ColumnCount = 12;
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelButton.Controls.Add(this.buttonPrev, 0, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoop, 7, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonFast, 6, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonSlow, 5, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonFreeze, 4, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonPlay, 1, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.labelSpeed, 5, 1);
+            this.tableLayoutPanelButton.Controls.Add(this.numericUpDownLooped, 7, 1);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonStop, 3, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonNext, 2, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonClear, 11, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.buttonEject, 10, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoopTimes, 8, 0);
+            this.tableLayoutPanelButton.Controls.Add(this.dateTimePickerLoopTimes, 8, 1);
+            this.tableLayoutPanelButton.Controls.Add(this.labelElapsed, 2, 1);
+            this.tableLayoutPanelButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 657);
+            this.tableLayoutPanelButton.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanelButton.Name = "tableLayoutPanelButton";
+            this.tableLayoutPanelButton.RowCount = 2;
+            this.tableLayoutPanelButton.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelButton.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelButton.Size = new System.Drawing.Size(899, 106);
+            this.tableLayoutPanelButton.TabIndex = 4;
             // 
-            // label2
+            // buttonPrev
             // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(204, 8);
-            this.label2.Margin = new System.Windows.Forms.Padding(4);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(367, 15);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "VSIF Type, Slot type (MSX only)";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonPrev.AutoSize = true;
+            this.buttonPrev.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonPrev.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonPrev.FlatAppearance.BorderSize = 0;
+            this.buttonPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonPrev.ImageIndex = 0;
+            this.buttonPrev.ImageList = this.imageListSmall;
+            this.buttonPrev.Location = new System.Drawing.Point(4, 4);
+            this.buttonPrev.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonPrev.Name = "buttonPrev";
+            this.buttonPrev.Size = new System.Drawing.Size(38, 68);
+            this.buttonPrev.TabIndex = 0;
+            this.buttonPrev.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonPrev, "Previous Track");
+            this.buttonPrev.UseVisualStyleBackColor = true;
+            this.buttonPrev.Click += new System.EventHandler(this.buttonPrev_Click);
             // 
-            // label3
+            // imageListSmall
             // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Location = new System.Drawing.Point(57, 62);
-            this.label3.Margin = new System.Windows.Forms.Padding(4);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(139, 23);
-            this.label3.TabIndex = 13;
-            this.label3.Text = "SN&76489(DCSG)";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label3.Click += new System.EventHandler(this.label3_Click);
-            this.label3.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            this.imageListSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListSmall.ImageStream")));
+            this.imageListSmall.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListSmall.Images.SetKeyName(0, "Prev.png");
+            this.imageListSmall.Images.SetKeyName(1, "Next.png");
+            this.imageListSmall.Images.SetKeyName(2, "Stop.png");
+            this.imageListSmall.Images.SetKeyName(3, "Freeze.png");
+            this.imageListSmall.Images.SetKeyName(4, "Slow.png");
+            this.imageListSmall.Images.SetKeyName(5, "Fast.png");
+            this.imageListSmall.Images.SetKeyName(6, "Loop.png");
+            this.imageListSmall.Images.SetKeyName(7, "Clear.png");
+            this.imageListSmall.Images.SetKeyName(8, "Eject.png");
+            this.imageListSmall.Images.SetKeyName(9, "Loop_Time.png");
             // 
-            // label4
+            // checkBoxLoop
             // 
-            this.label4.AutoSize = true;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(57, 93);
-            this.label4.Margin = new System.Windows.Forms.Padding(4);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(139, 23);
-            this.label4.TabIndex = 19;
-            this.label4.Text = "YM2&413(OPLL)";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label4.Click += new System.EventHandler(this.label3_Click);
-            this.label4.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            this.checkBoxLoop.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.Loop;
+            this.checkBoxLoop.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxLoop.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "Loop", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxLoop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxLoop.FlatAppearance.BorderSize = 0;
+            this.checkBoxLoop.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.checkBoxLoop.ImageIndex = 6;
+            this.checkBoxLoop.ImageList = this.imageListSmall;
+            this.checkBoxLoop.Location = new System.Drawing.Point(411, 4);
+            this.checkBoxLoop.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxLoop.Name = "checkBoxLoop";
+            this.checkBoxLoop.Size = new System.Drawing.Size(71, 68);
+            this.checkBoxLoop.TabIndex = 8;
+            this.checkBoxLoop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.checkBoxLoop, "Loop Count");
+            this.checkBoxLoop.UseVisualStyleBackColor = true;
+            this.checkBoxLoop.CheckedChanged += new System.EventHandler(this.checkBoxLoop_CheckedChanged);
+            // 
+            // buttonFast
+            // 
+            this.buttonFast.AutoSize = true;
+            this.buttonFast.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonFast.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFast.FlatAppearance.BorderSize = 0;
+            this.buttonFast.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonFast.ImageIndex = 5;
+            this.buttonFast.ImageList = this.imageListSmall;
+            this.buttonFast.Location = new System.Drawing.Point(365, 4);
+            this.buttonFast.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonFast.Name = "buttonFast";
+            this.buttonFast.Size = new System.Drawing.Size(38, 68);
+            this.buttonFast.TabIndex = 7;
+            this.buttonFast.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonFast, "Fast");
+            this.buttonFast.UseVisualStyleBackColor = true;
+            this.buttonFast.Click += new System.EventHandler(this.buttonFast_Click);
+            // 
+            // buttonSlow
+            // 
+            this.buttonSlow.AutoSize = true;
+            this.buttonSlow.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonSlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSlow.FlatAppearance.BorderSize = 0;
+            this.buttonSlow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonSlow.ImageIndex = 4;
+            this.buttonSlow.ImageList = this.imageListSmall;
+            this.buttonSlow.Location = new System.Drawing.Point(319, 4);
+            this.buttonSlow.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonSlow.Name = "buttonSlow";
+            this.buttonSlow.Size = new System.Drawing.Size(38, 68);
+            this.buttonSlow.TabIndex = 5;
+            this.buttonSlow.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonSlow, "Slow");
+            this.buttonSlow.UseVisualStyleBackColor = true;
+            this.buttonSlow.Click += new System.EventHandler(this.buttonSlow_Click);
+            // 
+            // buttonFreeze
+            // 
+            this.buttonFreeze.AutoSize = true;
+            this.buttonFreeze.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonFreeze.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonFreeze.FlatAppearance.BorderSize = 0;
+            this.buttonFreeze.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonFreeze.ImageIndex = 3;
+            this.buttonFreeze.ImageList = this.imageListSmall;
+            this.buttonFreeze.Location = new System.Drawing.Point(273, 4);
+            this.buttonFreeze.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonFreeze.Name = "buttonFreeze";
+            this.buttonFreeze.Size = new System.Drawing.Size(38, 68);
+            this.buttonFreeze.TabIndex = 4;
+            this.buttonFreeze.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonFreeze, "Freeze");
+            this.buttonFreeze.UseVisualStyleBackColor = true;
+            this.buttonFreeze.Click += new System.EventHandler(this.buttonFreeze_Click);
+            // 
+            // buttonPlay
+            // 
+            this.buttonPlay.AllowDrop = true;
+            this.buttonPlay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonPlay.FlatAppearance.BorderSize = 0;
+            this.buttonPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonPlay.ImageIndex = 0;
+            this.buttonPlay.ImageList = this.imageListBig;
+            this.buttonPlay.Location = new System.Drawing.Point(50, 4);
+            this.buttonPlay.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonPlay.Name = "buttonPlay";
+            this.tableLayoutPanelButton.SetRowSpan(this.buttonPlay, 2);
+            this.buttonPlay.Size = new System.Drawing.Size(123, 98);
+            this.buttonPlay.TabIndex = 1;
+            this.buttonPlay.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonPlay, "Play/Pause");
+            this.buttonPlay.UseVisualStyleBackColor = true;
+            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
+            this.buttonPlay.DragDrop += new System.Windows.Forms.DragEventHandler(this.buttonPlay_DragDrop);
+            this.buttonPlay.DragEnter += new System.Windows.Forms.DragEventHandler(this.buttonPlay_DragEnter);
+            // 
+            // imageListBig
+            // 
+            this.imageListBig.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListBig.ImageStream")));
+            this.imageListBig.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListBig.Images.SetKeyName(0, "Play.png");
+            this.imageListBig.Images.SetKeyName(1, "Pause.png");
+            // 
+            // labelSpeed
+            // 
+            this.labelSpeed.AutoSize = true;
+            this.labelSpeed.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tableLayoutPanelButton.SetColumnSpan(this.labelSpeed, 2);
+            this.labelSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelSpeed.Location = new System.Drawing.Point(319, 76);
+            this.labelSpeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelSpeed.Name = "labelSpeed";
+            this.labelSpeed.Size = new System.Drawing.Size(84, 30);
+            this.labelSpeed.TabIndex = 6;
+            this.labelSpeed.Text = "1.00x";
+            this.labelSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // numericUpDownLooped
+            // 
+            this.numericUpDownLooped.AutoSize = true;
+            this.numericUpDownLooped.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopCount", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownLooped.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDownLooped.Location = new System.Drawing.Point(411, 80);
+            this.numericUpDownLooped.Margin = new System.Windows.Forms.Padding(4);
+            this.numericUpDownLooped.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownLooped.Name = "numericUpDownLooped";
+            this.numericUpDownLooped.Size = new System.Drawing.Size(71, 22);
+            this.numericUpDownLooped.TabIndex = 9;
+            this.numericUpDownLooped.Value = global::zanac.VGMPlayer.Properties.Settings.Default.LoopCount;
+            this.numericUpDownLooped.ValueChanged += new System.EventHandler(this.numericUpDownLooped_ValueChanged);
+            // 
+            // buttonStop
+            // 
+            this.buttonStop.AutoSize = true;
+            this.buttonStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonStop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonStop.FlatAppearance.BorderSize = 0;
+            this.buttonStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonStop.ImageIndex = 2;
+            this.buttonStop.ImageList = this.imageListSmall;
+            this.buttonStop.Location = new System.Drawing.Point(227, 4);
+            this.buttonStop.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(38, 68);
+            this.buttonStop.TabIndex = 3;
+            this.buttonStop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonStop, "Stop");
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
+            // buttonNext
+            // 
+            this.buttonNext.AutoSize = true;
+            this.buttonNext.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonNext.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonNext.FlatAppearance.BorderSize = 0;
+            this.buttonNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonNext.ImageIndex = 1;
+            this.buttonNext.ImageList = this.imageListSmall;
+            this.buttonNext.Location = new System.Drawing.Point(181, 4);
+            this.buttonNext.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonNext.Name = "buttonNext";
+            this.buttonNext.Size = new System.Drawing.Size(38, 68);
+            this.buttonNext.TabIndex = 2;
+            this.buttonNext.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonNext, "Next Track");
+            this.buttonNext.UseVisualStyleBackColor = true;
+            this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
+            // 
+            // buttonClear
+            // 
+            this.buttonClear.AutoSize = true;
+            this.buttonClear.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonClear.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonClear.FlatAppearance.BorderSize = 0;
+            this.buttonClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonClear.ImageIndex = 7;
+            this.buttonClear.ImageList = this.imageListSmall;
+            this.buttonClear.Location = new System.Drawing.Point(857, 4);
+            this.buttonClear.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(38, 68);
+            this.buttonClear.TabIndex = 13;
+            this.buttonClear.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonClear, "Clear List");
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
+            // 
+            // buttonEject
+            // 
+            this.buttonEject.AutoSize = true;
+            this.buttonEject.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonEject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonEject.FlatAppearance.BorderSize = 0;
+            this.buttonEject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEject.ImageIndex = 8;
+            this.buttonEject.ImageList = this.imageListSmall;
+            this.buttonEject.Location = new System.Drawing.Point(811, 4);
+            this.buttonEject.Margin = new System.Windows.Forms.Padding(4);
+            this.buttonEject.Name = "buttonEject";
+            this.buttonEject.Size = new System.Drawing.Size(38, 68);
+            this.buttonEject.TabIndex = 12;
+            this.buttonEject.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.buttonEject, "Add Music files");
+            this.buttonEject.UseVisualStyleBackColor = true;
+            this.buttonEject.Click += new System.EventHandler(this.buttonEject_Click);
+            // 
+            // checkBoxLoopTimes
+            // 
+            this.checkBoxLoopTimes.AutoSize = true;
+            this.checkBoxLoopTimes.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.LoopTime;
+            this.checkBoxLoopTimes.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopTime", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxLoopTimes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxLoopTimes.FlatAppearance.BorderSize = 0;
+            this.checkBoxLoopTimes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.checkBoxLoopTimes.ImageIndex = 9;
+            this.checkBoxLoopTimes.ImageList = this.imageListSmall;
+            this.checkBoxLoopTimes.Location = new System.Drawing.Point(490, 4);
+            this.checkBoxLoopTimes.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxLoopTimes.Name = "checkBoxLoopTimes";
+            this.checkBoxLoopTimes.Size = new System.Drawing.Size(94, 68);
+            this.checkBoxLoopTimes.TabIndex = 10;
+            this.checkBoxLoopTimes.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.toolTip1.SetToolTip(this.checkBoxLoopTimes, "Loop Time");
+            this.checkBoxLoopTimes.UseVisualStyleBackColor = true;
+            this.checkBoxLoopTimes.CheckedChanged += new System.EventHandler(this.checkBoxLoopTimes_CheckedChanged);
+            // 
+            // dateTimePickerLoopTimes
+            // 
+            this.dateTimePickerLoopTimes.CustomFormat = "hh:mm:ss";
+            this.dateTimePickerLoopTimes.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopTimes", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.dateTimePickerLoopTimes.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.dateTimePickerLoopTimes.Location = new System.Drawing.Point(489, 79);
+            this.dateTimePickerLoopTimes.MaxDate = new System.DateTime(1753, 1, 1, 23, 59, 59, 0);
+            this.dateTimePickerLoopTimes.Name = "dateTimePickerLoopTimes";
+            this.dateTimePickerLoopTimes.ShowUpDown = true;
+            this.dateTimePickerLoopTimes.Size = new System.Drawing.Size(96, 22);
+            this.dateTimePickerLoopTimes.TabIndex = 11;
+            this.dateTimePickerLoopTimes.Value = global::zanac.VGMPlayer.Properties.Settings.Default.LoopTimes;
+            this.dateTimePickerLoopTimes.ValueChanged += new System.EventHandler(this.dateTimePickerLoopTimes_ValueChanged);
+            // 
+            // labelElapsed
+            // 
+            this.labelElapsed.AutoSize = true;
+            this.labelElapsed.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tableLayoutPanelButton.SetColumnSpan(this.labelElapsed, 3);
+            this.labelElapsed.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelElapsed.Location = new System.Drawing.Point(180, 76);
+            this.labelElapsed.Name = "labelElapsed";
+            this.labelElapsed.Size = new System.Drawing.Size(132, 30);
+            this.labelElapsed.TabIndex = 14;
+            this.labelElapsed.Text = "00:00:00";
+            this.labelElapsed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // contextMenuStripList
+            // 
+            this.contextMenuStripList.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStripList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playToolStripMenuItem,
+            this.removeToolStripMenuItem,
+            this.explorerToolStripMenuItem});
+            this.contextMenuStripList.Name = "contextMenuStrip1";
+            this.contextMenuStripList.Size = new System.Drawing.Size(134, 76);
+            // 
+            // playToolStripMenuItem
+            // 
+            this.playToolStripMenuItem.Name = "playToolStripMenuItem";
+            this.playToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.playToolStripMenuItem.Text = "&Play";
+            this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
+            // 
+            // removeToolStripMenuItem
+            // 
+            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.removeToolStripMenuItem.Text = "&Remove";
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
+            // 
+            // explorerToolStripMenuItem
+            // 
+            this.explorerToolStripMenuItem.Name = "explorerToolStripMenuItem";
+            this.explorerToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.explorerToolStripMenuItem.Text = "&Explorer";
+            this.explorerToolStripMenuItem.Click += new System.EventHandler(this.explorerToolStripMenuItem_Click);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.labelLoad, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.progressBarLoad, 1, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 763);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(899, 24);
+            this.tableLayoutPanel1.TabIndex = 5;
+            // 
+            // labelLoad
+            // 
+            this.labelLoad.AutoSize = true;
+            this.labelLoad.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelLoad.Location = new System.Drawing.Point(4, 0);
+            this.labelLoad.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelLoad.Name = "labelLoad";
+            this.labelLoad.Size = new System.Drawing.Size(37, 24);
+            this.labelLoad.TabIndex = 0;
+            this.labelLoad.Text = "Load";
+            this.labelLoad.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // progressBarLoad
+            // 
+            this.progressBarLoad.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressBarLoad.Location = new System.Drawing.Point(49, 4);
+            this.progressBarLoad.Margin = new System.Windows.Forms.Padding(4);
+            this.progressBarLoad.Name = "progressBarLoad";
+            this.progressBarLoad.Size = new System.Drawing.Size(846, 16);
+            this.progressBarLoad.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarLoad.TabIndex = 1;
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.label7, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxTitle, 1, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 625);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(899, 32);
+            this.tableLayoutPanel2.TabIndex = 3;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Location = new System.Drawing.Point(4, 0);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(56, 32);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "&Current";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // textBoxTitle
+            // 
+            this.textBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxTitle.Location = new System.Drawing.Point(68, 4);
+            this.textBoxTitle.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxTitle.Name = "textBoxTitle";
+            this.textBoxTitle.ReadOnly = true;
+            this.textBoxTitle.ShortcutsEnabled = false;
+            this.textBoxTitle.Size = new System.Drawing.Size(827, 22);
+            this.textBoxTitle.TabIndex = 1;
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "Video Game Music Files(*.vgm;*.vgz;*.xgm;*.mgs;*.kss;*.m3u)|*.vgm;*.vgz;*.xgm;*.m" +
+    "gs;*.kss;*.m3u";
+            this.openFileDialog.Multiselect = true;
+            this.openFileDialog.Title = "Select VGM/XGM files";
+            // 
+            // splitter1
+            // 
+            this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.splitter1.Location = new System.Drawing.Point(0, 230);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(899, 8);
+            this.splitter1.TabIndex = 6;
+            this.splitter1.TabStop = false;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 787);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(899, 26);
+            this.statusStrip1.TabIndex = 7;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel
+            // 
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(89, 20);
+            this.toolStripStatusLabel.Text = "(Status Text)";
+            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label12.Location = new System.Drawing.Point(57, 155);
+            this.label12.Margin = new System.Windows.Forms.Padding(4);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(139, 23);
+            this.label12.TabIndex = 31;
+            this.label12.Text = "&AY-3-8910(PSG)";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label12, "SSG of OPN2 fallbacks to this.\r\n");
+            this.label12.Click += new System.EventHandler(this.label3_Click);
+            this.label12.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(57, 31);
+            this.label5.Margin = new System.Windows.Forms.Padding(4);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(139, 23);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "YM2&612(OPN2)";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label5, "OPN fallbacks to this.");
+            this.label5.Click += new System.EventHandler(this.label3_Click);
+            this.label5.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label14.Location = new System.Drawing.Point(57, 217);
+            this.label14.Margin = new System.Windows.Forms.Padding(4);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(139, 23);
+            this.label14.TabIndex = 43;
+            this.label14.Text = "YM&F262(OPL3)";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label14, "OPL fallbacks to this.");
+            this.label14.Click += new System.EventHandler(this.label3_Click);
+            this.label14.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label15.Location = new System.Drawing.Point(57, 248);
+            this.label15.Margin = new System.Windows.Forms.Padding(4);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(139, 23);
+            this.label15.TabIndex = 49;
+            this.label15.Text = "YM260&8(OPNA)";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label15, "OPN fallbacks to this.");
+            this.label15.Click += new System.EventHandler(this.label3_Click);
+            this.label15.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label16.Location = new System.Drawing.Point(57, 279);
+            this.label16.Margin = new System.Windows.Forms.Padding(4);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(139, 23);
+            this.label16.TabIndex = 55;
+            this.label16.Text = "&Y8950(MSX-AUDIO)";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label16, "OPL fallbacks to this.");
+            this.label16.Click += new System.EventHandler(this.label3_Click);
+            this.label16.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // saveFileDialogM3U
+            // 
+            this.saveFileDialogM3U.DefaultExt = "m3u";
+            this.saveFileDialogM3U.FileName = "playlist.m3u";
+            this.saveFileDialogM3U.Filter = "M3U|*.m3u";
+            this.saveFileDialogM3U.Title = "Save playlist";
             // 
             // tableLayoutPanelPort
             // 
@@ -388,7 +901,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPNDiv, 5, 10);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
+            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 30);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(4);
@@ -772,6 +1285,58 @@ namespace zanac.VGMPlayer
             this.comboBoxPortYm2413.Name = "comboBoxPortYm2413";
             this.comboBoxPortYm2413.Size = new System.Drawing.Size(101, 23);
             this.comboBoxPortYm2413.TabIndex = 22;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(57, 93);
+            this.label4.Margin = new System.Windows.Forms.Padding(4);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(139, 23);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "YM2&413(OPLL)";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label4.Click += new System.EventHandler(this.label3_Click);
+            this.label4.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Location = new System.Drawing.Point(57, 62);
+            this.label3.Margin = new System.Windows.Forms.Padding(4);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(139, 23);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "SN&76489(DCSG)";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.label3.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(204, 8);
+            this.label2.Margin = new System.Windows.Forms.Padding(4);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(367, 15);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "VSIF Type, Slot type (MSX only)";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(57, 8);
+            this.label1.Margin = new System.Windows.Forms.Padding(4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(139, 15);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Chip";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label6
             // 
@@ -1373,21 +1938,6 @@ namespace zanac.VGMPlayer
             this.numericUpDownSCC.TabIndex = 27;
             this.numericUpDownSCC.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWaitSCC;
             // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label12.Location = new System.Drawing.Point(57, 155);
-            this.label12.Margin = new System.Windows.Forms.Padding(4);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(139, 23);
-            this.label12.TabIndex = 31;
-            this.label12.Text = "&AY-3-8910(PSG)";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label12, "SSG of OPN2 fallbacks to this.\r\n");
-            this.label12.Click += new System.EventHandler(this.label3_Click);
-            this.label12.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
-            // 
             // comboBoxY8910
             // 
             this.comboBoxY8910.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "Y8910_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -1772,21 +2322,6 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPN2.TabIndex = 6;
             this.checkBoxConnOPN2.UseVisualStyleBackColor = true;
             this.checkBoxConnOPN2.CheckedChanged += new System.EventHandler(this.checkBoxConnOPN2_CheckedChanged);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(57, 31);
-            this.label5.Margin = new System.Windows.Forms.Padding(4);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(139, 23);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "YM2&612(OPN2)";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label5, "OPN fallbacks to this.");
-            this.label5.Click += new System.EventHandler(this.label3_Click);
-            this.label5.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
             // 
             // comboBoxOPN2
             // 
@@ -2530,21 +3065,6 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPL3.UseVisualStyleBackColor = true;
             this.checkBoxConnOPL3.CheckedChanged += new System.EventHandler(this.checkBoxConnOPL3_CheckedChanged);
             // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label14.Location = new System.Drawing.Point(57, 217);
-            this.label14.Margin = new System.Windows.Forms.Padding(4);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(139, 23);
-            this.label14.TabIndex = 43;
-            this.label14.Text = "YM&F262(OPL3)";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label14, "OPL fallbacks to this.");
-            this.label14.Click += new System.EventHandler(this.label3_Click);
-            this.label14.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
-            // 
             // comboBoxOPL3
             // 
             this.comboBoxOPL3.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPL3_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -2857,21 +3377,6 @@ namespace zanac.VGMPlayer
             this.checkBoxConnOPNA.TabIndex = 48;
             this.checkBoxConnOPNA.UseVisualStyleBackColor = true;
             this.checkBoxConnOPNA.CheckedChanged += new System.EventHandler(this.checkBoxOPNA_CheckedChanged);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label15.Location = new System.Drawing.Point(57, 248);
-            this.label15.Margin = new System.Windows.Forms.Padding(4);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(139, 23);
-            this.label15.TabIndex = 49;
-            this.label15.Text = "YM260&8(OPNA)";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label15, "OPN fallbacks to this.");
-            this.label15.Click += new System.EventHandler(this.label3_Click);
-            this.label15.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
             // 
             // comboBoxOPNA
             // 
@@ -3188,21 +3693,6 @@ namespace zanac.VGMPlayer
             this.checkBoxConnY8950.TabIndex = 54;
             this.checkBoxConnY8950.UseVisualStyleBackColor = true;
             this.checkBoxConnY8950.CheckedChanged += new System.EventHandler(this.checkBoxConnY8950_CheckedChanged);
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label16.Location = new System.Drawing.Point(57, 279);
-            this.label16.Margin = new System.Windows.Forms.Padding(4);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(139, 23);
-            this.label16.TabIndex = 55;
-            this.label16.Text = "&Y8950(MSX-AUDIO)";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label16, "OPL fallbacks to this.");
-            this.label16.Click += new System.EventHandler(this.label3_Click);
-            this.label16.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
             // 
             // numericUpDownY8950
             // 
@@ -3896,12 +4386,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPN2Div.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPN2Div.Location = new System.Drawing.Point(776, 30);
             this.numericUpDownOPN2Div.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPN2Div.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -3916,12 +4406,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownDCSGDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownDCSGDiv.Location = new System.Drawing.Point(776, 61);
             this.numericUpDownDCSGDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownDCSGDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -3936,12 +4426,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPLLDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPLLDiv.Location = new System.Drawing.Point(776, 92);
             this.numericUpDownOPLLDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPLLDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -3956,12 +4446,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownSCCDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownSCCDiv.Location = new System.Drawing.Point(776, 123);
             this.numericUpDownSCCDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownSCCDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -3976,12 +4466,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownPSGDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownPSGDiv.Location = new System.Drawing.Point(776, 154);
             this.numericUpDownPSGDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownPSGDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -3996,12 +4486,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPMDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPMDiv.Location = new System.Drawing.Point(776, 185);
             this.numericUpDownOPMDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPMDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -4016,12 +4506,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPL3Div.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPL3Div.Location = new System.Drawing.Point(776, 216);
             this.numericUpDownOPL3Div.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPL3Div.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -4036,12 +4526,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNADiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPNADiv.Location = new System.Drawing.Point(776, 247);
             this.numericUpDownOPNADiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPNADiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -4056,12 +4546,12 @@ namespace zanac.VGMPlayer
             this.numericUpDown8950Div.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDown8950Div.Location = new System.Drawing.Point(776, 278);
             this.numericUpDown8950Div.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDown8950Div.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -4076,12 +4566,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNDiv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.numericUpDownOPNDiv.Location = new System.Drawing.Point(776, 309);
             this.numericUpDownOPNDiv.Maximum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             0});
             this.numericUpDownOPNDiv.Minimum = new decimal(new int[] {
-            3,
+            15,
             0,
             0,
             -2147483648});
@@ -4089,496 +4579,6 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNDiv.Size = new System.Drawing.Size(95, 22);
             this.numericUpDownOPNDiv.TabIndex = 65;
             this.numericUpDownOPNDiv.Value = global::zanac.VGMPlayer.Properties.Settings.Default.OPNDiv;
-            // 
-            // tableLayoutPanelButton
-            // 
-            this.tableLayoutPanelButton.ColumnCount = 12;
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelButton.Controls.Add(this.buttonPrev, 0, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoop, 7, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonFast, 6, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonSlow, 5, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonFreeze, 4, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonPlay, 1, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.labelSpeed, 5, 1);
-            this.tableLayoutPanelButton.Controls.Add(this.numericUpDownLooped, 7, 1);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonStop, 3, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonNext, 2, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonClear, 11, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.buttonEject, 10, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.checkBoxLoopTimes, 8, 0);
-            this.tableLayoutPanelButton.Controls.Add(this.dateTimePickerLoopTimes, 8, 1);
-            this.tableLayoutPanelButton.Controls.Add(this.labelElapsed, 2, 1);
-            this.tableLayoutPanelButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanelButton.Location = new System.Drawing.Point(0, 657);
-            this.tableLayoutPanelButton.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanelButton.Name = "tableLayoutPanelButton";
-            this.tableLayoutPanelButton.RowCount = 2;
-            this.tableLayoutPanelButton.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelButton.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelButton.Size = new System.Drawing.Size(899, 106);
-            this.tableLayoutPanelButton.TabIndex = 4;
-            // 
-            // buttonPrev
-            // 
-            this.buttonPrev.AutoSize = true;
-            this.buttonPrev.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonPrev.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonPrev.FlatAppearance.BorderSize = 0;
-            this.buttonPrev.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPrev.ImageIndex = 0;
-            this.buttonPrev.ImageList = this.imageListSmall;
-            this.buttonPrev.Location = new System.Drawing.Point(4, 4);
-            this.buttonPrev.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonPrev.Name = "buttonPrev";
-            this.buttonPrev.Size = new System.Drawing.Size(38, 68);
-            this.buttonPrev.TabIndex = 0;
-            this.buttonPrev.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonPrev, "Previous Track");
-            this.buttonPrev.UseVisualStyleBackColor = true;
-            this.buttonPrev.Click += new System.EventHandler(this.buttonPrev_Click);
-            // 
-            // imageListSmall
-            // 
-            this.imageListSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListSmall.ImageStream")));
-            this.imageListSmall.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListSmall.Images.SetKeyName(0, "Prev.png");
-            this.imageListSmall.Images.SetKeyName(1, "Next.png");
-            this.imageListSmall.Images.SetKeyName(2, "Stop.png");
-            this.imageListSmall.Images.SetKeyName(3, "Freeze.png");
-            this.imageListSmall.Images.SetKeyName(4, "Slow.png");
-            this.imageListSmall.Images.SetKeyName(5, "Fast.png");
-            this.imageListSmall.Images.SetKeyName(6, "Loop.png");
-            this.imageListSmall.Images.SetKeyName(7, "Clear.png");
-            this.imageListSmall.Images.SetKeyName(8, "Eject.png");
-            this.imageListSmall.Images.SetKeyName(9, "Loop_Time.png");
-            // 
-            // checkBoxLoop
-            // 
-            this.checkBoxLoop.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.Loop;
-            this.checkBoxLoop.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxLoop.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "Loop", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxLoop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxLoop.FlatAppearance.BorderSize = 0;
-            this.checkBoxLoop.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.checkBoxLoop.ImageIndex = 6;
-            this.checkBoxLoop.ImageList = this.imageListSmall;
-            this.checkBoxLoop.Location = new System.Drawing.Point(411, 4);
-            this.checkBoxLoop.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBoxLoop.Name = "checkBoxLoop";
-            this.checkBoxLoop.Size = new System.Drawing.Size(71, 68);
-            this.checkBoxLoop.TabIndex = 8;
-            this.checkBoxLoop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.checkBoxLoop, "Loop Count");
-            this.checkBoxLoop.UseVisualStyleBackColor = true;
-            this.checkBoxLoop.CheckedChanged += new System.EventHandler(this.checkBoxLoop_CheckedChanged);
-            // 
-            // buttonFast
-            // 
-            this.buttonFast.AutoSize = true;
-            this.buttonFast.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonFast.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFast.FlatAppearance.BorderSize = 0;
-            this.buttonFast.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonFast.ImageIndex = 5;
-            this.buttonFast.ImageList = this.imageListSmall;
-            this.buttonFast.Location = new System.Drawing.Point(365, 4);
-            this.buttonFast.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonFast.Name = "buttonFast";
-            this.buttonFast.Size = new System.Drawing.Size(38, 68);
-            this.buttonFast.TabIndex = 7;
-            this.buttonFast.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonFast, "Fast");
-            this.buttonFast.UseVisualStyleBackColor = true;
-            this.buttonFast.Click += new System.EventHandler(this.buttonFast_Click);
-            // 
-            // buttonSlow
-            // 
-            this.buttonSlow.AutoSize = true;
-            this.buttonSlow.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonSlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSlow.FlatAppearance.BorderSize = 0;
-            this.buttonSlow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSlow.ImageIndex = 4;
-            this.buttonSlow.ImageList = this.imageListSmall;
-            this.buttonSlow.Location = new System.Drawing.Point(319, 4);
-            this.buttonSlow.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonSlow.Name = "buttonSlow";
-            this.buttonSlow.Size = new System.Drawing.Size(38, 68);
-            this.buttonSlow.TabIndex = 5;
-            this.buttonSlow.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonSlow, "Slow");
-            this.buttonSlow.UseVisualStyleBackColor = true;
-            this.buttonSlow.Click += new System.EventHandler(this.buttonSlow_Click);
-            // 
-            // buttonFreeze
-            // 
-            this.buttonFreeze.AutoSize = true;
-            this.buttonFreeze.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonFreeze.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFreeze.FlatAppearance.BorderSize = 0;
-            this.buttonFreeze.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonFreeze.ImageIndex = 3;
-            this.buttonFreeze.ImageList = this.imageListSmall;
-            this.buttonFreeze.Location = new System.Drawing.Point(273, 4);
-            this.buttonFreeze.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonFreeze.Name = "buttonFreeze";
-            this.buttonFreeze.Size = new System.Drawing.Size(38, 68);
-            this.buttonFreeze.TabIndex = 4;
-            this.buttonFreeze.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonFreeze, "Freeze");
-            this.buttonFreeze.UseVisualStyleBackColor = true;
-            this.buttonFreeze.Click += new System.EventHandler(this.buttonFreeze_Click);
-            // 
-            // buttonPlay
-            // 
-            this.buttonPlay.AllowDrop = true;
-            this.buttonPlay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonPlay.FlatAppearance.BorderSize = 0;
-            this.buttonPlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonPlay.ImageIndex = 0;
-            this.buttonPlay.ImageList = this.imageListBig;
-            this.buttonPlay.Location = new System.Drawing.Point(50, 4);
-            this.buttonPlay.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonPlay.Name = "buttonPlay";
-            this.tableLayoutPanelButton.SetRowSpan(this.buttonPlay, 2);
-            this.buttonPlay.Size = new System.Drawing.Size(123, 98);
-            this.buttonPlay.TabIndex = 1;
-            this.buttonPlay.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonPlay, "Play/Pause");
-            this.buttonPlay.UseVisualStyleBackColor = true;
-            this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
-            this.buttonPlay.DragDrop += new System.Windows.Forms.DragEventHandler(this.buttonPlay_DragDrop);
-            this.buttonPlay.DragEnter += new System.Windows.Forms.DragEventHandler(this.buttonPlay_DragEnter);
-            // 
-            // imageListBig
-            // 
-            this.imageListBig.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListBig.ImageStream")));
-            this.imageListBig.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListBig.Images.SetKeyName(0, "Play.png");
-            this.imageListBig.Images.SetKeyName(1, "Pause.png");
-            // 
-            // labelSpeed
-            // 
-            this.labelSpeed.AutoSize = true;
-            this.labelSpeed.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tableLayoutPanelButton.SetColumnSpan(this.labelSpeed, 2);
-            this.labelSpeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelSpeed.Location = new System.Drawing.Point(319, 76);
-            this.labelSpeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelSpeed.Name = "labelSpeed";
-            this.labelSpeed.Size = new System.Drawing.Size(84, 30);
-            this.labelSpeed.TabIndex = 6;
-            this.labelSpeed.Text = "1.00x";
-            this.labelSpeed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // numericUpDownLooped
-            // 
-            this.numericUpDownLooped.AutoSize = true;
-            this.numericUpDownLooped.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopCount", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.numericUpDownLooped.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numericUpDownLooped.Location = new System.Drawing.Point(411, 80);
-            this.numericUpDownLooped.Margin = new System.Windows.Forms.Padding(4);
-            this.numericUpDownLooped.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownLooped.Name = "numericUpDownLooped";
-            this.numericUpDownLooped.Size = new System.Drawing.Size(71, 22);
-            this.numericUpDownLooped.TabIndex = 9;
-            this.numericUpDownLooped.Value = global::zanac.VGMPlayer.Properties.Settings.Default.LoopCount;
-            this.numericUpDownLooped.ValueChanged += new System.EventHandler(this.numericUpDownLooped_ValueChanged);
-            // 
-            // buttonStop
-            // 
-            this.buttonStop.AutoSize = true;
-            this.buttonStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonStop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonStop.FlatAppearance.BorderSize = 0;
-            this.buttonStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonStop.ImageIndex = 2;
-            this.buttonStop.ImageList = this.imageListSmall;
-            this.buttonStop.Location = new System.Drawing.Point(227, 4);
-            this.buttonStop.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(38, 68);
-            this.buttonStop.TabIndex = 3;
-            this.buttonStop.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonStop, "Stop");
-            this.buttonStop.UseVisualStyleBackColor = true;
-            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
-            // 
-            // buttonNext
-            // 
-            this.buttonNext.AutoSize = true;
-            this.buttonNext.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonNext.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonNext.FlatAppearance.BorderSize = 0;
-            this.buttonNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonNext.ImageIndex = 1;
-            this.buttonNext.ImageList = this.imageListSmall;
-            this.buttonNext.Location = new System.Drawing.Point(181, 4);
-            this.buttonNext.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonNext.Name = "buttonNext";
-            this.buttonNext.Size = new System.Drawing.Size(38, 68);
-            this.buttonNext.TabIndex = 2;
-            this.buttonNext.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonNext, "Next Track");
-            this.buttonNext.UseVisualStyleBackColor = true;
-            this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
-            // 
-            // buttonClear
-            // 
-            this.buttonClear.AutoSize = true;
-            this.buttonClear.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonClear.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonClear.FlatAppearance.BorderSize = 0;
-            this.buttonClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonClear.ImageIndex = 7;
-            this.buttonClear.ImageList = this.imageListSmall;
-            this.buttonClear.Location = new System.Drawing.Point(857, 4);
-            this.buttonClear.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(38, 68);
-            this.buttonClear.TabIndex = 13;
-            this.buttonClear.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonClear, "Clear List");
-            this.buttonClear.UseVisualStyleBackColor = true;
-            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
-            // 
-            // buttonEject
-            // 
-            this.buttonEject.AutoSize = true;
-            this.buttonEject.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonEject.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonEject.FlatAppearance.BorderSize = 0;
-            this.buttonEject.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonEject.ImageIndex = 8;
-            this.buttonEject.ImageList = this.imageListSmall;
-            this.buttonEject.Location = new System.Drawing.Point(811, 4);
-            this.buttonEject.Margin = new System.Windows.Forms.Padding(4);
-            this.buttonEject.Name = "buttonEject";
-            this.buttonEject.Size = new System.Drawing.Size(38, 68);
-            this.buttonEject.TabIndex = 12;
-            this.buttonEject.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.buttonEject, "Add Music files");
-            this.buttonEject.UseVisualStyleBackColor = true;
-            this.buttonEject.Click += new System.EventHandler(this.buttonEject_Click);
-            // 
-            // checkBoxLoopTimes
-            // 
-            this.checkBoxLoopTimes.AutoSize = true;
-            this.checkBoxLoopTimes.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.LoopTime;
-            this.checkBoxLoopTimes.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopTime", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxLoopTimes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxLoopTimes.FlatAppearance.BorderSize = 0;
-            this.checkBoxLoopTimes.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.checkBoxLoopTimes.ImageIndex = 9;
-            this.checkBoxLoopTimes.ImageList = this.imageListSmall;
-            this.checkBoxLoopTimes.Location = new System.Drawing.Point(490, 4);
-            this.checkBoxLoopTimes.Margin = new System.Windows.Forms.Padding(4);
-            this.checkBoxLoopTimes.Name = "checkBoxLoopTimes";
-            this.checkBoxLoopTimes.Size = new System.Drawing.Size(94, 68);
-            this.checkBoxLoopTimes.TabIndex = 10;
-            this.checkBoxLoopTimes.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.toolTip1.SetToolTip(this.checkBoxLoopTimes, "Loop Time");
-            this.checkBoxLoopTimes.UseVisualStyleBackColor = true;
-            this.checkBoxLoopTimes.CheckedChanged += new System.EventHandler(this.checkBoxLoopTimes_CheckedChanged);
-            // 
-            // dateTimePickerLoopTimes
-            // 
-            this.dateTimePickerLoopTimes.CustomFormat = "hh:mm:ss";
-            this.dateTimePickerLoopTimes.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "LoopTimes", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.dateTimePickerLoopTimes.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePickerLoopTimes.Location = new System.Drawing.Point(489, 79);
-            this.dateTimePickerLoopTimes.MaxDate = new System.DateTime(1753, 1, 1, 23, 59, 59, 0);
-            this.dateTimePickerLoopTimes.Name = "dateTimePickerLoopTimes";
-            this.dateTimePickerLoopTimes.ShowUpDown = true;
-            this.dateTimePickerLoopTimes.Size = new System.Drawing.Size(96, 22);
-            this.dateTimePickerLoopTimes.TabIndex = 11;
-            this.dateTimePickerLoopTimes.Value = global::zanac.VGMPlayer.Properties.Settings.Default.LoopTimes;
-            this.dateTimePickerLoopTimes.ValueChanged += new System.EventHandler(this.dateTimePickerLoopTimes_ValueChanged);
-            // 
-            // labelElapsed
-            // 
-            this.labelElapsed.AutoSize = true;
-            this.labelElapsed.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.tableLayoutPanelButton.SetColumnSpan(this.labelElapsed, 3);
-            this.labelElapsed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelElapsed.Location = new System.Drawing.Point(180, 76);
-            this.labelElapsed.Name = "labelElapsed";
-            this.labelElapsed.Size = new System.Drawing.Size(132, 30);
-            this.labelElapsed.TabIndex = 14;
-            this.labelElapsed.Text = "00:00:00";
-            this.labelElapsed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // contextMenuStripList
-            // 
-            this.contextMenuStripList.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStripList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.playToolStripMenuItem,
-            this.removeToolStripMenuItem,
-            this.explorerToolStripMenuItem});
-            this.contextMenuStripList.Name = "contextMenuStrip1";
-            this.contextMenuStripList.Size = new System.Drawing.Size(134, 76);
-            // 
-            // playToolStripMenuItem
-            // 
-            this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-            this.playToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
-            this.playToolStripMenuItem.Text = "&Play";
-            this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
-            // 
-            // removeToolStripMenuItem
-            // 
-            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
-            this.removeToolStripMenuItem.Text = "&Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
-            // 
-            // explorerToolStripMenuItem
-            // 
-            this.explorerToolStripMenuItem.Name = "explorerToolStripMenuItem";
-            this.explorerToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
-            this.explorerToolStripMenuItem.Text = "&Explorer";
-            this.explorerToolStripMenuItem.Click += new System.EventHandler(this.explorerToolStripMenuItem_Click);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.labelLoad, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.progressBarLoad, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 763);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(899, 24);
-            this.tableLayoutPanel1.TabIndex = 5;
-            // 
-            // labelLoad
-            // 
-            this.labelLoad.AutoSize = true;
-            this.labelLoad.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelLoad.Location = new System.Drawing.Point(4, 0);
-            this.labelLoad.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelLoad.Name = "labelLoad";
-            this.labelLoad.Size = new System.Drawing.Size(37, 24);
-            this.labelLoad.TabIndex = 0;
-            this.labelLoad.Text = "Load";
-            this.labelLoad.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // progressBarLoad
-            // 
-            this.progressBarLoad.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBarLoad.Location = new System.Drawing.Point(49, 4);
-            this.progressBarLoad.Margin = new System.Windows.Forms.Padding(4);
-            this.progressBarLoad.Name = "progressBarLoad";
-            this.progressBarLoad.Size = new System.Drawing.Size(846, 16);
-            this.progressBarLoad.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBarLoad.TabIndex = 1;
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.label7, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.textBoxTitle, 1, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 625);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(899, 32);
-            this.tableLayoutPanel2.TabIndex = 3;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Location = new System.Drawing.Point(4, 0);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(56, 32);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "&Current";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // textBoxTitle
-            // 
-            this.textBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxTitle.Location = new System.Drawing.Point(68, 4);
-            this.textBoxTitle.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxTitle.Name = "textBoxTitle";
-            this.textBoxTitle.ReadOnly = true;
-            this.textBoxTitle.ShortcutsEnabled = false;
-            this.textBoxTitle.Size = new System.Drawing.Size(827, 22);
-            this.textBoxTitle.TabIndex = 1;
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.Filter = "Video Game Music Files(*.vgm;*.vgz;*.xgm;*.mgs;*.kss;*.m3u)|*.vgm;*.vgz;*.xgm;*.m" +
-    "gs;*.kss;*.m3u";
-            this.openFileDialog.Multiselect = true;
-            this.openFileDialog.Title = "Select VGM/XGM files";
-            // 
-            // splitter1
-            // 
-            this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 228);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(899, 8);
-            this.splitter1.TabIndex = 6;
-            this.splitter1.TabStop = false;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 787);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(899, 26);
-            this.statusStrip1.TabIndex = 7;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel
-            // 
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(89, 20);
-            this.toolStripStatusLabel.Text = "(Status Text)";
-            this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // saveFileDialogM3U
-            // 
-            this.saveFileDialogM3U.DefaultExt = "m3u";
-            this.saveFileDialogM3U.FileName = "playlist.m3u";
-            this.saveFileDialogM3U.Filter = "M3U|*.m3u";
-            this.saveFileDialogM3U.Title = "Save playlist";
             // 
             // listViewList
             // 
@@ -4592,10 +4592,10 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 236);
+            this.listViewList.Location = new System.Drawing.Point(0, 238);
             this.listViewList.Margin = new System.Windows.Forms.Padding(4);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(899, 389);
+            this.listViewList.Size = new System.Drawing.Size(899, 387);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
@@ -4632,10 +4632,20 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VGM/XGM/MGS Player V1.43";
+            this.Text = "VGM/XGM/MGS Player V1.44";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.tableLayoutPanelButton.ResumeLayout(false);
+            this.tableLayoutPanelButton.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).EndInit();
+            this.contextMenuStripList.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.tableLayoutPanelPort.ResumeLayout(false);
             this.tableLayoutPanelPort.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
@@ -4662,16 +4672,6 @@ namespace zanac.VGMPlayer
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNADiv)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8950Div)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownOPNDiv)).EndInit();
-            this.tableLayoutPanelButton.ResumeLayout(false);
-            this.tableLayoutPanelButton.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).EndInit();
-            this.contextMenuStripList.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
