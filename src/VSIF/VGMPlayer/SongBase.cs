@@ -771,7 +771,6 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                case VsifSoundModuleType.P6_FTDI:
                     //Set volume for pseudo DAC
                     comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
                     //outputAdpcm(comPort, inputValue);
@@ -846,7 +845,6 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                case VsifSoundModuleType.P6_FTDI:
                     comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
@@ -902,7 +900,6 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                case VsifSoundModuleType.P6_FTDI:
                     //Set volume for pseudo DAC
                     comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
                     //outputAdpcm(comPort, inputValue);

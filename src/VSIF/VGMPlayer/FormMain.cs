@@ -865,10 +865,6 @@ namespace zanac.VGMPlayer
                         comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.OPN_Port, (int)Settings.Default.OPNDiv, false);
                         break;
-                    case 1:
-                        comPortOPN = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
-                            (PortId)Settings.Default.OPN_Port, (int)Settings.Default.OPNDiv, false);
-                        break;
                 }
                 checkBoxConnOPN.Checked = comPortOPN != null;
                 comboBoxOPN.Enabled = comPortOPN == null;
@@ -1088,14 +1084,10 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
                         break;
                     case 1:
-                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
-                            (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
-                        break;
-                    case 2:
                         comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
                             (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
                         break;
-                    case 3:
+                    case 2:
                         comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
                             (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
                         break;

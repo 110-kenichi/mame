@@ -198,7 +198,7 @@ namespace zanac.VGMPlayer
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(899, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(899, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -211,7 +211,7 @@ namespace zanac.VGMPlayer
             this.toolStripSeparator1,
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // addPlaylistToolStripMenuItem
@@ -253,7 +253,7 @@ namespace zanac.VGMPlayer
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
@@ -716,7 +716,7 @@ namespace zanac.VGMPlayer
             // 
             this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 230);
+            this.splitter1.Location = new System.Drawing.Point(0, 228);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(899, 8);
             this.splitter1.TabIndex = 6;
@@ -901,7 +901,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPNDiv, 5, 10);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 30);
+            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(4);
@@ -1945,8 +1945,7 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxY8910.FormattingEnabled = true;
             this.comboBoxY8910.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)",
-            "VSIF - PC-6001(FTDI2XX)",
+            "VSIF - MSX/PC-6001(FTDI2XX)",
             "VSIF - Generic(UART 115Kbps)"});
             this.comboBoxY8910.Location = new System.Drawing.Point(204, 155);
             this.comboBoxY8910.Margin = new System.Windows.Forms.Padding(4);
@@ -2333,8 +2332,7 @@ namespace zanac.VGMPlayer
             "VSIF - Genesis(UART 163Kbps)",
             "VSIF - Genesis(FTDI2XX)",
             "VSIF - Genesis(UART 115Kbps)",
-            "VSIF - MSX(FTDI2XX)",
-            "VSIF - PC-6001(FTDI2XX)"});
+            "VSIF - MSX/PC-6001(FTDI2XX)"});
             this.comboBoxOPN2.Location = new System.Drawing.Point(204, 31);
             this.comboBoxOPN2.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPN2.Name = "comboBoxOPN2";
@@ -3385,8 +3383,7 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPNA.FormattingEnabled = true;
             this.comboBoxOPNA.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)",
-            "VSIF - PC-6001(FTDI2XX)",
+            "VSIF - MSX/PC-6001(FTDI2XX)",
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(204, 248);
@@ -4075,8 +4072,7 @@ namespace zanac.VGMPlayer
             this.comboBoxOPN.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPN.FormattingEnabled = true;
             this.comboBoxOPN.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX)",
-            "VSIF - PC-6001(FTDI2XX)"});
+            "VSIF - MSX/PC-6001(FTDI2XX)"});
             this.comboBoxOPN.Location = new System.Drawing.Point(204, 310);
             this.comboBoxOPN.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPN.Name = "comboBoxOPN";
@@ -4592,10 +4588,10 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 238);
+            this.listViewList.Location = new System.Drawing.Point(0, 236);
             this.listViewList.Margin = new System.Windows.Forms.Padding(4);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(899, 387);
+            this.listViewList.Size = new System.Drawing.Size(899, 389);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
@@ -4632,7 +4628,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "VGM/XGM/MGS Player V1.44";
+            this.Text = "VGM/XGM/MGS Player V1.45";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

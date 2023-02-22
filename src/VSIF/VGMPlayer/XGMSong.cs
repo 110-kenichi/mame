@@ -115,7 +115,6 @@ namespace zanac.VGMPlayer
                         comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
                     case VsifSoundModuleType.MSX_FTDI:
-                    case VsifSoundModuleType.P6_FTDI:
                         for (int i = 0; i < 3; i++)
                             comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
@@ -124,8 +123,7 @@ namespace zanac.VGMPlayer
             }
             if (comPortOPN2 != null)
             {
-                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortOPN2.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+                if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
@@ -152,8 +150,7 @@ namespace zanac.VGMPlayer
 
             if (comPortOPNA != null)
             {
-                if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                    comPortOPNA.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+                if (comPortOPNA.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
                 {
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
@@ -208,8 +205,7 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         private void deferredWriteOPN2_P0(int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPN2.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
                 comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -227,8 +223,7 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         private void deferredWriteOPN2_P1(int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPN2.SoundModuleType == VsifSoundModuleType.P6_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
                 comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -405,15 +400,6 @@ namespace zanac.VGMPlayer
                     case 1:
                         if (comPortOPNA == null)
                         {
-                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
-                                (PortId)Settings.Default.OPNA_Port);
-                            if (comPortOPNA != null)
-                                comPortOPNA.ChipClockHz["OPNA"] = 8 * 1000 * 1000;
-                        }
-                        break;
-                    case 2:
-                        if (comPortOPNA == null)
-                        {
                             comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SpfmLight,
                                 (PortId)Settings.Default.OPNA_Port);
                             if (comPortOPNA != null)
@@ -424,7 +410,7 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
-                    case 3:
+                    case 2:
                         if (comPortOPNA == null)
                         {
                             comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
@@ -510,15 +496,6 @@ namespace zanac.VGMPlayer
                         if (comPortOPN2 == null)
                         {
                             comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPN2_Port);
-                            if (comPortOPN2 != null)
-                                comPortOPN2.ChipClockHz["OPN2"] = 7670453;
-                        }
-                        break;
-                    case 4:
-                        if (comPortOPN2 == null)
-                        {
-                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI,
                                 (PortId)Settings.Default.OPN2_Port);
                             if (comPortOPN2 != null)
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;

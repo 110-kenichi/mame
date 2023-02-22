@@ -159,7 +159,10 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_GEN + offset + 0.5)));
+                                    var ofst = FTDI_BAUDRATE_GEN + offset;
+                                    if (ofst < 0)
+                                        ofst = 0;
+                                    ftdi.SetBaudRate((uint)(3000000 / (ofst + 0.5)));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -182,7 +185,6 @@ namespace zanac.VGMPlayer
                             }
                             break;
                         case VsifSoundModuleType.MSX_FTDI:
-                        case VsifSoundModuleType.P6_FTDI:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
                                 var stat = ftdi.OpenByIndex((uint)comPort);
@@ -190,7 +192,10 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate((uint)(3000000 / (FTDI_BAUDRATE_MSX + offset + 0.5)));
+                                    var ofst = FTDI_BAUDRATE_MSX + offset;
+                                    if (ofst < 0)
+                                        ofst = 0;
+                                    ftdi.SetBaudRate((uint)(3000000 / (ofst + 0.5)));
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 
@@ -323,7 +328,6 @@ namespace zanac.VGMPlayer
         NES_FTDI_DIRECT,
         MSX_FTDI,
         Generic_UART,
-        P6_FTDI,
         Spfm,
         SpfmLight,
     }
