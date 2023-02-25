@@ -610,6 +610,8 @@ namespace zanac.VGMPlayer
             return data;
         }
 
+        private int lastOPN2DacEn;
+
         protected override void StreamSong()
         {
             xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
@@ -720,11 +722,13 @@ namespace zanac.VGMPlayer
                                                     {
                                                         case 0x2a:
                                                             //output DAC
-                                                            DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
+                                                            DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                             break;
                                                         case 0x2b:
                                                             //Enable DAC
-                                                            DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
+                                                            if (lastOPN2DacEn != (dt & 0x80))
+                                                                deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                            lastOPN2DacEn = (dt & 0x80);
                                                             break;
                                                         default:
                                                             deferredWriteOPN2_P0(adrs, dt, dclk);
@@ -885,7 +889,7 @@ namespace zanac.VGMPlayer
 
                                 if (comPortOPN2 != null)
                                 {
-                                    DeferredWriteOPN2_DAC(comPortOPN2, 0x2a, dacData);
+                                    DeferredWriteOPN2_DAC(comPortOPN2, dacData);
                                 }
                                 else if (comPortOPNA != null)
                                 {

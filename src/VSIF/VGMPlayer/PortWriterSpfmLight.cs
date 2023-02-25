@@ -66,10 +66,10 @@ namespace zanac.VGMPlayer
                             if (lastDataisPseudoDac)
                             {
                                 //dummy wait
-                                //ds.Add(0x00);
-                                //ds.Add(0x02);
-                                //ds.Add(0x20);
-                                //ds.Add(0x00);
+                                ds.Add(0x00);
+                                ds.Add(0x02);
+                                ds.Add(0x20);
+                                ds.Add(0x00);
                             }
                             ds.Add(0x00);
                             ds.Add(0x02);

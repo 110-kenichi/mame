@@ -137,7 +137,7 @@ namespace zanac.VGMPlayer
                         }
                         break;
                     case 0x13:
-                        if (lastWriteAddress == 0xe && //OPNA DAC write
+                        if (lastWriteAddress == 0xb && //OPNA DAC write
                             lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
                         {
                             byte[] sd = new byte[3] {
@@ -146,6 +146,27 @@ namespace zanac.VGMPlayer
                                 };
                             ds.AddRange(sd);
                         }else
+                        {
+                            byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            };
+                            ds.AddRange(sd);
+                        }
+                        lastDataType = dt.Type;
+                        lastWriteAddress = dt.Address;
+                        break;
+                    case 0x14:
+                        if (lastWriteAddress == 0x2a && //OPN2 DAC write
+                            lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                        {
+                            byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                            ds.AddRange(sd);
+                        }
+                        else
                         {
                             byte[] sd = new byte[3] {
                                     (byte)(dt.Type           | 0x20),

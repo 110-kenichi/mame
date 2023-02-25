@@ -117,8 +117,8 @@ namespace zanac.VGMPlayer
                     // ALL KEY OFF
                     for (int i = 0; i < 3; i++)
                     {
-                        deferredWriteOPN2_P0(0x28, i);
-                        deferredWriteOPN2_P0(0x28, 0x4 | i);
+                        deferredWriteOPN2_P0(comPortOPN2, 0x28, i);
+                        deferredWriteOPN2_P0(comPortOPN2, 0x28, 0x4 | i);
                     }
                 }
 
@@ -126,14 +126,14 @@ namespace zanac.VGMPlayer
                 {
                     //TL
                     for (int i = 0x40; i <= 0x4F; i++)
-                        deferredWriteOPN2_P0(i, 0xFF);
+                        deferredWriteOPN2_P0(comPortOPN2, i, 0xFF);
                     for (int i = 0x40; i <= 0x4F; i++)
-                        deferredWriteOPN2_P1(i, 0xFF);
+                        deferredWriteOPN2_P1(comPortOPN2, i, 0xFF);
                     //RR
                     for (int i = 0x80; i <= 0x8F; i++)
-                        deferredWriteOPN2_P0(i, 0xFF);
+                        deferredWriteOPN2_P0(comPortOPN2, i, 0xFF);
                     for (int i = 0x80; i <= 0x8F; i++)
-                        deferredWriteOPN2_P1(i, 0xFF);
+                        deferredWriteOPN2_P1(comPortOPN2, i, 0xFF);
                 }
             }
 
@@ -1076,29 +1076,29 @@ namespace zanac.VGMPlayer
                     Accepted = true;
 
                     //LFO
-                    deferredWriteOPN2_P0(0x22, 0x00);
+                    deferredWriteOPN2_P0(comPortOPN2, 0x22, 0x00);
                     //channel 3 mode
-                    deferredWriteOPN2_P0(0x27, 0x00);
+                    deferredWriteOPN2_P0(comPortOPN2, 0x27, 0x00);
                     //DAC OFF
-                    deferredWriteOPN2_P0(0x2B, 0x00);
+                    deferredWriteOPN2_P0(comPortOPN2, 0x2B, 0x00);
 
                     for (int i = 0x30; i <= 0x3F; i++)
-                        deferredWriteOPN2_P0(i, 0x00);
+                        deferredWriteOPN2_P0(comPortOPN2, i, 0x00);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPN2_P0(i, 0xff);
                     for (int i = 0x50; i <= 0xB3; i++)
-                        deferredWriteOPN2_P0(i, 0x00);
+                        deferredWriteOPN2_P0(comPortOPN2, i, 0x00);
                     for (int i = 0xB4; i <= 0xB6; i++)
-                        deferredWriteOPN2_P0(i, 0xC0);
+                        deferredWriteOPN2_P0(comPortOPN2, i, 0xC0);
 
                     for (int i = 0x30; i <= 0x3F; i++)
-                        deferredWriteOPN2_P1(i, 0x00);
+                        deferredWriteOPN2_P1(comPortOPN2, i, 0x00);
                     //for (int i = 0x40; i <= 0x4F; i++)
                     //    deferredWriteOPN2_P1(i, 0xff);
                     for (int i = 0x50; i <= 0xB3; i++)
-                        deferredWriteOPN2_P1(i, 0x00);
+                        deferredWriteOPN2_P1(comPortOPN2, i, 0x00);
                     for (int i = 0xB4; i <= 0xB6; i++)
-                        deferredWriteOPN2_P1(i, 0xC0);
+                        deferredWriteOPN2_P1(comPortOPN2, i, 0xC0);
 
                     return true;
                 }
@@ -1509,6 +1509,8 @@ namespace zanac.VGMPlayer
         private int y8950_pcm_start;
         private int y8950_pcm_stop;
 
+        private int lastOPN2DacEn;
+
         protected override void StreamSong()
         {
             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
@@ -1668,17 +1670,16 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case 0x2a:
                                                         //output DAC
-                                                        DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
+                                                        DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                         break;
                                                     case 0x2b:
                                                         //Enable DAC
-                                                        if ((dt & 0x80) != 0)
-                                                            DeferredWriteOPN2_DAC(comPortOPN2, adrs, dt);
-                                                        else
-                                                            deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                        if(lastOPN2DacEn != (dt & 0x80))
+                                                            deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
+                                                        lastOPN2DacEn = (dt & 0x80);
                                                         break;
                                                     default:
-                                                        deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                        deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
                                                         break;
                                                 }
                                             }
@@ -1720,7 +1721,7 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPN2 != null)
                                             {
-                                                deferredWriteOPN2_P1(adrs, dt, dclk);
+                                                deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                             }
                                             else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
                                             {
@@ -1858,7 +1859,7 @@ namespace zanac.VGMPlayer
                                                     break;
                                                 }
 
-                                                deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
                                             }
                                         }
                                         break;
@@ -1938,7 +1939,7 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNA"))
                                                 {
-                                                    deferredWriteOPN2_P1(adrs, dt, dclk);
+                                                    deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                                 }
                                             }
                                             else
@@ -2419,7 +2420,7 @@ namespace zanac.VGMPlayer
                                             {
                                                 if (comPortOPN2 != null)
                                                 {
-                                                    DeferredWriteOPN2_DAC(comPortOPN2, 0x2a, (byte)dacData[dacOffset]);
+                                                    DeferredWriteOPN2_DAC(comPortOPN2, (byte)dacData[dacOffset]);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
@@ -2449,7 +2450,7 @@ namespace zanac.VGMPlayer
                                                     {
                                                         if (comPortOPN2 != null)
                                                         {
-                                                            deferredWriteOPN2_P0(0x2b, 0x80, 0);
+                                                            deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
                                                         }
                                                         else if (comPortOPNA != null)
                                                         {
@@ -2596,9 +2597,9 @@ namespace zanac.VGMPlayer
                                                     break;
 
                                                 if (adrs < 0x30)
-                                                    deferredWriteOPN2_P0(adrs, dt, dclk);
+                                                    deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
                                                 else
-                                                    deferredWriteOPN2_P1(adrs, dt, dclk);
+                                                    deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                             }
                                             break;
                                         }
@@ -2770,7 +2771,7 @@ namespace zanac.VGMPlayer
 
                                     if (comPortOPN2 != null)
                                     {
-                                        DeferredWriteOPN2_DAC(comPortOPN2, 0x2a, data);
+                                        DeferredWriteOPN2_DAC(comPortOPN2, data);
                                     }
                                     else if (comPortOPNA != null)
                                     {
@@ -3668,149 +3669,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void deferredWriteOPN2_P0(int adrs, int dt, uint dclk)
-        {
-            //ignore test and unknown registers
-            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
-                return;
-            if (adrs > 0xb6)
-                return;
-
-            comPortOPN2.RegTable[adrs] = dt;
-
-            switch (adrs)
-            {
-                case 0xa0:
-                case 0xa1:
-                case 0xa2:
-                case 0xa8:
-                case 0xa9:
-                case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPN2_P0(adrs + 4, ret.Hi);
-                        deferredWriteOPN2_P0(adrs, dt);
-                    }
-                    break;
-                case 0xa4:
-                case 0xa5:
-                case 0xa6:
-                case 0xac:
-                case 0xad:
-                case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4], comPortOPN2.ChipClockHz["OPN2"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPN2_P0(adrs, dt);
-                        deferredWriteOPN2_P0(adrs - 4, ret.Lo);
-                    }
-                    break;
-                default:
-                    deferredWriteOPN2_P0(adrs, dt);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="adrs"></param>
-        /// <param name="dt"></param>
-        private void deferredWriteOPN2_P0(int adrs, int dt)
-        {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-            {
-                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-            }
-            else //Genesis
-            {
-                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-            }
-        }
-
-        private void deferredWriteOPN2_P1(int adrs, int dt, uint dclk)
-        {
-            //ignore test and unknown registers
-            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
-                return;
-            if (adrs > 0xb6)
-                return;
-
-            comPortOPN2.RegTable[adrs + 0x100] = dt;
-
-            switch (adrs)
-            {
-                case 0xa0:
-                case 0xa1:
-                case 0xa2:
-                case 0xa8:
-                case 0xa9:
-                case 0xaa:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                        goto default;
-                    {
-                        //LO
-                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4 + 0x100], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Lo;
-                        deferredWriteOPN2_P1(adrs + 4, ret.Hi);
-                        deferredWriteOPN2_P1(adrs, dt);
-                    }
-                    break;
-                case 0xa4:
-                case 0xa5:
-                case 0xa6:
-                case 0xac:
-                case 0xad:
-                case 0xae:
-                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
-                        goto default;
-                    {
-                        //HI
-                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4 + 0x100], comPortOPN2.ChipClockHz["OPN2"], dclk);
-                        if (ret.noConverted)
-                            goto default;
-                        dt = ret.Hi;
-                        deferredWriteOPN2_P1(adrs, dt);
-                        deferredWriteOPN2_P1(adrs - 4, ret.Lo);
-                    }
-                    break;
-                default:
-                    deferredWriteOPN2_P1(adrs, dt);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="adrs"></param>
-        /// <param name="dt"></param>
-        private void deferredWriteOPN2_P1(int adrs, int dt)
-        {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
-            {
-                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-            }
-            else
-            {
-                comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
-            }
-        }
 
         /// <summary>
         /// 
@@ -3947,6 +3805,7 @@ namespace zanac.VGMPlayer
                 comPortOPN.DeferredWriteData(0x12, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN);
             }
         }
+
 
         /// <summary>
         /// 

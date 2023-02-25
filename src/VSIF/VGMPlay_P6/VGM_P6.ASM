@@ -2,7 +2,7 @@
 ;*** MAmi-VGM Driver for PC-6001 ROM image ***
 ;	Originated by ioken@SNDR_SNDL
 ;	Arranged by Niga
-;	2022/12/27
+;	2023/02/25
 ;============================================================================
 ;使い方：
 ;
@@ -148,7 +148,7 @@ P6LDIR:	LD	A,1		;戦士のカートリッジ用
 
 ;=======================DATA
 
-MESVER:	DEFB	"MAmi-VSIF P6 DRIVER ver 0.02",CR,LF
+MESVER:	DEFB	"MAmi-VSIF P6 DRIVER ver 0.03",CR,LF
 	DEFB	"(C)2023 itoken@SNDR_SNDL",CR,LF
 	DEFB	"P6 ver. Programed by Niga",CR,LF,CR,LF,0
 
@@ -223,8 +223,8 @@ MAIN_LOOP:
 ;	10	7000	WRITE_OPN2_IO1		ACTIVE
 ;	11	7100	WRITE_OPN2_IO2		ACTIVE
 ;	12	7200	WRITE_OPN_IO		ACTIVE
-;	13	7300	N/A
-;	14	7400	N/A
+;	13	7300	WRITE_OPNA_PseudoDAC
+;	14	7400	WRITE_OPN2_DAC		ACTIVE
 ;	15	7500	N/A
 ;	16	7600	N/A
 ;	17	7700	N/A
@@ -879,10 +879,10 @@ OPN_CLR3:
 ;=============================================================================
 	ORG	07300h
 
-VGM_LOOP73:
+WRITE_OPNA_PseudoDAC:
 	IN 	A,(PSGRD)
 	AND	00100000b
-	JP	NZ,VGM_LOOP73
+	JP	WRITE_OPNA_PseudoDAC
 	JP	MAIN
 
 	DEFB	0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh	;境界識別用
@@ -893,11 +893,51 @@ VGM_LOOP73:
 ;=============================================================================
 	ORG	07400h
 
-VGM_LOOP74:
-	IN 	A,(PSGRD)
-	AND	00100000b
-	JP	NZ,VGM_LOOP74
-	JP	MAIN
+WRITE_OPN2_DAC:
+	LD	A,02Ah 		;  8
+	OUT	(014h),A 	; 12 20
+;=======================
+	LD	H,00010000b	;  8
+OPN2_DAC2:
+	IN	A,(PSGRD)	; 12
+	AND	H		;  5
+	JP	NZ,OPN2_DAC2	; 11
+
+	IN	A,(PSGRD)	; 12
+	LD	D,A		;  5
+	SLA	D		; 10
+	SLA	D		; 10
+	SLA	D		; 10
+	SLA	D		; 10
+	LD	E,00001111b	;  8 101
+
+OPN2_DAC3:
+	IN	A,(PSGRD)	; 12
+	AND	H		;  5
+	JP	Z,OPN2_DAC3	; 11
+
+	IN	A,(PSGRD)       ; 12
+	AND	E               ;  5
+	OR	D               ;  5
+	LD	D,A             ;  5 55
+
+	LD	A,D		;  5
+	OUT	(015h),A	; 12 17 
+
+	LD	 E,01Fh		; 30 85
+;=======================
+OPN2_DAC4:
+	IN	A,(PSGRD)
+	AND	00100000b 
+	JP	Z,OPN2_DAC4	;コマンドIDを待つ
+	IN	A,(PSGRD)
+	AND	E
+	CP	E		;ダミーID(1Fh)の場合
+	JP	Z,OPN2_DAC2	;連続書き込みへ
+	OR	060h
+	LD	H,A
+	LD	L,0
+	JP	(HL)		; 94
 
 	DEFB	0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh	;境界識別用
 	DEFB	0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh,0FFh
