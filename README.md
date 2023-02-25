@@ -28,7 +28,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 	*S/W
 
-		OS: Windows 7 SP1 or lator
+		OS: Windows 10 or lator
 		Runtime: .NET Framework 4.7 or lator
 		         VC++ 2012 Runtime https://www.microsoft.com/en-au/download/details.aspx?id=30679
 
