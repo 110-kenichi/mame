@@ -877,15 +877,18 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="dt"></param>
-        protected void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int adrs, int dt)
+        protected void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int dt)
         {
+            if (Settings.Default.DisableDAC)
+                return;
+
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
-                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
             else //Genesis
             {
-                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
                 comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
         }
@@ -897,6 +900,9 @@ namespace zanac.VGMPlayer
         /// <param name="inputValue"></param>
         protected void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
         {
+            if (Settings.Default.DisableDAC)
+                return;
+
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
@@ -909,6 +915,151 @@ namespace zanac.VGMPlayer
                     comPortOPNA.DeferredWriteData(0x02, 0x0b, (byte)inputValue, 0);
                     //comPortOPNA.DeferredWriteData(0x01, 0x0E, (byte)(inputValue-0x80), (int)Settings.Default.BitBangWaitOPNA);
                     break;
+            }
+        }
+
+
+        protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt, uint dclk)
+        {
+            //ignore test and unknown registers
+            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                return;
+            if (adrs > 0xb6)
+                return;
+
+            comPortOPN2.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPN2_P0(comPortOPN2, adrs + 4, ret.Hi);
+                        deferredWriteOPN2_P0(comPortOPN2, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPN2_P0(comPortOPN2, adrs, dt);
+                        deferredWriteOPN2_P0(comPortOPN2, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPN2_P0(comPortOPN2, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt)
+        {
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+            }
+            else //Genesis
+            {
+                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+            }
+        }
+
+        protected void deferredWriteOPN2_P1(VsifClient comPortOPN2, int adrs, int dt, uint dclk)
+        {
+            //ignore test and unknown registers
+            if (adrs < 0x22 || adrs == 0x23 || adrs == 0x29 || (0x2c < adrs && adrs < 0x30))
+                return;
+            if (adrs > 0xb6)
+                return;
+
+            comPortOPN2.RegTable[adrs + 0x100] = dt;
+
+            switch (adrs)
+            {
+                case 0xa0:
+                case 0xa1:
+                case 0xa2:
+                case 0xa8:
+                case 0xa9:
+                case 0xaa:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //LO
+                        var ret = convertOpnFrequency(comPortOPN2.RegTable[adrs + 4 + 0x100], dt, comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Lo;
+                        deferredWriteOPN2_P1(comPortOPN2, adrs + 4, ret.Hi);
+                        deferredWriteOPN2_P1(comPortOPN2, adrs, dt);
+                    }
+                    break;
+                case 0xa4:
+                case 0xa5:
+                case 0xa6:
+                case 0xac:
+                case 0xad:
+                case 0xae:
+                    if (!ConvertChipClock || (double)comPortOPN2.ChipClockHz["OPN2"] == (double)dclk)
+                        goto default;
+                    {
+                        //HI
+                        var ret = convertOpnFrequency(dt, comPortOPN2.RegTable[adrs - 4 + 0x100], comPortOPN2.ChipClockHz["OPN2"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        dt = ret.Hi;
+                        deferredWriteOPN2_P1(comPortOPN2, adrs, dt);
+                        deferredWriteOPN2_P1(comPortOPN2, adrs - 4, ret.Lo);
+                    }
+                    break;
+                default:
+                    deferredWriteOPN2_P1(comPortOPN2, adrs, dt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void deferredWriteOPN2_P1(VsifClient comPortOPN2, int adrs, int dt)
+        {
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            {
+                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+            }
+            else
+            {
+                comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 

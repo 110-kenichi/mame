@@ -66,10 +66,10 @@ namespace zanac.VGMPlayer
                             if (lastDataIsDac)
                             {
                                 //dummy wait
-                                //ds.Add(0x61);
-                                //ds.Add(0x20);
-                                //ds.Add(0x00);
-                                //ds.Add(0x80);
+                                ds.Add(0x61);
+                                ds.Add(0x20);
+                                ds.Add(0x00);
+                                ds.Add(0x80);
                             }
                             ds.Add(0x61);
                             ds.Add(dt.Address);

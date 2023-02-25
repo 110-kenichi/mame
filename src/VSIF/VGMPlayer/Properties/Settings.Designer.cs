@@ -861,5 +861,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["PaneHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableDAC {
+            get {
+                return ((bool)(this["DisableDAC"]));
+            }
+            set {
+                this["DisableDAC"] = value;
+            }
+        }
     }
 }

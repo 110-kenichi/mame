@@ -212,5 +212,8 @@
     <Setting Name="PaneHeight" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">899, 200</Value>
     </Setting>
+    <Setting Name="DisableDAC" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
