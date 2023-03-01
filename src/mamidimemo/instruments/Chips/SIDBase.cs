@@ -1596,7 +1596,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.DutyEnvelopesReleasePoint < 0)
                         //    f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
 
-                        if (f_dutyCounter >= settings.DutyEnvelopesNums.Length)
+                        if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                         {
                             if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
@@ -1632,7 +1632,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.ResonanceEnvelopesRepeatPoint < 0)
                         //    f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
 
-                        if (f_resCounter >= settings.ResonanceEnvelopesNums.Length)
+                        if (f_resCounter < settings.ResonanceEnvelopesNums.Length)
                         {
                             if (settings.ResonanceEnvelopesReleasePoint >= 0 && f_resCounter < (uint)settings.ResonanceEnvelopesReleasePoint)
                                 f_resCounter = (uint)settings.ResonanceEnvelopesReleasePoint;
@@ -1668,9 +1668,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.CutOffEnvelopesRepeatPoint < 0)
                         //    f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
 
-                        if (f_cutCounter >= settings.CutOffEnvelopesNums.Length && f_cutCounter < (uint)settings.CutOffEnvelopesReleasePoint)
+                        if (f_cutCounter < settings.CutOffEnvelopesNums.Length)
                         {
-                            if (settings.CutOffEnvelopesReleasePoint >= 0)
+                            if (settings.CutOffEnvelopesReleasePoint >= 0 && f_cutCounter < (uint)settings.CutOffEnvelopesReleasePoint)
                                 f_cutCounter = (uint)settings.CutOffEnvelopesReleasePoint;
                         }
                     }
@@ -1707,7 +1707,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length && f_wavCounter < (uint)settings.WaveFormEnvelopesReleasePoint)
                         {
-                            if (settings.WaveFormEnvelopesReleasePoint >= 0)
+                            if (settings.WaveFormEnvelopesReleasePoint >= 0 && f_wavCounter < (uint)settings.WaveFormEnvelopesReleasePoint)
                                 f_wavCounter = (uint)settings.WaveFormEnvelopesReleasePoint;
                         }
                     }
@@ -1742,9 +1742,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.SyncEnvelopesReleasePoint < 0)
                         //    f_syncCounter = (uint)settings.SyncEnvelopesNums.Length;
 
-                        if (f_syncCounter >= settings.SyncEnvelopesNums.Length && f_syncCounter < (uint)settings.SyncEnvelopesReleasePoint)
+                        if (f_syncCounter >= settings.SyncEnvelopesNums.Length)
                         {
-                            if (settings.SyncEnvelopesReleasePoint >= 0)
+                            if (settings.SyncEnvelopesReleasePoint >= 0 && f_syncCounter < (uint)settings.SyncEnvelopesReleasePoint)
                                 f_syncCounter = (uint)settings.SyncEnvelopesReleasePoint;
                         }
                     }
@@ -1779,9 +1779,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.RingEnvelopesReleasePoint < 0)
                         //    f_ringCounter = (uint)settings.RingEnvelopesNums.Length;
 
-                        if (f_ringCounter >= settings.RingEnvelopesNums.Length && f_ringCounter < (uint)settings.RingEnvelopesReleasePoint)
+                        if (f_ringCounter >= settings.RingEnvelopesNums.Length)
                         {
-                            if (settings.RingEnvelopesReleasePoint >= 0)
+                            if (settings.RingEnvelopesReleasePoint >= 0 && f_ringCounter < (uint)settings.RingEnvelopesReleasePoint)
                                 f_ringCounter = (uint)settings.RingEnvelopesReleasePoint;
                         }
                     }
@@ -1816,9 +1816,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.TestEnvelopesReleasePoint < 0)
                         //    f_testCounter = (uint)settings.TestEnvelopesNums.Length;
 
-                        if (f_testCounter >= settings.TestEnvelopesNums.Length && f_testCounter < (uint)settings.TestEnvelopesReleasePoint)
+                        if (f_testCounter >= settings.TestEnvelopesNums.Length)
                         {
-                            if (settings.TestEnvelopesReleasePoint >= 0)
+                            if (settings.TestEnvelopesReleasePoint >= 0 && f_testCounter < (uint)settings.TestEnvelopesReleasePoint)
                                 f_testCounter = (uint)settings.TestEnvelopesReleasePoint;
                         }
                     }
@@ -1895,7 +1895,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DutyEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < DutyEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= DutyEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1990,7 +1990,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         ResonanceEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < ResonanceEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= ResonanceEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2085,7 +2085,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         CutOffEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < CutOffEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= CutOffEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2179,7 +2179,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         WaveFormEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < WaveFormEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= WaveFormEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2274,7 +2274,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SyncEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < SyncEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= SyncEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2369,7 +2369,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         RingEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < RingEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= RingEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2464,7 +2464,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         TestEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < TestEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= TestEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');

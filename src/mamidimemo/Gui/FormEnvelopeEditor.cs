@@ -190,7 +190,7 @@ namespace zanac.MAmidiMEmo.Gui
                 var lpt = sl.Points[0];
                 var rpt = sr.Points[0];
 
-                if (0 <= xv && sv.Points.Count >= 0 && xv <= sv.Points[sv.Points.Count - 1].XValue &&
+                if (0 <= xv && sv.Points.Count >= 0 && xv <= sv.Points[sv.Points.Count - 1].XValue + 1 &&
                     (metroToggleRelease.Checked ? lpt.XValue < xv : true))
                     rpt.XValue = xv;
 
@@ -348,7 +348,7 @@ namespace zanac.MAmidiMEmo.Gui
                 suspendNumericUpDownNum = false;
 
                 StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < EnvelopesNums.Length; i++)
+                for (int i = 0; i <= EnvelopesNums.Length; i++)
                 {
                     if (sb.Length != 0)
                         sb.Append(' ');

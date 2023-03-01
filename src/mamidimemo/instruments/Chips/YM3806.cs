@@ -2326,9 +2326,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.PitchShift13ReleasePoint < 0)
                         //    f_PitchShift13Counter = (uint)settings.PitchShift13Nums.Length;
 
-                        if (f_PitchShift13Counter >= settings.PitchShift13Nums.Length)
+                        if (f_PitchShift13Counter < settings.PitchShift13Nums.Length)
                         {
-                            if (settings.PitchShift13ReleasePoint >= 0)
+                            if (settings.PitchShift13ReleasePoint >= 0 && f_PitchShift13Counter < (uint)settings.PitchShift13ReleasePoint)
                                 f_PitchShift13Counter = (uint)settings.PitchShift13ReleasePoint;
                         }
                     }
@@ -2362,9 +2362,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.PitchShift24ReleasePoint < 0)
                         //    f_PitchShift24Counter = (uint)settings.PitchShift24Nums.Length;
 
-                        if (f_PitchShift24Counter >= settings.PitchShift24Nums.Length)
+                        if (f_PitchShift24Counter < settings.PitchShift24Nums.Length)
                         {
-                            if (settings.PitchShift24ReleasePoint >= 0)
+                            if (settings.PitchShift24ReleasePoint >= 0 && f_PitchShift24Counter < (uint)settings.PitchShift24ReleasePoint)
                                 f_PitchShift24Counter = (uint)settings.PitchShift24ReleasePoint;
                         }
                     }

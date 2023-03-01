@@ -1245,7 +1245,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SoundTypeEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < SoundTypeEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= SoundTypeEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');

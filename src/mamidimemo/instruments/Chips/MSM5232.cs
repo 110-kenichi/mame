@@ -905,7 +905,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         HarmonicsEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < HarmonicsEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= HarmonicsEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1007,7 +1007,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.HarmonicsEnvelopesReleasePoint < 0)
                         //    f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesNums.Length;
 
-                        if (f_HarmonicsCounter >= settings.HarmonicsEnvelopesNums.Length)
+                        if (f_HarmonicsCounter < settings.HarmonicsEnvelopesNums.Length)
                         {
                             if (settings.HarmonicsEnvelopesReleasePoint >= 0 && f_HarmonicsCounter < (uint)settings.HarmonicsEnvelopesReleasePoint)
                                 f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesReleasePoint;

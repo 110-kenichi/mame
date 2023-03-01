@@ -1199,7 +1199,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         ToneEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < ToneEnvelopesNums.Length; i++)
+                        for (int i = 0; i <= ToneEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1301,7 +1301,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //if (settings.ToneEnvelopesReleasePoint < 0)
                         //    f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
 
-                        if (f_toneCounter >= settings.ToneEnvelopesNums.Length)
+                        if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                         {
                             if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter < (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
