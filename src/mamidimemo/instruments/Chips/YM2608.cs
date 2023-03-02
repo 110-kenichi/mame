@@ -2995,7 +2995,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         SoundTypeEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= SoundTypeEnvelopesNums.Length; i++)
+                        for (int i = 0; i < SoundTypeEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -3101,6 +3101,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType < (uint)settings.SoundTypeEnvelopesReleasePoint)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
+                            else
+                                f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }
                     if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)

@@ -2795,7 +2795,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         ToneEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= ToneEnvelopesNums.Length; i++)
+                        for (int i = 0; i < ToneEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2889,7 +2889,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DrumCh7FNumEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= DrumCh7FNumEnvelopesNums.Length; i++)
+                        for (int i = 0; i < DrumCh7FNumEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2983,7 +2983,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DrumCh8FNumEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= DrumCh8FNumEnvelopesNums.Length; i++)
+                        for (int i = 0; i < DrumCh8FNumEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -3077,7 +3077,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DrumCh9FNumEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= DrumCh9FNumEnvelopesNums.Length; i++)
+                        for (int i = 0; i < DrumCh9FNumEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -3220,6 +3220,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter < (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
+                            else
+                                f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
                         }
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
@@ -3255,6 +3257,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.DrumCh7FNumEnvelopesReleasePoint >= 0 && f_drumCh7FNumCounter < (ushort)settings.DrumCh7FNumEnvelopesReleasePoint)
                                 f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesReleasePoint;
+                            else
+                                f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesNums.Length;
                         }
                     }
                     if (f_drumCh7FNumCounter < settings.DrumCh7FNumEnvelopesNums.Length)
@@ -3289,6 +3293,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.DrumCh8FNumEnvelopesReleasePoint >= 0 && f_drumCh8FNumCounter < (ushort)settings.DrumCh8FNumEnvelopesReleasePoint)
                                 f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesReleasePoint;
+                            else
+                                f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesNums.Length;
                         }
                     }
                     if (f_drumCh8FNumCounter < settings.DrumCh8FNumEnvelopesNums.Length)
@@ -3323,6 +3329,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.DrumCh9FNumEnvelopesReleasePoint >= 0 && f_drumCh9FNumCounter < (ushort)settings.DrumCh9FNumEnvelopesReleasePoint)
                                 f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesReleasePoint;
+                            else
+                                f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesNums.Length;
                         }
                     }
                     if (f_drumCh9FNumCounter < settings.DrumCh9FNumEnvelopesNums.Length)

@@ -1651,7 +1651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         MorphEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= MorphEnvelopesNums.Length; i++)
+                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1757,6 +1757,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter < (uint)settings.MorphEnvelopesReleasePoint)
                                 f_morphCounter = (uint)settings.MorphEnvelopesReleasePoint;
+                            else
+                                f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
                         }
                     }
                     if (f_morphCounter < settings.MorphEnvelopesNums.Length)

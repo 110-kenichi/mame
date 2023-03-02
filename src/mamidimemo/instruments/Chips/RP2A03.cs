@@ -2416,7 +2416,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DutyEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= DutyEnvelopesNums.Length; i++)
+                        for (int i = 0; i < DutyEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2511,7 +2511,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         MorphEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= MorphEnvelopesNums.Length; i++)
+                        for (int i = 0; i < MorphEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2606,7 +2606,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         LfoFreqEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= LfoFreqEnvelopesNums.Length; i++)
+                        for (int i = 0; i < LfoFreqEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2701,7 +2701,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         LfoGainEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= LfoGainEnvelopesNums.Length; i++)
+                        for (int i = 0; i < LfoGainEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2794,7 +2794,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         LfoFreqMultiplyEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= LfoFreqMultiplyEnvelopesNums.Length; i++)
+                        for (int i = 0; i < LfoFreqMultiplyEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -2933,6 +2933,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
+                            else
+                                f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
                         }
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
@@ -2970,6 +2972,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter < (uint)settings.MorphEnvelopesReleasePoint)
                                 f_morphCounter = (uint)settings.MorphEnvelopesReleasePoint;
+                            else
+                                f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
                         }
                     }
                     if (f_morphCounter < settings.MorphEnvelopesNums.Length)
@@ -3007,6 +3011,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.LfoFreqEnvelopesReleasePoint >= 0 && f_lfoFreqCounter < (uint)settings.LfoFreqEnvelopesReleasePoint)
                                 f_lfoFreqCounter = (uint)settings.LfoFreqEnvelopesReleasePoint;
+                            else
+                                f_lfoFreqCounter = (uint)settings.LfoFreqEnvelopesNums.Length;
+
                         }
                     }
                     if (f_lfoFreqCounter < settings.LfoFreqEnvelopesNums.Length)
@@ -3043,6 +3050,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.LfoGainEnvelopesReleasePoint >= 0 && f_lfoGainCounter < (uint)settings.LfoGainEnvelopesReleasePoint)
                                 f_lfoGainCounter = (uint)settings.LfoGainEnvelopesReleasePoint;
+                            else
+                                f_lfoGainCounter = (uint)settings.LfoGainEnvelopesNums.Length;
+
                         }
                     }
                     if (f_lfoGainCounter < settings.LfoGainEnvelopesNums.Length)
@@ -3079,6 +3089,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.LfoFreqMultiplyEnvelopesReleasePoint >= 0 && f_lfoFreqMultiplyCounter < (uint)settings.LfoFreqMultiplyEnvelopesReleasePoint)
                                 f_lfoFreqMultiplyCounter = (uint)settings.LfoFreqMultiplyEnvelopesReleasePoint;
+                            else
+                                f_lfoFreqMultiplyCounter = (uint)settings.LfoFreqMultiplyEnvelopesNums.Length;
                         }
                     }
                     if (f_lfoFreqMultiplyCounter < settings.LfoFreqMultiplyEnvelopesNums.Length)

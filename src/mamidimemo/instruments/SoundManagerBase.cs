@@ -1212,7 +1212,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundingStarted)
+                        if (onSnd.IsSoundingStarted && !onSnd.IsKeyOff)
                         {
                             onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
@@ -1462,7 +1462,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundingStarted)
+                        if (onSnd.IsSoundingStarted && !onSnd.IsKeyOff)
                         {
                             onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))

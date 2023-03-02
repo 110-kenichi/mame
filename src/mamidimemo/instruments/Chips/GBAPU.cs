@@ -1365,7 +1365,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         DutyEnvelopesNums = vs.ToArray();
 
                         StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i <= DutyEnvelopesNums.Length; i++)
+                        for (int i = 0; i < DutyEnvelopesNums.Length; i++)
                         {
                             if (sb.Length != 0)
                                 sb.Append(' ');
@@ -1461,6 +1461,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
+                            else
+                                f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
                         }
                     }
                     if (f_dutyCounter < settings.DutyEnvelopesNums.Length)

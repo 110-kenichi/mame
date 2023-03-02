@@ -73,7 +73,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     VolumeEnvelopesNums = vs.ToArray();
 
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i <= VolumeEnvelopesNums.Length; i++)
+                    for (int i = 0; i < VolumeEnvelopesNums.Length; i++)
                     {
                         if (sb.Length != 0)
                             sb.Append(' ');
@@ -167,7 +167,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     PitchEnvelopesNums = vs.ToArray();
 
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i <= PitchEnvelopesNums.Length; i++)
+                    for (int i = 0; i < PitchEnvelopesNums.Length; i++)
                     {
                         if (sb.Length != 0)
                             sb.Append(' ');
@@ -301,7 +301,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     PanShiftEnvelopesNums = vs.ToArray();
 
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i <= PanShiftEnvelopesNums.Length; i++)
+                    for (int i = 0; i < PanShiftEnvelopesNums.Length; i++)
                     {
                         if (sb.Length != 0)
                             sb.Append(' ');
@@ -399,7 +399,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     ArpEnvelopesNums = vs.ToArray();
 
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i <= ArpEnvelopesNums.Length; i++)
+                    for (int i = 0; i < ArpEnvelopesNums.Length; i++)
                     {
                         if (sb.Length != 0)
                             sb.Append(' ');
