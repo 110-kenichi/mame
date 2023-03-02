@@ -2103,7 +2103,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 "Synchronize LFO frequency with Note frequency when set the value.")]
             [DoubleSlideParametersAttribute(0, 8, 0.01)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DefaultValue((float)0)]
             public double LfoFreqMultiply
             {
                 get
@@ -2115,6 +2114,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if(value >= 0)
                         f_LfoFreqMultiply = value;
                 }
+            }
+
+            public bool ShouldSerializeLfoFreqMultiply()
+            {
+                return LfoFreqMultiply != 0;
+            }
+
+            public void ResetLfoFreqMultiply()
+            {
+                LfoFreqMultiply = 0;
             }
 
             private sbyte[] f_LfoData = new sbyte[32];
@@ -2750,8 +2759,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Description("Set FDS LFO Freq Multiply envelop by text. Input FDS LFO Freq Multiply  value and split it with space like the FamiTracker.\r\n" +
                        "\"|\" is repeat point. \"/\" is release point.")]
-            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [EnvelopeEditorAttribute(0, 63)]
             public string LfoFreqMultiplyEnvelopes
             {
                 get
@@ -3097,7 +3104,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         double vol = settings.LfoFreqMultiplyEnvelopesNums[f_lfoFreqMultiplyCounter++];
 
-                        LfoFreqMultiplyValue = (byte)vol;
+                        LfoFreqMultiplyValue = vol;
                         process = true;
                     }
                 }
