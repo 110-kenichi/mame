@@ -1,1 +1,0 @@
-out/res/resources.o: res/resources.res
