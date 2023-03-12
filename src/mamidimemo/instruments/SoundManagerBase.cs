@@ -787,6 +787,14 @@ namespace zanac.MAmidiMEmo.Instruments
                 var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.VelocityMap);
                 processIntProps(msbValue, lsbValue, pis);
             }
+            if (!string.IsNullOrWhiteSpace(tim.MDS.NoteMap))
+            {
+                int msbValue = note.NoteNumber;
+                int lsbValue = 0;
+
+                var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.NoteMap);
+                processIntProps(msbValue, lsbValue, pis);
+            }
 
             if (preProcessArrpegioForKeyOn(note))
                 return;
