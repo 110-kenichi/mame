@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.3.0 Added the \"$\" keyword for the NoteMap property. The \"$\" keyword indicates its own value.
 4.6.2.0 Added the NoteMap property in the Midi Driver Settings[MDS] in the Timbre settings.
 4.6.1.1 Fixed RP2A03 FDS FreqMulitplyEnvelopes prop processing.
 4.6.1.0 Re-fixed envelopes & MONO mode processing.

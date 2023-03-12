@@ -133,7 +133,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "eg 1) \"DutyCycle,Volume\"\r\n" +
             "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
             "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
-            "... You can change Operator TL, MUL, D2R values dynamically via Velocity value.")]
+            "... You can change Operator 2 TL, MUL, D2R values dynamically via Velocity value.")]
         [DefaultValue(null)]
         [Category("MIDI")]
         public string VelocityMap
@@ -144,11 +144,14 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Define custom note map\r\n" +
-    "Link with Note value with the Timbre property value\r\n" +
-    "eg 1) \"DutyCycle,Volume\"\r\n" +
-    "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
-    "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
-    "... You can change Operator TL, MUL, D2R values dynamically via Velocity value.")]
+            "Link with Note value with the Timbre property value\r\n" +
+            "eg 1) \"DutyCycle,Volume\"\r\n" +
+            "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
+            "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
+            "... You can change Operator 2 TL, MUL, D2R values dynamically via Velocity value.\r\n" +
+            "Also the \"$\" sign indicates its own value.\r\n " +
+            "eg 3) \"$ * (Ops[3].AR/31)\"\r\r" +
+            "... You can change Operator 3 AR value the result of VelocityMap value.")]
         [DefaultValue(null)]
         [Category("MIDI")]
         public string NoteMap

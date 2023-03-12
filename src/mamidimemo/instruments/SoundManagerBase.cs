@@ -2,6 +2,7 @@
 using MathParserTK;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -417,8 +418,9 @@ namespace zanac.MAmidiMEmo.Instruments
                         try
                         {
                             //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
-
-                            val = (int)Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                            string formula = ipi.Formula.Replace("$", pd.Converter.ConvertToString(pd.GetValue(ipi.Owner)));
+                            formula = formula.Replace(ipi.Symbol, val.ToString());
+                            val = (int)Math.Round(MathParser.DefaultMathParser.Parse(formula));
                             if (val < attribute.SliderMin)
                                 val = attribute.SliderMin;
                             if (val > attribute.SliderMax)
@@ -447,8 +449,9 @@ namespace zanac.MAmidiMEmo.Instruments
                             try
                             {
                                 //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
-
-                                val = Math.Round(MathParser.DefaultMathParser.Parse(ipi.Formula.Replace(ipi.Symbol, val.ToString())));
+                                string formula = ipi.Formula.Replace("$", pd.Converter.ConvertToString(pd.GetValue(ipi.Owner)));
+                                formula = formula.Replace(ipi.Symbol, val.ToString());
+                                val = Math.Round(MathParser.DefaultMathParser.Parse(formula));
                                 if (val < dattribute.SliderMin)
                                     val = dattribute.SliderMin;
                                 if (val > dattribute.SliderMax)
