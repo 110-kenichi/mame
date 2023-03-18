@@ -357,7 +357,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
-            if (!ignoreVelocity && string.IsNullOrWhiteSpace(Timbre.MDS.VelocityMap))
+            if (!ignoreVelocity && Timbre.MDS.IgnoreVelocity)
                 v *= NoteOnEvent.Velocity / 127d;
 
             CombinedTimbreSettings parent = ParentModule.TryGetBaseTimbreSettings(NoteOnEvent, Timbre, BaseTimbreIndex);

@@ -133,10 +133,23 @@ namespace zanac.MAmidiMEmo.Instruments
             "eg 1) \"DutyCycle,Volume\"\r\n" +
             "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
             "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
-            "... You can change Operator 2 TL, MUL, D2R values dynamically via Velocity value.")]
+            "... You can change Operator 2 TL, MUL, D2R values dynamically via Velocity value.\r\n" +
+            "Also the \"$\" keyword indicates its own value.\r\n " +
+            "eg 3) \"$ * (Ops[3].AR/31)\"\r\r" +
+            "... You can change Operator 3 AR value from the original of AR value.")]
         [DefaultValue(null)]
         [Category("MIDI")]
         public string VelocityMap
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
+        [Description("Ignore Note On velocity.")]
+        [DefaultValue(null)]
+        [Category("MIDI")]
+        public bool IgnoreVelocity
         {
             get;
             set;
@@ -149,7 +162,7 @@ namespace zanac.MAmidiMEmo.Instruments
             "... You can change DutyCycle and Volume property values dynamically via Velocity value.\r\n" +
             "eg 2) \"16+Ops[2].TL/4, 64-Ops[2].MUL/2, Ops[2].D2R/4\"\r\r" +
             "... You can change Operator 2 TL, MUL, D2R values dynamically via Velocity value.\r\n" +
-            "Also the \"$\" sign indicates its own value.\r\n " +
+            "Also the \"$\" keyword indicates its own value.\r\n " +
             "eg 3) \"$ * (Ops[3].AR/31)\"\r\r" +
             "... You can change Operator 3 AR value the result of VelocityMap value.")]
         [DefaultValue(null)]

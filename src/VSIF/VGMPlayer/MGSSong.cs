@@ -79,21 +79,23 @@ namespace zanac.VGMPlayer
 
             Process p = new Process();
 
-            int loopCount = 0;
-            if (LoopByCount && LoopedCount > 0)
-                loopCount = LoopedCount;
-            long loopTime = 0;
-            if (LoopByElapsed)
-                loopTime = LoopTimes.Ticks / TimeSpan.TicksPerSecond;
-
+            string loopCount = "";
+            if (Settings.Default.Loop && Settings.Default.LoopCount > 0)
+                loopCount = $"-l{(int)Settings.Default.LoopCount}";
+            string loopTime = "";
+            if (Settings.Default.LoopTime)
+            {
+                var ts = new TimeSpan(Settings.Default.LoopTimes.Hour, Settings.Default.LoopTimes.Minute, Settings.Default.LoopTimes.Second);
+                loopTime = String.Format($"-p{ts.TotalSeconds}");
+            }
             p.StartInfo.FileName = "kss2vgm";
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = false;
             p.StartInfo.RedirectStandardInput = false;
             p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.Arguments = string.Format($"-l{loopCount} -p{loopTime} \"-o{tmpVgmFile}\" \"{fileName}\"");
+            p.StartInfo.Arguments = string.Format($"{loopCount} {loopTime} \"-o{tmpVgmFile}\" \"{fileName}\"");
             p.Start();
-            p.WaitForExit();
+            p.WaitForExit(1000 * 60);
 
             base.OpenFile(tmpVgmFile);
         }

@@ -450,7 +450,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         /// <returns></returns>
-        public TimbreBase GetLastTimbre(int channel)
+        public TimbreBase GetLastNoteOnTimbre(int channel)
         {
             if (lastNoteOnTimbres[channel] != null)
                 return lastNoteOnTimbres[channel];
@@ -463,14 +463,45 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (ptidx >= CombinedTimbres.Length)
                     ptidx = CombinedTimbres.Length - 1;
                 var pts = CombinedTimbres[ptidx];
-                if (pts.Timbres.Count != 0) //if Timbre assigned
-                    return CombinedTimbres[ptidx];
+                return pts;
             }
 
             int btidx = pn & 0xffff;
             if (btidx >= BaseTimbres.Length)
                 btidx = BaseTimbres.Length - 1;
             return BaseTimbres[btidx];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase GetLastTimbre(TimbreBase timbre)
+        {
+            if (timbre is CombinedTimbre)
+            {
+                var pts = (CombinedTimbre)timbre;
+                if (pts.Timbres.Count != 0) //if Timbre assigned
+                    return pts.Timbres[pts.Timbres.Count - 1].TimberObject;
+                else
+                    return null;
+            }
+
+            return timbre;
+        }
+
+        public TimbreBase[] GetBaseTimbres(TimbreBase timbre)
+        {
+            List<TimbreBase> ts = new List<TimbreBase>();
+
+            if (timbre is CombinedTimbre)
+            {
+                var pts = (CombinedTimbre)timbre;
+                foreach (var pt in pts.Timbres)
+                    ts.Add(pt.TimberObject);
+                return ts.ToArray();
+            }
+            return new TimbreBase[] { timbre };
         }
 
 
@@ -482,6 +513,116 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (ev.CombinedTimbreSettings != null && 0 <= baseTimbreIndex && baseTimbreIndex < ev.CombinedTimbreSettings.Length)
                 return ev.CombinedTimbreSettings[baseTimbreIndex];
+            return null;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase GetTimbre(TaggedNoteOnEvent ev)
+        {
+            var tb = ev.Tag as NoteOnTimbreInfo;
+            if (tb != null)
+            {
+                CombinedTimbre ctb = tb.Timbre as CombinedTimbre;
+                if (ctb != null)
+                    return ctb;
+                else
+                    return tb.Timbre;
+            }
+
+            switch (ChannelTypes[ev.Channel])
+            {
+                case ChannelType.Normal:
+                    {
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            return CombinedTimbres[ptidx];
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        return BaseTimbres[btidx];
+                    }
+                case ChannelType.Drum:
+                    {
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
+                        {
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
+                            {
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                return CombinedTimbres[ptidx];
+                            }
+
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            return BaseTimbres[btidx];
+                        }
+                        break;
+                    }
+            }
+            return null;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public TimbreBase GetTimbre(NoteOnEvent ev)
+        {
+            switch (ChannelTypes[ev.Channel])
+            {
+                case ChannelType.Normal:
+                    {
+                        int pn = (int)ProgramAssignments[ProgramNumbers[ev.Channel]];
+                        if ((pn & 0xffff0000) != 0)
+                        {
+                            int ptidx = pn & 0xffff;
+                            if (ptidx >= CombinedTimbres.Length)
+                                ptidx = CombinedTimbres.Length - 1;
+                            return CombinedTimbres[ptidx];
+                        }
+
+                        int btidx = pn & 0xffff;
+                        if (btidx >= BaseTimbres.Length)
+                            btidx = BaseTimbres.Length - 1;
+                        return BaseTimbres[btidx];
+                    }
+                case ChannelType.Drum:
+                    {
+                        var dt = DrumTimbres[ev.NoteNumber];
+                        if (dt != null && dt.TimbreNumber != null)
+                        {
+                            int pn = (int)dt.TimbreNumber;
+                            if ((pn & 0xffff0000) != 0)
+                            {
+                                int ptidx = pn & 0xffff;
+                                if (ptidx >= CombinedTimbres.Length)
+                                    ptidx = CombinedTimbres.Length - 1;
+                                return CombinedTimbres[ptidx];
+                            }
+
+                            int btidx = pn & 0xffff;
+                            if (btidx >= BaseTimbres.Length)
+                                btidx = BaseTimbres.Length - 1;
+                            return BaseTimbres[btidx];
+                        }
+                        break;
+                    }
+            }
             return null;
         }
 
@@ -621,7 +762,7 @@ namespace zanac.MAmidiMEmo.Instruments
             return ev.BaseTimbreIndexes;
         }
 
-        private DrumTimbre[] f_DrumTimbres ;
+        private DrumTimbre[] f_DrumTimbres;
 
         [DataMember]
         [Category(" Timbres")]
@@ -2408,7 +2549,7 @@ namespace zanac.MAmidiMEmo.Instruments
                             {
                                 if (FollowerMode != FollowerUnit.None)
                                     break;
-                                lastNoteOnTimbres[ce.Channel] = null;
+                                lastNoteOnTimbres[ce.Channel] = GetTimbre(non);
                                 OnNoteOnEvent(new TaggedNoteOnEvent(non));
                             }
                             break;
@@ -2427,6 +2568,8 @@ namespace zanac.MAmidiMEmo.Instruments
                                 var ni = tnon.Tag as NoteOnTimbreInfo;
                                 if (ni != null)
                                     lastNoteOnTimbres[ce.Channel] = ni.Timbre;
+                                else
+                                    lastNoteOnTimbres[ce.Channel] = GetTimbre(tnon);
                                 OnNoteOnEvent(tnon);
                             }
                             break;

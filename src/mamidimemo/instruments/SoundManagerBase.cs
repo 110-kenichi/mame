@@ -338,17 +338,24 @@ namespace zanac.MAmidiMEmo.Instruments
             int msbValue = caft.AftertouchValue;
             int lsbValue = 0;
 
-            var tim = parentModule.GetLastTimbre(channel);
-            bool process = processSCCSCore(msbValue, lsbValue, -1, tim);
-            if (process)
-            {
-                foreach (var t in AllSounds)
-                {
-                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
-                        continue;
+            var timbre = parentModule.GetLastNoteOnTimbre(channel);
+            if (timbre == null)
+                return;
 
-                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
-                        t.OnSoundParamsUpdated();
+            var tims = parentModule.GetBaseTimbres(timbre);
+            foreach (var tim in tims)
+            {
+                bool process = processSCCSCore(msbValue, lsbValue, -1, tim);
+                if (process)
+                {
+                    foreach (var t in AllSounds)
+                    {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
+                        if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                            t.OnSoundParamsUpdated();
+                    }
                 }
             }
         }
@@ -366,17 +373,24 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             int cnum = controlNumber - 70 + 1;
 
-            var tim = parentModule.GetLastTimbre(channel);
-            bool process = processSCCSCore(msbValue, lsbValue, cnum, tim);
-            if (process)
-            {
-                foreach (var t in AllSounds)
-                {
-                    if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
-                        continue;
+            var timbre = parentModule.GetLastNoteOnTimbre(channel);
+            if (timbre == null)
+                return;
 
-                    if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
-                        t.OnSoundParamsUpdated();
+            var tims = parentModule.GetBaseTimbres(timbre);
+            foreach (var tim in tims)
+            {
+                bool process = processSCCSCore(msbValue, lsbValue, cnum, tim);
+                if (process)
+                {
+                    foreach (var t in AllSounds)
+                    {
+                        if (t.ParentModule.UnitNumber != parentModule.UnitNumber)
+                            continue;
+
+                        if (t.NoteOnEvent.Channel == channel && t.Timbre == tim)
+                            t.OnSoundParamsUpdated();
+                    }
                 }
             }
         }
@@ -660,7 +674,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 return -1;
 
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetLastTimbre(ch);
+            var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+            if (timbre == null)
+                return -1;
 
             ArpSettings sds = parentModule.GlobalARP;
             if (timbre.SDS.ARP.Enable)
@@ -720,7 +736,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 return -1;
 
             int ch = (int)arp.Channel;
-            var timbre = parentModule.GetLastTimbre(ch);
+            var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+            if (timbre == null)
+                return -1;
 
             ArpSettings sds = parentModule.GlobalARP;
             if (timbre.SDS.ARP.Enable)
@@ -781,30 +799,75 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void ProcessKeyOn(TaggedNoteOnEvent note)
         {
             int channel = note.Channel;
-            var tim = parentModule.GetLastTimbre(channel);
-            if (!string.IsNullOrWhiteSpace(tim.MDS.VelocityMap))
+            var tims = parentModule.GetBaseTimbres(note);
+            List<object> lastVelocityPropValues = new List<object>();
+            InstancePropertyInfo[] lastVelocityPis = null;
+            List<object> lastNotePropValues = new List<object>();
+            InstancePropertyInfo[] lastNotePis = null;
+            try
             {
-                int msbValue = note.Velocity;
-                int lsbValue = 0;
+                foreach (var tim in tims)
+                {
+                    if (!string.IsNullOrWhiteSpace(tim.MDS.VelocityMap))
+                    {
+                        int msbValue = note.Velocity;
+                        int lsbValue = 0;
 
-                var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.VelocityMap);
-                processIntProps(msbValue, lsbValue, pis);
+                        var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.VelocityMap);
+                        lastVelocityPis = pis;
+                        for (int i = 0; i < pis.Length; i++)
+                        {
+                            var pi = pis[i].Property;
+                            var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
+                            lastVelocityPropValues.Add(pd.GetValue(pis[i].Owner));
+                        }
+                        processIntProps(msbValue, lsbValue, pis);
+                    }
+                    if (!string.IsNullOrWhiteSpace(tim.MDS.NoteMap))
+                    {
+                        int msbValue = note.NoteNumber;
+                        int lsbValue = 0;
+
+                        var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.NoteMap);
+                        lastNotePis = pis;
+                        for (int i = 0; i < pis.Length; i++)
+                        {
+                            var pi = pis[i].Property;
+                            var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
+                            lastNotePropValues.Add(pd.GetValue(pis[i].Owner));
+                        }
+                        processIntProps(msbValue, lsbValue, pis);
+                    }
+                }
+                if (preProcessArrpegioForKeyOn(note))
+                    return;
+
+                var snd = keyOnCore(note);
+
+                postProcessArrpegioForKeyOn(note, snd);
             }
-            if (!string.IsNullOrWhiteSpace(tim.MDS.NoteMap))
+            finally
             {
-                int msbValue = note.NoteNumber;
-                int lsbValue = 0;
-
-                var pis = TimbreBase.GetPropertiesInfo(tim, tim.MDS.NoteMap);
-                processIntProps(msbValue, lsbValue, pis);
+                //Restore last value
+                if (lastNotePis != null)
+                {
+                    for (int i = 0; i < lastNotePis.Length; i++)
+                    {
+                        var pi = lastNotePis[i].Property;
+                        var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
+                        pd.SetValue(lastNotePis[i].Owner, lastNotePropValues[i]);
+                    }
+                }
+                if (lastVelocityPis != null)
+                {
+                    for (int i = 0; i < lastVelocityPis.Length; i++)
+                    {
+                        var pi = lastVelocityPis[i].Property;
+                        var pd = TypeDescriptor.GetProperties(pi.DeclaringType)[pi.Name];
+                        pd.SetValue(lastVelocityPis[i].Owner, lastVelocityPropValues[i]);
+                    }
+                }
             }
-
-            if (preProcessArrpegioForKeyOn(note))
-                return;
-
-            var snd = keyOnCore(note);
-
-            postProcessArrpegioForKeyOn(note, snd);
         }
 
         private SoundBase[] keyOnCore(TaggedNoteOnEvent note)
@@ -956,7 +1019,11 @@ namespace zanac.MAmidiMEmo.Instruments
             if (parentModule.ChannelTypes[ch] != ChannelType.Normal)
                 return false;
 
-            ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
+            var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+            if (timbre == null)
+                return false;
+
+            ArpSettings sds = timbre.SDS.ARP;
             if (!sds.Enable)
                 sds = parentModule.GlobalARP;
             if (sds.Enable)
@@ -1028,7 +1095,11 @@ namespace zanac.MAmidiMEmo.Instruments
             if (parentModule.ChannelTypes[ch] != ChannelType.Normal)
                 return;
 
-            ArpSettings sds = parentModule.GetLastTimbre(ch).SDS.ARP;
+            var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+            if (timbre == null)
+                return;
+
+            ArpSettings sds = timbre.SDS.ARP;
             if (!sds.Enable)
                 sds = parentModule.GlobalARP;
             if (snd != null && sds.Enable)
@@ -1058,7 +1129,9 @@ namespace zanac.MAmidiMEmo.Instruments
             int ch = note.Channel;
             if (ArpeggiatorsForKeyOn.ContainsKey(ch))
             {
-                var timbre = parentModule.GetLastTimbre(ch);
+                var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+                if (timbre == null)
+                    return false;
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForKeyOn[ch];
 
@@ -1090,7 +1163,10 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             else if (ArpeggiatorsForPitch.ContainsKey(ch))
             {
-                var timbre = parentModule.GetLastTimbre(ch);
+                var timbre = parentModule.GetLastTimbre(parentModule.GetLastNoteOnTimbre(ch));
+                if (timbre == null)
+                    return false;
+
                 var sds = timbre.SDS.ARP;
                 ArpEngine arp = ArpeggiatorsForPitch[ch];
 
