@@ -73,8 +73,11 @@ namespace zanac.VGMPlayer
             this.progressBarLoad = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.label10 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
+            this.textBoxUseSystem = new System.Windows.Forms.TextBox();
+            this.textBoxSongSystem = new System.Windows.Forms.TextBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -156,6 +159,7 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNADiv = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown8950Div = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownOPNDiv = new System.Windows.Forms.NumericUpDown();
+            this.label18 = new System.Windows.Forms.Label();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
@@ -201,7 +205,7 @@ namespace zanac.VGMPlayer
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(899, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(899, 30);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -214,7 +218,7 @@ namespace zanac.VGMPlayer
             this.toolStripSeparator1,
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // addPlaylistToolStripMenuItem
@@ -256,7 +260,7 @@ namespace zanac.VGMPlayer
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
@@ -713,19 +717,40 @@ namespace zanac.VGMPlayer
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel2.ColumnCount = 4;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.label10, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.textBoxTitle, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxUseSystem, 3, 1);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxSongSystem, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label18, 2, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 625);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 597);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(899, 32);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(899, 60);
             this.tableLayoutPanel2.TabIndex = 3;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Location = new System.Drawing.Point(4, 30);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(59, 30);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "&Chip:";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label7
             // 
@@ -734,22 +759,45 @@ namespace zanac.VGMPlayer
             this.label7.Location = new System.Drawing.Point(4, 0);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(56, 32);
+            this.label7.Size = new System.Drawing.Size(59, 30);
             this.label7.TabIndex = 0;
-            this.label7.Text = "&Current";
+            this.label7.Text = "&Current:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // textBoxTitle
             // 
             this.textBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tableLayoutPanel2.SetColumnSpan(this.textBoxTitle, 3);
             this.textBoxTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxTitle.Location = new System.Drawing.Point(68, 4);
+            this.textBoxTitle.Location = new System.Drawing.Point(71, 4);
             this.textBoxTitle.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.ReadOnly = true;
             this.textBoxTitle.ShortcutsEnabled = false;
-            this.textBoxTitle.Size = new System.Drawing.Size(827, 22);
+            this.textBoxTitle.Size = new System.Drawing.Size(824, 22);
             this.textBoxTitle.TabIndex = 1;
+            // 
+            // textBoxUseSystem
+            // 
+            this.textBoxUseSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxUseSystem.Location = new System.Drawing.Point(497, 34);
+            this.textBoxUseSystem.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxUseSystem.Name = "textBoxUseSystem";
+            this.textBoxUseSystem.ReadOnly = true;
+            this.textBoxUseSystem.ShortcutsEnabled = false;
+            this.textBoxUseSystem.Size = new System.Drawing.Size(398, 22);
+            this.textBoxUseSystem.TabIndex = 2;
+            // 
+            // textBoxSongSystem
+            // 
+            this.textBoxSongSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxSongSystem.Location = new System.Drawing.Point(71, 34);
+            this.textBoxSongSystem.Margin = new System.Windows.Forms.Padding(4);
+            this.textBoxSongSystem.Name = "textBoxSongSystem";
+            this.textBoxSongSystem.ReadOnly = true;
+            this.textBoxSongSystem.ShortcutsEnabled = false;
+            this.textBoxSongSystem.Size = new System.Drawing.Size(398, 22);
+            this.textBoxSongSystem.TabIndex = 2;
             // 
             // openFileDialog
             // 
@@ -762,7 +810,7 @@ namespace zanac.VGMPlayer
             // 
             this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 228);
+            this.splitter1.Location = new System.Drawing.Point(0, 230);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(899, 8);
             this.splitter1.TabIndex = 6;
@@ -946,7 +994,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownOPNDiv, 5, 10);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
+            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 30);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(4);
@@ -4607,6 +4655,17 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNDiv.TabIndex = 65;
             this.numericUpDownOPNDiv.Value = global::zanac.VGMPlayer.Properties.Settings.Default.OPNDiv;
             // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label18.Location = new System.Drawing.Point(476, 30);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(14, 30);
+            this.label18.TabIndex = 4;
+            this.label18.Text = "⇒";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // listViewList
             // 
             this.listViewList.AllowDrop = true;
@@ -4619,10 +4678,10 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 236);
+            this.listViewList.Location = new System.Drawing.Point(0, 238);
             this.listViewList.Margin = new System.Windows.Forms.Padding(4);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(899, 389);
+            this.listViewList.Size = new System.Drawing.Size(899, 359);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;
@@ -4659,7 +4718,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.47 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.48 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -4831,5 +4890,9 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBoxUseSystem;
+        private System.Windows.Forms.TextBox textBoxSongSystem;
+        private System.Windows.Forms.Label label18;
     }
 }

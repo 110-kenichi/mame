@@ -357,10 +357,6 @@ namespace zanac.VGMPlayer
 
                 xgmReader = new BinaryReader(new MemoryStream(vgmData));
 
-                if (Settings.Default.DCSG_Enable)
-                {
-                    coonectToDCSG();
-                }
                 if (Settings.Default.OPN2_Enable)
                 {
                     connectToOPN2();
@@ -377,6 +373,12 @@ namespace zanac.VGMPlayer
 #endif
                     }
                 }
+                if (Settings.Default.DCSG_Enable)
+                {
+                    coonectToDCSG();
+                }
+                SongChipInformation += "OPN2@7.670453MHz ";
+                SongChipInformation += "DCSG@3.579545MHz ";
 
                 return true;
             }
@@ -394,7 +396,10 @@ namespace zanac.VGMPlayer
                             comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                 (PortId)Settings.Default.OPNA_Port);
                             if (comPortOPNA != null)
+                            {
                                 comPortOPNA.ChipClockHz["OPNA"] = 8 * 1000 * 1000;
+                                UseChipInformation += "OPNA@8.000000MHz ";
+                            }
                         }
                         break;
                     case 1:
@@ -407,6 +412,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                                UseChipInformation += "OPNA@7.987200MHz ";
                             }
                         }
                         break;
@@ -420,6 +426,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                                UseChipInformation += "OPNA@7.987200MHz ";
                             }
                         }
                         break;
@@ -471,7 +478,10 @@ namespace zanac.VGMPlayer
                             comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
                                 (PortId)Settings.Default.OPN2_Port);
                             if (comPortOPN2 != null)
+                            {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                            }
                         }
                         break;
                     case 1:
@@ -480,7 +490,10 @@ namespace zanac.VGMPlayer
                             comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
                                 (PortId)Settings.Default.OPN2_Port);
                             if (comPortOPN2 != null)
+                            {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                            }
                         }
                         break;
                     case 2:
@@ -489,7 +502,10 @@ namespace zanac.VGMPlayer
                             comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
                                 (PortId)Settings.Default.OPN2_Port);
                             if (comPortOPN2 != null)
+                            {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                            }
                         }
                         break;
                     case 3:
@@ -498,7 +514,10 @@ namespace zanac.VGMPlayer
                             comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                 (PortId)Settings.Default.OPN2_Port);
                             if (comPortOPN2 != null)
+                            {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                            }
                         }
                         break;
                 }
@@ -549,7 +568,10 @@ namespace zanac.VGMPlayer
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
                                 (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
+                            {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
                         }
                         break;
                     case 1:
@@ -558,7 +580,10 @@ namespace zanac.VGMPlayer
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
                                 (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
+                            {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
                         }
                         break;
                     case 2:
@@ -567,7 +592,10 @@ namespace zanac.VGMPlayer
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
                                 (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
+                            {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
                         }
                         break;
                     case 3:
@@ -576,7 +604,10 @@ namespace zanac.VGMPlayer
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
                                 (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
+                            {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
                         }
                         break;
                     case 4:
@@ -585,7 +616,10 @@ namespace zanac.VGMPlayer
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
+                            {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
                         }
                         break;
                 }

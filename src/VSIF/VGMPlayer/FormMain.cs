@@ -481,6 +481,8 @@ namespace zanac.VGMPlayer
                 labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
                 textBoxTitle.Text = currentSong.FileName;
                 currentSong.Play();
+                textBoxSongSystem.Text = currentSong.SongChipInformation;
+                textBoxUseSystem.Text = currentSong.UseChipInformation;
             }
             catch (Exception ex)
             {

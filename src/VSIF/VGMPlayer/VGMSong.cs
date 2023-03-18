@@ -465,6 +465,8 @@ namespace zanac.VGMPlayer
                 if (curHead.bytPSG_SRWidth == 0)
                     curHead.bytPSG_SRWidth = 0x10;
 
+                SongChipInformation += "DCSG@3.579545MHz ";
+
                 if (Settings.Default.DCSG_Enable)
                 {
                     coonectToDCSG();
@@ -472,6 +474,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2413 != 0)
             {
+                SongChipInformation += $"OPLL@{curHead.lngHzYM2413 / 1000000f}MHz ";
+
                 if (Settings.Default.OPLL_Enable)
                 {
                     connectToOPLL();
@@ -479,6 +483,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2612 != 0 && curHead.lngVersion >= 0x00000110)
             {
+                SongChipInformation += $"OPN2@{curHead.lngHzYM2612/1000000f}MHz ";
+
                 if (Settings.Default.OPN2_Enable)
                 {
                     connectToOPN2();
@@ -499,25 +505,17 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2151 != 0 && curHead.lngVersion >= 0x00000110)
             {
+                SongChipInformation += $"OPM@{curHead.lngHzYM2151 / 1000000f}MHz ";
+
                 if (Settings.Default.OPM_Enable)
                 {
                     connectToOPM();
                 }
             }
-            if (curHead.lngHzYM3812 != 0 && curHead.lngVersion >= 0x00000151)
-            {
-                if (Settings.Default.OPL3_Enable)
-                {
-                    connectToOPL3();
-                }
-                else if (Settings.Default.Y8950_Enable)
-                {
-                    if (connectToMsxAudio())
-                        comPortY8950.Tag["ProxyOPL2"] = true;
-                }
-            }
             if (curHead.lngHzYM3526 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"OPL@{curHead.lngHzYM3526 / 1000000f}MHz ";
+
                 if (Settings.Default.OPL3_Enable)
                 {
                     connectToOPL3();
@@ -528,8 +526,24 @@ namespace zanac.VGMPlayer
                         comPortY8950.Tag["ProxyOPL"] = true;
                 }
             }
+            if (curHead.lngHzYM3812 != 0 && curHead.lngVersion >= 0x00000151)
+            {
+                SongChipInformation += $"OPL2@{curHead.lngHzYM3812 / 1000000f}MHz ";
+
+                if (Settings.Default.OPL3_Enable)
+                {
+                    connectToOPL3();
+                }
+                else if (Settings.Default.Y8950_Enable)
+                {
+                    if (connectToMsxAudio())
+                        comPortY8950.Tag["ProxyOPL2"] = true;
+                }
+            }
             if (curHead.lngHzYMF262 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"OPL3@{curHead.lngHzYMF262 / 1000000f}MHz ";
+
                 if (Settings.Default.OPL3_Enable)
                 {
                     connectToOPL3();
@@ -537,6 +551,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2203 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"OPN@{curHead.lngHzYM2203 / 1000000f}MHz ";
+
                 if (Settings.Default.OPN_Enable)
                 {
                     connectToOPN();
@@ -561,6 +577,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2608 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"OPNA@{curHead.lngHzYM2608 / 1000000f}MHz ";
+
                 if (Settings.Default.OPNA_Enable)
                 {
                     connectToOPNA();
@@ -580,6 +598,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2610 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"OPNB@{curHead.lngHzYM2610 / 1000000f}MHz ";
+
                 if (Settings.Default.OPNA_Enable)
                 {
                     connectToOPNA();
@@ -599,6 +619,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzY8950 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"Y8950@{curHead.lngHzY8950 / 1000000f}MHz ";
+
                 if (Settings.Default.Y8950_Enable)
                 {
                     connectToMsxAudio();
@@ -619,6 +641,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzK051649 != 0 && curHead.lngVersion >= 0x00000161)
             {
+                SongChipInformation += $"SCC@{curHead.lngHzK051649 / 1000000f}MHz ";
+
                 if (Settings.Default.SCC_Enable)
                 {
                     connectToSCC();
@@ -626,6 +650,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzAY8910 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                SongChipInformation += $"PSG@{curHead.lngHzAY8910 / 1000000f}MHz ";
+
                 if (Settings.Default.Y8910_Enable)
                 {
                     connectToPSG();
@@ -651,6 +677,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortY8910.ChipClockHz["Y8910"] = 1789773;
                                 comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
+                                UseChipInformation += "PSG@1.789773MHz ";
                             }
                         }
                         break;
@@ -664,11 +691,143 @@ namespace zanac.VGMPlayer
                             {
                                 comPortY8910.ChipClockHz["Y8910"] = 1789773;
                                 comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
+                                UseChipInformation += "PSG@1.789773MHz ";
                             }
                         }
                         break;
                 }
                 if (comPortY8910 != null)
+                {
+                    Accepted = true;
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        private bool connectToOPLL()
+        {
+            if (comPortOPLL == null)
+            {
+                switch (Settings.Default.OPLL_IF)
+                {
+                    case 0:
+                        if (comPortOPLL == null)
+                        {
+                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                (PortId)Settings.Default.OPLL_Port);
+                            if (comPortOPLL != null)
+                            {
+                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
+                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
+                                UseChipInformation += "OPLL@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (comPortOPLL == null)
+                        {
+                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.OPLL_Port);
+                            if (comPortOPLL != null)
+                            {
+                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
+                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
+                                UseChipInformation += "OPLL@3.579545MHz ";
+                            }
+                        }
+                        break;
+                }
+                if (comPortOPLL != null)
+                {
+                    Accepted = true;
+
+                    for (int i = 0x00; i <= 0x2F; i++)
+                        deferredWriteOPLL(i, 0);
+                    //for (int i = 0x30; i <= 0x38; i++)
+                    //    deferredWriteOPLL(i, 0xff);
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool coonectToDCSG()
+        {
+            if (comPortDCSG == null)
+            {
+                switch (Settings.Default.DCSG_IF)
+                {
+                    case 0:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
+                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
+                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
+                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                               (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                }
+                if (comPortDCSG != null)
                 {
                     Accepted = true;
 
@@ -695,6 +854,7 @@ namespace zanac.VGMPlayer
 
                                 comPortSCC.ChipClockHz["SCC"] = 3.579545 * 1000 * 1000;
                                 comPortSCC.ChipClockHz["SCC_org"] = 3.579545 * 1000 * 1000;
+                                UseChipInformation += "SCC@3.579545MHz ";
 
                                 switch (comPortSCC.SoundModuleType)
                                 {
@@ -760,6 +920,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortY8950.ChipClockHz["Y8950"] = 3579545;
                                 comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
+                                UseChipInformation += "Y8950@3.579545MHz ";
                             }
                         }
                         break;
@@ -795,6 +956,7 @@ namespace zanac.VGMPlayer
                         {
                             comPortOPL3.ChipClockHz["OPL3"] = 14318180;
                             comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
+                            UseChipInformation += "OPL3@14.318180MHz ";
                         }
                         break;
                 }
@@ -844,6 +1006,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPM.ChipClockHz["OPM"] = 3579545;
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                                UseChipInformation += "OPM@3.579545MHz ";
                             }
                         }
                         break;
@@ -856,6 +1019,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPM.ChipClockHz["OPM"] = 3579545;
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                                UseChipInformation += "OPM@3.579545MHz ";
                             }
                         }
                         break;
@@ -868,6 +1032,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPM.ChipClockHz["OPM"] = 3579545;
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
+                                UseChipInformation += "OPM@3.579545MHz ";
                             }
                         }
                         break;
@@ -909,6 +1074,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA"] = 8000000;
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
+                                UseChipInformation += "OPNA@8.000000MHz ";
                             }
                         }
                         break;
@@ -922,6 +1088,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                                UseChipInformation += "OPNA@7.987200MHz ";
                             }
                         }
                         break;
@@ -935,6 +1102,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                                UseChipInformation += "OPNA@7.987200MHz ";
                             }
                         }
                         break;
@@ -990,6 +1158,7 @@ namespace zanac.VGMPlayer
                                 comPortOPN.ChipClockHz["OPN"] = 4000000;
                                 comPortOPN.ChipClockHz["OPN_SSG"] = 4000000;
                                 comPortOPN.ChipClockHz["OPN_org"] = 4000000;
+                                UseChipInformation += "OPN@4.000000MHz ";
                             }
                         }
                         break;
@@ -1031,6 +1200,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
                             }
                         }
                         break;
@@ -1043,6 +1213,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
                             }
                         }
                         break;
@@ -1055,6 +1226,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
                             }
                         }
                         break;
@@ -1067,6 +1239,7 @@ namespace zanac.VGMPlayer
                             {
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
                             }
                         }
                         break;
@@ -1099,129 +1272,6 @@ namespace zanac.VGMPlayer
                         deferredWriteOPN2_P1(comPortOPN2, i, 0x00);
                     for (int i = 0xB4; i <= 0xB6; i++)
                         deferredWriteOPN2_P1(comPortOPN2, i, 0xC0);
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool connectToOPLL()
-        {
-            if (comPortOPLL == null)
-            {
-                switch (Settings.Default.OPLL_IF)
-                {
-                    case 0:
-                        if (comPortOPLL == null)
-                        {
-                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                (PortId)Settings.Default.OPLL_Port);
-                            if (comPortOPLL != null)
-                            {
-                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
-                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
-                            }
-                        }
-                        break;
-                    case 1:
-                        if (comPortOPLL == null)
-                        {
-                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                                (PortId)Settings.Default.OPLL_Port);
-                            if (comPortOPLL != null)
-                            {
-                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
-                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
-                            }
-                        }
-                        break;
-                }
-                if (comPortOPLL != null)
-                {
-                    Accepted = true;
-
-                    for (int i = 0x00; i <= 0x2F; i++)
-                        deferredWriteOPLL(i, 0);
-                    //for (int i = 0x30; i <= 0x38; i++)
-                    //    deferredWriteOPLL(i, 0xff);
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool coonectToDCSG()
-        {
-            if (comPortDCSG == null)
-            {
-                switch (Settings.Default.DCSG_IF)
-                {
-                    case 0:
-                        if (comPortDCSG == null)
-                        {
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis,
-                                (PortId)Settings.Default.DCSG_Port);
-                            if (comPortDCSG != null)
-                            {
-                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
-                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
-                            }
-                        }
-                        break;
-                    case 1:
-                        if (comPortDCSG == null)
-                        {
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
-                                (PortId)Settings.Default.DCSG_Port);
-                            if (comPortDCSG != null)
-                            {
-                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
-                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
-                            }
-                        }
-                        break;
-                    case 2:
-                        if (comPortDCSG == null)
-                        {
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS,
-                                (PortId)Settings.Default.DCSG_Port);
-                            if (comPortDCSG != null)
-                            {
-                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
-                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
-                            }
-                        }
-                        break;
-                    case 3:
-                        if (comPortDCSG == null)
-                        {
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_Low,
-                                (PortId)Settings.Default.DCSG_Port);
-                            if (comPortDCSG != null)
-                            {
-                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
-                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
-                            }
-                        }
-                        break;
-                    case 4:
-                        if (comPortDCSG == null)
-                        {
-                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
-                               (PortId)Settings.Default.DCSG_Port);
-                            if (comPortDCSG != null)
-                            {
-                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
-                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
-                            }
-                        }
-                        break;
-                }
-                if (comPortDCSG != null)
-                {
-                    Accepted = true;
 
                     return true;
                 }

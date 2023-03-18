@@ -161,6 +161,18 @@ namespace zanac.VGMPlayer
             protected set;
         }
 
+        public String SongChipInformation
+        {
+            get;
+            protected set;
+        }
+
+        public String UseChipInformation
+        {
+            get;
+            protected set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
