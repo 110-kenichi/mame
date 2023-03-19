@@ -250,7 +250,7 @@ namespace zanac.VGMPlayer
                                 SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.WriteTimeout = 100;
                                 sp.ReadTimeout = 100;
-                                sp.BaudRate = 12 * 1000 * 1000;
+                                sp.BaudRate = 250 * 1000 * 1000;
                                 sp.StopBits = StopBits.One;
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;
@@ -268,7 +268,7 @@ namespace zanac.VGMPlayer
                                 SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
                                 sp.WriteTimeout = 100;
                                 sp.ReadTimeout = 100;
-                                sp.BaudRate = 12 * 1000 * 1000;
+                                sp.BaudRate = 250 * 1000 * 1000;
                                 sp.StopBits = StopBits.One;
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;

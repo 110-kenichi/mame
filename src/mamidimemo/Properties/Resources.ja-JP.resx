@@ -296,7 +296,7 @@
     <value>..\Resources\YM2608.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ConnectingSPFM" xml:space="preserve">
-    <value>SPFMで物理音源に接続しています...</value>
+    <value>SCCIで物理音源に接続しています...</value>
   </data>
   <data name="UpdatingADPCM" xml:space="preserve">
     <value>ADPCMデータを更新中...</value>
@@ -362,7 +362,7 @@
     <value>全ての音源をクリアしますか？</value>
   </data>
   <data name="CNTWarning" xml:space="preserve">
-    <value>4OPで音を出力する場合、Chip(Global) -> CONSEL プロパティの値を1またはそれ以上にしないと音がなりません。</value>
+    <value>4OPで音を出力する場合、Chip(Global) -&gt; CONSEL プロパティの値を1またはそれ以上にしないと音がなりません。</value>
   </data>
   <data name="NoMidiPort" xml:space="preserve">
     <value>MIDI IN デバイスがありません。
@@ -397,5 +397,8 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   </data>
   <data name="SelectDAWFolder" xml:space="preserve">
     <value>DAW のプラグインフォルダを選択してください</value>
+  </data>
+  <data name="ConnectingGimic" xml:space="preserve">
+    <value>c86ctlで物理音源GIMICに接続しています...</value>
   </data>
 </root>

@@ -319,8 +319,7 @@ namespace zanac.MAmidiMEmo.Properties {
         ///;;; #
         ///;;; # ========================================================================
         ///;;; # Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
-        ///;;; #
-        ///;;; # Red [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///;;;  [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string cmudict_0_7b {
             get {
@@ -338,7 +337,16 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   Connecting to a real chip via SPFM... に類似しているローカライズされた文字列を検索します。
+        ///   Connecting to a real chip via c86ctl for GIMIC... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ConnectingGimic {
+            get {
+                return ResourceManager.GetString("ConnectingGimic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Connecting to a real chip via SCCI... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ConnectingSPFM {
             get {

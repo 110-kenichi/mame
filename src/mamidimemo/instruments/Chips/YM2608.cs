@@ -28,6 +28,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.VSIF;
 using File = System.IO.File;
 using Path = System.IO.Path;
@@ -97,9 +98,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private object spfmPtrLock = new object();
+        private object sndEnginePtrLock = new object();
 
         private IntPtr spfmPtr;
+
+        private int gimicPtr = -1;
 
         private VsifClient vsifClient;
 
@@ -125,7 +128,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     (value == SoundEngineType.Software ||
                     value == SoundEngineType.SPFM ||
                     value == SoundEngineType.VSIF_MSX_FTDI ||
-                    value == SoundEngineType.VSIF_P6_FTDI))
+                    value == SoundEngineType.VSIF_P6_FTDI ||
+                    value == SoundEngineType.GIMIC))
                 {
                     setSoundEngine(value);
                 }
@@ -141,6 +145,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.SPFM,
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
+                    SoundEngineType.GIMIC,
                 });
 
                 return sc;
@@ -155,12 +160,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             AllSoundOff();
 
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
             {
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
+                }
+
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
                 }
 
                 f_SoundEngineType = value;
@@ -200,6 +211,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_P6_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
                         if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.GIMIC:
+                        gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                        if (gimicPtr >= 0)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
@@ -536,7 +560,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (!internalOnly)
                 {
-                    lock (spfmPtrLock)
+                    lock (sndEnginePtrLock)
                     {
                         switch (CurrentSoundEngine)
                         {
@@ -549,6 +573,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     vsifClient.WriteData(0x10, (byte)adrs, (byte)data, f_ftdiClkWidth);
                                 else
                                     vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                break;
+                            case SoundEngineType.GIMIC:
+                                GimicManager.SetRegister(gimicPtr, adrs, data, false);
                                 break;
                         }
                     }
@@ -611,10 +638,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (CurrentSoundEngine == SoundEngineType.SPFM)
                 {
-                    lock (spfmPtrLock)
+                    lock (sndEnginePtrLock)
                         return (byte)ScciManager.GetWrittenRegisterData(spfmPtr, (uint)(reg + address + (op * 4) + (slot % 3)));
                 }
-                else
+                else if (CurrentSoundEngine == SoundEngineType.GIMIC)
+                {
+                    lock (sndEnginePtrLock)
+                        return (byte)GimicManager.GetWrittenRegisterData(gimicPtr, (uint)(reg + address + (op * 4) + (slot % 3)));
+                }else
                 {
                     reg = (uint)(slot / 3) * 2;
                     YM2608_write(unitNumber, reg + 0, (byte)(address + (op * 4) + (slot % 3)));
@@ -857,12 +888,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
+            {
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
                 }
+                if (gimicPtr >= 0)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
+            }
             base.Dispose();
         }
 
@@ -928,7 +966,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2608WriteData(UnitNumber, 0x0d, 0, 0, (byte)f_EnvelopeType);
             YM2608WriteData(UnitNumber, 0x22, 0, 0, (byte)(LFOEN << 3 | LFRQ));
 
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
             updatePcmData(null);
         }
@@ -1122,7 +1160,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updatePcmData(YM2608Timbre timbre)
         {
-            lock (spfmPtrLock)
+            lock (sndEnginePtrLock)
             {
                 if (CurrentSoundEngine != SoundEngineType.SPFM)
                     return;
@@ -1172,7 +1210,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 FormProgress.RunDialog(Resources.UpdatingADPCM,
                         new Action<FormProgress>((f) =>
                         {
-                            lock (spfmPtrLock)
+                            lock (sndEnginePtrLock)
                             {
                                 if (CurrentSoundEngine != SoundEngineType.SPFM)
                                     return;
@@ -1244,6 +1282,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             while (!ScciManager.IsBufferEmpty(spfmPtr))
                                 Thread.Sleep(10);
                             break;
+                        case SoundEngineType.GIMIC:
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
                             break;
@@ -1268,6 +1307,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     while (!ScciManager.IsBufferEmpty(spfmPtr))
                         Thread.Sleep(10);
                     break;
+                case SoundEngineType.GIMIC:
                 case SoundEngineType.VSIF_MSX_FTDI:
                 case SoundEngineType.VSIF_P6_FTDI:
                     break;

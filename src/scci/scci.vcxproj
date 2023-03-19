@@ -138,12 +138,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="c86ctl.h" />
+    <ClInclude Include="C86CtlWrapper.h" />
     <ClInclude Include="scci.h" />
     <ClInclude Include="SCCIDefines.h" />
     <ClInclude Include="ScciWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\wrapper\AssemblyInfo.cpp" />
+    <ClCompile Include="C86CtlWrapper.cpp" />
     <ClCompile Include="ScciWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>

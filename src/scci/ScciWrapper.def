@@ -1,9 +1,19 @@
 LIBRARY   WRAPPER
 EXPORTS
-	InitializeScci
-	ReleaseScci
-	GetSoundChip
-	ReleaseSoundChip
-	SetRegister
-	GetWrittenRegisterData
-	IsBufferEmpty
+	ScciInitialize
+	ScciRelease
+	ScciGetSoundChip
+	ScciReleaseSoundChip
+	ScciSetRegister
+	ScciGetWrittenRegisterData
+	ScciIsBufferEmpty
+	GimicInitialize
+	GimicDeinitialize
+	GimicGetNumberOfChip
+	GimicGetModule
+	GimicSetClock
+	GimicSetRegister
+	GimicSetRegisterDirect
+	GimicGetWrittenRegisterData
+	GimicSetSSGVolume
+

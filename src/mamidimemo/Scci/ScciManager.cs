@@ -29,7 +29,7 @@ namespace zanac.MAmidiMEmo.Scci
 
         private static object lockObject = new object();
 
-        private static IScciWrapper wrapperClient;
+        private static NativeScciWrapper wrapperClient;
 
         private static bool initialized;
 
@@ -71,13 +71,15 @@ namespace zanac.MAmidiMEmo.Scci
 
         public static void TryReleaseScci()
         {
-            if (initialized)
-                lock (lockObject)
+            lock (lockObject)
+            {
+                if (initialized)
                 {
                     wrapperClient.ReleaseScci();
 
                     writtenDataCache.Clear();
                 }
+            }
         }
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace zanac.MAmidiMEmo.Scci
                 else
                 {
                     wrapperClient.SetRegister(pChip, dAddr, pData);
-                    if(writtenDataCache.ContainsKey(pChip))
+                    if (writtenDataCache.ContainsKey(pChip))
                         writtenDataCache[pChip][dAddr] = pData;
                 }
             }

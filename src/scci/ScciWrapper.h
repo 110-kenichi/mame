@@ -12,17 +12,17 @@ SoundInterfaceManager *pManager = NULL;
 
 extern "C" {
 
-	__declspec(dllexport) DWORD __cdecl  InitializeScci();
+	__declspec(dllexport) DWORD __cdecl  ScciInitialize();
 
-	__declspec(dllexport) BOOL __cdecl  ReleaseScci();
+	__declspec(dllexport) BOOL __cdecl  ScciRelease();
 
-	__declspec(dllexport) SoundChip* __cdecl  GetSoundChip(int iSoundChipType, DWORD dClock);
+	__declspec(dllexport) SoundChip* __cdecl  ScciGetSoundChip(int iSoundChipType, DWORD dClock);
 
-	__declspec(dllexport) BOOL __cdecl  ReleaseSoundChip(SoundChip * pSoundChip);
+	__declspec(dllexport) BOOL __cdecl  ScciReleaseSoundChip(SoundChip * pSoundChip);
 
-	__declspec(dllexport) BOOL __cdecl  SetRegister(void* pChip, DWORD dAddr, DWORD dData);
+	__declspec(dllexport) BOOL __cdecl  ScciSetRegister(void* pChip, DWORD dAddr, DWORD dData);
 
-	__declspec(dllexport) DWORD __cdecl  GetWrittenRegisterData(void* pChip, DWORD addr);
+	__declspec(dllexport) DWORD __cdecl  ScciGetWrittenRegisterData(void* pChip, DWORD addr);
 
-	__declspec(dllexport) BOOL __cdecl  IsBufferEmpty(void* pChip);
+	__declspec(dllexport) BOOL __cdecl  ScciIsBufferEmpty(void* pChip);
 }

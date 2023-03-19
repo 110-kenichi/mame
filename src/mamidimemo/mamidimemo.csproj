@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="Gimic\GimicManager.cs" />
     <Compile Include="ComponentModel\TimbrePropertyTabAttribute.cs" />
     <Compile Include="ComponentModel\TimbreSoundTab.cs" />
     <Compile Include="ComponentModel\TimbreMidiTab.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="ComponentModel\ExpandableNoteCollectionConverter.cs" />
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
+    <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
     <Compile Include="Gui\CancelListViewItemDragEventArgs.cs" />
     <Compile Include="Gui\DraggableListView.cs">
       <SubType>Component</SubType>
@@ -626,6 +628,7 @@
     <Compile Include="Instruments\SlotAssignmentType.cs" />
     <Compile Include="Instruments\MidiDriverSettings.cs" />
     <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
+    <Compile Include="Scci\NativeScciWrapper.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
@@ -1349,10 +1352,6 @@
     <ProjectReference Include="..\FastDelegate.Net\FastDelegate.Net\FastDelegate.Net.csproj">
       <Project>{fa0a043b-f264-43bc-83b8-28000c7f7b08}</Project>
       <Name>FastDelegate.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScciInterface\ScciWrapperInterface.csproj">
-      <Project>{26c36b22-d243-4cb4-9ab2-4895634d9a47}</Project>
-      <Name>ScciWrapperInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

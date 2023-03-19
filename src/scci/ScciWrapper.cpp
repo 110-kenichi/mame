@@ -4,7 +4,7 @@
 
 extern "C"
 {
-	__declspec(dllexport) DWORD __cdecl  InitializeScci()
+	__declspec(dllexport) DWORD __cdecl  ScciInitialize()
 	{
 		// scci.dll‚Ì“Çž‚Ý
 		hScci = ::LoadLibrary(L"scci");
@@ -37,7 +37,7 @@ extern "C"
 		return 0;
 	}
 
-	__declspec(dllexport) BOOL __cdecl  ReleaseScci()
+	__declspec(dllexport) BOOL __cdecl  ScciRelease()
 	{
 		if (pManager == NULL)
 			return TRUE;
@@ -52,7 +52,7 @@ extern "C"
 		return pManager->releaseInstance();
 	}
 
-	__declspec(dllexport) SoundChip* __cdecl  GetSoundChip(int iSoundChipType, DWORD dClock)
+	__declspec(dllexport) SoundChip* __cdecl  ScciGetSoundChip(int iSoundChipType, DWORD dClock)
 	{
 		if (pManager == NULL)
 			return NULL;
@@ -60,7 +60,7 @@ extern "C"
 		return pManager->getSoundChip(iSoundChipType, dClock);
 	}
 
-	__declspec(dllexport) BOOL __cdecl  ReleaseSoundChip(SoundChip* pSoundChip)
+	__declspec(dllexport) BOOL __cdecl  ScciReleaseSoundChip(SoundChip* pSoundChip)
 	{
 		if (pSoundChip == NULL)
 			return TRUE;
@@ -68,7 +68,7 @@ extern "C"
 		return pManager->releaseSoundChip(pSoundChip);
 	}
 
-	__declspec(dllexport) BOOL __cdecl  SetRegister(void* pChip, DWORD dAddr, DWORD dData)
+	__declspec(dllexport) BOOL __cdecl  ScciSetRegister(void* pChip, DWORD dAddr, DWORD dData)
 	{
 		if (pChip == NULL)
 			return FALSE;
@@ -76,7 +76,7 @@ extern "C"
 		return ((SoundChip*)pChip)->setRegister(dAddr, dData);
 	}
 
-	__declspec(dllexport) DWORD __cdecl  GetWrittenRegisterData(void* pChip, DWORD addr)
+	__declspec(dllexport) DWORD __cdecl  ScciGetWrittenRegisterData(void* pChip, DWORD addr)
 	{
 		if (pChip == NULL)
 			return FALSE;
@@ -84,7 +84,7 @@ extern "C"
 		return ((SoundChip*)pChip)->getWrittenRegisterData(addr);
 	}
 
-	__declspec(dllexport) BOOL __cdecl  IsBufferEmpty(void* pChip)
+	__declspec(dllexport) BOOL __cdecl  ScciIsBufferEmpty(void* pChip)
 	{
 		if (pChip == NULL)
 			return FALSE;

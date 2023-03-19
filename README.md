@@ -268,6 +268,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.4.2 Supported ADPCM light wait mode for SPFM/SPFM Light to play DAC.
 4.6.4.1 Added Chip information area for VGMPlayer.
 4.6.4.0 Fixed MGS file playing not started for VGMPlayer.
 		(Experimantal)Changed VelocityMap and NoteMap property behavior. Parameter changes are temporary, not permanent.
