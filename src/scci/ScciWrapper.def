@@ -16,4 +16,3 @@ EXPORTS
 	GimicSetRegisterDirect
 	GimicGetWrittenRegisterData
 	GimicSetSSGVolume
-

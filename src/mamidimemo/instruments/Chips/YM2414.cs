@@ -816,14 +816,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
+            base.Dispose();
+
             lock (spfmPtrLock)
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
                 }
-
-            base.Dispose();
         }
 
         /// <summary>

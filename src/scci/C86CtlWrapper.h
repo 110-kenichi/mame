@@ -17,16 +17,16 @@ extern "C" {
 
 	__declspec(dllexport) DWORD __cdecl  GimicGetNumberOfChip();
 
-	__declspec(dllexport) DWORD __cdecl  GimicGetModule(UINT moduleIndex, UINT chipType);
+	__declspec(dllexport) DWORD __cdecl  GimicGetModule(DWORD moduleIndex, DWORD chipType);
 
-	__declspec(dllexport) DWORD __cdecl  GimicSetClock(UINT moduleIndex, UINT clock);
+	__declspec(dllexport) DWORD __cdecl  GimicSetClock(DWORD moduleIndex, DWORD clock);
 
-	__declspec(dllexport) void __cdecl  GimicSetRegister(UINT moduleIndex, UINT addr, DWORD data);
+	__declspec(dllexport) void __cdecl  GimicSetRegister(DWORD moduleIndex, DWORD addr, DWORD data);
 
-	__declspec(dllexport) void __cdecl  GimicSetRegisterDirect(UINT moduleIndex, UINT addr, DWORD data);
+	__declspec(dllexport) void __cdecl  GimicSetRegisterDirect(DWORD moduleIndex, DWORD addr, DWORD data);
 
-	__declspec(dllexport) DWORD __cdecl  GimicGetWrittenRegisterData(UINT moduleIndex, DWORD addr);
+	__declspec(dllexport) DWORD __cdecl  GimicGetWrittenRegisterData(DWORD moduleIndex, DWORD addr);
 
-	__declspec(dllexport) void __cdecl  GimicSetSSGVolume(UINT moduleIndex, UCHAR volume);
+	__declspec(dllexport) void __cdecl  GimicSetSSGVolume(DWORD moduleIndex, UCHAR volume);
 
 }

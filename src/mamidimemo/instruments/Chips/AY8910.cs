@@ -625,6 +625,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+            base.Dispose();
 
             lock (sndEnginePtrLock)
             {
@@ -638,8 +639,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     vsifClient.Dispose();
                 }
             }
-
-            base.Dispose();
         }
 
         internal override void PrepareSound()

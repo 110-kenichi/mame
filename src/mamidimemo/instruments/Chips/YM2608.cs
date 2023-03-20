@@ -167,11 +167,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
                 }
-
                 if (gimicPtr != -1)
                 {
                     GimicManager.ReleaseModule(gimicPtr);
                     gimicPtr = -1;
+                }
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
                 }
 
                 f_SoundEngineType = value;
@@ -226,6 +230,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (gimicPtr >= 0)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
+                            f_MasterClock = GimicManager.SetClock(gimicPtr, f_MasterClock);
                             SetDevicePassThru(true);
                         }
                         else
@@ -299,9 +304,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_MasterClock != value)
                 {
+                    if (CurrentSoundEngine == SoundEngineType.GIMIC)
+                        value = GimicManager.SetClock(gimicPtr, value);
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
-                    setSoundEngine(SoundEngine);
                 }
             }
         }
@@ -888,6 +894,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            base.Dispose();
+
             lock (sndEnginePtrLock)
             {
                 if (spfmPtr != IntPtr.Zero)
@@ -901,7 +910,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     gimicPtr = -1;
                 }
             }
-            base.Dispose();
         }
 
 
@@ -1279,10 +1287,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.SPFM:
+                        case SoundEngineType.GIMIC:
                             while (!ScciManager.IsBufferEmpty(spfmPtr))
                                 Thread.Sleep(10);
                             break;
-                        case SoundEngineType.GIMIC:
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
                             break;
@@ -1304,10 +1312,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             switch (CurrentSoundEngine)
             {
                 case SoundEngineType.SPFM:
+                case SoundEngineType.GIMIC:
                     while (!ScciManager.IsBufferEmpty(spfmPtr))
                         Thread.Sleep(10);
                     break;
-                case SoundEngineType.GIMIC:
                 case SoundEngineType.VSIF_MSX_FTDI:
                 case SoundEngineType.VSIF_P6_FTDI:
                     break;

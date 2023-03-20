@@ -170,3 +170,4 @@ Release(but Debug .NET)
 /src/CMI8738OPL3/YMF724OPL3/x64
 obj
 bin
+/src/VSIF/VGMPlay_Genesis/out

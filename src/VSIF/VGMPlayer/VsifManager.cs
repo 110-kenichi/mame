@@ -255,7 +255,7 @@ namespace zanac.VGMPlayer
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;
                                 sp.Handshake = Handshake.None;
-                                //sp.WriteBufferSize = 4;
+                                sp.WriteBufferSize = 4;
                                 sp.Open();
                                 sp.Write(new byte[] { 0xff }, 0, 1);
                                 var client = new VsifClient(soundModule, new PortWriterSpfm(sp));
@@ -273,7 +273,7 @@ namespace zanac.VGMPlayer
                                 sp.Parity = Parity.None;
                                 sp.DataBits = 8;
                                 sp.Handshake = Handshake.None;
-                                //sp.WriteBufferSize = 4;
+                                sp.WriteBufferSize = 4;
                                 sp.Open();
                                 sp.Write(new byte[] { 0xff }, 0, 1);
                                 sp.Write(new byte[] { 0xfe }, 0, 1);

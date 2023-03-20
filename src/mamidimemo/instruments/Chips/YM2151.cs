@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Chips.YM;
@@ -93,6 +94,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private IntPtr spfmPtr;
 
+        private int gimicPtr = -1;
+
         private VsifClient vsifClient;
 
         private SoundEngineType f_SoundEngineType;
@@ -116,7 +119,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
                     value == SoundEngineType.SPFM ||
-                    value == SoundEngineType.VSIF_MSX_FTDI))
+                    value == SoundEngineType.VSIF_MSX_FTDI ||
+                    value == SoundEngineType.GIMIC))
                 {
                     setSoundEngine(value);
                 }
@@ -130,7 +134,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.SPFM,
-                    SoundEngineType.VSIF_MSX_FTDI});
+                    SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.GIMIC,
+                });
 
                 return sc;
             }
@@ -150,6 +156,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
+                }
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
                 }
                 if (vsifClient != null)
                 {
@@ -184,6 +195,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             enableOpm(ExtOPMSlot, true);
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.GIMIC:
+                        gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
+                        if (gimicPtr >= 0)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            f_MasterClock = GimicManager.SetClock(gimicPtr, f_MasterClock);
                             SetDevicePassThru(true);
                         }
                         else
@@ -307,6 +332,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_MasterClock != value)
                 {
+                    if (CurrentSoundEngine == SoundEngineType.GIMIC)
+                        value = GimicManager.SetClock(gimicPtr, value);
                     f_MasterClock = value;
                     SetClock(UnitNumber, (uint)value);
                 }
@@ -639,6 +666,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             enableOpm(f_extOPMSlot, false);
                             vsifClient.WriteData(0xe, adr, data, f_ftdiClkWidth);
                             break;
+                        case SoundEngineType.GIMIC:
+                            GimicManager.SetRegister(gimicPtr, adr, data, false);
+                            break;
                     }
                 }
                 DeferredWriteData(Ym2151_write, unitNumber, (uint)0, adr);
@@ -700,15 +730,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+            base.Dispose();
 
             lock (sndEnginePtrLock)
+            {
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
                 }
-
-            base.Dispose();
+                if (gimicPtr >= 0)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
+            }
         }
 
         /// <summary>

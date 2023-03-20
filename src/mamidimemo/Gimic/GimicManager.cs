@@ -61,8 +61,7 @@ namespace zanac.MAmidiMEmo.Gimic
             {
                 if (initialized)
                 {
-                    initialized = wrapperClient.DeinitializeGimic() == 0;
-                    if (!initialized)
+                    if (wrapperClient.DeinitializeGimic() == 0)
                     {
                         writtenDataCache.Clear();
 
@@ -94,14 +93,17 @@ namespace zanac.MAmidiMEmo.Gimic
 
             lock (lockObject)
             {
-                for (int i = 0; i < GetNumberOfChip(); i++)
+                if (initialized)
                 {
-                    if (writtenDataCache.ContainsKey(i))
-                        continue;
-                    if (wrapperClient.TryGetModuleIndex((uint)i, (uint)chipType) == NativeC86CtlWrapper.C86CTL_ERR_NONE)
+                    for (int i = 0; i < GetNumberOfChip(); i++)
                     {
-                        writtenDataCache.Add(i, new Dictionary<uint, uint>());
-                        return i;
+                        if (writtenDataCache.ContainsKey(i))
+                            continue;
+                        if (wrapperClient.TryGetModuleIndex((uint)i, (uint)chipType) == NativeC86CtlWrapper.C86CTL_ERR_NONE)
+                        {
+                            writtenDataCache.Add(i, new Dictionary<uint, uint>());
+                            return i;
+                        }
                     }
                 }
             }
@@ -136,7 +138,12 @@ namespace zanac.MAmidiMEmo.Gimic
         /// <param name="pData"></param>
         public static uint SetClock(int moduleIndex, uint clock)
         {
-            return SetClock(moduleIndex, clock);
+            lock (lockObject)
+            {
+                if (initialized)
+                    return wrapperClient.SetClock(moduleIndex, clock);
+            }
+            return 0;
         }
 
         /// <summary>
@@ -162,21 +169,24 @@ namespace zanac.MAmidiMEmo.Gimic
         {
             lock (lockObject)
             {
-                if (useCache)
+                if (initialized)
                 {
-                    var prevData = GetWrittenRegisterData(moduleIndex, dAddr);
-                    if (prevData != pData)
+                    if (useCache)
+                    {
+                        var prevData = GetWrittenRegisterData(moduleIndex, dAddr);
+                        if (prevData != pData)
+                        {
+                            wrapperClient.SetRegister(moduleIndex, dAddr, pData);
+                            if (writtenDataCache.ContainsKey(moduleIndex))
+                                writtenDataCache[moduleIndex][dAddr] = pData;
+                        }
+                    }
+                    else
                     {
                         wrapperClient.SetRegister(moduleIndex, dAddr, pData);
                         if (writtenDataCache.ContainsKey(moduleIndex))
                             writtenDataCache[moduleIndex][dAddr] = pData;
                     }
-                }
-                else
-                {
-                    wrapperClient.SetRegister(moduleIndex, dAddr, pData);
-                    if (writtenDataCache.ContainsKey(moduleIndex))
-                        writtenDataCache[moduleIndex][dAddr] = pData;
                 }
             }
         }
