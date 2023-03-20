@@ -964,10 +964,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //6CH MODE
             YM2608WriteData(UnitNumber, 0x29, 0, 0, 0xFF, false);
             //ADPCM A TOTAL LEVEL MAX
+            YM2608WriteData(UnitNumber, 0x11, 0, 0, 0x0);   //HACK: avoid GIMIC cache issue
             YM2608WriteData(UnitNumber, 0x11, 0, 0, 0x3f);
             //ADPCM B
             YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x20, false);  //EXTMEM
             YM2608WriteData(UnitNumber, 0x01, 0, 3, 0xC2);  //LR, 8bit DRAM
+
+            YM2608WriteData(UnitNumber, 0x0B, 0, 3, 0);   //HACK: avoid GIMIC cache issue
+            YM2608WriteData(UnitNumber, 0x0B, 0, 3, 0xff); //ADPCM B TOTAL LEVEL MAX
 
             YM2608WriteData(UnitNumber, 0x0b, 0, 0, (byte)f_EnvelopeFrequencyCoarse);
             YM2608WriteData(UnitNumber, 0x0c, 0, 0, (byte)f_EnvelopeFrequencyFine);
@@ -1800,8 +1804,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 else
                                     pan = 0x3;
 
-                                byte fv = (byte)(((byte)Math.Round(63 * CalcCurrentVolume(true)) & 0x3f));
-                                parentModule.YM2608WriteData(unitNumber, 0x11, 0, 0, (byte)fv);
+                                OnVolumeUpdated();
 
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x18 + ofst), 0, 0, (byte)((pan << 6) | (NoteOnEvent.Velocity >> 2)));
                                 parentModule.YM2608WriteData(unitNumber, (byte)(0x10), 0, 0, kon, false);
