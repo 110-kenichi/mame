@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using zanac.VGMPlayer;
+using zanac.MAmidiMEmo.Gimic;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -359,7 +360,7 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA_Enable)
                 {
-                    if (connectToOPNA())
+                    if (connectToOPNA(7670453))
                     {
                         comPortOPNA.Tag["ProxyOPN2"] = true;
                         //Force OPN mode
@@ -378,7 +379,7 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private bool connectToOPNA()
+        private bool connectToOPNA(uint clock)
         {
             if (comPortOPNA == null)
             {
@@ -421,6 +422,30 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
                                 UseChipInformation += "OPNA@7.987200MHz ";
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic);
+                            if (comPortOPNA != null)
+                            {
+                                var gimmic = (PortWriterGimic)comPortOPNA.DataWriter;
+                                var idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                                if (idx >= 0)
+                                {
+                                    clock = GimicManager.SetClock(gimmic.OpnaIndex, clock);
+                                    comPortOPNA.ChipClockHz["OPNA"] = clock;
+                                    comPortOPNA.ChipClockHz["OPNA_SSG"] = clock;
+                                    comPortOPNA.ChipClockHz["OPNA_org"] = clock;
+                                    UseChipInformation += $"OPNA@{(double)clock / (double)1000000}MHz ";
+                                }
+                                else
+                                {
+                                    comPortOPNA?.Dispose();
+                                    comPortOPNA = null;
+                                }
                             }
                         }
                         break;

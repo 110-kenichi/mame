@@ -54,6 +54,14 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
+        public PortWriter(string portName)
+        {
+            PortName = portName;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="serialPort"></param>
         public PortWriter(SerialPort serialPort)
         {

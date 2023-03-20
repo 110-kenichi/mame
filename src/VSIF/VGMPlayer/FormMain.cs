@@ -1027,6 +1027,9 @@ namespace zanac.VGMPlayer
                             comPortOPM.Tag["OPM.Slot"] = comboBoxOpmSlot.SelectedIndex;
                         }
                         break;
+                    case 3:
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic);
+                        break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
                 comboBoxOPM.Enabled = comPortOPM == null;
@@ -1091,6 +1094,10 @@ namespace zanac.VGMPlayer
                         break;
                     case 2:
                         comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Spfm,
+                            (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
+                        break;
+                    case 3:
+                        comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic,
                             (PortId)Settings.Default.OPNA_Port, (int)Settings.Default.OPNADiv, false);
                         break;
                 }

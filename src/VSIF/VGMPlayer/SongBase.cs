@@ -794,8 +794,10 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
-                    //comPortOPNA.DataWriter.RawWrite(new byte[] { 0x00, 0x00, (byte)adrs, (byte)dt }, 0);
-                    comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, 0);
+                    break;
+                case VsifSoundModuleType.Gimic:
+                    comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, 0);
                     break;
             }
         }
@@ -866,7 +868,9 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
-                    //comPortOPNA.DataWriter.RawWrite(new byte[] { 0x01, 0x00, (byte)adrs, (byte)dt }, 0);
+                    comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, 0);
+                    break;
+                case VsifSoundModuleType.Gimic:
                     comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, 0);
                     break;
             }
@@ -941,6 +945,9 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.Spfm:
                     comPortOPNA.DeferredWriteData(0x02, 0x0b, (byte)lastWriteDacValue, 0);
                     //deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)(lastWriteDacValue - 0x80));
+                    break;
+                case VsifSoundModuleType.Gimic:
+                    comPortOPNA.DeferredWriteData(0x01, 0x0b, (byte)lastWriteDacValue, 0);
                     break;
             }
         }

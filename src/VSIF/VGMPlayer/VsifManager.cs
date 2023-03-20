@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.VGMPlayer.Properties;
 
 namespace zanac.VGMPlayer
@@ -44,6 +45,17 @@ namespace zanac.VGMPlayer
         /// <param name="iSoundChipType"></param>
         /// <param name="clock"></param>
         /// <returns></returns>
+        public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule)
+        {
+            return TryToConnectVSIF(soundModule, 0, 0, true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iSoundChipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
         public static VsifClient TryToConnectVSIF(VsifSoundModuleType soundModule, PortId comPort)
         {
             return TryToConnectVSIF(soundModule, comPort, 0, true);
@@ -63,15 +75,26 @@ namespace zanac.VGMPlayer
                 {
                     if (c.SoundModuleType == soundModule)
                     {
-                        if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
+                        if (c.SoundModuleType == VsifSoundModuleType.Gimic)
                         {
-                            c.ReferencedCount++;
-                            return c;
+                            if (c.DataWriter.PortName.Equals("Gimic"))
+                            {
+                                c.ReferencedCount++;
+                                return c;
+                            }
                         }
-                        if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
+                        else
                         {
-                            c.ReferencedCount++;
-                            return c;
+                            if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
+                            {
+                                c.ReferencedCount++;
+                                return c;
+                            }
+                            if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
+                            {
+                                c.ReferencedCount++;
+                                return c;
+                            }
                         }
                     }
                 }
@@ -282,6 +305,18 @@ namespace zanac.VGMPlayer
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.Gimic:
+                            {
+                                GimicManager.TryInitializeGimmic();
+                                if (GimicManager.IsScciInitialized)
+                                {
+                                    var client = new VsifClient(soundModule, new PortWriterGimic());
+                                    client.Disposed += Client_Disposed;
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                                break;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -330,6 +365,7 @@ namespace zanac.VGMPlayer
         Generic_UART,
         Spfm,
         SpfmLight,
+        Gimic
     }
 
 

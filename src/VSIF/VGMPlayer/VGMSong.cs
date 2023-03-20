@@ -18,6 +18,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Drawing;
 using Microsoft.Win32;
+using zanac.MAmidiMEmo.Gimic;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -479,7 +480,7 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2612 != 0 && curHead.lngVersion >= 0x00000110)
             {
-                SongChipInformation += $"OPN2@{curHead.lngHzYM2612/1000000f}MHz ";
+                SongChipInformation += $"OPN2@{curHead.lngHzYM2612 / 1000000f}MHz ";
 
                 if (Settings.Default.OPN2_Enable)
                 {
@@ -487,7 +488,7 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA_Enable)
                 {
-                    if (connectToOPNA())
+                    if (connectToOPNA(curHead.lngHzYM2612))
                     {
                         comPortOPNA.Tag["ProxyOPN2"] = true;
                         //Force OPN mode
@@ -503,7 +504,7 @@ namespace zanac.VGMPlayer
 
                 if (Settings.Default.OPM_Enable)
                 {
-                    connectToOPM();
+                    connectToOPM(curHead.lngHzYM2151);
                 }
             }
             if (curHead.lngHzYM3526 != 0 && curHead.lngVersion >= 0x00000151)
@@ -553,7 +554,7 @@ namespace zanac.VGMPlayer
                 }
                 else if (Settings.Default.OPNA_Enable)
                 {
-                    if (connectToOPNA())
+                    if (connectToOPNA(curHead.lngHzYM2203 * 2))
                         comPortOPNA.Tag["ProxyOPN"] = true;
                 }
                 else if (Settings.Default.OPN2_Enable)
@@ -575,7 +576,7 @@ namespace zanac.VGMPlayer
 
                 if (Settings.Default.OPNA_Enable)
                 {
-                    connectToOPNA();
+                    connectToOPNA(curHead.lngHzYM2608);
                 }
                 else if (Settings.Default.OPN2_Enable)
                 {
@@ -596,7 +597,7 @@ namespace zanac.VGMPlayer
 
                 if (Settings.Default.OPNA_Enable)
                 {
-                    connectToOPNA();
+                    connectToOPNA(curHead.lngHzYM2610);
                 }
                 else if (Settings.Default.OPN2_Enable)
                 {
@@ -628,7 +629,7 @@ namespace zanac.VGMPlayer
                     }
                     if (Settings.Default.OPNA_Enable)
                     {
-                        if (connectToOPNA())
+                        if (connectToOPNA(curHead.lngHzY8950))
                             comPortOPNA.Tag["ProxyY8950"] = true;
                     }
                 }
@@ -985,7 +986,7 @@ namespace zanac.VGMPlayer
             return false;
         }
 
-        private bool connectToOPM()
+        private bool connectToOPM(uint clock)
         {
             if (comPortOPM == null)
             {
@@ -1030,6 +1031,29 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 3:
+                        if (comPortOPM == null)
+                        {
+                            comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic);
+                            if (comPortOPM != null)
+                            {
+                                var gimmic = (PortWriterGimic)comPortOPM.DataWriter;
+                                var idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
+                                if (idx >= 0)
+                                {
+                                    clock = GimicManager.SetClock(gimmic.OpmIndex, clock);
+                                    comPortOPM.ChipClockHz["OPM"] = clock;
+                                    comPortOPM.ChipClockHz["OPM_org"] = clock;
+                                    UseChipInformation += $"OPM@{(double)clock / (double)1000000}MHz ";
+                                }
+                                else
+                                {
+                                    comPortOPM?.Dispose();
+                                    comPortOPM = null;
+                                }
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPM != null)
                 {
@@ -1052,7 +1076,7 @@ namespace zanac.VGMPlayer
             return false;
         }
 
-        private bool connectToOPNA()
+        private bool connectToOPNA(uint clock)
         {
             if (comPortOPNA == null)
             {
@@ -1097,6 +1121,30 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
                                 UseChipInformation += "OPNA@7.987200MHz ";
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (comPortOPNA == null)
+                        {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic);
+                            if (comPortOPNA != null)
+                            {
+                                var gimmic = (PortWriterGimic)comPortOPNA.DataWriter;
+                                var idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                                if (idx >= 0)
+                                {
+                                    clock = GimicManager.SetClock(gimmic.OpnaIndex, clock);
+                                    comPortOPNA.ChipClockHz["OPNA"] = clock;
+                                    comPortOPNA.ChipClockHz["OPNA_SSG"] = clock;
+                                    comPortOPNA.ChipClockHz["OPNA_org"] = clock;
+                                    UseChipInformation += $"OPNA@{(double)clock / (double)1000000}MHz ";
+                                }
+                                else
+                                {
+                                    comPortOPNA?.Dispose();
+                                    comPortOPNA = null;
+                                }
                             }
                         }
                         break;
@@ -1718,7 +1766,7 @@ namespace zanac.VGMPlayer
                                                         break;
                                                     case 0x2b:
                                                         //Enable DAC
-                                                        if(lastOPN2DacEn != (dt & 0x80))
+                                                        if (lastOPN2DacEn != (dt & 0x80))
                                                             deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
                                                         lastOPN2DacEn = (dt & 0x80);
                                                         break;
@@ -3280,6 +3328,9 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.Spfm:
                     comPortOPM.DeferredWriteData(0x10, (byte)adrs, (byte)dt, 0);
                     break;
+                case VsifSoundModuleType.Gimic:
+                    comPortOPM.DeferredWriteData(0x2, (byte)adrs, (byte)dt, 0);
+                    break;
             }
         }
 
@@ -3318,7 +3369,7 @@ namespace zanac.VGMPlayer
             //flag
             deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x13);   //CLEAR MASK
             deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);   //IRQ RESET
-                                                                          //Ctrl1
+                                                             //Ctrl1
             deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x60);   //REC, EXTMEM
             //Ctrl2
             //START
@@ -3355,6 +3406,7 @@ namespace zanac.VGMPlayer
                 {
                     case VsifSoundModuleType.Spfm:
                     case VsifSoundModuleType.SpfmLight:
+                    case VsifSoundModuleType.Gimic:
                         comPortOPNA?.FlushDeferredWriteDataAndWait();
                         break;
                 }
@@ -3506,6 +3558,7 @@ namespace zanac.VGMPlayer
                 {
                     case VsifSoundModuleType.Spfm:
                     case VsifSoundModuleType.SpfmLight:
+                    case VsifSoundModuleType.Gimic:
                         comPortY8950?.FlushDeferredWriteDataAndWait();
                         break;
                 }

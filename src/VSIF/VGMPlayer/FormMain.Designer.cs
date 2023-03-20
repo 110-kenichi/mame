@@ -3489,7 +3489,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPNA.Items.AddRange(new object[] {
             "VSIF - MSX/PC-6001(FTDI2XX)",
             "SPFM Light - 4759 Player",
-            "SPFM - 4759 Player"});
+            "SPFM - 4759 Player",
+            "GIMIC"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(204, 248);
             this.comboBoxOPNA.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA.Name = "comboBoxOPNA";
@@ -4718,7 +4719,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.49 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.50 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

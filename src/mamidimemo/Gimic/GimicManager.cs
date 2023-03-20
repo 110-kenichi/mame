@@ -176,14 +176,14 @@ namespace zanac.MAmidiMEmo.Gimic
                         var prevData = GetWrittenRegisterData(moduleIndex, dAddr);
                         if (prevData != pData)
                         {
-                            wrapperClient.SetRegister(moduleIndex, dAddr, pData);
+                            wrapperClient.SetRegisterDirect(moduleIndex, dAddr, pData);
                             if (writtenDataCache.ContainsKey(moduleIndex))
                                 writtenDataCache[moduleIndex][dAddr] = pData;
                         }
                     }
                     else
                     {
-                        wrapperClient.SetRegister(moduleIndex, dAddr, pData);
+                        wrapperClient.SetRegisterDirect(moduleIndex, dAddr, pData);
                         if (writtenDataCache.ContainsKey(moduleIndex))
                             writtenDataCache[moduleIndex][dAddr] = pData;
                     }

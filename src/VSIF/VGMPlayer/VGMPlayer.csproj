@@ -88,6 +88,8 @@
     <Compile Include="FormProgress.Designer.cs">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gimic\GimicManager.cs" />
+    <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
     <Compile Include="InsertionMode.cs" />
     <Compile Include="DraggableListView.cs">
       <SubType>Component</SubType>
@@ -95,6 +97,7 @@
     <Compile Include="MGSSong.cs" />
     <Compile Include="ListViewItemDragEventArgs.cs" />
     <Compile Include="PortWriteData.cs" />
+    <Compile Include="PortWriterGimic.cs" />
     <Compile Include="PortWriter.cs" />
     <Compile Include="PortWriterSpfm.cs" />
     <Compile Include="PortWriterSpfmLight.cs" />
