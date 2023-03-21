@@ -227,6 +227,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.GIMIC:
                         gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                        //HACK: OPN3L
+                        if (gimicPtr < 0)
+                            gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+
                         if (gimicPtr >= 0)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;

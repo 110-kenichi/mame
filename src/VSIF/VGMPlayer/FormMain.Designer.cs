@@ -3084,7 +3084,7 @@ namespace zanac.VGMPlayer
             "VSIF - MSX(FTDI2XX)",
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player",
-            "G.I.M.I.C."});
+            "G.I.M.I.C"});
             this.comboBoxOPM.Location = new System.Drawing.Point(4, 4);
             this.comboBoxOPM.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPM.Name = "comboBoxOPM";
@@ -3491,7 +3491,7 @@ namespace zanac.VGMPlayer
             "VSIF - MSX/PC-6001(FTDI2XX)",
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player",
-            "G.I.M.I.C."});
+            "G.I.M.I.C"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(204, 248);
             this.comboBoxOPNA.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxOPNA.Name = "comboBoxOPNA";
