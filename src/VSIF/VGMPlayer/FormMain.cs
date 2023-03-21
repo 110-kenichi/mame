@@ -1028,7 +1028,8 @@ namespace zanac.VGMPlayer
                         }
                         break;
                     case 3:
-                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic);
+                        comPortOPM = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Gimic,
+                            (PortId)Settings.Default.OPM_Port, (int)Settings.Default.OPMDiv, false);
                         break;
                 }
                 checkBoxConnOPM.Checked = comPortOPM != null;
