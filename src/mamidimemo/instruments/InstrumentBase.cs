@@ -2285,9 +2285,23 @@ namespace zanac.MAmidiMEmo.Instruments
             Dispose(false);
         }
 
+        public bool IsDisposing
+        {
+            get;
+            protected set;
+        }
+
+        public bool IsDisposed
+        {
+            get;
+            protected set;
+        }
+
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public virtual void Dispose()
         {
+            IsDisposing = true;
+
             AllSoundOff();
 
             Program.SoundUpdating();
@@ -2298,6 +2312,8 @@ namespace zanac.MAmidiMEmo.Instruments
             GC.SuppressFinalize(this);
 
             Program.SoundUpdated();
+
+            IsDisposed = true;
         }
 
         #endregion

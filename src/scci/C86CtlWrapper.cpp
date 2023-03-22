@@ -81,6 +81,23 @@ extern "C"
 		return 0;
 	}
 
+	__declspec(dllexport) void __cdecl GimicReset(DWORD moduleIndex)
+	{
+		c86ctl::IGimic2* pGimicModule;
+		if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IGimic2, (void**)&pGimicModule)) {
+
+			c86ctl::IRealChip2* pRC = NULL;
+			if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IRealChip2, (void**)&pRC))
+			{
+				pRC->reset();
+
+				pRC->Release();
+			}
+
+			pGimicModule->Release();
+		}
+	}
+
 	__declspec(dllexport) void __cdecl  GimicSetRegister(DWORD moduleIndex, DWORD addr, DWORD data)
 	{
 		c86ctl::IGimic2* pGimicModule;

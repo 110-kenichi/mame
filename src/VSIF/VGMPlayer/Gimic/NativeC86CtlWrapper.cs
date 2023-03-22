@@ -83,6 +83,14 @@ namespace zanac.MAmidiMEmo.Gimic
             return GetModuleIndexInternal(moduleIndex, chipType);
         }
 
+        [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicReset", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void ResetInternal(int moduleIndex);
+
+        public void Reset(int moduleIndex)
+        {
+            ResetInternal(moduleIndex);
+        }
+
         [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicSetRegister", CallingConvention = CallingConvention.Cdecl)]
         private static extern void SetRegisterInternal(int moduleIndex, uint dAddr, uint pData);
 

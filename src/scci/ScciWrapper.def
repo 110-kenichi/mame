@@ -12,6 +12,7 @@ EXPORTS
 	GimicGetNumberOfChip
 	GimicGetModule
 	GimicSetClock
+	GimicSetReset
 	GimicSetRegister
 	GimicSetRegisterDirect
 	GimicGetWrittenRegisterData

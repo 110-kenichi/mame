@@ -834,6 +834,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            if (!IsDisposing)
+                updateDpcmData();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private class RP2A03SoundManager : SoundManagerBase
         {
             private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);

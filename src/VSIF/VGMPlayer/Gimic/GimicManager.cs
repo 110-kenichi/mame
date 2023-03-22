@@ -127,6 +127,19 @@ namespace zanac.MAmidiMEmo.Gimic
         /// 
         /// </summary>
         /// <param name="pChip"></param>
+        public static void Reset(int moduleIndex)
+        {
+            lock (lockObject)
+            {
+                if (initialized)
+                    wrapperClient.Reset(moduleIndex);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pChip"></param>
         /// <param name="dAddr"></param>
         /// <param name="pData"></param>
         public static uint SetClock(int moduleIndex, uint clock)
@@ -169,14 +182,14 @@ namespace zanac.MAmidiMEmo.Gimic
                         var prevData = GetWrittenRegisterData(moduleIndex, dAddr);
                         if (prevData != pData)
                         {
-                            wrapperClient.SetRegisterDirect(moduleIndex, dAddr, pData);
+                            wrapperClient.SetRegister(moduleIndex, dAddr, pData);
                             if (writtenDataCache.ContainsKey(moduleIndex))
                                 writtenDataCache[moduleIndex][dAddr] = pData;
                         }
                     }
                     else
                     {
-                        wrapperClient.SetRegisterDirect(moduleIndex, dAddr, pData);
+                        wrapperClient.SetRegister(moduleIndex, dAddr, pData);
                         if (writtenDataCache.ContainsKey(moduleIndex))
                             writtenDataCache[moduleIndex][dAddr] = pData;
                     }

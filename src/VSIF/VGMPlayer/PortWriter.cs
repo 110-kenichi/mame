@@ -163,7 +163,7 @@ namespace zanac.VGMPlayer
             Console.WriteLine(after - before);
          */
 
-        protected void SendData(byte[] sendData, int wait)
+        protected void SendDataByFtdi(byte[] sendData, int wait)
         {
             var rawSendData = new byte[sendData.Length * (int)wait];
             unsafe

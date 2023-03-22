@@ -34,7 +34,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "4.6.5.4";
+        public const string FILE_VERSION = "4.6.5.6";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2023 Itoken.All rights reserved.";
@@ -416,9 +416,16 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
         /// MAMEとMAmiの排他制御
         /// MAmiがMAMEのレジスタを書き換えるときに呼び出す必要がある
         /// </summary>
-        public static bool TryEnterWriteLock()
+        public static bool TryEnterWriteLock(int wait)
         {
-            return lockSlim.TryEnterWriteLock(-1);
+            return lockSlim.TryEnterWriteLock(wait);
+        }
+
+        /// <summary>
+        /// </summary>
+        public static bool IsWriteLockHeld()
+        {
+            return lockSlim.IsWriteLockHeld;
         }
 
         private class KnownTypesBinder : ISerializationBinder

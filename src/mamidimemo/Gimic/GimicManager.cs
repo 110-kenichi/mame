@@ -134,6 +134,19 @@ namespace zanac.MAmidiMEmo.Gimic
         /// 
         /// </summary>
         /// <param name="pChip"></param>
+        public static void Reset(int moduleIndex)
+        {
+            lock (lockObject)
+            {
+                if (initialized)
+                    wrapperClient.Reset(moduleIndex);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pChip"></param>
         /// <param name="dAddr"></param>
         /// <param name="pData"></param>
         public static uint SetClock(int moduleIndex, uint clock)

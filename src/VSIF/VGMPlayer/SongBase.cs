@@ -797,7 +797,10 @@ namespace zanac.VGMPlayer
                     comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, 0);
                     break;
                 case VsifSoundModuleType.Gimic:
-                    comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, 0);
+                    if(!comPortOPNA.Tag.ContainsKey("OPN3L"))
+                        comPortOPNA.DeferredWriteData(0, (byte)adrs, (byte)dt, 0);
+                    else
+                        comPortOPNA.DeferredWriteData(3, (byte)adrs, (byte)dt, 0);
                     break;
             }
         }
@@ -871,7 +874,10 @@ namespace zanac.VGMPlayer
                     comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, 0);
                     break;
                 case VsifSoundModuleType.Gimic:
-                    comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, 0);
+                    if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
+                        comPortOPNA.DeferredWriteData(1, (byte)adrs, (byte)dt, 0);
+                    else
+                        comPortOPNA.DeferredWriteData(4, (byte)adrs, (byte)dt, 0);
                     break;
             }
         }
@@ -947,7 +953,10 @@ namespace zanac.VGMPlayer
                     //deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)(lastWriteDacValue - 0x80));
                     break;
                 case VsifSoundModuleType.Gimic:
-                    comPortOPNA.DeferredWriteData(0x01, 0x0b, (byte)lastWriteDacValue, 0);
+                    if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
+                        comPortOPNA.DeferredWriteData(1, 0x0b, (byte)lastWriteDacValue, 0);
+                    else
+                        comPortOPNA.DeferredWriteData(4, 0x0b, (byte)lastWriteDacValue, 0);
                     break;
             }
         }

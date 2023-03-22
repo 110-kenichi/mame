@@ -37,6 +37,12 @@ namespace zanac.VGMPlayer
             private set;
         } = -1;
 
+        public int Opn3lIndex
+        {
+            get;
+            private set;
+        } = -1;
+
         /// <summary>
         /// 
         /// </summary>
@@ -51,13 +57,12 @@ namespace zanac.VGMPlayer
             {
                 case ChipType.CHIP_OPNA:
                     if (OpnaIndex < 0)
-                    {
                         OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                        //HACK: OPN3L
-                        if (OpnaIndex < 0)
-                            OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                    }
                     return OpnaIndex;
+                case ChipType.CHIP_OPN3L:
+                    if (Opn3lIndex < 0)
+                        Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+                    return Opn3lIndex;
                 case ChipType.CHIP_OPM:
                     if (OpmIndex < 0)
                         OpmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
@@ -85,23 +90,13 @@ namespace zanac.VGMPlayer
                     {
                         case 0: //OPNA
                             if (OpnaIndex < 0)
-                            {
                                 OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                                //HACK: OPN3L
-                                if (OpnaIndex < 0)
-                                    OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                            }
                             if (OpnaIndex >= 0)
                                 GimicManager.SetRegister(id, dt.Address, dt.Data, false);
                             break;
                         case 1: //OPNA
                             if (OpnaIndex < 0)
-                            {
                                 OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                                //HACK: OPN3L
-                                if (OpnaIndex < 0)
-                                    OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                            }
                             if (OpnaIndex >= 0)
                                 GimicManager.SetRegister(id, (uint)(dt.Address + 0x100), dt.Data, false);
                             break;
@@ -110,6 +105,18 @@ namespace zanac.VGMPlayer
                                 OpmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
                             if (OpmIndex >= 0)
                                 GimicManager.SetRegister(id, dt.Address, dt.Data, false);
+                            break;
+                        case 3: //OPN3L
+                            if (Opn3lIndex < 0)
+                                Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+                            if (Opn3lIndex >= 0)
+                                GimicManager.SetRegister(id, dt.Address, dt.Data, false);
+                            break;
+                        case 4: //OPN3L
+                            if (Opn3lIndex < 0)
+                                Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+                            if (Opn3lIndex >= 0)
+                                GimicManager.SetRegister(id, (uint)(dt.Address + 0x100), dt.Data, false);
                             break;
                     }
                 }

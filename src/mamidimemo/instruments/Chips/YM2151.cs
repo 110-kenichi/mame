@@ -899,6 +899,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager?.ProcessAllSoundOff();
+            lock (sndEnginePtrLock)
+            {
+                //HACK:
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.GIMIC:
+                        GimicManager.Reset(gimicPtr);
+                        break;
+                }
+            }
             ClearWrittenDataCache();
         }
 

@@ -75,7 +75,7 @@ namespace zanac.VGMPlayer
         {
             wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * wait) / 100;
 
-            SendData(sendData, wait);
+            SendDataByFtdi(sendData, wait);
         }
 
         private byte[] convertToDataPacket(byte[] sendData)

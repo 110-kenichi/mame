@@ -27,6 +27,7 @@ using MetroFramework.Forms;
 using Melanchall.DryWetMidi.Interaction;
 using zanac.MAmidiMEmo.Util;
 using System.Security.Permissions;
+using System.Runtime.CompilerServices;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -298,7 +299,7 @@ namespace zanac.MAmidiMEmo.Gui
                     MessageBox.Show(Resources.NoMidiPort, "Warning", MessageBoxButtons.OK);
                 }
             }
-            outputListView = listView1;
+            outputListView = listViewOutput;
 
             //statusLabel = toolStripStatusLabel1;
 

@@ -443,8 +443,22 @@ namespace zanac.VGMPlayer
                                 }
                                 else
                                 {
-                                    comPortOPNA?.Dispose();
-                                    comPortOPNA = null;
+                                    //HACK:
+                                    idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+                                    if (idx >= 0)
+                                    {
+                                        clock = GimicManager.SetClock(gimmic.Opn3lIndex, clock * 2);
+                                        comPortOPNA.ChipClockHz["OPNA"] = clock;
+                                        comPortOPNA.ChipClockHz["OPNA_SSG"] = clock;
+                                        comPortOPNA.ChipClockHz["OPNA_org"] = clock;
+                                        comPortOPNA.Tag["OPN3L"] = true;
+                                        UseChipInformation += $"OPN3L@{(double)clock / (double)1000000}MHz ";
+                                    }
+                                    else
+                                    {
+                                        comPortOPNA?.Dispose();
+                                        comPortOPNA = null;
+                                    }
                                 }
                             }
                         }
