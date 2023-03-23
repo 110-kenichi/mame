@@ -1,0 +1,20 @@
+-- c86ctl --
+honet.kk(at)gmail.com
+
+importディレクトリ内はMicrosoft等外部ベンダー提供のファイル
+の配置場所です。DDK/SDKより適宜取得して配置してください。
+
+import/ddk
+  HIDPI.H
+  HIDSDI.H
+  HIDUSAGE.H
+  Setupapi.h
+
+import/ddk/ia32
+  HID.LIB
+  SETUPAPI.LIB
+
+import/ddk/x64
+  HID.LIB
+  SETUPAPI.LIB
+

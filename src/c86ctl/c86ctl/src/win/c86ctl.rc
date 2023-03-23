@@ -1,0 +1,201 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+#include "..\version.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 (日本) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    __C86CTL_DLL_FILEVERSION
+ PRODUCTVERSION __C86CTL_DLL_PRODUCTVERSION
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40000L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "Comments", "C86CTL"
+            VALUE "CompanyName", "honet"
+            VALUE "FileDescription", "C86CTL dynamic link library"
+            VALUE "FileVersion",     __C86CTL_DLL_FILEVERSION_STRING
+            VALUE "InternalName", "C86CTL"
+            VALUE "LegalCopyright", "Copyright (C) 2011~2013 honet"
+            VALUE "ProductName", "C86CTL dynamic link library"
+            VALUE "ProductVersion",  __C86CTL_DLL_PRODUCTVERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""res\\\\c86ctl.rc2""\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNGSKIN1            PNG                     "res\\skin.png"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON_C86CTL         ICON                    "res\\c86ctl.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU_SYSPOPUP MENU
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Configuration",               ID_POPUP_CONFIG
+        MENUITEM SEPARATOR
+        MENUITEM "Show Visualizer",             ID_POPUP_SHOWVIS
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_C86CTL_CONFIG DIALOGEX 0, 0, 394, 154
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "C86CTL Configuration"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Show Visualizer",IDC_CHECK_SHOWVIS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,12,65,10
+    LTEXT           "Module0",IDC_STATIC,18,51,28,8
+    EDITTEXT        IDC_EDIT_DELAY0,53,48,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_DELAY0,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,95,48,11,14
+    LTEXT           "Module1",IDC_STATIC,18,69,28,8
+    EDITTEXT        IDC_EDIT_DELAY1,53,66,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_DELAY1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,95,66,11,14
+    LTEXT           "Module2",IDC_STATIC,18,87,28,8
+    EDITTEXT        IDC_EDIT_DELAY2,53,84,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_DELAY2,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,95,84,11,14
+    LTEXT           "Module3",IDC_STATIC,18,105,28,8
+    EDITTEXT        IDC_EDIT_DELAY3,53,102,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_DELAY3,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,95,102,11,14
+    LTEXT           "Module0",IDC_STATIC,138,51,28,8
+    EDITTEXT        IDC_EDIT_SSGVOL0,174,48,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_SSGVOL0,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,216,48,11,14
+    LTEXT           "Module1",IDC_STATIC,138,69,28,8
+    EDITTEXT        IDC_EDIT_SSGVOL1,174,66,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_SSGVOL1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,216,66,11,14
+    LTEXT           "Module2",IDC_STATIC,138,87,28,8
+    EDITTEXT        IDC_EDIT_SSGVOL2,174,84,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_SSGVOL2,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,216,84,11,14
+    LTEXT           "Module3",IDC_STATIC,138,105,28,8
+    EDITTEXT        IDC_EDIT_SSGVOL3,174,102,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_SPIN_SSGVOL3,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,216,102,11,14
+    LTEXT           "Module0",IDC_STATIC,258,51,28,8
+    COMBOBOX        IDC_COMBO_PLLCLOCK0,294,48,72,102,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Module1",IDC_STATIC,258,69,28,8
+    COMBOBOX        IDC_COMBO_PLLCLOCK1,294,66,72,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Module2",IDC_STATIC,258,87,28,8
+    COMBOBOX        IDC_COMBO_PLLCLOCK2,294,84,72,84,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Module3",IDC_STATIC,258,104,28,8
+    COMBOBOX        IDC_COMBO_PLLCLOCK3,294,102,72,66,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,330,132,50,14
+    GROUPBOX        "Delay Control",IDC_STATIC,6,36,114,90
+    GROUPBOX        "SSG Volume (OPNA Only)",IDC_STATIC,126,36,114,90
+    GROUPBOX        "PLL Clock",IDC_STATIC,246,36,138,90
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_C86CTL_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 387
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 日本語 (日本) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

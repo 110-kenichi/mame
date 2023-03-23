@@ -1,0 +1,43 @@
+#include "windows.h"
+#include "..\..\version.h"
+
+//LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+
+
+//
+// Version Info Resource
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION    __C86CTL_DLL_FILEVERSION
+ PRODUCTVERSION __C86CTL_DLL_PRODUCTVERSION
+ FILEFLAGSMASK  0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS      VOS_NT
+ FILETYPE    VFT_DLL
+ FILESUBTYPE 0x0L
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "000004b0"
+        {
+            VALUE "Comments",        "C86CTL"
+            VALUE "CompanyName",     "honet"
+            VALUE "FileDescription", "C86CTL dynamic link library"
+            VALUE "FileVersion",     __C86CTL_DLL_FILEVERSION_STRING
+            VALUE "InternalName",    "C86CTL"
+            VALUE "LegalCopyright",  "Copyright (C) 2011~2013 honet"
+            VALUE "ProductName",     "C86CTL dynamic link library"
+            VALUE "ProductVersion",  __C86CTL_DLL_PRODUCTVERSION_STRING
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0, 1200
+    }
+}
+

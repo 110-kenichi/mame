@@ -1,0 +1,9 @@
+LIBRARY	"c86ctl_mami"
+EXPORTS
+	CreateInstance
+	c86ctl_initialize
+	c86ctl_deinitialize
+	c86ctl_reset
+	c86ctl_out
+	c86ctl_in
+
