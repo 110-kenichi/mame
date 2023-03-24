@@ -667,7 +667,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0xe, adr, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.GIMIC:
-                            GimicManager.SetRegister(gimicPtr, adr, data, false);
+                            GimicManager.SetRegister2(gimicPtr, new uint[] { adr }, new byte[] { data });
                             break;
                     }
                 }

@@ -107,6 +107,14 @@ namespace zanac.MAmidiMEmo.Gimic
             SetRegisterDirectInternal(moduleIndex, dAddr, pData);
         }
 
+        [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicSetRegister2", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void SetRegister2Internal(int moduleIndex, uint[] dAddr, byte[] pData, uint sz);
+
+        public void SetRegister2(int moduleIndex, uint[] dAddr, byte[] pData, uint sz)
+        {
+            SetRegister2Internal(moduleIndex, dAddr, pData, sz);
+        }
+
         [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicGetWrittenRegisterData", CallingConvention = CallingConvention.Cdecl)]
         private static extern uint GetWrittenRegisterDataInternal(int moduleIndex, uint addr);
 

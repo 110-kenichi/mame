@@ -131,7 +131,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void setSoundEngine(SoundEngineType value)
         {
-            AllSoundOff();
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
 
             lock (sndEnginePtrLock)
             {
@@ -831,13 +839,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             ClearWrittenDataCache();
         }
 
+        private bool ignoreUpdatePcmData;
+
         /// <summary>
         /// 
         /// </summary>
         protected override void ClearWrittenDataCache()
         {
             base.ClearWrittenDataCache();
-            if (!IsDisposing)
+
+            if (!IsDisposing && !ignoreUpdatePcmData)
                 updateDpcmData();
         }
 

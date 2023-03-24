@@ -132,6 +132,23 @@ extern "C"
 		}
 	}
 
+	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD *addr, UCHAR *data, DWORD sz)
+	{
+		c86ctl::IGimic2* pGimicModule;
+		if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IGimic2, (void**)&pGimicModule)) {
+
+			c86ctl::IRealChip2* pRC = NULL;
+			if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IRealChip2, (void**)&pRC))
+			{
+				pRC->directOut2(addr, data, sz);
+
+				pRC->Release();
+			}
+
+			pGimicModule->Release();
+		}
+	}
+
 	__declspec(dllexport) DWORD __cdecl  GimicGetWrittenRegisterData(DWORD moduleIndex, DWORD addr)
 	{
 		c86ctl::IGimic2* pGimicModule;

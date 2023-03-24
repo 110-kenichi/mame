@@ -317,7 +317,7 @@ int GimicWinUSB::sendMsg( MSG *data )
 			memset( &buff[sz], 0xff, 64-sz );
 
 		::EnterCriticalSection(&csection);
-		ret = devWrite(buff, 4);
+		ret = devWrite(buff, sz + 1);
 		::LeaveCriticalSection(&csection);
 	}
 
@@ -347,7 +347,7 @@ int GimicWinUSB::transaction( MSG *txdata, uint8_t *rxdata, uint32_t rxsz )
 			if( sz<64 )
 				memset( &buff[sz], 0xff, 64-sz );
 
-			ret = devWrite(buff, 64);
+			ret = devWrite(buff, 65);
 		}
 
 		if( C86CTL_ERR_NONE==ret ){
@@ -637,10 +637,12 @@ void GimicWinUSB::directOut2(DWORD* addr, UCHAR* data, DWORD sz)
 		if (a < 0xfc) {
 			MSG d = { 3, { a & 0xff, dt, 0xff } };
 			sendMsg2(&d.dat[0], d.len);
+			cal += d.len;
 		}
 		else if (0x100 <= a && a <= 0x1fb) {
 			MSG d = { 4, { 0xfe, a & 0xff, dt, 0xff } };
 			sendMsg2(&d.dat[0], d.len);
+			cal += d.len;
 		}
 	}
 }

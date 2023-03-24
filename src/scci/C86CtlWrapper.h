@@ -1,6 +1,6 @@
 // copyright-holders:K.Ito
 
-#include "c86ctl.h"
+#include "../c86ctl/c86ctl/src/c86ctl.h"
 
 #pragma once
 
@@ -24,6 +24,8 @@ extern "C" {
 	__declspec(dllexport) void __cdecl  GimicSetRegister(DWORD moduleIndex, DWORD addr, DWORD data);
 
 	__declspec(dllexport) void __cdecl  GimicSetRegisterDirect(DWORD moduleIndex, DWORD addr, DWORD data);
+
+	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD* addr, UCHAR* data, DWORD sz);
 
 	__declspec(dllexport) DWORD __cdecl  GimicGetWrittenRegisterData(DWORD moduleIndex, DWORD addr);
 

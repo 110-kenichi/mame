@@ -663,6 +663,8 @@ namespace zanac.VGMPlayer
         /// <param name="dclk"></param>
         protected void deferredWriteOPNA_P0(VsifClient comPortOPNA, int adrs, int dt, uint dclk)
         {
+            return;
+
             if (adrs == 7)
                 dt &= 0x3f;
             comPortOPNA.RegTable[adrs] = dt;
@@ -785,6 +787,8 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPNA_P0(VsifClient comPortOPNA, int adrs, int dt)
         {
+            return;
+
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
@@ -808,6 +812,8 @@ namespace zanac.VGMPlayer
 
         protected void deferredWriteOPNA_P1(VsifClient comPortOPNA, int adrs, int dt, uint dclk)
         {
+            return;
+
             comPortOPNA.RegTable[adrs + 0x100] = dt;
 
             switch (adrs)
@@ -864,6 +870,8 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPNA_P1(VsifClient comPortOPNA, int adrs, int dt)
         {
+            return;
+
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:

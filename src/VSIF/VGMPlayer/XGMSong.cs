@@ -432,9 +432,9 @@ namespace zanac.VGMPlayer
                             if (comPortOPNA != null)
                             {
                                 var gimmic = (PortWriterGimic)comPortOPNA.DataWriter;
-                                var idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                                if (idx >= 0)
+                                if (gimmic.OpnaIndex >= 0)
                                 {
+                                    GimicManager.Reset(gimmic.OpnaIndex);
                                     clock = GimicManager.SetClock(gimmic.OpnaIndex, clock);
                                     comPortOPNA.ChipClockHz["OPNA"] = clock;
                                     comPortOPNA.ChipClockHz["OPNA_SSG"] = clock;
@@ -444,9 +444,9 @@ namespace zanac.VGMPlayer
                                 else
                                 {
                                     //HACK:
-                                    idx = gimmic.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                                    if (idx >= 0)
+                                    if (gimmic.Opn3lIndex >= 0)
                                     {
+                                        GimicManager.Reset(gimmic.Opn3lIndex);
                                         clock = GimicManager.SetClock(gimmic.Opn3lIndex, clock * 2);
                                         comPortOPNA.ChipClockHz["OPNA"] = clock;
                                         comPortOPNA.ChipClockHz["OPNA_SSG"] = clock;

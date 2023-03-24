@@ -239,7 +239,7 @@ int GimicHID::sendMsg( MSG *data )
 			memset( &buff[1+sz], 0xff, 64-sz );
 
 		::EnterCriticalSection(&csection);
-		int ret = devWrite(buff, 65);
+		int ret = devWrite(buff, sz + 1);
 		::LeaveCriticalSection(&csection);
 	}
 
@@ -270,7 +270,7 @@ int GimicHID::transaction( MSG *txdata, uint8_t *rxdata, uint32_t rxsz )
 			if( sz<64 )
 				memset( &buff[1+sz], 0xff, 64-sz );
 
-			ret = devWrite(buff, 65);
+			ret = devWrite(buff, sz + 1);
 		}
 
 		if( C86CTL_ERR_NONE==ret ){

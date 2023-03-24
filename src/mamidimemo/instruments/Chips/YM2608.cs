@@ -158,7 +158,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="value"></param>
         private void setSoundEngine(SoundEngineType value)
         {
-            AllSoundOff();
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
 
             lock (sndEnginePtrLock)
             {
@@ -304,7 +312,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
-        [DefaultValue(MasterClockType.Default)]
         public uint MasterClock
         {
             get
@@ -592,7 +599,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                 break;
                             case SoundEngineType.GIMIC:
-                                GimicManager.SetRegister(gimicPtr, adrs, data, false);
+                                GimicManager.SetRegister2(gimicPtr, new uint[] { adrs }, new byte[] { data });
                                 break;
                         }
                     }
@@ -601,7 +608,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 uint yreg = (uint)(slot / 3) * 2;
                 DeferredWriteData(YM2608_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
                 DeferredWriteData(YM2608_write, unitNumber, yreg + 1, data);
-                FormMain.OutputDebugLog(this, "adr:" + (byte)(address + (op * 4) + (slot % 3)) + " dat:" + data);
+                //FormMain.OutputDebugLog(this, "adr:" + (byte)(address + (op * 4) + (slot % 3)) + " dat:" + data);
                 //try
                 //{
                 //    Program.SoundUpdating();
@@ -967,6 +974,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             initGlobalRegisters();
         }
 
+        private bool ignoreUpdatePcmData;
+
         private void initGlobalRegisters()
         {
             //SSG OFF
@@ -993,7 +1002,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
 
-            if(!IsDisposing)
+            if (!IsDisposing && !ignoreUpdatePcmData)
                 updatePcmData(null);
         }
 

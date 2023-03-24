@@ -15,5 +15,6 @@ EXPORTS
 	GimicSetReset
 	GimicSetRegister
 	GimicSetRegisterDirect
+	GimicSetRegister2
 	GimicGetWrittenRegisterData
 	GimicSetSSGVolume

@@ -25,23 +25,41 @@ namespace zanac.VGMPlayer
         {
         }
 
+        private int? opnaIndex;
+
         public int OpnaIndex
         {
-            get;
-            private set;
-        } = -1;
+            get
+            {
+                if(opnaIndex == null)
+                    opnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                return opnaIndex.Value;
+            }
+        }
+
+        private int? opmIndex;
 
         public int OpmIndex
         {
-            get;
-            private set;
-        } = -1;
+            get
+            {
+                if (opmIndex == null)
+                    opmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                return opmIndex.Value;
+            }
+        }
+
+        private int? opn3lIndex;
 
         public int Opn3lIndex
         {
-            get;
-            private set;
-        } = -1;
+            get
+            {
+                if (opn3lIndex == null)
+                    opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
+                return opn3lIndex.Value;
+            }
+        }
 
         /// <summary>
         /// 
@@ -56,16 +74,10 @@ namespace zanac.VGMPlayer
             switch (chipType)
             {
                 case ChipType.CHIP_OPNA:
-                    if (OpnaIndex < 0)
-                        OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
                     return OpnaIndex;
                 case ChipType.CHIP_OPN3L:
-                    if (Opn3lIndex < 0)
-                        Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
                     return Opn3lIndex;
                 case ChipType.CHIP_OPM:
-                    if (OpmIndex < 0)
-                        OpmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
                     return OpmIndex;
             }
 
@@ -83,43 +95,45 @@ namespace zanac.VGMPlayer
         {
             try
             {
+                List<uint> opnaDataAdr = new List<uint>();
+                List<byte> opnaDataData = new List<byte>();
+                List<uint> opmDataAdr = new List<uint>();
+                List<byte> opmDataData = new List<byte>();
+                List<uint> opn3lDataAdr = new List<uint>();
+                List<byte> opn3lDataData = new List<byte>();
+
                 foreach (var dt in data)
                 {
-                    int id = 0;
                     switch (dt.Type)
                     {
                         case 0: //OPNA
-                            if (OpnaIndex < 0)
-                                OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                            if (OpnaIndex >= 0)
-                                GimicManager.SetRegister(id, dt.Address, dt.Data, false);
+                            opnaDataAdr.Add(dt.Address);
+                            opnaDataData.Add(dt.Data);
                             break;
                         case 1: //OPNA
-                            if (OpnaIndex < 0)
-                                OpnaIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
-                            if (OpnaIndex >= 0)
-                                GimicManager.SetRegister(id, (uint)(dt.Address + 0x100), dt.Data, false);
+                            opnaDataAdr.Add((uint)(dt.Address + 0x100));
+                            opnaDataData.Add(dt.Data);
                             break;
                         case 2: //OPM
-                            if (OpmIndex < 0)
-                                OpmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
-                            if (OpmIndex >= 0)
-                                GimicManager.SetRegister(id, dt.Address, dt.Data, false);
+                            opmDataAdr.Add(dt.Address);
+                            opmDataData.Add(dt.Data);
                             break;
                         case 3: //OPN3L
-                            if (Opn3lIndex < 0)
-                                Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                            if (Opn3lIndex >= 0)
-                                GimicManager.SetRegister(id, dt.Address, dt.Data, false);
+                            opn3lDataAdr.Add(dt.Address);
+                            opn3lDataData.Add(dt.Data);
                             break;
                         case 4: //OPN3L
-                            if (Opn3lIndex < 0)
-                                Opn3lIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPN3L);
-                            if (Opn3lIndex >= 0)
-                                GimicManager.SetRegister(id, (uint)(dt.Address + 0x100), dt.Data, false);
+                            opn3lDataAdr.Add((uint)(dt.Address + 0x100));
+                            opn3lDataData.Add(dt.Data);
                             break;
                     }
                 }
+                if (opnaDataAdr.Count > 0 && OpnaIndex >= 0)
+                    GimicManager.SetRegister2(OpnaIndex, opnaDataAdr.ToArray(), opnaDataData.ToArray());
+                if (opmDataAdr.Count > 0 && OpmIndex >= 0)
+                    GimicManager.SetRegister2(OpmIndex, opmDataAdr.ToArray(), opmDataData.ToArray());
+                if (opn3lDataAdr.Count > 0 && Opn3lIndex >= 0)
+                    GimicManager.SetRegister2(Opn3lIndex, opn3lDataAdr.ToArray(), opn3lDataData.ToArray());
             }
             catch (Exception ex)
             {

@@ -138,7 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="c86ctl.h" />
     <ClInclude Include="C86CtlWrapper.h" />
     <ClInclude Include="scci.h" />
     <ClInclude Include="SCCIDefines.h" />
