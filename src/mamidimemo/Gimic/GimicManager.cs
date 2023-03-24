@@ -244,13 +244,13 @@ namespace zanac.MAmidiMEmo.Gimic
         /// <param name="dAddr"></param>
         /// <param name="pData"></param>
         /// <param name="useCache"></param>
-        public static void SetRegister2(int moduleIndex, uint[] dAddr, byte[] pData)
+        public static void SetRegister2(int moduleIndex, uint dAddr, byte pData)
         {
             lock (lockObject)
             {
                 if (initialized)
                 {
-                    wrapperClient.SetRegister2(moduleIndex, dAddr, pData, (uint)dAddr.Length);
+                    wrapperClient.SetRegister2(moduleIndex, dAddr, pData, 1);
                 }
             }
         }
