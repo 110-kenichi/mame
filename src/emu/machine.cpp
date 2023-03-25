@@ -562,14 +562,17 @@ int running_machine::run(bool quiet)
 			sdr->set_stream_update_callback(StreamUpdatedR);
 		}
 		else {
-			m_rpcSrv = new rpc::server(30000);
+			if (vstPort = options().chip_server())
+			{
+				m_rpcSrv = new rpc::server(30000);
 
-			m_rpcSrv->bind("DirectAccessToChip", [&](unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
-				{
-					DirectAccessToChip(device_id, unit, address, data);
-				});
+				m_rpcSrv->bind("DirectAccessToChip", [&](unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
+					{
+						DirectAccessToChip(device_id, unit, address, data);
+					});
 
-			m_rpcSrv->async_run();
+				m_rpcSrv->async_run();
+			}
 		}
 
 		// run the CPUs until a reset or exit

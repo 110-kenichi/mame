@@ -194,6 +194,8 @@
 #define OPTION_HTTP_PORT            "http_port"
 #define OPTION_HTTP_ROOT            "http_root"
 
+#define OPTION_CHIP_SERVER        "chip_server"
+
 //**************************************************************************
 //  TYPE DEFINITIONS
 //**************************************************************************
@@ -474,6 +476,9 @@ public:
 	bool  http() const { return bool_value(OPTION_HTTP); }
 	short http_port() const { return int_value(OPTION_HTTP_PORT); }
 	const char *http_root() const { return value(OPTION_HTTP_ROOT); }
+
+	//mamidimemo OPTION_HTTP_PORT
+	bool chip_server() const { return bool_value(OPTION_CHIP_SERVER); }
 
 	// slots and devices - the values for these are stored outside of the core_options
 	// structure
