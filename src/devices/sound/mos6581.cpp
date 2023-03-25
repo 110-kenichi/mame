@@ -199,12 +199,12 @@ void mos6581_device::device_start()
 	m_read_poty.resolve_safe(0xff);
 
 	// create sound stream
-	m_stream = machine().sound().stream_alloc(*this, 0, 2, machine().sample_rate());
+	m_stream = machine().sound().stream_alloc(*this, 0, 2, 48000);	//mamidimemo
 
 	// initialize SID engine
 	m_token->device = this;
 	m_token->mixer_channel = m_stream;
-	m_token->PCMfreq = machine().sample_rate();
+	m_token->PCMfreq = 48000;	//mamidimemo
 	m_token->clock = clock();
 	m_token->type = m_variant;
 
