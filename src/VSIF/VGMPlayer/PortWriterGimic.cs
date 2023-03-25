@@ -44,7 +44,7 @@ namespace zanac.VGMPlayer
             get
             {
                 if (opmIndex == null)
-                    opmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
+                    opmIndex = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPM);
                 return opmIndex.Value;
             }
         }
