@@ -173,9 +173,9 @@ namespace zanac.VGMPlayer
                     deferredWriteOPNA_P0(comPortOPNA, 0x09, 0);
                     deferredWriteOPNA_P0(comPortOPNA, 0x0A, 0);
                     //ADPCM
-                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
-
-                    EnableDacYM2608(comPortOPNA, false);
+                    deferredWriteOPNA_P1(comPortOPNA, 0x0B, 0);    //VOLUME 0
+                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
+                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x00);  //STOP
                 }
             }
 
@@ -491,10 +491,10 @@ namespace zanac.VGMPlayer
                     if (connectToOPNA(curHead.lngHzYM2612))
                     {
                         comPortOPNA.Tag["ProxyOPN2"] = true;
-                        //Force OPN mode
+                        //Force OPNA mode
                         deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
-                        //Enable DAC
-                        EnableDacYM2608(comPortOPNA, true);
+                        //Enable Pseudo DAC
+                        EnablePseudoDacYM2608(comPortOPNA, true);
                     }
                 }
             }
@@ -650,6 +650,41 @@ namespace zanac.VGMPlayer
                 if (Settings.Default.Y8910_Enable)
                 {
                     connectToPSG();
+                }
+            }
+            if (curHead.lngHzOKIM6258 != 0 && curHead.lngVersion >= 0x00000161)
+            {
+                uint[] dividers = new uint[] { 1024, 768, 512, 512 };
+
+                SongChipInformation += $"OKIM6258@{curHead.lngHzOKIM6258 / 1000000f}MHz ";
+                oki6258_master_clock = curHead.lngHzOKIM6258;
+                oki6258_divider = dividers[curHead.bytOKI6258Flags & 0x3];
+                oki6258_sample_rate = oki6258_master_clock / oki6258_divider;
+
+                oki6258_clock_buffer[0x00] = (oki6258_master_clock & 0x000000FF) >> 0;
+                oki6258_clock_buffer[0x01] = (oki6258_master_clock & 0x0000FF00) >> 8;
+                oki6258_clock_buffer[0x02] = (oki6258_master_clock & 0x00FF0000) >> 16;
+                oki6258_clock_buffer[0x03] = (oki6258_master_clock & 0xFF000000) >> 24;
+
+                if (Settings.Default.OPN2_Enable)
+                {
+                    if (connectToOPN2())
+                    {
+                        comPortOPN2.Tag["ProxyOKIM6258"] = true;
+                        //Enable Dac
+                        deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+                    }
+                }
+                else if (Settings.Default.OPNA_Enable)
+                {
+                    if (connectToOPNA(7987200))
+                    {
+                        comPortOPNA.Tag["ProxyOKIM6258"] = true;
+                        //Force OPNA mode
+                        deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                        //Enable Dac
+                        EnableDacYM2608(comPortOPNA, true);
+                    }
                 }
             }
 
@@ -1637,6 +1672,9 @@ namespace zanac.VGMPlayer
                 StreamParam streamParam = null;
                 StreamParam currentStreamParam = null;
                 QueryPerformanceCounter(out before);
+                bool oki6285Adpcm2ndNibble = false;
+                int streamChipType = 0;
+                OKIM6258 okim6258 = null;
 
                 while (true)
                 {
@@ -1795,7 +1833,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case 0x2a:
                                                         //output DAC
-                                                        DeferredWriteOPNA_DAC(comPortOPNA, dt);
+                                                        DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                         break;
                                                     case 0x2b:
                                                         //Enable DAC
@@ -2398,7 +2436,7 @@ namespace zanac.VGMPlayer
                                             {
                                                 switch (dtype)
                                                 {
-                                                    case 0:
+                                                    case 0: //YM2612 PCM data for use with associated commands
                                                         {
                                                             dacDataOffset.Add(dacData.Count);
                                                             dacDataLength.Add((int)size);
@@ -2406,6 +2444,31 @@ namespace zanac.VGMPlayer
                                                                 dacData.AddRange(new byte[] { 0 });
                                                             else
                                                                 dacData.AddRange(vgmReader.ReadBytes((int)size));
+                                                        }
+                                                        break;
+                                                    case 4: //OKIM6258 ADPCM data for use with associated commands
+                                                        {
+                                                            dacDataOffset.Add(dacData.Count);
+                                                            dacDataLength.Add((int)size);
+                                                            if (size == 0)
+                                                                dacData.AddRange(new byte[] { 0 });
+                                                            else
+                                                                dacData.AddRange(vgmReader.ReadBytes((int)size));
+                                                            //StringBuilder sb = new StringBuilder();
+                                                            //foreach (byte d in dacData)
+                                                            //{
+                                                            //    sb.AppendLine(d.ToString());
+                                                            //}
+                                                            //File.WriteAllBytes("d:\\aaa" + dacData.Count + ".bin", dacData.ToArray());
+                                                            //Oki o = new Oki();
+                                                            //List<byte> pcm = new List<byte>();
+                                                            //for (int i = 0; i < dacData.Count; i++)
+                                                            //{
+                                                            //    pcm.Add((byte)(o.decode(dacData[i] >> 4) >> 8));
+                                                            //    pcm.Add((byte)(o.decode(dacData[i] & 0xf) >> 8));
+                                                            //}
+                                                            //File.WriteAllBytes("d:\\aaa" + dacData.Count + ".pcm", pcm.ToArray());
+                                                            //File.WriteAllText("d:\\aaa"+dacData.Count+".csv", sb.ToString());
                                                         }
                                                         break;
                                                     case 0x81:  //YM2608
@@ -2419,12 +2482,11 @@ namespace zanac.VGMPlayer
                                                                 (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
                                                                 " (" + size.ToString("x") + ")");
 #endif
-
                                                             //FormProgress.RunDialog("Updating ADPCM data",
                                                             //    new Action<FormProgress>((f) =>
                                                             {
                                                                 if (size > 0)
-                                                                    sendAdpcmDataYM2608(vgmReader.ReadBytes((int)size), (int)saddr, null);
+                                                                    sendAdpcmDataYM2608(comPortOPNA, ym2608_adpcmbit8, vgmReader.ReadBytes((int)size), (int)saddr, null);
                                                             }
                                                             //));
 #if DEBUG
@@ -2460,7 +2522,7 @@ namespace zanac.VGMPlayer
                                                                     else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyY8950"))
                                                                     {
                                                                         if (!y8950_adpcmbit64k)
-                                                                            sendAdpcmDataYM2608(vgmReader.ReadBytes((int)size), (int)saddr, null);
+                                                                            sendAdpcmDataYM2608(comPortOPNA, ym2608_adpcmbit8, vgmReader.ReadBytes((int)size), (int)saddr, null);
                                                                     }
                                                                 }
                                                             }
@@ -2526,7 +2588,7 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    DeferredWriteOPNA_DAC(comPortOPNA, (short)dacData[dacOffset]);
+                                                    DeferredWriteOPNA_PseudoDAC(comPortOPNA, (short)dacData[dacOffset]);
                                                 }
                                             }
                                             dacOffset++;
@@ -2538,21 +2600,35 @@ namespace zanac.VGMPlayer
                                             //stream id
                                             var sid = readByte();
                                             //chip type
-                                            var ct = readByte();
+                                            streamChipType = readByte();
                                             //port
                                             var port = readByte();
                                             //command
                                             var cmd = readByte();
-                                            switch (ct)
+                                            switch (streamChipType)
                                             {
                                                 case 2:   //YM2612
-                                                    if (port == 0x00 && cmd == 0x2a)    //PCM
+                                                    if (port == 0x00 && cmd == 0x2a)    //PCM ENABLE
                                                     {
                                                         if (comPortOPN2 != null)
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
                                                         }
                                                         else if (comPortOPNA != null)
+                                                        {
+                                                            //nop
+                                                        }
+                                                    }
+                                                    break;
+                                                case 23: //OKIM6258
+                                                    if (port == 0x00 && cmd == 0x1)    //ADPCM ENABLE
+                                                    {
+                                                        okim6258 = new OKIM6258();
+                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        {
+                                                            deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+                                                        }
+                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             //nop
                                                         }
@@ -2714,7 +2790,106 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xB0 <= cmd && cmd <= 0xBF:
+                                    case int cmd when 0xB0 <= cmd && cmd <= 0xB6:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xB7:  //okim6258
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+
+                                            switch (aa)
+                                            {
+                                                case 0x00:
+                                                    //okim6258_ctrl_w(ChipID, /*0x00, */Data);
+                                                    break;
+                                                case 0x01:
+                                                    if (okim6258 != null)
+                                                    {
+                                                        if (!oki6285Adpcm2ndNibble)
+                                                        {
+                                                            var ddata = okim6258.decode(dd & 0xf);
+                                                            //var ddata = decodeOpnaAdpcm(dd & 0xf);
+
+                                                            if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                                DeferredWriteOPN2_DAC(comPortOPN2, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8));
+                                                                DeferredWriteOPNA_DAC(comPortOPNA, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            oki6285Adpcm2ndNibble = true;
+                                                            vgmDataCurrentOffset--;
+                                                        }
+                                                        else
+                                                        {
+                                                            var ddata = okim6258.decode(dd >> 4);
+                                                            //var ddata = decodeOpnaAdpcm(dd >> 4);
+
+                                                            if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                                DeferredWriteOPN2_DAC(comPortOPN2, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8));
+                                                                DeferredWriteOPNA_DAC(comPortOPNA, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            oki6285Adpcm2ndNibble = false;
+                                                        }
+                                                    }
+                                                    break;
+                                                case 0x02:
+                                                    if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
+                                                    {
+                                                        //LR
+                                                        byte lr = (byte)((~dd << 6) & 0xc0);
+                                                        deferredWriteOPNA_P1(comPortOPNA, 0x01, (byte)(lr | 0xc));
+                                                    }
+                                                    break;
+                                                case 0x08:
+                                                case 0x09:
+                                                case 0x0A:
+                                                    oki6258_clock_buffer[aa & 3] = (uint)dd;
+                                                    break;
+                                                case 0x0B:
+                                                    oki6258_clock_buffer[aa & 3] = (uint)dd;
+                                                    oki6258_master_clock = (oki6258_clock_buffer[0x00] << 0) |
+                                                        (oki6258_clock_buffer[0x01] << 8) |
+                                                        (oki6258_clock_buffer[0x02] << 16) |
+                                                        (oki6258_clock_buffer[0x03] << 24);
+                                                    oki6258_sample_rate = oki6258_master_clock / oki6258_divider;
+                                                    break;
+                                                case 0x0C:
+                                                    uint[] dividers = new uint[] { 1024, 768, 512, 512 };
+                                                    oki6258_divider = dividers[dd];
+                                                    oki6258_sample_rate = oki6258_master_clock / oki6258_divider;
+                                                    break;
+                                            }
+                                        }
+                                        break;
+
+                                    case int cmd when 0xB8 <= cmd && cmd <= 0xBF:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2869,15 +3044,64 @@ namespace zanac.VGMPlayer
                                     byte data = dacData[currentStreamIdx];
                                     currentStreamIdx += currentStreamIdxDir;
 
-                                    if (comPortOPN2 != null)
+                                    switch (streamChipType)
                                     {
-                                        DeferredWriteOPN2_DAC(comPortOPN2, data);
+                                        case 0x2:
+                                            if (comPortOPN2 != null)
+                                            {
+                                                DeferredWriteOPN2_DAC(comPortOPN2, data);
+                                            }
+                                            else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
+                                            {
+                                                DeferredWriteOPNA_PseudoDAC(comPortOPNA, data);
+                                            }
+                                            streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
+                                            break;
+                                        case 23:
+                                            {
+                                                if (okim6258 != null)
+                                                {
+                                                    if (!oki6285Adpcm2ndNibble)
+                                                    {
+                                                        var ddata = okim6258.decode(data & 0xf);
+                                                        //var ddata = decodeOpnaAdpcm(data & 0xf);
+
+                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        {
+                                                            byte bdata = (byte)((ddata >> 8) + 128);
+                                                            DeferredWriteOPN2_DAC(comPortOPN2, bdata);
+                                                        }
+                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        {
+                                                            //var ddata = decodeOpnaAdpcm(data & 0xf);
+                                                            byte bdata = (byte)((ddata >> 8));
+                                                            DeferredWriteOPNA_DAC(comPortOPNA, bdata);
+                                                        }
+                                                        currentStreamIdx -= currentStreamIdxDir;
+                                                        oki6285Adpcm2ndNibble = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        var ddata = okim6258.decode(data >> 4);
+                                                        //var ddata = decodeOpnaAdpcm(data >> 4);
+
+                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        {
+                                                            byte bdata = (byte)((ddata >> 8) + 128);
+                                                            DeferredWriteOPN2_DAC(comPortOPN2, bdata);
+                                                        }
+                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        {
+                                                            byte bdata = (byte)((ddata >> 8));
+                                                            DeferredWriteOPNA_DAC(comPortOPNA, bdata);
+                                                        }
+                                                        oki6285Adpcm2ndNibble = false;
+                                                    }
+                                                }
+                                            }
+                                            streamWaitDelta += 44.1 * 1000 / (currentStreamData.Frequency << 1);
+                                            break;
                                     }
-                                    else if (comPortOPNA != null)
-                                    {
-                                        DeferredWriteOPNA_DAC(comPortOPNA, data);
-                                    }
-                                    streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
                                 }
                             }
                         }
@@ -2961,7 +3185,6 @@ namespace zanac.VGMPlayer
                     before = after;
                 }
             }
-
             StopAllSounds(true);
             State = SoundState.Stopped;
             NotifyFinished();
@@ -3374,83 +3597,6 @@ namespace zanac.VGMPlayer
         /// <param name="transferData"></param>
         /// <param name="saddr"></param>
         /// <param name="fp"></param>
-        private void sendAdpcmDataYM2608(byte[] transferData, int saddr, FormProgress fp)
-        {
-            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
-
-            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
-
-            //flag
-            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x13);   //CLEAR MASK
-            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);   //IRQ RESET
-                                                             //Ctrl1
-            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x60);   //REC, EXTMEM
-            //Ctrl2
-            //START
-            if (ym2608_adpcmbit8)
-            {
-                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x02);   //LR, 8bit DRAM
-                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 5) & 0xff));
-                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (5 + 8)) & 0xff));
-            }
-            else
-            {
-                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x00);   //LR, 1bit DRAM
-                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 2) & 0xff));
-                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (2 + 8)) & 0xff));
-            }
-            //STOP
-            deferredWriteOPNA_P1(comPortOPNA, 0x04, 0xff);
-            deferredWriteOPNA_P1(comPortOPNA, 0x05, 0xff);
-            //LIMIT
-            deferredWriteOPNA_P1(comPortOPNA, 0x0C, 0xff);
-            deferredWriteOPNA_P1(comPortOPNA, 0x0D, 0xff);
-
-            //Transfer
-            int len = transferData.Length;
-            int index = 0;
-            int percentage = 0;
-            int lastPercentage = 0;
-            for (int i = 0; i < len; i++)
-            {
-                deferredWriteOPNA_P1(comPortOPNA, 0x08, transferData[i]);
-
-                //HACK: WAIT
-                switch (comPortOPNA?.SoundModuleType)
-                {
-                    case VsifSoundModuleType.Spfm:
-                    case VsifSoundModuleType.SpfmLight:
-                    case VsifSoundModuleType.Gimic:
-                        comPortOPNA?.FlushDeferredWriteDataAndWait();
-                        break;
-                }
-
-                percentage = (100 * index) / len;
-                if (percentage != lastPercentage)
-                {
-                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
-                    //fp.Percentage = percentage;
-                    comPortOPNA?.FlushDeferredWriteDataAndWait();
-                }
-                lastPercentage = percentage;
-                index++;
-                if (RequestedStat == SoundState.Stopped)
-                    break;
-                else updateStatusForDataTransfer();
-            }
-            FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
-
-            // Finish
-            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);
-            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="transferData"></param>
-        /// <param name="saddr"></param>
-        /// <param name="fp"></param>
         private void sendAdpcmDataY8950(byte[] transferData, int saddr, FormProgress fp)
         {
             if (transferData.Length == 0)
@@ -3624,27 +3770,7 @@ namespace zanac.VGMPlayer
             Y8950WriteData(comPortY8950, 0x07, 0, slot, 0, 0, (byte)0x01, false, wait);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void updateStatusForDataTransfer()
-        {
-            if (RequestedStat == SoundState.Paused)
-            {
-                if (State != SoundState.Paused)
-                    State = SoundState.Paused;
-            }
-            else if (RequestedStat == SoundState.Freezed)
-            {
-                if (State != SoundState.Freezed)
-                    State = SoundState.Freezed;
-            }
-            else if (RequestedStat == SoundState.Playing)
-            {
-                if (State != SoundState.Playing)
-                    State = SoundState.Freezed;
-            }
-        }
+
 
 
         /// <summary>
@@ -4105,6 +4231,220 @@ namespace zanac.VGMPlayer
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        uint oki6258_master_clock;
+
+        uint oki6258_divider;
+
+        uint oki6258_sample_rate;
+
+        uint[] oki6258_clock_buffer = new uint[4];
+
+
+        /// <summary>
+        /// PCM値
+        /// </summary>
+        int pcmValueForEncode = 0;
+        /// <summary>
+        /// 予測変化量
+        /// </summary>
+        int predictValueForEncode = 127;
+        /// <summary>
+        /// 8bitデータの1つ目(上位4bit)かどうか
+        /// </summary>
+        bool firstDataForEncode = true;
+        /// <summary>
+        /// 実際のADPCM出力値
+        /// </summary>
+        byte outputValueForEncode = 0;
+
+        private int? encodeAdpcm(int inputValue)
+        {
+            int? retValue = null;
+            //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
+            //変化量 <- PCM入力値 - PCM値
+            int deltaValue = (inputValue * 256) - pcmValueForEncode;
+            //ADPCM値
+            int adpcmData = 0;
+            //予測変化値に対する変化量の比率によってADPCM値を決定
+            if (predictValueForEncode * 14 / 8 <= deltaValue)
+                adpcmData = 7;
+            else if (predictValueForEncode * 12 / 8 <= deltaValue && deltaValue < predictValueForEncode * 14 / 8)
+                adpcmData = 6;
+            else if (predictValueForEncode * 10 / 8 <= deltaValue && deltaValue < predictValueForEncode * 12 / 8)
+                adpcmData = 5;
+            else if (predictValueForEncode * 8 / 8 <= deltaValue && deltaValue < predictValueForEncode * 10 / 8)
+                adpcmData = 4;
+            else if (predictValueForEncode * 6 / 8 <= deltaValue && deltaValue < predictValueForEncode * 8 / 8)
+                adpcmData = 3;
+            else if (predictValueForEncode * 4 / 8 <= deltaValue && deltaValue < predictValueForEncode * 6 / 8)
+                adpcmData = 2;
+            else if (predictValueForEncode * 2 / 8 <= deltaValue && deltaValue < predictValueForEncode * 4 / 8)
+                adpcmData = 1;
+            else if (predictValueForEncode * 0 / 8 <= deltaValue && deltaValue < predictValueForEncode * 2 / 8)
+                adpcmData = 0;
+            else if (predictValueForEncode * -2 / 8 <= deltaValue && deltaValue < predictValueForEncode * 0 / 8)
+                adpcmData = 8;
+            else if (predictValueForEncode * -4 / 8 <= deltaValue && deltaValue < predictValueForEncode * -2 / 8)
+                adpcmData = 9;
+            else if (predictValueForEncode * -6 / 8 <= deltaValue && deltaValue < predictValueForEncode * -4 / 8)
+                adpcmData = 10;
+            else if (predictValueForEncode * -8 / 8 <= deltaValue && deltaValue < predictValueForEncode * -6 / 8)
+                adpcmData = 11;
+            else if (predictValueForEncode * -10 / 8 <= deltaValue && deltaValue < predictValueForEncode * -8 / 8)
+                adpcmData = 12;
+            else if (predictValueForEncode * -12 / 8 <= deltaValue && deltaValue < predictValueForEncode * -10 / 8)
+                adpcmData = 13;
+            else if (predictValueForEncode * -14 / 8 <= deltaValue && deltaValue < predictValueForEncode * -12 / 8)
+                adpcmData = 14;
+            else if (deltaValue < predictValueForEncode * -14 / 8)
+                adpcmData = 15;
+
+            //出力
+            if (firstDataForEncode)
+            {
+                outputValueForEncode = (byte)(adpcmData << 4);
+                firstDataForEncode = false;
+            }
+            else
+            {
+                outputValueForEncode |= (byte)adpcmData;
+                //comPortOPNA.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
+                retValue = outputValueForEncode;
+                outputValueForEncode = 0;
+                firstDataForEncode = true;
+            }
+
+            //変化率 = ADPCM値のbit2-0
+            int factor = adpcmData & 0x7;
+            //変化量 <- 予測変化量 x (変化率 x 2 + 1) / 8
+            deltaValue = predictValueForEncode * (factor * 2 + 1) / 8;
+            if ((adpcmData & 0x8) == 0)
+            {
+                //増加
+                pcmValueForEncode = pcmValueForEncode + deltaValue;
+            }
+            else
+            {
+                //減少
+                pcmValueForEncode = pcmValueForEncode - deltaValue;
+            }
+            //変化率によって次回の予測変化量を更新
+            switch (factor)
+            {
+                case 0:
+                    predictValueForEncode = predictValueForEncode * 57 / 64;
+                    break;
+                case 1:
+                    predictValueForEncode = predictValueForEncode * 57 / 64;
+                    break;
+                case 2:
+                    predictValueForEncode = predictValueForEncode * 57 / 64;
+                    break;
+                case 3:
+                    predictValueForEncode = predictValueForEncode * 57 / 64;
+                    break;
+                case 4:
+                    predictValueForEncode = predictValueForEncode * 77 / 64;
+                    break;
+                case 5:
+                    predictValueForEncode = predictValueForEncode * 102 / 64;
+                    break;
+                case 6:
+                    predictValueForEncode = predictValueForEncode * 128 / 64;
+                    break;
+                case 7:
+                    predictValueForEncode = predictValueForEncode * 153 / 64;
+                    break;
+            }
+            //
+            if (predictValueForEncode < 127)
+                predictValueForEncode = 127;
+            else if (predictValueForEncode > 24576)
+                predictValueForEncode = 24576;
+
+            return retValue;
+        }
+
+
+        /// <summary>
+        /// PCM値
+        /// </summary>
+        int pcmValueForDecode = 0;
+        /// <summary>
+        /// 予測変化量
+        /// </summary>
+        int predictValueForDecode = 127;
+
+        private int decodeOpnaAdpcm(int inputValue)
+        {
+            int retValue = 0x0;
+
+            //https://www.piece-me.org/piece-lab/adpcm/adpcm1.html
+            //変化率 <- ADPCM値のbit2-0
+            int deltaRatio = inputValue & 0x7;
+            //変化量 <- 予測変化量*(変化率*2+1)/8
+            int deltaValue = predictValueForDecode * ((deltaRatio * 2) + 1) / 8;
+            if ((inputValue & 0x8) == 0)
+            {
+                //増加
+                //PCM値 <- PCM値 + 変化量
+                pcmValueForDecode = pcmValueForDecode + deltaValue;
+            }
+            else
+            {
+                //減少
+                //PCM値 <- PCM値 - 変化量
+                pcmValueForDecode = pcmValueForDecode - deltaValue;
+            }
+            pcmValueForDecode = pcmValueForDecode << 4;
+            if (pcmValueForDecode > short.MaxValue)
+                pcmValueForDecode = short.MaxValue;
+            else if (pcmValueForDecode < short.MinValue)
+                pcmValueForDecode = short.MinValue;
+
+            retValue = pcmValueForDecode;
+
+            //変化率によって、自戒の予測変化量を更新
+            switch (deltaRatio)
+            {
+                case 0:
+                    predictValueForDecode = predictValueForDecode * 57 / 64;
+                    break;
+                case 1:
+                    predictValueForDecode = predictValueForDecode * 57 / 64;
+                    break;
+                case 2:
+                    predictValueForDecode = predictValueForDecode * 57 / 64;
+                    break;
+                case 3:
+                    predictValueForDecode = predictValueForDecode * 57 / 64;
+                    break;
+                case 4:
+                    predictValueForDecode = predictValueForDecode * 77 / 64;
+                    break;
+                case 5:
+                    predictValueForDecode = predictValueForDecode * 102 / 64;
+                    break;
+                case 6:
+                    predictValueForDecode = predictValueForDecode * 128 / 64;
+                    break;
+                case 7:
+                    predictValueForDecode = predictValueForDecode * 153 / 64;
+                    break;
+            }
+            if (predictValueForDecode < 127)
+            {
+                predictValueForDecode = 127;
+            }
+            else if (predictValueForDecode > 24576)
+            {
+                predictValueForDecode = 24576;
+            }
+
+            return retValue;
+        }
+
 
     }
 

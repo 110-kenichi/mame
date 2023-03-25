@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitBangTest", "..\BitBangTe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScciWrapper", "..\..\scci\scci.vcxproj", "{DCE05C04-33C4-4929-9076-D75D78725613}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "c86ctl", "..\..\c86ctl\c86ctl\prj\vc10\c86ctl.vcxproj", "{4B8BCF47-4D54-4802-9516-D5F75D35721D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "c86ctl_mami", "..\..\c86ctl\c86ctl\prj\vc10\c86ctl.vcxproj", "{4B8BCF47-4D54-4802-9516-D5F75D35721D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

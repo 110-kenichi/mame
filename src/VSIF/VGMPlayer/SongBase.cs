@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -607,11 +608,18 @@ namespace zanac.VGMPlayer
         /// <param name="transferData"></param>
         /// <param name="saddr"></param>
         /// <param name="fp"></param>
-        protected void EnableDacYM2608(VsifClient comPort, bool enable)
+        protected void EnablePseudoDacYM2608(VsifClient comPort, bool enable)
         {
             deferredWriteOPNA_P1(comPort, 0x00, 3, 0x01);  //RESET
             if (enable)
             {
+                //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
+                //MAX Attenuation
+                byte[] adpcmdata = new byte[32];
+                for (int i = 0; i < adpcmdata.Length; i++)
+                    adpcmdata[i] = 0x80;
+                sendAdpcmDataYM2608(comPort, true, adpcmdata, 0, null);
+
                 //*
                 //ADPCM mode
                 deferredWriteOPNA_P1(comPort, 0x10, 0x17);   //ENA FLAG BRDY
@@ -630,14 +638,18 @@ namespace zanac.VGMPlayer
 
                 deferredWriteOPNA_P1(comPort, 0x0B, 0x00);   // Volume 0
 
-                //MAX Attenuation
-                deferredWriteOPNA_P1(comPort, 0x08, 0xff);
-                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
-                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
-                deferredWriteOPNA_P1(comPort, 0x08, 0x77);
-                deferredWriteOPNA_P1(comPort, 0x08, 0xff);
-                deferredWriteOPNA_P1(comPort, 0x08, 0x70);
-                deferredWriteOPNA_P1(comPort, 0x08, 0x80);
+                //playAdpcmDataYM2608(comPort, 0, 0, false);
+                //Thread.Sleep(1);
+                playAdpcmDataYM2608(comPort, 0, 0, false);
+
+                /*
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);  //255
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);  //255
+                deferredWriteOPNA_P1(comPort, 0x08, 0x70);  //112
+                deferredWriteOPNA_P1(comPort, 0x08, 0x80);  //128
                 //*/
 
                 /*/
@@ -651,6 +663,146 @@ namespace zanac.VGMPlayer
                 deferredWriteOPNA_P1(comPort, 0x0B, 0xff);   // Volume 
 
                 //*/
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        protected void EnableDacYM2608(VsifClient comPort, bool enable)
+        {
+            deferredWriteOPNA_P1(comPort, 0x00, 3, 0x01);  //RESET
+            if (enable)
+            {
+                deferredWriteOPNA_P1(comPort, 0x10, 0x1B);   //ENA FLAG EOS
+                deferredWriteOPNA_P1(comPort, 0x10, 0x80);   //RESET FLAGS
+                deferredWriteOPNA_P1(comPort, 0x06, 0xF4);   //16KHz
+                deferredWriteOPNA_P1(comPort, 0x07, 0x01);   //16KHz
+                deferredWriteOPNA_P1(comPort, 0x01, 0xCC);   //Sart
+                deferredWriteOPNA_P1(comPort, 0x0B, 0x1f);   // Volume 
+            }
+        }
+
+        protected void playAdpcmDataYM2608(VsifClient comPortOPNA, uint saddr, uint eaddr, bool loop)
+        {
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x1B); //CLEAR FLAGS
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80); //IRQ RESET
+
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x20); //ACCESS TO MEM
+
+            //pcm start
+            deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 5) & 0xff));
+            deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (5 + 8) & 0xff)));
+            //pcm end
+            deferredWriteOPNA_P1(comPortOPNA, 0x04, (byte)((eaddr >> 5) & 0xff));
+            deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)((eaddr >> (5 + 8)) & 0xff));
+            //limit
+            deferredWriteOPNA_P1(comPortOPNA, 0x0C, (byte)(0xff));
+            deferredWriteOPNA_P1(comPortOPNA, 0x0D, (byte)(0xff));
+
+            //KeyOn
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, (byte)(0x80 | 0x20 | (loop ? (byte)0x10 : (byte)0x00)));   //PLAY, ACCESS TO MEM, LOOP
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        protected void sendAdpcmDataYM2608(VsifClient comPortOPNA, bool ym2608_adpcmbit8, byte[] transferData, int saddr, FormProgress fp)
+        {
+            //File.WriteAllBytes(transferData.Length.ToString(), transferData);
+
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
+
+            //flag
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x13);   //CLEAR MASK
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);   //IRQ RESET
+                                                             //Ctrl1
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x60);   //REC, EXTMEM
+            //Ctrl2
+            //START
+            if (ym2608_adpcmbit8)
+            {
+                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x02);   //LR, 8bit DRAM
+                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 5) & 0xff));
+                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (5 + 8)) & 0xff));
+            }
+            else
+            {
+                deferredWriteOPNA_P1(comPortOPNA, 0x01, 0x00);   //LR, 1bit DRAM
+                deferredWriteOPNA_P1(comPortOPNA, 0x02, (byte)((saddr >> 2) & 0xff));
+                deferredWriteOPNA_P1(comPortOPNA, 0x03, (byte)((saddr >> (2 + 8)) & 0xff));
+            }
+            //STOP
+            deferredWriteOPNA_P1(comPortOPNA, 0x04, 0xff);
+            deferredWriteOPNA_P1(comPortOPNA, 0x05, 0xff);
+            //LIMIT
+            deferredWriteOPNA_P1(comPortOPNA, 0x0C, 0xff);
+            deferredWriteOPNA_P1(comPortOPNA, 0x0D, 0xff);
+
+            //Transfer
+            int len = transferData.Length;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int i = 0; i < len; i++)
+            {
+                deferredWriteOPNA_P1(comPortOPNA, 0x08, transferData[i]);
+
+                //HACK: WAIT
+                switch (comPortOPNA?.SoundModuleType)
+                {
+                    case VsifSoundModuleType.Spfm:
+                    case VsifSoundModuleType.SpfmLight:
+                    case VsifSoundModuleType.Gimic:
+                        comPortOPNA?.FlushDeferredWriteDataAndWait();
+                        break;
+                }
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    FormMain.TopForm.SetStatusText("YM2608: Transferring ADPCM(" + percentage + "%)");
+                    //fp.Percentage = percentage;
+                    comPortOPNA?.FlushDeferredWriteDataAndWait();
+                }
+                lastPercentage = percentage;
+                index++;
+                if (RequestedStat == SoundState.Stopped)
+                    break;
+                else updateStatusForDataTransfer();
+            }
+            FormMain.TopForm.SetStatusText("YM2608: Transferred ADPCM");
+
+            // Finish
+            deferredWriteOPNA_P1(comPortOPNA, 0x10, 0x80);
+            deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void updateStatusForDataTransfer()
+        {
+            if (RequestedStat == SoundState.Paused)
+            {
+                if (State != SoundState.Paused)
+                    State = SoundState.Paused;
+            }
+            else if (RequestedStat == SoundState.Freezed)
+            {
+                if (State != SoundState.Freezed)
+                    State = SoundState.Freezed;
+            }
+            else if (RequestedStat == SoundState.Playing)
+            {
+                if (State != SoundState.Playing)
+                    State = SoundState.Freezed;
             }
         }
 
@@ -788,16 +940,14 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                    //Set volume for pseudo DAC
                     comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
-                    //outputAdpcm(comPort, inputValue);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
                     comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, 0);
                     break;
                 case VsifSoundModuleType.Gimic:
-                    if(!comPortOPNA.Tag.ContainsKey("OPN3L"))
+                    if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
                         comPortOPNA.DeferredWriteData(0, (byte)adrs, (byte)dt, 0);
                     else
                         comPortOPNA.DeferredWriteData(3, (byte)adrs, (byte)dt, 0);
@@ -931,7 +1081,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="inputValue"></param>
-        protected void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
+        protected void DeferredWriteOPNA_PseudoDAC(VsifClient comPortOPNA, int inputValue)
         {
             if (Settings.Default.DisableDAC)
                 return;
@@ -950,7 +1100,6 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
                     comPortOPNA.DeferredWriteData(0x02, 0x0b, (byte)lastWriteDacValue, 0);
-                    //deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)(lastWriteDacValue - 0x80));
                     break;
                 case VsifSoundModuleType.Gimic:
                     if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
@@ -961,6 +1110,37 @@ namespace zanac.VGMPlayer
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="inputValue"></param>
+        protected void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
+        {
+            if (Settings.Default.DisableDAC)
+                return;
+
+            if (lastWriteDacValue == (byte)inputValue)
+                return;
+            lastWriteDacValue = (byte)inputValue;
+
+            switch (comPortOPNA.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                    deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)lastWriteDacValue);
+                    //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
+                case VsifSoundModuleType.SpfmLight:
+                case VsifSoundModuleType.Spfm:
+                    comPortOPNA.DeferredWriteData(0x01, 0x0e, (byte)lastWriteDacValue, 0);
+                    break;
+                case VsifSoundModuleType.Gimic:
+                    if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
+                        comPortOPNA.DeferredWriteData(1, 0x0e, (byte)lastWriteDacValue, 0);
+                    break;
+            }
+        }
 
         protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt, uint dclk)
         {

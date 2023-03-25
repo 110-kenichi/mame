@@ -186,7 +186,7 @@ namespace zanac.VGMPlayer
                     //ADPCM
                     deferredWriteOPNA_P1(comPortOPNA, 0x00, 1);
 
-                    EnableDacYM2608(comPortOPNA, false);
+                    EnablePseudoDacYM2608(comPortOPNA, false);
                 }
             }
 
@@ -365,7 +365,7 @@ namespace zanac.VGMPlayer
                         comPortOPNA.Tag["ProxyOPN2"] = true;
                         //Force OPN mode
                         deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
-                        EnableDacYM2608(comPortOPNA, true);
+                        EnablePseudoDacYM2608(comPortOPNA, true);
                     }
                 }
                 if (Settings.Default.DCSG_Enable)
@@ -808,7 +808,7 @@ namespace zanac.VGMPlayer
                                                     {
                                                         case 0x2a:
                                                             //output DAC
-                                                            DeferredWriteOPNA_DAC(comPortOPNA, dt);
+                                                            DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                             break;
                                                         case 0x2b:
                                                             //Enable DAC
@@ -956,7 +956,7 @@ namespace zanac.VGMPlayer
                                 }
                                 else if (comPortOPNA != null)
                                 {
-                                    DeferredWriteOPNA_DAC(comPortOPNA, dacData);
+                                    DeferredWriteOPNA_PseudoDAC(comPortOPNA, dacData);
                                 }
                                 streamWaitDelta += 44.1d / 14d;
                             }
