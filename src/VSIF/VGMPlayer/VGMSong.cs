@@ -1808,6 +1808,8 @@ namespace zanac.VGMPlayer
                                             if (adrs > 0xb6)
                                                 break;
 
+                                            dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+
                                             if (comPortOPN2 != null)
                                             {
                                                 switch (adrs)
@@ -2582,13 +2584,16 @@ namespace zanac.VGMPlayer
                                             //_chip.WritePort0(0x2A, _DACData[_DACOffset]);
                                             if (dacData != null && dacOffset < dacData.Count)
                                             {
+                                                byte dt = dacData[dacOffset];
+                                                dt = (byte)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+
                                                 if (comPortOPN2 != null)
                                                 {
-                                                    DeferredWriteOPN2_DAC(comPortOPN2, (byte)dacData[dacOffset]);
+                                                    DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
-                                                    DeferredWriteOPNA_PseudoDAC(comPortOPNA, (short)dacData[dacOffset]);
+                                                    DeferredWriteOPNA_PseudoDAC(comPortOPNA, (short)dt);
                                                 }
                                             }
                                             dacOffset++;
@@ -2822,6 +2827,7 @@ namespace zanac.VGMPlayer
                                                         {
                                                             var ddata = okim6258.decode(dd & 0xf);
                                                             //var ddata = decodeOpnaAdpcm(dd & 0xf);
+                                                            ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
                                                             if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
@@ -2842,6 +2848,7 @@ namespace zanac.VGMPlayer
                                                         {
                                                             var ddata = okim6258.decode(dd >> 4);
                                                             //var ddata = decodeOpnaAdpcm(dd >> 4);
+                                                            ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
                                                             if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
@@ -3053,6 +3060,7 @@ namespace zanac.VGMPlayer
                                             }
                                             else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
                                             {
+                                                data = (byte)Math.Round((double)data * (double)Settings.Default.DacVolume / 100d);
                                                 DeferredWriteOPNA_PseudoDAC(comPortOPNA, data);
                                             }
                                             streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
@@ -3065,6 +3073,8 @@ namespace zanac.VGMPlayer
                                                     {
                                                         var ddata = okim6258.decode(data & 0xf);
                                                         //var ddata = decodeOpnaAdpcm(data & 0xf);
+
+                                                        ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
                                                         if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
@@ -3084,6 +3094,8 @@ namespace zanac.VGMPlayer
                                                     {
                                                         var ddata = okim6258.decode(data >> 4);
                                                         //var ddata = decodeOpnaAdpcm(data >> 4);
+
+                                                        ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
                                                         if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {

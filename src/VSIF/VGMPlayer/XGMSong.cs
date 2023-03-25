@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using zanac.VGMPlayer;
 using zanac.MAmidiMEmo.Gimic;
+using System.Xml.Linq;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -808,6 +809,7 @@ namespace zanac.VGMPlayer
                                                     {
                                                         case 0x2a:
                                                             //output DAC
+                                                            dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
                                                             DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                             break;
                                                         case 0x2b:
@@ -948,14 +950,16 @@ namespace zanac.VGMPlayer
                                     dacData = sbyte.MaxValue;
                                 else if (dacData < sbyte.MinValue)
                                     dacData = sbyte.MinValue;
-                                dacData += 0x80;
 
                                 if (comPortOPN2 != null)
                                 {
+                                    dacData += 0x80;
                                     DeferredWriteOPN2_DAC(comPortOPN2, dacData);
                                 }
                                 else if (comPortOPNA != null)
                                 {
+                                    dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
+                                    dacData += 0x80;
                                     DeferredWriteOPNA_PseudoDAC(comPortOPNA, dacData);
                                 }
                                 streamWaitDelta += 44.1d / 14d;

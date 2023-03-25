@@ -873,5 +873,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["DisableDAC"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public decimal DacVolume {
+            get {
+                return ((decimal)(this["DacVolume"]));
+            }
+            set {
+                this["DacVolume"] = value;
+            }
+        }
     }
 }
