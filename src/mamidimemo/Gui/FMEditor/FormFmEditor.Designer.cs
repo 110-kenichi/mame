@@ -596,8 +596,8 @@
             // openFileDialogTone
             // 
             this.openFileDialogTone.DefaultExt = "*.muc";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX)|*.muc;*.dat;*.mwi;*.mml;*.fxb" +
-    ";*.gwi;*.bnk;*.syx";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX, FF, FFOPM)|*.muc;*.dat;*.mwi;*.mml;*.fxb" +
+    ";*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
             this.openFileDialogTone.Title = "Load tone file";
             // 

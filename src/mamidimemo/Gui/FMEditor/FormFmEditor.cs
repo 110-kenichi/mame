@@ -827,7 +827,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     case ".SYX":
                         tones = SyxReaderTX81Z.Read(file);
                         break;
-                }
+                    case ".FF":
+                        tones = FF.Reader(file, Option);
+                        break;
+                    case ".FFOPM":
+                        tones = FF.Reader(file, Option);
+                        break;
+}
             }
             catch (Exception ex)
             {
