@@ -147,7 +147,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Description("Ignore Note On velocity.")]
-        [DefaultValue(null)]
+        [DefaultValue(false)]
         [Category("MIDI")]
         public bool IgnoreVelocity
         {
