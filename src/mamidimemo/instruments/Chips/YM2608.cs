@@ -2130,10 +2130,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 break;
                         }
                         var v = CalcCurrentVolume();
+                        int velo = 1 + timbre.MDS.VelocitySensitivity;
                         foreach (int op in ops)
                         {
                             //$40+: total level
-                            parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
+                            parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
                         }
                         break;
                     case ToneType.SSG:
@@ -2900,9 +2901,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-
             #endregion
-
 
             [DataMember]
             [Category("Sound(ADPCM-B)")]

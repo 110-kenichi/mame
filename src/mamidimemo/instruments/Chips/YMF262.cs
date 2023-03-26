@@ -1017,6 +1017,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnVolumeUpdated()
             {
                 var v = CalcCurrentVolume();
+                int velo = 1 + timbre.MDS.VelocitySensitivity;
                 for (int op = 0; op < (lastALG <= 1 ? 2 : 4); op++)
                 {
                     YMF262Operator o = timbre.Ops[op];
@@ -1024,7 +1025,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (lastALG <= 1)
                     {
                         if (timbre.ALG == 1 || op == 1)
-                            parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                            parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                         else
                             parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                     }
@@ -1034,25 +1035,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case 2:
                                 if (op == 1)
-                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                                 else
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 3:
                                 if (op == 1 || op == 3)
-                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                                 else
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 4:
                                 if (op == 0 || op == 3)
-                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                                 else
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;
                             case 5:
                                 if (op == 0 || op == 2 || op == 3)
-                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / 3) - (byte)Math.Round(((63 * 2 / 3) - (o.TL * 2 / 3)) * v))));
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                                 else
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 break;

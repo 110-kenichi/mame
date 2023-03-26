@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using MathParserTK;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
@@ -11,6 +12,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using zanac.MAmidiMEmo.ComponentModel;
+using static zanac.MAmidiMEmo.Instruments.Chips.YMF262;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -125,6 +127,35 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (f_KeyOffDelay < 0)
                     f_KeyOffDelay = 0;
             }
+        }
+
+        private byte f_VelocitySensitivity;
+
+        [DataMember]
+        [Description("Velocity Sensitivity for FM Career")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(0, 3)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte VelocitySensitivity
+        {
+            get
+            {
+                return f_VelocitySensitivity;
+            }
+            set
+            {
+                f_VelocitySensitivity = (byte)(value & 7);
+            }
+        }
+
+        public virtual bool ShouldSerializeVelocitySensitivity()
+        {
+            return VelocitySensitivity != 0;
+        }
+
+        public virtual void ResetVelocitySensitivity()
+        {
+            VelocitySensitivity = 0;
         }
 
         [DataMember]

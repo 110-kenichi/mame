@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.8.0 Added VelocitySensitivity for FM Career on MidiDriverSettings.
+		★Default value is "0". "0" means linear sensitivity. "3" is default value of previous version.
 4.6.7.1 Fixed importing *.FF/*.FFOPM file.
         Fixed velocity is invalid.
 4.6.7.0 Supported importing *.FF/*.FFOPM file.

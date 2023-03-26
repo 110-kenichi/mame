@@ -1159,10 +1159,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
                 var v = CalcCurrentVolume();
+                int velo = 1 + timbre.MDS.VelocitySensitivity;
                 foreach (int op in ops)
                 {
                     //$40+: total level
-                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / 3) - Math.Round(((127 / 3) - (timbre.Ops[op].TL / 3)) * v)));
+                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
                 }
             }
 

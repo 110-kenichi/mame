@@ -1204,6 +1204,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         ops.Add(3);
                         break;
                 }
+                int velo = 1 + timbre.MDS.VelocitySensitivity;
                 foreach (int op in ops)
                 {
                     var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
@@ -1214,7 +1215,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tl = 127;
                     double vol = 0;
                     if (kvs < 0)
-                        vol = ((127 / 3) - Math.Round(((127 / 3) - (tl / 3)) * CalcCurrentVolume()));
+                        vol = ((127 / velo) - Math.Round(((127 / velo) - (tl / velo)) * CalcCurrentVolume()));
                     else
                         vol = (127 - Math.Round((127 - (tl + kvs)) * CalcCurrentVolume(true)));
                     //$60+: total level
@@ -1812,7 +1813,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(PMS));
                 }
             }
-
 
             [DataMember]
             [Category("Chip(Global)")]
