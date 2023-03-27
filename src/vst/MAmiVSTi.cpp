@@ -531,22 +531,22 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 		VstMidiEventBase* meb = (VstMidiEventBase*)(events->events[i]);
 		switch (meb->type)
 		{
-		case kVstMidiType:
-		{
-			VstMidiEvent* midievent = (VstMidiEvent*)meb;
+			case kVstMidiType:
+			{
+				VstMidiEvent* midievent = (VstMidiEvent*)meb;
 
-			m_rpcClient->async_call("SendMidiEvent",
-				(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
-			break;
-		}
-		case kVstSysExType:
-		{
-			VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
-			std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+				m_rpcClient->async_call("SendMidiEvent",
+					(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
+				break;
+			}
+			case kVstSysExType:
+			{
+				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
+				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
 
-			m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
-			break;
-		}
+				m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
+				break;
+			}
 		}
 	}
 

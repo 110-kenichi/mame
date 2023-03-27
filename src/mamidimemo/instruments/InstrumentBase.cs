@@ -1024,6 +1024,38 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("MIDI")]
+        [Description("FineTune (0 - 8192 - 16383) <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [Mask(16383)]
+        [CollectionDefaultValue((ushort)8192)]
+        public virtual ushort[] FineTunes
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeFineTunes()
+        {
+            foreach (var dt in FineTunes)
+            {
+                if (dt != 8192)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetFineTunes()
+        {
+            for (int i = 0; i < FineTunes.Length; i++)
+                FineTunes[i] = 8192;
+        }
+
         [JsonConverter(typeof(NoTypeConverterJsonConverter<ScaleTuning>))]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [InstLock]
@@ -2078,6 +2110,12 @@ namespace zanac.MAmidiMEmo.Instruments
                     8192, 8192, 8192,
                     8192, 8192, 8192,
                     8192, 8192, 8192, 8192};
+            FineTunes = new ushort[] {
+                    8192, 8192, 8192,
+                    8192, 8192, 8192,
+                    8192, 8192, 8192,
+                    8192, 8192, 8192,
+                    8192, 8192, 8192, 8192};
             PitchBendRanges = new byte[] {
                     2, 2, 2,
                     2, 2, 2,
@@ -2773,6 +2811,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         ModulationDepthRangesCent[i] = 0x40;
                         Portamentos[i] = 0;
                         PortamentoTimes[i] = 0;
+                        FineTunes[i] = 8192;
 
                         MonoMode[i] = 0;
                         PolyMode[i] = 0;
@@ -2860,6 +2899,11 @@ namespace zanac.MAmidiMEmo.Instruments
                         {
                             switch (RpnLsb[dataLsb.Channel])
                             {
+                                case 1: //Master Fine Tune
+                                    {
+                                        FineTunes[dataLsb.Channel] = (ushort)(((ushort)(DataMsb[dataLsb.Channel]) << 7) | (ushort)dataLsb.ControlValue);
+                                        break;
+                                    }
                                 case 0: //PitchBendRanges Cent
                                     {
                                         break;

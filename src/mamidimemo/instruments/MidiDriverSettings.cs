@@ -129,12 +129,11 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        private byte f_VelocitySensitivity;
+        private byte f_VelocitySensitivity = 2;
 
         [DataMember]
         [Description("Velocity Sensitivity for FM Career")]
-        [DefaultValue(0)]
-        [SlideParametersAttribute(0, 3)]
+        [SlideParametersAttribute(0, 7)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte VelocitySensitivity
         {
@@ -150,12 +149,12 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public virtual bool ShouldSerializeVelocitySensitivity()
         {
-            return VelocitySensitivity != 0;
+            return f_VelocitySensitivity != 2;
         }
 
         public virtual void ResetVelocitySensitivity()
         {
-            VelocitySensitivity = 0;
+            f_VelocitySensitivity = 2;
         }
 
         [DataMember]

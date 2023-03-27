@@ -68,6 +68,7 @@ private:
 	bool createSharedMemory();
 
 	bool m_streamBufferOverflowed;
+	bool silence;
 
 	CHAR* m_cpSharedMemory;
 	HANDLE m_hSharedMemory;
