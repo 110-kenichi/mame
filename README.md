@@ -1,4 +1,4 @@
-MAmidiMEmo 4.6.8.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.6.8.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -268,6 +268,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.8.1 (Experimentaly)Supported SE mode and 5 ch mode for YM2612.
+		(Experimentaly)Added MIDI ch equals FM ch mode for YM2612.
 4.6.8.0 Added VelocitySensitivity for FM Career TL on MidiDriverSettings.
 		  ★Default value is "2". "0" means Velocity equals TL. "3" is default value of previous version.
 		Improved latency of VSTi module for certain DAW.

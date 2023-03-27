@@ -126,6 +126,17 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Assign MIDI channel to hardware channel.\r\n" +
+            "Currently supported OPN2 only.")]
+        [DefaultValue(false)]
+        public bool AssignMIDIChtoSlotNum
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 
         /// </summary>

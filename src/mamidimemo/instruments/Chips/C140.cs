@@ -817,7 +817,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Description("Loop point enable")]
-            [SlideParametersAttribute(0, 1)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DefaultValue(false)]
             public bool LoopEnable
