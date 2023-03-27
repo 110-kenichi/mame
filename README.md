@@ -268,8 +268,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
-4.6.8.0 Added VelocitySensitivity for FM Career on MidiDriverSettings.
-		★Default value is "0". "0" means linear sensitivity. "3" is default value of previous version.
+4.6.8.0 Added VelocitySensitivity for FM Career TL on MidiDriverSettings.
+		  ★Default value is "2". "0" means Velocity equals TL. "3" is default value of previous version.
+		Improved latency of VSTi module for certain DAW.
+		Added FineTunes Property. FineTunes Property can change by RPN.
 4.6.7.1 Fixed importing *.FF/*.FFOPM file.
         Fixed velocity is invalid.
 4.6.7.0 Supported importing *.FF/*.FFOPM file.
@@ -287,7 +289,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		User DirectAccess API for G.I.M.I.C to avoid cache miss
 4.6.5.1 Fixed ADPCM volume cache for YM2608 for GIMIC.
 4.6.5.0 Supported GIMIC for YM2608 & YM2151.
-　　　　★Remove c86ctl.dll if exists on the MAmidiMEmo dir if you want to use the GIMIC for YM2608 & YM2151.★
+　　　　  ★Remove c86ctl.dll if exists on the MAmidiMEmo dir if you want to use the GIMIC for YM2608 & YM2151.★
 4.6.4.2 Supported ADPCM light wait mode for SPFM/SPFM Light to play DAC.
 4.6.4.1 Added Chip information area for VGMPlayer.
 4.6.4.0 Fixed MGS file playing not started for VGMPlayer.
