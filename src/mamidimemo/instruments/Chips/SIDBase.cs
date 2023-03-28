@@ -1598,9 +1598,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                         {
-                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
+                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter <= (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
-                            else
+                            else if (settings.DutyEnvelopesReleasePoint < 0)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
                         }
                     }
@@ -1636,9 +1636,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_resCounter < settings.ResonanceEnvelopesNums.Length)
                         {
-                            if (settings.ResonanceEnvelopesReleasePoint >= 0 && f_resCounter < (uint)settings.ResonanceEnvelopesReleasePoint)
+                            if (settings.ResonanceEnvelopesReleasePoint >= 0 && f_resCounter <= (uint)settings.ResonanceEnvelopesReleasePoint)
                                 f_resCounter = (uint)settings.ResonanceEnvelopesReleasePoint;
-                            else
+                            else if (settings.ResonanceEnvelopesReleasePoint < 0)
                                 f_resCounter = (uint)settings.ResonanceEnvelopesNums.Length;
 
                         }
@@ -1675,9 +1675,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_cutCounter < settings.CutOffEnvelopesNums.Length)
                         {
-                            if (settings.CutOffEnvelopesReleasePoint >= 0 && f_cutCounter < (uint)settings.CutOffEnvelopesReleasePoint)
+                            if (settings.CutOffEnvelopesReleasePoint >= 0 && f_cutCounter <= (uint)settings.CutOffEnvelopesReleasePoint)
                                 f_cutCounter = (uint)settings.CutOffEnvelopesReleasePoint;
-                            else
+                            else if (settings.CutOffEnvelopesReleasePoint < 0)
                                 f_cutCounter = (uint)settings.CutOffEnvelopesNums.Length;
                         }
                     }
@@ -1714,9 +1714,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_wavCounter >= settings.WaveFormEnvelopesNums.Length && f_wavCounter < (uint)settings.WaveFormEnvelopesReleasePoint)
                         {
-                            if (settings.WaveFormEnvelopesReleasePoint >= 0 && f_wavCounter < (uint)settings.WaveFormEnvelopesReleasePoint)
+                            if (settings.WaveFormEnvelopesReleasePoint >= 0 && f_wavCounter <= (uint)settings.WaveFormEnvelopesReleasePoint)
                                 f_wavCounter = (uint)settings.WaveFormEnvelopesReleasePoint;
-                            else
+                            else if (settings.WaveFormEnvelopesReleasePoint < 0)
                                 f_wavCounter = (uint)settings.WaveFormEnvelopesNums.Length;
                         }
                     }
@@ -1753,9 +1753,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_syncCounter >= settings.SyncEnvelopesNums.Length)
                         {
-                            if (settings.SyncEnvelopesReleasePoint >= 0 && f_syncCounter < (uint)settings.SyncEnvelopesReleasePoint)
+                            if (settings.SyncEnvelopesReleasePoint >= 0 && f_syncCounter <= (uint)settings.SyncEnvelopesReleasePoint)
                                 f_syncCounter = (uint)settings.SyncEnvelopesReleasePoint;
-                            else
+                            else if (settings.SyncEnvelopesReleasePoint < 0)
                                 f_syncCounter = (uint)settings.SyncEnvelopesNums.Length;
                         }
                     }
@@ -1792,9 +1792,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_ringCounter >= settings.RingEnvelopesNums.Length)
                         {
-                            if (settings.RingEnvelopesReleasePoint >= 0 && f_ringCounter < (uint)settings.RingEnvelopesReleasePoint)
+                            if (settings.RingEnvelopesReleasePoint >= 0 && f_ringCounter <= (uint)settings.RingEnvelopesReleasePoint)
                                 f_ringCounter = (uint)settings.RingEnvelopesReleasePoint;
-                            else
+                            else if (settings.RingEnvelopesReleasePoint < 0)
                                 f_ringCounter = (uint)settings.RingEnvelopesNums.Length;
 
                         }
@@ -1832,9 +1832,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_testCounter >= settings.TestEnvelopesNums.Length)
                         {
-                            if (settings.TestEnvelopesReleasePoint >= 0 && f_testCounter < (uint)settings.TestEnvelopesReleasePoint)
+                            if (settings.TestEnvelopesReleasePoint >= 0 && f_testCounter <= (uint)settings.TestEnvelopesReleasePoint)
                                 f_testCounter = (uint)settings.TestEnvelopesReleasePoint;
-                            else
+                            else if (settings.TestEnvelopesReleasePoint < 0)
                                 f_testCounter = (uint)settings.TestEnvelopesNums.Length;
                         }
                     }

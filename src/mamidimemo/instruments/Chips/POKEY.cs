@@ -1303,9 +1303,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                         {
-                            if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter < (uint)settings.ToneEnvelopesReleasePoint)
+                            if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter <= (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
-                            else
+                            else if (settings.ToneEnvelopesReleasePoint < 0)
                                 f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
                         }
                     }

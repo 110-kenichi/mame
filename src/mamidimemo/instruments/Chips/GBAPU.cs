@@ -1459,9 +1459,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                         {
-                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
+                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter <= (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
-                            else
+                            else if (settings.DutyEnvelopesReleasePoint < 0)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
                         }
                     }

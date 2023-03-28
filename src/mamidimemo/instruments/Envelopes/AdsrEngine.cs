@@ -20,15 +20,18 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         double outputLevel;
         double attackRate;
         double decayRate;
+        double sustainRate;
         double releaseRate;
         double attackCoef;
         double decayCoef;
+        double sustainCoef;
         double releaseCoef;
         double sustainLevel;
         double targetRatioA;
         double targetRatioDR;
         double attackBase;
         double decayBase;
+        double sustainBase;
         double releaseBase;
 
 
@@ -52,10 +55,11 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
         {
             SetAttackRate(0);
             SetDecayRate(0);
+            SetSustainRate(30);
             SetReleaseRate(30);
             SetSustainLevel(1.0);
             SetTargetRatioA(0.3);
-            SetTargetRatioDR(0.0001);
+            SetTargetRatioDR(0.01);
         }
 
         /// <summary>
@@ -78,6 +82,17 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             decayRate = rate * HighPrecisionTimer.TIMER_BASIC_1KHZ;
             decayCoef = calcCoef(rate, targetRatioDR);
             decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
+        }
+
+        /// <summary>
+        /// set sustain rate
+        /// </summary>
+        /// <param name="rate">[sec]</param>
+        public void SetSustainRate(double rate)
+        {
+            sustainRate = rate * HighPrecisionTimer.TIMER_BASIC_1KHZ;
+            sustainCoef = calcCoef(rate, targetRatioDR);
+            sustainBase = -targetRatioDR * (1.0 - sustainCoef);
         }
 
         /// <summary>
@@ -133,6 +148,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                 targetRatio = 0.000000001;  // -180 dB
             targetRatioDR = targetRatio;
             decayCoef = calcCoef(decayRate, targetRatioDR);
+            sustainCoef = calcCoef(sustainRate, targetRatioDR);
             releaseCoef = calcCoef(releaseRate, targetRatioDR);
             decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
             releaseBase = -targetRatioDR * (1.0 - releaseCoef);
@@ -165,6 +181,15 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
                     }
                     break;
                 case AdsrState.Sustain:
+                    if (sustainRate != 3600000)
+                    {
+                        outputLevel = sustainBase + outputLevel * sustainCoef;
+                        if (outputLevel <= 0.0)
+                        {
+                            outputLevel = 0.0;
+                            adsrState = AdsrState.SoundOff;
+                        }
+                    }
                     break;
                 case AdsrState.Release:
                     outputLevel = releaseBase + outputLevel * releaseCoef;

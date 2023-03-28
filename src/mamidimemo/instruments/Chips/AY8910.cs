@@ -1348,9 +1348,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_SoundType >= settings.SoundTypeEnvelopesNums.Length)
                         {
-                            if (settings.SoundTypeEnvelopesReleasePoint >= 0)
+                            if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType <= (uint)settings.SoundTypeEnvelopesReleasePoint)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
-                            else
+                            else if (settings.SoundTypeEnvelopesReleasePoint < 0)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }

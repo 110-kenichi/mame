@@ -178,6 +178,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 AdsrEngine = new AdsrEngine();
                 AdsrEngine.SetAttackRate(Math.Pow(10d * (127d - adsrs.AR) / 127d, 2));
                 AdsrEngine.SetDecayRate(Math.Pow(100d * (adsrs.DR / 127d), 2));
+                AdsrEngine.SetSustainRate(Math.Pow(60d * (adsrs.SR / 127d), 2));
                 AdsrEngine.SetReleaseRate(Math.Pow(60d * (adsrs.RR / 127d), 2));
                 AdsrEngine.SetSustainLevel((127d - adsrs.SL) / 127d);
                 AdsrEngine.Gate(true);

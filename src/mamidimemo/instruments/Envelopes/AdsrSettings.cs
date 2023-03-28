@@ -153,6 +153,29 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
         }
 
+        private byte f_SR = 127;
+
+        /// <summary>
+        /// Sustain Rate (0(min)-127(max))
+        /// </summary>
+        [DataMember]
+        [Category("Sound")]
+        [Description("Sound Driver Level Sustain Rate (0(none)-127(max))")]
+        [DefaultValue((byte)127)]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public byte SR
+        {
+            get
+            {
+                return f_SR;
+            }
+            set
+            {
+                f_SR = (byte)(value & 127);
+            }
+        }
+
         private byte f_RR = 48;
 
         /// <summary>

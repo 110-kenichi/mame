@@ -1299,26 +1299,30 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundingStarted && !onSnd.IsKeyOff)
+                        if (onSnd.IsSoundingStarted)
                         {
-                            onSnd.SoundOff();
+                            bool keyoff = onSnd.IsKeyOff;
+                            onSnd.Dispose();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
 
-                            //Store removed keyon event;
-                            bool konfound = false;
-                            for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
+                            if (!keyoff)
                             {
-                                if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                //Store removed keyon event;
+                                bool konfound = false;
+                                for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
                                 {
-                                    konfound = true;
-                                    break;
+                                    if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                    {
+                                        konfound = true;
+                                        break;
+                                    }
                                 }
+                                if (!konfound)
+                                    monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                             }
-                            if (!konfound)
-                                monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                         }
                     }
                 }
@@ -1549,25 +1553,29 @@ namespace zanac.MAmidiMEmo.Instruments
                     for (int i = 0; i < sameChSnds.Count - (mono - 1); i++)
                     {
                         var onSnd = sameChSnds[i];
-                        if (onSnd.IsSoundingStarted && !onSnd.IsKeyOff)
+                        if (onSnd.IsSoundingStarted)
                         {
-                            onSnd.SoundOff();
+                            bool keyoff = onSnd.IsKeyOff;
+                            onSnd.Dispose();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
 
-                            //Store removed keyon event;
-                            bool onfound = false;
-                            for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
+                            if (!keyoff)
                             {
-                                if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                //Store removed keyon event;
+                                bool onfound = false;
+                                for (int oni = 0; oni < monoNoteOnRemovedList.Count; oni++)
                                 {
-                                    onfound = true;
-                                    break;
+                                    if (monoNoteOnRemovedList[oni].NoteNumber == onSnd.NoteOnEvent.NoteNumber)
+                                    {
+                                        onfound = true;
+                                        break;
+                                    }
                                 }
+                                if (!onfound)
+                                    monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                             }
-                            if (!onfound)
-                                monoNoteOnRemovedList.Add(onSnd.NoteOnEvent);
                         }
                     }
                 }

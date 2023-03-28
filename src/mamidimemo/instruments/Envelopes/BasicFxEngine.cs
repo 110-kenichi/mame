@@ -126,9 +126,9 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
                     if (volumeCounter < settings.VolumeEnvelopesNums.Length)
                     {
-                        if (settings.VolumeEnvelopesReleasePoint >= 0 && volumeCounter < (uint)settings.VolumeEnvelopesReleasePoint)
+                        if (settings.VolumeEnvelopesReleasePoint >= 0 && volumeCounter <= (uint)settings.VolumeEnvelopesReleasePoint)
                             volumeCounter = (uint)settings.VolumeEnvelopesReleasePoint;
-                        else
+                        else if (settings.VolumeEnvelopesReleasePoint < 0)
                             volumeCounter = (uint)settings.VolumeEnvelopesNums.Length;
                     }
                 }
@@ -165,9 +165,9 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
                     if (pitchCounter < settings.PitchEnvelopesNums.Length)
                     {
-                        if (settings.PitchEnvelopesReleasePoint >= 0 && pitchCounter < (uint)settings.PitchEnvelopesReleasePoint)
+                        if (settings.PitchEnvelopesReleasePoint >= 0 && pitchCounter <= (uint)settings.PitchEnvelopesReleasePoint)
                             pitchCounter = (uint)settings.PitchEnvelopesReleasePoint;
-                        else
+                        else if (settings.PitchEnvelopesReleasePoint < 0)
                             pitchCounter = (uint)settings.PitchEnvelopesNums.Length;
                     }
                 }
@@ -214,9 +214,9 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
                     if (panCounter < settings.PanShiftEnvelopesNums.Length)
                     {
-                        if (settings.PanShiftEnvelopesReleasePoint >= 0 && panCounter < (uint)settings.PanShiftEnvelopesReleasePoint)
+                        if (settings.PanShiftEnvelopesReleasePoint >= 0 && panCounter <= (uint)settings.PanShiftEnvelopesReleasePoint)
                             panCounter = (uint)settings.PanShiftEnvelopesReleasePoint;
-                        else
+                        else if (settings.PanShiftEnvelopesReleasePoint < 0)
                             panCounter = (uint)settings.PanShiftEnvelopesNums.Length;
                     }
                 }
@@ -253,9 +253,9 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
 
                     if (arpCounter < settings.ArpEnvelopesNums.Length)
                     {
-                        if (settings.ArpEnvelopesReleasePoint >= 0 && arpCounter < (uint)settings.ArpEnvelopesReleasePoint)
+                        if (settings.ArpEnvelopesReleasePoint >= 0 && arpCounter <= (uint)settings.ArpEnvelopesReleasePoint)
                             arpCounter = (uint)settings.ArpEnvelopesReleasePoint;
-                        else
+                        else if(settings.ArpEnvelopesReleasePoint < 0)
                             arpCounter = (uint)settings.ArpEnvelopesNums.Length;
                     }
                 }

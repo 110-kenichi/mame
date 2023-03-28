@@ -298,6 +298,8 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
             {
                 InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
+                FormMain.AppliactionForm?.SaveWindowStatus();
+
                 var es = Program.SaveEnvironmentSettings();
                 string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
                 byte[] buf = Encoding.Unicode.GetBytes(StringCompressionUtility.Compress(data));
@@ -342,6 +344,11 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
                     throw;
 
                 MessageBox.Show(ex.ToString());
+
+                string text2 = StringCompressionUtility.Decompress(Encoding.Unicode.GetString(data, length));
+                string tmp = Path.GetTempFileName();
+                File.WriteAllText(tmp, text2);
+                MessageBox.Show($"Please send the {tmp} file for debugging.");
             }
         }
 

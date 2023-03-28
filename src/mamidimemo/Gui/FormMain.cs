@@ -327,6 +327,12 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            SaveWindowStatus();
+            base.OnClosing(e);
+        }
+
+        public void SaveWindowStatus()
+        {
             Settings.Default.MWinPort = toolStripComboBoxPort.SelectedIndex;
 
             Settings.Default.MWinProgNo = toolStripComboBoxProgNo.SelectedIndex;
@@ -342,7 +348,6 @@ namespace zanac.MAmidiMEmo.Gui
 
             Settings.Default.MediaList = new System.Collections.Specialized.StringCollection();
             Settings.Default.MediaList.AddRange(draggableListViewMediaList.Items.Cast<ListViewItem>().Select(item => item.Text).ToArray());
-            base.OnClosing(e);
         }
 
         private void PianoControl1_NoteOn(object sender, TaggedNoteOnEvent e)
@@ -1881,7 +1886,11 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void copyMAmiVSTiToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            betterFolderBrowserVSTi.RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string lastDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (!string.IsNullOrWhiteSpace(Settings.Default.LastVSTiFolder))
+                lastDir = Settings.Default.LastVSTiFolder;
+
+            betterFolderBrowserVSTi.RootFolder = lastDir;
             betterFolderBrowserVSTi.Title = Resources.SelectDAWFolder;
             var result = betterFolderBrowserVSTi.ShowDialog(this);
             if (result == DialogResult.OK)
@@ -1903,6 +1912,8 @@ namespace zanac.MAmidiMEmo.Gui
                         sw.WriteLine("[MAmi]");
                         sw.WriteLine($"MAmiDir = {Path.Combine(Program.MAmiDir, @"MAmidiMEmo.exe")}");
                     }
+
+                    Settings.Default.LastVSTiFolder = pluginDir;
 
                     MessageBox.Show(Resources.CopiedVSTi);
                 }

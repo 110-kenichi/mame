@@ -113,7 +113,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports Software and SPFM.")]
+            "Supports Software and SPFM/VSIF/G.I.M.I.C .")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
         public SoundEngineType SoundEngine
@@ -3200,9 +3200,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
                         {
-                            if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType < (uint)settings.SoundTypeEnvelopesReleasePoint)
+                            if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType <= (uint)settings.SoundTypeEnvelopesReleasePoint)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
-                            else
+                            else if (settings.SoundTypeEnvelopesReleasePoint < 0)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }

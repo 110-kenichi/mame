@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
 
 //https://www.plutiedev.com/ym2612-registers
@@ -95,6 +96,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private object sndEnginePtrLock = new object();
 
+        private IntPtr spfmPtr;
+
         private VsifClient vsifClient;
 
         private SoundEngineType f_SoundEngineType;
@@ -104,7 +107,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Select a sound engine type.\r\n" +
-            "Supports \"Software\" and \"VSIF - Genesis\"")]
+            "Supports \"Software\" and \"VSIF/SPFM\"")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2612))]
         public SoundEngineType SoundEngine
@@ -207,6 +210,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_P6_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
                         if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2612, (SC_CHIP_CLOCK)MasterClock);
+                        if (spfmPtr != IntPtr.Zero)
                         {
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
@@ -580,6 +596,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_P6_FTDI:
                             vsifClient.WriteData((byte)(0x10 + (slot / 3)), (byte)(address + (op * 4) + (slot % 3)), data, f_ftdiClkWidth);
                             break;
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, adrs, data, false);
+                            break;
                     }
                 }
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
@@ -659,8 +678,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager?.Dispose();
 
             lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                     vsifClient.Dispose();
+            }
 
             base.Dispose();
         }
@@ -1026,13 +1052,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if (parentModule.Ch3Mode == 1)
                     {
-                        return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 4, timbre.AssignMIDIChtoSlotNum ? note.Channel : -1, 0);
+                        var slot = timbre.AssignMIDIChtoSlotNum? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                        if (slot > 3)
+                            slot = -1;
+                        return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 4, slot, 0);
                     }
                     return (parentModule, -1);
                 }
                 else
                 {
-                    return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.Mode5ch ? 5 : 6, timbre.AssignMIDIChtoSlotNum ? note.Channel : -1, 0);
+                    var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                    if (slot > (parentModule.Mode5ch ? 5 : 6))
+                        slot = -1;
+                    return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.Mode5ch ? 5 : 6, slot, 0);
                 }
             }
 
@@ -2483,6 +2515,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_Genesis_FTDI,
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
+                    SoundEngineType.SPFM,
                 });
 
                 return sc;

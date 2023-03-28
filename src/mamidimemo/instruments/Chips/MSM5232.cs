@@ -1009,7 +1009,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_HarmonicsCounter < settings.HarmonicsEnvelopesNums.Length)
                         {
-                            if (settings.HarmonicsEnvelopesReleasePoint >= 0 && f_HarmonicsCounter < (uint)settings.HarmonicsEnvelopesReleasePoint)
+                            if (settings.HarmonicsEnvelopesReleasePoint >= 0 && f_HarmonicsCounter <= (uint)settings.HarmonicsEnvelopesReleasePoint)
                                 f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesReleasePoint;
                             else
                                 f_HarmonicsCounter = (uint)settings.HarmonicsEnvelopesNums.Length;

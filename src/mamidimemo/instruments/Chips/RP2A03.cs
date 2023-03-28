@@ -2959,9 +2959,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_dutyCounter < settings.DutyEnvelopesNums.Length)
                         {
-                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter < (uint)settings.DutyEnvelopesReleasePoint)
+                            if (settings.DutyEnvelopesReleasePoint >= 0 && f_dutyCounter <= (uint)settings.DutyEnvelopesReleasePoint)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesReleasePoint;
-                            else
+                            else if (settings.DutyEnvelopesReleasePoint < 0)
                                 f_dutyCounter = (uint)settings.DutyEnvelopesNums.Length;
                         }
                     }
@@ -2998,9 +2998,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_morphCounter < settings.MorphEnvelopesNums.Length)
                         {
-                            if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter < (uint)settings.MorphEnvelopesReleasePoint)
+                            if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter <= (uint)settings.MorphEnvelopesReleasePoint)
                                 f_morphCounter = (uint)settings.MorphEnvelopesReleasePoint;
-                            else
+                            else if (settings.MorphEnvelopesReleasePoint < 0)
                                 f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
                         }
                     }
@@ -3037,9 +3037,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_lfoFreqCounter < settings.LfoFreqEnvelopesNums.Length)
                         {
-                            if (settings.LfoFreqEnvelopesReleasePoint >= 0 && f_lfoFreqCounter < (uint)settings.LfoFreqEnvelopesReleasePoint)
+                            if (settings.LfoFreqEnvelopesReleasePoint >= 0 && f_lfoFreqCounter <= (uint)settings.LfoFreqEnvelopesReleasePoint)
                                 f_lfoFreqCounter = (uint)settings.LfoFreqEnvelopesReleasePoint;
-                            else
+                            else if (settings.LfoFreqEnvelopesReleasePoint < 0)
                                 f_lfoFreqCounter = (uint)settings.LfoFreqEnvelopesNums.Length;
 
                         }
@@ -3076,9 +3076,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_lfoGainCounter < settings.LfoGainEnvelopesNums.Length)
                         {
-                            if (settings.LfoGainEnvelopesReleasePoint >= 0 && f_lfoGainCounter < (uint)settings.LfoGainEnvelopesReleasePoint)
+                            if (settings.LfoGainEnvelopesReleasePoint >= 0 && f_lfoGainCounter <= (uint)settings.LfoGainEnvelopesReleasePoint)
                                 f_lfoGainCounter = (uint)settings.LfoGainEnvelopesReleasePoint;
-                            else
+                            else if (settings.LfoGainEnvelopesReleasePoint < 0)
                                 f_lfoGainCounter = (uint)settings.LfoGainEnvelopesNums.Length;
 
                         }
@@ -3115,9 +3115,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_lfoFreqMultiplyCounter < settings.LfoFreqMultiplyEnvelopesNums.Length)
                         {
-                            if (settings.LfoFreqMultiplyEnvelopesReleasePoint >= 0 && f_lfoFreqMultiplyCounter < (uint)settings.LfoFreqMultiplyEnvelopesReleasePoint)
+                            if (settings.LfoFreqMultiplyEnvelopesReleasePoint >= 0 && f_lfoFreqMultiplyCounter <= (uint)settings.LfoFreqMultiplyEnvelopesReleasePoint)
                                 f_lfoFreqMultiplyCounter = (uint)settings.LfoFreqMultiplyEnvelopesReleasePoint;
-                            else
+                            else if (settings.LfoFreqMultiplyEnvelopesReleasePoint < 0)
                                 f_lfoFreqMultiplyCounter = (uint)settings.LfoFreqMultiplyEnvelopesNums.Length;
                         }
                     }

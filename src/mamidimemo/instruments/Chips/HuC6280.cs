@@ -1549,7 +1549,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (f_lfoCounter < settings.MorphEnvelopesNums.Length)
                         {
-                            if (settings.MorphEnvelopesReleasePoint >= 0 && f_lfoCounter < (uint)settings.MorphEnvelopesReleasePoint)
+                            if (settings.MorphEnvelopesReleasePoint >= 0 && f_lfoCounter <= (uint)settings.MorphEnvelopesReleasePoint)
                                 f_lfoCounter = (uint)settings.MorphEnvelopesReleasePoint;
                             else
                                 f_lfoCounter = (uint)settings.MorphEnvelopesNums.Length;

@@ -27,7 +27,7 @@ using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
+using static zanac.MAmidiMEmo.Instruments.Chips.SN76496;
 
 //http://www.smspower.org/Development/SN76489
 //http://www.st.rim.or.jp/~nkomatsu/peripheral/SN76489.html
@@ -96,6 +96,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         private object sndEnginePtrLock = new object();
+
+        private IntPtr spfmPtr;
 
         private VsifClient vsifClient;
 
@@ -221,6 +223,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip((SoundChipType)SpfmSnType, (SC_CHIP_CLOCK)MasterClock);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
             PrepareSound();
@@ -266,6 +281,72 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return;
             }
             f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
+
+
+        private SpfmSnTypes f_SpfmSnType = SpfmSnTypes.DCSG_SN76489;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select SN type variation for SPFM")]
+        [DefaultValue(SpfmSnTypes.DCSG_SN76489)]
+        public SpfmSnTypes SpfmSnType
+        {
+            get => f_SpfmSnType;
+            set
+            {
+                if (f_SpfmSnType != value)
+                {
+                    f_SpfmSnType = value;
+                    setSoundEngine(SoundEngine);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum SpfmSnTypes
+        {
+            DCSG_SN76489 = SoundChipType.SC_TYPE_SN76489,
+            DCSG_SN76496 = SoundChipType.SC_TYPE_SN76496,
+            DCSG_315_5124 = SoundChipType.SC_TYPE_315_5124,
+        }
+
+        private uint f_MasterClock = 3579545;
+
+        /// <summary>
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Set Master Clock of this chip.")]
+        public uint MasterClock
+        {
+            get
+            {
+                return f_MasterClock;
+            }
+            set
+            {
+                if (f_MasterClock != value)
+                {
+                    f_MasterClock = value;
+                    SetClock(UnitNumber, (uint)value);
+                }
+            }
+        }
+
+        public bool ShouldSerializeMasterClock()
+        {
+            return MasterClock != 3579545;
+        }
+
+        public void ResetMasterClock()
+        {
+            MasterClock = (uint)3579545;
         }
 
         /// <summary>
@@ -376,6 +457,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_MSX_FTDI:
                             vsifClient.WriteData(0xF, 0, data, f_ftdiClkWidth);
                             break;
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, 0, data, false);
+                            break;
                     }
                 }
 
@@ -454,8 +538,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager?.Dispose();
 
             lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                     vsifClient.Dispose();
+            }
 
             base.Dispose();
         }
@@ -628,7 +719,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundType.PSG:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3);
+                            var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                            if (slot > 2)
+                                slot = -1;
+                            if (slot == -1)
+                            {
+                                if(timbre.PartialReserve3ch)
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2, slot, 0);
+                                else
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);
+                            }
+                            else
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);
                             break;
                         }
                     case SoundType.NOISE:
@@ -717,7 +819,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updatePsgVolume()
             {
-                byte fv = (byte)((14 - (int)Math.Round(14 * CalcCurrentVolume())) & 0xf);
+                byte fv = (byte)((15 - (int)Math.Round(15 * CalcCurrentVolume())) & 0xf);
 
                 parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | 0x10 | fv));
             }
@@ -727,7 +829,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateNoiseVolume()
             {
-                byte fv = (byte)((14 - (int)Math.Round(14 * CalcCurrentVolume())) & 0xf);
+                byte fv = (byte)((15 - (int)Math.Round(15 * CalcCurrentVolume())) & 0xf);
 
                 //var exp = parentModule.Expressions[NoteOnEvent.Channel] / 127d;
                 //var vol = parentModule.Volumes[NoteOnEvent.Channel] / 127d;
@@ -763,7 +865,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void updatePsgPitch()
             {
                 double freq = CalcCurrentFrequency();
-                freq = Math.Round(3579545 / (freq * 32));
+                freq = Math.Round(parentModule.MasterClock / (freq * 32));
                 if (freq > 0x3ff)
                     freq = 0x3ff;
                 var n = (ushort)freq;
@@ -778,30 +880,44 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             private void updateNoisePitch()
             {
-                double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
+                if (timbre.Use3chNoiseFreq)
+                {
+                    double freq = CalcCurrentFrequency();
+                    freq = Math.Round(parentModule.MasterClock / (freq * 32));
+                    if (freq > 0x3ff)
+                        freq = 0x3ff;
+                    var n = (ushort)freq;
+                    parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | 2 << 5 | n & 0xf));
+                    parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)((n >> 4) & 0x3f));
+                    parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | 3));
+                }
+                else
+                {
+                    double d = CalcCurrentPitchDeltaNoteNumber() * 63d;
 
-                int kf = 0;
-                if (d > 0)
-                    kf = (int)d % 63;
-                else if (d < 0)
-                    kf = 63 + ((int)d % 63);
+                    int kf = 0;
+                    if (d > 0)
+                        kf = (int)d % 63;
+                    else if (d < 0)
+                        kf = 63 + ((int)d % 63);
 
-                int noted = (int)d / 63;
-                if (d < 0)
-                    noted -= 1;
+                    int noted = (int)d / 63;
+                    if (d < 0)
+                        noted -= 1;
 
-                int nn = NoteOnEvent.NoteNumber;
-                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
-                int noteNum = nn + noted;
-                if (noteNum > 127)
-                    noteNum = 127;
-                else if (noteNum < 0)
-                    noteNum = 0;
+                    int nn = NoteOnEvent.NoteNumber;
+                    if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                        nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                    int noteNum = nn + noted;
+                    if (noteNum > 127)
+                        noteNum = 127;
+                    else if (noteNum < 0)
+                        noteNum = 0;
 
-                int v = noteNum % 4;
+                    int v = noteNum % 4;
 
-                parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
+                    parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
+                }
             }
 
 
@@ -867,6 +983,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private bool f_Use3chNoiseFreq;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("USe ch3 frequency as NOISE frequency")]
+            [DefaultValue(false)]
+            public bool Use3chNoiseFreq
+            {
+                get
+                {
+                    return f_Use3chNoiseFreq;
+                }
+                set
+                {
+                    f_Use3chNoiseFreq = value;
+                }
+            }
+
+
+            [DataMember]
+            [Category("Chip")]
+            [Description("NOISE partial reserve against with PSG.\r\n" +
+                "NOISE w/ Use3chNoiseFreq shared 3 ch with PSG." +
+                "So, you can choose whether to give priority to NOISE w/ Use3chNoiseFreq over PSG")]
+            [DefaultValue(false)]
+            public bool PartialReserve3ch
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -894,6 +1041,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -914,6 +1062,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,
                     SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.SPFM,
                });
 
                 return sc;
