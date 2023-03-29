@@ -268,8 +268,17 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.9.0 Added ADSR.SR property.
+        Fixed ADSR.SL for SN76489.
+		Fixed Software Envelope ReleasePoint when point is zero.
+		Added AssignMIDIChtoSlotNumOffset property for AssignMIDIChtoSlotNum.
+		Fixed MONO mode. When key on on mono mode ch, completele OFF the last note sound.
+		Reduced crashing while closing DAW.
+		(Preliminary) Added sin/sq/tri wave create button on the SW Envelope editor.
+		(Preliminary) Supported LegatoFootSwitch(CC#68). Enabled only MONO = 1 and RecentlyUsedSlot mode.
+		(Preliminary) Supported DAC PCM for YM2612 for REAL HARDWARE.
 4.6.8.1 (Experimentaly)Supported SE mode and 5 ch mode for YM2612.
-		(Experimentaly)Added MIDI ch equals FM ch mode for YM2612.
+		(Experimentaly)Added MIDI ch equals FM ch mode for YM2612 and DCSG( AssignMIDIChtoSlotNum property ).
 4.6.8.0 Added VelocitySensitivity for FM Career TL on MidiDriverSettings.
 		  ★Default value is "2". "0" means Velocity equals TL. "3" is default value of previous version.
 		Improved latency of VSTi module for certain DAW.

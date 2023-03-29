@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -27,6 +30,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 
 //https://www.plutiedev.com/ym2612-registers
 //http://www.smspower.org/maxim/Documents/YM2612#regb4
@@ -137,7 +141,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void setSoundEngine(SoundEngineType value)
         {
-            AllSoundOff();
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
 
             lock (sndEnginePtrLock)
             {
@@ -327,7 +339,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Global)")]
-        [Description("Use 5ch. And also enabled DAC mode.")]
+        [Description("Use 5ch. And also enable DAC mode.\r\n" +
+            "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
         public bool Mode5ch
         {
@@ -341,6 +354,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_Mode5ch = value;
                     Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(f_Mode5ch ? 0x80 : 0x00));
+                    if (value)
+                        pcmEngine.StartEngine();
+                    else
+                        pcmEngine.StopEngine();
                 }
             }
         }
@@ -616,6 +633,42 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //}
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dt"></param>
+        protected void DeferredWriteOPN2_DAC(uint unitNumber, byte[] dacData)
+        {
+            List<PortWriteData> list = new List<PortWriteData>();
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_Genesis:
+                    case SoundEngineType.VSIF_Genesis_Low:
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        foreach (var dd in dacData)
+                        {
+                            list.Add(new PortWriteData() { Type = 0, Address = 0x04, Data = 0x2a, Wait = f_ftdiClkWidth });
+                            list.Add(new PortWriteData() { Type = 0, Address = 0x08, Data = dd, Wait = f_ftdiClkWidth });
+                        }
+                        vsifClient.WriteData(list.ToArray());
+                        break;
+                    case SoundEngineType.VSIF_MSX_FTDI:
+                    case SoundEngineType.VSIF_P6_FTDI:
+                        foreach (var dd in dacData)
+                            list.Add(new PortWriteData() { Type = 0x14, Address = 0x2a, Data = dd, Wait = f_ftdiClkWidth });
+                        vsifClient.WriteData(list.ToArray());
+                        break;
+                    case SoundEngineType.SPFM:
+                        foreach (var dd in dacData)
+                            ScciManager.SetRegister(spfmPtr, 0x2a, dd, false);
+                        break;
+                }
+            }
+        }
+
         private const float DEFAULT_GAIN = 1.5f;
 
         public override bool ShouldSerializeGainLeft()
@@ -665,6 +718,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres = new YM2612Timbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
             for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
                 Timbres[i] = new YM2612Timbre();
+
+            pcmEngine = new PcmEngine(this);
+
             setPresetInstruments();
 
             this.soundManager = new YM2612SoundManager(this);
@@ -676,6 +732,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+            pcmEngine?.Dispose();
 
             lock (sndEnginePtrLock)
             {
@@ -882,6 +939,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             initGlobalRegisters();
         }
 
+        private bool ignoreUpdatePcmData;
+
         /// <summary>
         /// 
         /// </summary>
@@ -991,6 +1050,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private static SoundList<YM2612Sound> fmOnSounds = new SoundList<YM2612Sound>(6);
 
+            private static SoundList<YM2612Sound> pcmOnSounds = new SoundList<YM2612Sound>(1);
+
             private YM2612 parentModule;
 
             /// <summary>
@@ -1019,9 +1080,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         continue;
 
                     YM2612Sound snd = new YM2612Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot);
-                    fmOnSounds.Add(snd);
-
-                    FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
+                    switch (timbre.ToneType)
+                    {
+                        case ToneType.FM:
+                            fmOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn FM ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.PCM:
+                            pcmOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn PCM ch" + emptySlot + " " + note.ToString());
+                            break;
+                    }
                     rv.Add(snd);
                 }
                 for (int i = 0; i < rv.Count; i++)
@@ -1047,25 +1116,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <returns></returns>
             private (YM2612 inst, int slot) searchEmptySlot(YM2612Timbre timbre, TaggedNoteOnEvent note)
             {
+                var emptySlot = (parentModule, -1);
+
                 //return (parentModule, 1);
-                if (timbre.SeMode)
+                switch (timbre.ToneType)
                 {
-                    if (parentModule.Ch3Mode == 1)
-                    {
-                        var slot = timbre.AssignMIDIChtoSlotNum? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                        if (slot > 3)
-                            slot = -1;
-                        return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 4, slot, 0);
-                    }
-                    return (parentModule, -1);
+                    case ToneType.FM:
+                        {
+                            if (timbre.SeMode)
+                            {
+                                if (parentModule.Ch3Mode == 1)
+                                {
+                                    var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                                    if (slot > 3)
+                                        slot = -1;
+                                    return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 4, slot, 0);
+                                }
+                                return (parentModule, -1);
+                            }
+                            else
+                            {
+                                var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                                if (slot > (parentModule.Mode5ch ? 5 : 6))
+                                    slot = -1;
+                                return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.Mode5ch ? 5 : 6, slot, 0);
+                            }
+                        }
+                    case ToneType.PCM:
+                        {
+                            if (!parentModule.Mode5ch)
+                                break;
+                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, 1);
+                        }
                 }
-                else
-                {
-                    var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                    if (slot > (parentModule.Mode5ch ? 5 : 6))
-                        slot = -1;
-                    return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.Mode5ch ? 5 : 6, slot, 0);
-                }
+
+                return emptySlot;
             }
 
             internal override void ProcessAllSoundOff()
@@ -1081,8 +1166,327 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     for (int op = 0; op < 4; op++)
                         parentModule.Ym2612WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
+
+                parentModule.pcmEngine?.Stop();
             }
 
+
+        }
+
+        private PcmEngine pcmEngine;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PcmEngine : IDisposable
+        {
+            private object engineLockObject;
+
+            private object dataLockObject;
+
+            private AutoResetEvent autoResetEvent;
+
+            private bool stopEngineFlag;
+
+            private bool disposedValue;
+
+
+            private YM2612 ym2612;
+
+            private uint unitNumber;
+
+            private List<byte> deferredWriteData;
+
+            private SampleData currentSampleData;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PcmEngine(YM2612 ym2612)
+            {
+                this.ym2612 = ym2612;
+                unitNumber = ym2612.UnitNumber;
+                engineLockObject = new object();
+                dataLockObject = new object();
+                stopEngineFlag = true;
+                deferredWriteData = new List<byte>();
+                autoResetEvent = new AutoResetEvent(false);
+            }
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StartEngine()
+            {
+                if (stopEngineFlag)
+                {
+                    stopEngineFlag = false;
+                    currentSampleData = null;
+                    Thread t = new Thread(processDac);
+                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Start();
+
+                    t = new Thread(deferredWriteDataTask);
+                    t.Priority = ThreadPriority.Highest;
+                    t.Start();
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StopEngine()
+            {
+                stopEngineFlag = true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Play(YM2612Timbre pcmTimbre)
+            {
+                lock (engineLockObject)
+                {
+                    currentSampleData = new SampleData(pcmTimbre.PcmData, pcmTimbre.SampleRate);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Stop()
+            {
+                lock (engineLockObject)
+                {
+                    currentSampleData = null;
+                }
+            }
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceFrequency(out long frequency);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="address"></param>
+            /// <param name="data"></param>
+            private void deferredWriteDacData(byte data)
+            {
+                lock (dataLockObject)
+                {
+                    if (disposedValue)
+                        return;
+                    deferredWriteData.Add(data);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void deferredWriteDataTask()
+            {
+                try
+                {
+                    while (!stopEngineFlag)
+                    {
+                        if (disposedValue)
+                            break;
+
+                        byte[] dd;
+                        lock (dataLockObject)
+                        {
+                            if (deferredWriteData.Count == 0)
+                                continue;
+                            dd = deferredWriteData.ToArray();
+                            deferredWriteData.Clear();
+                        }
+                        if (dd.Length != 0)
+                            ym2612.DeferredWriteOPN2_DAC(unitNumber, dd);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void processDac()
+            {
+                double wait = 0;
+                double lastWaitRemain = 0;
+                double lastDiff = 0;
+
+                long freq, before, after;
+                QueryPerformanceFrequency(out freq);
+
+                QueryPerformanceCounter(out before);
+                while (!stopEngineFlag)
+                {
+                    if (disposedValue)
+                        break;
+
+                    QueryPerformanceCounter(out before);
+
+                    uint sampleRate = 0;
+
+                    if (wait <= 0)
+                    {
+                        short dacData = 0;
+                        bool playDac = false;
+                        lock (engineLockObject)
+                        {
+                            if (currentSampleData == null)
+                                continue;
+
+                            var d = currentSampleData.GetDacData();
+                            if (d == null)
+                                continue;
+
+                            dacData = d.Value;
+                            sampleRate = currentSampleData.SampleRate;
+                            playDac = true;
+                        }
+
+                        if (playDac)
+                        {
+                            if (dacData > byte.MaxValue)
+                                dacData = byte.MaxValue;
+
+                            deferredWriteDacData((byte)dacData);
+
+                            /* TODO:
+                            try
+                            {
+                                Program.SoundUpdating();
+                                Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
+                                Ym2612_write(unitNumber, (uint)1, (byte)dacData);
+                            }
+                            finally
+                            {
+                                Program.SoundUpdated();
+                            }
+                            */
+
+                            wait += 44100d / sampleRate;
+                        }
+                    }
+
+                    if (wait + lastWaitRemain <= 0)
+                        continue;
+
+                    lastWaitRemain = 0;
+
+                    QueryPerformanceCounter(out after);
+                    double pwait = wait + lastWaitRemain;
+                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                    {
+                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                        lastWaitRemain = -(lastDiff * 44.1 * 1000);
+                        lastWaitRemain = 0;
+                        wait = 0;
+                    }
+                    else
+                    {
+                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                            QueryPerformanceCounter(out after);
+                        wait = 0;
+                        lastWaitRemain = 0;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="disposing"></param>
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                        stopEngineFlag = true;
+
+                        autoResetEvent?.Dispose();
+                    }
+
+                    // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                    // TODO: 大きなフィールドを null に設定します
+                    disposedValue = true;
+                }
+            }
+
+            // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+            // ~PcmEngine()
+            // {
+            //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            //     Dispose(disposing: false);
+            // }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class SampleData
+        {
+            public byte[] PcmData
+            {
+                get;
+                private set;
+            }
+
+            public uint SampleRate
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="adress"></param>
+            /// <param name="size"></param>
+            public SampleData(byte[] pcmData, uint sampleRate)
+            {
+                PcmData = pcmData;
+                SampleRate = sampleRate;
+            }
+
+            private int index;
+
+            public void Restart()
+            {
+                index = 0;
+            }
+
+            public byte? GetDacData()
+            {
+                if (index >= PcmData.Length)
+                    return null;
+
+                return PcmData[index++];
+            }
         }
 
 
@@ -1119,166 +1523,192 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
-                var gs = timbre.GlobalSettings;
-                if (gs.Enable)
+                switch (timbre.ToneType)
                 {
-                    if (gs.LFOEN.HasValue)
-                        parentModule.LFOEN = gs.LFOEN.Value;
-                    if (gs.LFRQ.HasValue)
-                        parentModule.LFRQ = gs.LFRQ.Value;
-                }
+                    case ToneType.FM:
+                        {
+                            var gs = timbre.GlobalSettings;
+                            if (gs.Enable)
+                            {
+                                if (gs.LFOEN.HasValue)
+                                    parentModule.LFOEN = gs.LFOEN.Value;
+                                if (gs.LFRQ.HasValue)
+                                    parentModule.LFRQ = gs.LFRQ.Value;
+                            }
 
-                //
-                SetFmTimbre();
-                //Freq
-                OnPitchUpdated();
-                //Volume
-                OnVolumeUpdated();
-                //On
-                if (timbre.SeMode)
-                {
-                    byte op = (byte)(0x10 << Slot);
-                    parentModule.f_Ch3ModeKeyOn |= op;
-                    parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(parentModule.f_Ch3ModeKeyOn | (byte)(2 % 3)));
-                }
-                else
-                {
-                    uint reg = (uint)(Slot / 3) * 2;
-                    byte op = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
-                    parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(op | (reg << 1) | (byte)(Slot % 3)));
+                            //
+                            SetFmTimbre();
+                            //Freq
+                            OnPitchUpdated();
+                            //Volume
+                            OnVolumeUpdated();
+                            //On
+                            if (timbre.SeMode)
+                            {
+                                byte op = (byte)(0x10 << Slot);
+                                parentModule.f_Ch3ModeKeyOn |= op;
+                                parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(parentModule.f_Ch3ModeKeyOn | (byte)(2 % 3)));
+                            }
+                            else
+                            {
+                                uint reg = (uint)(Slot / 3) * 2;
+                                byte op = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
+                                parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(op | (reg << 1) | (byte)(Slot % 3)));
+                            }
+                            break;
+                        }
+                    case ToneType.PCM:
+                        {
+                            if (!parentModule.Mode5ch)
+                                break;
+                            parentModule.pcmEngine.Play(timbre);
+                            break;
+                        }
                 }
             }
 
 
             public override void OnSoundParamsUpdated()
             {
-
-                var gs = timbre.GlobalSettings;
-                if (gs.Enable)
+                switch (timbre.ToneType)
                 {
-                    if (gs.LFOEN.HasValue)
-                        parentModule.LFOEN = gs.LFOEN.Value;
-                    if (gs.LFRQ.HasValue)
-                        parentModule.LFRQ = gs.LFRQ.Value;
-                }
-                if (timbre.SeMode)
-                {
-                    int op = Slot;
-                    {
-                        //$30+: multiply and detune
-                        parentModule.Ym2612WriteData(unitNumber, 0x30, op, 2, (byte)((timbre.Ops[0].DT1 << 4 | timbre.Ops[0].MUL)));
-                        //$40+: total level
-                        switch (timbre.ALG)
+                    case ToneType.FM:
                         {
-                            case 0:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 1:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 2:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 3:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 4:
-                                if (op != 1 && op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 5:
-                                if (op == 4)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 6:
-                                if (op == 4)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
-                                break;
-                            case 7:
-                                break;
+
+                            var gs = timbre.GlobalSettings;
+                            if (gs.Enable)
+                            {
+                                if (gs.LFOEN.HasValue)
+                                    parentModule.LFOEN = gs.LFOEN.Value;
+                                if (gs.LFRQ.HasValue)
+                                    parentModule.LFRQ = gs.LFRQ.Value;
+                            }
+                            if (timbre.SeMode)
+                            {
+                                int op = Slot;
+                                {
+                                    //$30+: multiply and detune
+                                    parentModule.Ym2612WriteData(unitNumber, 0x30, op, 2, (byte)((timbre.Ops[0].DT1 << 4 | timbre.Ops[0].MUL)));
+                                    //$40+: total level
+                                    switch (timbre.ALG)
+                                    {
+                                        case 0:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 1:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 2:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 3:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 4:
+                                            if (op != 1 && op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 5:
+                                            if (op == 4)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 6:
+                                            if (op == 4)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                                            break;
+                                        case 7:
+                                            break;
+                                    }
+                                    //$50+: attack rate and rate scaling
+                                    parentModule.Ym2612WriteData(unitNumber, 0x50, op, 2, (byte)((timbre.Ops[0].RS << 6 | timbre.Ops[0].AR)));
+                                    //$60+: 1st decay rate and AM enable
+                                    parentModule.Ym2612WriteData(unitNumber, 0x60, op, 2, (byte)((timbre.Ops[0].AM << 7 | timbre.Ops[0].D1R)));
+                                    //$70+: 2nd decay rate
+                                    parentModule.Ym2612WriteData(unitNumber, 0x70, op, 2, (byte)timbre.Ops[0].D2R);
+                                    //$80+: release rate and sustain level
+                                    parentModule.Ym2612WriteData(unitNumber, 0x80, op, 2, (byte)((timbre.Ops[0].SL << 4 | timbre.Ops[0].RR)));
+                                    //$90+: SSG-EG
+                                    parentModule.Ym2612WriteData(unitNumber, 0x90, op, 2, (byte)timbre.Ops[0].SSG_EG);
+                                }
+                            }
+                            else
+                            {
+                                for (int op = 0; op < 4; op++)
+                                {
+                                    //$30+: multiply and detune
+                                    parentModule.Ym2612WriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                                    //$40+: total level
+                                    switch (timbre.ALG)
+                                    {
+                                        case 0:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 1:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 2:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 3:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 4:
+                                            if (op != 1 && op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 5:
+                                            if (op == 4)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 6:
+                                            if (op == 4)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 7:
+                                            break;
+                                    }
+                                    //$50+: attack rate and rate scaling
+                                    parentModule.Ym2612WriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                                    //$60+: 1st decay rate and AM enable
+                                    parentModule.Ym2612WriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                                    //$70+: 2nd decay rate
+                                    parentModule.Ym2612WriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
+                                    //$80+: release rate and sustain level
+                                    parentModule.Ym2612WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                                    //$90+: SSG-EG
+                                    parentModule.Ym2612WriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
+                                }
+                            }
+
+                            //$B0+: algorithm and feedback
+                            parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
+
+                            //On
+                            if (!IsKeyOff)
+                            {
+                                if (!timbre.SeMode)
+                                {
+                                    uint reg = (uint)(Slot / 3) * 2;
+                                    byte open = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
+                                    parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(Slot % 3)));
+                                }
+                            }
+                            break;
                         }
-                        //$50+: attack rate and rate scaling
-                        parentModule.Ym2612WriteData(unitNumber, 0x50, op, 2, (byte)((timbre.Ops[0].RS << 6 | timbre.Ops[0].AR)));
-                        //$60+: 1st decay rate and AM enable
-                        parentModule.Ym2612WriteData(unitNumber, 0x60, op, 2, (byte)((timbre.Ops[0].AM << 7 | timbre.Ops[0].D1R)));
-                        //$70+: 2nd decay rate
-                        parentModule.Ym2612WriteData(unitNumber, 0x70, op, 2, (byte)timbre.Ops[0].D2R);
-                        //$80+: release rate and sustain level
-                        parentModule.Ym2612WriteData(unitNumber, 0x80, op, 2, (byte)((timbre.Ops[0].SL << 4 | timbre.Ops[0].RR)));
-                        //$90+: SSG-EG
-                        parentModule.Ym2612WriteData(unitNumber, 0x90, op, 2, (byte)timbre.Ops[0].SSG_EG);
-                    }
-                }
-                else
-                {
-                    for (int op = 0; op < 4; op++)
-                    {
-                        //$30+: multiply and detune
-                        parentModule.Ym2612WriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                        //$40+: total level
-                        switch (timbre.ALG)
+                    case ToneType.PCM:
                         {
-                            case 0:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 1:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 2:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 3:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 4:
-                                if (op != 1 && op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 5:
-                                if (op == 4)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 6:
-                                if (op == 4)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 7:
-                                break;
+                            break;
                         }
-                        //$50+: attack rate and rate scaling
-                        parentModule.Ym2612WriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
-                        //$60+: 1st decay rate and AM enable
-                        parentModule.Ym2612WriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                        //$70+: 2nd decay rate
-                        parentModule.Ym2612WriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
-                        //$80+: release rate and sustain level
-                        parentModule.Ym2612WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
-                        //$90+: SSG-EG
-                        parentModule.Ym2612WriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
-                    }
                 }
 
-                //$B0+: algorithm and feedback
-                parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
-
-                //On
-                if (!IsKeyOff)
-                {
-                    if (!timbre.SeMode)
-                    {
-                        uint reg = (uint)(Slot / 3) * 2;
-                        byte open = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
-                        parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(open | (reg << 1) | (byte)(Slot % 3)));
-                    }
-                }
 
                 base.OnSoundParamsUpdated();
             }
@@ -1288,63 +1718,75 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                List<int> ops = new List<int>();
-                switch (timbre.ALG)
+                switch (timbre.ToneType)
                 {
-                    case 0:
-                        ops.Add(3);
-                        break;
-                    case 1:
-                        ops.Add(3);
-                        break;
-                    case 2:
-                        ops.Add(3);
-                        break;
-                    case 3:
-                        ops.Add(3);
-                        break;
-                    case 4:
-                        ops.Add(1);
-                        ops.Add(3);
-                        break;
-                    case 5:
-                        ops.Add(1);
-                        ops.Add(2);
-                        ops.Add(3);
-                        break;
-                    case 6:
-                        ops.Add(1);
-                        ops.Add(2);
-                        ops.Add(3);
-                        break;
-                    case 7:
-                        ops.Add(0);
-                        ops.Add(1);
-                        ops.Add(2);
-                        ops.Add(3);
-                        break;
-                }
-                var v = CalcCurrentVolume();
-                int velo = 1 + timbre.MDS.VelocitySensitivity;
-                if (timbre.SeMode)
-                {
-                    foreach (int op in ops)
-                    {
-                        if (op == Slot)
+                    case ToneType.FM:
                         {
-                            //$40+: total level
-                            parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
+                            List<int> ops = new List<int>();
+                            switch (timbre.ALG)
+                            {
+                                case 0:
+                                    ops.Add(3);
+                                    break;
+                                case 1:
+                                    ops.Add(3);
+                                    break;
+                                case 2:
+                                    ops.Add(3);
+                                    break;
+                                case 3:
+                                    ops.Add(3);
+                                    break;
+                                case 4:
+                                    ops.Add(1);
+                                    ops.Add(3);
+                                    break;
+                                case 5:
+                                    ops.Add(1);
+                                    ops.Add(2);
+                                    ops.Add(3);
+                                    break;
+                                case 6:
+                                    ops.Add(1);
+                                    ops.Add(2);
+                                    ops.Add(3);
+                                    break;
+                                case 7:
+                                    ops.Add(0);
+                                    ops.Add(1);
+                                    ops.Add(2);
+                                    ops.Add(3);
+                                    break;
+                            }
+                            var v = CalcCurrentVolume();
+                            int velo = 1 + timbre.MDS.VelocitySensitivity;
+                            if (timbre.SeMode)
+                            {
+                                foreach (int op in ops)
+                                {
+                                    if (op == Slot)
+                                    {
+                                        //$40+: total level
+                                        parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foreach (int op in ops)
+                                {
+                                    //$40+: total level
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
+                                }
+                            }
+
                             break;
                         }
-                    }
-                }
-                else
-                {
-                    foreach (int op in ops)
-                    {
-                        //$40+: total level
-                        parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)((127 / velo) - Math.Round(((127 / velo) - (timbre.Ops[op].TL / velo)) * v)));
-                    }
+                    case ToneType.PCM:
+                        {
+                            break;
+                        }
                 }
             }
 
@@ -1354,64 +1796,75 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                double d = CalcCurrentPitchDeltaNoteNumber();
-
-                int nn = NoteOnEvent.NoteNumber;
-                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
-                    nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
-                int noteNum = nn + (int)d;
-                if (noteNum > 127)
-                    noteNum = 127;
-                else if (noteNum < 0)
-                    noteNum = 0;
-                var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
-                var freq = convertFmFrequency(nnOn, 0);
-                var octave = nnOn.GetNoteOctave();
-
-                if (d != 0)
-                    freq += (convertFmFrequency(nnOn, (d < 0) ? -1 : +1) - freq) * Math.Abs(d - Math.Truncate(d));
-
-                if (octave < 0)
+                switch (timbre.ToneType)
                 {
-                    freq /= 2 * -octave;
-                    octave = 0;
-                }
-                else if (octave > 7)
-                {
-                    freq *= 2 * (octave - 7);
-                    if (freq > 0x7ff)
-                        freq = 0x7ff;
-                    octave = 7;
-                }
+                    case ToneType.FM:
+                        {
+                            double d = CalcCurrentPitchDeltaNoteNumber();
 
-                ushort dfreq = (ushort)Math.Round(freq);
-                octave = octave << 3;
-                if (timbre.SeMode)
-                {
-                    switch (Slot)
-                    {
-                        case 0:
-                            parentModule.Ym2612WriteData(unitNumber, 0xad, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
-                            parentModule.Ym2612WriteData(unitNumber, 0xa9, 0, 0, (byte)(0xff & dfreq), false);
+                            int nn = NoteOnEvent.NoteNumber;
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                                nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
+                            int noteNum = nn + (int)d;
+                            if (noteNum > 127)
+                                noteNum = 127;
+                            else if (noteNum < 0)
+                                noteNum = 0;
+                            var nnOn = new TaggedNoteOnEvent((SevenBitNumber)noteNum, (SevenBitNumber)127);
+                            var freq = convertFmFrequency(nnOn, 0);
+                            var octave = nnOn.GetNoteOctave();
+
+                            if (d != 0)
+                                freq += (convertFmFrequency(nnOn, (d < 0) ? -1 : +1) - freq) * Math.Abs(d - Math.Truncate(d));
+
+                            if (octave < 0)
+                            {
+                                freq /= 2 * -octave;
+                                octave = 0;
+                            }
+                            else if (octave > 7)
+                            {
+                                freq *= 2 * (octave - 7);
+                                if (freq > 0x7ff)
+                                    freq = 0x7ff;
+                                octave = 7;
+                            }
+
+                            ushort dfreq = (ushort)Math.Round(freq);
+                            octave = octave << 3;
+                            if (timbre.SeMode)
+                            {
+                                switch (Slot)
+                                {
+                                    case 0:
+                                        parentModule.Ym2612WriteData(unitNumber, 0xad, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
+                                        parentModule.Ym2612WriteData(unitNumber, 0xa9, 0, 0, (byte)(0xff & dfreq), false);
+                                        break;
+                                    case 1:
+                                        parentModule.Ym2612WriteData(unitNumber, 0xae, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
+                                        parentModule.Ym2612WriteData(unitNumber, 0xaa, 0, 0, (byte)(0xff & dfreq), false);
+                                        break;
+                                    case 2:
+                                        parentModule.Ym2612WriteData(unitNumber, 0xac, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
+                                        parentModule.Ym2612WriteData(unitNumber, 0xa8, 0, 0, (byte)(0xff & dfreq), false);
+                                        break;
+                                    case 3:
+                                        parentModule.Ym2612WriteData(unitNumber, 0xa6, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
+                                        parentModule.Ym2612WriteData(unitNumber, 0xa2, 0, 0, (byte)(0xff & dfreq), false);
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                parentModule.Ym2612WriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)), false);
+                                parentModule.Ym2612WriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq), false);
+                            }
                             break;
-                        case 1:
-                            parentModule.Ym2612WriteData(unitNumber, 0xae, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
-                            parentModule.Ym2612WriteData(unitNumber, 0xaa, 0, 0, (byte)(0xff & dfreq), false);
+                        }
+                    case ToneType.PCM:
+                        {
                             break;
-                        case 2:
-                            parentModule.Ym2612WriteData(unitNumber, 0xac, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
-                            parentModule.Ym2612WriteData(unitNumber, 0xa8, 0, 0, (byte)(0xff & dfreq), false);
-                            break;
-                        case 3:
-                            parentModule.Ym2612WriteData(unitNumber, 0xa6, 0, 0, (byte)(octave | ((dfreq >> 8) & 7)), false);
-                            parentModule.Ym2612WriteData(unitNumber, 0xa2, 0, 0, (byte)(0xff & dfreq), false);
-                            break;
-                    }
-                }
-                else
-                {
-                    parentModule.Ym2612WriteData(unitNumber, 0xa4, 0, Slot, (byte)(octave | ((dfreq >> 8) & 7)), false);
-                    parentModule.Ym2612WriteData(unitNumber, 0xa0, 0, Slot, (byte)(0xff & dfreq), false);
+                        }
                 }
 
                 base.OnPitchUpdated();
@@ -1430,13 +1883,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     pan = 0x1;
                 else
                     pan = 0x3;
-                if (timbre.SeMode)
+                switch (timbre.ToneType)
                 {
-                    parentModule.Ym2612WriteData(unitNumber, 0xB4, 0, 2, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
-                }
-                else
-                {
-                    parentModule.Ym2612WriteData(unitNumber, 0xB4, 0, Slot, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
+                    case ToneType.FM:
+                        {
+                            if (timbre.SeMode)
+                            {
+                                parentModule.Ym2612WriteData(unitNumber, 0xB4, 0, 2, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
+                            }
+                            else
+                            {
+                                parentModule.Ym2612WriteData(unitNumber, 0xB4, 0, Slot, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
+                            }
+                            break;
+                        }
+                    case ToneType.PCM:
+                        {
+                            if (!parentModule.Mode5ch)
+                                break;
+
+                            parentModule.Ym2612WriteData(unitNumber, 0xB4, 0, 5, (byte)(pan << 6 | (timbre.AMS << 4) | timbre.FMS));
+                            break;
+                        }
                 }
             }
 
@@ -1445,85 +1913,95 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetFmTimbre()
             {
-                if (timbre.SeMode)
+                switch (timbre.ToneType)
                 {
-                    int op = Slot;
-                    {
-                        //$30+: multiply and detune
-                        parentModule.Ym2612WriteData(unitNumber, 0x30, op, 2, (byte)((timbre.Ops[0].DT1 << 4 | timbre.Ops[0].MUL)));
-                        //$40+: total level
-                        switch (timbre.ALG)
+                    case ToneType.FM:
                         {
-                            case 0:
-                                if (op != 3)
+                            if (timbre.SeMode)
+                            {
+                                int op = Slot;
+                                {
+                                    //$30+: multiply and detune
+                                    parentModule.Ym2612WriteData(unitNumber, 0x30, op, 2, (byte)((timbre.Ops[0].DT1 << 4 | timbre.Ops[0].MUL)));
+                                    //$40+: total level
+                                    switch (timbre.ALG)
+                                    {
+                                        case 0:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 1:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 2:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 3:
+                                            if (op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 4:
+                                            if (op != 1 && op != 3)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 5:
+                                            if (op == 0)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 6:
+                                            if (op == 0)
+                                                parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                            break;
+                                        case 7:
+                                            break;
+                                    }
+                                    //$50+: attack rate and rate scaling
+                                    parentModule.Ym2612WriteData(unitNumber, 0x50, op, 2, (byte)((timbre.Ops[0].RS << 6 | timbre.Ops[0].AR)));
+                                    //$60+: 1st decay rate and AM enable
+                                    parentModule.Ym2612WriteData(unitNumber, 0x60, op, 2, (byte)((timbre.Ops[0].AM << 7 | timbre.Ops[0].D1R)));
+                                    //$70+: 2nd decay rate
+                                    parentModule.Ym2612WriteData(unitNumber, 0x70, op, 2, (byte)timbre.Ops[0].D2R);
+                                    //$80+: release rate and sustain level
+                                    parentModule.Ym2612WriteData(unitNumber, 0x80, op, 2, (byte)((timbre.Ops[0].SL << 4 | timbre.Ops[0].RR)));
+                                    //$90+: SSG-EG
+                                    parentModule.Ym2612WriteData(unitNumber, 0x90, op, 2, (byte)timbre.Ops[0].SSG_EG);
+                                }
+
+                                //$B0+: algorithm and feedback
+                                parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, 2, (byte)(timbre.FB << 3 | timbre.ALG));
+                            }
+                            else
+                            {
+                                for (int op = 0; op < 4; op++)
+                                {
+                                    //$30+: multiply and detune
+                                    parentModule.Ym2612WriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+                                    //$40+: total level
                                     parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 1:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 2:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 3:
-                                if (op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 4:
-                                if (op != 1 && op != 3)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 5:
-                                if (op == 0)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 6:
-                                if (op == 0)
-                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                                break;
-                            case 7:
-                                break;
+                                    //$50+: attack rate and rate scaling
+                                    parentModule.Ym2612WriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
+                                    //$60+: 1st decay rate and AM enable
+                                    parentModule.Ym2612WriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
+                                    //$70+: 2nd decay rate
+                                    parentModule.Ym2612WriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
+                                    //$80+: release rate and sustain level
+                                    parentModule.Ym2612WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
+                                    //$90+: SSG-EG
+                                    parentModule.Ym2612WriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
+                                }
+
+                                //$B0+: algorithm and feedback
+                                parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
+                            }
+                            break;
                         }
-                        //$50+: attack rate and rate scaling
-                        parentModule.Ym2612WriteData(unitNumber, 0x50, op, 2, (byte)((timbre.Ops[0].RS << 6 | timbre.Ops[0].AR)));
-                        //$60+: 1st decay rate and AM enable
-                        parentModule.Ym2612WriteData(unitNumber, 0x60, op, 2, (byte)((timbre.Ops[0].AM << 7 | timbre.Ops[0].D1R)));
-                        //$70+: 2nd decay rate
-                        parentModule.Ym2612WriteData(unitNumber, 0x70, op, 2, (byte)timbre.Ops[0].D2R);
-                        //$80+: release rate and sustain level
-                        parentModule.Ym2612WriteData(unitNumber, 0x80, op, 2, (byte)((timbre.Ops[0].SL << 4 | timbre.Ops[0].RR)));
-                        //$90+: SSG-EG
-                        parentModule.Ym2612WriteData(unitNumber, 0x90, op, 2, (byte)timbre.Ops[0].SSG_EG);
-                    }
-
-                    //$B0+: algorithm and feedback
-                    parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, 2, (byte)(timbre.FB << 3 | timbre.ALG));
+                    case ToneType.PCM:
+                        {
+                            break;
+                        }
                 }
-                else
-                {
-                    for (int op = 0; op < 4; op++)
-                    {
-                        //$30+: multiply and detune
-                        parentModule.Ym2612WriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                        //$40+: total level
-                        parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
-                        //$50+: attack rate and rate scaling
-                        parentModule.Ym2612WriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
-                        //$60+: 1st decay rate and AM enable
-                        parentModule.Ym2612WriteData(unitNumber, 0x60, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
-                        //$70+: 2nd decay rate
-                        parentModule.Ym2612WriteData(unitNumber, 0x70, op, Slot, (byte)timbre.Ops[op].D2R);
-                        //$80+: release rate and sustain level
-                        parentModule.Ym2612WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].SL << 4 | timbre.Ops[op].RR)));
-                        //$90+: SSG-EG
-                        parentModule.Ym2612WriteData(unitNumber, 0x90, op, Slot, (byte)timbre.Ops[op].SSG_EG);
-                    }
-
-                    //$B0+: algorithm and feedback
-                    parentModule.Ym2612WriteData(unitNumber, 0xB0, 0, Slot, (byte)(timbre.FB << 3 | timbre.ALG));
-                }
-
                 OnPanpotUpdated();
             }
 
@@ -1534,16 +2012,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.SoundOff();
 
-                if (timbre.SeMode)
+                switch (timbre.ToneType)
                 {
-                    int reg = 0x10 << Slot;
-                    parentModule.f_Ch3ModeKeyOn = (byte)(~reg & parentModule.f_Ch3ModeKeyOn);
-                    parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(parentModule.f_Ch3ModeKeyOn | (byte)(2 % 3)));
-                }
-                else
-                {
-                    uint reg = (uint)(Slot / 3) * 2;
-                    parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(Slot % 3)));
+                    case ToneType.FM:
+                        {
+                            if (timbre.SeMode)
+                            {
+                                int reg = 0x10 << Slot;
+                                parentModule.f_Ch3ModeKeyOn = (byte)(~reg & parentModule.f_Ch3ModeKeyOn);
+                                parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(parentModule.f_Ch3ModeKeyOn | (byte)(2 % 3)));
+                            }
+                            else
+                            {
+                                uint reg = (uint)(Slot / 3) * 2;
+                                parentModule.Ym2612WriteData(unitNumber, 0x28, 0, 0, (byte)(0x00 | (reg << 1) | (byte)(Slot % 3)));
+                            }
+                            break;
+                        }
+                    case ToneType.PCM:
+                        {
+                            parentModule.pcmEngine?.Stop();
+                            break;
+                        }
                 }
             }
 
@@ -1575,6 +2065,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class YM2612Timbre : TimbreBase
         {
+            [DataMember]
+            [Category("Sound")]
+            [Description("Sound Type")]
+            [DefaultValue(ToneType.FM)]
+            public ToneType ToneType
+            {
+                get;
+                set;
+            }
+
             #region FM Synth
 
             [Category("Sound")]
@@ -1839,6 +2339,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             #endregion
 
+            #region Ops
 
             /// <summary>
             /// 
@@ -2002,6 +2503,102 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(FMS));
                 }
             }
+
+            #endregion
+
+
+            #region PCM
+
+            private byte[] f_PcmData = new byte[0];
+
+            [TypeConverter(typeof(TypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 0)]
+            public byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    f_PcmData = value;
+                }
+            }
+
+            public bool ShouldSerializePcmData()
+            {
+                return PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                PcmData = new byte[0];
+            }
+
+            /*
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set PCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "440")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 440;
+            */
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set PCM samplerate [Hz]")]
+            [DefaultValue(typeof(uint), "14000")]
+            [SlideParametersAttribute(4000, 14000)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 14000;
+
+            //[DataMember]
+            //[Category("Sound(PCM)")]
+            //[Description("Set loop point (0 - 65535")]
+            //[DefaultValue(typeof(ushort), "0")]
+            //[SlideParametersAttribute(0, 65535)]
+            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            //public ushort LoopPoint
+            //{
+            //    get;
+            //    set;
+            //}
+
+            //private bool f_LoopEnable;
+
+            //[DataMember]
+            //[Category("Sound(PCM)")]
+            //[Description("Loop point enable")]
+            //[SlideParametersAttribute(0, 1)]
+            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            //[DefaultValue(false)]
+            //public bool LoopEnable
+            //{
+            //    get
+            //    {
+            //        return f_LoopEnable;
+            //    }
+            //    set
+            //    {
+            //        f_LoopEnable = value;
+            //    }
+            //}
+
+            #endregion
+
 
             [DataMember]
             [Category("Chip")]
@@ -2557,7 +3154,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum ToneType
+        {
+            FM,
+            PCM,
+        }
 
         private class EnumConverterSoundEngineTypeYM2612 : EnumConverter<SoundEngineType>
         {
