@@ -83,6 +83,12 @@ namespace zanac.MAmidiMEmo.Gui
             checkBoxTransparent_CheckedChanged(null, null);
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            checkBoxTransparent.Focus();
+            base.OnShown(e);
+        }
+
         /// <summary>
         /// 
         /// </summary>

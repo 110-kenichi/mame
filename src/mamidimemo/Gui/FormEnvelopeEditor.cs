@@ -69,6 +69,16 @@ namespace zanac.MAmidiMEmo.Gui
         /// 
         /// </summary>
         /// <param name="e"></param>
+        protected override void OnShown(EventArgs e)
+        {
+            numericUpDown1.Focus();
+            base.OnShown(e);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);

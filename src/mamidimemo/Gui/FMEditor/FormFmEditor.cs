@@ -144,6 +144,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            toolStripComboBoxCh.Focus();
+            base.OnShown(e);
+        }
+
         private class TimbreItem
         {
             public TimbreBase Timbre

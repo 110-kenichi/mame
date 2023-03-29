@@ -462,6 +462,8 @@
             this.metroTextBoxTarget.MaxLength = 32767;
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
             this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxTarget.SelectedText = "";
             this.metroTextBoxTarget.SelectionLength = 0;
@@ -596,8 +598,8 @@
             // openFileDialogTone
             // 
             this.openFileDialogTone.DefaultExt = "*.muc";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX, FF, FFOPM)|*.muc;*.dat;*.mwi;*.mml;*.fxb" +
-    ";*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
+            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX, FF, FFOPM)|*.muc;*.dat;*.mwi;" +
+    "*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
             this.openFileDialogTone.SupportMultiDottedExtensions = true;
             this.openFileDialogTone.Title = "Load tone file";
             // 
@@ -700,7 +702,6 @@
             this.Name = "FormFmEditor";
             this.Padding = new System.Windows.Forms.Padding(9, 94, 9, 15);
             this.ShowIcon = false;
-            this.ShowInTaskbar = true;
             this.Text = "FM Synthesis Editor";
             this.panelPiano.ResumeLayout(false);
             this.panelPiano.PerformLayout();
