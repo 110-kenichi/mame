@@ -1344,14 +1344,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.Ym2151WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
                 for (int op = 0; op < 4; op++)
                 {
-                    parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
-                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
-                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
-                    if (kvs > 0)
-                        tl += kvs;
-                    if (tl > 127)
-                        tl = 127;
-                    parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                            if (op != 3)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 1:
+                            if (op != 3)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 2:
+                            if (op != 3)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 3:
+                            if (op != 3)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 4:
+                            if (op != 1 && op != 3)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 5:
+                            if (op == 0)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 6:
+                            if (op == 0)
+                                parentModule.Ym2151WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 7:
+                            break;
+                    }
                     parentModule.Ym2151WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     parentModule.Ym2151WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].D1R)));
                     parentModule.Ym2151WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].DT2 << 6 | timbre.Ops[op].D2R)));

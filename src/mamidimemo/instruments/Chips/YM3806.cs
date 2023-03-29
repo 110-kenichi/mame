@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -945,14 +946,41 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     parentModule.Ym3806WriteData(unitNumber, 0x40, op, Slot, (byte)(timbre.Ops[op].DT1));
                     parentModule.Ym3806WriteData(unitNumber, 0x40, op, Slot, (byte)(0x80 + timbre.Ops[op].MUL));
 
-                    var tl = timbre.Ops[op].TL + timbre.Ops[op].GetLSAttenuationValue(NoteOnEvent.NoteNumber);
-                    int kvs = timbre.Ops[op].GetKvsAttenuationValue(NoteOnEvent.Velocity);
-                    if (kvs > 0)
-                        tl += kvs;
-                    if (tl > 127)
-                        tl = 127;
-
-                    parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)tl);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                            if (op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 1:
+                            if (op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 2:
+                            if (op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 3:
+                            if (op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 4:
+                            if (op != 2 && op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 5:
+                            if (op == 0)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 6:
+                            if (op == 0)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 7:
+                            if (op != 2 && op != 3)
+                                parentModule.Ym3806WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                    }
                     parentModule.Ym3806WriteData(unitNumber, 0x80, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     parentModule.Ym3806WriteData(unitNumber, 0xa0, op, Slot, (byte)((timbre.Ops[op].AM << 7 | timbre.Ops[op].OSCW << 6 | timbre.Ops[op].D1R)));
                     parentModule.Ym3806WriteData(unitNumber, 0xc0, op, Slot, (byte)((timbre.Ops[op].D2R)));

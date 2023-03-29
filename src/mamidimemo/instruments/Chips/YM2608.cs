@@ -32,6 +32,7 @@ using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.VSIF;
 using File = System.IO.File;
 using Path = System.IO.Path;
+using System.Diagnostics;
 
 //https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
@@ -1820,10 +1821,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             //
                             setFmTimbre();
+
                             //Freq
                             OnPitchUpdated();
+
                             //Volume
                             OnVolumeUpdated();
+
                             //On
                             uint reg = (uint)(Slot / 3) * 2;
                             byte op = (byte)(timbre.Ops[0].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[2].Enable << 6 | timbre.Ops[3].Enable << 7);
@@ -2396,7 +2400,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //$30+: multiply and detune
                     parentModule.YM2608WriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     //$40+: total level
-                    parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                            if(op != 3)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 1:
+                            if (op != 3)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 2:
+                            if (op != 3)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 3:
+                            if (op != 3)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 4:
+                            if (op != 1 && op != 3)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 5:
+                            if (op == 0)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 6:
+                            if (op == 0)
+                                parentModule.YM2608WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 7:
+                            break;
+                    }
                     //$50+: attack rate and rate scaling
                     parentModule.YM2608WriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     //$60+: 1st decay rate and AM enable

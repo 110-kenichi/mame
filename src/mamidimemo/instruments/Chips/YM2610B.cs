@@ -1576,7 +1576,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //$30+: multiply and detune
                     YM2610BWriteData(unitNumber, 0x30, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
                     //$40+: total level
-                    YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                    switch (timbre.ALG)
+                    {
+                        case 0:
+                            if (op != 3)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 1:
+                            if (op != 3)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 2:
+                            if (op != 3)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 3:
+                            if (op != 3)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 4:
+                            if (op != 1 && op != 3)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 5:
+                            if (op == 0)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 6:
+                            if (op == 0)
+                                YM2610BWriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                            break;
+                        case 7:
+                            break;
+                    }
                     //$50+: attack rate and rate scaling
                     YM2610BWriteData(unitNumber, 0x50, op, Slot, (byte)((timbre.Ops[op].RS << 6 | timbre.Ops[op].AR)));
                     //$60+: 1st decay rate and AM enable

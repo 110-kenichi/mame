@@ -1452,7 +1452,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         //$30+: multiply and detune
                         parentModule.Ym2612WriteData(unitNumber, 0x30, op, 2, (byte)((timbre.Ops[0].DT1 << 4 | timbre.Ops[0].MUL)));
                         //$40+: total level
-                        parentModule.Ym2612WriteData(unitNumber, 0x40, op, 2, (byte)timbre.Ops[0].TL);
+                        switch (timbre.ALG)
+                        {
+                            case 0:
+                                if (op != 3)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 1:
+                                if (op != 3)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 2:
+                                if (op != 3)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 3:
+                                if (op != 3)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 4:
+                                if (op != 1 && op != 3)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 5:
+                                if (op == 0)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 6:
+                                if (op == 0)
+                                    parentModule.Ym2612WriteData(unitNumber, 0x40, op, Slot, (byte)timbre.Ops[op].TL);
+                                break;
+                            case 7:
+                                break;
+                        }
                         //$50+: attack rate and rate scaling
                         parentModule.Ym2612WriteData(unitNumber, 0x50, op, 2, (byte)((timbre.Ops[0].RS << 6 | timbre.Ops[0].AR)));
                         //$60+: 1st decay rate and AM enable
@@ -1781,6 +1813,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             }
+
+            private byte f_SeModeOperator;
+
+            /// <summary>
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [DefaultValue((byte)0)]
+            [Description("Set SE mode operator (0:Free 1～7:Force set operator bit)")]
+            [SlideParametersAttribute(0, 7)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public byte SeModeOperator
+            {
+                get
+                {
+                    return f_SeModeOperator;
+                }
+                set
+                {
+                    f_SeModeOperator = (byte)(value & 7);
+                }
+            }
+
 
             #endregion
 
