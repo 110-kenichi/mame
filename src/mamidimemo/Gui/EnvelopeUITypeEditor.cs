@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -54,10 +55,12 @@ namespace zanac.MAmidiMEmo.Gui
             if (editorService == null)
                 return value;
 
+            AbstractFxSettingsBase fx = context.Instance as AbstractFxSettingsBase;
+
             EnvelopeEditorAttribute env = (EnvelopeEditorAttribute)context.PropertyDescriptor.Attributes[typeof(EnvelopeEditorAttribute)];
 
             // CurrencyValueEditorForm を使用したプロパティエディタの表示
-            using (FormEnvelopeEditor frm = new FormEnvelopeEditor((string)value, env.Min, env.Max))
+            using (FormEnvelopeEditor frm = new FormEnvelopeEditor(fx, (string)value, env.Min, env.Max))
             {
                 frm.ValueChanged += Frm_ValueChangedByte;
                 frm.Tag = context;
@@ -95,7 +98,6 @@ namespace zanac.MAmidiMEmo.Gui
                     //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
                 }
             }
-
         }
     }
 }

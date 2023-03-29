@@ -302,7 +302,8 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
 
                 var es = Program.SaveEnvironmentSettings();
                 string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
-                byte[] buf = Encoding.Unicode.GetBytes(StringCompressionUtility.Compress(data));
+                string comdata = StringCompressionUtility.Compress(data);
+                byte[] buf = Encoding.Unicode.GetBytes(comdata);
 
                 if (saveDataPtr != IntPtr.Zero)
                     Marshal.FreeHGlobal(saveDataPtr);
@@ -345,10 +346,22 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
 
                 MessageBox.Show(ex.ToString());
 
-                string text2 = StringCompressionUtility.Decompress(Encoding.Unicode.GetString(data, length));
-                string tmp = Path.GetTempFileName();
-                File.WriteAllText(tmp, text2);
-                MessageBox.Show($"Please send the {tmp} file for debugging.");
+                try
+                {
+                    string text2 = Encoding.Unicode.GetString(data, length);
+                    string tmp = Path.GetTempFileName();
+                    File.WriteAllText(tmp, text2);
+                    MessageBox.Show($"Please send the {tmp} file for debugging.");
+                }
+                catch (Exception ex2)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show(ex2.ToString());
+                }
             }
         }
 

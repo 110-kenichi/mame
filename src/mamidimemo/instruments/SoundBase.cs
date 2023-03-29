@@ -136,8 +136,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             if (!IsDisposed)
             {
-                KeyOff();
-                SoundOff();
+                if (!IsSoundOff)
+                    SoundOff();
             }
 
             IsDisposed = true;
@@ -241,6 +241,26 @@ namespace zanac.MAmidiMEmo.Instruments
         /// サウンドオフ
         /// </summary>
         public virtual void SoundOff()
+        {
+            if (!IsKeyOff)
+            {
+                IsKeyOff = true;
+                AdsrEngine?.Gate(false);
+
+                SoundKeyOff?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
+            }
+
+            IsSoundOff = true;
+
+            SoundOffTime = soundOffTimeCounter++;
+
+            SoundSoundOff?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// サウンドオフ
+        /// </summary>
+        public virtual void FakeSoundOff()
         {
             if (!IsKeyOff)
             {

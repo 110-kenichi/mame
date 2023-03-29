@@ -1955,27 +1955,37 @@ namespace zanac.MAmidiMEmo.Gui
                 // get category for selected item
                 if (gi != null)
                 {
-                    GridItem pgi = gi.Parent;
-                    if (pgi != null && gi.Parent.Parent != null)
-                        pgi = gi.Parent.Parent;
-                    if (pgi != null)
+                    try
                     {
-                        //sort categories
-                        List<GridItem> sortedCats = new List<GridItem>(pgi.GridItems.Cast<GridItem>());
-                        sortedCats.Sort(delegate (GridItem gi1, GridItem gi2) { return gi1.Label.CompareTo(gi2.Label); });
-
-                        // loop to first category
-                        for (int i = 0; i < pgi.GridItems.Count; i++)
+                        GridItem pgi = gi.Parent;
+                        if (pgi != null && gi.Parent.Parent != null)
+                            pgi = gi.Parent.Parent;
+                        if (pgi != null)
                         {
-                            if (pgi.GridItems[i] == gi)
-                                break; // in case full circle done
-                                       // select if first category
-                            if (pgi.GridItems[i].Label == sortedCats[0].Label)
+                            //sort categories
+                            List<GridItem> sortedCats = new List<GridItem>(pgi.GridItems.Cast<GridItem>());
+                            sortedCats.Sort(delegate (GridItem gi1, GridItem gi2) { return gi1.Label.CompareTo(gi2.Label); });
+
+                            // loop to first category
+                            for (int i = 0; i < pgi.GridItems.Count; i++)
                             {
-                                pgi.GridItems[i].Select();
-                                break;
+                                if (pgi.GridItems[i] == gi)
+                                    break; // in case full circle done
+                                           // select if first category
+                                if (pgi.GridItems[i].Label == sortedCats[0].Label)
+                                {
+                                    pgi.GridItems[i].Select();
+                                    break;
+                                }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
                     }
                 }
             }));

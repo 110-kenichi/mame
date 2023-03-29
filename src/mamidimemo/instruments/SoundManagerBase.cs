@@ -1302,7 +1302,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted)
                         {
                             bool keyoff = onSnd.IsKeyOff;
-                            onSnd.Dispose();
+                            if(inst.LegatoFootSwitch[newNote.Channel] >= 64 &&
+                                mono == 1 &&
+                                inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
+                                onSnd.FakeSoundOff();
+                            else
+                                onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             //onSounds.Remove(onSnd);
@@ -1556,7 +1561,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted)
                         {
                             bool keyoff = onSnd.IsKeyOff;
-                            onSnd.Dispose();
+                            if (inst.LegatoFootSwitch[newNote.Channel] >= 64 &&
+                                mono == 1 &&
+                                inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
+                                onSnd.FakeSoundOff();
+                            else
+                                onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);

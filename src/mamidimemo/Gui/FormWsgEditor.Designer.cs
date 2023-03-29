@@ -223,6 +223,7 @@
             this.metroTextBoxFirWeight.MaxLength = 32767;
             this.metroTextBoxFirWeight.Name = "metroTextBoxFirWeight";
             this.metroTextBoxFirWeight.PasswordChar = '\0';
+            this.metroTextBoxFirWeight.PromptText = "Set FIR weights like \"1,1,1,1,1\"";
             this.metroTextBoxFirWeight.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxFirWeight.SelectedText = "";
             this.metroTextBoxFirWeight.SelectionLength = 0;

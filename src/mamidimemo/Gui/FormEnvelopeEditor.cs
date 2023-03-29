@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 
@@ -19,6 +20,7 @@ namespace zanac.MAmidiMEmo.Gui
 {
     public partial class FormEnvelopeEditor : FormBase
     {
+        private AbstractFxSettingsBase fx;
 
         public event EventHandler ValueChanged;
 
@@ -33,9 +35,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// <summary>
         /// 
         /// </summary>
-        public FormEnvelopeEditor(string value, int min, int max)
+        public FormEnvelopeEditor(AbstractFxSettingsBase fx, string value, int min, int max)
         {
             InitializeComponent();
+            
+            this.fx = fx;
 
             //Loop
             chart1.Series["SeriesLoop"].Points.Add(new DataPoint(0, new double[] { min, max }));
@@ -57,6 +61,8 @@ namespace zanac.MAmidiMEmo.Gui
             updateReleaseBarColor();
 
             Size = Settings.Default.EnvEdSize;
+
+            numericUpDown1.Value = fx.EnvelopeInterval;
         }
 
         /// <summary>
@@ -229,7 +235,7 @@ namespace zanac.MAmidiMEmo.Gui
                     sb.Append("| ");
                 if ((int)rpt.XValue == i && metroToggleRelease.Checked)
                     sb.Append("/ ");
-                if(i < sv.Points.Count)
+                if (i < sv.Points.Count)
                     sb.Append(((int)sv.Points[i].YValues[0]).ToString((IFormatProvider)null));
             }
 
@@ -356,7 +362,7 @@ namespace zanac.MAmidiMEmo.Gui
                         sb.Append("| ");
                     if (EnvelopesReleasePoint == i)
                         sb.Append("/ ");
-                    if(i < EnvelopesNums.Length)
+                    if (i < EnvelopesNums.Length)
                         sb.Append(EnvelopesNums[i].ToString((IFormatProvider)null));
                 }
                 f_EnvelopeValuesText = sb.ToString();
@@ -705,6 +711,326 @@ namespace zanac.MAmidiMEmo.Gui
             }
             //firData.RemoveAt(0);
             return firData.ToArray();
+        }
+
+        private void metroButtonSin_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var height = (int)ca.AxisY.Maximum - (int)ca.AxisY.Minimum;
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width; i++)
+                {
+                    var v = (height / 2) + ((height / 2) * Math.Sin(((double)i / (double)width) * 2d * Math.PI));
+                    s.Points[si + i].YValues[0] = v + (int)ca.AxisY.Minimum;
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonSaw_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var height = (int)ca.AxisY.Maximum - (int)ca.AxisY.Minimum;
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width; i++)
+                {
+                    s.Points[si + i].YValues[0] = ca.AxisY.Minimum + ((height * i) / (width - 1));
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonSq_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var height = (int)ca.AxisY.Maximum - (int)ca.AxisY.Minimum;
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width / 2; i++)
+                    s.Points[si++].YValues[0] = (int)ca.AxisY.Minimum;
+                for (int i = width / 2; i < width; i++)
+                    s.Points[si++].YValues[0] = (int)ca.AxisY.Maximum;
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonTri_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var height = (int)ca.AxisY.Maximum - (int)ca.AxisY.Minimum;
+                var width = s.Points.Count;
+                int ei = width;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                    ei = (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width / 4; i++)
+                {
+                    s.Points[si + i].YValues[0] = (int)ca.AxisY.Minimum + (((int)height / 2) + ((i * ((int)height / 2)) / (width / 4)));
+                    s.Points[si + i + (width / 4)].YValues[0] = (int)ca.AxisY.Minimum + ((int)height - ((i * ((int)height / 2)) / (width / 4)));
+                    s.Points[si + i + (2 * (width / 4))].YValues[0] = (int)ca.AxisY.Minimum + (((int)height / 2) - ((i * ((int)height / 2)) / (width / 4)));
+                    s.Points[si + i + (3 * (width / 4))].YValues[0] = (int)ca.AxisY.Minimum + (((i * ((int)height / 2)) / ((int)width / 4)));
+                }
+                //if (si + ((width / 4) - 1) + (3 * (width / 4)) < ei - 1)
+                //{
+                //    for (int i = (width / 4) - 1; i <= width / 4; i++)
+                //        s.Points[si + i + (3 * (width / 4))].YValues[0] = (int)ca.AxisY.Minimum + (((i * ((int)height / 2)) / ((int)width / 4)));
+                //}
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        int incrementValue;
+
+        private void metroButtonUp_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width; i++)
+                {
+                    s.Points[si + i].YValues[0] += incrementValue;
+                    if (s.Points[si + i].YValues[0] > (int)ca.AxisY.Maximum)
+                        s.Points[si + i].YValues[0] = (int)ca.AxisY.Maximum;
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonDown_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width; i++)
+                {
+                    s.Points[si + i].YValues[0] -= incrementValue;
+                    if (s.Points[si + i].YValues[0] < (int)ca.AxisY.Minimum)
+                        s.Points[si + i].YValues[0] = (int)ca.AxisY.Minimum;
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void metroButtonMin_Click(object sender, EventArgs e)
+        {
+            ChartArea ca = chart1.ChartAreas[0];
+            Series s = chart1.Series["SeriesValues"];
+
+            try
+            {
+                var width = s.Points.Count;
+                if (metroToggleRelease.Checked)
+                {
+                    Series sr = chart1.Series["SeriesRelease"];
+                    width -= s.Points.Count - (int)sr.Points[0].XValue;
+                }
+                int si = 0;
+                if (metroToggleRepeat.Checked)
+                {
+                    Series sl = chart1.Series["SeriesLoop"];
+                    si = (int)sl.Points[0].XValue;
+                    width -= si;
+                }
+                for (int i = 0; i < width; i++)
+                {
+                    s.Points[si + i].YValues[0] = (int)(s.Points[si + i].YValues[0] / 1.5);
+                }
+            }
+            catch
+            {
+
+            }
+
+            chart1.Refresh();
+
+            updateText();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        Button clickedButton;
+
+        private void numericUpDown1_ValueChanged_1(object sender, EventArgs e)
+        {
+            if(fx != null)
+                fx.EnvelopeInterval = (uint)numericUpDown1.Value;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            incrementValue += incrementValue;
+            clickedButton.PerformClick();
+        }
+
+        private void metroButtonUp_MouseDown(object sender, MouseEventArgs e)
+        {
+            incrementValue = 1;
+            clickedButton = metroButtonUp;
+
+            timer1.Enabled = true;
+        }
+
+        private void metroButtonUp_MouseUp(object sender, MouseEventArgs e)
+        {
+            timer1.Enabled = false;
+        }
+
+        private void metroButtonDown_MouseDown(object sender, MouseEventArgs e)
+        {
+            incrementValue = 1;
+            clickedButton = metroButtonDown;
+
+            timer1.Enabled = true;
+        }
+
+        private void metroButtonDown_MouseUp(object sender, MouseEventArgs e)
+        {
+            timer1.Enabled = false;
         }
     }
 

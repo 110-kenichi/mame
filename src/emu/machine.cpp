@@ -399,7 +399,8 @@ void StreamUpdatedR(int32_t* buffer, int32_t size)
 
 DWORD WINAPI CloseApplicationProc(LPVOID lpParam)
 {
-	Sleep(1000);
+	//HACK: mamidimemo When SCCI connected to real hardware, need to wait a lot
+	Sleep(5000);
 
 	if (m_rpcSrv != NULL)
 	{

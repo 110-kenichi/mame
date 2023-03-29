@@ -1650,6 +1650,36 @@ namespace zanac.MAmidiMEmo.Instruments
                 PortamentoTimes[i] = 0;
         }
 
+
+        [DataMember]
+        [Category("MIDI")]
+        [Description("Legato Foot Switch for Mono mode (0-127) 0:Disable 64:Enable <MIDI 16ch>")]
+        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [Mask(127)]
+        [CollectionDefaultValue((byte)0)]
+        public virtual byte[] LegatoFootSwitch
+        {
+            get;
+            set;
+        }
+
+        public bool ShouldSerializeLegatoFootSwitch()
+        {
+            foreach (var dt in LegatoFootSwitch)
+            {
+                if (dt != 0)
+                    return true;
+            }
+            return false;
+        }
+
+        public void ResetLegatoFootSwitch()
+        {
+            for (int i = 0; i < LegatoFootSwitch.Length; i++)
+                LegatoFootSwitch[i] = 0;
+        }
+
         [DataMember]
         [Category("MIDI")]
         [Description("Mono mode (0-127) 0:Disable mono mode N:Number of max voices <MIDI 16ch>")]
@@ -1678,6 +1708,7 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < MonoMode.Length; i++)
                 MonoMode[i] = 0;
         }
+
 
         [DataMember]
         [Category("MIDI")]
@@ -2207,6 +2238,12 @@ namespace zanac.MAmidiMEmo.Instruments
                     0, 0, 0,
                     0, 0, 0, 0};
             MonoMode = new byte[] {
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0, 0};
+            LegatoFootSwitch = new byte[] {
                     0, 0, 0,
                     0, 0, 0,
                     0, 0, 0,
@@ -2746,6 +2783,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 case 65:    //Portamento
                     Portamentos[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
+                case 68:    //LegatoFootSwitch
+                    LegatoFootSwitch[midiEvent.Channel] = midiEvent.ControlValue;
+                    break;
                 case 76:    //Modulation Rate
                     ModulationRates[midiEvent.Channel] = midiEvent.ControlValue;
                     break;
@@ -2812,6 +2852,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         Portamentos[i] = 0;
                         PortamentoTimes[i] = 0;
                         FineTunes[i] = 8192;
+                        LegatoFootSwitch[i] = 0;
 
                         MonoMode[i] = 0;
                         PolyMode[i] = 0;
