@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,12 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        private List<PortWriteData> deferredWriteAdrAndData;
+
+        private Thread writeThread;
+
+        private AutoResetEvent autoResetEvent;
+
         /// <summary>
         /// 
         /// </summary>
@@ -43,7 +50,7 @@ namespace zanac.MAmidiMEmo.VSIF
         /// <summary>
         /// 
         /// </summary>
-        public PortWriter SerialPort
+        public PortWriter DataWriter
         {
             get;
             private set;
@@ -73,12 +80,19 @@ namespace zanac.MAmidiMEmo.VSIF
         /// 
         /// </summary>
         /// <param name="type"></param>
-        public VsifClient(VsifSoundModuleType type, PortWriter serialPort)
+        public VsifClient(VsifSoundModuleType type, PortWriter dataWriter)
         {
             SoundModuleType = type;
-            SerialPort = serialPort;
+            DataWriter = dataWriter;
 
             ReferencedCount = 1;
+
+            deferredWriteAdrAndData = new List<PortWriteData>();
+
+            autoResetEvent = new AutoResetEvent(false);
+            writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
+            writeThread.Priority = ThreadPriority.AboveNormal;
+            writeThread.Start();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -94,9 +108,9 @@ namespace zanac.MAmidiMEmo.VSIF
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // 大きなフィールドを null に設定します
-                if (SerialPort != null)
-                    SerialPort.Dispose();
-                SerialPort = null;
+                if (DataWriter != null)
+                    DataWriter.Dispose();
+                DataWriter = null;
             }
         }
 
@@ -123,68 +137,22 @@ namespace zanac.MAmidiMEmo.VSIF
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        public virtual void WriteData(PortWriteData[] data)
+        private void deferredWriteDataTask()
         {
             try
             {
-                if (disposedValue)
-                    return;
-                lock (lockObject)
-                    SerialPort?.Write(data);
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        public virtual void WriteData(byte type, byte address, byte data, int wait)
-        {
-            try
-            {
-                if (disposedValue)
-                    return;
-                lock (lockObject)
-                    SerialPort?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        public virtual void WriteData(byte type, byte address, byte[] data, int wait)
-        {
-            try
-            {
-                if (disposedValue)
-                    return;
-                lock (lockObject)
+                while (!disposedValue)
                 {
-                    PortWriteData[] pdata = new PortWriteData[data.Length];
-                    for (int i = 0; i < data.Length; i++)
+                    PortWriteData[] dd;
+                    lock (lockObject)
                     {
-                        pdata[i] = new PortWriteData() { Type = type, Address = address++, Data = data[i], Wait = wait };
+                        if (deferredWriteAdrAndData.Count == 0)
+                            continue;
+                        dd = deferredWriteAdrAndData.ToArray();
+                        deferredWriteAdrAndData.Clear();
                     }
-                    SerialPort?.Write(pdata);
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
@@ -196,9 +164,60 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void WriteData(PortWriteData[] data)
+        {
+            lock (lockObject)
+            {
+                if (disposedValue)
+                    return;
+
+                deferredWriteAdrAndData.AddRange(data);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void WriteData(byte type, byte address, byte data, int wait)
+        {
+            lock (lockObject)
+            {
+                if (disposedValue)
+                    return;
+
+                deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void WriteData(byte type, byte address, byte[] data, int wait)
+        {
+            lock (lockObject)
+            {
+                if (disposedValue)
+                    return;
+
+                PortWriteData[] pdata = new PortWriteData[data.Length];
+                for (int i = 0; i < data.Length; i++)
+                    pdata[i] = new PortWriteData() { Type = type, Address = address++, Data = data[i], Wait = wait };
+                deferredWriteAdrAndData.AddRange(pdata);
+            }
+        }
+
         public virtual void ClearDataCache()
         {
-            SerialPort?.ClearDataCache();
+            DataWriter?.ClearDataCache();
         }
 
         /// <summary>
@@ -213,7 +232,7 @@ namespace zanac.MAmidiMEmo.VSIF
                 if (disposedValue)
                     return;
                 lock (lockObject)
-                    SerialPort?.RawWrite(data, wait);
+                    DataWriter?.RawWrite(data, wait);
             }
             catch (Exception ex)
             {

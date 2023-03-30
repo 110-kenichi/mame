@@ -218,7 +218,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private void sendData(byte[] sendData, int wait)
         {
-            SendData(sendData, wait);
+            SendDataByFtdi(sendData, wait);
         }
 
     }

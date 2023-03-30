@@ -104,7 +104,7 @@ namespace zanac.MAmidiMEmo.VSIF
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
 
-        protected void SendData(byte[] sendData, int wait)
+        protected void SendDataByFtdi(byte[] sendData, int wait)
         {
             var rawSendData = new byte[sendData.Length * (int)wait];
             unsafe

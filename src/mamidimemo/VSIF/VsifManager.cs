@@ -67,12 +67,12 @@ namespace zanac.MAmidiMEmo.VSIF
                 {
                     if (c.SoundModuleType == soundModule)
                     {
-                        if (c.SerialPort.PortName.Equals("COM" + (int)(comPort + 1)))
+                        if (c.DataWriter.PortName.Equals("COM" + (int)(comPort + 1)))
                         {
                             c.ReferencedCount++;
                             return c;
                         }
-                        if (c.SerialPort.PortName.Equals("FTDI_COM" + (int)comPort))
+                        if (c.DataWriter.PortName.Equals("FTDI_COM" + (int)comPort))
                         {
                             c.ReferencedCount++;
                             return c;
