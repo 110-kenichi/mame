@@ -1026,7 +1026,6 @@ namespace zanac.VGMPlayer
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
                         lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        lastWaitRemain = 0;
                         wait = 0;
                         NotifyProcessLoadOccurred();
                     }
