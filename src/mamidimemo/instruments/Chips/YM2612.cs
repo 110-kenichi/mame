@@ -1146,7 +1146,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (!parentModule.Mode5ch)
                                 break;
-                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, 1);
+                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, PcmEngine.MAX_VOICE);
                         }
                 }
 
@@ -1167,7 +1167,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.Ym2612WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
 
-                parentModule.pcmEngine?.Stop();
+                for (int i = 0; i < PcmEngine.MAX_VOICE; i++)
+                    parentModule.pcmEngine.Stop(i);
             }
 
 
@@ -1181,6 +1182,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class PcmEngine : IDisposable
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int MAX_VOICE = 4;
+
             private object engineLockObject;
 
             private object dataLockObject;
@@ -1198,7 +1204,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private List<byte> deferredWriteData;
 
-            private SampleData currentSampleData;
+            private SampleData[] currentSampleData;
 
             /// <summary>
             /// 
@@ -1212,6 +1218,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 stopEngineFlag = true;
                 deferredWriteData = new List<byte>();
                 autoResetEvent = new AutoResetEvent(false);
+                currentSampleData = new SampleData[MAX_VOICE];
             }
 
 
@@ -1223,7 +1230,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (stopEngineFlag)
                 {
                     stopEngineFlag = false;
-                    currentSampleData = null;
                     Thread t = new Thread(processDac);
                     t.Priority = ThreadPriority.AboveNormal;
                     t.Start();
@@ -1246,11 +1252,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="pcmData"></param>
-            public void Play(YM2612Timbre pcmTimbre)
+            public void Play(TaggedNoteOnEvent note, int slot, YM2612Timbre pcmTimbre)
             {
                 lock (engineLockObject)
                 {
-                    currentSampleData = new SampleData(pcmTimbre.PcmData, pcmTimbre.SampleRate);
+                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate);
                 }
             }
 
@@ -1258,11 +1264,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="pcmData"></param>
-            public void Stop()
+            public void Stop(int slot)
             {
                 lock (engineLockObject)
                 {
-                    currentSampleData = null;
+                    currentSampleData[slot] = null;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void StopAll()
+            {
+                lock (engineLockObject)
+                {
+                    for(int i=0; i<currentSampleData.Length; i++)
+                        currentSampleData[i] = null;
                 }
             }
 
@@ -1326,13 +1345,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void processDac()
             {
                 double wait = 0;
+                double streamWaitDelta = 0;
                 double lastWaitRemain = 0;
                 double lastDiff = 0;
+                int overflowed = 0;
 
                 long freq, before, after;
                 QueryPerformanceFrequency(out freq);
 
                 QueryPerformanceCounter(out before);
+                uint sampleRate = 0;
+
                 while (!stopEngineFlag)
                 {
                     if (disposedValue)
@@ -1340,32 +1363,42 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     QueryPerformanceCounter(out before);
 
-                    uint sampleRate = 0;
-
-                    if (wait <= 0)
+                    if (streamWaitDelta <= 0)
                     {
-                        short dacData = 0;
+                        int dacData = 0;
                         bool playDac = false;
                         lock (engineLockObject)
                         {
-                            if (currentSampleData == null)
-                                continue;
+                            foreach (var sd in currentSampleData)
+                            {
+                                if (sd == null)
+                                    continue;
 
-                            var d = currentSampleData.GetDacData();
-                            if (d == null)
-                                continue;
+                                var d = sd.GetDacData();
+                                if (d == null)
+                                    continue;
 
-                            dacData = d.Value;
-                            sampleRate = currentSampleData.SampleRate;
-                            playDac = true;
+                                dacData += ((int)d.Value - 0x80) * sd.Note.Velocity / 127;
+                                sampleRate = sd.SampleRate;
+                                playDac = true;
+                            }
                         }
 
-                        if (playDac)
+                        if (playDac || overflowed != 0)
                         {
-                            if (dacData > byte.MaxValue)
+                            //dacData += overflowed;
+                            overflowed = 0;
+                            if (dacData > sbyte.MaxValue)
+                            {
+                                //overflowed = dacData - sbyte.MaxValue;
                                 dacData = byte.MaxValue;
-
-                            deferredWriteDacData((byte)dacData);
+                            }
+                            else if (dacData < sbyte.MinValue)
+                            {
+                                //overflowed = dacData - sbyte.MinValue;
+                                dacData = byte.MinValue;
+                            }
+                            deferredWriteDacData((byte)(dacData + 0x80));
 
                             /* TODO:
                             try
@@ -1380,9 +1413,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             */
 
-                            wait += 44100d / sampleRate;
+                            streamWaitDelta += 44100d / sampleRate;
                         }
                     }
+
+                    wait += streamWaitDelta;
+                    streamWaitDelta = 0;
 
                     if (wait + lastWaitRemain <= 0)
                         continue;
@@ -1395,15 +1431,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
                         lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        lastWaitRemain = 0;
                         wait = 0;
                     }
                     else
                     {
                         while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
                             QueryPerformanceCounter(out after);
-                        wait = 0;
                         lastWaitRemain = 0;
+                        wait = 0;
                     }
                 }
             }
@@ -1462,14 +1497,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
+            public TaggedNoteOnEvent Note
+            {
+                get;
+                private set;
+            }
+             
             /// <summary>
             /// 
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(byte[] pcmData, uint sampleRate)
+            public SampleData(TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate)
             {
-                PcmData = pcmData;
+                Note = note;
+                PcmData = (byte[])pcmData.Clone();
                 SampleRate = sampleRate;
             }
 
@@ -1561,7 +1603,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (!parentModule.Mode5ch)
                                 break;
-                            parentModule.pcmEngine.Play(timbre);
+                            parentModule.pcmEngine.Play(NoteOnEvent, Slot, timbre);
                             break;
                         }
                 }
@@ -2031,7 +2073,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.PCM:
                         {
-                            parentModule.pcmEngine?.Stop();
+                            parentModule.pcmEngine.Stop(Slot);
                             break;
                         }
                 }
