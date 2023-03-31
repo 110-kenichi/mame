@@ -34,7 +34,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "4.6.8.1";
+        public const string FILE_VERSION = "4.6.9.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2023 Itoken.All rights reserved.";
@@ -181,32 +181,38 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
                         fm.Shown += (_, __) =>
                         {
                             if (!IsVSTiMode())
+                            {
                                 fm.BeginInvoke(new MethodInvoker(() => { fs.Close(); }));
 
-                            if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
-                            {
-                                try
+                                if (!string.IsNullOrEmpty(Settings.Default.EnvironmentSettings))
                                 {
-                                    var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
-                                    InstrumentManager.ClearAllInstruments();
-                                    var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
-                                    InstrumentManager.RestoreSettings(settings);
-                                }
-                                catch (Exception ex)
-                                {
-                                    if (ex.GetType() == typeof(Exception))
-                                        throw;
-                                    else if (ex.GetType() == typeof(SystemException))
-                                        throw;
+                                    try
+                                    {
+                                        var dso = StringCompressionUtility.Decompress(Settings.Default.EnvironmentSettings);
+                                        InstrumentManager.ClearAllInstruments();
+                                        var settings = JsonConvert.DeserializeObject<EnvironmentSettings>(dso, JsonAutoSettings);
+                                        InstrumentManager.RestoreSettings(settings);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (ex.GetType() == typeof(Exception))
+                                            throw;
+                                        else if (ex.GetType() == typeof(SystemException))
+                                            throw;
 
-                                    MessageBox.Show(ex.ToString());
+                                        MessageBox.Show(ex.ToString());
+                                    }
                                 }
                             }
                         };
+                        //if (IsVSTiMode())
+                        //    Application.Idle += (_, __) => MameIF.ParameterAutomated();
                         Application.Run(fm);
-
-                        var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
-                        Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
+                        if (!IsVSTiMode())
+                        {
+                            var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
+                            Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
+                        }
                         Settings.Default.Save();
                     }
                     catch (Exception ex)
@@ -274,20 +280,14 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
         /// </summary>
         public static void CloseApplication()
         {
+            var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
+            Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
+            InstrumentManager.ClearAllInstruments();
+
+            FormMain.AppliactionForm?.ForceClose();
+            /*
             Application.Exit();
-
-            try
-            {
-                InstrumentManager.InstExclusiveLockObject.EnterReadLock();
-
-                var so = JsonConvert.SerializeObject(SaveEnvironmentSettings(), Formatting.Indented, JsonAutoSettings);
-                Settings.Default.EnvironmentSettings = StringCompressionUtility.Compress(so);
-                Settings.Default.Save();
-            }
-            finally
-            {
-                InstrumentManager.InstExclusiveLockObject.ExitReadLock();
-            }
+            */
         }
 
         private static IntPtr saveDataPtr;

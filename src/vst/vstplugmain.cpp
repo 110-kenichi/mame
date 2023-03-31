@@ -12,6 +12,8 @@
 
 #include "audioeffect.h"
 
+#define WIN32 1
+
 //------------------------------------------------------------------------
 /** Must be implemented externally. */
 extern AudioEffect* createEffectInstance (audioMasterCallback audioMaster);

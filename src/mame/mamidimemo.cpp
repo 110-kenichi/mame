@@ -335,6 +335,18 @@ extern "C"
 		sd->set_vst_fx_callback(callback);
 	}
 
+	DllExport void parameter_automated()
+	{
+		mame_machine_manager* mmm = mame_machine_manager::instance();
+		if (mmm == nullptr)
+			return;
+		running_machine* rm = mmm->machine();
+		if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+			return;
+
+		return rm->parameter_automated();
+	}
+
 	ym2151_device *ym2151_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym2151_write(unsigned int unitNumber, unsigned int address, unsigned char data)

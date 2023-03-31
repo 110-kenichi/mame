@@ -20,6 +20,7 @@
 #include <functional>
 
 #include <ctime>
+#include <shared_mutex>
 
 //**************************************************************************
 //  CONSTANTS
@@ -197,6 +198,7 @@ public:
 	const std::string &basename() const { return m_basename; }
 	int sample_rate() const { return m_sample_rate; }
 	bool save_or_load_pending() const { return !m_saveload_pending_file.empty(); }
+	void parameter_automated();
 
 	// RAII-based side effect disable
 	// NOP-ed when passed false, to make it more easily conditional

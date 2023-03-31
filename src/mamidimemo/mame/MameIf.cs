@@ -115,5 +115,27 @@ namespace zanac.MAmidiMEmo.Mame
             }
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void delg_parameter_automated();
+
+        private static delg_parameter_automated parameter_automated;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static delg_parameter_automated ParameterAutomated
+        {
+            get
+            {
+                if (parameter_automated == null)
+                {
+                    IntPtr funcPtr = MameIF.GetProcAddress("parameter_automated");
+                    if (funcPtr != IntPtr.Zero)
+                        parameter_automated = (delg_parameter_automated)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delg_parameter_automated));
+                }
+                return parameter_automated;
+            }
+        }
+
     }
 }

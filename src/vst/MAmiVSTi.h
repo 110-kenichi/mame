@@ -23,8 +23,8 @@
 //公開する場合は以下URLで発行されたユニークIDを入力する。
 //http://ygrabit.steinberg.de/~ygrabit/public_html/index.html
 
-#define MY_VST_PRESET_NUM    0 //プリセットプログラムの数
-#define MY_VST_PARAMETER_NUM 0 //パラメータの数
+#define MY_VST_PRESET_NUM    1 //プリセットプログラムの数
+#define MY_VST_PARAMETER_NUM 1 //パラメータの数
 
 struct VstMidiEventBase
 {
@@ -119,7 +119,7 @@ public:
 	///< Stuff \e name with the name of the current program. Limited to #kVstMaxProgNameLen.
 	virtual void getProgramName(char* name)
 	{
-		vst_strncpy(name, "MAmiProg", kVstMaxParamStrLen);
+		vst_strncpy(name, "MAmidiMEmo", kVstMaxParamStrLen);
 	}
 
 	///< Return number of MIDI input channels
@@ -152,4 +152,48 @@ public:
 
 	// MIDIメッセージをホストアプリケーションから受け取るためのメンバー関数
 	VstInt32 processEvents(VstEvents* events);
+
+	virtual void getParameterDisplay(VstInt32 index, char* text);	///< Stuff \e text with a string representation ("0.5", "-3", "PLATE", etc...) of the value of parameter \e index. Limited to #kVstMaxParamStrLen.
+	virtual void getParameterLabel(VstInt32 index, char* label);	///< Stuff \e label with the units in which parameter \e index is displayed (i.e. "sec", "dB", "type", etc...). Limited to #kVstMaxParamStrLen.
+	virtual void setParameter(VstInt32 index, float value);	///< Called when a parameter changed
+	virtual float getParameter(VstInt32 index);	///< Return the value of the parameter with \e index
+	virtual void getParameterName(VstInt32 index, char* text);    ///< Stuff \e text with the name ("Time", "Gain", "RoomType", etc...) of parameter \e index. Limited to #kVstMaxParamStrLen.
+	virtual void setProgram(VstInt32 program);	///< Set the current program to \e program
+};
+
+#include "aeffeditor.h"
+#include "audioeffectx.h"
+
+#define WIDTH 600
+#define HEIGHT 100
+
+#define ID_B1 100
+
+#define PROP_WINPROC "PropClassWindowProc"
+
+extern void* hInstance;
+
+static int regist_count = 0;
+static LPCTSTR lpszAppName = "DummyMamiEditor";
+
+class DummyVstEditor : public AEffEditor
+{
+public:
+	DummyVstEditor(AudioEffect* effect);
+	virtual ~DummyVstEditor() {};
+
+	virtual bool getRect(ERect** erect);
+	virtual bool open(void* ptr);
+	virtual void close();
+	virtual void idle();
+	virtual void setParam1(float param1) { fParam1 = param1; }
+	virtual float getParam1() { return fParam1; }
+	virtual void setParameter(VstInt32 index, float value);
+	virtual void valueChanged(VstInt32 index, float value);
+
+	static LRESULT WINAPI WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+private:
+	HWND hwnd_e;
+	float fParam1;
 };

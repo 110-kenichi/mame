@@ -277,6 +277,8 @@ namespace zanac.MAmidiMEmo.Gui
 
                 mIDIDelayCheckerToolStripMenuItem.Enabled = false;
                 this.ControlBox = false;
+
+                toolStripMenuItemExit.Enabled = false;
             }
             else
             {
@@ -321,12 +323,26 @@ namespace zanac.MAmidiMEmo.Gui
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 
+        private bool forceCloseForm;
+
+        public void ForceClose()
+        {
+            forceCloseForm = true;
+            Close();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            if (Program.IsVSTiMode() && !forceCloseForm)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             SaveWindowStatus();
             base.OnClosing(e);
         }

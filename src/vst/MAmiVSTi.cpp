@@ -124,10 +124,10 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	setUniqueID(MY_VST_UNIQUE_ID);     //ユニークIDの設定
 
 	isSynth(true);          //このVSTがSynthかどうかのフラグを設定。
-							 //Synthの場合…true、Effectorの場合…false
+	//Synthの場合…true、Effectorの場合…false
 
 	canProcessReplacing();  //このVSTが音声処理可能かどうかのフラグを設定。
-							 //音声処理を行わないVSTはないので必ずこの関数を呼び出す。
+	//音声処理を行わないVSTはないので必ずこの関数を呼び出す。
 
 	programsAreChunks(true);
 
@@ -154,6 +154,9 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 		return;
 	}
 	PathCombineA(m_mamiPath, dllDir, mamiPath);
+
+	AEffEditor* editor = new DummyVstEditor(this);
+	setEditor(editor);
 
 	m_vstCtor = true;
 }
@@ -190,25 +193,29 @@ void MAmiVSTi::startRpcServer()
 	m_rpcSrv = new rpc::server(m_vstPort);
 
 	m_rpcSrv->bind("MAmiMainStarted", [&]()
-	{
-		DWORD dwThreadId = 0L;
-		CreateThread(NULL, 0, MAmidiMEmoMainStartedProc, (void*)this, 0, &dwThreadId);
-	});
+		{
+			DWORD dwThreadId = 0L;
+			CreateThread(NULL, 0, MAmidiMEmoMainStartedProc, (void*)this, 0, &dwThreadId);
+		});
 	m_rpcSrv->bind("AllocateMAmiPort", [&]()
-	{
-		m_mamiPort = FindUnusedPort(10001);
-		return m_mamiPort;
-	});
+		{
+			m_mamiPort = FindUnusedPort(10001);
+			return m_mamiPort;
+		});
 	m_rpcSrv->bind("StreamUpdatedL", [&](int32_t size)
-	{
-		//set_stream_update_callback(const_cast<char*>("lspeaker"), MAmiVSTi::StreamUpdatedL);
-		streamUpdatedL(size);
-	});
+		{
+			//set_stream_update_callback(const_cast<char*>("lspeaker"), MAmiVSTi::StreamUpdatedL);
+			streamUpdatedL(size);
+		});
 	m_rpcSrv->bind("StreamUpdatedR", [&](int32_t size)
-	{
-		//set_stream_update_callback(const_cast<char*>("rspeaker"), MAmiVSTi::StreamUpdatedR);
-		streamUpdatedR(size);
-	});
+		{
+			//set_stream_update_callback(const_cast<char*>("rspeaker"), MAmiVSTi::StreamUpdatedR);
+			streamUpdatedR(size);
+		});
+	m_rpcSrv->bind("ParameterAutomated", [&]()
+		{
+			setParameterAutomated(0, 0);
+		});
 
 	m_rpcSrv->async_run();
 }
@@ -298,41 +305,70 @@ VstInt32 MAmiVSTi::setChunk(void* data, VstInt32 byteSize, bool isPreset)
 ///< Called when plug-in is initialized
 void MAmiVSTi::open()
 {
+}
 
+DWORD WINAPI closeRpcServer(LPVOID lpParam)
+{
+	rpc::server* m_rpcSrv = reinterpret_cast<rpc::server*>(lpParam);
+
+	if (m_rpcSrv != NULL)
+	{
+		m_rpcSrv->close_sessions();
+		try {
+			m_rpcSrv->stop();
+			m_rpcSrv->~server();
+		}
+		catch (...)
+		{
+		}
+	}
+
+	return 0;
 }
 
 ///< Called when plug-in will be released
 void MAmiVSTi::close()
 {
 	std::lock_guard<std::shared_mutex> lock(mtxBuffer);
+	std::lock_guard<std::shared_mutex> lock2(mtxSoxrBuffer);
 
 	m_vstIsClosed = true;
 
 	if (NULL != m_cpSharedMemory)
 		::UnmapViewOfFile(m_cpSharedMemory);
+	m_cpSharedMemory = NULL;
 	if (NULL != m_hSharedMemory)
 		::CloseHandle(m_hSharedMemory);
+	m_hSharedMemory = NULL;
 
 	if (soxr != NULL)
 		soxr_delete(soxr);
+	soxr = NULL;
 
 	if (m_vstInited)
 	{
 		if (m_rpcClient != NULL)
 		{
 			if (m_rpcClient->get_connection_state() == rpc::client::connection_state::connected)
-				m_rpcClient->async_call("CloseApplication");
+				m_rpcClient->call("CloseApplication");
 			m_rpcClient->~client();
 			m_rpcClient = NULL;
 		}
 
 		if (m_rpcSrv != NULL)
 		{
-			m_rpcSrv->close_sessions();
-			m_rpcSrv->stop();
-			m_rpcSrv->~server();
+			DWORD dwThreadId = 0L;
+			CreateThread(NULL, 0, closeRpcServer, (void*)m_rpcSrv, 0, &dwThreadId);
 			m_rpcSrv = NULL;
 		}
+
+		//if (m_rpcSrv != NULL)
+		//{
+		//	m_rpcSrv->close_sessions();
+		//	m_rpcSrv->stop();
+		//	m_rpcSrv->~server();
+		//	m_rpcSrv = NULL;
+		//}
 
 		m_vstInited = false;
 	}
@@ -341,7 +377,6 @@ void MAmiVSTi::close()
 ///< Called when plug-in is switched to off
 void MAmiVSTi::suspend()
 {
-
 }
 
 bool MAmiVSTi::createSharedMemory()
@@ -410,25 +445,28 @@ void MAmiVSTi::resume()
 // does not call from MAmi
 void MAmiVSTi::streamUpdatedL(int32_t size)
 {
-	if (isVstDisabled())
-		return;
-	if (m_cpSharedMemory == NULL)
-		return;
+	//if (isVstDisabled())
+	//	return;
+	//if (m_cpSharedMemory == NULL)
+	//	return;
 
 	//m_tmpBuffer2ch = (int32_t*)m_cpSharedMemory;
 }
 
 void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 {
+	std::lock_guard<std::shared_mutex> lock1(mtxSoxrBuffer);
+
 	if (isVstDisabled())
 		return;
 	if (m_cpSharedMemory == NULL)
+		return;
+	if (soxr == NULL)
 		return;
 
 	int32_t* tmpBuf2ch = (int32_t*)m_cpSharedMemory;
 
 	//std::lock_guard<std::shared_mutex> lock1(mtxSoxrBuffer);
-	mtxSoxrBuffer.lock();
 	if (sampleRate != (double)m_mami_sample_rate)
 	{
 		size_t cnvSize = (size_t)round((double)size1ch * ((double)sampleRate / (double)m_mami_sample_rate));
@@ -441,7 +479,6 @@ void MAmiVSTi::streamUpdatedR(int32_t size1ch)
 		size1ch = (int32_t)odone;
 		tmpBuf2ch = outBuf2ch;
 	}
-	mtxSoxrBuffer.unlock();
 
 	std::lock_guard<std::shared_mutex> lock2(mtxBuffer);
 	//mtxBuffer.lock();	// Lock buffer
@@ -492,7 +529,7 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 		m_streamBufferOverflowed = false;
 	}
 
-	int* sbuf2ch = &m_streamBuffer2ch[0];
+	int* sbuf2ch = m_streamBuffer2ch.data();
 	auto size1ch = m_streamBuffer2ch.size() / 2;
 	if (size1ch < (size_t)sampleFrames1ch)
 	{
@@ -531,25 +568,245 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 		VstMidiEventBase* meb = (VstMidiEventBase*)(events->events[i]);
 		switch (meb->type)
 		{
-			case kVstMidiType:
-			{
-				VstMidiEvent* midievent = (VstMidiEvent*)meb;
+		case kVstMidiType:
+		{
+			VstMidiEvent* midievent = (VstMidiEvent*)meb;
 
-				m_rpcClient->async_call("SendMidiEvent",
-					(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
-				break;
-			}
-			case kVstSysExType:
-			{
-				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
-				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+			m_rpcClient->async_call("SendMidiEvent",
+				(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
+			break;
+		}
+		case kVstSysExType:
+		{
+			VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
+			std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
 
-				m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
-				break;
-			}
+			m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
+			break;
+		}
 		}
 	}
 
 	//　1を返さなければならない
 	return 1;
+}
+
+
+// ============================================================================================
+// パラメーターの設定、表示を行うメンバー関数
+// ============================================================================================
+void  MAmiVSTi::setParameter(VstInt32 index, float value)
+{
+	//indexで指定されたパラメータに値を設定する。valueは0.0f～1.0fで与えられる。
+	switch (index)
+	{
+	case 0: // indexが0の場合、tremolospeedの値を設定
+		break;
+	}
+}
+
+float MAmiVSTi::getParameter(VstInt32 index)
+{
+	//indexで指定されたパラメータの値を0.0f～1.0fの範囲で返す。
+	float value = 0;
+	switch (index)
+	{
+	case 0: // indexが0の場合、tremolospeedの値を0～1の範囲にして返す
+		break;
+	}
+	return value;
+}
+
+void  MAmiVSTi::getParameterName(VstInt32 index, char* text)
+{
+	//indexで指定されたパラメータの名前をtextに格納する
+	switch (index)
+	{
+	case 0: // indexが0の場合、tremolospeedのパラメーター名を返す
+		vst_strncpy(text, "(Dummy)", kVstMaxParamStrLen);
+		break;
+	}
+}
+
+void  MAmiVSTi::getParameterLabel(VstInt32 index, char* label)
+{
+	//indexで指定されたパラメータの単位をlabelに格納する
+	switch (index)
+	{
+	case 0: // indexが0の場合、tremolospeedの単位名を返す
+		vst_strncpy(label, " ", kVstMaxParamStrLen);
+		break;
+	}
+}
+
+void  MAmiVSTi::getParameterDisplay(VstInt32 index, char* text)
+{
+	//indexで指定されたパラメータの表示内容をtextに格納する
+	switch (index)
+	{
+	case 0: // indexが0の場合、tremolospeedの表示値を返す
+		break;
+	}
+	float2string(0, text, kVstMaxParamStrLen);
+}
+
+// ============================================================================================
+// プリセットプログラムの設定を行うメンバー関数
+// ============================================================================================
+void MAmiVSTi::setProgram(VstInt32 program)
+{
+	// programで指定された設定を内部のパラメータに反映する
+	switch (program)
+	{
+	case 0: // 1つ目のプリセットの指定があった場合
+		break;
+	}
+
+	// 現在のプリセット番号を記憶する (curProgramは継承元クラスの変数)
+	curProgram = program;
+}
+
+DummyVstEditor::DummyVstEditor(AudioEffect* effectx)
+	: AEffEditor(effectx), hwnd_e(NULL), fParam1(1.0f) {}
+
+bool DummyVstEditor::getRect(ERect** erect) {
+	static ERect r = { 0, 0, HEIGHT, WIDTH };
+	*erect = &r;
+	return true;
+}
+
+bool DummyVstEditor::open(void* ptr) {
+	systemWindow = ptr;
+
+	if (regist_count == 0) {
+		WNDCLASS wd;
+		wd.style = 0;
+		wd.lpfnWndProc = WindowProc;
+		wd.cbClsExtra = 0;
+		wd.cbWndExtra = 0;
+		wd.hInstance = (HINSTANCE)hInstance;
+		wd.hIcon = NULL;
+		wd.hCursor = NULL;
+		wd.hbrBackground = GetSysColorBrush(COLOR_BTNFACE);
+		wd.lpszMenuName = NULL;
+		wd.lpszClassName = lpszAppName;
+
+		RegisterClass(&wd);
+	}
+
+	regist_count++;
+
+	HWND hwnd = CreateWindowEx(
+		NULL,
+		lpszAppName,
+		"",
+		WS_CHILD | WS_VISIBLE,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		WIDTH,
+		HEIGHT,
+		(HWND)systemWindow,
+		NULL,
+		(HINSTANCE)hInstance,
+		NULL);
+
+	hwnd_e = hwnd;
+
+	SetProp(hwnd, PROP_WINPROC, this);
+
+	SetWindowLong(hwnd, GWLP_USERDATA, (LONG_PTR)this);
+
+	return true;
+}
+
+void DummyVstEditor::close() {
+	hwnd_e = NULL;
+
+	regist_count--;
+
+	if (regist_count == 0) {
+		UnregisterClass(lpszAppName, (HINSTANCE)hInstance);
+	}
+}
+
+void DummyVstEditor::idle() {
+	AEffEditor::idle();
+	effect->setParameterAutomated(0, 0);
+}
+
+void DummyVstEditor::setParameter(VstInt32 index, float value) {
+	if (hwnd_e == NULL) {
+		return;
+	}
+
+	setParam1(effect->getParameter(index));
+
+	InvalidateRect(hwnd_e, NULL, TRUE);
+}
+
+void DummyVstEditor::valueChanged(VstInt32 index, float value) {
+	effect->setParameterAutomated(index, value);
+}
+
+/* プロシージャ */
+LRESULT WINAPI DummyVstEditor::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	static char buf[256];
+	static HWND hButton1;
+
+	switch (message) {
+	case WM_CREATE:
+		//hButton1 = CreateWindow(
+		//	"BUTTON",
+		//	"0.5",
+		//	WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		//	10,
+		//	10,
+		//	80,
+		//	20,
+		//	hWnd,
+		//	(HMENU)ID_B1,
+		//	(HINSTANCE)hInstance
+		//	, NULL);
+		return 0;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+			//ボタン１を押したとき
+		case ID_B1:
+			DummyVstEditor* nmve = (DummyVstEditor*)GetProp(hWnd, PROP_WINPROC);
+			nmve->valueChanged(0, 0.5f);
+			return 0;
+		}
+		break;
+	case WM_PAINT:
+		{
+			RECT rect;
+			SIZE size;
+			PAINTSTRUCT ps;
+			HDC hDC = BeginPaint(hWnd, &ps);
+
+			GetClientRect(hWnd, &rect);
+
+			//nmVstEditor* nmve = (nmVstEditor*)GetProp(hWnd, PROP_WINPROC);
+
+			//sprintf(buf, "%f", nmve->getParam1());
+			sprintf_s(buf, "Keep this window open to prevent DATA LOSS or save data manually.");
+			
+			GetTextExtentPoint32(hDC, buf, strlen(buf), &size);
+
+			SetBkMode(hDC, TRANSPARENT);
+
+			TextOut(hDC, ((rect.right - rect.left) - size.cx) / 2, ((rect.bottom - rect.top) - size.cy) / 2, buf, strlen(buf));
+
+			EndPaint(hWnd, &ps);
+		}
+		return 0;
+	case WM_DESTROY:
+		RemoveProp(hWnd, PROP_WINPROC);
+		PostQuitMessage(0);
+		return 0;
+	default:
+		break;
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }

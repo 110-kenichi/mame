@@ -399,20 +399,28 @@ void StreamUpdatedR(int32_t* buffer, int32_t size)
 
 DWORD WINAPI CloseApplicationProc(LPVOID lpParam)
 {
-	//HACK: mamidimemo When SCCI connected to real hardware, need to wait a lot
-	Sleep(5000);
-
 	if (m_rpcSrv != NULL)
 	{
+		m_rpcSrv->suppress_exceptions(true);
 		m_rpcSrv->close_sessions();
 		m_rpcSrv->stop();
 		m_rpcSrv->~server();
+		m_rpcSrv = NULL;
 	}
 
 	if (m_rpcClient != NULL)
+	{
 		m_rpcClient->~client();
+		m_rpcClient = NULL;
+	}
 
 	return 0;
+}
+
+void running_machine::parameter_automated()
+{
+	if (m_rpcClient != NULL)
+		m_rpcClient->async_call("ParameterAutomated");
 }
 
 int running_machine::run(bool quiet)
@@ -512,7 +520,8 @@ int running_machine::run(bool quiet)
 			});
 			m_rpcSrv->bind("CloseApplication", [&]()
 			{
-				OnCloseApplication();
+				CloseApplication();
+				//OnCloseApplication();
 			});
 			m_rpcSrv->bind("HasExited", [&]()
 			{
@@ -594,12 +603,13 @@ int running_machine::run(bool quiet)
 
 			g_profiler.stop();
 
-			if (HasExited() != 0)
+			if (HasExited() != 0 ||
+				(m_rpcClient != NULL && m_rpcClient->get_connection_state() != rpc::client::connection_state::connected))
 				schedule_exit();
-			if (m_rpcClient != NULL &&
-				m_rpcClient->get_connection_state() != rpc::client::connection_state::connected)
-				OnCloseApplication();
 		}
+
+		OnCloseApplication();
+
 		m_manager.http()->clear();
 
 		// and out via the exit phase
@@ -661,22 +671,27 @@ int running_machine::run(bool quiet)
 
 void running_machine::OnCloseApplication()
 {
-	device_sound_interface* sdl =
-		dynamic_cast<device_sound_interface*>(this->device((std::string("lspeaker")).c_str()));
-	sdl->set_stream_update_callback(NULL);
-	device_sound_interface* sdr =
-		dynamic_cast<device_sound_interface*>(this->device((std::string("rspeaker")).c_str()));
-	sdr->set_stream_update_callback(NULL);
-
 	if (NULL != m_cpSharedMemory)
 		::UnmapViewOfFile(m_cpSharedMemory);
+	m_cpSharedMemory = NULL;
 	if (NULL != m_hSharedMemory)
 		::CloseHandle(m_hSharedMemory);
+	m_hSharedMemory = NULL;
 
-	DWORD dwThreadId = 0L;
-	CreateThread(NULL, 0, CloseApplicationProc, (void*)m_rpcSrv, 0, &dwThreadId);
+	if (m_rpcSrv != NULL)
+	{
+		//m_rpcSrv->suppress_exceptions(true);
+		m_rpcSrv->close_sessions();
+		m_rpcSrv->stop();
+		m_rpcSrv->~server();
+		m_rpcSrv = NULL;
+	}
 
-	CloseApplication();
+	if (m_rpcClient != NULL)
+	{
+		m_rpcClient->~client();
+		m_rpcClient = NULL;
+	}
 }
 
 //-------------------------------------------------
