@@ -3239,7 +3239,7 @@
     <value>XGM*</value>
   </data>
   <data name="toolStripButton22.ToolTipText" xml:space="preserve">
-    <value>Start VGM Recording for specific chip</value>
+    <value>Start XGM Recording for MD/Gen chip</value>
   </data>
   <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 122</value>

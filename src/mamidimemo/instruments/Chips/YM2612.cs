@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
@@ -11,6 +12,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1268,6 +1270,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 lock (engineLockObject)
                 {
                     currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate);
+
+                    if (ym2612.RecordingEnabled)
+                    {
+                        ym2612.RecordData(new PortWriteData()
+                        { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
+                    }
                 }
             }
 
@@ -1280,6 +1288,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 lock (engineLockObject)
                 {
                     currentSampleData[slot] = null;
+
+                    if (ym2612.RecordingEnabled)
+                    {
+                        ym2612.RecordData(new PortWriteData()
+                        { Type = (byte)6, Address = (byte)slot, Data = 0 });
+                    }
                 }
             }
 
@@ -3244,10 +3258,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             lock (RecordingLock)
             {
                 var now = DateTime.Now;
-                string fname = "MAmi" + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
+                string fname = $"MAmi_{UnitNumber}" + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
 
                 OutputFileName = $"{fname}.xgm";
                 base.RecordStart(outputDir, type);
+
+                var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
+                if (UnitNumber < dcsg.Count())
+                    ((SN76496)dcsg.ElementAt((int)UnitNumber)).SetXGMWriter(this);
 
                 recordDataCommand = -1;
                 ClearWrittenDataCache();
@@ -3255,13 +3273,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        public int removeSameAddressData(List<PortWriteData> framedata, PortWriteData writingData)
+        {
+            for (int i = 0; i < framedata.Count; i++)
+            {
+                if (framedata[i].Type == writingData.Type && framedata[i].Address == writingData.Address)
+                {
+                    framedata.RemoveAt(i);
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public override void RecordStop()
         {
             lock (RecordingLock)
             {
+                RecordData(new PortWriteData()
+                { Type = (byte)0x7f, Address = 0, Data = 0, Command = recordDataCommand });
+
                 List<PortWriteData> rd = RecordingData;
 
                 base.RecordStop();
+
+                var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
+                if (UnitNumber < dcsg.Count())
+                    ((SN76496)dcsg.ElementAt((int)UnitNumber)).SetXGMWriter(null);
 
                 Thread t = new Thread(new ThreadStart(() =>
                 {
@@ -3282,18 +3320,58 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //                             We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
                     //                             The sample address is relative to the start of the "Sample Data Bloc"(field $104).
                     //                             An empty entry should have its address set to $FFFF and size set to $0001.
-                    for (int i = 0; i < 63; i++)
+
+                    Dictionary<Object, int> pcmIndexTable = new System.Collections.Generic.Dictionary<Object, int>();
+                    Dictionary<int, Object> pcmDataTable = new System.Collections.Generic.Dictionary<int, Object>();
+
+                    int pcmId = 0;
+                    foreach (var writeData in rd)
                     {
-                        ushort address = 0 / 256;
-                        ushort size = 0 / 256;
-                        address = 0xffff;
-                        size = 0x1;
-                        wd.AddRange(BitConverter.GetBytes(address));
-                        wd.AddRange(BitConverter.GetBytes(size));
+                        if (writeData.Type == 6 && writeData.Data == 1) //Gather PCM Play command
+                        {
+                            if (!pcmIndexTable.ContainsKey(writeData.Tag))
+                            {
+                                pcmDataTable.Add(pcmId, writeData.Tag);
+                                pcmIndexTable.Add(writeData.Tag, pcmId++);
+                            }
+                        }
+                        if (pcmId > 63)
+                            break;
+                    }
+
+                    ushort pcmAddress = 0;
+                    List<byte> pcmDataBlock = new List<byte>();
+                    for (int pid = 0; pid < 63; pid++)
+                    {
+                        if (pcmDataTable.ContainsKey(pid))
+                        {
+                            byte[] pcmdata = (byte[])pcmDataTable[pid];
+
+                            ushort size = (ushort)((pcmdata.Length / 256) + 1);
+                            ushort adr = pcmAddress;
+                            wd.AddRange(BitConverter.GetBytes(adr));
+                            wd.AddRange(BitConverter.GetBytes(size));
+                            pcmAddress += size;
+
+                            for (int pi = 0; pi < size * 256; pi++)
+                            {
+                                if (pi < pcmdata.Length)
+                                    pcmDataBlock.Add((byte)((int)pcmdata[pi] - 0x80));
+                                else
+                                    pcmDataBlock.Add(0);
+                            }
+                        }
+                        else
+                        {
+                            ushort adr = 0xffff;
+                            ushort size = 0x1;
+                            wd.AddRange(BitConverter.GetBytes(adr));
+                            wd.AddRange(BitConverter.GetBytes(size));
+                        }
                     }
                     //$0100                 2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
                     //                           We will reference the value of this field as SLEN.
-                    ushort sampleDataBlockSize = 0 / 256;
+                    ushort sampleDataBlockSize = pcmAddress;
                     wd.AddRange(BitConverter.GetBytes(sampleDataBlockSize));
                     //$0102                 1    Version information (0x01 currently)                 
                     wd.Add(0x01);
@@ -3303,22 +3381,100 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //                           The size of this bloc is variable and is determined by the field $100.
                     //                           If field $100 contains $0000 the bloc is empty and the field is ignored.
                     //                           As explained in the 'Sample id table' field, sample size is aligned on 256 bytes
-                    for (int i = 0; i < sampleDataBlockSize * 256; i++)
-                    {
-                        wd.Add(0x00);   //PCM DATA
-                    }
+                    wd.AddRange(pcmDataBlock.ToArray());
 
                     int moffset = wd.Count;
 
                     List<byte> mdata = new List<byte>();
 
-                    long lastWaitTick = -1;
                     long f;
                     QueryPerformanceFrequency(out f);
                     double tick1frame = f / 60d;
-                    foreach (PortWriteData rd2 in rd)
+
+                    long lastWaitTick = -1;
+
+                    //Optimize
+                    List<PortWriteData> optWriteData = new List<PortWriteData>();
                     {
-                        switch (rd2.Command)
+                        List<PortWriteData> frame1Data = new List<PortWriteData>();
+                        foreach (PortWriteData writeData in rd)
+                        {
+                            switch (writeData.Command)
+                            {
+                                case -1:
+                                    //initial commands
+                                    break;
+                                case 0:
+                                    //normal write
+                                    if (lastWaitTick < 0)
+                                    {
+                                        lastWaitTick = writeData.Tick;
+                                    }
+                                    else if (writeData.Tick - lastWaitTick > tick1frame)
+                                    {
+                                        //Avoid 2byte data splitted by frame
+                                        if (writeData.Type == 4 &&
+                                        (writeData.Address == 8 || writeData.Address == 10 || writeData.Address == 12))
+                                        {
+                                            break;
+                                        }
+                                        if (writeData.Type == 0 || writeData.Type == 2)
+                                        {
+                                            if (0xa0 <= writeData.Address && writeData.Type <= 0xaf)
+                                                break;
+                                        }
+
+                                        //$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
+                                        lastWaitTick = writeData.Tick;
+                                        optWriteData.AddRange(frame1Data.ToArray());
+                                        frame1Data.Clear();
+                                    }
+                                    break;
+                            }
+                            switch (writeData.Type)
+                            {
+                                case 0:
+                                    if (writeData.Address != 0x28)
+                                    {
+                                        //$2X data  1+2(X+1)    YM2612 port 0 register write:
+                                        removeSameAddressData(frame1Data, writeData);
+                                        frame1Data.Add(writeData);
+                                    }
+                                    else
+                                    {
+                                        //$4X data   1+(X+1)    YM2612 key off/on ($28) command write:
+                                        frame1Data.Add(writeData);
+                                    }
+                                    break;
+                                case 2:
+                                    //$3X data  1+2(X+1)    YM2612 port 1 register write:
+                                    removeSameAddressData(frame1Data, writeData);
+                                    frame1Data.Add(writeData);
+                                    break;
+                                case 4: //DCSG 1
+                                    removeSameAddressData(frame1Data, writeData);
+                                    frame1Data.Add(writeData);
+                                    break;
+                                case 5: //DCSG 2
+                                    removeSameAddressData(frame1Data, writeData);
+                                    frame1Data.Add(writeData);
+                                    break;
+                                case 6: //PCM
+                                    removeSameAddressData(frame1Data, writeData);
+                                    frame1Data.Add(writeData);
+                                    break;
+                                case 0x7f: //END
+                                    frame1Data.Add(writeData);
+                                    break;
+                            }
+                        }
+                        optWriteData.AddRange(frame1Data.ToArray());
+                    }
+
+                    lastWaitTick = -1;
+                    foreach (PortWriteData writeData in optWriteData)
+                    {
+                        switch (writeData.Command)
                         {
                             case -1:
                                 //initial commands
@@ -3327,40 +3483,67 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //normal write
                                 if (lastWaitTick < 0)
                                 {
-                                    lastWaitTick = rd2.Tick;
+                                    lastWaitTick = writeData.Tick;
                                 }
-                                else if (rd2.Tick - lastWaitTick > tick1frame)
+                                else if (writeData.Tick - lastWaitTick > tick1frame)
                                 {
                                     //$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
-                                    int wait = (int)Math.Round((rd2.Tick - lastWaitTick) / tick1frame);
+                                    int wait = (int)Math.Round((writeData.Tick - lastWaitTick) / tick1frame);
                                     for (int i = 0; i < wait; i++)
                                         mdata.Add(0x00);
-                                    lastWaitTick = rd2.Tick;
+                                    lastWaitTick = writeData.Tick;
                                 }
                                 break;
                         }
-                        switch (rd2.Type)
+                        switch (writeData.Type)
                         {
                             case 0:
-                                if (rd2.Address != 0x28)
+                                if (writeData.Address != 0x28)
                                 {
                                     //$2X data  1+2(X+1)    YM2612 port 0 register write:
                                     mdata.Add(0x20);
-                                    mdata.Add(rd2.Address);
-                                    mdata.Add(rd2.Data);
+                                    mdata.Add(writeData.Address);
+                                    mdata.Add(writeData.Data);
                                 }
                                 else
                                 {
                                     //$4X data   1+(X+1)    YM2612 key off/on ($28) command write:
                                     mdata.Add(0x40);
-                                    mdata.Add(rd2.Data);
+                                    mdata.Add(writeData.Data);
                                 }
                                 break;
                             case 2:
                                 //$3X data  1+2(X+1)    YM2612 port 1 register write:
                                 mdata.Add(0x30);
-                                mdata.Add(rd2.Address);
-                                mdata.Add(rd2.Data);
+                                mdata.Add(writeData.Address);
+                                mdata.Add(writeData.Data);
+                                break;
+                            case 4: //DCSG 1
+                                mdata.Add(0x10);
+                                mdata.Add(((byte)(writeData.Address << 4 | writeData.Data)));
+                                break;
+                            case 5: //DCSG 2
+                                mdata.Add(0x10);
+                                mdata.Add((byte)writeData.Data);
+                                break;
+                            case 6: //PCM
+                                if (writeData.Data == 1)
+                                {
+                                    if (pcmIndexTable.ContainsKey(writeData.Tag))
+                                    {
+                                        mdata.Add((byte)(0x50 + writeData.Address));
+                                        mdata.Add((byte)(pcmIndexTable[writeData.Tag] + 1));
+                                    }
+                                    else
+                                    {
+                                        mdata.Add((byte)(0x50 + writeData.Address));
+                                        mdata.Add((byte)0);
+                                    }
+                                }
+                                break;
+                            case 0x7f: //END
+                                //$7F              1    End command (end of music data).
+                                mdata.Add(0x7f);
                                 break;
                         }
                     }
@@ -3368,14 +3551,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //$0104+SLEN            4    Music data bloc size.
                     //                           We will reference the value of this field as MLEN.
                     //                           This fields may be used later to quickly browse multi track XGM file.
-                    uint mlen = (uint)(mdata.Count - moffset);
+                    uint mlen = (uint)(mdata.Count);
                     wd.AddRange(BitConverter.GetBytes(mlen));
 
                     //$0108 + SLEN               MLEN Music data bloc. It contains the XGM music data(see the XGM command description below).
                     wd.AddRange(mdata.ToArray());
 
-                    //$7F              1    End command (end of music data).
-                    wd.Add(0x7f);
 
                     FileStream xgm = new FileStream(fn, FileMode.CreateNew);
                     xgm.Write(wd.ToArray(), 0, wd.Count);

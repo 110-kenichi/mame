@@ -21,6 +21,8 @@ namespace zanac.MAmidiMEmo.VSIF
 
         public int Command;
 
+        public object Tag;
+
         public long Tick;
     }
 }

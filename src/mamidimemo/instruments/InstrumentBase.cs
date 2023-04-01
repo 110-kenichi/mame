@@ -3094,10 +3094,13 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             lock (RecordingLock)
             {
-                OutputDir = outputDir;
-                RecordingData = new List<PortWriteData>();
-                RecordingEnabled = true;
-                RecordingType = type;
+                if (!RecordingEnabled)
+                {
+                    OutputDir = outputDir;
+                    RecordingData = new List<PortWriteData>();
+                    RecordingEnabled = true;
+                    RecordingType = type;
+                }
             }
         }
 

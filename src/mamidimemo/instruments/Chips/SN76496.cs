@@ -435,6 +435,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Sn76496WriteData(unitNumber, data, true);
         }
 
+        private int lastWriteRegister;
+
         /// <summary>
         /// 
         /// </summary>
@@ -464,6 +466,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
 
                 DeferredWriteData(Sn76496_write, unitNumber, data);
+
+                //For XGM
+                if (ym2612 != null && !ym2612.IsDisposed)
+                {
+                    if ((data & 0x80) != 0)
+                    {
+                        lastWriteRegister = (data >> 4);
+                        ym2612.RecordData(new PortWriteData()
+                        {
+                            Type = 4,
+                            Address = (byte)lastWriteRegister,
+                            Data = (byte)(data & 0xf)
+                        });
+                    }
+                    else
+                    {
+                        ym2612.RecordData(new PortWriteData()
+                        {
+                            Type = 5,
+                            Address = (byte)lastWriteRegister,
+                            Data = (byte)(data & 0x3f)
+                        });
+                    }
+                }
             }));
 
             /*
@@ -549,6 +575,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             base.Dispose();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void initGlobalRegisters()
+        {
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
         }
 
         /// <summary>
@@ -724,7 +764,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 slot = -1;
                             if (slot == -1)
                             {
-                                if(timbre.PartialReserve3ch)
+                                if (timbre.PartialReserve3ch)
                                     emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2, slot, 0);
                                 else
                                     emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);
@@ -1067,6 +1107,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 return sc;
             }
+        }
+
+        private YM2612 ym2612;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ym2612"></param>
+        public void SetXGMWriter(YM2612 ym2612)
+        {
+            this.ym2612 = ym2612;
         }
 
     }

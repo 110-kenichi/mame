@@ -2453,7 +2453,6 @@ namespace zanac.MAmidiMEmo.Gui
             Directory.CreateDirectory(Settings.Default.OutputDir);
 
             var opn2 = InstrumentManager.GetInstruments((int)(InstrumentType.YM2612 + 1));
-            var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
             try
             {
                 Program.SoundUpdating();

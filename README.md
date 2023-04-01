@@ -1,4 +1,4 @@
-MAmidiMEmo 4.6.8.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.6.9.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -250,11 +250,12 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 	Please see tha manual.
 	https://github.com/110-kenichi/mame/blob/master/docs/MAmidiMEmo/Manual.pdf
 
-*** Known issues and limitations *** 
+*** ★Known issues and limitations★ *** 
 
    1. MT-32 & CM32-P can not store/restore last settings.
    2. HuC6820 suddenly stop sounding. Please restart MAmi.
    3. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
+   4. You need to save the data manually on the DAW (Cubase and so on). Or, keep open the dummy editor window of the MAmidiMemo.
    
 *** How to create build environment ***
 
@@ -269,11 +270,13 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 4.6.9.0 Added ADSR.SR property.
-        Fixed ADSR.SL for SN76489.
+        Fixed ADSR.SL for SN76489 volume calculation.
 		Fixed Software Envelope ReleasePoint when point is zero.
 		Added AssignMIDIChtoSlotNumOffset property for AssignMIDIChtoSlotNum.
 		Fixed MONO mode. When key on on mono mode ch, completele OFF the last note sound.
 		Reduced crashing while closing DAW.
+		Improved FTDI speed for MAmidiMEmo.
+		Fixed Save/Load error on DAW.
 		(Preliminary) Added sin/sq/tri wave create button on the SW Envelope editor.
 		(Preliminary) Supported LegatoFootSwitch(CC#68). Enabled only MONO = 1 and RecentlyUsedSlot mode.
 		(Preliminary) Supported DAC PCM for YM2612 for REAL HARDWARE.
