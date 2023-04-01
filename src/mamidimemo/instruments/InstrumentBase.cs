@@ -29,6 +29,7 @@ using zanac.MAmidiMEmo.Instruments.Vst;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.VSIF;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -3046,6 +3047,92 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         #endregion
+
+        protected static object RecordingLock = new object();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Boolean RecordingEnabled
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string OutputDir
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<PortWriteData> RecordingData
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int RecordingType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outputDir"></param>
+        public virtual void RecordStart(string outputDir, int type)
+        {
+            lock (RecordingLock)
+            {
+                OutputDir = outputDir;
+                RecordingData = new List<PortWriteData>();
+                RecordingEnabled = true;
+                RecordingType = type;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void RecordStop()
+        {
+            lock (RecordingLock)
+            {
+                this.RecordingEnabled = false;
+                RecordingData = null;
+            }
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryPerformanceFrequency(out long frequency);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="outputDir"></param>
+        public virtual void RecordData(PortWriteData writeData)
+        {
+            lock (RecordingLock)
+            {
+                long count;
+                QueryPerformanceCounter(out count);
+                writeData.Tick = count;
+                RecordingData?.Add(writeData);
+            }
+        }
     }
 
     public enum FilterMode

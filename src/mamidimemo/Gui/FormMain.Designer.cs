@@ -190,6 +190,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton22 = new System.Windows.Forms.ToolStripButton();
             this.openFileDialogMidi = new System.Windows.Forms.OpenFileDialog();
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
@@ -1440,7 +1441,8 @@
             this.toolStripButton2,
             this.toolStripSeparator1,
             this.toolStripButton20,
-            this.toolStripButton21});
+            this.toolStripButton21,
+            this.toolStripButton22});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
@@ -1770,6 +1772,13 @@
             this.toolStripButton21.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
             this.toolStripButton21.Click += new System.EventHandler(this.toolStripButton21_Click);
             // 
+            // toolStripButton22
+            // 
+            resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
+            this.toolStripButton22.Name = "toolStripButton22";
+            this.toolStripButton22.CheckedChanged += new System.EventHandler(this.toolStripButton22_CheckedChanged);
+            this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click_1);
+            // 
             // openFileDialogMidi
             // 
             this.openFileDialogMidi.DefaultExt = "*.mid";
@@ -2005,6 +2014,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonNext;
         private System.Windows.Forms.ToolStripMenuItem yM3806OPQToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mIDIDelayCheckerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButton22;
     }
 }
 

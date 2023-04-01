@@ -28,6 +28,9 @@ using Melanchall.DryWetMidi.Interaction;
 using zanac.MAmidiMEmo.Util;
 using System.Security.Permissions;
 using System.Runtime.CompilerServices;
+using zanac.MAmidiMEmo.VSIF;
+using zanac.MAmidiMEmo.Instruments.Chips;
+using System.Xml.Linq;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -1343,7 +1346,7 @@ namespace zanac.MAmidiMEmo.Gui
                         Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
                     string op = Path.Combine(Settings.Default.OutputDir, fname);
-                    Directory.CreateDirectory(op);
+                    Directory.CreateDirectory(Settings.Default.OutputDir);
 
                     InstrumentManager.StartVgmRecordingTo(op);
                 }
@@ -2435,6 +2438,44 @@ namespace zanac.MAmidiMEmo.Gui
             using (var mt = new FormMidiTest())
             {
                 mt.ShowDialog();
+            }
+        }
+
+        private void toolStripButton22_Click_1(object sender, EventArgs e)
+        {
+            toolStripButton22.Checked = !toolStripButton22.Checked;
+        }
+
+        private void toolStripButton22_CheckedChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
+                Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            Directory.CreateDirectory(Settings.Default.OutputDir);
+
+            var opn2 = InstrumentManager.GetInstruments((int)(InstrumentType.YM2612 + 1));
+            var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
+            try
+            {
+                Program.SoundUpdating();
+
+                if (toolStripButton22.Checked)
+                {
+                    foreach (var instr in opn2)
+                    {
+                        instr.RecordStart(Settings.Default.OutputDir, 2);   //XGM
+                    }
+                }
+                else
+                {
+                    foreach (var instr in opn2)
+                    {
+                        instr.RecordStop();
+                    }
+                }
+            }
+            finally
+            {
+                Program.SoundUpdated();
             }
         }
     }

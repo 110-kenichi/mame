@@ -18,5 +18,9 @@ namespace zanac.MAmidiMEmo.VSIF
         public byte Data;
 
         public int Wait;
+
+        public int Command;
+
+        public long Tick;
     }
 }
