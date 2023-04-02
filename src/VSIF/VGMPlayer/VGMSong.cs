@@ -1808,14 +1808,13 @@ namespace zanac.VGMPlayer
                                             if (adrs > 0xb6)
                                                 break;
 
-                                            dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
-
                                             if (comPortOPN2 != null)
                                             {
                                                 switch (adrs)
                                                 {
                                                     case 0x2a:
                                                         //output DAC
+                                                        dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
                                                         DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                         break;
                                                     case 0x2b:
@@ -1835,6 +1834,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case 0x2a:
                                                         //output DAC
+                                                        dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
                                                         DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                         break;
                                                     case 0x2b:
