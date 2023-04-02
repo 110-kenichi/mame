@@ -1400,13 +1400,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (dacData > sbyte.MaxValue)
                             {
                                 //overflowed = dacData - sbyte.MaxValue;
-                                dacData = byte.MaxValue;
+                                dacData = sbyte.MaxValue;
                             }
                             else if (dacData < sbyte.MinValue)
                             {
                                 //overflowed = dacData - sbyte.MinValue;
-                                dacData = byte.MinValue;
+                                dacData = sbyte.MinValue;
                             }
+                            //ym2612.DeferredWriteOPN2_DAC(unitNumber, new byte[] { (byte)(dacData + 0x80) });
                             deferredWriteDacData((byte)(dacData + 0x80));
 
                             /* TODO:
@@ -1414,13 +1415,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 Program.SoundUpdating();
                                 Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
-                                Ym2612_write(unitNumber, (uint)1, (byte)dacData);
+                                Ym2612_write(unitNumber, (uint)1, (byte)(dacData + 0x80));
                             }
                             finally
                             {
                                 Program.SoundUpdated();
                             }
-                            */
+                            //*/
 
                             streamWaitDelta += 44100d / sampleRate;
                         }

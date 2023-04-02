@@ -282,9 +282,13 @@ VstInt32 MAmiVSTi::getChunk(void** data, bool isPreset)
 
 	auto buff = m_rpcClient->call("SaveData").as<std::vector<unsigned char>>();
 
-	*data = &buff[0];
+	//saveData.clear();
+	saveData.resize(buff.size());
+	std::copy(buff.begin(), buff.end(), saveData.data());
 
-	return (VstInt32)buff.size();
+	*data = saveData.data();
+
+	return (VstInt32)saveData.size();
 }
 
 ///< Host restores plug-in state
@@ -296,8 +300,12 @@ VstInt32 MAmiVSTi::setChunk(void* data, VstInt32 byteSize, bool isPreset)
 		return 0;
 
 	//	LoadData((byte*)data, byteSize);
-	std::vector<unsigned char> buffer((unsigned char*)data, ((unsigned char*)data) + byteSize);
-	m_rpcClient->call("LoadData", buffer, byteSize);
+	saveData.resize(byteSize);
+	std::copy((unsigned char*)data, (unsigned char*)data + byteSize, saveData.data());
+	m_rpcClient->call("LoadData", saveData, byteSize);
+
+	//std::vector<unsigned char> buffer((unsigned char*)data, ((unsigned char*)data) + byteSize);
+	//m_rpcClient->call("LoadData", buffer, byteSize);
 
 	return 0;
 }

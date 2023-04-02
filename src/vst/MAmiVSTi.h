@@ -45,6 +45,7 @@ private:
 	std::shared_mutex mtxSoxrBuffer;
 
 	std::vector<int32_t> m_streamBuffer2ch;
+	std::vector<unsigned char> saveData;
 
 	void streamUpdatedL(int32_t size);
 	void streamUpdatedR(int32_t size);

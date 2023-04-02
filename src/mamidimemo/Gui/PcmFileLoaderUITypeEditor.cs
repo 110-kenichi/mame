@@ -86,7 +86,11 @@ namespace zanac.MAmidiMEmo.Gui
                             }
                             object rvalue = convertRawToRetValue(context, buf.ToArray());
                             if (rvalue != null)
+                            {
+                                TimbreBase tim = context.Instance as TimbreBase;
+                                tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                 return rvalue;
+                            }
                             return value;
                         }
                         else
@@ -105,7 +109,11 @@ namespace zanac.MAmidiMEmo.Gui
                             {
                                 object rvalue = convertToRetValue(context, data.Data);
                                 if (rvalue != null)
+                                {
+                                    TimbreBase tim = context.Instance as TimbreBase;
+                                    tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                     return rvalue;
+                                }
                             }
                             return value;
                         }
