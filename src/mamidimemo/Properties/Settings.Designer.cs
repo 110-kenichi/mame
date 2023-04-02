@@ -657,5 +657,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["ToneLibLastDir"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OctaveDisplay {
+            get {
+                return ((int)(this["OctaveDisplay"]));
+            }
+            set {
+                this["OctaveDisplay"] = value;
+            }
+        }
     }
 }

@@ -265,8 +265,12 @@ namespace zanac.MAmidiMEmo.Midi
 
         public static string GetNoteName(SevenBitNumber noteNumber)
         {
+            int oct = 0;
+            if (Settings.Default.OctaveDisplay == 1)
+                oct = -1;
+
             var no = new TaggedNoteOnEvent(noteNumber, (SevenBitNumber)0);
-            var nn = no.GetNoteName() + no.GetNoteOctave().ToString();
+            var nn = no.GetNoteName() + (no.GetNoteOctave() + oct).ToString();
 
             return nn.Replace("Sharp", "#");
         }

@@ -139,6 +139,8 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Lower key range")]
         [DefaultValue(NoteNames.C_1)]
+        [TypeConverter(typeof(NoteNameConverter))]
+        [EditorAttribute(typeof(NoteNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public NoteNames KeyRangeLow
         {
             get => f_KeyRangeLow;
@@ -150,6 +152,8 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Higher key range")]
         [DefaultValue(NoteNames.G9)]
+        [TypeConverter(typeof(NoteNameConverter))]
+        [EditorAttribute(typeof(NoteNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public NoteNames KeyRangeHigh
         {
             get => f_KeyRangeHigh;

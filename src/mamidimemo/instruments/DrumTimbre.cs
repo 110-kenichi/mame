@@ -55,6 +55,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
+        [TypeConverter(typeof(NoteNameConverter))]
+        [EditorAttribute(typeof(NoteNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public NoteNames BaseNote
         {
             get

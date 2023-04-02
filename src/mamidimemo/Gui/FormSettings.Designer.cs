@@ -34,23 +34,25 @@
             this.labelRate = new MetroFramework.Controls.MetroLabel();
             this.label2 = new MetroFramework.Controls.MetroLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.comboBoxAudioLatency = new MetroFramework.Controls.MetroComboBox();
             this.label3 = new MetroFramework.Controls.MetroLabel();
-            this.comboBoxSoundType = new MetroFramework.Controls.MetroComboBox();
-            this.comboBoxSampleRate = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBoxPaLatency = new MetroFramework.Controls.MetroTextBox();
             this.label6 = new MetroFramework.Controls.MetroLabel();
-            this.textBoxPaDevice = new MetroFramework.Controls.MetroTextBox();
             this.label5 = new MetroFramework.Controls.MetroLabel();
             this.label4 = new MetroFramework.Controls.MetroLabel();
-            this.textBoxPaApi = new MetroFramework.Controls.MetroTextBox();
             this.label7 = new MetroFramework.Controls.MetroLabel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.button1 = new MetroFramework.Controls.MetroButton();
-            this.textBox1 = new MetroFramework.Controls.MetroTextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
+            this.metroComboBox1 = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxAudioLatency = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxSoundType = new MetroFramework.Controls.MetroComboBox();
+            this.comboBoxSampleRate = new System.Windows.Forms.ComboBox();
+            this.textBoxPaLatency = new MetroFramework.Controls.MetroTextBox();
+            this.textBoxPaDevice = new MetroFramework.Controls.MetroTextBox();
+            this.textBoxPaApi = new MetroFramework.Controls.MetroTextBox();
+            this.textBox1 = new MetroFramework.Controls.MetroTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -93,7 +95,88 @@
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.label7, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.metroLabel1, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.metroComboBox1, 1, 5);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // groupBox1
+            // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
+            this.tableLayoutPanel1.SetColumnSpan(this.groupBox1, 2);
+            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.TabStop = false;
+            // 
+            // tableLayoutPanel2
+            // 
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Controls.Add(this.textBoxPaLatency, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label6, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxPaDevice, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label5, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxPaApi, 1, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.Name = "label7";
+            // 
+            // tableLayoutPanel3
+            // 
+            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
+            this.tableLayoutPanel3.Controls.Add(this.button1, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.textBox1, 0, 0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            // 
+            // button1
+            // 
+            resources.ApplyResources(this.button1, "button1");
+            this.button1.Name = "button1";
+            this.button1.UseSelectable = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // folderBrowserDialog1
+            // 
+            resources.ApplyResources(this.folderBrowserDialog1, "folderBrowserDialog1");
+            // 
+            // metroLabel1
+            // 
+            resources.ApplyResources(this.metroLabel1, "metroLabel1");
+            this.metroLabel1.Name = "metroLabel1";
+            // 
+            // metroComboBox1
+            // 
+            this.metroComboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OctaveDisplay", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.metroComboBox1, "metroComboBox1");
+            this.metroComboBox1.FormattingEnabled = true;
+            this.metroComboBox1.Items.AddRange(new object[] {
+            resources.GetString("metroComboBox1.Items"),
+            resources.GetString("metroComboBox1.Items1")});
+            this.metroComboBox1.Name = "metroComboBox1";
+            this.metroComboBox1.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.OctaveDisplay;
+            this.metroComboBox1.UseSelectable = true;
             // 
             // comboBoxAudioLatency
             // 
@@ -108,11 +191,6 @@
             this.comboBoxAudioLatency.Name = "comboBoxAudioLatency";
             this.comboBoxAudioLatency.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.AudioLatency;
             this.comboBoxAudioLatency.UseSelectable = true;
-            // 
-            // label3
-            // 
-            resources.ApplyResources(this.label3, "label3");
-            this.label3.Name = "label3";
             // 
             // comboBoxSoundType
             // 
@@ -144,25 +222,6 @@
             this.comboBoxSampleRate.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.SampleRate;
             this.comboBoxSampleRate.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBoxSampleRate_DrawItem);
             this.comboBoxSampleRate.Validating += new System.ComponentModel.CancelEventHandler(this.comboBoxText_Validating);
-            // 
-            // groupBox1
-            // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.tableLayoutPanel1.SetColumnSpan(this.groupBox1, 2);
-            this.groupBox1.Controls.Add(this.tableLayoutPanel2);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
-            // 
-            // tableLayoutPanel2
-            // 
-            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
-            this.tableLayoutPanel2.Controls.Add(this.textBoxPaLatency, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this.label6, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.textBoxPaDevice, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.label5, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.textBoxPaApi, 1, 0);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             // 
             // textBoxPaLatency
             // 
@@ -197,11 +256,6 @@
             this.textBoxPaLatency.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBoxPaLatency.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaLatency.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
-            // 
-            // label6
-            // 
-            resources.ApplyResources(this.label6, "label6");
-            this.label6.Name = "label6";
             // 
             // textBoxPaDevice
             // 
@@ -238,16 +292,6 @@
             this.textBoxPaDevice.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaDevice.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             // 
-            // label5
-            // 
-            resources.ApplyResources(this.label5, "label5");
-            this.label5.Name = "label5";
-            // 
-            // label4
-            // 
-            resources.ApplyResources(this.label4, "label4");
-            this.label4.Name = "label4";
-            // 
             // textBoxPaApi
             // 
             // 
@@ -282,25 +326,6 @@
             this.textBoxPaApi.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaApi.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             // 
-            // label7
-            // 
-            resources.ApplyResources(this.label7, "label7");
-            this.label7.Name = "label7";
-            // 
-            // tableLayoutPanel3
-            // 
-            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
-            this.tableLayoutPanel3.Controls.Add(this.button1, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.textBox1, 0, 0);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            // 
-            // button1
-            // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseSelectable = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // textBox1
             // 
             // 
@@ -332,10 +357,6 @@
             this.textBox1.UseSelectable = true;
             this.textBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.textBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            // 
-            // folderBrowserDialog1
-            // 
-            resources.ApplyResources(this.folderBrowserDialog1, "folderBrowserDialog1");
             // 
             // FormSettings
             // 
@@ -388,5 +409,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private MetroFramework.Controls.MetroButton button1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private MetroFramework.Controls.MetroLabel metroLabel1;
+        private MetroFramework.Controls.MetroComboBox metroComboBox1;
     }
 }

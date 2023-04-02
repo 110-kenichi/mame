@@ -10,8 +10,8 @@ using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Midi
 {
-    [Editor(typeof(EnumTypeEditor), typeof(UITypeEditor))]
-    [TypeConverter(typeof(EnumConverter<NoteNames>))]
+    [EditorAttribute(typeof(NoteNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+    [TypeConverter(typeof(NoteNameConverter))]
     public enum NoteNames : byte
     {
         [Description("C-1")]
