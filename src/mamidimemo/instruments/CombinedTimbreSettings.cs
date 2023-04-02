@@ -247,6 +247,43 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Save...)")]
+        [Description("Save all parameters as serialize data to the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataSave
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
+        }
+
+
+        [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Load...)")]
+        [Description("Load all parameters as serialize data from the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataLoad
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
+        }
+
         [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
@@ -283,7 +320,7 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 var obj = JsonConvert.DeserializeObject<CombinedTimbreSettings>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
             }
             catch (Exception ex)
             {

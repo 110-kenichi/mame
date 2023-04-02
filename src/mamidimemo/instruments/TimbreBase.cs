@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FM_SoundConvertor;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using System;
@@ -8,11 +9,13 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
+using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -251,6 +254,43 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get;
             set;
+        }
+
+        [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Save...)")]
+        [Description("Save all parameters as serialize data to the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataSave
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
+        }
+
+
+        [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Load...)")]
+        [Description("Load all parameters as serialize data from the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataLoad
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
         }
 
         [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]

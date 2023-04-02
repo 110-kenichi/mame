@@ -496,7 +496,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM2612>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -2698,7 +2698,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2612Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -3081,6 +3081,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Save...)")]
+            [Description("Save all parameters as serialize data to the file.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string SerializeDataSave
+            {
+                get
+                {
+                    return SerializeData;
+                }
+                set
+                {
+                    SerializeData = value;
+                }
+            }
+
+
+            [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            [DisplayName("(Load...)")]
+            [Description("Load all parameters as serialize data from the file.")]
+            [TypeConverter(typeof(EmptyTypeConverter))]
+            public string SerializeDataLoad
+            {
+                get
+                {
+                    return SerializeData;
+                }
+                set
+                {
+                    SerializeData = value;
+                }
+            }
+
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
                 typeof(UITypeEditor)), Localizable(false)]
             [IgnoreDataMember]
@@ -3103,7 +3140,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2612Operator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -3245,6 +3282,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public string OutputFileName
         {
             get;

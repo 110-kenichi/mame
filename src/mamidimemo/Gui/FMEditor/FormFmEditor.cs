@@ -1234,5 +1234,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             PasteRequested?.Invoke(sender, e);
         }
+
+        private void metroButton1_Click(object sender, EventArgs e)
+        {
+            FormToneLibrary l = new FormToneLibrary();
+            l.ShowDialog();
+        }
     }
 }

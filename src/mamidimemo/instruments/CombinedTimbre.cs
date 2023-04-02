@@ -131,7 +131,7 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 var obj = JsonConvert.DeserializeObject<CombinedTimbre>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
             }
             catch (Exception ex)
             {

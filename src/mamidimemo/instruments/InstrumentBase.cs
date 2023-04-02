@@ -357,6 +357,43 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Save...)")]
+        [Description("Save all parameters as serialize data to the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataSave
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
+        }
+
+
+        [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [DisplayName("(Load...)")]
+        [Description("Load all parameters as serialize data from the file.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        public string SerializeDataLoad
+        {
+            get
+            {
+                return SerializeData;
+            }
+            set
+            {
+                SerializeData = value;
+            }
+        }
+
         [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
@@ -2361,12 +2398,18 @@ namespace zanac.MAmidiMEmo.Instruments
             Dispose(false);
         }
 
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public bool IsDisposing
         {
             get;
             protected set;
         }
 
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public bool IsDisposed
         {
             get;
@@ -3053,6 +3096,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public Boolean RecordingEnabled
         {
             get;
@@ -3062,6 +3108,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public string OutputDir
         {
             get;
@@ -3071,6 +3120,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public List<PortWriteData> RecordingData
         {
             get;
@@ -3080,6 +3132,9 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Browsable(false)]
         public int RecordingType
         {
             get;

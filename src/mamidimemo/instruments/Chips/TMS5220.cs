@@ -126,7 +126,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<Beep>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
             }
             catch (Exception ex)
             {
@@ -919,7 +919,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<TMS5220Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
                 }
                 catch (Exception ex)
                 {

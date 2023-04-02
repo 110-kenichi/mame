@@ -65,6 +65,7 @@
             this.metroButtonAbort = new MetroFramework.Controls.MetroButton();
             this.metroButtonPaste = new MetroFramework.Controls.MetroButton();
             this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -385,7 +386,8 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 6;
+            this.tableLayoutPanel1.ColumnCount = 7;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -395,13 +397,14 @@
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonParams, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTarget, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 5, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 5, 2);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 5, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 4, 0);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 6, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 6, 0);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 5, 0);
+            this.tableLayoutPanel1.Controls.Add(this.metroButton1, 2, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 726);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -422,7 +425,7 @@
             this.metroButtonRand1.Name = "metroButtonRand1";
             this.metroButtonRand1.Size = new System.Drawing.Size(100, 29);
             this.metroButtonRand1.TabIndex = 0;
-            this.metroButtonRand1.Text = "&Rand All";
+            this.metroButtonRand1.Text = "&Rand all";
             this.metroButtonRand1.UseSelectable = true;
             this.metroButtonRand1.Click += new System.EventHandler(this.metroButtonRandAll_Click);
             // 
@@ -434,17 +437,18 @@
             this.metroButtonParams.Name = "metroButtonParams";
             this.metroButtonParams.Size = new System.Drawing.Size(100, 29);
             this.metroButtonParams.TabIndex = 1;
-            this.metroButtonParams.Text = "Rand &Fine";
+            this.metroButtonParams.Text = "Rand &fine";
             this.metroButtonParams.UseSelectable = true;
             this.metroButtonParams.Click += new System.EventHandler(this.metroButtonRandParams_Click);
             // 
             // metroTextBoxTarget
             // 
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 3);
             // 
             // 
             // 
             this.metroTextBoxTarget.CustomButton.Image = null;
-            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(469, 2);
+            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(577, 2);
             this.metroTextBoxTarget.CustomButton.Margin = new System.Windows.Forms.Padding(4);
             this.metroTextBoxTarget.CustomButton.Name = "";
             this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(27, 27);
@@ -469,7 +473,7 @@
             this.metroTextBoxTarget.SelectionLength = 0;
             this.metroTextBoxTarget.SelectionStart = 0;
             this.metroTextBoxTarget.ShortcutsEnabled = true;
-            this.metroTextBoxTarget.Size = new System.Drawing.Size(499, 32);
+            this.metroTextBoxTarget.Size = new System.Drawing.Size(607, 32);
             this.metroTextBoxTarget.TabIndex = 2;
             this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
             this.metroTextBoxTarget.UseSelectable = true;
@@ -571,6 +575,18 @@
             this.metroButtonCopy.UseSelectable = true;
             this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
+            // metroButton1
+            // 
+            this.metroButton1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButton1.Location = new System.Drawing.Point(223, 54);
+            this.metroButton1.Margin = new System.Windows.Forms.Padding(4);
+            this.metroButton1.Name = "metroButton1";
+            this.metroButton1.Size = new System.Drawing.Size(100, 29);
+            this.metroButton1.TabIndex = 6;
+            this.metroButton1.Text = "Tone library...";
+            this.metroButton1.UseSelectable = true;
+            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
+            // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
@@ -623,7 +639,7 @@
             this.metroComboBoxTimbres.Location = new System.Drawing.Point(68, 4);
             this.metroComboBoxTimbres.Margin = new System.Windows.Forms.Padding(4);
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.metroComboBoxTimbres.Size = new System.Drawing.Size(700, 30);
+            this.metroComboBoxTimbres.Size = new System.Drawing.Size(741, 30);
             this.metroComboBoxTimbres.TabIndex = 3;
             this.metroComboBoxTimbres.UseSelectable = true;
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
@@ -655,7 +671,7 @@
             this.metroButtonImportAll.AllowDrop = true;
             this.metroButtonImportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonImportAll.AutoSize = true;
-            this.metroButtonImportAll.Location = new System.Drawing.Point(776, 4);
+            this.metroButtonImportAll.Location = new System.Drawing.Point(817, 4);
             this.metroButtonImportAll.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAll.Name = "metroButtonImportAll";
             this.metroButtonImportAll.Size = new System.Drawing.Size(112, 31);
@@ -670,10 +686,10 @@
             // 
             this.metroButtonImportAllGit.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonImportAllGit.AutoSize = true;
-            this.metroButtonImportAllGit.Location = new System.Drawing.Point(896, 4);
+            this.metroButtonImportAllGit.Location = new System.Drawing.Point(937, 4);
             this.metroButtonImportAllGit.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAllGit.Name = "metroButtonImportAllGit";
-            this.metroButtonImportAllGit.Size = new System.Drawing.Size(153, 31);
+            this.metroButtonImportAllGit.Size = new System.Drawing.Size(112, 31);
             this.metroButtonImportAllGit.TabIndex = 3;
             this.metroButtonImportAllGit.Text = "Import all Gi&t...";
             this.metroButtonImportAllGit.UseSelectable = true;
@@ -757,5 +773,6 @@
         private MetroFramework.Controls.MetroButton metroButtonAbort;
         private MetroFramework.Controls.MetroButton metroButtonCopy;
         private MetroFramework.Controls.MetroButton metroButtonPaste;
+        private MetroFramework.Controls.MetroButton metroButton1;
     }
 }

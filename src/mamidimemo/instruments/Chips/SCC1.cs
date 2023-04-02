@@ -307,7 +307,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void RestoreFrom(string serializeData)
         {
             using (var obj = JsonConvert.DeserializeObject<SCC1>(serializeData))
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -1293,7 +1293,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<SCC1Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData" }), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
                     calcWsgDataHashCode();
                 }
                 catch (Exception ex)
