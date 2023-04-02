@@ -15,6 +15,7 @@ using zanac.MAmidiMEmo.Instruments;
 using System.IO;
 using Microsoft.Win32;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -66,70 +67,82 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                     InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
-                    SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-                    saveFileDialog.DefaultExt = "*.msd";
-                    saveFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";
-                    string fname = null;
-                    try
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-                        fname = tim.TimbreName;
-                    }
-                    catch (Exception ex1)
-                    {
-                        if (ex1.GetType() == typeof(Exception))
-                            throw;
-                        else if (ex1.GetType() == typeof(SystemException))
-                            throw;
 
+                        string dir = Settings.Default.ToneLibLastDir;
+                        if (string.IsNullOrWhiteSpace(dir))
+                        {
+                            dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                            dir = Path.Combine(dir, "MAmi");
+                        }
+                        saveFileDialog.InitialDirectory = dir;
+
+                        saveFileDialog.DefaultExt = "*.msd";
+                        saveFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";
+                        string fname = null;
                         try
                         {
-                            StringReader rs = new StringReader(tim.Memo);
-                            while (rs.Peek() > -1)
-                            {
-                                fname = rs.ReadLine();
-                                break;
-                            }
+                            fname = tim.TimbreName;
                         }
-                        catch (Exception ex2)
+                        catch (Exception ex1)
                         {
-                            if (ex2.GetType() == typeof(Exception))
+                            if (ex1.GetType() == typeof(Exception))
                                 throw;
-                            else if (ex2.GetType() == typeof(SystemException))
+                            else if (ex1.GetType() == typeof(SystemException))
                                 throw;
 
                             try
                             {
-                                fname = fullTypeName;
+                                StringReader rs = new StringReader(tim.Memo);
+                                while (rs.Peek() > -1)
+                                {
+                                    fname = rs.ReadLine();
+                                    break;
+                                }
                             }
-                            catch (Exception ex3)
+                            catch (Exception ex2)
                             {
-                                if (ex3.GetType() == typeof(Exception))
+                                if (ex2.GetType() == typeof(Exception))
                                     throw;
-                                else if (ex3.GetType() == typeof(SystemException))
+                                else if (ex2.GetType() == typeof(SystemException))
                                     throw;
+
+                                try
+                                {
+                                    fname = fullTypeName;
+                                }
+                                catch (Exception ex3)
+                                {
+                                    if (ex3.GetType() == typeof(Exception))
+                                        throw;
+                                    else if (ex3.GetType() == typeof(SystemException))
+                                        throw;
+                                }
                             }
                         }
-                    }
-                    if (string.IsNullOrWhiteSpace(fname))
-                        fname = "MyData";
-                    Path.ChangeExtension(fname, ".msd");
+                        if (string.IsNullOrWhiteSpace(fname))
+                            fname = "MyData";
+                        Path.ChangeExtension(fname, ".msd");
 
-                    foreach (var invalidChar in Path.GetInvalidFileNameChars())
-                        fname = fname.Replace(invalidChar.ToString(), "");
+                        foreach (var invalidChar in Path.GetInvalidFileNameChars())
+                            fname = fname.Replace(invalidChar.ToString(), "");
 
-                    saveFileDialog.FileName = fname;
-                    saveFileDialog.SupportMultiDottedExtensions = true;
+                        saveFileDialog.FileName = fname;
+                        saveFileDialog.SupportMultiDottedExtensions = true;
 
-                    DialogResult res = saveFileDialog.ShowDialog();
-                    if (res == DialogResult.OK)
-                    {
-                        fname = saveFileDialog.FileName;
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine(fullTypeName);
-                        sb.AppendLine("1.0");
-                        sb.AppendLine(serializeData);
-                        File.WriteAllText(fname, sb.ToString());
+                        DialogResult res = saveFileDialog.ShowDialog();
+                        if (res == DialogResult.OK)
+                        {
+                            fname = saveFileDialog.FileName;
+                            StringBuilder sb = new StringBuilder();
+                            sb.AppendLine(fullTypeName);
+                            sb.AppendLine("1.0");
+                            sb.AppendLine(serializeData);
+                            File.WriteAllText(fname, sb.ToString());
+
+                            Settings.Default.ToneLibLastDir = Path.GetDirectoryName(fname);
+                        }
                     }
                 }
                 finally

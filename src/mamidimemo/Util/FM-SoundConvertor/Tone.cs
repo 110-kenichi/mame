@@ -65,6 +65,8 @@ namespace FM_SoundConvertor
 
     public class Tone
     {
+        public string[] MML;
+
         public string Name;
         public int Number;
         public int FB;

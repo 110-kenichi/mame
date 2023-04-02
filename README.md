@@ -269,6 +269,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.6.10.0 Added SerializeData Save/Load feature
 4.6.9.0 Added ADSR.SR property.
         Fixed ADSR.SL for SN76489 volume calculation.
 		Fixed Software Envelope ReleasePoint when point is zero.

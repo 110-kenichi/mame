@@ -139,41 +139,49 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected override void ApplyTone(TimbreBase timbre, Tone tone)
         {
-            YM3806Timbre tim = (YM3806Timbre)timbre;
-
-            tim.ALG = (byte)tone.AL;
-            tim.FB = (byte)tone.FB;
-            tim.REV = (byte)tone.REV;
-            tim.AMS = (byte)tone.AMS;
-            tim.PMS = (byte)tone.PMS;
-            tim.PitchShift13 = (byte)tone.PitchShift;
-            tim.PitchShift24 = (byte)tone.PitchShift2;
-            tim.GlobalSettings.Enable = false;
-            tim.GlobalSettings.LFOE = (byte?)tone.LFOE;
-            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
-            if(tim.GlobalSettings.LFRQ > 0 ||
-                tim.GlobalSettings.LFOE > 0
-                )
-                tim.GlobalSettings.Enable = true;
-
-            for (int i = 0; i < 4; i++)
+            if (tone.MML != null)
             {
-                tim.Ops[i].Enable = 1;
-                tim.Ops[i].AR = (byte)tone.aOp[i].AR;
-                tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
-                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
-                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
-                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                tim.Ops[i].TL = (byte)tone.aOp[i].TL;
-                tim.Ops[i].RS = (byte)tone.aOp[i].KS;
-                tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
-                tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
-                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
-                tim.Ops[i].LS = (byte)tone.aOp[i].LS;
-                tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
+                ApplyTimbre(timbre);
+                ApplyTone(tone);
             }
-            timbre.TimbreName = tone.Name;
+            else
+            {
+                YM3806Timbre tim = (YM3806Timbre)timbre;
+
+                tim.ALG = (byte)tone.AL;
+                tim.FB = (byte)tone.FB;
+                tim.REV = (byte)tone.REV;
+                tim.AMS = (byte)tone.AMS;
+                tim.PMS = (byte)tone.PMS;
+                tim.PitchShift13 = (byte)tone.PitchShift;
+                tim.PitchShift24 = (byte)tone.PitchShift2;
+                tim.GlobalSettings.Enable = false;
+                tim.GlobalSettings.LFOE = (byte?)tone.LFOE;
+                tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+                if (tim.GlobalSettings.LFRQ > 0 ||
+                    tim.GlobalSettings.LFOE > 0
+                    )
+                    tim.GlobalSettings.Enable = true;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    tim.Ops[i].Enable = 1;
+                    tim.Ops[i].AR = (byte)tone.aOp[i].AR;
+                    tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
+                    tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
+                    tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                    tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                    tim.Ops[i].TL = (byte)tone.aOp[i].TL;
+                    tim.Ops[i].RS = (byte)tone.aOp[i].KS;
+                    tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
+                    tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
+                    tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                    tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
+                    tim.Ops[i].LS = (byte)tone.aOp[i].LS;
+                    tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
+                }
+                timbre.TimbreName = tone.Name;
+            }
         }
 
         /// <summary>
@@ -214,6 +222,23 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["LS"]).Value = tim.Ops[i].LS;
                 ((RegisterValue)this["Operator " + (i + 1)]["KVS"]).Value = tim.Ops[i].KVS;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override string ExtensionsFilterExt
+        {
+            get
+            {
+                return "*.mopq";
+            }
+        }
+
+        protected override string[] GetMMlValues()
+        {
+            return new string[] { Timbre.TimbreName, MmlValueGeneral, MmlValueOps[0], MmlValueOps[1], MmlValueOps[2], MmlValueOps[3] };
+
         }
 
     }

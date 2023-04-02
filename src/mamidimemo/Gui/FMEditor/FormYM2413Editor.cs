@@ -106,37 +106,46 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         protected override void ApplyTone(Tone tone)
         {
-            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
-            ((RegisterValue)this["General"]["SUS"]).Value = 0;
+            if (tone.MML != null)
+            {
+                Timbre.TimbreName = tone.MML[0];
+                MmlValueGeneral = tone.MML[1];
+                MmlValueOps = new string[] { tone.MML[2], tone.MML[3] };
+            }
+            else
+            {
+                ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+                ((RegisterValue)this["General"]["SUS"]).Value = 0;
 
-            ((RegisterValue)this["Modulator"]["AR"]).Value = tone.aOp[0].AR / 2;
-            ((RegisterValue)this["Modulator"]["DR"]).Value = tone.aOp[0].DR / 2;
-            ((RegisterValue)this["Modulator"]["RR"]).Value = tone.aOp[0].RR;
-            ((RegisterValue)this["Modulator"]["SL"]).Value = tone.aOp[0].SL;
-            ((RegisterValue)this["Modulator"]["SR"]).Value = tone.aOp[0].SR / 2;
-            ((RegisterValue)this["Modulator"]["TL"]).Value = tone.aOp[0].TL / 2;
-            ((RegisterValue)this["Modulator"]["KSL"]).Value = tone.aOp[0].KS;
-            ((RegisterValue)this["Modulator"]["KSR"]).Value = tone.aOp[0].KSR;
-            ((RegisterValue)this["Modulator"]["MUL"]).Value = tone.aOp[0].ML;
-            ((RegisterValue)this["Modulator"]["AM"]).Value = tone.aOp[0].AM;
-            ((RegisterValue)this["Modulator"]["VIB"]).Value = tone.aOp[0].VIB;
-            ((RegisterValue)this["Modulator"]["EG"]).Value = tone.aOp[0].EG;
-            ((RegisterValue)this["Modulator"]["DIST"]).Value = tone.aOp[0].WS;
+                ((RegisterValue)this["Modulator"]["AR"]).Value = tone.aOp[0].AR / 2;
+                ((RegisterValue)this["Modulator"]["DR"]).Value = tone.aOp[0].DR / 2;
+                ((RegisterValue)this["Modulator"]["RR"]).Value = tone.aOp[0].RR;
+                ((RegisterValue)this["Modulator"]["SL"]).Value = tone.aOp[0].SL;
+                ((RegisterValue)this["Modulator"]["SR"]).Value = tone.aOp[0].SR / 2;
+                ((RegisterValue)this["Modulator"]["TL"]).Value = tone.aOp[0].TL / 2;
+                ((RegisterValue)this["Modulator"]["KSL"]).Value = tone.aOp[0].KS;
+                ((RegisterValue)this["Modulator"]["KSR"]).Value = tone.aOp[0].KSR;
+                ((RegisterValue)this["Modulator"]["MUL"]).Value = tone.aOp[0].ML;
+                ((RegisterValue)this["Modulator"]["AM"]).Value = tone.aOp[0].AM;
+                ((RegisterValue)this["Modulator"]["VIB"]).Value = tone.aOp[0].VIB;
+                ((RegisterValue)this["Modulator"]["EG"]).Value = tone.aOp[0].EG;
+                ((RegisterValue)this["Modulator"]["DIST"]).Value = tone.aOp[0].WS;
 
-            ((RegisterValue)this["Career"]["AR"]).Value = tone.aOp[1].AR / 2;
-            ((RegisterValue)this["Career"]["DR"]).Value = tone.aOp[1].DR / 2;
-            ((RegisterValue)this["Career"]["RR"]).Value = tone.aOp[1].RR;
-            ((RegisterValue)this["Career"]["SL"]).Value = tone.aOp[1].SL;
-            ((RegisterValue)this["Career"]["SR"]).Value = tone.aOp[1].SR / 2;
-            ((RegisterValue)this["Career"]["KSL"]).Value = tone.aOp[1].KS;
-            ((RegisterValue)this["Career"]["KSR"]).Value = tone.aOp[1].KSR;
-            ((RegisterValue)this["Career"]["MUL"]).Value = tone.aOp[1].ML;
-            ((RegisterValue)this["Career"]["AM"]).Value = tone.aOp[1].AM;
-            ((RegisterValue)this["Career"]["VIB"]).Value = tone.aOp[1].VIB;
-            ((RegisterValue)this["Career"]["EG"]).Value = tone.aOp[1].EG;
-            ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].WS;
+                ((RegisterValue)this["Career"]["AR"]).Value = tone.aOp[1].AR / 2;
+                ((RegisterValue)this["Career"]["DR"]).Value = tone.aOp[1].DR / 2;
+                ((RegisterValue)this["Career"]["RR"]).Value = tone.aOp[1].RR;
+                ((RegisterValue)this["Career"]["SL"]).Value = tone.aOp[1].SL;
+                ((RegisterValue)this["Career"]["SR"]).Value = tone.aOp[1].SR / 2;
+                ((RegisterValue)this["Career"]["KSL"]).Value = tone.aOp[1].KS;
+                ((RegisterValue)this["Career"]["KSR"]).Value = tone.aOp[1].KSR;
+                ((RegisterValue)this["Career"]["MUL"]).Value = tone.aOp[1].ML;
+                ((RegisterValue)this["Career"]["AM"]).Value = tone.aOp[1].AM;
+                ((RegisterValue)this["Career"]["VIB"]).Value = tone.aOp[1].VIB;
+                ((RegisterValue)this["Career"]["EG"]).Value = tone.aOp[1].EG;
+                ((RegisterValue)this["Career"]["DIST"]).Value = tone.aOp[1].WS;
 
-            timbre.TimbreName = tone.Name;
+                timbre.TimbreName = tone.Name;
+            }
         }
 
 
@@ -146,39 +155,47 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected override void ApplyTone(TimbreBase timbre, Tone tone)
         {
-            YM2413Timbre tim = (YM2413Timbre)timbre;
+            if (tone.MML != null)
+            {
+                ApplyTimbre(timbre);
+                ApplyTone(tone);
+            }
+            else
+            {
+                YM2413Timbre tim = (YM2413Timbre)timbre;
 
-            tim.FB = (byte)tone.FB;
-            tim.SUS = 0;
+                tim.FB = (byte)tone.FB;
+                tim.SUS = 0;
 
-            tim.Modulator.AR = (byte)(tone.aOp[0].AR / 2);
-            tim.Modulator.DR = (byte)(tone.aOp[0].DR / 2);
-            tim.Modulator.RR = (byte)(tone.aOp[0].RR);
-            tim.Modulator.SL = (byte)(tone.aOp[0].SL);
-            tim.Modulator.SR = (byte)(tone.aOp[0].SR / 2);
-            tim.Modulator.TL = (byte)(tone.aOp[0].TL / 2);
-            tim.Modulator.KSL = (byte)(tone.aOp[0].KS);
-            tim.Modulator.KSR = (byte)(0);
-            tim.Modulator.MUL = (byte)(tone.aOp[0].ML);
-            tim.Modulator.AM = (byte)(tone.aOp[0].AM);
-            tim.Modulator.VIB = (byte)(0);
-            tim.Modulator.EG = (byte)(0);
-            tim.Modulator.DIST = (byte)(0);
+                tim.Modulator.AR = (byte)(tone.aOp[0].AR / 2);
+                tim.Modulator.DR = (byte)(tone.aOp[0].DR / 2);
+                tim.Modulator.RR = (byte)(tone.aOp[0].RR);
+                tim.Modulator.SL = (byte)(tone.aOp[0].SL);
+                tim.Modulator.SR = (byte)(tone.aOp[0].SR / 2);
+                tim.Modulator.TL = (byte)(tone.aOp[0].TL / 2);
+                tim.Modulator.KSL = (byte)(tone.aOp[0].KS);
+                tim.Modulator.KSR = (byte)(0);
+                tim.Modulator.MUL = (byte)(tone.aOp[0].ML);
+                tim.Modulator.AM = (byte)(tone.aOp[0].AM);
+                tim.Modulator.VIB = (byte)(0);
+                tim.Modulator.EG = (byte)(0);
+                tim.Modulator.DIST = (byte)(0);
 
-            tim.Career.AR = (byte)(tone.aOp[1].AR / 2);
-            tim.Career.DR = (byte)(tone.aOp[1].DR / 2);
-            tim.Career.RR = (byte)(tone.aOp[1].RR);
-            tim.Career.SL = (byte)(tone.aOp[1].SL);
-            tim.Career.SR = (byte)(tone.aOp[1].SR / 2);
-            tim.Career.KSL = (byte)(tone.aOp[1].KS);
-            tim.Career.KSR = (byte)(0);
-            tim.Career.MUL = (byte)(tone.aOp[1].ML);
-            tim.Career.AM = (byte)(tone.aOp[1].AM);
-            tim.Career.VIB = (byte)(0);
-            tim.Career.EG = (byte)(0);
-            tim.Career.DIST = (byte)(0);
+                tim.Career.AR = (byte)(tone.aOp[1].AR / 2);
+                tim.Career.DR = (byte)(tone.aOp[1].DR / 2);
+                tim.Career.RR = (byte)(tone.aOp[1].RR);
+                tim.Career.SL = (byte)(tone.aOp[1].SL);
+                tim.Career.SR = (byte)(tone.aOp[1].SR / 2);
+                tim.Career.KSL = (byte)(tone.aOp[1].KS);
+                tim.Career.KSR = (byte)(0);
+                tim.Career.MUL = (byte)(tone.aOp[1].ML);
+                tim.Career.AM = (byte)(tone.aOp[1].AM);
+                tim.Career.VIB = (byte)(0);
+                tim.Career.EG = (byte)(0);
+                tim.Career.DIST = (byte)(0);
 
-            timbre.TimbreName = tone.Name;
+                timbre.TimbreName = tone.Name;
+            }
         }
 
         /// <summary>
@@ -223,6 +240,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["EG"]).Value = tim.Career.EG;
             ((RegisterValue)this["Career"]["DIST"]).Value = tim.Career.DIST;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override string ExtensionsFilterExt
+        {
+            get
+            {
+                return "*.moll";
+            }
+        }
+
+        protected override string[] GetMMlValues()
+        {
+            return new string[] { Timbre.TimbreName, MmlValueGeneral, MmlValueOps[0], MmlValueOps[1] };
+
+        }
+
     }
 
 }

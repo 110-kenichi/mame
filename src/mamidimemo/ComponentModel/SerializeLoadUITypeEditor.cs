@@ -16,6 +16,7 @@ using System.IO;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Microsoft.Win32;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -67,75 +68,38 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                     InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
-                    OpenFileDialog openFileDialog = new OpenFileDialog();
-
-                    openFileDialog.DefaultExt = "*.msd";
-                    openFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";
-                    string fname = null;
-                    try
+                    using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        fname = tim.TimbreName;
-                    }
-                    catch (Exception ex1)
-                    {
-                        if (ex1.GetType() == typeof(Exception))
-                            throw;
-                        else if (ex1.GetType() == typeof(SystemException))
-                            throw;
-
-                        try
+                        string dir = Settings.Default.ToneLibLastDir;
+                        if (string.IsNullOrWhiteSpace(dir))
                         {
-                            StringReader rs = new StringReader(tim.Memo);
-                            while (rs.Peek() > -1)
-                            {
-                                fname = rs.ReadLine();
-                                break;
-                            }
+                            dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                            dir = Path.Combine(dir, "MAmi");
                         }
-                        catch (Exception ex2)
+                        openFileDialog.InitialDirectory = dir;
+
+                        openFileDialog.DefaultExt = "*.msd";
+                        openFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";
+
+                        openFileDialog.SupportMultiDottedExtensions = true;
+
+                        DialogResult res = openFileDialog.ShowDialog();
+                        if (res == DialogResult.OK)
                         {
-                            if (ex2.GetType() == typeof(Exception))
-                                throw;
-                            else if (ex2.GetType() == typeof(SystemException))
-                                throw;
+                            string txt = File.ReadAllText(openFileDialog.FileName);
+                            StringReader rs = new StringReader(txt);
 
-                            try
-                            {
-                                fname = fullTypeName;
-                            }
-                            catch (Exception ex3)
-                            {
-                                if (ex3.GetType() == typeof(Exception))
-                                    throw;
-                                else if (ex3.GetType() == typeof(SystemException))
-                                    throw;
-                            }
+                            string ftname = rs.ReadLine();
+                            if (fullTypeName != ftname)
+                                throw new InvalidDataException();
+                            string ver = rs.ReadLine();
+                            if (ver != "1.0")
+                                throw new InvalidDataException();
+
+                            value = rs.ReadToEnd();
+
+                            Settings.Default.ToneLibLastDir = Path.GetDirectoryName(openFileDialog.FileName);
                         }
-                    }
-                    if (string.IsNullOrWhiteSpace(fname))
-                        fname = "MyData";
-                    Path.ChangeExtension(fname, ".msd");
-
-                    foreach (var invalidChar in Path.GetInvalidFileNameChars())
-                        fname = fname.Replace(invalidChar.ToString(), "");
-
-                    openFileDialog.FileName = fname;
-                    openFileDialog.SupportMultiDottedExtensions = true;
-
-                    DialogResult res = openFileDialog.ShowDialog();
-                    if (res == DialogResult.OK)
-                    {
-                        string txt = File.ReadAllText(openFileDialog.FileName);
-                        StringReader rs = new StringReader(txt);
-
-                        string ftname = rs.ReadLine();
-                        if (fullTypeName != ftname)
-                            throw new InvalidDataException();
-                        string ver = rs.ReadLine();
-                        if (ver != "1.0")
-                            throw new InvalidDataException();
-
-                        value = rs.ReadToEnd();
                     }
                 }
                 finally

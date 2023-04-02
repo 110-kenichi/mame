@@ -193,7 +193,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     {
                                         var fn = (string)file["name"];
                                         var ext = System.IO.Path.GetExtension(fn);
-                                        if (editor.IsSupportedExtension(ext))
+                                        if (editor.IsSupportedToneExtension(ext))
                                         {
                                             var item = new ListViewItem(fn, "SOUND");
                                             item.Tag = file;
@@ -321,7 +321,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                             if (this.IsDisposed)
                                                 return;
                                         }
-                                        if (editor.IsSupportedExtension(ext))
+                                        if (editor.IsSupportedToneExtension(ext))
                                         {
                                             listBoxTones.Items.Clear();
 

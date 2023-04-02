@@ -108,11 +108,22 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        protected override string SupportedExtensionsFilter
+        protected override string SupportedExtensionsCustomFilterLabel
         {
             get
             {
-                return "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, WOPL, FITOM, OPL)|*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.wopl;*.bnk;*.opl";
+                return "Tone file(OPL)";
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override string SupportedExtensionsCustomFilterExt
+        {
+            get
+            {
+                return "*.opl";
             }
         }
 
@@ -501,80 +512,89 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         protected override void ApplyTone(Tone tone)
         {
-            int alg = 0;
-            bool native = false;
-            if (tone.CNT == -1)
+            if (tone.MML != null)
             {
-                switch (tone.AL)
-                {
-                    case 0:
-                        alg = 2;
-                        break;
-                    case 1:
-                        alg = 4;    //?
-                        break;
-                    case 2:
-                        alg = 4;    //?
-                        break;
-                    case 3:
-                        alg = 3;    //?
-                        break;
-                    case 4:
-                        alg = 3;
-                        break;
-                    case 5:
-                        alg = 5;    //?
-                        break;
-                    case 6:
-                        alg = 5;    //?
-                        break;
-                    case 7:
-                        alg = 5;
-                        break;
-                }
+                Timbre.TimbreName = tone.MML[0];
+                MmlValueGeneral = tone.MML[1];
+                MmlValueOps = new string[] { tone.MML[2], tone.MML[3], tone.MML[4], tone.MML[5] };
             }
             else
             {
-                alg = tone.CNT;
-                native = true;
-            }
-            ((RegisterValue)this["General"]["ALG"]).Value = alg;
-            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
-            ((RegisterValue)this["General"]["FB2"]).Value = tone.FB;
-            ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
-            ((RegisterValue)this["General"]["GlobalSettings.DAM"]).NullableValue = null;
-            ((RegisterValue)this["General"]["GlobalSettings.DVB"]).NullableValue = null;
-
-            for (int i = 0; i < 4; i++)
-            {
-                if (!native)
+                int alg = 0;
+                bool native = false;
+                if (tone.CNT == -1)
                 {
-                    ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR / 2;
-                    ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR / 2;
-                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
-                    ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
+                    switch (tone.AL)
+                    {
+                        case 0:
+                            alg = 2;
+                            break;
+                        case 1:
+                            alg = 4;    //?
+                            break;
+                        case 2:
+                            alg = 4;    //?
+                            break;
+                        case 3:
+                            alg = 3;    //?
+                            break;
+                        case 4:
+                            alg = 3;
+                            break;
+                        case 5:
+                            alg = 5;    //?
+                            break;
+                        case 6:
+                            alg = 5;    //?
+                            break;
+                        case 7:
+                            alg = 5;
+                            break;
+                    }
                 }
                 else
                 {
-                    ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
-                    ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR;
-                    ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = -1;
-                    ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
+                    alg = tone.CNT;
+                    native = true;
                 }
-                ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
-                ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
-                ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
-                ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tone.aOp[i].KSR;
-                ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
-                ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
-                ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = tone.aOp[i].VIB;
-                ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tone.aOp[i].EG;
-                ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
-            }
+            ((RegisterValue)this["General"]["ALG"]).Value = alg;
+                ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+                ((RegisterValue)this["General"]["FB2"]).Value = tone.FB;
+                ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
+                ((RegisterValue)this["General"]["GlobalSettings.DAM"]).NullableValue = null;
+                ((RegisterValue)this["General"]["GlobalSettings.DVB"]).NullableValue = null;
 
-            timbre.MDS.KeyShift = tone.KeyShift;
-            timbre.MDS.PitchShift = tone.PitchShift;
-            timbre.TimbreName = tone.Name;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (!native)
+                    {
+                        ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR / 2;
+                        ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR / 2;
+                        ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = tone.aOp[i].SR / 2;
+                        ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL / 2;
+                    }
+                    else
+                    {
+                        ((RegisterValue)this["Operator " + (i + 1)]["AR"]).Value = tone.aOp[i].AR;
+                        ((RegisterValue)this["Operator " + (i + 1)]["DR"]).Value = tone.aOp[i].DR;
+                        ((RegisterValue)this["Operator " + (i + 1)]["SR"]).Value = -1;
+                        ((RegisterValue)this["Operator " + (i + 1)]["TL"]).Value = tone.aOp[i].TL;
+                    }
+                    ((RegisterValue)this["Operator " + (i + 1)]["RR"]).Value = tone.aOp[i].RR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["SL"]).Value = tone.aOp[i].SL;
+                    ((RegisterValue)this["Operator " + (i + 1)]["KSL"]).Value = tone.aOp[i].KS;
+                    ((RegisterValue)this["Operator " + (i + 1)]["KSR"]).Value = tone.aOp[i].KSR;
+                    ((RegisterValue)this["Operator " + (i + 1)]["MFM"]).Value = tone.aOp[i].ML;
+                    ((RegisterValue)this["Operator " + (i + 1)]["AM"]).Value = tone.aOp[i].AM;
+                    ((RegisterValue)this["Operator " + (i + 1)]["VIB"]).Value = tone.aOp[i].VIB;
+                    ((RegisterValue)this["Operator " + (i + 1)]["EG"]).Value = tone.aOp[i].EG;
+                    ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tone.aOp[i].WS;
+                }
+
+                timbre.MDS.KeyShift = tone.KeyShift;
+                timbre.MDS.PitchShift = tone.PitchShift;
+                timbre.TimbreName = tone.Name;
+            }
         }
 
         /// <summary>
@@ -583,83 +603,91 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="tone"></param>
         protected override void ApplyTone(TimbreBase timbre, Tone tone)
         {
-            YMF262Timbre tim = (YMF262Timbre)timbre;
-
-            int alg = 0;
-            bool native = false;
-            if (tone.CNT == -1)
+            if (tone.MML != null)
             {
-                switch (tone.AL)
-                {
-                    case 0:
-                        alg = 2;
-                        break;
-                    case 1:
-                        alg = 4;    //?
-                        break;
-                    case 2:
-                        alg = 4;    //?
-                        break;
-                    case 3:
-                        alg = 3;    //?
-                        break;
-                    case 4:
-                        alg = 3;
-                        break;
-                    case 5:
-                        alg = 5;    //?
-                        break;
-                    case 6:
-                        alg = 5;    //?
-                        break;
-                    case 7:
-                        alg = 5;
-                        break;
-                }
+                ApplyTimbre(timbre);
+                ApplyTone(tone);
             }
             else
             {
-                alg = tone.CNT;
-                native = true;
-            }
+                YMF262Timbre tim = (YMF262Timbre)timbre;
 
-            tim.ALG = (byte)alg;
-            tim.FB = (byte)tone.FB;
-            tim.FB2 = (byte)tone.FB2;
-            tim.GlobalSettings.Enable = false;
-            tim.GlobalSettings.DAM = null;
-            tim.GlobalSettings.DVB = null;
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (!native)
+                int alg = 0;
+                bool native = false;
+                if (tone.CNT == -1)
                 {
-                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
-                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
-                    tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
-                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
+                    switch (tone.AL)
+                    {
+                        case 0:
+                            alg = 2;
+                            break;
+                        case 1:
+                            alg = 4;    //?
+                            break;
+                        case 2:
+                            alg = 4;    //?
+                            break;
+                        case 3:
+                            alg = 3;    //?
+                            break;
+                        case 4:
+                            alg = 3;
+                            break;
+                        case 5:
+                            alg = 5;    //?
+                            break;
+                        case 6:
+                            alg = 5;    //?
+                            break;
+                        case 7:
+                            alg = 5;
+                            break;
+                    }
                 }
                 else
                 {
-                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
-                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
-                    tim.Ops[i].SR = null;
-                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
+                    alg = tone.CNT;
+                    native = true;
                 }
-                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
-                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
-                tim.Ops[i].KSR = (byte)tone.aOp[i].KSR;
-                tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
-                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                tim.Ops[i].VIB = (byte)tone.aOp[i].VIB;
-                tim.Ops[i].EG = (byte)tone.aOp[i].EG;
-                tim.Ops[i].WS = (byte)tone.aOp[i].WS;
-            }
 
-            tim.MDS.KeyShift = tone.KeyShift;
-            tim.MDS.PitchShift = tone.PitchShift;
-            timbre.TimbreName = tone.Name;
+                tim.ALG = (byte)alg;
+                tim.FB = (byte)tone.FB;
+                tim.FB2 = (byte)tone.FB2;
+                tim.GlobalSettings.Enable = false;
+                tim.GlobalSettings.DAM = null;
+                tim.GlobalSettings.DVB = null;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (!native)
+                    {
+                        tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
+                        tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
+                        tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
+                        tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
+                    }
+                    else
+                    {
+                        tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
+                        tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
+                        tim.Ops[i].SR = null;
+                        tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
+                    }
+                    tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                    tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                    tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
+                    tim.Ops[i].KSR = (byte)tone.aOp[i].KSR;
+                    tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
+                    tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                    tim.Ops[i].VIB = (byte)tone.aOp[i].VIB;
+                    tim.Ops[i].EG = (byte)tone.aOp[i].EG;
+                    tim.Ops[i].WS = (byte)tone.aOp[i].WS;
+                }
+
+                tim.MDS.KeyShift = tone.KeyShift;
+                tim.MDS.PitchShift = tone.PitchShift;
+                timbre.TimbreName = tone.Name;
+            }
         }
 
         /// <summary>
@@ -694,6 +722,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["Operator " + (i + 1)]["WS"]).Value = tim.Ops[i].WS;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override string ExtensionsFilterExt
+        {
+            get
+            {
+                return "*.mopl3";
+            }
+        }
+
+        protected override string[] GetMMlValues()
+        {
+            return new string[] { Timbre.TimbreName, MmlValueGeneral, MmlValueOps[0], MmlValueOps[1], MmlValueOps[2], MmlValueOps[3] };
+
+        }
+
     }
 
 }

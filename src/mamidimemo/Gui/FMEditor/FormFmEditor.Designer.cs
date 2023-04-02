@@ -1,4 +1,6 @@
-﻿namespace zanac.MAmidiMEmo.Gui.FMEditor
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+
+namespace zanac.MAmidiMEmo.Gui.FMEditor
 {
     partial class FormFmEditor
     {
@@ -65,17 +67,17 @@
             this.metroButtonAbort = new MetroFramework.Controls.MetroButton();
             this.metroButtonPaste = new MetroFramework.Controls.MetroButton();
             this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
+            this.metroButtonExport = new MetroFramework.Controls.MetroButton();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.openFileDialogTone = new System.Windows.Forms.OpenFileDialog();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBoxTimbres = new MetroFramework.Controls.MetroComboBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportAllGit = new MetroFramework.Controls.MetroButton();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.metroButtonExportAll = new MetroFramework.Controls.MetroButton();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -404,7 +406,7 @@
             this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 6, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 6, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 5, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButton1, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonExport, 2, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 726);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -466,8 +468,6 @@
             this.metroTextBoxTarget.MaxLength = 32767;
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PasswordChar = '\0';
-            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-    " with comma. )";
             this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxTarget.SelectedText = "";
             this.metroTextBoxTarget.SelectionLength = 0;
@@ -490,7 +490,7 @@
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(100, 29);
-            this.buttonOK.TabIndex = 7;
+            this.buttonOK.TabIndex = 8;
             this.buttonOK.Text = "&OK";
             this.metroToolTip1.SetToolTip(this.buttonOK, "Close and apply editor data.");
             this.buttonOK.UseSelectable = true;
@@ -504,7 +504,7 @@
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(100, 29);
-            this.buttonCancel.TabIndex = 8;
+            this.buttonCancel.TabIndex = 9;
             this.buttonCancel.Text = "&Cancel";
             this.metroToolTip1.SetToolTip(this.buttonCancel, "Close and undo data to initial data.");
             this.buttonCancel.UseSelectable = true;
@@ -545,7 +545,7 @@
             this.metroButtonAbort.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonAbort.Name = "metroButtonAbort";
             this.metroButtonAbort.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonAbort.TabIndex = 9;
+            this.metroButtonAbort.TabIndex = 10;
             this.metroButtonAbort.Text = "&Abort";
             this.metroToolTip1.SetToolTip(this.metroButtonAbort, "Close and does not undo data to initial data.");
             this.metroButtonAbort.UseSelectable = true;
@@ -575,17 +575,17 @@
             this.metroButtonCopy.UseSelectable = true;
             this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
-            // metroButton1
+            // metroButtonExport
             // 
-            this.metroButton1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButton1.Location = new System.Drawing.Point(223, 54);
-            this.metroButton1.Margin = new System.Windows.Forms.Padding(4);
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(100, 29);
-            this.metroButton1.TabIndex = 6;
-            this.metroButton1.Text = "Tone library...";
-            this.metroButton1.UseSelectable = true;
-            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
+            this.metroButtonExport.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonExport.Location = new System.Drawing.Point(223, 54);
+            this.metroButtonExport.Margin = new System.Windows.Forms.Padding(4);
+            this.metroButtonExport.Name = "metroButtonExport";
+            this.metroButtonExport.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonExport.TabIndex = 7;
+            this.metroButtonExport.Text = "Ex&port...";
+            this.metroButtonExport.UseSelectable = true;
+            this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
             // panel1
             // 
@@ -611,14 +611,6 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(67, 62);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // openFileDialogTone
-            // 
-            this.openFileDialogTone.DefaultExt = "*.muc";
-            this.openFileDialogTone.Filter = "Tone file(MUCOM88, FMP, PMD, VOPM, GWI, FITOM, SYX, FF, FFOPM)|*.muc;*.dat;*.mwi;" +
-    "*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
-            this.openFileDialogTone.SupportMultiDottedExtensions = true;
-            this.openFileDialogTone.Title = "Load tone file";
-            // 
             // metroLabel1
             // 
             this.metroLabel1.AutoSize = true;
@@ -639,7 +631,7 @@
             this.metroComboBoxTimbres.Location = new System.Drawing.Point(68, 4);
             this.metroComboBoxTimbres.Margin = new System.Windows.Forms.Padding(4);
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.metroComboBoxTimbres.Size = new System.Drawing.Size(741, 30);
+            this.metroComboBoxTimbres.Size = new System.Drawing.Size(626, 30);
             this.metroComboBoxTimbres.TabIndex = 3;
             this.metroComboBoxTimbres.UseSelectable = true;
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
@@ -648,15 +640,17 @@
             // 
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 4;
+            this.tableLayoutPanel2.ColumnCount = 5;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.Controls.Add(this.metroComboBoxTimbres, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAll, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAllGit, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroButtonExportAll, 4, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 94);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
@@ -671,7 +665,7 @@
             this.metroButtonImportAll.AllowDrop = true;
             this.metroButtonImportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonImportAll.AutoSize = true;
-            this.metroButtonImportAll.Location = new System.Drawing.Point(817, 4);
+            this.metroButtonImportAll.Location = new System.Drawing.Point(702, 4);
             this.metroButtonImportAll.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAll.Name = "metroButtonImportAll";
             this.metroButtonImportAll.Size = new System.Drawing.Size(112, 31);
@@ -686,7 +680,7 @@
             // 
             this.metroButtonImportAllGit.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonImportAllGit.AutoSize = true;
-            this.metroButtonImportAllGit.Location = new System.Drawing.Point(937, 4);
+            this.metroButtonImportAllGit.Location = new System.Drawing.Point(822, 4);
             this.metroButtonImportAllGit.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAllGit.Name = "metroButtonImportAllGit";
             this.metroButtonImportAllGit.Size = new System.Drawing.Size(112, 31);
@@ -700,6 +694,19 @@
             this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
+            // 
+            // metroButtonExportAll
+            // 
+            this.metroButtonExportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.metroButtonExportAll.AutoSize = true;
+            this.metroButtonExportAll.Location = new System.Drawing.Point(942, 4);
+            this.metroButtonExportAll.Margin = new System.Windows.Forms.Padding(4);
+            this.metroButtonExportAll.Name = "metroButtonExportAll";
+            this.metroButtonExportAll.Size = new System.Drawing.Size(107, 31);
+            this.metroButtonExportAll.TabIndex = 3;
+            this.metroButtonExportAll.Text = "&Export all...";
+            this.metroButtonExportAll.UseSelectable = true;
+            this.metroButtonExportAll.Click += new System.EventHandler(this.metroButtonExportAll_Click);
             // 
             // FormFmEditor
             // 
@@ -760,7 +767,6 @@
         private MetroFramework.Controls.MetroButton metroButtonParams;
         private MetroFramework.Controls.MetroTextBox metroTextBoxTarget;
         private MetroFramework.Controls.MetroButton metroButtonImport;
-        private System.Windows.Forms.OpenFileDialog openFileDialogTone;
         private MetroFramework.Controls.MetroLabel metroLabel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private MetroFramework.Controls.MetroComboBox metroComboBoxTimbres;
@@ -773,6 +779,7 @@
         private MetroFramework.Controls.MetroButton metroButtonAbort;
         private MetroFramework.Controls.MetroButton metroButtonCopy;
         private MetroFramework.Controls.MetroButton metroButtonPaste;
-        private MetroFramework.Controls.MetroButton metroButton1;
+        private MetroFramework.Controls.MetroButton metroButtonExport;
+        private MetroFramework.Controls.MetroButton metroButtonExportAll;
     }
 }

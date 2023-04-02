@@ -284,6 +284,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        [Browsable(false)]
         [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]

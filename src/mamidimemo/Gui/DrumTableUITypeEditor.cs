@@ -60,7 +60,14 @@ namespace zanac.MAmidiMEmo.Gui
                 if (value != null)
                 {
                     var s = JsonConvert.SerializeObject((DrumTimbre[])value, Program.JsonAutoSettings);
-                    frm.DrumData = JsonConvert.DeserializeObject<DrumTimbre[]>(s, Program.JsonAutoSettings);
+                    DrumTimbre[] cd = JsonConvert.DeserializeObject<DrumTimbre[]>(s, Program.JsonAutoSettings);
+                    DrumTimbre[] od = (DrumTimbre[])value;
+                    for (int i = 0; i < od.Length; i++)
+                    {
+                        cd[i].NoteNumber = od[i].NoteNumber;
+                        cd[i].KeyName = od[i].KeyName;
+                    }
+                    frm.DrumData = cd;
                 }
                 else
                 {

@@ -238,13 +238,23 @@ namespace zanac.MAmidiMEmo.Instruments
             SCCS.SerializeData = "{}";
         }
 
+        private string f_TimbreName;
+
         [DataMember]
         [Description("Name")]
         [DefaultValue(null)]
         public string TimbreName
         {
-            get;
-            set;
+            get
+            {
+                return f_TimbreName;
+            }
+            set
+            {
+                f_TimbreName = value;
+                if(f_TimbreName != null)
+                    f_TimbreName = f_TimbreName.Replace("\0", string.Empty);
+            }
         }
 
         [DataMember]
@@ -270,7 +280,6 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
-                SerializeData = value;
             }
         }
 
@@ -285,7 +294,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return SerializeData;
+                return null;
             }
             set
             {
@@ -293,6 +302,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        [Browsable(false)]
         [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
