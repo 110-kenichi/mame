@@ -25,6 +25,26 @@ namespace zanac.MAmidiMEmo.Instruments
     [RefreshProperties(RefreshProperties.All)]
     public class CombinedTimbreSettingsCollection : IList<CombinedTimbreSettings>, IList
     {
+        private InstrumentBase f_Instrument;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public InstrumentBase Instrument
+        {
+            get
+            {
+                return f_Instrument;
+            }
+            set
+            {
+                f_Instrument = value;
+                foreach (var item in f_list)
+                    item.Instrument = value;
+            }
+        }
+
         private List<CombinedTimbreSettings> f_list = new List<CombinedTimbreSettings>();
 
         /// <summary>
@@ -42,6 +62,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public void Insert(int index, CombinedTimbreSettings item)
         {
+            item.Instrument = Instrument;
+
             lock (InstrumentBase.VstPluginContextLockObject)
                 f_list.Insert(index, item);
         }
@@ -66,6 +88,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public void Add(CombinedTimbreSettings item)
         {
+            item.Instrument = Instrument;
+
             lock (InstrumentBase.VstPluginContextLockObject)
                 f_list.Add(item);
         }

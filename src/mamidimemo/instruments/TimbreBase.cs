@@ -30,6 +30,32 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public abstract class TimbreBase : ContextBoundObject
     {
+        private InstrumentBase f_Instrument;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public InstrumentBase Instrument
+        {
+            get
+            {
+                return f_Instrument;
+            }
+            set
+            {
+                f_Instrument = value;
+                OnInstrumentChanged(value);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instrument"></param>
+        protected virtual void OnInstrumentChanged(InstrumentBase instrument)
+        {
+        }
 
         [Browsable(false)]
         [Obsolete]

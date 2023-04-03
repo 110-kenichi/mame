@@ -73,6 +73,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
             }
 
             _cancel = false;
+            listBox.Height = 200;
             _editorService.DropDownControl(listBox);
             if (_cancel || listBox.SelectedIndices.Count == 0)
                 return value;

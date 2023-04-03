@@ -22,6 +22,15 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        public InstrumentBase Instrument
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [IgnoreDataMember]
         public String KeyName
         {
@@ -43,6 +52,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [DataMember]
+        [TypeConverter(typeof(ProgramAssignmentNumberConverter))]
+        [EditorAttribute(typeof(ProgramAssignmentNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public ProgramAssignmentNumber? TimbreNumber
         {
             get;

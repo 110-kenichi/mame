@@ -26,6 +26,16 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class CombinedTimbreSettings : ContextBoundObject
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public InstrumentBase Instrument
+        {
+            get;
+            set;
+        }
+
 
         [DataMember]
         [Description("Base frequency offset [Semitone]")]
@@ -203,6 +213,8 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Description("Set the timbre numbers to bind this Combibed Timbre.")]
         [DefaultValue(ProgramAssignmentTimbreNumber.Timbre0)]
+        [TypeConverter(typeof(ProgramAssignmentTimbreNumberConverter))]
+        [EditorAttribute(typeof(ProgramAssignmentNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public ProgramAssignmentTimbreNumber TimbreNumber
         {
             get;

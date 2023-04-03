@@ -841,10 +841,12 @@ namespace zanac.MAmidiMEmo.Instruments
                 DrumTimbres[i] = new DrumTimbre(i, null);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataMember]
+        private CombinedTimbre[] f_CombinedTimbres;
+
+/// <summary>
+/// 
+/// </summary>
+[DataMember]
         [Category(" Timbres")]
         [Description("Combine multiple Timbres (0-255)\r\n" +
             "Override PatchTimbres to Timbres when you set binding patch numbers.")]
@@ -852,8 +854,20 @@ namespace zanac.MAmidiMEmo.Instruments
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public virtual CombinedTimbre[] CombinedTimbres
         {
-            get;
-            set;
+            get
+            {
+                return f_CombinedTimbres;
+            }
+            set
+            {
+                f_CombinedTimbres = value;
+                if (f_CombinedTimbres != null)
+                    for (int i = 0; i < value.Length; i++)
+                    {
+                        if (f_CombinedTimbres[i] != null)
+                            f_CombinedTimbres[i].Instrument = this;
+                    }
+            }
         }
 
         public virtual bool ShouldSerializeCombinedTimbres()

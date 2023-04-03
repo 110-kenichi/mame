@@ -17,6 +17,15 @@ namespace zanac.MAmidiMEmo.Gui
 {
     public partial class FormDrumTableEditor : FormBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public InstrumentBase Instrument
+        {
+            get;
+            set;
+        }
+
         public DrumTimbre[] f_DrumData;
 
         /// <summary>
@@ -33,25 +42,59 @@ namespace zanac.MAmidiMEmo.Gui
                 f_DrumData = value;
 
                 propertyGrid1.SelectedObjects = null;
-                listViewPcmSounds.BeginUpdate();
-                try
-                {
-                    listViewPcmSounds.Items.Clear();
-                    for (int i = 0; i < value.Length; i++)
-                    {
-                        DrumTimbre dt = value[i];
+                updateList();
+            }
+        }
 
-                        var item = listViewPcmSounds.Items.Add(i.ToString() + "(" + dt.KeyName + ")");
-                        item.Tag = dt;
-                        item.SubItems.Add(dt.TimbreNumber.ToString());
-                    }
-                    foreach (ColumnHeader c in listViewPcmSounds.Columns)
-                        c.Width = -2;
-                }
-                finally
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void updateList()
+        {
+            int ti = 0;
+            if(listViewPcmSounds.TopItem != null)
+                ti = listViewPcmSounds.TopItem.Index;
+
+            listViewPcmSounds.BeginUpdate();
+            try
+            {
+                listViewPcmSounds.Items.Clear();
+                for (int i = 0; i < f_DrumData.Length; i++)
                 {
-                    listViewPcmSounds.EndUpdate();
+                    DrumTimbre dt = f_DrumData[i];
+                    dt.Instrument = Instrument;
+
+                    var item = listViewPcmSounds.Items.Add(i.ToString() + "(" + dt.KeyName + ")");
+                    item.Tag = dt;
+                    if (dt.TimbreNumber != null)
+                    {
+                        string text = dt.TimbreNumber.ToString();
+                        if (!string.IsNullOrWhiteSpace(dt.TimbreName))
+                        {
+                            text += " " + dt.TimbreName;
+                        }
+                        else if (dt.TimbreNumber < (ProgramAssignmentNumber)0x10000)
+                        {
+                            if ((int)dt.TimbreNumber.Value < Instrument.BaseTimbres.Length)
+                                text += " " + Instrument.BaseTimbres[(int)dt.TimbreNumber.Value].TimbreName;
+                        }
+                        else
+                        {
+                            if ((int)(dt.TimbreNumber.Value - 0x10000) < Instrument.CombinedTimbres.Length)
+                                text += " " + Instrument.CombinedTimbres[(int)dt.TimbreNumber.Value - 0x10000].TimbreName;
+                        }
+                        item.SubItems.Add(text);
+                    }
                 }
+                foreach (ColumnHeader c in listViewPcmSounds.Columns)
+                    c.Width = -2;
+                listViewPcmSounds.Items[listViewPcmSounds.Items.Count - 1].EnsureVisible();
+                listViewPcmSounds.Items[ti].EnsureVisible();
+            }
+            finally
+            {
+                listViewPcmSounds.EndUpdate();
             }
         }
 
@@ -70,7 +113,7 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
                 insts.Add((DrumTimbre)item.Tag);
             propertyGrid1.SelectedObjects = insts.ToArray();
-         
+
         }
 
         /// <summary>
@@ -80,19 +123,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            DrumTimbre[] insts = (DrumTimbre[])propertyGrid1.SelectedObjects;
-            foreach (var pcm in insts)
-            {
-                foreach (ListViewItem item in listViewPcmSounds.SelectedItems)
-                {
-                    if (item.Tag == pcm)
-                    {
-                        item.SubItems[1].Text = pcm.TimbreNumber.ToString();
-                    }
-                }
-            }
-            foreach (ColumnHeader c in listViewPcmSounds.Columns)
-                c.Width = -2;
+            updateList();
         }
 
     }

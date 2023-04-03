@@ -6,6 +6,7 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using zanac.MAmidiMEmo.Instruments;
@@ -28,7 +29,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
             service = provider.GetService(typeof(IWindowsFormsEditorService)) as IWindowsFormsEditorService;
             if (service == null)
                 return value;
-            var list = new ListBox();
+            var list = new System.Windows.Forms.ListBox();
             list.Click += List_Click;
             lock (InstrumentBase.VstPluginContextLockObject)
             {
@@ -40,6 +41,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                         list.Items.Add(ctx.PluginCommandStub.GetProgramNameIndexed(i));
                 }
             }
+            list.Height = 200;
             service.DropDownControl(list);
             return (list.SelectedItem != null) ? list.SelectedItem : value;
         }

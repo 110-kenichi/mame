@@ -169,6 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="ComponentModel\ProgramAssignmentTimbreNumberConverter.cs" />
+    <Compile Include="ComponentModel\ProgramAssignmentNumberConverter.cs" />
+    <Compile Include="ComponentModel\ProgramAssignmentNumberTypeEditor.cs" />
     <Compile Include="ComponentModel\NoteNumberTypeEditor.cs" />
     <Compile Include="ComponentModel\NoteNameConverter.cs" />
     <Compile Include="ComponentModel\SerializeLoadUITypeEditor.cs" />

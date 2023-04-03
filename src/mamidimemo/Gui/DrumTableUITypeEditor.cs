@@ -57,6 +57,9 @@ namespace zanac.MAmidiMEmo.Gui
             // CurrencyValueEditorForm を使用したプロパティエディタの表示
             using (FormDrumTableEditor frm = new FormDrumTableEditor())
             {
+                InstrumentBase inst = context.Instance as InstrumentBase;
+                frm.Instrument = inst;
+
                 if (value != null)
                 {
                     var s = JsonConvert.SerializeObject((DrumTimbre[])value, Program.JsonAutoSettings);
