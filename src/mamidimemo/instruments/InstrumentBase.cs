@@ -807,7 +807,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category(" Timbres")]
         [Description("Drum ch(usually 10ch) Timbres table")]
         [Editor(typeof(DrumTableUITypeEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ExpandableNoteCollectionConverter))]
+        [TypeConverter(typeof(ExpandableDrumCollectionConverter))]
         public virtual DrumTimbre[] DrumTimbres
         {
             get
@@ -821,6 +821,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     f_DrumTimbres[i].NoteNumber = i;
                     f_DrumTimbres[i].KeyName = Midi.MidiManager.GetNoteName((SevenBitNumber)i);
+                    f_DrumTimbres[i].Instrument = this;
                 }
             }
         }

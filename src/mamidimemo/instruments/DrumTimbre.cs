@@ -22,6 +22,8 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
         public InstrumentBase Instrument
         {
             get;
@@ -134,14 +136,31 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private String f_TimbreName;
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         public String TimbreName
         {
-            get;
-            set;
+            get
+            {
+                if (f_TimbreName != null)
+                    return f_TimbreName;
+                else if (Instrument != null)
+                {
+                    if (this.TimbreNumber != null && (int)(TimbreNumber.Value) < Instrument.BaseTimbres.Length)
+                    {
+                        return Instrument.BaseTimbres[(int)(TimbreNumber.Value)].TimbreName;
+                    }
+                }
+                return null;
+            }
+            set
+            {
+                f_TimbreName = value;
+            }
         }
 
         /// <summary>
