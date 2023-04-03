@@ -337,7 +337,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Global)")]
-        [Description("Use 5ch. And also enable DAC mode.\r\n" +
+        [Description("Use 5ch mode. Also 6ch uses for DAC.\r\n" +
             "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
         public bool Mode5ch
@@ -352,7 +352,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_Mode5ch = value;
                     Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(f_Mode5ch ? 0x80 : 0x00));
-                    if (value)
+                    if (f_Mode5ch && !f_DisableDACTransfer)
+                        pcmEngine.StartEngine();
+                    else
+                        pcmEngine.StopEngine();
+                }
+            }
+        }
+
+        private bool f_DisableDACTransfer;
+
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Disable DAC data transfer to keep USB bandwidth.\r\n" +
+            "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
+        [DefaultValue(false)]
+        public bool DisableDACTransfer
+        {
+            get
+            {
+                return f_DisableDACTransfer;
+            }
+            set
+            {
+                if (f_DisableDACTransfer != value)
+                {
+                    f_DisableDACTransfer = value;
+                    if (f_Mode5ch && !f_DisableDACTransfer)
                         pcmEngine.StartEngine();
                     else
                         pcmEngine.StopEngine();
