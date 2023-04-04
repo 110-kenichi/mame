@@ -306,6 +306,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
+                SerializeData = value;
             }
         }
 
@@ -320,7 +321,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return null;
+                return SerializeData;
             }
             set
             {
@@ -328,8 +329,8 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        [Browsable(false)]
-        [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
+        [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+            typeof(UITypeEditor)), Localizable(false)]
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [IgnoreDataMember]
         [JsonIgnore]

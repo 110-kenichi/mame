@@ -1019,6 +1019,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
+
+            if (NrpnMsb[dataMsb.Channel] == 1 && NrpnLsb[dataMsb.Channel] == 6)
+            {
+                switch (dataMsb.ControlValue)
+                {
+                    case 0: //Start Song Record
+                        RecordStart(Settings.Default.OutputDir, 2);   //XGM
+                        break;
+                    case 1: //Set Loop Start Point
+                        RecordData(new PortWriteData()
+                        { Type = (byte)0x7d, Address = 0, Data = 0, Command = recordDataCommand });
+                        break;
+                    case 2: //Set Loop End Point & Song End
+                        RecordData(new PortWriteData()
+                        { Type = (byte)0x7e, Address = 0, Data = 0, Command = recordDataCommand });
+                        break;
+                    case 3: //End Song Record
+                        RecordStop();
+                        break;
+                }
+            }
+
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
@@ -3315,6 +3337,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             lock (RecordingLock)
             {
+                if (RecordingEnabled)
+                    RecordStop();
+
                 var now = DateTime.Now;
                 string fname = $"MAmi_{UnitNumber}" + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
 
@@ -3348,10 +3373,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             lock (RecordingLock)
             {
+                if (!RecordingEnabled)
+                    return;
+
+                string fn = System.IO.Path.Combine(OutputDir, OutputFileName);
+                List<PortWriteData> rd = RecordingData;
+
                 RecordData(new PortWriteData()
                 { Type = (byte)0x7f, Address = 0, Data = 0, Command = recordDataCommand });
 
-                List<PortWriteData> rd = RecordingData;
 
                 base.RecordStop();
 
@@ -3361,8 +3391,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 Thread t = new Thread(new ThreadStart(() =>
                 {
-                    string fn = System.IO.Path.Combine(OutputDir, OutputFileName);
-
                     List<byte> wd = new List<byte>();
 
                     //https://github.com/Stephane-D/SGDK/blob/master/bin/xgm.txt
@@ -3451,7 +3479,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     long lastWaitTick = -1;
 
+                    long loopAddress = -1;
+
                     //Optimize
+                    ///*
                     List<PortWriteData> optWriteData = new List<PortWriteData>();
                     {
                         List<PortWriteData> frame1Data = new List<PortWriteData>();
@@ -3521,13 +3552,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     removeSameAddressData(frame1Data, writeData);
                                     frame1Data.Add(writeData);
                                     break;
+                                case 0x7d: //LOOP START
+                                    frame1Data.Add(writeData);
+                                    break;
+                                case 0x7e: //LOOP END
+                                    frame1Data.Add(writeData);
+                                    break;
                                 case 0x7f: //END
                                     frame1Data.Add(writeData);
                                     break;
                             }
                         }
                         optWriteData.AddRange(frame1Data.ToArray());
-                    }
+                    }//*/
+                    //List<PortWriteData> optWriteData = new List<PortWriteData>(rd);
 
                     lastWaitTick = -1;
                     foreach (PortWriteData writeData in optWriteData)
@@ -3599,11 +3637,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     }
                                 }
                                 break;
+                            case 0x7d: //LOOP START
+                                loopAddress = mdata.Count;
+                                break;
+                            case 0x7e: //LOOP END
+                                //$7E              1    End command (end of music data).
+                                mdata.Add(0x7e);
+                                if (loopAddress >= 0)
+                                {
+                                    byte[] loopadrs = BitConverter.GetBytes(loopAddress);
+                                    mdata.Add(loopadrs[0]);
+                                    mdata.Add(loopadrs[1]);
+                                    mdata.Add(loopadrs[2]);
+                                }
+                                //$7F              1    End command (end of music data).
+                                mdata.Add(0x7f);
+                                break;
                             case 0x7f: //END
                                 //$7F              1    End command (end of music data).
                                 mdata.Add(0x7f);
                                 break;
                         }
+
+                        if (mdata[mdata.Count - 1] == 0x7f)
+                            break;
                     }
 
                     //$0104+SLEN            4    Music data bloc size.

@@ -3201,6 +3201,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             lock (RecordingLock)
             {
+                if (!RecordingEnabled)
+                    return;
                 long count;
                 QueryPerformanceCounter(out count);
                 writeData.Tick = count;

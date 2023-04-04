@@ -2477,5 +2477,115 @@ namespace zanac.MAmidiMEmo.Gui
                 Program.SoundUpdated();
             }
         }
+
+        private string copiedValue;
+
+        private object copiedValueInstance;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void copySerializeDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = propertyGrid.SelectedGridItem;
+            ITypeDescriptorContext context = item as ITypeDescriptorContext;
+            bool enabled = false;
+            try
+            {
+                enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataLoad";
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            if (enabled)
+            {
+                copiedValue = item.PropertyDescriptor.GetValue(context.Instance) as string;
+                copiedValueInstance = context.Instance;
+            }
+        }
+
+        private void pasteSerializeDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = propertyGrid.SelectedGridItem;
+            ITypeDescriptorContext context = item as ITypeDescriptorContext;
+            bool enabled = false;
+            try
+            {
+                enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataSave";
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            if (enabled && copiedValue != null && copiedValueInstance != null && copiedValueInstance.GetType() == context.Instance.GetType())
+            {
+                item.PropertyDescriptor.SetValue(context.Instance, copiedValue);
+            }
+        }
+
+        private void contextMenuStripProp_Opening(object sender, CancelEventArgs e)
+        {
+            var item = propertyGrid.SelectedGridItem;
+            ITypeDescriptorContext context = item as ITypeDescriptorContext;
+
+            try
+            {
+                bool enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+                resetToDefaultThisPropertyToolStripMenuItem.Enabled = enabled;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+
+            try
+            {
+                bool enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataLoad";
+                copySerializeDataToolStripMenuItem.Enabled = enabled;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+
+
+            try
+            {
+                bool enabled = item != null &&
+                    item.GridItemType == GridItemType.Property &&
+                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataSave";
+                pasteSerializeDataToolStripMenuItem.Enabled = (enabled && copiedValue != null && copiedValueInstance != null && copiedValueInstance.GetType() == context.Instance.GetType());
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
     }
 }
