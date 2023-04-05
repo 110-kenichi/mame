@@ -41,14 +41,14 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
         }
 
-        private uint f_Interval = 50;
+        private double f_Interval = 50;
 
         [DataMember]
         [Description("Set interval of envelope changing [ms]")]
         [DefaultValue(typeof(uint), "50")]
-        [SlideParametersAttribute(1, 10000)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        public uint EnvelopeInterval
+        [DoubleSlideParametersAttribute(1, 10000, 1)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public double EnvelopeInterval
         {
             get
             {

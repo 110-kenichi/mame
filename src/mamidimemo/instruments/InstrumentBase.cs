@@ -10,6 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Design;
 using System.Dynamic;
 using System.IO;
@@ -844,13 +845,13 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private CombinedTimbre[] f_CombinedTimbres;
 
-/// <summary>
-/// 
-/// </summary>
-[DataMember]
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
         [Category(" Timbres")]
         [Description("Combine multiple Timbres (0-255)\r\n" +
-            "Override PatchTimbres to Timbres when you set binding patch numbers.")]
+                    "Override PatchTimbres to Timbres when you set binding patch numbers.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public virtual CombinedTimbre[] CombinedTimbres
@@ -2662,6 +2663,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnMidiEvent(midiEvent);
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -3107,108 +3109,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #endregion
 
-        protected static object RecordingLock = new object();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public Boolean RecordingEnabled
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public string OutputDir
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public List<PortWriteData> RecordingData
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public int RecordingType
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="outputDir"></param>
-        public virtual void RecordStart(string outputDir, int type)
-        {
-            lock (RecordingLock)
-            {
-                if (!RecordingEnabled)
-                {
-                    OutputDir = outputDir;
-                    RecordingData = new List<PortWriteData>();
-                    RecordingEnabled = true;
-                    RecordingType = type;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual void RecordStop()
-        {
-            lock (RecordingLock)
-            {
-                this.RecordingEnabled = false;
-                RecordingData = null;
-            }
-        }
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool QueryPerformanceFrequency(out long frequency);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="outputDir"></param>
-        public virtual void RecordData(PortWriteData writeData)
-        {
-            lock (RecordingLock)
-            {
-                if (!RecordingEnabled)
-                    return;
-                long count;
-                QueryPerformanceCounter(out count);
-                writeData.Tick = count;
-                RecordingData?.Add(writeData);
-            }
-        }
     }
 
     public enum FilterMode

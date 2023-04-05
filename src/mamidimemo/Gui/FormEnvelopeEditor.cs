@@ -62,7 +62,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             Size = Settings.Default.EnvEdSize;
 
-            numericUpDown1.Value = fx.EnvelopeInterval;
+            metroTextBoxInterval.Text = fx.EnvelopeInterval.ToString();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         protected override void OnShown(EventArgs e)
         {
-            numericUpDown1.Focus();
+            metroTextBoxInterval.Focus();
             base.OnShown(e);
         }
 
@@ -1005,11 +1005,6 @@ namespace zanac.MAmidiMEmo.Gui
 
         Button clickedButton;
 
-        private void numericUpDown1_ValueChanged_1(object sender, EventArgs e)
-        {
-            if(fx != null)
-                fx.EnvelopeInterval = (uint)numericUpDown1.Value;
-        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -1041,6 +1036,16 @@ namespace zanac.MAmidiMEmo.Gui
         private void metroButtonDown_MouseUp(object sender, MouseEventArgs e)
         {
             timer1.Enabled = false;
+        }
+
+        private void metroTextBoxInterval_TextChanged(object sender, EventArgs e)
+        {
+            if (fx != null)
+            {
+                double val;
+                if (Double.TryParse(metroTextBoxInterval.Text, out val))
+                    fx.EnvelopeInterval = val;
+            }
         }
     }
 

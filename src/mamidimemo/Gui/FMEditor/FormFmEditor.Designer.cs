@@ -108,7 +108,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // toolStrip2
             // 
-            this.toolStrip2.ClickThrough = false;
             this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxCh,

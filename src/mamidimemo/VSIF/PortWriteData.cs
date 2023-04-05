@@ -24,5 +24,10 @@ namespace zanac.MAmidiMEmo.VSIF
         public object Tag;
 
         public long Tick;
+
+        public override string ToString()
+        {
+            return $"tick={Tick} tp={Type} a={Address} d={Data}";
+        }
     }
 }

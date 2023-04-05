@@ -47,6 +47,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         /// <remarks>
         /// Default value is false, which is the same behavior provided by the base ToolStrip class.
         /// </remarks>
+        [DefaultValue(true)]
         public bool ClickThrough
         {
             get

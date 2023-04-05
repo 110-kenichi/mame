@@ -173,21 +173,23 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        public static void SendMidiEvent(MidiPort port, byte data1, byte data2, byte data3)
+        public static void SendMidiEvent(MidiPort port, long ticks, byte data1, byte data2, byte data3)
         {
             var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
+            me.DeltaTime = ticks;
             SendMidiEvent(port, me);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        unsafe public static void SendMidiSysEvent(MidiPort port, byte* data, int length)
+        unsafe public static void SendMidiSysEvent(MidiPort port, long ticks, byte* data, int length)
         {
             List<byte> buf = new List<byte>();
             for (int i = 0; i < length; i++)
                 buf.Add(data[i]);
             var me = midiConverter.Convert(buf.ToArray());
+            me.DeltaTime = ticks;
             SendMidiEvent(port, me);
         }
 

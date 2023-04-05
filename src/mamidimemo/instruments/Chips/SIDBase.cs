@@ -818,7 +818,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private Waveforms lastWaveform;
 
-            protected override int ModulationInterval
+            protected override double ModulationInterval
             {
                 get
                 {
@@ -826,7 +826,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            protected override int PortamentInterval
+            protected override double PortamentInterval
             {
                 get
                 {

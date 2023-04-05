@@ -2452,23 +2452,31 @@ namespace zanac.MAmidiMEmo.Gui
                 Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             Directory.CreateDirectory(Settings.Default.OutputDir);
 
-            var opn2 = InstrumentManager.GetInstruments((int)(InstrumentType.YM2612 + 1));
+            var opn2s = InstrumentManager.GetInstruments((int)(InstrumentType.YM2612 + 1)).ToArray();
+            var dcsgs = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1)).ToArray();
             try
             {
                 Program.SoundUpdating();
 
                 if (toolStripButton22.Checked)
                 {
-                    foreach (var instr in opn2)
+                    for (int i = 0; i < 8; i++)
                     {
-                        instr.RecordStart(Settings.Default.OutputDir, 2);   //XGM
+                        if (i < opn2s.Length || i < dcsgs.Length)
+                        {
+                            var xgmw = new XGMWriter();
+                            xgmw.RecordStart(Settings.Default.OutputDir, (uint)i);   //XGM
+                        }
                     }
                 }
                 else
                 {
-                    foreach (var instr in opn2)
+                    for (int i = 0; i < 8; i++)
                     {
-                        instr.RecordStop();
+                        if (i < opn2s.Length && ((YM2612)opn2s[i]).XgmWriter != null)
+                            ((YM2612)opn2s[i]).XgmWriter.RecordStop(true);   //XGM
+                        else if (i < dcsgs.Length && ((SN76496)dcsgs[i]).XgmWriter != null)
+                            ((SN76496)dcsgs[i]).XgmWriter.RecordStop(true);   //XGM
                     }
                 }
             }

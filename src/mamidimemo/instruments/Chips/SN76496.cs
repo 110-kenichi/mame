@@ -384,7 +384,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<SN76496>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -468,12 +468,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 DeferredWriteData(Sn76496_write, unitNumber, data);
 
                 //For XGM
-                if (ym2612 != null && !ym2612.IsDisposed)
+                if (XgmWriter != null)
                 {
                     if ((data & 0x80) != 0)
                     {
                         lastWriteRegister = (data >> 4);
-                        ym2612.RecordData(new PortWriteData()
+                        XgmWriter.RecordData(new PortWriteData()
                         {
                             Type = 4,
                             Address = (byte)lastWriteRegister,
@@ -482,7 +482,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        ym2612.RecordData(new PortWriteData()
+                        XgmWriter.RecordData(new PortWriteData()
                         {
                             Type = 5,
                             Address = (byte)lastWriteRegister,
@@ -603,6 +603,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
+        protected override void OnMidiEvent(MidiEvent midiEvent)
+        {
+            try
+            {
+                XgmWriter?.SetCurrentProcessingMidiEvent(midiEvent);
+                base.OnMidiEvent(midiEvent);
+            }
+            finally
+            {
+                XgmWriter?.SetCurrentProcessingMidiEvent(null);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.ProcessKeyOn(midiEvent);
@@ -636,6 +653,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         protected override void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
+
+            if (NrpnMsb[dataMsb.Channel] == 1 && NrpnLsb[dataMsb.Channel] == 6)
+            {
+                switch (dataMsb.ControlValue)
+                {
+                    case 0: //Start Song Record
+                        var xgm = new XGMWriter();
+                        xgm.RecordStart(Settings.Default.OutputDir, this.UnitNumber);   //XGM
+                        break;
+                    case 1: //Set Loop Start Point
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7d, Address = 0, Data = 0 });
+                        break;
+                    case 2: //Set Loop End Point & Song End
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7e, Address = 0, Data = 0 });
+                        break;
+                    case 3: //End Song Record
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7f, Address = 0, Data = 0 });
+                        XgmWriter?.RecordStop(false);
+                        break;
+                }
+            }
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
@@ -1066,7 +1107,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<SN76496Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -1109,15 +1150,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private YM2612 ym2612;
+        private XGMWriter f_XgmWriter;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ym2612"></param>
-        public void SetXGMWriter(YM2612 ym2612)
+        public XGMWriter XgmWriter
         {
-            this.ym2612 = ym2612;
+            get
+            {
+                return f_XgmWriter;
+            }
+            set
+            {
+                f_XgmWriter?.RecordStop(true);
+                f_XgmWriter = value;
+            }
         }
 
     }

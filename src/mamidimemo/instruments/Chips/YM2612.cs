@@ -34,6 +34,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
@@ -646,11 +647,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 0, (byte)a);
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 1, data);
 
-                if (RecordingEnabled)
-                {
-                    RecordData(new PortWriteData()
-                    { Type = (byte)yreg, Address = (byte)a, Data = data, Command = recordDataCommand });
-                }
+                XgmWriter?.RecordData(new PortWriteData()
+                { Type = (byte)yreg, Address = (byte)a, Data = data });
             }));
             //try
             //{
@@ -985,6 +983,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// 
         /// </summary>
         /// <param name="midiEvent"></param>
+        protected override void OnMidiEvent(MidiEvent midiEvent)
+        {
+            try
+            {
+                XgmWriter?.SetCurrentProcessingMidiEvent(midiEvent);
+                base.OnMidiEvent(midiEvent);
+            }
+            finally
+            {
+                XgmWriter?.SetCurrentProcessingMidiEvent(null);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="midiEvent"></param>
         protected override void OnNoteOnEvent(TaggedNoteOnEvent midiEvent)
         {
             soundManager.ProcessKeyOn(midiEvent);
@@ -1019,24 +1034,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
-
             if (NrpnMsb[dataMsb.Channel] == 1 && NrpnLsb[dataMsb.Channel] == 6)
             {
                 switch (dataMsb.ControlValue)
                 {
                     case 0: //Start Song Record
-                        RecordStart(Settings.Default.OutputDir, 2);   //XGM
+                        var xgm = new XGMWriter();
+                        xgm.RecordStart(Settings.Default.OutputDir, this.UnitNumber);   //XGM
                         break;
                     case 1: //Set Loop Start Point
-                        RecordData(new PortWriteData()
-                        { Type = (byte)0x7d, Address = 0, Data = 0, Command = recordDataCommand });
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7d, Address = 0, Data = 0 });
                         break;
                     case 2: //Set Loop End Point & Song End
-                        RecordData(new PortWriteData()
-                        { Type = (byte)0x7e, Address = 0, Data = 0, Command = recordDataCommand });
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7e, Address = 0, Data = 0 });
                         break;
                     case 3: //End Song Record
-                        RecordStop();
+                        XgmWriter?.RecordData(new PortWriteData()
+                        { Type = (byte)0x7f, Address = 0, Data = 0 });
+                        XgmWriter?.RecordStop(false);
                         break;
                 }
             }
@@ -1227,7 +1244,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private PcmEngine pcmEngine;
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -1309,11 +1325,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate);
 
-                    if (ym2612.RecordingEnabled)
-                    {
-                        ym2612.RecordData(new PortWriteData()
-                        { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
-                    }
+                    ym2612.XgmWriter?.RecordData(new PortWriteData()
+                    { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
                 }
             }
 
@@ -1327,11 +1340,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = null;
 
-                    if (ym2612.RecordingEnabled)
-                    {
-                        ym2612.RecordData(new PortWriteData()
-                        { Type = (byte)6, Address = (byte)slot, Data = 0 });
-                    }
+                    ym2612.XgmWriter?.RecordData(new PortWriteData()
+                    { Type = (byte)6, Address = (byte)slot, Data = 0 });
                 }
             }
 
@@ -1395,6 +1405,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         throw;
                 }
             }
+
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceFrequency(out long frequency);
 
             /// <summary>
             /// 
@@ -3319,365 +3336,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private XGMWriter f_XgmWriter;
+
         /// <summary>
         /// 
         /// </summary>
-        [IgnoreDataMember]
-        [JsonIgnore]
-        [Browsable(false)]
-        public string OutputFileName
+        public XGMWriter XgmWriter
         {
-            get;
-            private set;
-        }
-
-        private int recordDataCommand;
-
-        public override void RecordStart(string outputDir, int type)
-        {
-            lock (RecordingLock)
+            get
             {
-                if (RecordingEnabled)
-                    RecordStop();
-
-                var now = DateTime.Now;
-                string fname = $"MAmi_{UnitNumber}" + "_" + now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-');
-
-                OutputFileName = $"{fname}.xgm";
-                base.RecordStart(outputDir, type);
-
-                var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
-                if (UnitNumber < dcsg.Count())
-                    ((SN76496)dcsg.ElementAt((int)UnitNumber)).SetXGMWriter(this);
-
-                recordDataCommand = -1;
-                ClearWrittenDataCache();
-                recordDataCommand = 0;
+                return f_XgmWriter;
             }
-        }
-
-        public int removeSameAddressData(List<PortWriteData> framedata, PortWriteData writingData)
-        {
-            for (int i = 0; i < framedata.Count; i++)
+            set
             {
-                if (framedata[i].Type == writingData.Type && framedata[i].Address == writingData.Address)
-                {
-                    framedata.RemoveAt(i);
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        public override void RecordStop()
-        {
-            lock (RecordingLock)
-            {
-                if (!RecordingEnabled)
-                    return;
-
-                string fn = System.IO.Path.Combine(OutputDir, OutputFileName);
-                List<PortWriteData> rd = RecordingData;
-
-                RecordData(new PortWriteData()
-                { Type = (byte)0x7f, Address = 0, Data = 0, Command = recordDataCommand });
-
-
-                base.RecordStop();
-
-                var dcsg = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1));
-                if (UnitNumber < dcsg.Count())
-                    ((SN76496)dcsg.ElementAt((int)UnitNumber)).SetXGMWriter(null);
-
-                Thread t = new Thread(new ThreadStart(() =>
-                {
-                    List<byte> wd = new List<byte>();
-
-                    //https://github.com/Stephane-D/SGDK/blob/master/bin/xgm.txt
-                    //File format (multi bytes value are in little endian format)
-                    //Address            Size    Description
-                    //$0000                 4    XGM file ident, should be "XGM "
-                    wd.AddRange(Encoding.ASCII.GetBytes("XGM "));
-                    //$0004               252    Sample id table.
-                    //                           This table contain the address and the size for all sample (maximum = 63 samples)
-                    //                           Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
-                    //                               entry +$0: sample address / 256
-                    //                               entry +$2: sample size / 256
-                    //                             We don't need the low 8 bits information as each sample have its address and size aligned on 256 bytes.
-                    //                             The sample address is relative to the start of the "Sample Data Bloc"(field $104).
-                    //                             An empty entry should have its address set to $FFFF and size set to $0001.
-
-                    Dictionary<Object, int> pcmIndexTable = new System.Collections.Generic.Dictionary<Object, int>();
-                    Dictionary<int, Object> pcmDataTable = new System.Collections.Generic.Dictionary<int, Object>();
-
-                    int pcmId = 0;
-                    foreach (var writeData in rd)
-                    {
-                        if (writeData.Type == 6 && writeData.Data == 1) //Gather PCM Play command
-                        {
-                            if (!pcmIndexTable.ContainsKey(writeData.Tag))
-                            {
-                                pcmDataTable.Add(pcmId, writeData.Tag);
-                                pcmIndexTable.Add(writeData.Tag, pcmId++);
-                            }
-                        }
-                        if (pcmId > 63)
-                            break;
-                    }
-
-                    ushort pcmAddress = 0;
-                    List<byte> pcmDataBlock = new List<byte>();
-                    for (int pid = 0; pid < 63; pid++)
-                    {
-                        if (pcmDataTable.ContainsKey(pid))
-                        {
-                            byte[] pcmdata = (byte[])pcmDataTable[pid];
-
-                            ushort size = (ushort)((pcmdata.Length / 256) + 1);
-                            ushort adr = pcmAddress;
-                            wd.AddRange(BitConverter.GetBytes(adr));
-                            wd.AddRange(BitConverter.GetBytes(size));
-                            pcmAddress += size;
-
-                            for (int pi = 0; pi < size * 256; pi++)
-                            {
-                                if (pi < pcmdata.Length)
-                                    pcmDataBlock.Add((byte)((int)pcmdata[pi] - 0x80));
-                                else
-                                    pcmDataBlock.Add(0);
-                            }
-                        }
-                        else
-                        {
-                            ushort adr = 0xffff;
-                            ushort size = 0x1;
-                            wd.AddRange(BitConverter.GetBytes(adr));
-                            wd.AddRange(BitConverter.GetBytes(size));
-                        }
-                    }
-                    //$0100                 2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
-                    //                           We will reference the value of this field as SLEN.
-                    ushort sampleDataBlockSize = pcmAddress;
-                    wd.AddRange(BitConverter.GetBytes(sampleDataBlockSize));
-                    //$0102                 1    Version information (0x01 currently)                 
-                    wd.Add(0x01);
-                    //$0103                 1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
-                    wd.Add(0x00);
-                    //$0104              SLEN    Sample data bloc, contains all sample data (8 bits signed format)
-                    //                           The size of this bloc is variable and is determined by the field $100.
-                    //                           If field $100 contains $0000 the bloc is empty and the field is ignored.
-                    //                           As explained in the 'Sample id table' field, sample size is aligned on 256 bytes
-                    wd.AddRange(pcmDataBlock.ToArray());
-
-                    int moffset = wd.Count;
-
-                    List<byte> mdata = new List<byte>();
-
-                    long f;
-                    QueryPerformanceFrequency(out f);
-                    double tick1frame = f / 60d;
-
-                    long lastWaitTick = -1;
-
-                    long loopAddress = -1;
-
-                    //Optimize
-                    ///*
-                    List<PortWriteData> optWriteData = new List<PortWriteData>();
-                    {
-                        List<PortWriteData> frame1Data = new List<PortWriteData>();
-                        foreach (PortWriteData writeData in rd)
-                        {
-                            switch (writeData.Command)
-                            {
-                                case -1:
-                                    //initial commands
-                                    break;
-                                case 0:
-                                    //normal write
-                                    if (lastWaitTick < 0)
-                                    {
-                                        lastWaitTick = writeData.Tick;
-                                    }
-                                    else if (writeData.Tick - lastWaitTick > tick1frame)
-                                    {
-                                        //Avoid 2byte data splitted by frame
-                                        if (writeData.Type == 4 &&
-                                        (writeData.Address == 8 || writeData.Address == 10 || writeData.Address == 12))
-                                        {
-                                            break;
-                                        }
-                                        if (writeData.Type == 0 || writeData.Type == 2)
-                                        {
-                                            if (0xa0 <= writeData.Address && writeData.Type <= 0xaf)
-                                                break;
-                                        }
-
-                                        //$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
-                                        lastWaitTick = writeData.Tick;
-                                        optWriteData.AddRange(frame1Data.ToArray());
-                                        frame1Data.Clear();
-                                    }
-                                    break;
-                            }
-                            switch (writeData.Type)
-                            {
-                                case 0:
-                                    if (writeData.Address != 0x28)
-                                    {
-                                        //$2X data  1+2(X+1)    YM2612 port 0 register write:
-                                        removeSameAddressData(frame1Data, writeData);
-                                        frame1Data.Add(writeData);
-                                    }
-                                    else
-                                    {
-                                        //$4X data   1+(X+1)    YM2612 key off/on ($28) command write:
-                                        frame1Data.Add(writeData);
-                                    }
-                                    break;
-                                case 2:
-                                    //$3X data  1+2(X+1)    YM2612 port 1 register write:
-                                    removeSameAddressData(frame1Data, writeData);
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 4: //DCSG 1
-                                    removeSameAddressData(frame1Data, writeData);
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 5: //DCSG 2
-                                    removeSameAddressData(frame1Data, writeData);
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 6: //PCM
-                                    removeSameAddressData(frame1Data, writeData);
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 0x7d: //LOOP START
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 0x7e: //LOOP END
-                                    frame1Data.Add(writeData);
-                                    break;
-                                case 0x7f: //END
-                                    frame1Data.Add(writeData);
-                                    break;
-                            }
-                        }
-                        optWriteData.AddRange(frame1Data.ToArray());
-                    }//*/
-                    //List<PortWriteData> optWriteData = new List<PortWriteData>(rd);
-
-                    lastWaitTick = -1;
-                    foreach (PortWriteData writeData in optWriteData)
-                    {
-                        switch (writeData.Command)
-                        {
-                            case -1:
-                                //initial commands
-                                break;
-                            case 0:
-                                //normal write
-                                if (lastWaitTick < 0)
-                                {
-                                    lastWaitTick = writeData.Tick;
-                                }
-                                else if (writeData.Tick - lastWaitTick > tick1frame)
-                                {
-                                    //$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
-                                    int wait = (int)Math.Round((writeData.Tick - lastWaitTick) / tick1frame);
-                                    for (int i = 0; i < wait; i++)
-                                        mdata.Add(0x00);
-                                    lastWaitTick = writeData.Tick;
-                                }
-                                break;
-                        }
-                        switch (writeData.Type)
-                        {
-                            case 0:
-                                if (writeData.Address != 0x28)
-                                {
-                                    //$2X data  1+2(X+1)    YM2612 port 0 register write:
-                                    mdata.Add(0x20);
-                                    mdata.Add(writeData.Address);
-                                    mdata.Add(writeData.Data);
-                                }
-                                else
-                                {
-                                    //$4X data   1+(X+1)    YM2612 key off/on ($28) command write:
-                                    mdata.Add(0x40);
-                                    mdata.Add(writeData.Data);
-                                }
-                                break;
-                            case 2:
-                                //$3X data  1+2(X+1)    YM2612 port 1 register write:
-                                mdata.Add(0x30);
-                                mdata.Add(writeData.Address);
-                                mdata.Add(writeData.Data);
-                                break;
-                            case 4: //DCSG 1
-                                mdata.Add(0x10);
-                                mdata.Add(((byte)(writeData.Address << 4 | writeData.Data)));
-                                break;
-                            case 5: //DCSG 2
-                                mdata.Add(0x10);
-                                mdata.Add((byte)writeData.Data);
-                                break;
-                            case 6: //PCM
-                                if (writeData.Data == 1)
-                                {
-                                    if (pcmIndexTable.ContainsKey(writeData.Tag))
-                                    {
-                                        mdata.Add((byte)(0x50 + writeData.Address));
-                                        mdata.Add((byte)(pcmIndexTable[writeData.Tag] + 1));
-                                    }
-                                    else
-                                    {
-                                        mdata.Add((byte)(0x50 + writeData.Address));
-                                        mdata.Add((byte)0);
-                                    }
-                                }
-                                break;
-                            case 0x7d: //LOOP START
-                                loopAddress = mdata.Count;
-                                break;
-                            case 0x7e: //LOOP END
-                                //$7E              1    End command (end of music data).
-                                mdata.Add(0x7e);
-                                if (loopAddress >= 0)
-                                {
-                                    byte[] loopadrs = BitConverter.GetBytes(loopAddress);
-                                    mdata.Add(loopadrs[0]);
-                                    mdata.Add(loopadrs[1]);
-                                    mdata.Add(loopadrs[2]);
-                                }
-                                //$7F              1    End command (end of music data).
-                                mdata.Add(0x7f);
-                                break;
-                            case 0x7f: //END
-                                //$7F              1    End command (end of music data).
-                                mdata.Add(0x7f);
-                                break;
-                        }
-
-                        if (mdata[mdata.Count - 1] == 0x7f)
-                            break;
-                    }
-
-                    //$0104+SLEN            4    Music data bloc size.
-                    //                           We will reference the value of this field as MLEN.
-                    //                           This fields may be used later to quickly browse multi track XGM file.
-                    uint mlen = (uint)(mdata.Count);
-                    wd.AddRange(BitConverter.GetBytes(mlen));
-
-                    //$0108 + SLEN               MLEN Music data bloc. It contains the XGM music data(see the XGM command description below).
-                    wd.AddRange(mdata.ToArray());
-
-
-                    FileStream xgm = new FileStream(fn, FileMode.CreateNew);
-                    xgm.Write(wd.ToArray(), 0, wd.Count);
-
-                }));
-                t.Start();
+                f_XgmWriter?.RecordStop(true);
+                f_XgmWriter = value;
             }
         }
 

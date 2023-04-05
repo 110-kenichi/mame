@@ -233,7 +233,7 @@
     <value>シリアライズデータをペースト(&amp;P)</value>
   </data>
   <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>277, 104</value>
+    <value>277, 76</value>
   </data>
   <data name="propertyGrid.Size" type="System.Drawing.Size, System.Drawing">
     <value>738, 416</value>

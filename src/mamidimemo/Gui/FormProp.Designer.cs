@@ -105,7 +105,6 @@
             // 
             // toolStrip2
             // 
-            this.toolStrip2.ClickThrough = false;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxProg,
             this.toolStripLabel4,
@@ -441,7 +440,6 @@
             // 
             // toolStrip3
             // 
-            this.toolStrip3.ClickThrough = true;
             this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonCat,
             this.toolStripButtonA2Z,

@@ -47,7 +47,6 @@
             // 
             // toolStrip2
             // 
-            this.toolStrip2.ClickThrough = false;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBox1,
             this.toolStripLabel2});

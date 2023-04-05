@@ -14,8 +14,8 @@ typedef void(CALLBACK* SoundUpdatedProc)();
 typedef void(CALLBACK* RestartApplicationProc)();
 typedef void(CALLBACK* SetVSTiModeProc)();
 typedef int(CALLBACK* IsVSTiModeProc)();
-typedef void(CALLBACK* SendMidiEventProc)(unsigned char data1, unsigned char data2, unsigned char data3);
-typedef void(CALLBACK* SendMidiSysEventProc)(unsigned char *data, int length);
+typedef void(CALLBACK* SendMidiEventProc)(LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3);
+typedef void(CALLBACK* SendMidiSysEventProc)(LONG64 ticks, unsigned char *data, int length);
 typedef int(CALLBACK* CloseApplicationProc)();
 typedef void(CALLBACK*  LoadDataProc)(unsigned char* data, int length);
 typedef int(CALLBACK* SaveDataProc)(void** saveBuf);
@@ -196,14 +196,14 @@ int IsVSTiMode()
 	return isVSTiMode();
 }
 
-void SendMidiEvent(unsigned char data1, unsigned char data2, unsigned char data3)
+void SendMidiEvent(LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3)
 {
-	sendMidiEvent(data1, data2, data3);
+	sendMidiEvent(ticks, data1, data2, data3);
 }
 
-void SendMidiSysEvent(unsigned char *data, int length)
+void SendMidiSysEvent(LONG64 ticks, unsigned char *data, int length)
 {
-	sendMidiSysEvent(data, length);
+	sendMidiSysEvent(ticks, data, length);
 }
 
 void CloseApplication()

@@ -687,7 +687,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        protected virtual int ModulationInterval
+        protected virtual double ModulationInterval
         {
             get
             {
@@ -734,7 +734,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// 
         /// </summary>
-        protected virtual int PortamentInterval
+        protected virtual double PortamentInterval
         {
             get
             {

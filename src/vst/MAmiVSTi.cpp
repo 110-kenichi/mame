@@ -116,6 +116,7 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	, m_hSharedMemory(0)
 	, m_mamiPath("")
 	, m_streamBufferOverflowed(false)
+	, ticks(0)
 {
 	//以下の関数を呼び出して入力数、出力数等の情報を設定する。
 	//必ず呼び出さなければならない。
@@ -562,6 +563,7 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 		}
 		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + (size_t)sampleFrames1ch * 2);
 	}
+	ticks += m_sampleFramesBlock;
 }
 
 // MIDIメッセージをVSTに保存する。
@@ -570,28 +572,36 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 {
 	int loops = (events->numEvents);
 
+	VstTimeInfo* ti = getTimeInfo(kVstTransportChanged | kVstTransportPlaying | kVstTransportRecording);
 	// VSTイベントの回数だけループをまわす。
 	for (int i = 0; i < loops; i++)
 	{
 		VstMidiEventBase* meb = (VstMidiEventBase*)(events->events[i]);
 		switch (meb->type)
 		{
-		case kVstMidiType:
-		{
-			VstMidiEvent* midievent = (VstMidiEvent*)meb;
-
-			m_rpcClient->async_call("SendMidiEvent",
-				(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
-			break;
-		}
-		case kVstSysExType:
-		{
-			VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
-			std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
-
-			m_rpcClient->async_call("SendMidiSysEvent", buffer, midievent->dumpBytes);
-			break;
-		}
+			case kVstMidiType:
+			{
+				VstMidiEvent* midievent = (VstMidiEvent*)meb;
+				LONG64 t = ticks + midievent->deltaFrames;
+				if ((ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
+					t++;
+				else
+					t = 0;
+				m_rpcClient->async_call("SendMidiEvent", t,
+					(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
+				break;
+			}
+			case kVstSysExType:
+			{
+				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
+				LONG64 t = ticks + midievent->deltaFrames;
+				if ((ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
+					t++;
+				else
+					t = 0;				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+				m_rpcClient->async_call("SendMidiSysEvent", t, buffer, midievent->dumpBytes);
+				break;
+			}
 		}
 	}
 
@@ -786,28 +796,28 @@ LRESULT WINAPI DummyVstEditor::WindowProc(HWND hWnd, UINT message, WPARAM wParam
 		}
 		break;
 	case WM_PAINT:
-		{
-			RECT rect;
-			SIZE size;
-			PAINTSTRUCT ps;
-			HDC hDC = BeginPaint(hWnd, &ps);
+	{
+		RECT rect;
+		SIZE size;
+		PAINTSTRUCT ps;
+		HDC hDC = BeginPaint(hWnd, &ps);
 
-			GetClientRect(hWnd, &rect);
+		GetClientRect(hWnd, &rect);
 
-			//nmVstEditor* nmve = (nmVstEditor*)GetProp(hWnd, PROP_WINPROC);
+		//nmVstEditor* nmve = (nmVstEditor*)GetProp(hWnd, PROP_WINPROC);
 
-			//sprintf(buf, "%f", nmve->getParam1());
-			sprintf_s(buf, "Keep this window open to prevent DATA LOSS or save data manually.");
-			
-			GetTextExtentPoint32(hDC, buf, strlen(buf), &size);
+		//sprintf(buf, "%f", nmve->getParam1());
+		sprintf_s(buf, "Keep this window open to prevent DATA LOSS or save data manually.");
 
-			SetBkMode(hDC, TRANSPARENT);
+		GetTextExtentPoint32(hDC, buf, strlen(buf), &size);
 
-			TextOut(hDC, ((rect.right - rect.left) - size.cx) / 2, ((rect.bottom - rect.top) - size.cy) / 2, buf, strlen(buf));
+		SetBkMode(hDC, TRANSPARENT);
 
-			EndPaint(hWnd, &ps);
-		}
-		return 0;
+		TextOut(hDC, ((rect.right - rect.left) - size.cx) / 2, ((rect.bottom - rect.top) - size.cy) / 2, buf, strlen(buf));
+
+		EndPaint(hWnd, &ps);
+	}
+	return 0;
 	case WM_DESTROY:
 		RemoveProp(hWnd, PROP_WINPROC);
 		PostQuitMessage(0);
