@@ -270,6 +270,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 4.7.0.0 Supported XGM recording by NRPN. For more information, see the manual.
+		Fixed XGM DAC playing issue created by MAmi.
 4.6.10.0 Added SerializeData Save/Load feature
          Supported Import/Export FM tone file as MAmi format.
 		 Re-fixed Save/Load error on DAW.

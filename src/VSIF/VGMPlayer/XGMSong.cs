@@ -64,20 +64,20 @@ namespace zanac.VGMPlayer
                 this.xgmData = xgmData;
             }
 
-            private int index;
+            private int[] index = new int[4];
 
-            public void Restart()
+            public void Restart(int ch)
             {
-                index = 0;
+                index[ch] = 0;
             }
 
-            public sbyte? GetDacData()
+            public sbyte? GetDacData(int ch)
             {
-                if (index >= Size)
+                if (index[ch] >= Size)
                     return null;
 
-                sbyte ret = (sbyte)xgmData.dacData[Address + index];
-                index++;
+                sbyte ret = (sbyte)xgmData.dacData[Address + index[ch]];
+                index[ch]++;
 
                 return ret;
             }
@@ -892,7 +892,7 @@ namespace zanac.VGMPlayer
                                             else
                                             {
                                                 currentPlaySamples[ch] = SampleDataTable[id - 1];
-                                                currentPlaySamples[ch].Restart();
+                                                currentPlaySamples[ch].Restart(ch);
                                             }
                                         }
                                         break;
@@ -936,7 +936,7 @@ namespace zanac.VGMPlayer
                             bool playDac = false;
                             for (int i = 0; i < currentPlaySamples.Length; i++)
                             {
-                                var dt = currentPlaySamples[i]?.GetDacData();
+                                var dt = currentPlaySamples[i]?.GetDacData(i);
                                 if (dt != null)
                                 {
                                     dacData += (short)dt.Value;
