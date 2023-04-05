@@ -1792,7 +1792,6 @@
             // 
             resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
             this.toolStripButton22.Name = "toolStripButton22";
-            this.toolStripButton22.CheckedChanged += new System.EventHandler(this.toolStripButton22_CheckedChanged);
             this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click_1);
             // 
             // openFileDialogMidi

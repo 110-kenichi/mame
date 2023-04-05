@@ -323,6 +323,9 @@ namespace zanac.MAmidiMEmo.Gui
             MidiManager.MidiEventReceivedA += MidiManager_MidiEventReceivedA;
             MidiManager.MidiEventReceivedB += MidiManager_MidiEventReceivedB;
 
+            XGMWriter.RecodingStarted += XGMWriter_RecodingStarted;
+            XGMWriter.RecodingStopped += XGMWriter_RecodingStopped;
+
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 
@@ -1932,7 +1935,7 @@ namespace zanac.MAmidiMEmo.Gui
                         sw.WriteLine($"MAmiDir = {Path.Combine(Program.MAmiDir, @"MAmidiMEmo.exe")}");
                     }
 
-                    Settings.Default.LastVSTiFolder = pluginDir;
+                    Settings.Default.LastVSTiFolder = Path.GetDirectoryName(pluginDir);
 
                     MessageBox.Show(Resources.CopiedVSTi);
                 }
@@ -2443,11 +2446,6 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton22_Click_1(object sender, EventArgs e)
         {
-            toolStripButton22.Checked = !toolStripButton22.Checked;
-        }
-
-        private void toolStripButton22_CheckedChanged(object sender, EventArgs e)
-        {
             if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
                 Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             Directory.CreateDirectory(Settings.Default.OutputDir);
@@ -2458,7 +2456,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 Program.SoundUpdating();
 
-                if (toolStripButton22.Checked)
+                if (!toolStripButton22.Checked)
                 {
                     for (int i = 0; i < 8; i++)
                     {
@@ -2484,6 +2482,22 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 Program.SoundUpdated();
             }
+        }
+
+        private int recordingCount;
+
+        private void XGMWriter_RecodingStarted(object sender, EventArgs e)
+        {
+            recordingCount++;
+            if (recordingCount > 0)
+                toolStripButton22.Checked = true;
+        }
+
+        private void XGMWriter_RecodingStopped(object sender, EventArgs e)
+        {
+            recordingCount--;
+            if (recordingCount == 0)
+                toolStripButton22.Checked = false;
         }
 
         private string copiedValue;

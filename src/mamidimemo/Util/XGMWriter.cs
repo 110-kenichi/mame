@@ -14,6 +14,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Melanchall.DryWetMidi.Core;
 using FastColoredTextBoxNS;
+using System.Collections.ObjectModel;
 
 namespace zanac.MAmidiMEmo.Util
 {
@@ -22,6 +23,7 @@ namespace zanac.MAmidiMEmo.Util
     /// </summary>
     public class XGMWriter
     {
+
         private static object RecordingLock = new object();
 
         private MidiEvent currentProcessingMidiEvent;
@@ -49,12 +51,16 @@ namespace zanac.MAmidiMEmo.Util
         /// <summary>
         /// 
         /// </summary>
-        private YM2612 TargetYM2612 { get; set; }
+        private YM2612 targetYM2612;
 
         /// <summary>
         /// 
         /// </summary>
-        private SN76496 TargetSN76496 { get; set; }
+        private SN76496 targetSN76496;
+
+        public static event EventHandler RecodingStarted;
+
+        public static event EventHandler RecodingStopped;
 
         /// <summary>
         /// 
@@ -85,13 +91,15 @@ namespace zanac.MAmidiMEmo.Util
 
                 if (unitNumber < opn2s.Length)
                 {
-                    TargetYM2612 = (YM2612)opn2s[unitNumber];
-                    TargetYM2612.XgmWriter = this;
+                    targetYM2612 = (YM2612)opn2s[unitNumber];
+                    targetYM2612.XgmWriter = this;
+                    f_RecordingEnabled = true;
                 }
                 if (unitNumber < dcsgs.Length)
                 {
-                    TargetSN76496 = (SN76496)dcsgs[unitNumber];
-                    TargetSN76496.XgmWriter = this;
+                    targetSN76496 = (SN76496)dcsgs[unitNumber];
+                    targetSN76496.XgmWriter = this;
+                    f_RecordingEnabled = true;
                 }
 
                 var now = DateTime.Now;
@@ -106,15 +114,16 @@ namespace zanac.MAmidiMEmo.Util
                 currentProcessingMidiEventTicks = 0;
                 lastWriteTicks = 0;
 
-                f_RecordingEnabled = true;
 
                 //startXGM = false;
                 //sb = new StringBuilder();
 
                 recordDataCommandType = -1;
-                TargetYM2612?.AllSoundOff();
-                TargetSN76496?.AllSoundOff();
+                targetYM2612?.AllSoundOff();
+                targetSN76496?.AllSoundOff();
                 recordDataCommandType = 0;
+
+                RecodingStarted?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -209,6 +218,8 @@ namespace zanac.MAmidiMEmo.Util
                 if (!f_RecordingEnabled)
                     return;
 
+                RecodingStopped?.Invoke(this, EventArgs.Empty);
+
                 if (endMark)
                 {
                     RecordData(new PortWriteData()
@@ -221,8 +232,8 @@ namespace zanac.MAmidiMEmo.Util
                 this.f_RecordingEnabled = false;
                 f_RecordingData = null;
 
-                TargetYM2612 = null;
-                TargetSN76496 = null;
+                targetYM2612 = null;
+                targetSN76496 = null;
 
                 Thread t = new Thread(new ThreadStart(() =>
                 {
@@ -312,7 +323,7 @@ namespace zanac.MAmidiMEmo.Util
                     QueryPerformanceFrequency(out f);
                     double tick1frame = f / 60d;
 
-                    long lastWaitTick = -1;
+                    double lastWaitTick = -1;
 
                     long loopAddress = -1;
 
@@ -369,7 +380,12 @@ namespace zanac.MAmidiMEmo.Util
                                         optWriteData.AddRange(frame1Data.ToArray());
                                         frame1Data.Clear();
 
-                                        lastWaitTick = writeData.Tick;
+                                        var mod = (writeData.Tick - lastWaitTick) % tick1frame;
+                                        if (mod >= tick1frame / 2)
+                                            lastWaitTick = writeData.Tick + mod;
+                                        else
+                                            lastWaitTick = writeData.Tick - mod;
+                                        //lastWaitTick = writeData.Tick;
                                     }
                                     break;
                             }
@@ -467,11 +483,16 @@ namespace zanac.MAmidiMEmo.Util
                                         break;
                                     */
                                     //$00              1    frame wait (1/60 of second in NTSC, 1/50 of second in PAL)
-                                    int wait = (int)Math.Round((writeData.Tick - lastWaitTick) / tick1frame);
-                                    for (int w = 0; w < wait; w++)
+                                    long wait = (long)Math.Round((writeData.Tick - lastWaitTick) / tick1frame);
+                                    for (long w = 0; w < wait; w++)
                                         mdata.Add(0x00);
 
-                                    lastWaitTick = writeData.Tick;
+                                    var mod = (writeData.Tick - lastWaitTick) % tick1frame;
+                                    if (mod >= tick1frame / 2)
+                                        lastWaitTick = writeData.Tick + mod;
+                                    else
+                                        lastWaitTick = writeData.Tick - mod;
+                                    //lastWaitTick = writeData.Tick;
                                 }
                                 break;
                         }
@@ -563,10 +584,10 @@ namespace zanac.MAmidiMEmo.Util
                 }));
                 t.Start();
 
-                if (TargetYM2612 != null)
-                    TargetYM2612.XgmWriter = null;
-                if (TargetSN76496 != null)
-                    TargetSN76496.XgmWriter = null;
+                if (targetYM2612 != null)
+                    targetYM2612.XgmWriter = null;
+                if (targetSN76496 != null)
+                    targetSN76496.XgmWriter = null;
             }
         }
 

@@ -654,6 +654,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             base.OnNrpnDataEntered(dataMsb, dataLsb);
 
+            /* TODO: DCSGでだけで録音できると良いかも?
             if (NrpnMsb[dataMsb.Channel] == 1 && NrpnLsb[dataMsb.Channel] == 6)
             {
                 switch (dataMsb.ControlValue)
@@ -676,7 +677,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         XgmWriter?.RecordStop(false);
                         break;
                 }
-            }
+            }*/
 
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
