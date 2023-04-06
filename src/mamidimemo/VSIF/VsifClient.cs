@@ -105,13 +105,15 @@ namespace zanac.MAmidiMEmo.VSIF
                 if (disposing)
                 {
                     //マネージド状態を破棄します (マネージド オブジェクト)
+                    autoResetEvent.Set();
+                    while (writeThread.IsAlive)
+                        Thread.Sleep(0);
+
+                    autoResetEvent.Dispose();
                 }
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // 大きなフィールドを null に設定します
-                if (DataWriter != null)
-                    DataWriter.Dispose();
-                DataWriter = null;
             }
         }
 
@@ -127,6 +129,10 @@ namespace zanac.MAmidiMEmo.VSIF
             ReferencedCount--;
             if (ReferencedCount != 0)
                 return;
+
+            if (DataWriter != null)
+                DataWriter.Dispose();
+            DataWriter = null;
 
             // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
             Dispose(disposing: true);
@@ -144,6 +150,7 @@ namespace zanac.MAmidiMEmo.VSIF
             {
                 while (!disposedValue)
                 {
+                    autoResetEvent.WaitOne();
                     PortWriteData[] dd;
                     lock (lockObject)
                     {
@@ -179,6 +186,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
                 deferredWriteAdrAndData.AddRange(data);
             }
+            autoResetEvent.Set();
         }
 
         /// <summary>
@@ -195,6 +203,7 @@ namespace zanac.MAmidiMEmo.VSIF
 
                 deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
             }
+            autoResetEvent.Set();
         }
 
         /// <summary>
@@ -214,6 +223,7 @@ namespace zanac.MAmidiMEmo.VSIF
                     pdata[i] = new PortWriteData() { Type = type, Address = address++, Data = data[i], Wait = wait };
                 deferredWriteAdrAndData.AddRange(pdata);
             }
+            autoResetEvent.Set();
         }
 
         public virtual void ClearDataCache()

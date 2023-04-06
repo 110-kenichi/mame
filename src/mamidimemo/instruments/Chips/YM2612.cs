@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using FastColoredTextBoxNS;
@@ -667,7 +668,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="dt"></param>
-        protected void DeferredWriteOPN2_DAC(uint unitNumber, byte[] dacData)
+        protected void DeferredWriteOPN2_DAC(uint unitNumber, byte dacData)
         {
             List<PortWriteData> list = new List<PortWriteData>();
             lock (sndEnginePtrLock)
@@ -677,22 +678,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_Genesis:
                     case SoundEngineType.VSIF_Genesis_Low:
                     case SoundEngineType.VSIF_Genesis_FTDI:
-                        foreach (var dd in dacData)
-                        {
-                            list.Add(new PortWriteData() { Type = 0, Address = 0x04, Data = 0x2a, Wait = f_ftdiClkWidth });
-                            list.Add(new PortWriteData() { Type = 0, Address = 0x08, Data = dd, Wait = f_ftdiClkWidth });
-                        }
+                        list.Add(new PortWriteData() { Type = 0, Address = 0x04, Data = 0x2a, Wait = f_ftdiClkWidth });
+                        list.Add(new PortWriteData() { Type = 0, Address = 0x08, Data = dacData, Wait = f_ftdiClkWidth });
                         vsifClient.WriteData(list.ToArray());
                         break;
                     case SoundEngineType.VSIF_MSX_FTDI:
                     case SoundEngineType.VSIF_P6_FTDI:
-                        foreach (var dd in dacData)
-                            list.Add(new PortWriteData() { Type = 0x14, Address = 0x2a, Data = dd, Wait = f_ftdiClkWidth });
+                        list.Add(new PortWriteData() { Type = 0x14, Address = 0x2a, Data = dacData, Wait = f_ftdiClkWidth });
                         vsifClient.WriteData(list.ToArray());
                         break;
                     case SoundEngineType.SPFM:
-                        foreach (var dd in dacData)
-                            ScciManager.SetRegister(spfmPtr, 0x2a, dd, false);
+                        ScciManager.SetRegister(spfmPtr, 0x2a, dacData, false);
                         break;
                 }
             }
@@ -1269,8 +1265,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private uint unitNumber;
 
-            private List<byte> deferredWriteData;
-
             private SampleData[] currentSampleData;
 
             /// <summary>
@@ -1283,7 +1277,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 engineLockObject = new object();
                 dataLockObject = new object();
                 stopEngineFlag = true;
-                deferredWriteData = new List<byte>();
                 autoResetEvent = new AutoResetEvent(false);
                 currentSampleData = new SampleData[MAX_VOICE];
             }
@@ -1299,10 +1292,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     stopEngineFlag = false;
                     Thread t = new Thread(processDac);
                     t.Priority = ThreadPriority.AboveNormal;
-                    t.Start();
-
-                    t = new Thread(deferredWriteDataTask);
-                    t.Priority = ThreadPriority.Highest;
                     t.Start();
                 }
             }
@@ -1358,55 +1347,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="address"></param>
-            /// <param name="data"></param>
-            private void deferredWriteDacData(byte data)
-            {
-                lock (dataLockObject)
-                {
-                    if (disposedValue)
-                        return;
-                    deferredWriteData.Add(data);
-                }
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            private void deferredWriteDataTask()
-            {
-                try
-                {
-                    while (!stopEngineFlag)
-                    {
-                        if (disposedValue)
-                            break;
-
-                        byte[] dd;
-                        lock (dataLockObject)
-                        {
-                            if (deferredWriteData.Count == 0)
-                                continue;
-                            dd = deferredWriteData.ToArray();
-                            deferredWriteData.Clear();
-                        }
-                        if (dd.Length != 0)
-                            ym2612.DeferredWriteOPN2_DAC(unitNumber, dd);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex.GetType() == typeof(Exception))
-                        throw;
-                    else if (ex.GetType() == typeof(SystemException))
-                        throw;
-                }
-            }
-
-
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
 
@@ -1418,10 +1358,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void processDac()
             {
-                double wait = 0;
                 double streamWaitDelta = 0;
                 double lastWaitRemain = 0;
-                double lastDiff = 0;
                 int overflowed = 0;
 
                 long freq, before, after;
@@ -1435,12 +1373,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (disposedValue)
                         break;
 
-                    QueryPerformanceCounter(out before);
+                    int dacData = 0;
+                    bool playDac = false;
 
-                    if (streamWaitDelta <= 0)
+                    //if (streamWaitDelta <= 0)
                     {
-                        int dacData = 0;
-                        bool playDac = false;
                         lock (engineLockObject)
                         {
                             foreach (var sd in currentSampleData)
@@ -1472,10 +1409,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
-                            //ym2612.DeferredWriteOPN2_DAC(unitNumber, new byte[] { (byte)(dacData + 0x80) });
-                            deferredWriteDacData((byte)(dacData + 0x80));
+                            ym2612.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
 
-                            /* TODO:
+                            /*
                             try
                             {
                                 Program.SoundUpdating();
@@ -1488,33 +1424,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             //*/
 
-                            streamWaitDelta += 44100d / sampleRate;
+                            streamWaitDelta = 44100d / sampleRate;
                         }
                     }
 
-                    wait += streamWaitDelta;
-                    streamWaitDelta = 0;
-
-                    if (wait + lastWaitRemain <= 0)
+                    if (streamWaitDelta <= 0)
                         continue;
 
-                    lastWaitRemain = 0;
-
                     QueryPerformanceCounter(out after);
-                    double pwait = wait + lastWaitRemain;
-                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                    before = after;
+                    double pwait = streamWaitDelta + lastWaitRemain;
+                    if (pwait > 0)
                     {
-                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
-                        lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        wait = 0;
+                        if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                        {
+                            double lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                            lastWaitRemain = -(lastDiff * 44.1 * 1000);
+                        }
+                        else
+                        {
+                            while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                                QueryPerformanceCounter(out after);
+                            lastWaitRemain = 0;
+                        }
                     }
-                    else
-                    {
-                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
-                            QueryPerformanceCounter(out after);
-                        lastWaitRemain = 0;
-                        wait = 0;
-                    }
+                    streamWaitDelta = 0;
                 }
             }
 
