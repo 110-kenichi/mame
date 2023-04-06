@@ -763,3 +763,6 @@ http://c86box.com/software.html
 http://www.pastel-flower.jp/~isaki/NetBSD/src/?sys/dev/ic/msm6258.c
 umjammer
 https://github.com/umjammer/vavi-sound/blob/master/src/main/java/vavi/sound/adpcm/oki/Oki.java
+
+*airfont 380Final by Milton Paredes, mpj factory studios
+https://musical-artifacts.com/artifacts/635
