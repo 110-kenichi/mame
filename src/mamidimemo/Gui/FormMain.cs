@@ -2518,7 +2518,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 enabled = item != null &&
                     item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataSave";
+                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
             }
             catch (Exception ex)
             {
@@ -2543,7 +2543,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 enabled = item != null &&
                     item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataLoad";
+                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
             }
             catch (Exception ex)
             {
@@ -2582,7 +2582,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 bool enabled = item != null &&
                     item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataLoad";
+                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
                 copySerializeDataToolStripMenuItem.Enabled = enabled;
             }
             catch (Exception ex)
@@ -2598,7 +2598,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 bool enabled = item != null &&
                     item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && item.PropertyDescriptor.Name == "SerializeDataLoad";
+                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
                 pasteSerializeDataToolStripMenuItem.Enabled = (enabled && copiedValue != null && copiedValueInstance != null && copiedValueInstance.GetType() == context.Instance.GetType());
             }
             catch (Exception ex)
