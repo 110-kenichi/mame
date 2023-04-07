@@ -402,6 +402,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [Description("Set LFO and Portament processing interval[ms]. If you use a real hardware, please increase to appropriate value.")]
+        [DefaultValue(10d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(1d, 50d, 1d)]
+        public override double ProcessingInterval
+        {
+            get
+            {
+                return base.ProcessingInterval;
+            }
+            set
+            {
+                base.ProcessingInterval = value;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -598,6 +620,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
+
+            ProcessingInterval = 10;
 
             Timbres = new SIDTimbre[InstrumentBase.DEFAULT_MAX_TIMBRES];
             for (int i = 0; i < InstrumentBase.DEFAULT_MAX_TIMBRES; i++)
@@ -817,22 +841,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private SIDTimbre timbre;
 
             private Waveforms lastWaveform;
-
-            protected override double ModulationInterval
-            {
-                get
-                {
-                    return 10;
-                }
-            }
-
-            protected override double PortamentInterval
-            {
-                get
-                {
-                    return 10;
-                }
-            }
 
             /// <summary>
             /// 

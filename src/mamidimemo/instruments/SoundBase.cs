@@ -706,7 +706,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return 1;
+                return ParentModule.ProcessingInterval;
             }
         }
 
@@ -753,7 +753,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return 1;
+                return ParentModule.ProcessingInterval;
             }
         }
 

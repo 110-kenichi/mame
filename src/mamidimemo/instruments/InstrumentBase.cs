@@ -203,6 +203,31 @@ namespace zanac.MAmidiMEmo.Instruments
             GlobalARP.SerializeData = "{}";
         }
 
+
+        private double f_ProcessingInterval = 1;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("General")]
+        [Description("Set LFO and Portament processing interval[ms]. If you use a real hardware, please increase to appropriate value to prevent performance hit.")]
+        [DefaultValue(1d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+        [DoubleSlideParameters(1d, 50d, 1d)]
+        public virtual double ProcessingInterval
+        {
+            get
+            {
+                return f_ProcessingInterval;
+            }
+            set
+            {
+                if (f_ProcessingInterval >= 1)
+                    f_ProcessingInterval = value;
+            }
+        }
+
         private FilterMode f_FilterMode = FilterMode.LowPass;
 
         [DataMember]
@@ -1276,7 +1301,6 @@ namespace zanac.MAmidiMEmo.Instruments
             for (int i = 0; i < ProgramAssignments.Length; i++)
                 ProgramAssignments[i] = (ProgramAssignmentNumber)i;
         }
-
 
         [DataMember]
         [Category("MIDI")]
