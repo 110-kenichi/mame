@@ -1638,33 +1638,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnVolumeUpdated()
             {
                 List<int> ops = new List<int>();
+                List<int> exops = new List<int>();
                 switch (timbre.ALG)
                 {
                     case 0:
                         ops.Add(3);
+                        exops.Add(0);
+                        exops.Add(1);
+                        exops.Add(2);
                         break;
                     case 1:
                         ops.Add(3);
+                        exops.Add(0);
+                        exops.Add(1);
+                        exops.Add(2);
                         break;
                     case 2:
                         ops.Add(3);
+                        exops.Add(0);
+                        exops.Add(1);
+                        exops.Add(2);
                         break;
                     case 3:
                         ops.Add(3);
+                        exops.Add(0);
+                        exops.Add(1);
+                        exops.Add(2);
                         break;
                     case 4:
                         ops.Add(1);
                         ops.Add(3);
+                        exops.Add(0);
+                        exops.Add(2);
                         break;
                     case 5:
                         ops.Add(1);
                         ops.Add(2);
                         ops.Add(3);
+                        exops.Add(0);
                         break;
                     case 6:
                         ops.Add(1);
                         ops.Add(2);
                         ops.Add(3);
+                        exops.Add(0);
                         break;
                     case 7:
                         ops.Add(0);
@@ -1691,6 +1708,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     else
                         vol = (127 - Math.Round((127 - (tl + kvs)) * CalcCurrentVolume(true)));
                     parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)vol);
+                }
+                if (timbre.UseExprForModulator)
+                {
+                    //$60+: total level
+                    var mul = CalcModulatorMultiply();
+                    foreach (int op in exops)
+                    {
+                        double vol = timbre.Ops[op].TL;
+                        if (mul > 0)
+                            vol = vol + ((127 - vol) * mul);
+                        else if (mul < 0)
+                            vol = vol + ((vol) * mul);
+                        vol = Math.Round(vol);
+                        parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)vol);
+                    }
                 }
             }
 
@@ -1852,31 +1884,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     switch (timbre.ALG)
                     {
                         case 0:
-                            if (op != 3)
+                            if (op != 3 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 1:
-                            if (op != 3)
+                            if (op != 3 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 2:
-                            if (op != 3)
+                            if (op != 3 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 3:
-                            if (op != 3)
+                            if (op != 3 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 4:
-                            if (op != 1 && op != 3)
+                            if (op != 1 && op != 3 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 5:
-                            if (op == 0)
+                            if (op == 0 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 6:
-                            if (op == 0)
+                            if (op == 0 && !timbre.UseExprForModulator)
                                 parentModule.YM2414WriteData(unitNumber, 0x60, op, Slot, (byte)timbre.Ops[op].TL);
                             break;
                         case 7:
@@ -2499,6 +2531,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         nameof(AMS),
                         nameof(PMS));
                 }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [DefaultValue(false)]
+            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Browsable(true)]
+            public override bool UseExprForModulator
+            {
+                get;
+                set;
             }
 
             [DataMember]

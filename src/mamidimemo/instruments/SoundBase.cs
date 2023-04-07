@@ -377,7 +377,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             double v = 1;
 
-            v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
+            if (!Timbre.UseExprForModulator)
+                v *= ParentModule.Expressions[NoteOnEvent.Channel] / 127d;
             v *= ParentModule.Volumes[NoteOnEvent.Channel] / 127d;
             if (!ignoreVelocity && !Timbre.MDS.IgnoreVelocity)
                 v *= NoteOnEvent.Velocity / 127d;
@@ -400,6 +401,20 @@ namespace zanac.MAmidiMEmo.Instruments
                 v = 0.0;
 
             return v;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected double CalcModulatorMultiply()
+        {
+            var v = ParentModule.Expressions[NoteOnEvent.Channel];
+            if (v > 64)
+                return -(ParentModule.Expressions[NoteOnEvent.Channel] - 64) / 63d;
+            else if (v < 63)
+                return -(ParentModule.Expressions[NoteOnEvent.Channel] - 63) / 63d;
+            return 0;
         }
 
         /// <summary>

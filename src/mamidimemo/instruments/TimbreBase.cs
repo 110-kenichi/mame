@@ -155,6 +155,16 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        public virtual bool UseExprForModulator
+        {
+            get;
+            set;
+        }
+
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Assign MIDI channel to hardware channel.\r\n" +

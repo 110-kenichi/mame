@@ -575,7 +575,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.ALG == 1 || op == 1)
                         YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                     else
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                    {
+                        if (!timbre.UseExprForModulator)
+                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                        else
+                        {
+                            var mul = CalcModulatorMultiply();
+                            double vol = timbre.Ops[op].TL;
+                            if (mul > 0)
+                                vol = vol + ((63 - vol) * mul);
+                            else if (mul < 0)
+                                vol = vol + ((vol) * mul);
+                            vol = Math.Round(vol);
+                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | (byte)vol));
+                        }
+                    }
                 }
             }
 
@@ -638,6 +652,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM3812Operator o = timbre.Ops[op];
                     //$20+: Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
                     YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
+                    //$40+: Scaling level/ total level
+                    if (!(timbre.ALG == 1 || op == 1))
+                    {
+                        if (!timbre.UseExprForModulator)
+                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                    }
                     //$60+: Attack Rate / Decay Rate
                     YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
@@ -970,6 +990,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[1].EG",
                         "Ops[1].WS");
                 }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [DefaultValue(false)]
+            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Browsable(true)]
+            public override bool UseExprForModulator
+            {
+                get;
+                set;
             }
 
             [DataMember]

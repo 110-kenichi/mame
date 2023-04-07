@@ -382,7 +382,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YMF262>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -1027,7 +1027,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (timbre.ALG == 1 || op == 1)
                             parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                         else
-                            parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                        {
+                            if (!timbre.UseExprForModulator)
+                                parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                            else
+                            {
+                                var mul = CalcModulatorMultiply();
+                                double vol = timbre.Ops[op].TL;
+                                if (mul > 0)
+                                    vol = vol + ((63 - vol) * mul);
+                                else if (mul < 0)
+                                    vol = vol + ((vol) * mul);
+                                vol = Math.Round(vol);
+                                parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | (byte)vol));
+                            }
+                        }
                     }
                     else
                     {
@@ -1037,25 +1051,70 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (op == 1)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                                 else
+                            if (!timbre.UseExprForModulator)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                else
+                                {
+                                    var mul = CalcModulatorMultiply();
+                                    double vol = timbre.Ops[op].TL;
+                                    if (mul > 0)
+                                        vol = vol + ((63 - vol) * mul);
+                                    else if (mul < 0)
+                                        vol = vol + ((vol) * mul);
+                                    vol = Math.Round(vol);
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | (byte)vol));
+                                }
                                 break;
                             case 3:
                                 if (op == 1 || op == 3)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
-                                else
+                                else if (!timbre.UseExprForModulator)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                else
+                                {
+                                    var mul = CalcModulatorMultiply();
+                                    double vol = timbre.Ops[op].TL;
+                                    if (mul > 0)
+                                        vol = vol + ((63 - vol) * mul);
+                                    else if (mul < 0)
+                                        vol = vol + ((vol) * mul);
+                                    vol = Math.Round(vol);
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | (byte)vol));
+                                }
                                 break;
                             case 4:
                                 if (op == 0 || op == 3)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
-                                else
+                                else if (!timbre.UseExprForModulator)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                else
+                                {
+                                    var mul = CalcModulatorMultiply();
+                                    double vol = timbre.Ops[op].TL;
+                                    if (mul > 0)
+                                        vol = vol + ((63 - vol) * mul);
+                                    else if (mul < 0)
+                                        vol = vol + ((vol) * mul);
+                                    vol = Math.Round(vol);
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | (byte)vol));
+                                }
                                 break;
                             case 5:
                                 if (op == 0 || op == 2 || op == 3)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
-                                else
+                                else if (!timbre.UseExprForModulator)
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                else
+                                {
+                                    var mul = CalcModulatorMultiply();
+                                    double vol = timbre.Ops[op].TL;
+                                    if (mul > 0)
+                                        vol = vol + ((63 - vol) * mul);
+                                    else if (mul < 0)
+                                        vol = vol + ((vol) * mul);
+                                    vol = Math.Round(vol);
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | (byte)vol));
+                                }
                                 break;
                         }
                     }
@@ -1142,6 +1201,49 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     YMF262Operator o = timbre.Ops[op];
                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x20, op, Slot, lastALG, lastConsel, (byte)((o.AM << 7 | o.VIB << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
+
+                    //$40+: Scaling level/ total level
+                    if (lastALG <= 1)
+                    {
+                        if (timbre.ALG == 1 || op == 1)
+                        { }
+                        else
+                        {
+                            if (!timbre.UseExprForModulator)
+                                parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                        }
+                    }
+                    else
+                    {
+                        switch (lastALG)
+                        {
+                            case 2:
+                                if (op == 1)
+                                { }
+                                else if (!timbre.UseExprForModulator)
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 3:
+                                if (op == 1 || op == 3)
+                                { }
+                                else if (!timbre.UseExprForModulator)
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 4:
+                                if (op == 0 || op == 3)
+                                { }
+                                else if (!timbre.UseExprForModulator)
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                            case 5:
+                                if (op == 0 || op == 2 || op == 3)
+                                { }
+                                else if (!timbre.UseExprForModulator)
+                                    parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
+                                break;
+                        }
+                    }
+
                     //$60+: Attack Rate / Decay Rate
                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x60, op, Slot, lastALG, lastConsel, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
@@ -1622,6 +1724,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [DefaultValue(false)]
+            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Browsable(true)]
+            public override bool UseExprForModulator
+            {
+                get;
+                set;
+            }
+
             [DataMember]
             [Category("Chip")]
             [Description("Global Settings")]
@@ -1659,7 +1775,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YMF262Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2101,7 +2217,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YMF262Operator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {

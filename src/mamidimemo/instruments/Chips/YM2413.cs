@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -1177,6 +1178,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             tt = (ToneType)(eng.ToneValue.Value & 15);
                     }
                     parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, Slot, (byte)((int)tt << 4 | tl));
+
+                    if (timbre.UseExprForModulator && lastToneType == ToneType.Custom)
+                    {
+                        var mul = CalcModulatorMultiply();
+                        double vol = timbre.Modulator.TL;
+                        if (mul > 0)
+                            vol = vol + ((63 - vol) * mul);
+                        else if (mul < 0)
+                            vol = vol + ((vol) * mul);
+                        vol = Math.Round(vol);
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((timbre.Modulator.KSL << 6 | (byte)vol)));
+                    }
                 }
                 else if (parentModule.RHY == 1)
                 {
@@ -1506,7 +1519,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
                         //$02+:
-                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
+                        if(!timbre.UseExprForModulator)
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
+
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x03, 0, (byte)((c.KSL << 6 | c.DIST << 4 | m.DIST << 3 | timbre.FB)));
                         //$04+:
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x04, 0, (byte)((m.AR << 4 | m.DR)));
@@ -1988,6 +2003,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         "SUS");
                 }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [DefaultValue(false)]
+            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Browsable(true)]
+            public override bool UseExprForModulator
+            {
+                get;
+                set;
             }
 
             [DataMember]
