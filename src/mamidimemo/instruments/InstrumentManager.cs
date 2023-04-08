@@ -466,63 +466,69 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="midiEvent"></param>
-        private static void MidiManager_MidiEventReceivedA(object sender, MidiEvent e)
+        private static void MidiManager_MidiEventReceivedA(object sender, MidiEvent[] es)
         {
-            if (e is ActiveSensingEvent)
-                return;
-
-            try
+            lock (MidiManager.SoundExclusiveLockObject)
             {
-                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
-
-                FormMain.OutputDebugLog(null, "A: " + e.ToString());
-
-                ProcessSysEx(MidiPort.PortA, e);
-
-                //lock (ExclusiveLockObject)
-                ProcessCC(MidiPort.PortA, e);
-
-                /* set GM inst name
-
-                Dictionary<int, string> dnames = new Dictionary<int, string>();
-                for (int idx = 0; idx < drumNames.Length; idx++)
+                foreach (MidiEvent e in es)
                 {
-                    dnames.Add((int)drumNames[idx + 1], (string)drumNames[idx]);
-                    idx++;
-                }
-                */
+                    if (e is ActiveSensingEvent)
+                        continue;
 
-                foreach (var i in instruments)
-                    i.ForEach((dev) =>
+                    try
                     {
-                        if (dev.MidiPort == Midi.MidiPort.PortAB ||
-                            dev.MidiPort == Midi.MidiPort.PortA)
-                            dev.NotifyMidiEvent(e);
+                        //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
-                        /*
-                        foreach (var ti in i)
+                        FormMain.OutputDebugLog(null, "A: " + e.ToString());
+
+                        ProcessSysEx(MidiPort.PortA, e);
+
+                        //lock (ExclusiveLockObject)
+                        ProcessCC(MidiPort.PortA, e);
+
+                        /* set GM inst name
+
+                        Dictionary<int, string> dnames = new Dictionary<int, string>();
+                        for (int idx = 0; idx < drumNames.Length; idx++)
                         {
-                            for (int idx = 0; idx < 128; idx++)
-                            {
-                                ti.BaseTimbres[idx].TimbreName = gsInstName[idx];
+                            dnames.Add((int)drumNames[idx + 1], (string)drumNames[idx]);
+                            idx++;
+                        }
+                        */
 
-                                //ti.BaseTimbres[idx].TimbreName = gsInstName[idx] + " A";
-                                //ti.BaseTimbres[idx + 128].TimbreName = gsInstName[idx] + " B";
-                            }
-                            for (int idx = 0; idx < 128; idx++)
+                        foreach (var i in instruments)
+                            i.ForEach((dev) =>
                             {
-                                if (ti.DrumTimbres[idx].TimbreNumber != null)
+                                if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                                    dev.MidiPort == Midi.MidiPort.PortA)
+                                    dev.NotifyMidiEvent(e);
+
+                                /*
+                                foreach (var ti in i)
                                 {
-                                    if (dnames.ContainsKey(idx))
-                                        ti.DrumTimbres[idx].TimbreName = dnames[idx];
-                                }
-                            }
-                        }*/
-                    });
-            }
-            finally
-            {
-                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                                    for (int idx = 0; idx < 128; idx++)
+                                    {
+                                        ti.BaseTimbres[idx].TimbreName = gsInstName[idx];
+
+                                        //ti.BaseTimbres[idx].TimbreName = gsInstName[idx] + " A";
+                                        //ti.BaseTimbres[idx + 128].TimbreName = gsInstName[idx] + " B";
+                                    }
+                                    for (int idx = 0; idx < 128; idx++)
+                                    {
+                                        if (ti.DrumTimbres[idx].TimbreNumber != null)
+                                        {
+                                            if (dnames.ContainsKey(idx))
+                                                ti.DrumTimbres[idx].TimbreName = dnames[idx];
+                                        }
+                                    }
+                                }*/
+                            });
+                    }
+                    finally
+                    {
+                        //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                    }
+                }
             }
         }
 
@@ -714,33 +720,39 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="midiEvent"></param>
-        private static void MidiManager_MidiEventReceivedB(object sender, MidiEvent e)
+        private static void MidiManager_MidiEventReceivedB(object sender, MidiEvent[] es)
         {
-            if (e is ActiveSensingEvent)
-                return;
-
-            try
+            lock (MidiManager.SoundExclusiveLockObject)
             {
-                //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+                foreach (MidiEvent e in es)
+                {
+                    if (e is ActiveSensingEvent)
+                        continue;
 
-                FormMain.OutputDebugLog(null, "B: " + e.ToString());
-
-                ProcessSysEx(MidiPort.PortB, e);
-
-                //lock (ExclusiveLockObject)
-                ProcessCC(MidiPort.PortB, e);
-
-                foreach (var i in instruments)
-                    i.ForEach((dev) =>
+                    try
                     {
-                        if (dev.MidiPort == Midi.MidiPort.PortAB ||
-                            dev.MidiPort == Midi.MidiPort.PortB)
-                            dev.NotifyMidiEvent(e);
-                    });
-            }
-            finally
-            {
-                //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                        //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
+
+                        FormMain.OutputDebugLog(null, "B: " + e.ToString());
+
+                        ProcessSysEx(MidiPort.PortB, e);
+
+                        //lock (ExclusiveLockObject)
+                        ProcessCC(MidiPort.PortB, e);
+
+                        foreach (var i in instruments)
+                            i.ForEach((dev) =>
+                            {
+                                if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                                    dev.MidiPort == Midi.MidiPort.PortB)
+                                    dev.NotifyMidiEvent(e);
+                            });
+                    }
+                    finally
+                    {
+                        //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
+                    }
+                }
             }
         }
 

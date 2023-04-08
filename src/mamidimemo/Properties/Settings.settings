@@ -11,9 +11,6 @@
     <Setting Name="SoundType" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="SampleRate" Type="System.String" Scope="User">
-      <Value Profile="(Default)">48000</Value>
-    </Setting>
     <Setting Name="AudioLatency" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
@@ -163,6 +160,15 @@
     </Setting>
     <Setting Name="OctaveDisplay" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="XgmErrorCorrection" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">480</Value>
+    </Setting>
+    <Setting Name="XgmTVSystem" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SampleRate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">48000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

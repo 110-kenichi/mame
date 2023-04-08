@@ -116,7 +116,7 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	, m_hSharedMemory(0)
 	, m_mamiPath("")
 	, m_streamBufferOverflowed(false)
-	, ticks(0)
+	, eventId(0)
 {
 	//以下の関数を呼び出して入力数、出力数等の情報を設定する。
 	//必ず呼び出さなければならない。
@@ -563,7 +563,6 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 		}
 		m_streamBuffer2ch.erase(m_streamBuffer2ch.begin(), m_streamBuffer2ch.begin() + (size_t)sampleFrames1ch * 2);
 	}
-	ticks += m_sampleFramesBlock;
 }
 
 // MIDIメッセージをVSTに保存する。
@@ -571,9 +570,14 @@ void MAmiVSTi::processReplacing(float** inputs, float** outputs, VstInt32 sample
 VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 {
 	int loops = (events->numEvents);
-
 	VstTimeInfo* ti = getTimeInfo(kVstTransportChanged | kVstTransportPlaying | kVstTransportRecording);
+
 	// VSTイベントの回数だけループをまわす。
+	std::vector<unsigned char> midiEvents1;
+	std::vector<unsigned char> midiEvents2;
+	std::vector<unsigned char> midiEvents3;
+	int count = 0;
+
 	for (int i = 0; i < loops; i++)
 	{
 		VstMidiEventBase* meb = (VstMidiEventBase*)(events->events[i]);
@@ -582,28 +586,35 @@ VstInt32 MAmiVSTi::processEvents(VstEvents* events)
 			case kVstMidiType:
 			{
 				VstMidiEvent* midievent = (VstMidiEvent*)meb;
-				LONG64 t = ticks + midievent->deltaFrames;
-				if ((ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
-					t++;
-				else
-					t = 0;
-				m_rpcClient->async_call("SendMidiEvent", t,
-					(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
+				midiEvents1.push_back((unsigned char)midievent->midiData[0]);
+				midiEvents2.push_back((unsigned char)midievent->midiData[1]);
+				midiEvents3.push_back((unsigned char)midievent->midiData[2]);
+				count++;
+				//m_rpcClient->async_call("SendMidiEvent", processId,
+				//	(unsigned char)midievent->midiData[0], (unsigned char)midievent->midiData[1], (unsigned char)midievent->midiData[2]);
 				break;
 			}
 			case kVstSysExType:
 			{
 				VstMidiSysexEvent* midievent = (VstMidiSysexEvent*)meb;
-				LONG64 t = ticks + midievent->deltaFrames;
-				if ((ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
-					t++;
-				else
-					t = 0;				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
-				m_rpcClient->async_call("SendMidiSysEvent", t, buffer, midievent->dumpBytes);
+				std::vector<unsigned char> buffer(midievent->sysexDump, midievent->sysexDump + midievent->dumpBytes);
+				m_rpcClient->async_call("SendMidiSysEvent", eventId, buffer, midievent->dumpBytes);
 				break;
 			}
 		}
 	}
+
+	LONG64 eid = eventId;
+	if (!(ti->flags & (kVstTransportPlaying | kVstTransportRecording)))
+		eid = 0;
+
+	if (count != 0)
+	{
+		int frame = (int)(ti->samplePos / (ti->sampleRate / 60.0));
+		m_rpcClient->async_call("SendMidiEvents", eid, frame, midiEvents1, midiEvents2, midiEvents3, count);
+	}
+
+	eventId++;
 
 	//　1を返さなければならない
 	return 1;

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -34,9 +35,9 @@ namespace zanac.MAmidiMEmo.Midi
         //
         // 概要:
         //     Occurs when a MIDI event is received.
-        public static event EventHandler<MidiEvent> MidiEventReceivedA;
+        public static event EventHandler<MidiEvent[]> MidiEventReceivedA;
 
-        public static event EventHandler<MidiEvent> MidiEventReceivedB;
+        public static event EventHandler<MidiEvent[]> MidiEventReceivedB;
 
         /// <summary>
         /// 
@@ -156,6 +157,28 @@ namespace zanac.MAmidiMEmo.Midi
             switch (port)
             {
                 case MidiPort.PortA:
+                    MidiEventReceivedA?.Invoke(typeof(MidiManager), new MidiEvent[] { e });
+                    break;
+                case MidiPort.PortB:
+                    MidiEventReceivedB?.Invoke(typeof(MidiManager), new MidiEvent[] { e });
+                    break;
+                default:
+                    MidiEventReceivedA?.Invoke(typeof(MidiManager), new MidiEvent[] { e });
+                    MidiEventReceivedB?.Invoke(typeof(MidiManager), new MidiEvent[] { e });
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void SendMidiEvents(MidiPort port, MidiEvent[] e)
+        {
+            switch (port)
+            {
+                case MidiPort.PortA:
                     MidiEventReceivedA?.Invoke(typeof(MidiManager), e);
                     break;
                 case MidiPort.PortB:
@@ -173,23 +196,53 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        public static void SendMidiEvent(MidiPort port, long ticks, byte data1, byte data2, byte data3)
+        public static void SendMidiEvent(MidiPort port, long eventId, long frameId, byte data1, byte data2, byte data3)
         {
+            long count;
+            QueryPerformanceCounter(out count);
             var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
-            me.DeltaTime = ticks;
+            me.DeltaTime = count;
             SendMidiEvent(port, me);
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        unsafe public static void SendMidiEvents(MidiPort port, long eventId, long frameId, byte* data1, byte* data2, byte* data3, int length)
+        {
+#if DEBUG
+            //while (!Debugger.IsAttached)
+            //{
+            //    Thread.Sleep(100);
+            //}
+#endif
+            long count;
+            QueryPerformanceCounter(out count);
+            List<MidiEvent> events = new List<MidiEvent>();
+            for (int i = 0; i < length; i++)
+            {
+                var me = midiConverter.Convert(new byte[] { data1[i], data2[i], data3[i] });
+                me.DeltaTime = count;
+                events.Add(me);
+            }
+            SendMidiEvents(port, events.ToArray());
         }
 
         /// <summary>
         /// 
         /// </summary>
-        unsafe public static void SendMidiSysEvent(MidiPort port, long ticks, byte* data, int length)
+        unsafe public static void SendMidiSysEvent(MidiPort port, long eventId, long frameId, byte* data, int length)
         {
+            long count;
+            QueryPerformanceCounter(out count);
             List<byte> buf = new List<byte>();
             for (int i = 0; i < length; i++)
                 buf.Add(data[i]);
             var me = midiConverter.Convert(buf.ToArray());
-            me.DeltaTime = ticks;
+            me.DeltaTime = count;
             SendMidiEvent(port, me);
         }
 
@@ -208,7 +261,7 @@ namespace zanac.MAmidiMEmo.Midi
             if (ea.Cancel)
                 return;
 
-            MidiEventReceivedA?.Invoke(sender, e.Event);
+            MidiEventReceivedA?.Invoke(sender, new MidiEvent[] { e.Event });
         }
 
 
@@ -225,7 +278,7 @@ namespace zanac.MAmidiMEmo.Midi
             if (ea.Cancel)
                 return;
 
-            MidiEventReceivedB?.Invoke(sender, e.Event);
+            MidiEventReceivedB?.Invoke(sender, new MidiEvent[] { e.Event });
         }
 
         /// <summary>

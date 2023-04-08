@@ -73,7 +73,7 @@ private:
 
 	CHAR* m_cpSharedMemory;
 	HANDLE m_hSharedMemory;
-	LONG64 ticks;
+	LONG64 eventId;
 
 protected:
 	float m_vst_sample_rate;

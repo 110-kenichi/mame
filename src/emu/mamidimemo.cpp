@@ -14,8 +14,9 @@ typedef void(CALLBACK* SoundUpdatedProc)();
 typedef void(CALLBACK* RestartApplicationProc)();
 typedef void(CALLBACK* SetVSTiModeProc)();
 typedef int(CALLBACK* IsVSTiModeProc)();
-typedef void(CALLBACK* SendMidiEventProc)(LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3);
-typedef void(CALLBACK* SendMidiSysEventProc)(LONG64 ticks, unsigned char *data, int length);
+typedef void(CALLBACK* SendMidiEventProc)(LONG64 eventId, LONG64  farameId, unsigned char data1, unsigned char data2, unsigned char data3);
+typedef void(CALLBACK* SendMidiEventsProc)(LONG64 eventId, LONG64  farameId, unsigned char* data1, unsigned char* data2, unsigned char* data3, int length);
+typedef void(CALLBACK* SendMidiSysEventProc)(LONG64 eventId, LONG64  farameId, unsigned char *data, int length);
 typedef int(CALLBACK* CloseApplicationProc)();
 typedef void(CALLBACK*  LoadDataProc)(unsigned char* data, int length);
 typedef int(CALLBACK* SaveDataProc)(void** saveBuf);
@@ -31,6 +32,7 @@ RestartApplicationProc restartApplication = 0;
 SetVSTiModeProc setVSTiMode = 0;
 IsVSTiModeProc isVSTiMode = 0;
 SendMidiEventProc sendMidiEvent = 0;
+SendMidiEventsProc sendMidiEvents = 0;
 SendMidiSysEventProc sendMidiSysEvent = 0;
 CloseApplicationProc closeApplication = 0;
 LoadDataProc loadData = 0;
@@ -101,6 +103,9 @@ void StartMAmidiMEmoMain()
 	proc = GetProcAddress(hModule, "SendMidiEvent");
 	if (proc != NULL)
 		sendMidiEvent = reinterpret_cast<SendMidiEventProc>(proc);
+	proc = GetProcAddress(hModule, "SendMidiEvents");
+	if (proc != NULL)
+		sendMidiEvents = reinterpret_cast<SendMidiEventsProc>(proc);
 	proc = GetProcAddress(hModule, "SendMidiSysEvent");
 	if (proc != NULL)
 		sendMidiSysEvent = reinterpret_cast<SendMidiSysEventProc>(proc);
@@ -196,14 +201,19 @@ int IsVSTiMode()
 	return isVSTiMode();
 }
 
-void SendMidiEvent(LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3)
+void SendMidiEvent(LONG64 eventId, LONG64 farameId, unsigned char data1, unsigned char data2, unsigned char data3)
 {
-	sendMidiEvent(ticks, data1, data2, data3);
+	sendMidiEvent(eventId, farameId, data1, data2, data3);
 }
 
-void SendMidiSysEvent(LONG64 ticks, unsigned char *data, int length)
+void SendMidiEvents(LONG64 eventId, LONG64 farameId, unsigned char *data1, unsigned char *data2, unsigned char *data3, int length)
 {
-	sendMidiSysEvent(ticks, data, length);
+	sendMidiEvents(eventId, farameId, data1, data2, data3, length);
+}
+
+void SendMidiSysEvent(LONG64 eventId, LONG64 farameId, unsigned char *data, int length)
+{
+	sendMidiSysEvent(eventId, farameId, data, length);
 }
 
 void CloseApplication()

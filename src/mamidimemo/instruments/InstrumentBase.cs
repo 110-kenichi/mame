@@ -2687,7 +2687,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 OnMidiEvent(midiEvent);
         }
 
-
         /// <summary>
         /// 
         /// </summary>

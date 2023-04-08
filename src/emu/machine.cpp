@@ -310,8 +310,9 @@ void SoundTimerCallback();
 void CloseApplication();
 void LoadData(unsigned char* data, int length);
 int SaveData(void** saveBuf);
-void SendMidiEvent(LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3);
-void SendMidiSysEvent(LONG64 ticks, unsigned char* data, int length);
+void SendMidiEvent(LONG64 eventId, LONG64  farameId, unsigned char data1, unsigned char data2, unsigned char data3);
+void SendMidiEvents(LONG64 eventId, LONG64 farameId, unsigned char* data1, unsigned char* data2, unsigned char *data3, int length);
+void SendMidiSysEvent(LONG64 eventId, LONG64 farameId, unsigned char* data, int length);
 void DirectAccessToChip(unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data);
 
 void running_machine::mami_timer_callback(void* ptr, s32 param)
@@ -544,19 +545,22 @@ int running_machine::run(bool quiet)
 
 				return data;
 			});
-			m_rpcSrv->bind("SendMidiEvent", [&](LONG64 ticks, unsigned char data1, unsigned char data2, unsigned char data3)
+			m_rpcSrv->bind("SendMidiEvent", [&](LONG64 eventId, LONG64 farameId, unsigned char data1, unsigned char data2, unsigned char data3)
 			{
-				SendMidiEvent(ticks, data1, data2, data3);
+				SendMidiEvent(eventId, farameId, data1, data2, data3);
 			});
-			m_rpcSrv->bind("SendMidiSysEvent", [&](LONG64 ticks, std::vector<unsigned char> buffer, int length)
+			m_rpcSrv->bind("SendMidiEvents", [&](LONG64 eventId, LONG64 farameId, std::vector<unsigned char> data1, std::vector<unsigned char> data2, std::vector<unsigned char> data3, int length)
 			{
-				SendMidiSysEvent(ticks, &buffer[0], length);
+				SendMidiEvents(eventId, farameId, data1.data(), data2.data(), data3.data(), length);
 			});
-
+			m_rpcSrv->bind("SendMidiSysEvent", [&](LONG64 eventId, LONG64 farameId, std::vector<unsigned char> buffer, int length)
+			{
+				SendMidiSysEvent(eventId, farameId, buffer.data(), length);
+			});
 			m_rpcSrv->bind("DirectAccessToChip", [&](unsigned char device_id, unsigned char unit, unsigned int address, unsigned int data)
-				{
-					DirectAccessToChip(device_id, unit, address, data);
-				});
+			{
+				DirectAccessToChip(device_id, unit, address, data);
+			});
 
 			m_rpcSrv->async_run();
 

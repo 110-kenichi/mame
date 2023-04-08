@@ -1800,40 +1800,46 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-        private void MidiManager_MidiEventReceivedA(object sender, MidiEvent e)
+        private void MidiManager_MidiEventReceivedA(object sender, MidiEvent[] es)
         {
-            if (e.EventType == MidiEventType.NoteOn)
+            foreach (MidiEvent e in es)
             {
-                NoteOnEvent noe = e as NoteOnEvent;
-                if (noe != null && noe.Velocity != 0)
+                if (e.EventType == MidiEventType.NoteOn)
                 {
-                    lock (chNoteOnDataA)
-                        chNoteOnDataA[noe.Channel] = noe.Velocity;
-                }
-                TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
-                if (tnoe != null && tnoe.Velocity != 0)
-                {
-                    lock (chNoteOnDataA)
-                        chNoteOnDataA[tnoe.Channel] = tnoe.Velocity;
+                    NoteOnEvent noe = e as NoteOnEvent;
+                    if (noe != null && noe.Velocity != 0)
+                    {
+                        lock (chNoteOnDataA)
+                            chNoteOnDataA[noe.Channel] = noe.Velocity;
+                    }
+                    TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
+                    if (tnoe != null && tnoe.Velocity != 0)
+                    {
+                        lock (chNoteOnDataA)
+                            chNoteOnDataA[tnoe.Channel] = tnoe.Velocity;
+                    }
                 }
             }
         }
 
-        private void MidiManager_MidiEventReceivedB(object sender, MidiEvent e)
+        private void MidiManager_MidiEventReceivedB(object sender, MidiEvent[] es)
         {
-            if (e.EventType == MidiEventType.NoteOn)
+            foreach (MidiEvent e in es)
             {
-                NoteOnEvent noe = e as NoteOnEvent;
-                if (noe != null && noe.Velocity != 0)
+                if (e.EventType == MidiEventType.NoteOn)
                 {
-                    lock (chNoteOnDataB)
-                        chNoteOnDataB[noe.Channel] = noe.Velocity;
-                }
-                TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
-                if (tnoe != null && tnoe.Velocity != 0)
-                {
-                    lock (chNoteOnDataB)
-                        chNoteOnDataB[tnoe.Channel] = tnoe.Velocity;
+                    NoteOnEvent noe = e as NoteOnEvent;
+                    if (noe != null && noe.Velocity != 0)
+                    {
+                        lock (chNoteOnDataB)
+                            chNoteOnDataB[noe.Channel] = noe.Velocity;
+                    }
+                    TaggedNoteOnEvent tnoe = e as TaggedNoteOnEvent;
+                    if (tnoe != null && tnoe.Velocity != 0)
+                    {
+                        lock (chNoteOnDataB)
+                            chNoteOnDataB[tnoe.Channel] = tnoe.Velocity;
+                    }
                 }
             }
         }

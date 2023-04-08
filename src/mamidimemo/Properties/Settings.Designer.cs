@@ -61,18 +61,6 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("48000")]
-        public string SampleRate {
-            get {
-                return ((string)(this["SampleRate"]));
-            }
-            set {
-                this["SampleRate"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int AudioLatency {
             get {
@@ -667,6 +655,42 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["OctaveDisplay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("480")]
+        public decimal XgmErrorCorrection {
+            get {
+                return ((decimal)(this["XgmErrorCorrection"]));
+            }
+            set {
+                this["XgmErrorCorrection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int XgmTVSystem {
+            get {
+                return ((int)(this["XgmTVSystem"]));
+            }
+            set {
+                this["XgmTVSystem"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("48000")]
+        public string SampleRate {
+            get {
+                return ((string)(this["SampleRate"]));
+            }
+            set {
+                this["SampleRate"] = value;
             }
         }
     }
