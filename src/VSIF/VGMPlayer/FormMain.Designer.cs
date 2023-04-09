@@ -630,7 +630,7 @@ namespace zanac.VGMPlayer
             this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "DisableDAC", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBox1.Location = new System.Drawing.Point(3, 28);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(113, 19);
+            this.checkBox1.Size = new System.Drawing.Size(110, 19);
             this.checkBox1.TabIndex = 67;
             this.checkBox1.Text = "DAC disable ";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -4766,7 +4766,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.54 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.55 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

@@ -314,7 +314,7 @@ namespace zanac.VGMPlayer
         {
         }
 
-        public bool HighLoad
+        public virtual bool HighLoad
         {
             get;
             set;
@@ -1071,8 +1071,11 @@ namespace zanac.VGMPlayer
             }
             else //Genesis
             {
-                comPortOPN2.DeferredWriteData(0, 0x04, (byte)0x2a, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x08, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteDataPrior(
+                    new byte[] { 0, 0 },
+                    new byte[] { 0x04, 0x8 },
+                    new byte[] { (byte)0x2a, (byte)lastWriteDacValue },
+                    (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 
@@ -1209,8 +1212,11 @@ namespace zanac.VGMPlayer
             }
             else //Genesis
             {
-                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(
+                    new byte[] { 0, 0 },
+                    new byte[] { 0x04, 0x8 },
+                    new byte[] { (byte)adrs, (byte)dt },
+                    (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 
@@ -1281,8 +1287,11 @@ namespace zanac.VGMPlayer
             }
             else
             {
-                comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(
+                    new byte[] { 0, 0 },
+                    new byte[] { 0x0C, 0x10 },
+                    new byte[] { (byte)adrs, (byte)dt },
+                    (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 

@@ -4108,34 +4108,6 @@ namespace zanac.VGMPlayer
             comPortOPN?.FlushDeferredWriteDataAndWait();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private bool IsDeferredDataFlushed()
-        {
-            if (comPortDCSG != null && !comPortDCSG.DeferredDataFlushed)
-                return false;
-            if (comPortOPLL != null && !comPortOPLL.DeferredDataFlushed)
-                return false;
-            if (comPortOPN2 != null && !comPortOPN2.DeferredDataFlushed)
-                return false;
-            if (comPortSCC != null && !comPortSCC.DeferredDataFlushed)
-                return false;
-            if (comPortY8910 != null && !comPortY8910.DeferredDataFlushed)
-                return false;
-            if (comPortOPM != null && !comPortOPM.DeferredDataFlushed)
-                return false;
-            if (comPortOPL3 != null && !comPortOPL3.DeferredDataFlushed)
-                return false;
-            if (comPortOPNA != null && !comPortOPNA.DeferredDataFlushed)
-                return false;
-            if (comPortY8950 != null && !comPortY8950.DeferredDataFlushed)
-                return false;
-            if (comPortOPN != null && !comPortOPN.DeferredDataFlushed)
-                return false;
-
-            return true;
-        }
 
         /// <summary>
         /// 

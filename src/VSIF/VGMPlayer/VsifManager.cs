@@ -39,6 +39,11 @@ namespace zanac.VGMPlayer
 
         private static List<VsifClient> vsifClients = new List<VsifClient>();
 
+        public static IReadOnlyCollection<VsifClient> GetVsifClients()
+        {
+            return vsifClients.AsReadOnly();
+        }
+
         /// <summary>
         /// 
         /// </summary>

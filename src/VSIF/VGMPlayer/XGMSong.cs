@@ -34,17 +34,35 @@ namespace zanac.VGMPlayer
 
         private byte[] vgmData;
 
+        private bool xgmHighLoad;
+
+        private bool dacHighLoad;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override bool HighLoad
+        {
+            get
+            {
+                return xgmHighLoad | dacHighLoad;
+            }
+            set
+            {
+            }
+        }
+
         private SampleData[] SampleDataTable = new SampleData[63];
 
         private class SampleData
         {
-            public int Address
+            public uint Address
             {
                 get;
                 private set;
             }
 
-            public int Size
+            public uint Size
             {
                 get;
                 private set;
@@ -59,8 +77,8 @@ namespace zanac.VGMPlayer
             /// <param name="size"></param>
             public SampleData(XGMSong xgmData, uint adress, uint size)
             {
-                Address = (int)adress;
-                Size = (int)size;
+                Address = adress;
+                Size = size;
                 this.xgmData = xgmData;
             }
 
@@ -190,6 +208,8 @@ namespace zanac.VGMPlayer
                     EnablePseudoDacYM2608(comPortOPNA, false);
                 }
             }
+
+            pcmEngine.StopAll();
 
             flushDeferredWriteDataAndWait();
             Thread.Sleep(250);
@@ -682,18 +702,16 @@ namespace zanac.VGMPlayer
 
         protected override void StreamSong()
         {
+            pcmEngine = new PcmEngine(this);
+            pcmEngine.StartEngine();
+
             xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-            double wait = 0;
             double lastWaitRemain = 0;
             double xgmWaitDelta = 0;
-            double streamWaitDelta = 0;
-            double lastDiff = 0;
             {
                 //bool firstKeyon = false;    //TODO: true
                 long freq, before, after;
                 QueryPerformanceFrequency(out freq);
-
-                SampleData[] currentPlaySamples = new SampleData[4];
 
                 QueryPerformanceCounter(out before);
                 while (true)
@@ -887,13 +905,11 @@ namespace zanac.VGMPlayer
                                             var id = readByte();
                                             if (id < 0)
                                                 break;
+
                                             if (id == 0)
-                                                currentPlaySamples[ch] = null;
+                                                pcmEngine.Stop(ch);
                                             else
-                                            {
-                                                currentPlaySamples[ch] = SampleDataTable[id - 1];
-                                                currentPlaySamples[ch].Restart(ch);
-                                            }
+                                                pcmEngine.Play(ch, (uint)(id - 1));
                                         }
                                         break;
                                     case 0x7E:
@@ -929,42 +945,6 @@ namespace zanac.VGMPlayer
                                     CurrentLoopedCount++;
                             }
                         }
-
-                        if (streamWaitDelta <= 0)
-                        {
-                            short dacData = 0;
-                            bool playDac = false;
-                            for (int i = 0; i < currentPlaySamples.Length; i++)
-                            {
-                                var dt = currentPlaySamples[i]?.GetDacData(i);
-                                if (dt != null)
-                                {
-                                    dacData += (short)dt.Value;
-                                    playDac = true;
-                                }
-                            }
-
-                            if (playDac)
-                            {
-                                if (dacData > sbyte.MaxValue)
-                                    dacData = sbyte.MaxValue;
-                                else if (dacData < sbyte.MinValue)
-                                    dacData = sbyte.MinValue;
-
-                                if (comPortOPN2 != null)
-                                {
-                                    dacData += 0x80;
-                                    DeferredWriteOPN2_DAC(comPortOPN2, dacData);
-                                }
-                                else if (comPortOPNA != null)
-                                {
-                                    dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
-                                    dacData += 0x80;
-                                    DeferredWriteOPNA_PseudoDAC(comPortOPNA, dacData);
-                                }
-                                streamWaitDelta += 44.1d / 14d;
-                            }
-                        }
                     }
                     catch (Exception ex)
                     {
@@ -984,63 +964,33 @@ namespace zanac.VGMPlayer
                         xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
-                    if (streamWaitDelta < xgmWaitDelta)
-                    {
-                        if (streamWaitDelta <= 0)
-                        {
-                            wait += xgmWaitDelta;
-                            xgmWaitDelta = 0;
-                        }
-                        else
-                        {
-                            wait += streamWaitDelta;
-                            xgmWaitDelta -= streamWaitDelta;
-                            streamWaitDelta = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (xgmWaitDelta <= 0)
-                        {
-                            wait += streamWaitDelta;
-                            streamWaitDelta = 0;
-                        }
-                        else
-                        {
-                            wait += xgmWaitDelta;
-                            streamWaitDelta -= xgmWaitDelta;
-                            xgmWaitDelta = 0;
-                        }
-                    }
-
                     //if (wait <= (double)Settings.Default.VGMWait)
-                    if (wait + lastWaitRemain <= 0)
+                    if (xgmWaitDelta <= 0)
                         continue;
 
                     flushDeferredWriteData();
-                    lastWaitRemain = 0;
 
                     QueryPerformanceCounter(out after);
-                    double pwait = ((wait + lastWaitRemain) / PlaybackSpeed);
+                    double pwait = ((xgmWaitDelta + lastWaitRemain) / PlaybackSpeed);
                     if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
                     {
-                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                        double lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
                         lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        wait = 0;
+                        xgmWaitDelta = 0;
+                        xgmHighLoad = true;
                         NotifyProcessLoadOccurred();
                     }
                     else
                     {
                         while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
                             QueryPerformanceCounter(out after);
-                        wait = 0;
+                        xgmWaitDelta = 0;
                         lastWaitRemain = 0;
-                        HighLoad = false;
+                        xgmHighLoad = false;
                     }
                     before = after;
                 }
             }
-
             StopAllSounds(true);
             State = SoundState.Stopped;
             NotifyFinished();
@@ -1282,6 +1232,9 @@ namespace zanac.VGMPlayer
                 comPortOPNA?.Dispose();
                 comPortOPNA = null;
 
+                pcmEngine?.Dispose();
+                pcmEngine = null;
+
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
             }
@@ -1301,6 +1254,238 @@ namespace zanac.VGMPlayer
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+
+        private PcmEngine pcmEngine;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PcmEngine : IDisposable
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int MAX_VOICE = 4;
+
+            private object engineLockObject;
+
+            private AutoResetEvent autoResetEvent;
+
+            private bool stopEngineFlag;
+
+            private bool disposedValue;
+
+            private XGMSong xgmSong;
+
+            private SampleData[] currentPlaySamples;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PcmEngine(XGMSong xgmSong)
+            {
+                this.xgmSong = xgmSong;
+                engineLockObject = new object();
+                stopEngineFlag = true;
+                autoResetEvent = new AutoResetEvent(false);
+                currentPlaySamples = new SampleData[MAX_VOICE];
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StartEngine()
+            {
+                if (stopEngineFlag)
+                {
+                    stopEngineFlag = false;
+                    Thread t = new Thread(processDac);
+                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Start();
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StopEngine()
+            {
+                stopEngineFlag = true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Play(int slot, uint id)
+            {
+                lock (engineLockObject)
+                {
+                    currentPlaySamples[slot] = xgmSong.SampleDataTable[id];
+                    currentPlaySamples[slot].Restart(slot);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Stop(int slot)
+            {
+                lock (engineLockObject)
+                {
+                    currentPlaySamples[slot] = null;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void StopAll()
+            {
+                lock (engineLockObject)
+                {
+                    for (int i = 0; i < currentPlaySamples.Length; i++)
+                        currentPlaySamples[i] = null;
+                }
+            }
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceFrequency(out long frequency);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void processDac()
+            {
+                double streamWaitDelta = 0;
+                double lastWaitRemain = 0;
+                int overflowed = 0;
+
+                long freq, before, after;
+                QueryPerformanceFrequency(out freq);
+
+                QueryPerformanceCounter(out before);
+                uint sampleRate = 14000;
+
+                while (!stopEngineFlag)
+                {
+                    if (disposedValue)
+                        break;
+
+                    int dacData = 0;
+                    bool playDac = false;
+
+                    //if (streamWaitDelta <= 0)
+                    {
+                        lock (engineLockObject)
+                        {
+                            for (int i = 0; i < MAX_VOICE; i++)
+                            {
+                                var sd = currentPlaySamples[i];
+                                if (sd == null)
+                                    continue;
+
+                                var d = sd.GetDacData(i);
+                                if (d == null)
+                                    continue;
+
+                                dacData += (int)d.Value;
+                                playDac = true;
+                            }
+                        }
+
+                        if (playDac || overflowed != 0)
+                        {
+                            overflowed = 0;
+                            if (dacData > sbyte.MaxValue)
+                                dacData = sbyte.MaxValue;
+                            else if (dacData < sbyte.MinValue)
+                                dacData = sbyte.MinValue;
+                            if (xgmSong.comPortOPN2 != null)
+                            {
+                                dacData += 0x80;
+                                xgmSong.DeferredWriteOPN2_DAC(xgmSong.comPortOPN2, dacData);
+                            }
+                            else if (xgmSong.comPortOPNA != null)
+                            {
+                                dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
+                                xgmSong.DeferredWriteOPNA_PseudoDAC(xgmSong.comPortOPNA, dacData);
+                            }
+
+                            streamWaitDelta = 44100d / sampleRate;
+                        }
+                    }
+
+                    if (streamWaitDelta <= 0)
+                        continue;
+
+                    QueryPerformanceCounter(out after);
+                    before = after;
+                    double pwait = streamWaitDelta + lastWaitRemain;
+                    if (pwait > 0)
+                    {
+                        if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                        {
+                            double lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
+                            lastWaitRemain = -(lastDiff * 44.1 * 1000);
+                            xgmSong.dacHighLoad = true;
+                            xgmSong.NotifyProcessLoadOccurred();
+                        }
+                        else
+                        {
+                            while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                                QueryPerformanceCounter(out after);
+                            lastWaitRemain = 0;
+                            xgmSong.dacHighLoad = false;
+                        }
+                    }
+                    streamWaitDelta = 0;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="disposing"></param>
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                        stopEngineFlag = true;
+
+                        autoResetEvent?.Dispose();
+                    }
+
+                    // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                    // TODO: 大きなフィールドを null に設定します
+                    disposedValue = true;
+                }
+            }
+
+            // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+            // ~PcmEngine()
+            // {
+            //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            //     Dispose(disposing: false);
+            // }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
     }
 
 #pragma warning disable 0649, 0169

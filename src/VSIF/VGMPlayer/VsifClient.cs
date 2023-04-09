@@ -37,14 +37,19 @@ namespace zanac.VGMPlayer
         }
 
         private object lockObject = new object();
+        private object lockObjectPrior = new object();
 
         private List<PortWriteData> deferredWriteAdrAndData;
+        private List<PortWriteData> deferredWriteAdrAndDataPrior;
 
         private bool disposedValue;
 
         private Thread writeThread;
+        private Thread writeThreadPrior;
+
 
         private AutoResetEvent autoResetEvent;
+        private AutoResetEvent autoResetEventPrior;
 
         /// <summary>
         /// 
@@ -87,11 +92,16 @@ namespace zanac.VGMPlayer
 
             ReferencedCount = 1;
             deferredWriteAdrAndData = new List<PortWriteData>();
+            deferredWriteAdrAndDataPrior = new List<PortWriteData>();
 
             autoResetEvent = new AutoResetEvent(false);
+            autoResetEventPrior = new AutoResetEvent(false);
             writeThread = new Thread(new ThreadStart(deferredWriteDataTask));
             writeThread.Priority = ThreadPriority.AboveNormal;
             writeThread.Start();
+            writeThreadPrior = new Thread(new ThreadStart(deferredWriteDataTaskPrior));
+            writeThreadPrior.Priority = ThreadPriority.Highest;
+            writeThreadPrior.Start();
 
             for (int i = 0; i < 0x1ff; i++)
                 RegTable.Add(i, 0);
@@ -109,8 +119,12 @@ namespace zanac.VGMPlayer
                     autoResetEvent.Set();
                     while (writeThread.IsAlive)
                         Thread.Sleep(0);
-
                     autoResetEvent.Dispose();
+
+                    autoResetEventPrior.Set();
+                    while (writeThreadPrior.IsAlive)
+                        Thread.Sleep(0);
+                    autoResetEventPrior.Dispose();
                 }
 
                 // アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
@@ -165,6 +179,12 @@ namespace zanac.VGMPlayer
                     return;
                 deferredWriteAdrAndData.Clear();
             }
+            lock (lockObjectPrior)
+            {
+                if (disposedValue)
+                    return;
+                deferredWriteAdrAndDataPrior.Clear();
+            }
         }
 
         /// <summary>
@@ -180,6 +200,7 @@ namespace zanac.VGMPlayer
                     return;
                 deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
             }
+            autoResetEvent.Set();
         }
 
         /// <summary>
@@ -187,14 +208,33 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
-        public virtual void DeferredWriteDataPrior(byte type, byte address, byte data, int wait)
+        public virtual void DeferredWriteData(byte[] type, byte[] address, byte[] data, int wait)
         {
             lock (lockObject)
             {
                 if (disposedValue)
                     return;
-                deferredWriteAdrAndData.Insert(0, new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
+                for (int i = 0; i < type.Length; i++)
+                    deferredWriteAdrAndData.Add(new PortWriteData() { Type = type[i], Address = address[i], Data = data[i], Wait = wait });
             }
+            autoResetEvent.Set();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        public virtual void DeferredWriteDataPrior(byte[] type, byte[] address, byte[] data, int wait)
+        {
+            lock (lockObjectPrior)
+            {
+                if (disposedValue)
+                    return;
+                for (int i = 0; i < type.Length; i++)
+                    deferredWriteAdrAndDataPrior.Add(new PortWriteData() { Type = type[i], Address = address[i], Data = data[i], Wait = wait });
+            }
+            autoResetEventPrior.Set();
         }
 
         /// <summary>
@@ -211,16 +251,44 @@ namespace zanac.VGMPlayer
                     lock (lockObject)
                     {
                         if (deferredWriteAdrAndData.Count == 0)
-                        {
-                            DeferredDataFlushed = true;
                             continue;
-                        }
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
                     }
                     if (dd.Length != 0)
                         DataWriter?.Write(dd);
-                    DeferredDataFlushed = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void deferredWriteDataTaskPrior()
+        {
+            try
+            {
+                while (!disposedValue)
+                {
+                    autoResetEventPrior.WaitOne();
+                    PortWriteData[] dd;
+                    lock (lockObjectPrior)
+                    {
+                        if (deferredWriteAdrAndDataPrior.Count == 0)
+                            continue;
+                        dd = deferredWriteAdrAndDataPrior.ToArray();
+                        deferredWriteAdrAndDataPrior.Clear();
+                    }
+
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
@@ -239,8 +307,7 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void FlushDeferredWriteData()
         {
-            DeferredDataFlushed = false;
-            autoResetEvent.Set();
+            //autoResetEvent.Set();
         }
 
         /// <summary>
@@ -275,12 +342,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        public bool DeferredDataFlushed
-        {
-            get;
-            set;
-        } = true;
-
         /// <summary>
         /// 
         /// </summary>
@@ -311,32 +372,6 @@ namespace zanac.VGMPlayer
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="address"></param>
-        /// <param name="data"></param>
-        public virtual void WriteThroughData(byte type, byte address, byte data, int wait)
-        {
-            try
-            {
-                lock (lockObject)
-                {
-                    if (disposedValue)
-                        return;
-
-                    DataWriter?.Write(new PortWriteData[] { new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait } });
-                }
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
-            }
-        }
-
         public void Abort()
         {
             try
@@ -353,6 +388,21 @@ namespace zanac.VGMPlayer
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
+            try
+            {
+                lock (lockObjectPrior)
+                {
+                    deferredWriteAdrAndDataPrior.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+            
             DataWriter?.Abort();
         }
 

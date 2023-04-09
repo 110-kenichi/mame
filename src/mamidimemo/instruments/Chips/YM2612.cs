@@ -1252,8 +1252,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private object engineLockObject;
 
-            private object dataLockObject;
-
             private AutoResetEvent autoResetEvent;
 
             private bool stopEngineFlag;
@@ -1275,7 +1273,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.ym2612 = ym2612;
                 unitNumber = ym2612.UnitNumber;
                 engineLockObject = new object();
-                dataLockObject = new object();
                 stopEngineFlag = true;
                 autoResetEvent = new AutoResetEvent(false);
                 currentSampleData = new SampleData[MAX_VOICE];
