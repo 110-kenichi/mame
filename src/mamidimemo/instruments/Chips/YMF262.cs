@@ -1032,6 +1032,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                             else
                             {
+                                if (((1 << op) & (int)timbre.ExprTargetModulators) == 0)
+                                    continue;
+
                                 var mul = CalcModulatorMultiply();
                                 double vol = timbre.Ops[op].TL;
                                 if (mul > 0)
@@ -1055,6 +1058,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 else
                                 {
+                                    if (((1 << op) & (int)timbre.ExprTargetModulators) == 0)
+                                        continue;
+
                                     var mul = CalcModulatorMultiply();
                                     double vol = timbre.Ops[op].TL;
                                     if (mul > 0)
@@ -1072,6 +1078,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 else
                                 {
+                                    if (((1 << op) & (int)timbre.ExprTargetModulators) == 0)
+                                        continue;
+
                                     var mul = CalcModulatorMultiply();
                                     double vol = timbre.Ops[op].TL;
                                     if (mul > 0)
@@ -1089,6 +1098,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 else
                                 {
+                                    if (((1 << op) & (int)timbre.ExprTargetModulators) == 0)
+                                        continue;
+
                                     var mul = CalcModulatorMultiply();
                                     double vol = timbre.Ops[op].TL;
                                     if (mul > 0)
@@ -1106,6 +1118,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     parentModule.YMF262WriteData(parentModule.UnitNumber, 0x40, op, Slot, lastALG, lastConsel, (byte)(o.KSL << 6 | o.TL));
                                 else
                                 {
+                                    if (((1 << op) & (int)timbre.ExprTargetModulators) == 0)
+                                        continue;
+
                                     var mul = CalcModulatorMultiply();
                                     double vol = timbre.Ops[op].TL;
                                     if (mul > 0)
@@ -1730,12 +1745,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [DefaultValue(false)]
-            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Description("Use MIDI Expresion for Modulator Total Level.")]
             [Browsable(true)]
             public override bool UseExprForModulator
             {
                 get;
                 set;
+            }
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            [DataMember]
+            [Category("Sound")]
+            [Description("Traget modulator for UseExprForModulator.")]
+            [Browsable(true)]
+            [Editor(typeof(FlagEnumUIEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public ExprModulators ExprTargetModulators
+            {
+                get;
+                set;
+            } = ExprModulators.All;
+
+            public virtual bool ShouldSerializeExprTargetModulators()
+            {
+                return ExprTargetModulators != ExprModulators.All;
+            }
+
+            public virtual void ResetExprTargetModulators()
+            {
+                ExprTargetModulators = ExprModulators.All;
+            }
+
+            [FlagsAttribute]
+            public enum ExprModulators
+            {
+                [Description("Operator 1[Ops[0]")]
+                Ops0 = 1,
+                [Description("Operator 2[Ops[1]")]
+                Ops1 = 2,
+                [Description("Operator 3[Ops[2]")]
+                Ops2 = 4,
+                [Description("All")]
+                All = 7,
             }
 
             [DataMember]

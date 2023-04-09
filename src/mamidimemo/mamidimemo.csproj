@@ -170,6 +170,9 @@
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\ExpandableDrumCollectionConverter.cs" />
+    <Compile Include="ComponentModel\FlagEnumEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ComponentModel\ProgramAssignmentTimbreNumberConverter.cs" />
     <Compile Include="ComponentModel\ProgramAssignmentNumberConverter.cs" />
     <Compile Include="ComponentModel\ProgramAssignmentNumberTypeEditor.cs" />

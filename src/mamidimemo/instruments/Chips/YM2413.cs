@@ -2011,7 +2011,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [DefaultValue(false)]
-            [Description("Use MIDI Expresion for Career Total Level.")]
+            [Description("Use MIDI Expresion for Modulator Total Level.")]
             [Browsable(true)]
             public override bool UseExprForModulator
             {
