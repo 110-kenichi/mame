@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2414;
 
 //http://www.ajworld.net/neogeodev/ym2610am2.html
 //https://wiki.neogeodev.org/index.php?title=YM2610_registers
@@ -280,12 +281,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2610BTimbre[])value;
             }
         }
 

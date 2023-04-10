@@ -20,6 +20,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using static zanac.MAmidiMEmo.Instruments.Chips.CM32P;
 
 //http://www.magicengine.com/mkit/doc_hard_psg.html
 
@@ -65,12 +66,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (HuC6280Timbre[])value;
             }
         }
 
@@ -80,7 +84,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public HuC6280Timbre[] Timbres
         {

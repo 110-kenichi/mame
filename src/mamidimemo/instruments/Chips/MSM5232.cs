@@ -21,6 +21,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using static zanac.MAmidiMEmo.Instruments.Chips.HuC6280;
 
 //http://www.citylan.it/wiki/images/3/3e/5232.pdf
 //http://sr4.sakura.ne.jp/acsound/taito/taito5232.html
@@ -68,12 +69,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (MSM5232Timbre[])value;
             }
         }
 
@@ -83,7 +87,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public MSM5232Timbre[] Timbres
         {

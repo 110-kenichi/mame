@@ -39,6 +39,7 @@ using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
+using static zanac.MAmidiMEmo.Instruments.Chips.SAM;
 
 //https://www.plutiedev.com/ym2612-registers
 //http://www.smspower.org/maxim/Documents/YM2612#regb4
@@ -354,7 +355,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_Mode5ch = value;
                     Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(f_Mode5ch ? 0x80 : 0x00));
-                    if (f_Mode5ch && !f_DisableDACTransfer)
+                    if (f_Mode5ch && !f_DisableDacTransfer)
                         pcmEngine.StartEngine();
                     else
                         pcmEngine.StopEngine();
@@ -362,25 +363,50 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private bool f_DisableDACTransfer;
+        private const int DEFAULT_MAX_VOICES = 4;
+
+        private int f_MaxDacPcmVoices = DEFAULT_MAX_VOICES;
+
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Max voices of the DAC PCM for Mode5ch.")]
+        [DefaultValue(DEFAULT_MAX_VOICES)]
+        [SlideParametersAttribute(1, DEFAULT_MAX_VOICES)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public int MaxDacPcmVoices
+        {
+            get
+            {
+                return f_MaxDacPcmVoices;
+            }
+            set
+            {
+                if (f_MaxDacPcmVoices != value && 1 <= value && value <= DEFAULT_MAX_VOICES)
+                {
+                    f_MaxDacPcmVoices = value;
+                }
+            }
+        }
+
+        private bool f_DisableDacTransfer;
 
         [DataMember]
         [Category("Chip(Global)")]
         [Description("Disable DAC data transfer to keep USB bandwidth.\r\n" +
             "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
-        public bool DisableDACTransfer
+        public bool DisableDacTransfer
         {
             get
             {
-                return f_DisableDACTransfer;
+                return f_DisableDacTransfer;
             }
             set
             {
-                if (f_DisableDACTransfer != value)
+                if (f_DisableDacTransfer != value)
                 {
-                    f_DisableDACTransfer = value;
-                    if (f_Mode5ch && !f_DisableDACTransfer)
+                    f_DisableDacTransfer = value;
+                    if (f_Mode5ch && !f_DisableDacTransfer)
                         pcmEngine.StartEngine();
                     else
                         pcmEngine.StopEngine();
@@ -487,12 +513,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2612Timbre[])value;
             }
         }
 
@@ -1210,7 +1239,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (!parentModule.Mode5ch)
                                 break;
-                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, PcmEngine.MAX_VOICE);
+                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, parentModule.MaxDacPcmVoices);
                         }
                 }
 
@@ -1231,7 +1260,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.Ym2612WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
 
-                for (int i = 0; i < PcmEngine.MAX_VOICE; i++)
+                for (int i = 0; i < parentModule.MaxDacPcmVoices; i++)
                     parentModule.pcmEngine.Stop(i);
             }
 
@@ -1245,10 +1274,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class PcmEngine : IDisposable
         {
-            /// <summary>
-            /// 
-            /// </summary>
-            public const int MAX_VOICE = 4;
 
             private object engineLockObject;
 
@@ -1259,7 +1284,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private bool disposedValue;
 
 
-            private YM2612 ym2612;
+            private YM2612 parentModule;
 
             private uint unitNumber;
 
@@ -1268,14 +1293,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// 
             /// </summary>
-            public PcmEngine(YM2612 ym2612)
+            public PcmEngine(YM2612 parentModule)
             {
-                this.ym2612 = ym2612;
-                unitNumber = ym2612.UnitNumber;
+                this.parentModule = parentModule;
+                unitNumber = parentModule.UnitNumber;
                 engineLockObject = new object();
                 stopEngineFlag = true;
                 autoResetEvent = new AutoResetEvent(false);
-                currentSampleData = new SampleData[MAX_VOICE];
+                currentSampleData = new SampleData[YM2612.DEFAULT_MAX_VOICES];
             }
 
 
@@ -1311,7 +1336,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate);
 
-                    ym2612.XgmWriter?.RecordData(new PortWriteData()
+                    parentModule.XgmWriter?.RecordData(new PortWriteData()
                     { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
                 }
             }
@@ -1326,7 +1351,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = null;
 
-                    ym2612.XgmWriter?.RecordData(new PortWriteData()
+                    parentModule.XgmWriter?.RecordData(new PortWriteData()
                     { Type = (byte)6, Address = (byte)slot, Data = 0 });
                 }
             }
@@ -1406,7 +1431,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
-                            ym2612.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
+                            parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
 
                             /*
                             try

@@ -26,6 +26,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 
 //http://bifi.msxnet.org/msxnet/tech/scc.html
 
@@ -277,12 +278,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (SCC1Timbre[])value;
             }
         }
 
@@ -292,7 +296,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SCC1Timbre[] Timbres
         {

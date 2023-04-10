@@ -269,22 +269,22 @@
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
             this.toolStripComboBoxCh.Items.AddRange(new object[] {
-            "0(1ch)",
-            "1(2ch)",
-            "2(3ch)",
-            "3(4ch)",
-            "4(5ch)",
-            "5(6ch)",
-            "6(7ch)",
-            "7(8ch)",
-            "8(9ch)",
-            "9(10ch)",
-            "10(11ch)",
-            "11(12ch)",
-            "12(13ch)",
-            "13(14ch)",
-            "14(15ch)",
-            "15(16ch)"});
+            "A0(1ch)",
+            "A1(2ch)",
+            "A2(3ch)",
+            "A3(4ch)",
+            "A4(5ch)",
+            "A5(6ch)",
+            "A6(7ch)",
+            "A7(8ch)",
+            "A8(9ch)",
+            "A9(10ch)",
+            "A10(11ch)",
+            "A11(12ch)",
+            "A12(13ch)",
+            "A13(14ch)",
+            "A14(15ch)",
+            "A15(16ch)"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
             this.toolStripComboBoxCh.Size = new System.Drawing.Size(75, 25);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);

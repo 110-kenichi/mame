@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.TMS5220;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 //https://www16.atwiki.jp/mxdrv/pages/24.html
@@ -528,12 +529,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2151Timbre[])value;
             }
         }
 

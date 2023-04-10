@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 
 //http://spatula-city.org/~im14u2c/sp0256-al2/Archer_SP0256-AL2.pdf
 
@@ -259,22 +260,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
             }
-
+            set
+            {
+                Timbres = (SP0256Timbre[])value;
+            }
         }
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SP0256Timbre[] Timbres
         {

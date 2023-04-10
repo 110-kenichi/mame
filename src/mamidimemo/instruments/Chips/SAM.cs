@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using static zanac.MAmidiMEmo.Instruments.Chips.SN76477;
 
 //http://www.retrobits.net/atari/sam.shtml
 //https://github.com/s-macke/SAM
@@ -74,22 +75,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
             }
-
+            set
+            {
+                Timbres = (SAMTimbre[])value;
+            }
         }
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SAMTimbre[] Timbres
         {

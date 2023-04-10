@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.C140;
 
 //https://www.waitingforfriday.com/?p=661#6581_SID_Block_Diagram
 //http://www.bellesondes.fr/wiki/doku.php?id=mos6581#mos6581_sound_interface_device_sid
@@ -434,6 +435,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return Timbres;
             }
+            set
+            {
+                Timbres = (SIDTimbre[])value;
+            }
         }
 
         /// <summary>
@@ -442,7 +447,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public SIDTimbre[] Timbres
         {

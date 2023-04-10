@@ -170,5 +170,8 @@
     <Setting Name="SampleRate" Type="System.String" Scope="User">
       <Value Profile="(Default)">48000</Value>
     </Setting>
+    <Setting Name="FmCh" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

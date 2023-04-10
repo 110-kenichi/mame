@@ -71,13 +71,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBoxTimbres = new MetroFramework.Controls.MetroComboBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonImportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportAllGit = new MetroFramework.Controls.MetroButton();
-            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.metroButtonExportAll = new MetroFramework.Controls.MetroButton();
+            this.metroButtonTimbre = new MetroFramework.Controls.MetroButton();
+            this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -136,22 +136,22 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
             this.toolStripComboBoxCh.Items.AddRange(new object[] {
-            "1ch",
-            "2ch",
-            "3ch",
-            "4ch",
-            "5ch",
-            "6ch",
-            "7ch",
-            "8ch",
-            "9ch",
-            "10ch",
-            "11ch",
-            "12ch",
-            "13ch",
-            "14ch",
-            "15ch",
-            "16ch"});
+            "A0(1ch)",
+            "A1(2ch)",
+            "A2(3ch)",
+            "A3(4ch)",
+            "A4(5ch)",
+            "A5(6ch)",
+            "A6(7ch)",
+            "A7(8ch)",
+            "A8(9ch)",
+            "A9(10ch)",
+            "A10(11ch)",
+            "A11(12ch)",
+            "A12(13ch)",
+            "A13(14ch)",
+            "A14(15ch)",
+            "A15(16ch)"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
             this.toolStripComboBoxCh.Size = new System.Drawing.Size(99, 28);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
@@ -610,28 +610,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.flowLayoutPanel1.Size = new System.Drawing.Size(67, 62);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // metroLabel1
-            // 
-            this.metroLabel1.AutoSize = true;
-            this.metroLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel1.Location = new System.Drawing.Point(4, 0);
-            this.metroLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(56, 39);
-            this.metroLabel1.TabIndex = 2;
-            this.metroLabel1.Text = "&Timbre:";
-            this.metroLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // metroComboBoxTimbres
             // 
             this.metroComboBoxTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroComboBoxTimbres.FormattingEnabled = true;
             this.metroComboBoxTimbres.ItemHeight = 24;
-            this.metroComboBoxTimbres.Location = new System.Drawing.Point(68, 4);
+            this.metroComboBoxTimbres.Location = new System.Drawing.Point(89, 4);
             this.metroComboBoxTimbres.Margin = new System.Windows.Forms.Padding(4);
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.metroComboBoxTimbres.Size = new System.Drawing.Size(626, 30);
-            this.metroComboBoxTimbres.TabIndex = 3;
+            this.metroComboBoxTimbres.Size = new System.Drawing.Size(605, 30);
+            this.metroComboBoxTimbres.TabIndex = 1;
             this.metroComboBoxTimbres.UseSelectable = true;
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
             // 
@@ -641,15 +629,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.ColumnCount = 5;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Controls.Add(this.metroComboBoxTimbres, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAll, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAllGit, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonExportAll, 4, 0);
+            this.tableLayoutPanel2.Controls.Add(this.metroButtonTimbre, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 94);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
@@ -668,7 +657,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonImportAll.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAll.Name = "metroButtonImportAll";
             this.metroButtonImportAll.Size = new System.Drawing.Size(112, 31);
-            this.metroButtonImportAll.TabIndex = 3;
+            this.metroButtonImportAll.TabIndex = 2;
             this.metroButtonImportAll.Text = "Import &all...";
             this.metroButtonImportAll.UseSelectable = true;
             this.metroButtonImportAll.Click += new System.EventHandler(this.metroButtonImportAll_Click);
@@ -688,12 +677,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonImportAllGit.UseSelectable = true;
             this.metroButtonImportAllGit.Click += new System.EventHandler(this.metroButtonImportAllGit_Click);
             // 
-            // metroToolTip1
-            // 
-            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroToolTip1.StyleManager = null;
-            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
-            // 
             // metroButtonExportAll
             // 
             this.metroButtonExportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -706,6 +689,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonExportAll.Text = "&Export all...";
             this.metroButtonExportAll.UseSelectable = true;
             this.metroButtonExportAll.Click += new System.EventHandler(this.metroButtonExportAll_Click);
+            // 
+            // metroButtonTimbre
+            // 
+            this.metroButtonTimbre.AutoSize = true;
+            this.metroButtonTimbre.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButtonTimbre.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroButtonTimbre.Location = new System.Drawing.Point(3, 3);
+            this.metroButtonTimbre.Name = "metroButtonTimbre";
+            this.metroButtonTimbre.Size = new System.Drawing.Size(79, 33);
+            this.metroButtonTimbre.TabIndex = 0;
+            this.metroButtonTimbre.Text = "Edit &name";
+            this.metroButtonTimbre.UseSelectable = true;
+            this.metroButtonTimbre.Click += new System.EventHandler(this.metroButtonTimbre_Click);
+            // 
+            // metroToolTip1
+            // 
+            this.metroToolTip1.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroToolTip1.StyleManager = null;
+            this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
             // FormFmEditor
             // 
@@ -766,7 +768,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private MetroFramework.Controls.MetroButton metroButtonParams;
         private MetroFramework.Controls.MetroTextBox metroTextBoxTarget;
         private MetroFramework.Controls.MetroButton metroButtonImport;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private MetroFramework.Controls.MetroComboBox metroComboBoxTimbres;
         private MetroFramework.Controls.MetroButton metroButtonImportAll;
@@ -780,5 +781,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private MetroFramework.Controls.MetroButton metroButtonPaste;
         private MetroFramework.Controls.MetroButton metroButtonExport;
         private MetroFramework.Controls.MetroButton metroButtonExportAll;
+        private MetroFramework.Controls.MetroButton metroButtonTimbre;
     }
 }

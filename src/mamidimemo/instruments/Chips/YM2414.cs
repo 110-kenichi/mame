@@ -23,6 +23,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util.Syx;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2151;
 
 //http://sr4.sakura.ne.jp/fmsound/opz.html
 //https://sites.google.com/site/undocumentedsoundchips/yamaha/ym2414
@@ -611,12 +612,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2414Timbre[])value;
             }
         }
 

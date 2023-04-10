@@ -31,6 +31,7 @@ using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -500,13 +501,18 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [Browsable(false)]
+
+        [IgnoreDataMember]
+        [JsonIgnore]
+        [Category(" Timbres")]
+        [DisplayName("(Timbre Manager...)")]
+        [Description("Opens Timbre Manager.")]
+        [TypeConverter(typeof(EmptyTypeConverter))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         public abstract TimbreBase[] BaseTimbres
         {
             get;
+            set;
         }
 
         private TimbreBase[] lastNoteOnTimbres = new TimbreBase[16];

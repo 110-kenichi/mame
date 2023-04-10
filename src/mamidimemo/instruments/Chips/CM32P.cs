@@ -225,6 +225,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 return Timbres;
             }
+            set
+            {
+                Timbres = (CM32PTimbre[])value;
+            }
         }
 
         /// <summary>

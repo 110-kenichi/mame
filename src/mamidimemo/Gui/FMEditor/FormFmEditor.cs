@@ -101,18 +101,25 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 toolStripComboBoxVelo.Items.Add(nn);
             }
 
-            toolStripComboBoxNote.SelectedIndex = 60;
-            toolStripComboBoxVelo.SelectedIndex = 127;
-            toolStripComboBoxGate.SelectedIndex = 0;
-            toolStripComboBoxCh.SelectedIndex = 0;
-            toolStripComboBoxCC.SelectedIndex = 0;
-
             Settings.Default.SettingsLoaded += Default_SettingsLoaded;
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
             toolStripButtonHook.Checked = Settings.Default.FmHook;
             toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
+            toolStripComboBoxCC.SelectedIndex = Settings.Default.FmCC;
+            toolStripComboBoxCh.SelectedIndex = Settings.Default.FmCh;
+            if (inst.Channels[toolStripComboBoxCh.SelectedIndex] == false)
+            {
+                for (int i = 0; i < inst.Channels.Length; i++)
+                {
+                    if (inst.Channels[i])
+                    {
+                        toolStripComboBoxCh.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
 
             if (singleSelect)
                 pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
@@ -196,6 +203,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Settings.Default.FmVelocity = toolStripComboBoxVelo.SelectedIndex;
             Settings.Default.FmGateTime = toolStripComboBoxGate.SelectedIndex;
             Settings.Default.FmNote = toolStripComboBoxNote.SelectedIndex;
+            Settings.Default.FmCC = toolStripComboBoxCC.SelectedIndex;
+            Settings.Default.FmCh = toolStripComboBoxCh.SelectedIndex;
+
             base.OnClosing(e);
         }
 
@@ -206,6 +216,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             toolStripComboBoxVelo.SelectedIndex = Settings.Default.FmVelocity;
             toolStripComboBoxGate.SelectedIndex = Settings.Default.FmGateTime;
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
+            toolStripComboBoxCC.SelectedIndex = Settings.Default.FmCC;
+            toolStripComboBoxCh.SelectedIndex = Settings.Default.FmCh;
         }
 
         private void setTitle()
@@ -337,6 +349,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
 
                 e.Tag = new NoteOnTimbreInfo(Timbre, TimbreNo);
+                e.Channel = (FourBitNumber)toolStripComboBoxCh.SelectedIndex;
                 Instrument.NotifyMidiEvent(e);
             }
             finally
@@ -350,7 +363,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             try
             {
                 //InstrumentManager.ExclusiveLockObject.EnterUpgradeableReadLock();
-
+                e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
                 Instrument.NotifyMidiEvent(e);
             }
             finally
@@ -544,6 +557,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private void MidiManager_MidiEventHooked(object sender, CancelMidiEventReceivedEventArgs e)
         {
             if (!this.IsHandleCreated || ActiveForm != this)
+                return;
+
+            if (this.IsDisposed)
                 return;
 
             this.Invoke(new MethodInvoker(() =>
@@ -797,9 +813,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
                 openFileDialogTone.Filters.Clear();
+
+                String allext = ExtensionsFilterExt;
+                if (SupportedExtensionsCustomFilterExt != null)
+                    allext += ";" + ExtensionsFilterExt;
+                if (SupportedExtensionsExtFilterExt != null)
+                    allext += ";" + SupportedExtensionsExtFilterExt;
+                openFileDialogTone.Filters.Add(new CommonFileDialogFilter("All Supported Files", allext));
+
                 openFileDialogTone.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, ExtensionsFilterExt));
+
                 if (SupportedExtensionsCustomFilterExt != null)
                     openFileDialogTone.Filters.Add(new CommonFileDialogFilter(SupportedExtensionsCustomFilterLabel, SupportedExtensionsCustomFilterExt));
+
                 if (SupportedExtensionsExtFilterExt != null)
                     openFileDialogTone.Filters.Add(new CommonFileDialogFilter(SupportedExtensionsExtFilterLabel, SupportedExtensionsExtFilterExt));
 
@@ -1111,18 +1137,31 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             if (ExtensionsFilterExt.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            var exts = SupportedExtensionsExtFilterExt.Split(new char[] { ';' });
+            var exts = ExtensionsFilterExt.Split(new char[] { ';' });
             foreach (string e in exts)
             {
                 if (e.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
 
-            exts = SupportedExtensionsCustomFilterExt.Split(new char[] { ';' });
-            foreach (string e in exts)
+            if (SupportedExtensionsExtFilterExt != null)
             {
-                if (e.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
-                    return true;
+                exts = SupportedExtensionsExtFilterExt.Split(new char[] { ';' });
+                foreach (string e in exts)
+                {
+                    if (e.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+
+            if (SupportedExtensionsCustomFilterExt != null)
+            {
+                exts = SupportedExtensionsCustomFilterExt.Split(new char[] { ';' });
+                foreach (string e in exts)
+                {
+                    if (e.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
             }
 
             return false;
@@ -1262,6 +1301,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
                 openFileDialogTone.Filters.Clear();
+
+                String allext = ExtensionsFilterExt;
+                if (SupportedExtensionsCustomFilterExt != null)
+                    allext += ";" + ExtensionsFilterExt;
+                if (SupportedExtensionsExtFilterExt != null)
+                    allext += ";" + SupportedExtensionsExtFilterExt;
+                openFileDialogTone.Filters.Add(new CommonFileDialogFilter("All Supported Files", allext));
+
                 if (ExtensionsFilterExt != null)
                     openFileDialogTone.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, ExtensionsFilterExt));
                 if (SupportedExtensionsCustomFilterExt != null)
@@ -1531,6 +1578,38 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     {
                         ignorePlayingFlag--;
                     }
+                    Control_ValueChanged(this, null);
+                }
+            }
+        }
+
+        private void metroButtonTimbre_Click(object sender, EventArgs e)
+        {
+            using (FormRename f = new FormRename())
+            {
+                f.InputText = Timbre.TimbreName;
+                var result = f.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    Timbre.TimbreName = f.InputText;
+
+                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
+                    metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
+                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
+                }
+            }
+        }
+
+        private void metroButton1_Click(object sender, EventArgs e)
+        {
+            using (FormTimbreManager f = new FormTimbreManager(Instrument))
+            {
+                DialogResult dr = f.ShowDialog(this);
+                if (dr == DialogResult.OK)
+                {
+                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
+                    metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
+                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
                     Control_ValueChanged(this, null);
                 }
             }

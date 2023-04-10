@@ -170,6 +170,9 @@
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
     <Compile Include="ComponentModel\ExpandableDrumCollectionConverter.cs" />
+    <Compile Include="ComponentModel\FileFolderList.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ComponentModel\FlagEnumEditor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -180,6 +183,7 @@
     <Compile Include="ComponentModel\NoteNameConverter.cs" />
     <Compile Include="ComponentModel\SerializeLoadUITypeEditor.cs" />
     <Compile Include="ComponentModel\SerializeSaveUITypeEditor.cs" />
+    <Compile Include="ComponentModel\TimbresArrayUITypeEditor.cs" />
     <Compile Include="Gimic\GimicManager.cs" />
     <Compile Include="ComponentModel\TimbrePropertyTabAttribute.cs" />
     <Compile Include="ComponentModel\TimbreSoundTab.cs" />
@@ -259,6 +263,18 @@
     </Compile>
     <Compile Include="Gui\FormMidiTest.Designer.cs">
       <DependentUpon>FormMidiTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormRename.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormRename.Designer.cs">
+      <DependentUpon>FormRename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\FormTimbreManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormTimbreManager.Designer.cs">
+      <DependentUpon>FormTimbreManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\GraphicEqulizer.cs">
       <SubType>UserControl</SubType>
@@ -986,6 +1002,9 @@
     <EmbeddedResource Include="Gui\FormProgress.resx">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormRename.resx">
+      <DependentUpon>FormRename.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSettings.ja-JP.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -1000,6 +1019,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormLpcEditor.resx">
       <DependentUpon>FormLpcEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormTimbreManager.resx">
+      <DependentUpon>FormTimbreManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\GraphicEqulizer.resx">
       <DependentUpon>GraphicEqulizer.cs</DependentUpon>

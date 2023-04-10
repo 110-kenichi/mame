@@ -21,6 +21,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3812;
 
 //http://takeda-toshiya.my.coocan.jp/scv/scv.pdf
 
@@ -67,22 +68,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
             }
-
+            set
+            {
+                Timbres = (uPD1771Timbre[])value;
+            }
         }
+
         /// <summary>
         /// 
         /// </summary>
         [DataMember]
         [Category(" Timbres")]
         [Description("Timbres")]
-        [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
+        [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         public uPD1771Timbre[] Timbres
         {

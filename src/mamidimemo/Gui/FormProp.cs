@@ -274,6 +274,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 //Program change
                 var pe = new ProgramChangeEvent((SevenBitNumber)(toolStripComboBoxProg.SelectedIndex - 1));
+                pe.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
                 foreach (var i in instruments)
                     i.NotifyMidiEvent(pe);
                 foreach (var i in instruments)
@@ -299,6 +300,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void PianoControl1_NoteOff(object sender, NoteOffEvent e)
         {
+            e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
             foreach (var i in instruments)
                 i.NotifyMidiEvent(e);
         }

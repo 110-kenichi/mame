@@ -28,6 +28,7 @@ using zanac.MAmidiMEmo.Util;
 using System.Threading;
 using zanac.MAmidiMEmo.Scci;
 using FM_SoundConvertor;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3806;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
@@ -350,15 +351,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YMF262Timbre[])value;
             }
         }
 

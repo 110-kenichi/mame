@@ -94,11 +94,14 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                             try
                             {
-                                StringReader rs = new StringReader(tim.Memo);
-                                while (rs.Peek() > -1)
+                                if (tim.Memo?.Trim() != null)
                                 {
-                                    fname = rs.ReadLine();
-                                    break;
+                                    StringReader rs = new StringReader(tim.Memo);
+                                    while (rs.Peek() > -1)
+                                    {
+                                        fname = rs.ReadLine();
+                                        break;
+                                    }
                                 }
                             }
                             catch (Exception ex2)
@@ -107,26 +110,17 @@ namespace zanac.MAmidiMEmo.ComponentModel
                                     throw;
                                 else if (ex2.GetType() == typeof(SystemException))
                                     throw;
-
-                                try
-                                {
-                                    fname = fullTypeName;
-                                }
-                                catch (Exception ex3)
-                                {
-                                    if (ex3.GetType() == typeof(Exception))
-                                        throw;
-                                    else if (ex3.GetType() == typeof(SystemException))
-                                        throw;
-                                }
                             }
                         }
+
+                        fname = fname?.Trim();
                         if (string.IsNullOrWhiteSpace(fname))
-                            fname = "MyData";
-                        Path.ChangeExtension(fname, ".msd");
+                            fname = fullTypeName;
 
                         foreach (var invalidChar in Path.GetInvalidFileNameChars())
                             fname = fname.Replace(invalidChar.ToString(), "");
+
+                        fname = Path.ChangeExtension(fname, ".msd");
 
                         saveFileDialog.FileName = fname;
                         saveFileDialog.SupportMultiDottedExtensions = true;

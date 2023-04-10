@@ -50,6 +50,9 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void MidiManager_MidiEventHooked(object sender, CancelMidiEventReceivedEventArgs e)
         {
+            if (this.IsDisposed)
+                return;
+
             TimingClockEvent tce = e.Event.Event as TimingClockEvent;
             if (tce != null)
             {
@@ -57,6 +60,9 @@ namespace zanac.MAmidiMEmo.Gui
                 var delta = now.Ticks - lastSentTime;
                 labelReceiveTime.BeginInvoke(new MethodInvoker(() =>
                 {
+                    if (this.IsDisposed)
+                        return;
+
                     labelReceiveTime.Text = now.ToString("mm:ss:ffffff");
                     labelSpan.Text = "( +" + TimeSpan.FromTicks(delta).TotalMilliseconds + " ms)";
 

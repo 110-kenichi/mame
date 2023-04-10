@@ -90,7 +90,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                             StringReader rs = new StringReader(txt);
 
                             string ftname = rs.ReadLine();
-                            if (fullTypeName != ftname)
+                            if (!string.Equals(fullTypeName, ftname, StringComparison.Ordinal))
                                 throw new InvalidDataException();
                             string ver = rs.ReadLine();
                             if (ver != "1.0")

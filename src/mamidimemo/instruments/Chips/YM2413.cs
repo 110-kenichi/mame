@@ -27,6 +27,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
+using static zanac.MAmidiMEmo.Instruments.Chips.SPC700;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
 //http://www.smspower.org/maxim/Documents/YM2413ApplicationManual
@@ -363,12 +364,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2413Timbre[])value;
             }
         }
 

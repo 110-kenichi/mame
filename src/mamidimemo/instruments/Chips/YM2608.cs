@@ -33,6 +33,7 @@ using zanac.MAmidiMEmo.VSIF;
 using File = System.IO.File;
 using Path = System.IO.Path;
 using System.Diagnostics;
+using static zanac.MAmidiMEmo.Instruments.Chips.AY8910;
 
 //https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
@@ -482,12 +483,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [Browsable(false)]
         public override TimbreBase[] BaseTimbres
         {
             get
             {
                 return Timbres;
+            }
+            set
+            {
+                Timbres = (YM2608Timbre[])value;
             }
         }
 
