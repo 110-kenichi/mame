@@ -157,44 +157,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             else
             {
-                YM2151Timbre tim = (YM2151Timbre)timbre;
-
-                tim.ALG = (byte)tone.AL;
-                tim.FB = (byte)tone.FB;
-                tim.AMS = (byte)tone.AMS;
-                tim.PMS = (byte)tone.PMS;
-                tim.GlobalSettings.Enable = false;
-                tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
-                tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-                tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
-                tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
-                tim.GlobalSettings.NE = (byte?)tone.NE;
-                tim.GlobalSettings.NFRQ = (byte?)tone.NF;
-                if (tim.GlobalSettings.NE > 0 ||
-                    tim.GlobalSettings.LFRQ > 0 ||
-                    tim.GlobalSettings.LFOW > 0 ||
-                    tim.GlobalSettings.LFOD > 0
-                    )
-                    tim.GlobalSettings.Enable = true;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    tim.Ops[i].Enable = 1;
-                    tim.Ops[i].AR = (byte)tone.aOp[i].AR;
-                    tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
-                    tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
-                    tim.Ops[i].RR = (byte)tone.aOp[i].RR;
-                    tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                    tim.Ops[i].TL = (byte)tone.aOp[i].TL;
-                    tim.Ops[i].RS = (byte)tone.aOp[i].KS;
-                    tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
-                    tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
-                    tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                    tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
-                    tim.Ops[i].LS = (byte)tone.aOp[i].LS;
-                    tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
-                }
-                timbre.TimbreName = tone.Name;
+                ((YM2151)Instrument).ImportToneFile(timbre, tone);
             }
         }
 

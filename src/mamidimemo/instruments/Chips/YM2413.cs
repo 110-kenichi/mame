@@ -28,6 +28,7 @@ using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 using static zanac.MAmidiMEmo.Instruments.Chips.SPC700;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
 //http://www.smspower.org/maxim/Documents/YM2413ApplicationManual
@@ -3480,6 +3481,62 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             MMIO_2 = 2,
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportToneFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override void ImportToneFile(TimbreBase timbre, Tone tone)
+        {
+            YM2413Timbre tim = (YM2413Timbre)timbre;
+
+            tim.FB = (byte)tone.FB;
+            tim.SUS = 0;
+
+            tim.Modulator.AR = (byte)(tone.aOp[0].AR / 2);
+            tim.Modulator.DR = (byte)(tone.aOp[0].DR / 2);
+            tim.Modulator.RR = (byte)(tone.aOp[0].RR);
+            tim.Modulator.SL = (byte)(tone.aOp[0].SL);
+            tim.Modulator.SR = (byte)(tone.aOp[0].SR / 2);
+            tim.Modulator.TL = (byte)(tone.aOp[0].TL / 2);
+            tim.Modulator.KSL = (byte)(tone.aOp[0].KS);
+            tim.Modulator.KSR = (byte)(0);
+            tim.Modulator.MUL = (byte)(tone.aOp[0].ML);
+            tim.Modulator.AM = (byte)(tone.aOp[0].AM);
+            tim.Modulator.VIB = (byte)(0);
+            tim.Modulator.EG = (byte)(0);
+            tim.Modulator.DIST = (byte)(0);
+
+            tim.Career.AR = (byte)(tone.aOp[1].AR / 2);
+            tim.Career.DR = (byte)(tone.aOp[1].DR / 2);
+            tim.Career.RR = (byte)(tone.aOp[1].RR);
+            tim.Career.SL = (byte)(tone.aOp[1].SL);
+            tim.Career.SR = (byte)(tone.aOp[1].SR / 2);
+            tim.Career.KSL = (byte)(tone.aOp[1].KS);
+            tim.Career.KSR = (byte)(0);
+            tim.Career.MUL = (byte)(tone.aOp[1].ML);
+            tim.Career.AM = (byte)(tone.aOp[1].AM);
+            tim.Career.VIB = (byte)(0);
+            tim.Career.EG = (byte)(0);
+            tim.Career.DIST = (byte)(0);
+
+            timbre.TimbreName = tone.Name;
+        }
     }
 
 

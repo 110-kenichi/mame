@@ -1,4 +1,5 @@
-﻿using Melanchall.DryWetMidi.Common;
+﻿using FM_SoundConvertor;
+using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -14,9 +16,12 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Media.Animation;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util.FITOM;
+using zanac.MAmidiMEmo.Util.Syx;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using Directory = System.IO.Directory;
@@ -36,8 +41,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Type timbreType;
 
-        private string originalSerializedData;
-
+        private Type drumTimbreType;
 
         /// <summary>
         /// 
@@ -83,9 +87,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             //pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
             this.Instrument = inst;
-            timbreType = Instrument.BaseTimbres[0].GetType();
 
-            originalSerializedData = JsonConvert.SerializeObject(Instrument.BaseTimbres, Formatting.Indented);
+            timbreType = Instrument.BaseTimbres[0].GetType();
+            drumTimbreType = Instrument.DrumTimbres[0].GetType();
 
             for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
             {
@@ -96,6 +100,7 @@ namespace zanac.MAmidiMEmo.Gui
                 listViewCurrentTimbres.Items.Add(lvi);
             }
             listViewCurrentTimbres.Items[0].Selected = true;
+
             lastFocusedListView = listViewCurrentTimbres;
 
             setTitle();
@@ -109,11 +114,22 @@ namespace zanac.MAmidiMEmo.Gui
 
             Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
 
-            fileFolderList1.FilterExts = new string[] { ".MSD", ".MSDS" };
-            fileFolderList1.FilterFunction = new Func<FileSystemInfo, bool>((fi) =>
+            List<string> extList = new List<string>(new string[] { ".MSD", ".MSDS" });
+            if (inst.CanImportToneFile)
+            {
+                var texts = Tone.SupportedExts.Split(';');
+                for (int i = 0; i < texts.Length; i++)
+                    texts[i] = texts[i].Replace("*", "");
+                extList.AddRange(texts);
+            }
+
+            fileFolderList1.FilterExts = extList.ToArray();
+            fileFolderList1.FileValidator = new Func<FileSystemInfo, bool>((fi) =>
             {
                 FileInfo ffi = fi as FileInfo;
-                if (ffi != null)
+                if (ffi != null &&
+                (string.Equals(ffi.Extension, ".MSD", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(ffi.Extension, ".MSDS", StringComparison.OrdinalIgnoreCase)))
                 {
                     try
                     {
@@ -147,11 +163,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         protected override void OnShown(EventArgs e)
         {
+            listViewFilesTimbres.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(listViewFilesTimbres_ItemSelectionChanged);
+
             listViewCurrentTimbres.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(listViewCurrentTimbres_ItemSelectionChanged);
             foreach (ColumnHeader c in listViewCurrentTimbres.Columns)
                 c.Width = -1;
-
-            listViewFilesTimbres.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(listViewFilesTimbres_ItemSelectionChanged);
 
             fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
 
@@ -385,7 +401,7 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     TimbreItem tim = (TimbreItem)lastFocusedListView.SelectedItems[0].Tag;
                     TimbreItem timNo = (TimbreItem)listViewCurrentTimbres.Items[0].Tag;
-                    if(listViewCurrentTimbres.SelectedItems.Count != 0)
+                    if (listViewCurrentTimbres.SelectedItems.Count != 0)
                         timNo = (TimbreItem)listViewCurrentTimbres.SelectedItems[0].Tag;
 
                     e.Tag = new NoteOnTimbreInfo(tim.Timbre, timNo.Number);
@@ -526,7 +542,8 @@ namespace zanac.MAmidiMEmo.Gui
                                 string serializeData = rs.ReadToEnd();
 
                                 TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(serializeData, timbreType);
-                                TimbreItem tim = new TimbreItem(t, i);
+                                TimbreItem tim = new TimbreItem(t, no);
+                                no++;
 
                                 var lvi = new ListViewItem(new string[] { i.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
                                 lvi.Tag = tim;
@@ -565,7 +582,7 @@ namespace zanac.MAmidiMEmo.Gui
                                                     break;
 
                                                 TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(lines.ToString(), timbreType);
-                                                TimbreItem tim = new TimbreItem(t, i);
+                                                TimbreItem tim = new TimbreItem(t, no);
 
                                                 var lvi = new ListViewItem(new string[] { no.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
                                                 no++;
@@ -591,6 +608,89 @@ namespace zanac.MAmidiMEmo.Gui
                                 }
                                 break;
                             }
+                        case ".MUC":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Muc.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".DAT":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Dat.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".MWI":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Fmp.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".MML":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Pmd.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".FXB":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Vopm.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".GWI":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = Gwi.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".BNK":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = BankReader.Read(file);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".SYX":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = SyxReaderTX81Z.Read(file);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".FF":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = FF.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".FFOPM":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var Option = new Option();
+                                var tones = FF.Reader(file, Option);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+
+                        default:
+                            break;
                     }
                 }
             }
@@ -602,6 +702,23 @@ namespace zanac.MAmidiMEmo.Gui
                 listViewFilesTimbres.EndUpdate();
             }
             //fileFolderList1.SelectedPath
+        }
+
+        private int loadTones(int no, IEnumerable<Tone> tones)
+        {
+            foreach (var tns in tones)
+            {
+                TimbreBase t = (TimbreBase)Activator.CreateInstance(timbreType);
+                Instrument.ImportToneFile(t, tns);
+                var tim = new TimbreItem(t, no);
+
+                var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
+                no++;
+                lvi.Tag = tim;
+                listViewFilesTimbres.Items.Add(lvi);
+            }
+
+            return no;
         }
 
         private bool ignore_metroTextBox1_TextChanged;
@@ -646,6 +763,35 @@ namespace zanac.MAmidiMEmo.Gui
             public override string ToString()
             {
                 return "No " + Number.ToString() + " " + Timbre.TimbreName + " " + Timbre.Memo;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class DrumTimbreItem
+        {
+            public DrumTimbre Timbre
+            {
+                get;
+                private set;
+            }
+
+            public int Number
+            {
+                get;
+                private set;
+            }
+
+            public DrumTimbreItem(DrumTimbre timbre, int number)
+            {
+                Timbre = timbre;
+                Number = number;
+            }
+
+            public override string ToString()
+            {
+                return "No " + Number.ToString() + " " + Timbre.TimbreName + " " + Timbre.KeyName;
             }
         }
 
@@ -887,7 +1033,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                     fname = fname?.Trim();
                     if (string.IsNullOrWhiteSpace(fname))
-                        fname = timbreType.FullName;
+                        fname = timbreType.Name + ".mds";
 
                     foreach (var invalidChar in Path.GetInvalidFileNameChars())
                         fname = fname.Replace(invalidChar.ToString(), "");
@@ -909,7 +1055,19 @@ namespace zanac.MAmidiMEmo.Gui
                         string sd = ttimi.Timbre.SerializeData;
                         sb.AppendLine(sd);
 
-                        File.WriteAllText(fname, sb.ToString());
+                        try
+                        {
+                            File.WriteAllText(fname, sb.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.GetType() == typeof(Exception))
+                                throw;
+                            else if (ex.GetType() == typeof(SystemException))
+                                throw;
+
+                            MessageBox.Show(ex.Message);
+                        }
                     }
                 }
             }
@@ -964,7 +1122,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                     fname = fname?.Trim();
                     if (string.IsNullOrWhiteSpace(fname))
-                        fname = timbreType.FullName;
+                        fname = timbreType.Name + ".msds";
 
                     foreach (var invalidChar in Path.GetInvalidFileNameChars())
                         fname = fname.Replace(invalidChar.ToString(), "");
@@ -991,7 +1149,19 @@ namespace zanac.MAmidiMEmo.Gui
                             sb.AppendLine("-");
                         }
 
-                        File.WriteAllText(fname, sb.ToString());
+                        try
+                        {
+                            File.WriteAllText(fname, sb.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.GetType() == typeof(Exception))
+                                throw;
+                            else if (ex.GetType() == typeof(SystemException))
+                                throw;
+
+                            MessageBox.Show(ex.Message);
+                        }
                     }
                 }
 
@@ -1098,5 +1268,142 @@ namespace zanac.MAmidiMEmo.Gui
                 metroTextBox1.Text = betterFolderBrowser1.SelectedFolder;
             }
         }
+
+        private void metroButton2_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                TimbreItem ttim = (TimbreItem)(listViewCurrentTimbres.Items[0].Tag);
+
+                string dir = fileFolderList1.CurrentDirectory;
+                if (string.IsNullOrWhiteSpace(dir))
+                {
+                    dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    dir = Path.Combine(dir, "MAmi");
+                }
+                saveFileDialog.InitialDirectory = dir;
+
+                saveFileDialog.DefaultExt = "*.msds";
+                saveFileDialog.Filter = "MAmi Serialize Data Files(*.msds)|*.msds";
+                string fname = null;
+                try
+                {
+                    fname = ttim.Timbre.TimbreName;
+                }
+                catch (Exception ex1)
+                {
+                    if (ex1.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex1.GetType() == typeof(SystemException))
+                        throw;
+
+                    try
+                    {
+                        if (ttim.Timbre.Memo?.Trim() != null)
+                        {
+                            StringReader rs = new StringReader(ttim.Timbre.Memo);
+                            while (rs.Peek() > -1)
+                            {
+                                fname = rs.ReadLine();
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception ex2)
+                    {
+                        if (ex2.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex2.GetType() == typeof(SystemException))
+                            throw;
+                    }
+                }
+
+                fname = fname?.Trim();
+                if (string.IsNullOrWhiteSpace(fname))
+                    fname = timbreType.Name + ".msds";
+
+                foreach (var invalidChar in Path.GetInvalidFileNameChars())
+                    fname = fname.Replace(invalidChar.ToString(), "");
+
+                fname = Path.ChangeExtension(fname, ".msds");
+
+                saveFileDialog.FileName = fname;
+                saveFileDialog.SupportMultiDottedExtensions = true;
+
+                DialogResult res = saveFileDialog.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    fname = saveFileDialog.FileName;
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(timbreType.FullName);
+                    sb.AppendLine("1.0");
+                    sb.AppendLine(listViewCurrentTimbres.Items.Count.ToString());
+
+                    for (int i = 0; i < listViewCurrentTimbres.Items.Count; i++)
+                    {
+                        TimbreItem ttimi = (TimbreItem)(listViewCurrentTimbres.Items[i].Tag);
+                        string sd = ttimi.Timbre.SerializeData;
+                        sb.AppendLine(sd);
+                        sb.AppendLine("-");
+                    }
+
+                    try
+                    {
+                        File.WriteAllText(fname, sb.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+            fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+
+        }
+
+        private void metroButtonRefresh_Click(object sender, EventArgs e)
+        {
+            fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+        }
+
+        private void metroButtonExplorer_Click(object sender, EventArgs e)
+        {
+            string path = fileFolderList1.CurrentDirectory;
+
+            Task.Run(new Action(() =>
+            {
+                Process.Start("explorer.exe", "/select,\"" + path + "\"");
+            }));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void metroButton3_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(this, "Are you sure you want to reset selected Timbres to default?",
+    "Qeuestion", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+
+            if (result == DialogResult.OK)
+            {
+                for (int i = 0; i < listViewCurrentTimbres.SelectedItems.Count; i++)
+                {
+                    TimbreItem ttim = (TimbreItem)(listViewCurrentTimbres.SelectedItems[i].Tag);
+
+                    ttim = new TimbreItem((TimbreBase)Activator.CreateInstance(timbreType), ttim.Number);
+                    listViewCurrentTimbres.SelectedItems[i].Tag = ttim;
+                    listViewCurrentTimbres.SelectedItems[i].SubItems[1].Text = ttim.Timbre.TimbreName;
+                    listViewCurrentTimbres.SelectedItems[i].SubItems[2].Text = ttim.Timbre.Memo;
+                }
+            }
+        }
+
     }
 }

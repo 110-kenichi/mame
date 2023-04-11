@@ -855,95 +855,111 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <returns></returns>
         public virtual IEnumerable<Tone> ImportToneFile(string file)
         {
-            string mext = System.IO.Path.GetExtension(ExtensionsFilterExt).ToUpper(CultureInfo.InvariantCulture);
-
             string ext = System.IO.Path.GetExtension(file);
-            var Option = new Option();
             IEnumerable<Tone> tones = null;
-            try
-            {
-                string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
-                switch (ext.ToUpper(CultureInfo.InvariantCulture))
-                {
-                    case ".MUC":
-                        tones = Muc.Reader(importFile, Option);
-                        break;
-                    case ".DAT":
-                        tones = Dat.Reader(importFile, Option);
-                        break;
-                    case ".MWI":
-                        tones = Fmp.Reader(importFile, Option);
-                        break;
-                    case ".MML":
-                        tones = Pmd.Reader(importFile, Option);
-                        break;
-                    case ".FXB":
-                        tones = Vopm.Reader(importFile, Option);
-                        break;
-                    case ".GWI":
-                        tones = Gwi.Reader(importFile, Option);
-                        break;
-                    case ".BNK":
-                        tones = BankReader.Read(file);
-                        break;
-                    case ".SYX":
-                        tones = SyxReaderTX81Z.Read(file);
-                        break;
-                    case ".FF":
-                        tones = FF.Reader(file, Option);
-                        break;
-                    case ".FFOPM":
-                        tones = FF.Reader(file, Option);
-                        break;
-                    default:
-                        if (ext.ToUpper(CultureInfo.InvariantCulture).Equals(mext))
-                        {
-                            string txt = System.IO.File.ReadAllText(file);
-                            StringReader rs = new StringReader(txt);
 
-                            string ftname = rs.ReadLine();
-                            if (ExtensionsFilterExt == ftname)
+            string mext = System.IO.Path.GetExtension(ExtensionsFilterExt).ToUpper(CultureInfo.InvariantCulture);
+            if (ext.ToUpper(CultureInfo.InvariantCulture).Equals(mext))
+            {
+                try
+                {
+                    string txt = System.IO.File.ReadAllText(file);
+                    StringReader rs = new StringReader(txt);
+
+                    string ftname = rs.ReadLine();
+                    if (ExtensionsFilterExt == ftname)
+                    {
+                        string ver = rs.ReadLine();
+                        if (ver != "1.0")
+                            throw new InvalidDataException();
+                        int num = int.Parse(rs.ReadLine());
+                        List<string> lines = new List<string>();
+                        List<Tone> ts = new List<Tone>();
+                        int progNo = 0;
+                        while (true)
+                        {
+                            string line = rs.ReadLine();
+                            if (line == null || line == "-")
                             {
-                                string ver = rs.ReadLine();
-                                if (ver != "1.0")
-                                    throw new InvalidDataException();
-                                int num = int.Parse(rs.ReadLine());
-                                List<string> lines = new List<string>();
-                                List<Tone> ts = new List<Tone>();
-                                int progNo = 0;
-                                while (true)
-                                {
-                                    string line = rs.ReadLine();
-                                    if (line == null || line == "-")
-                                    {
-                                        if (lines.Count == 0)
-                                            break;
-                                        Tone t = new Tone();
-                                        t.MML = lines.ToArray();
-                                        t.Name = t.MML[0];
-                                        t.Number = progNo++;
-                                        ts.Add(t);
-                                        lines.Clear();
-                                        if (line == null)
-                                            break;
-                                        continue;
-                                    }
-                                    lines.Add(line);
-                                }
-                                tones = ts;
+                                if (lines.Count == 0)
+                                    break;
+                                Tone t = new Tone();
+                                t.MML = lines.ToArray();
+                                t.Name = t.MML[0];
+                                t.Number = progNo++;
+                                ts.Add(t);
+                                lines.Clear();
+                                if (line == null)
+                                    break;
+                                continue;
                             }
+                            lines.Add(line);
                         }
-                        break;
+                        tones = ts;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
+                var Option = new Option();
+                try
+                {
+                    string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
+                    switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                    {
+                        case ".MUC":
+                            tones = Muc.Reader(importFile, Option);
+                            break;
+                        case ".DAT":
+                            tones = Dat.Reader(importFile, Option);
+                            break;
+                        case ".MWI":
+                            tones = Fmp.Reader(importFile, Option);
+                            break;
+                        case ".MML":
+                            tones = Pmd.Reader(importFile, Option);
+                            break;
+                        case ".FXB":
+                            tones = Vopm.Reader(importFile, Option);
+                            break;
+                        case ".GWI":
+                            tones = Gwi.Reader(importFile, Option);
+                            break;
+                        case ".BNK":
+                            tones = BankReader.Read(file);
+                            break;
+                        case ".SYX":
+                            tones = SyxReaderTX81Z.Read(file);
+                            break;
+                        case ".FF":
+                            tones = FF.Reader(file, Option);
+                            break;
+                        case ".FFOPM":
+                            tones = FF.Reader(file, Option);
+                            break;
+                        default:
 
-                MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+
+                    MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+                }
             }
             return tones;
         }
@@ -1269,7 +1285,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get
             {
-                return "*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
+                return Tone.SupportedExts;
             }
         }
 

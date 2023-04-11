@@ -331,51 +331,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             else
             {
-                YM3812Timbre tim = (YM3812Timbre)timbre;
-
-                bool native = false;
-                if (tone.CNT == -1)
-                {
-                    tim.ALG = (byte)tone.AL;
-                }
-                else
-                {
-                    tim.ALG = (byte)tone.CNT;
-                    native = true;
-                }
-
-                tim.FB = (byte)tone.FB;
-                tim.GlobalSettings.Enable = false;
-                tim.GlobalSettings.AMD = null;
-                tim.GlobalSettings.VIB = null;
-
-                for (int i = 0; i < 2; i++)
-                {
-                    if (!native)
-                    {
-                        tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
-                        tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
-                        tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
-                        tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
-                    }
-                    else
-                    {
-                        tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
-                        tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
-                        tim.Ops[i].SR = null;
-                        tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
-                    }
-                    tim.Ops[i].RR = (byte)tone.aOp[i].RR;
-                    tim.Ops[i].SL = (byte)tone.aOp[i].SL;
-                    tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
-                    tim.Ops[i].KSR = 0;
-                    tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
-                    tim.Ops[i].AM = (byte)tone.aOp[i].AM;
-                    tim.Ops[i].VR = 0;
-                    tim.Ops[i].EG = 0;
-                    tim.Ops[i].WS = 0;
-                }
-                timbre.TimbreName = tone.Name;
+                ((YM3812)Instrument).ImportToneFile(timbre, tone);
             }
         }
 

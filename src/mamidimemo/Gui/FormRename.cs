@@ -65,5 +65,10 @@ namespace zanac.MAmidiMEmo.Gui
             InitializeComponent();
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            metroTextBoxText.Focus();
+            base.OnShown(e);
+        }
     }
 }

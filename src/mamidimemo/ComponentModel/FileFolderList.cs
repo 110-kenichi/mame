@@ -25,6 +25,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
     {
         public object ItemInfo;
         public Types Type;
+        public bool Invalid;
     }
 
     public partial class FileFolderList : ListView
@@ -50,7 +51,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         /// <summary>
         /// 
         /// </summary>
-        public Func<FileSystemInfo, bool> FilterFunction
+        public Func<FileSystemInfo, bool> FileValidator
         {
             get;
             set;
@@ -277,6 +278,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 foreach (ListViewItem item in this.SelectedItems)
                 {
                     ItemType type = (ItemType)item.Tag;
+                    if (type.Invalid)
+                        continue;
 
                     if (type.Type == Types.FOLDER)
                     {
@@ -354,10 +357,14 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     continue;
                 }
 
-                if (FilterFunction != null && !FilterFunction(di))
-                    continue;
-
                 ListViewItem item = new ListViewItem(di.Name);
+
+                bool invalid = false;
+                if (FileValidator != null && !FileValidator(di))
+                {
+                    item.ForeColor = SystemColors.GrayText;
+                    invalid = true;
+                }
 
                 //if (!il16.Images.ContainsKey(di.FullName))
                 //{
@@ -370,7 +377,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 item.Tag = new ItemType()
                 {
                     ItemInfo = di,
-                    Type = Types.FOLDER
+                    Type = Types.FOLDER,
+                    Invalid = invalid
                 };
 
                 // add temp subitems if View was set to Details
@@ -403,6 +411,9 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     continue;
                 }
 
+                ListViewItem item = new ListViewItem(fi.Name);
+
+
                 bool ignore = true;
                 if (FilterExts != null)
                 {
@@ -419,13 +430,14 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 {
                     ignore = false;
                 }
-                if (ignore)
-                    continue;
-
-                if (FilterFunction != null && !FilterFunction(fi))
-                    continue;
-
-                ListViewItem item = new ListViewItem(fi.Name);
+                bool invalid = false;
+                if (ignore || (FileValidator != null && !FileValidator(fi)))
+                {
+                    item.ForeColor = SystemColors.GrayText;
+                    invalid = true;
+                }
+                else
+                    item.Font = new Font(item.Font.Name, item.Font.Size, FontStyle.Bold);
 
                 //if (!il16.Images.ContainsKey(fi.FullName))
                 //{
@@ -438,7 +450,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 item.Tag = new ItemType()
                 {
                     ItemInfo = fi,
-                    Type = Types.FILE
+                    Type = Types.FILE,
+                    Invalid = invalid
                 };
 
                 // add temp subitems if View was set to Details

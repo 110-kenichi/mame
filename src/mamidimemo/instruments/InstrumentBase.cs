@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using FastDelegate.Net;
+using FM_SoundConvertor;
 using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
@@ -2051,7 +2052,7 @@ namespace zanac.MAmidiMEmo.Instruments
             vgmRecording = true;
 
             var now = DateTime.Now;
-            string op = Path.Combine(vgmPath, this.Name + "_" + this.UnitNumber + "_" +
+            string op = System.IO.Path.Combine(vgmPath, this.Name + "_" + this.UnitNumber + "_" +
                 now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-'));
 
             StartVgmRecordingToInternal(UnitNumber, SoundInterfaceTagNamePrefix, op);
@@ -3137,6 +3138,30 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public virtual bool CanImportToneFile
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public virtual void ImportToneFile(TimbreBase timbre, Tone tone)
+        {
+
+        }
 
     }
 

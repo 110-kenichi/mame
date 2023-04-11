@@ -94,7 +94,7 @@ namespace FM_SoundConvertor
 
 
 
-		static IEnumerable<Tone> Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path, Option @Option)
 		{
             List<Tone> tones = new List<Tone>();
 

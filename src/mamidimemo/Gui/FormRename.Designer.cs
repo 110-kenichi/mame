@@ -53,14 +53,15 @@
             // 
             // 
             this.metroTextBoxText.CustomButton.Image = null;
-            this.metroTextBoxText.CustomButton.Location = new System.Drawing.Point(426, 1);
+            this.metroTextBoxText.CustomButton.Location = new System.Drawing.Point(424, 1);
             this.metroTextBoxText.CustomButton.Name = "";
-            this.metroTextBoxText.CustomButton.Size = new System.Drawing.Size(21, 21);
+            this.metroTextBoxText.CustomButton.Size = new System.Drawing.Size(23, 23);
             this.metroTextBoxText.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTextBoxText.CustomButton.TabIndex = 1;
             this.metroTextBoxText.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTextBoxText.CustomButton.UseSelectable = true;
             this.metroTextBoxText.CustomButton.Visible = false;
+            this.metroTextBoxText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxText.Lines = new string[0];
             this.metroTextBoxText.Location = new System.Drawing.Point(59, 3);
             this.metroTextBoxText.MaxLength = 32767;
@@ -71,7 +72,7 @@
             this.metroTextBoxText.SelectionLength = 0;
             this.metroTextBoxText.SelectionStart = 0;
             this.metroTextBoxText.ShortcutsEnabled = true;
-            this.metroTextBoxText.Size = new System.Drawing.Size(448, 23);
+            this.metroTextBoxText.Size = new System.Drawing.Size(448, 25);
             this.metroTextBoxText.TabIndex = 1;
             this.metroTextBoxText.UseSelectable = true;
             this.metroTextBoxText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -134,7 +135,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "Set a name";
+            this.Text = "Specify the name";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

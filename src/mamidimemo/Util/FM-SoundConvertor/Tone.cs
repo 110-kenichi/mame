@@ -1,6 +1,15 @@
 ﻿
 
 
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System;
+using zanac.MAmidiMEmo.Util.FITOM;
+using zanac.MAmidiMEmo.Util.Syx;
+using System.Windows.Forms;
+using zanac.MAmidiMEmo.Properties;
+
 namespace FM_SoundConvertor
 {
     public class Op
@@ -144,6 +153,76 @@ namespace FM_SoundConvertor
         public override string ToString()
         {
             return "(" + Number + ")" + Name;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string SupportedExts
+        {
+            get
+            {
+                return "*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tone> ImportToneFile(string file)
+        {
+            string ext = System.IO.Path.GetExtension(file);
+            var Option = new Option();
+            IEnumerable<Tone> tones = null;
+            try
+            {
+                string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
+                switch (ext.ToUpper(CultureInfo.InvariantCulture))
+                {
+                    case ".MUC":
+                        tones = Muc.Reader(importFile, Option);
+                        break;
+                    case ".DAT":
+                        tones = Dat.Reader(importFile, Option);
+                        break;
+                    case ".MWI":
+                        tones = Fmp.Reader(importFile, Option);
+                        break;
+                    case ".MML":
+                        tones = Pmd.Reader(importFile, Option);
+                        break;
+                    case ".FXB":
+                        tones = Vopm.Reader(importFile, Option);
+                        break;
+                    case ".GWI":
+                        tones = Gwi.Reader(importFile, Option);
+                        break;
+                    case ".BNK":
+                        tones = BankReader.Read(file);
+                        break;
+                    case ".SYX":
+                        tones = SyxReaderTX81Z.Read(file);
+                        break;
+                    case ".FF":
+                        tones = FF.Reader(file, Option);
+                        break;
+                    case ".FFOPM":
+                        tones = FF.Reader(file, Option);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+            }
+            return tones;
         }
     }
 }

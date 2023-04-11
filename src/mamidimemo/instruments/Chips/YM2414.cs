@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -24,6 +25,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util.Syx;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2151;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
 
 //http://sr4.sakura.ne.jp/fmsound/opz.html
 //https://sites.google.com/site/undocumentedsoundchips/yamaha/ym2414
@@ -932,7 +934,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             var es = Program.SaveEnvironmentSettings();
             string data = JsonConvert.SerializeObject(es, Formatting.Indented, Program.JsonAutoSettings);
-            File.WriteAllText(fileName, StringCompressionUtility.Compress(data));
+            System.IO.File.WriteAllText(fileName, StringCompressionUtility.Compress(data));
         }
 
         /// <summary>
@@ -3672,6 +3674,92 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_LFD2 = v;
                 }
             }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportToneFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override void ImportToneFile(TimbreBase timbre, Tone tone)
+        {
+            YM2414Timbre tim = (YM2414Timbre)timbre;
+
+            tim.ALG = (byte)tone.AL;
+            tim.FB = (byte)tone.FB;
+            tim.AMS = (byte)tone.AMS;
+            tim.PMS = (byte)tone.PMS;
+            tim.AMS2 = (byte)tone.AMS2;
+            tim.PMS2 = (byte)tone.PMS2;
+
+            tim.GlobalSettings.NE = (byte?)tone.NE;
+            tim.GlobalSettings.NFRQ = (byte?)tone.NF;
+
+            tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
+            tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
+            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
+            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+            tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
+            tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+            tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
+            tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
+
+            tim.GlobalSettings.LFD = (byte?)tone.LFD;
+            tim.GlobalSettings.LFD2 = (byte?)tone.LFD2;
+
+            tim.GlobalSettings.SYNC = (byte?)tone.SY;
+            tim.GlobalSettings.SYNC2 = (byte?)tone.SY2;
+
+            if (tim.GlobalSettings.NE > 0 ||
+                tim.GlobalSettings.LFRQ > 0 ||
+                tim.GlobalSettings.LFRQ2 > 0 ||
+                tim.GlobalSettings.LFOW > 0 ||
+                tim.GlobalSettings.LFOW2 > 0 ||
+                tim.GlobalSettings.LFOD > 0 ||
+                tim.GlobalSettings.LFOD2 > 0
+                )
+                tim.GlobalSettings.Enable = true;
+
+            for (int i = 0; i < 4; i++)
+            {
+                tim.Ops[i].Enable = 1;
+                tim.Ops[i].AR = (byte)tone.aOp[i].AR;
+                tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
+                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
+                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                tim.Ops[i].TL = (byte)tone.aOp[i].TL;
+                tim.Ops[i].RS = (byte)tone.aOp[i].KS;
+                tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
+                tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
+                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                tim.Ops[i].DT2 = (byte)tone.aOp[i].DT2;
+                tim.Ops[i].FINE = (byte)tone.aOp[i].FINE;
+                tim.Ops[i].FIX = (byte)tone.aOp[i].FIX;
+                tim.Ops[i].FIXR = (byte)tone.aOp[i].FIXR;
+                tim.Ops[i].FIXF = (byte)tone.aOp[i].FIXF;
+                tim.Ops[i].OSCW = (byte)tone.aOp[i].OSCW;
+                tim.Ops[i].EGSF = (byte)tone.aOp[i].EGSF;
+                tim.Ops[i].REV = (byte)tone.aOp[i].REV;
+                tim.Ops[i].LS = (byte)tone.aOp[i].LS;
+                tim.Ops[i].KVS = (byte)tone.aOp[i].KVS;
+            }
+            timbre.TimbreName = tone.Name;
         }
     }
 

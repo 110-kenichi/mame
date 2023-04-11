@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -2954,6 +2955,57 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             SSG,
             ADPCM_A,
             ADPCM_B,
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportToneFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override void ImportToneFile(TimbreBase timbre, Tone tone)
+        {
+            YM2610BTimbre tim = (YM2610BTimbre)timbre;
+
+            tim.ToneType = ToneType.FM;
+
+            tim.ALG = (byte)tone.AL;
+            tim.FB = (byte)tone.FB;
+            tim.AMS = (byte)tone.AMS;
+            tim.FMS = (byte)tone.PMS;
+            tim.GlobalSettings.Enable = false;
+            tim.GlobalSettings.LFRQ = null;
+            tim.GlobalSettings.LFOEN = null;
+
+            for (int i = 0; i < 4; i++)
+            {
+                tim.Ops[i].Enable = 1;
+                tim.Ops[i].AR = (byte)tone.aOp[i].AR;
+                tim.Ops[i].D1R = (byte)tone.aOp[i].DR;
+                tim.Ops[i].D2R = tone.aOp[i].SR < 0 ? (byte)0 : (byte)tone.aOp[i].SR;
+                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                tim.Ops[i].TL = (byte)tone.aOp[i].TL;
+                tim.Ops[i].RS = (byte)tone.aOp[i].KS;
+                tim.Ops[i].MUL = (byte)tone.aOp[i].ML;
+                tim.Ops[i].DT1 = (byte)tone.aOp[i].DT;
+                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                tim.Ops[i].SSG = (byte)tone.aOp[i].SSG;
+            }
+            timbre.TimbreName = tone.Name;
         }
     }
 }

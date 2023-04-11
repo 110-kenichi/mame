@@ -2401,6 +2401,105 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportToneFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override void ImportToneFile(TimbreBase timbre, Tone tone)
+        {
+            YMF262Timbre tim = (YMF262Timbre)timbre;
+
+            int alg = 0;
+            bool native = false;
+            if (tone.CNT == -1)
+            {
+                switch (tone.AL)
+                {
+                    case 0:
+                        alg = 2;
+                        break;
+                    case 1:
+                        alg = 4;    //?
+                        break;
+                    case 2:
+                        alg = 4;    //?
+                        break;
+                    case 3:
+                        alg = 3;    //?
+                        break;
+                    case 4:
+                        alg = 3;
+                        break;
+                    case 5:
+                        alg = 5;    //?
+                        break;
+                    case 6:
+                        alg = 5;    //?
+                        break;
+                    case 7:
+                        alg = 5;
+                        break;
+                }
+            }
+            else
+            {
+                alg = tone.CNT;
+                native = true;
+            }
+
+            tim.ALG = (byte)alg;
+            tim.FB = (byte)tone.FB;
+            tim.FB2 = (byte)tone.FB2;
+            tim.GlobalSettings.Enable = false;
+            tim.GlobalSettings.DAM = null;
+            tim.GlobalSettings.DVB = null;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (!native)
+                {
+                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR / 2);
+                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR / 2);
+                    tim.Ops[i].SR = (byte)(tone.aOp[i].SR / 2);
+                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL / 2);
+                }
+                else
+                {
+                    tim.Ops[i].AR = (byte)(tone.aOp[i].AR);
+                    tim.Ops[i].DR = (byte)(tone.aOp[i].DR);
+                    tim.Ops[i].SR = null;
+                    tim.Ops[i].TL = (byte)(tone.aOp[i].TL);
+                }
+                tim.Ops[i].RR = (byte)tone.aOp[i].RR;
+                tim.Ops[i].SL = (byte)tone.aOp[i].SL;
+                tim.Ops[i].KSL = (byte)tone.aOp[i].KS;
+                tim.Ops[i].KSR = (byte)tone.aOp[i].KSR;
+                tim.Ops[i].MFM = (byte)tone.aOp[i].ML;
+                tim.Ops[i].AM = (byte)tone.aOp[i].AM;
+                tim.Ops[i].VIB = (byte)tone.aOp[i].VIB;
+                tim.Ops[i].EG = (byte)tone.aOp[i].EG;
+                tim.Ops[i].WS = (byte)tone.aOp[i].WS;
+            }
+
+            tim.MDS.KeyShift = tone.KeyShift;
+            tim.MDS.PitchShift = tone.PitchShift;
+            timbre.TimbreName = tone.Name;
+        }
     }
 
 }

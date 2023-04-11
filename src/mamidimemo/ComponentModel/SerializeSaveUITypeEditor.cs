@@ -115,7 +115,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                         fname = fname?.Trim();
                         if (string.IsNullOrWhiteSpace(fname))
-                            fname = fullTypeName;
+                            fname = tim.GetType().Name + ".msd";
 
                         foreach (var invalidChar in Path.GetInvalidFileNameChars())
                             fname = fname.Replace(invalidChar.ToString(), "");

@@ -250,6 +250,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void ResetSDS()
         {
             SDS.SerializeData = "{}";
+            InitializeFxS();
         }
 
         [DataMember]

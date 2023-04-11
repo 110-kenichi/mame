@@ -70,9 +70,13 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonNewDir = new MetroFramework.Controls.MetroButton();
             this.metroButtonDelete = new MetroFramework.Controls.MetroButton();
+            this.metroButtonRefresh = new MetroFramework.Controls.MetroButton();
+            this.metroButtonExplorer = new MetroFramework.Controls.MetroButton();
+            this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonExport = new MetroFramework.Controls.MetroButton();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
+            this.metroButton2 = new MetroFramework.Controls.MetroButton();
+            this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.betterFolderBrowser1 = new WK.Libraries.BetterFolderBrowserNS.BetterFolderBrowser(this.components);
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -373,13 +377,11 @@
             // listViewCurrentTimbres
             // 
             this.listViewCurrentTimbres.AllowDrop = true;
-            this.listViewCurrentTimbres.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewCurrentTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
+            this.listViewCurrentTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
             listViewGroup1.Header = "Default";
@@ -387,10 +389,10 @@
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1});
             this.listViewCurrentTimbres.HideSelection = false;
-            this.listViewCurrentTimbres.Location = new System.Drawing.Point(741, 32);
+            this.listViewCurrentTimbres.Location = new System.Drawing.Point(745, 34);
             this.listViewCurrentTimbres.Name = "listViewCurrentTimbres";
             this.listViewCurrentTimbres.ShowGroups = false;
-            this.listViewCurrentTimbres.Size = new System.Drawing.Size(295, 511);
+            this.listViewCurrentTimbres.Size = new System.Drawing.Size(291, 509);
             this.listViewCurrentTimbres.TabIndex = 5;
             this.listViewCurrentTimbres.UseCompatibleStateImageBehavior = false;
             this.listViewCurrentTimbres.View = System.Windows.Forms.View.Details;
@@ -466,14 +468,14 @@
             this.fileFolderList1.CurrentDirectory = "C:\\";
             this.fileFolderList1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileFolderList1.FilterExts = null;
-            this.fileFolderList1.FilterFunction = null;
+            this.fileFolderList1.FileValidator = null;
             this.fileFolderList1.FullRowSelect = true;
             this.fileFolderList1.GridLines = true;
             this.fileFolderList1.HideSelection = false;
             this.fileFolderList1.isSoloBrowser = true;
-            this.fileFolderList1.Location = new System.Drawing.Point(3, 32);
+            this.fileFolderList1.Location = new System.Drawing.Point(3, 34);
             this.fileFolderList1.Name = "fileFolderList1";
-            this.fileFolderList1.Size = new System.Drawing.Size(384, 511);
+            this.fileFolderList1.Size = new System.Drawing.Size(392, 509);
             this.fileFolderList1.TabIndex = 7;
             this.fileFolderList1.UseCompatibleStateImageBehavior = false;
             this.fileFolderList1.View = System.Windows.Forms.View.Details;
@@ -489,9 +491,9 @@
             // 
             // 
             this.metroTextBox1.CustomButton.Image = null;
-            this.metroTextBox1.CustomButton.Location = new System.Drawing.Point(272, 1);
+            this.metroTextBox1.CustomButton.Location = new System.Drawing.Point(266, 1);
             this.metroTextBox1.CustomButton.Name = "";
-            this.metroTextBox1.CustomButton.Size = new System.Drawing.Size(21, 21);
+            this.metroTextBox1.CustomButton.Size = new System.Drawing.Size(23, 23);
             this.metroTextBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
             this.metroTextBox1.CustomButton.TabIndex = 1;
             this.metroTextBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
@@ -509,7 +511,7 @@
             this.metroTextBox1.SelectionLength = 0;
             this.metroTextBox1.SelectionStart = 0;
             this.metroTextBox1.ShortcutsEnabled = true;
-            this.metroTextBox1.Size = new System.Drawing.Size(294, 23);
+            this.metroTextBox1.Size = new System.Drawing.Size(290, 25);
             this.metroTextBox1.TabIndex = 8;
             this.metroTextBox1.Text = "c:\\";
             this.metroTextBox1.UseSelectable = true;
@@ -524,17 +526,17 @@
             this.metroLabelDir.Location = new System.Drawing.Point(4, 0);
             this.metroLabelDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabelDir.Name = "metroLabelDir";
-            this.metroLabelDir.Size = new System.Drawing.Size(62, 29);
+            this.metroLabelDir.Size = new System.Drawing.Size(62, 31);
             this.metroLabelDir.TabIndex = 9;
             this.metroLabelDir.Text = "&Directry:";
             // 
             // metroLabel1
             // 
             this.metroLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel1.Location = new System.Drawing.Point(394, 0);
+            this.metroLabel1.Location = new System.Drawing.Point(402, 0);
             this.metroLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(292, 29);
+            this.metroLabel1.Size = new System.Drawing.Size(288, 31);
             this.metroLabel1.TabIndex = 10;
             this.metroLabel1.Text = "Loaded &Timbres: (Drag to right pane)";
             this.metroLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -552,7 +554,6 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel2.Controls.Add(this.metroLabelDir, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.listViewCurrentTimbres, 5, 1);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.fileFolderList1, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel2, 5, 0);
@@ -560,8 +561,9 @@
             this.tableLayoutPanel2.Controls.Add(this.listViewFilesTimbres, 3, 1);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel3, 4, 1);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 5, 3);
             this.tableLayoutPanel2.Controls.Add(this.metroButton1, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 5, 3);
+            this.tableLayoutPanel2.Controls.Add(this.listViewCurrentTimbres, 5, 1);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(10, 79);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 4;
@@ -575,10 +577,10 @@
             // metroLabel2
             // 
             this.metroLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel2.Location = new System.Drawing.Point(742, 0);
+            this.metroLabel2.Location = new System.Drawing.Point(746, 0);
             this.metroLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(293, 29);
+            this.metroLabel2.Size = new System.Drawing.Size(289, 31);
             this.metroLabel2.TabIndex = 10;
             this.metroLabel2.Text = "&Current Timbres: (Drag(+shift) to copy(exchg) order)";
             this.metroLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -600,10 +602,10 @@
             this.listViewFilesTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup2});
             this.listViewFilesTimbres.HideSelection = false;
-            this.listViewFilesTimbres.Location = new System.Drawing.Point(393, 32);
+            this.listViewFilesTimbres.Location = new System.Drawing.Point(401, 34);
             this.listViewFilesTimbres.Name = "listViewFilesTimbres";
             this.listViewFilesTimbres.ShowGroups = false;
-            this.listViewFilesTimbres.Size = new System.Drawing.Size(294, 511);
+            this.listViewFilesTimbres.Size = new System.Drawing.Size(290, 509);
             this.listViewFilesTimbres.TabIndex = 5;
             this.listViewFilesTimbres.UseCompatibleStateImageBehavior = false;
             this.listViewFilesTimbres.View = System.Windows.Forms.View.Details;
@@ -629,9 +631,9 @@
             // 
             this.metroLabel3.AutoSize = true;
             this.metroLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel3.Location = new System.Drawing.Point(693, 29);
+            this.metroLabel3.Location = new System.Drawing.Point(697, 31);
             this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(42, 517);
+            this.metroLabel3.Size = new System.Drawing.Size(42, 515);
             this.metroLabel3.TabIndex = 11;
             this.metroLabel3.Text = "⇒";
             this.metroLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -640,19 +642,24 @@
             // 
             this.tableLayoutPanel3.AutoSize = true;
             this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 3;
-            this.tableLayoutPanel2.SetColumnSpan(this.tableLayoutPanel3, 2);
+            this.tableLayoutPanel3.ColumnCount = 5;
+            this.tableLayoutPanel2.SetColumnSpan(this.tableLayoutPanel3, 3);
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel3.Controls.Add(this.metroButtonNewDir, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.metroButtonDelete, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.metroButtonRefresh, 4, 0);
+            this.tableLayoutPanel3.Controls.Add(this.metroButtonExplorer, 3, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 546);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(217, 31);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(398, 31);
             this.tableLayoutPanel3.TabIndex = 12;
             // 
             // metroButtonNewDir
@@ -679,43 +686,104 @@
             this.metroButtonDelete.UseSelectable = true;
             this.metroButtonDelete.Click += new System.EventHandler(this.metroButtonDelete_Click);
             // 
-            // tableLayoutPanel4
+            // metroButtonRefresh
             // 
-            this.tableLayoutPanel4.AutoSize = true;
-            this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel4.ColumnCount = 1;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 0, 0);
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(738, 546);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(81, 29);
-            this.tableLayoutPanel4.TabIndex = 12;
+            this.metroButtonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.metroButtonRefresh.AutoSize = true;
+            this.metroButtonRefresh.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButtonRefresh.Location = new System.Drawing.Point(328, 3);
+            this.metroButtonRefresh.Name = "metroButtonRefresh";
+            this.metroButtonRefresh.Size = new System.Drawing.Size(67, 25);
+            this.metroButtonRefresh.TabIndex = 1;
+            this.metroButtonRefresh.Text = "Refresh";
+            this.metroButtonRefresh.UseSelectable = true;
+            this.metroButtonRefresh.Click += new System.EventHandler(this.metroButtonRefresh_Click);
             // 
-            // metroButtonExport
+            // metroButtonExplorer
             // 
-            this.metroButtonExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButtonExport.Location = new System.Drawing.Point(3, 3);
-            this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.Size = new System.Drawing.Size(75, 23);
-            this.metroButtonExport.TabIndex = 0;
-            this.metroButtonExport.Text = "Save...";
-            this.metroButtonExport.UseSelectable = true;
-            this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
+            this.metroButtonExplorer.AutoSize = true;
+            this.metroButtonExplorer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButtonExplorer.Location = new System.Drawing.Point(254, 3);
+            this.metroButtonExplorer.Name = "metroButtonExplorer";
+            this.metroButtonExplorer.Size = new System.Drawing.Size(68, 25);
+            this.metroButtonExplorer.TabIndex = 2;
+            this.metroButtonExplorer.Text = "Explorer";
+            this.metroButtonExplorer.UseSelectable = true;
+            this.metroButtonExplorer.Click += new System.EventHandler(this.metroButtonExplorer_Click);
             // 
             // metroButton1
             // 
-            this.metroButton1.Location = new System.Drawing.Point(373, 3);
+            this.metroButton1.AutoSize = true;
+            this.metroButton1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroButton1.Location = new System.Drawing.Point(369, 3);
             this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(14, 23);
+            this.metroButton1.Size = new System.Drawing.Size(26, 25);
             this.metroButton1.TabIndex = 13;
             this.metroButton1.Text = "...";
             this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
+            // 
+            // tableLayoutPanel4
+            // 
+            this.tableLayoutPanel4.AutoSize = true;
+            this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel4.ColumnCount = 3;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.metroButton2, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.metroButton3, 2, 0);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(742, 546);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 1;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(297, 31);
+            this.tableLayoutPanel4.TabIndex = 12;
+            // 
+            // metroButtonExport
+            // 
+            this.metroButtonExport.AutoSize = true;
+            this.metroButtonExport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButtonExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroButtonExport.Location = new System.Drawing.Point(3, 3);
+            this.metroButtonExport.Name = "metroButtonExport";
+            this.metroButtonExport.Size = new System.Drawing.Size(108, 25);
+            this.metroButtonExport.TabIndex = 0;
+            this.metroButtonExport.Text = "Save slected...";
+            this.metroButtonExport.UseSelectable = true;
+            this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
+            // 
+            // metroButton2
+            // 
+            this.metroButton2.AutoSize = true;
+            this.metroButton2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButton2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroButton2.Location = new System.Drawing.Point(117, 3);
+            this.metroButton2.Name = "metroButton2";
+            this.metroButton2.Size = new System.Drawing.Size(75, 25);
+            this.metroButton2.TabIndex = 1;
+            this.metroButton2.Text = "Save all...";
+            this.metroButton2.UseSelectable = true;
+            this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
+            // 
+            // metroButton3
+            // 
+            this.metroButton3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.metroButton3.AutoSize = true;
+            this.metroButton3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.metroButton3.Location = new System.Drawing.Point(235, 3);
+            this.metroButton3.Name = "metroButton3";
+            this.metroButton3.Size = new System.Drawing.Size(59, 25);
+            this.metroButton3.TabIndex = 2;
+            this.metroButton3.Text = "Clear...";
+            this.metroButton3.UseSelectable = true;
+            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
             // 
             // betterFolderBrowser1
             // 
@@ -742,6 +810,7 @@
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
+            this.tableLayoutPanel4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -792,5 +861,9 @@
         private MetroFramework.Controls.MetroLabel metroLabel3;
         private MetroFramework.Controls.MetroButton metroButton1;
         private WK.Libraries.BetterFolderBrowserNS.BetterFolderBrowser betterFolderBrowser1;
+        private MetroFramework.Controls.MetroButton metroButton2;
+        private MetroFramework.Controls.MetroButton metroButtonRefresh;
+        private MetroFramework.Controls.MetroButton metroButtonExplorer;
+        private MetroFramework.Controls.MetroButton metroButton3;
     }
 }
