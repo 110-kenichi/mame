@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
             this.toolStripComboBoxCh = new System.Windows.Forms.ToolStripComboBox();
@@ -388,10 +388,10 @@
             this.listViewCurrentTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
-            listViewGroup6.Header = "Default";
-            listViewGroup6.Name = "listViewGroup1";
+            listViewGroup1.Header = "Default";
+            listViewGroup1.Name = "listViewGroup1";
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup6});
+            listViewGroup1});
             this.listViewCurrentTimbres.HideSelection = false;
             this.listViewCurrentTimbres.Location = new System.Drawing.Point(745, 34);
             this.listViewCurrentTimbres.Name = "listViewCurrentTimbres";
@@ -405,6 +405,7 @@
             this.listViewCurrentTimbres.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewCurrentTimbres_DragOver);
             this.listViewCurrentTimbres.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewCurrentTimbres_DragOver);
             this.listViewCurrentTimbres.Enter += new System.EventHandler(this.listViewCurrentTimbres_Enter);
+            this.listViewCurrentTimbres.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewCurrentTimbres_MouseDoubleClick);
             // 
             // columnHeader1
             // 
@@ -616,10 +617,10 @@
             this.columnHeader7});
             this.listViewFilesTimbres.FullRowSelect = true;
             this.listViewFilesTimbres.GridLines = true;
-            listViewGroup5.Header = "Default";
-            listViewGroup5.Name = "listViewGroup1";
+            listViewGroup2.Header = "Default";
+            listViewGroup2.Name = "listViewGroup1";
             this.listViewFilesTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup5});
+            listViewGroup2});
             this.listViewFilesTimbres.HideSelection = false;
             this.listViewFilesTimbres.Location = new System.Drawing.Point(401, 34);
             this.listViewFilesTimbres.Name = "listViewFilesTimbres";

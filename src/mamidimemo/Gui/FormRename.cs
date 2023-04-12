@@ -30,21 +30,6 @@ namespace zanac.MAmidiMEmo.Gui
         /// <summary>
         /// 
         /// </summary>
-        public string LabelText
-        {
-            get
-            {
-                return metroLabelName.Text;
-            }
-            set
-            {
-                metroLabelName.Text = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string InputText
         {
             get

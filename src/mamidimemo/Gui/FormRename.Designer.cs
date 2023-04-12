@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.metroLabelName = new MetroFramework.Controls.MetroLabel();
             this.metroTextBoxText = new MetroFramework.Controls.MetroTextBox();
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
@@ -36,24 +35,13 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // metroLabelName
-            // 
-            this.metroLabelName.AutoSize = true;
-            this.metroLabelName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabelName.Location = new System.Drawing.Point(3, 0);
-            this.metroLabelName.Name = "metroLabelName";
-            this.metroLabelName.Size = new System.Drawing.Size(50, 31);
-            this.metroLabelName.TabIndex = 0;
-            this.metroLabelName.Text = "&Name:";
-            this.metroLabelName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // metroTextBoxText
             // 
             // 
             // 
             // 
             this.metroTextBoxText.CustomButton.Image = null;
-            this.metroTextBoxText.CustomButton.Location = new System.Drawing.Point(424, 1);
+            this.metroTextBoxText.CustomButton.Location = new System.Drawing.Point(480, 1);
             this.metroTextBoxText.CustomButton.Name = "";
             this.metroTextBoxText.CustomButton.Size = new System.Drawing.Size(23, 23);
             this.metroTextBoxText.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -63,7 +51,7 @@
             this.metroTextBoxText.CustomButton.Visible = false;
             this.metroTextBoxText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxText.Lines = new string[0];
-            this.metroTextBoxText.Location = new System.Drawing.Point(59, 3);
+            this.metroTextBoxText.Location = new System.Drawing.Point(3, 3);
             this.metroTextBoxText.MaxLength = 32767;
             this.metroTextBoxText.Name = "metroTextBoxText";
             this.metroTextBoxText.PasswordChar = '\0';
@@ -72,7 +60,7 @@
             this.metroTextBoxText.SelectionLength = 0;
             this.metroTextBoxText.SelectionStart = 0;
             this.metroTextBoxText.ShortcutsEnabled = true;
-            this.metroTextBoxText.Size = new System.Drawing.Size(448, 25);
+            this.metroTextBoxText.Size = new System.Drawing.Size(504, 25);
             this.metroTextBoxText.TabIndex = 1;
             this.metroTextBoxText.UseSelectable = true;
             this.metroTextBoxText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -109,7 +97,6 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.metroLabelName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxText, 1, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(10, 78);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -137,14 +124,11 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Specify the name";
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private MetroFramework.Controls.MetroLabel metroLabelName;
         private MetroFramework.Controls.MetroTextBox metroTextBoxText;
         private MetroFramework.Controls.MetroButton buttonOK;
         private MetroFramework.Controls.MetroButton buttonCancel;

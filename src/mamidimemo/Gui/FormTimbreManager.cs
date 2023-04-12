@@ -1431,5 +1431,34 @@ namespace zanac.MAmidiMEmo.Gui
         {
             metroButtonClear_Click(sender, e);
         }
+
+        private void listViewCurrentTimbres_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(e.Location);
+            if (info.SubItem == null)
+                return;
+            if (info.Item.SubItems[0] == info.SubItem)
+                return;
+
+            TimbreItem ttim = (TimbreItem)info.Item.Tag;
+            using (var f = new FormRename())
+            {
+                f.InputText = info.SubItem.Text;
+                if (info.Item.SubItems[1] == info.SubItem)
+                    f.TitleText = "Specify the Timbre name";
+                else if (info.Item.SubItems[2] == info.SubItem)
+                    f.TitleText = "Specify the Timbre memo";
+
+                var dr = f.ShowDialog(this);
+                if (dr == DialogResult.OK)
+                {
+                    info.SubItem.Text = f.InputText;
+                    if (info.Item.SubItems[1] == info.SubItem)
+                        ttim.Timbre.TimbreName = f.InputText;
+                    else if (info.Item.SubItems[2] == info.SubItem)
+                        ttim.Timbre.Memo = f.InputText;
+                }
+            }
+        }
     }
 }
