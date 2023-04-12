@@ -15,6 +15,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Drawing;
+    using System.Drawing.Drawing2D;
 
     enum Types
     {
@@ -114,6 +115,33 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
             this.ItemActivate += new EventHandler(FileFolderList_ItemActivate);
             this.ItemSelectionChanged += new ListViewItemSelectionChangedEventHandler(FileFolderList_ItemSelectionChanged);
+        }
+
+        private void listView1_DrawItem(object sender,
+    DrawListViewItemEventArgs e)
+        {
+            if ((e.State & ListViewItemStates.Selected) != 0)
+            {
+                // Draw the background and focus rectangle for a selected item.
+                e.Graphics.FillRectangle(Brushes.Maroon, e.Bounds);
+                e.DrawFocusRectangle();
+            }
+            else
+            {
+                // Draw the background for an unselected item.
+                using (LinearGradientBrush brush =
+                    new LinearGradientBrush(e.Bounds, Color.Orange,
+                    Color.Maroon, LinearGradientMode.Horizontal))
+                {
+                    e.Graphics.FillRectangle(brush, e.Bounds);
+                }
+            }
+
+            // Draw the item text for views other than the Details view.
+            if (View != View.Details)
+            {
+                e.DrawText();
+            }
         }
 
         void bgIconLoader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -216,6 +244,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                     if (use16)
                     {
+
                         if (!il16.Images.ContainsKey(fi.FullName))
                         {
                             il16.Images.Add(fi.FullName, this.win32.GetIcon(fi.FullName, true));
@@ -494,11 +523,11 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
     internal class Win32
     {
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         struct SHFILEINFO
         {
             public IntPtr hIcon;
-            public IntPtr iIcon;
+            public int iIcon;
             public uint dwAttributes;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
@@ -521,7 +550,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
         public const uint SHGFI_LARGEICON = 0x0;    // 'Large icon
         public const uint SHGFI_SMALLICON = 0x1;    // 'Small icon
 
-        [DllImport("shell32.dll")]
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         static extern IntPtr SHGetFileInfo(string pszPath,
                                     uint dwFileAttributes,
                                     ref SHFILEINFO psfi,
