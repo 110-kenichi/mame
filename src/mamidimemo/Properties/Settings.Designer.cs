@@ -705,5 +705,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmCh"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size TimbreManagerWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TimbreManagerWinSize"]));
+            }
+            set {
+                this["TimbreManagerWinSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size DrumEditorWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["DrumEditorWinSize"]));
+            }
+            set {
+                this["DrumEditorWinSize"] = value;
+            }
+        }
     }
 }

@@ -70,13 +70,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                     using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
-                        string dir = Settings.Default.ToneLibLastDir;
-                        if (string.IsNullOrWhiteSpace(dir))
-                        {
-                            dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                            dir = Path.Combine(dir, "MAmi");
-                        }
-                        openFileDialog.InitialDirectory = dir;
+                        openFileDialog.InitialDirectory = Program.GetToneLibLastDir();
 
                         openFileDialog.DefaultExt = "*.msd";
                         openFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";

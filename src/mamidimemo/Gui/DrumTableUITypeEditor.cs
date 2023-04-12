@@ -55,9 +55,10 @@ namespace zanac.MAmidiMEmo.Gui
                 return value;
 
             // CurrencyValueEditorForm を使用したプロパティエディタの表示
-            using (FormDrumTableEditor frm = new FormDrumTableEditor())
+            InstrumentBase inst = context.Instance as InstrumentBase;
+
+            using (FormDrumTableEditor frm = new FormDrumTableEditor(inst))
             {
-                InstrumentBase inst = context.Instance as InstrumentBase;
                 frm.Instrument = inst;
 
                 if (value != null)

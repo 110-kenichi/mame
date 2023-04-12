@@ -2,6 +2,7 @@
 using Accessibility;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Devices;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -503,5 +504,30 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
             }
         }
 
+        public static string GetToneLibLastDir()
+        {
+            string dir = Settings.Default.ToneLibLastDir;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dir))
+                {
+                    dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    dir = Path.Combine(dir, "MAmi");
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(Settings.Default.ToneLibLastDir);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            }
+            return dir;
+        }
     }
 }

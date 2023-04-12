@@ -1504,13 +1504,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             using (CommonSaveFileDialog saveFileDialog = new CommonSaveFileDialog())
             {
-                string dir = Settings.Default.ToneLibLastDir;
-                if (string.IsNullOrWhiteSpace(dir))
-                {
-                    dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    dir = System.IO.Path.Combine(dir, "MAmi");
-                }
-                saveFileDialog.InitialDirectory = dir;
+                saveFileDialog.InitialDirectory = Program.GetToneLibLastDir();
                 saveFileDialog.DefaultFileName = $"Instrument_{Instrument.Name}";
 
                 saveFileDialog.DefaultExtension = ExtensionsFilterExt.Replace("*", "");

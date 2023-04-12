@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
             this.toolStripComboBoxCh = new System.Windows.Forms.ToolStripComboBox();
@@ -52,6 +52,8 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
@@ -79,6 +81,7 @@
             this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.betterFolderBrowser1 = new WK.Libraries.BetterFolderBrowserNS.BetterFolderBrowser(this.components);
             this.toolStrip2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -92,7 +95,7 @@
             this.pianoControl1.Margin = new System.Windows.Forms.Padding(5);
             this.pianoControl1.Name = "pianoControl1";
             this.pianoControl1.Size = new System.Drawing.Size(1042, 72);
-            this.pianoControl1.TabIndex = 3;
+            this.pianoControl1.TabIndex = 2;
             this.pianoControl1.TargetTimbres = null;
             // 
             // toolStrip2
@@ -118,7 +121,7 @@
             this.toolStrip2.Location = new System.Drawing.Point(7, 659);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(1042, 28);
-            this.toolStrip2.TabIndex = 4;
+            this.toolStrip2.TabIndex = 1;
             // 
             // toolStripComboBoxCh
             // 
@@ -381,19 +384,20 @@
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
+            this.listViewCurrentTimbres.ContextMenuStrip = this.contextMenuStrip1;
             this.listViewCurrentTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
-            listViewGroup1.Header = "Default";
-            listViewGroup1.Name = "listViewGroup1";
+            listViewGroup6.Header = "Default";
+            listViewGroup6.Name = "listViewGroup1";
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1});
+            listViewGroup6});
             this.listViewCurrentTimbres.HideSelection = false;
             this.listViewCurrentTimbres.Location = new System.Drawing.Point(745, 34);
             this.listViewCurrentTimbres.Name = "listViewCurrentTimbres";
             this.listViewCurrentTimbres.ShowGroups = false;
             this.listViewCurrentTimbres.Size = new System.Drawing.Size(291, 509);
-            this.listViewCurrentTimbres.TabIndex = 5;
+            this.listViewCurrentTimbres.TabIndex = 8;
             this.listViewCurrentTimbres.UseCompatibleStateImageBehavior = false;
             this.listViewCurrentTimbres.View = System.Windows.Forms.View.Details;
             this.listViewCurrentTimbres.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewCurrentTimbres_ItemDrag);
@@ -414,6 +418,21 @@
             // 
             this.columnHeader3.Text = "Memo";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(121, 28);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(120, 24);
+            this.clearToolStripMenuItem.Text = "&Clear...";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
@@ -431,7 +450,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1042, 46);
-            this.tableLayoutPanel1.TabIndex = 6;
+            this.tableLayoutPanel1.TabIndex = 3;
             // 
             // buttonOK
             // 
@@ -441,7 +460,7 @@
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(100, 29);
-            this.buttonOK.TabIndex = 8;
+            this.buttonOK.TabIndex = 0;
             this.buttonOK.Text = "&OK";
             this.buttonOK.UseSelectable = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
@@ -454,8 +473,8 @@
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(100, 29);
-            this.buttonCancel.TabIndex = 9;
-            this.buttonCancel.Text = "&Cancel";
+            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseSelectable = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
@@ -467,8 +486,8 @@
             this.tableLayoutPanel2.SetColumnSpan(this.fileFolderList1, 3);
             this.fileFolderList1.CurrentDirectory = "C:\\";
             this.fileFolderList1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fileFolderList1.FilterExts = null;
             this.fileFolderList1.FileValidator = null;
+            this.fileFolderList1.FilterExts = null;
             this.fileFolderList1.FullRowSelect = true;
             this.fileFolderList1.GridLines = true;
             this.fileFolderList1.HideSelection = false;
@@ -476,7 +495,7 @@
             this.fileFolderList1.Location = new System.Drawing.Point(3, 34);
             this.fileFolderList1.Name = "fileFolderList1";
             this.fileFolderList1.Size = new System.Drawing.Size(392, 509);
-            this.fileFolderList1.TabIndex = 7;
+            this.fileFolderList1.TabIndex = 3;
             this.fileFolderList1.UseCompatibleStateImageBehavior = false;
             this.fileFolderList1.View = System.Windows.Forms.View.Details;
             this.fileFolderList1.CurrentDirectoryChanged += new System.EventHandler(this.fileFolderList1_CurrentDirectoryChanged);
@@ -512,7 +531,7 @@
             this.metroTextBox1.SelectionStart = 0;
             this.metroTextBox1.ShortcutsEnabled = true;
             this.metroTextBox1.Size = new System.Drawing.Size(290, 25);
-            this.metroTextBox1.TabIndex = 8;
+            this.metroTextBox1.TabIndex = 1;
             this.metroTextBox1.Text = "c:\\";
             this.metroTextBox1.UseSelectable = true;
             this.metroTextBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -527,7 +546,7 @@
             this.metroLabelDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabelDir.Name = "metroLabelDir";
             this.metroLabelDir.Size = new System.Drawing.Size(62, 31);
-            this.metroLabelDir.TabIndex = 9;
+            this.metroLabelDir.TabIndex = 0;
             this.metroLabelDir.Text = "&Directry:";
             // 
             // metroLabel1
@@ -537,7 +556,7 @@
             this.metroLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(288, 31);
-            this.metroLabel1.TabIndex = 10;
+            this.metroLabel1.TabIndex = 4;
             this.metroLabel1.Text = "Loaded &Timbres: (Drag to right pane)";
             this.metroLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -572,7 +591,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(1039, 577);
-            this.tableLayoutPanel2.TabIndex = 12;
+            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // metroLabel2
             // 
@@ -581,8 +600,8 @@
             this.metroLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel2.Name = "metroLabel2";
             this.metroLabel2.Size = new System.Drawing.Size(289, 31);
-            this.metroLabel2.TabIndex = 10;
-            this.metroLabel2.Text = "&Current Timbres: (Drag(+shift) to copy(exchg) order)";
+            this.metroLabel2.TabIndex = 7;
+            this.metroLabel2.Text = "C&urrent Timbres: (Drag(+shift) to copy(exchg) order)";
             this.metroLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // listViewFilesTimbres
@@ -597,10 +616,10 @@
             this.columnHeader7});
             this.listViewFilesTimbres.FullRowSelect = true;
             this.listViewFilesTimbres.GridLines = true;
-            listViewGroup2.Header = "Default";
-            listViewGroup2.Name = "listViewGroup1";
+            listViewGroup5.Header = "Default";
+            listViewGroup5.Name = "listViewGroup1";
             this.listViewFilesTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup2});
+            listViewGroup5});
             this.listViewFilesTimbres.HideSelection = false;
             this.listViewFilesTimbres.Location = new System.Drawing.Point(401, 34);
             this.listViewFilesTimbres.Name = "listViewFilesTimbres";
@@ -634,7 +653,7 @@
             this.metroLabel3.Location = new System.Drawing.Point(697, 31);
             this.metroLabel3.Name = "metroLabel3";
             this.metroLabel3.Size = new System.Drawing.Size(42, 515);
-            this.metroLabel3.TabIndex = 11;
+            this.metroLabel3.TabIndex = 6;
             this.metroLabel3.Text = "⇒";
             this.metroLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -660,7 +679,7 @@
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.Size = new System.Drawing.Size(398, 31);
-            this.tableLayoutPanel3.TabIndex = 12;
+            this.tableLayoutPanel3.TabIndex = 9;
             // 
             // metroButtonNewDir
             // 
@@ -671,7 +690,7 @@
             this.metroButtonNewDir.Name = "metroButtonNewDir";
             this.metroButtonNewDir.Size = new System.Drawing.Size(110, 25);
             this.metroButtonNewDir.TabIndex = 0;
-            this.metroButtonNewDir.Text = "Create folder...";
+            this.metroButtonNewDir.Text = "Create &folder...";
             this.metroButtonNewDir.UseSelectable = true;
             this.metroButtonNewDir.Click += new System.EventHandler(this.metroButtonNewDir_Click);
             // 
@@ -681,8 +700,8 @@
             this.metroButtonDelete.Location = new System.Drawing.Point(119, 3);
             this.metroButtonDelete.Name = "metroButtonDelete";
             this.metroButtonDelete.Size = new System.Drawing.Size(75, 25);
-            this.metroButtonDelete.TabIndex = 0;
-            this.metroButtonDelete.Text = "Delete...";
+            this.metroButtonDelete.TabIndex = 1;
+            this.metroButtonDelete.Text = "D&elete...";
             this.metroButtonDelete.UseSelectable = true;
             this.metroButtonDelete.Click += new System.EventHandler(this.metroButtonDelete_Click);
             // 
@@ -695,8 +714,8 @@
             this.metroButtonRefresh.Location = new System.Drawing.Point(328, 3);
             this.metroButtonRefresh.Name = "metroButtonRefresh";
             this.metroButtonRefresh.Size = new System.Drawing.Size(67, 25);
-            this.metroButtonRefresh.TabIndex = 1;
-            this.metroButtonRefresh.Text = "Refresh";
+            this.metroButtonRefresh.TabIndex = 3;
+            this.metroButtonRefresh.Text = "&Refresh";
             this.metroButtonRefresh.UseSelectable = true;
             this.metroButtonRefresh.Click += new System.EventHandler(this.metroButtonRefresh_Click);
             // 
@@ -708,7 +727,7 @@
             this.metroButtonExplorer.Name = "metroButtonExplorer";
             this.metroButtonExplorer.Size = new System.Drawing.Size(68, 25);
             this.metroButtonExplorer.TabIndex = 2;
-            this.metroButtonExplorer.Text = "Explorer";
+            this.metroButtonExplorer.Text = "E&xplorer";
             this.metroButtonExplorer.UseSelectable = true;
             this.metroButtonExplorer.Click += new System.EventHandler(this.metroButtonExplorer_Click);
             // 
@@ -720,7 +739,7 @@
             this.metroButton1.Location = new System.Drawing.Point(369, 3);
             this.metroButton1.Name = "metroButton1";
             this.metroButton1.Size = new System.Drawing.Size(26, 25);
-            this.metroButton1.TabIndex = 13;
+            this.metroButton1.TabIndex = 2;
             this.metroButton1.Text = "...";
             this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
@@ -743,7 +762,7 @@
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel4.Size = new System.Drawing.Size(297, 31);
-            this.tableLayoutPanel4.TabIndex = 12;
+            this.tableLayoutPanel4.TabIndex = 10;
             // 
             // metroButtonExport
             // 
@@ -752,9 +771,9 @@
             this.metroButtonExport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroButtonExport.Location = new System.Drawing.Point(3, 3);
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.Size = new System.Drawing.Size(108, 25);
+            this.metroButtonExport.Size = new System.Drawing.Size(117, 25);
             this.metroButtonExport.TabIndex = 0;
-            this.metroButtonExport.Text = "Save slected...";
+            this.metroButtonExport.Text = "Ex&port slected...";
             this.metroButtonExport.UseSelectable = true;
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
@@ -763,11 +782,11 @@
             this.metroButton2.AutoSize = true;
             this.metroButton2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.metroButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButton2.Location = new System.Drawing.Point(117, 3);
+            this.metroButton2.Location = new System.Drawing.Point(126, 3);
             this.metroButton2.Name = "metroButton2";
-            this.metroButton2.Size = new System.Drawing.Size(75, 25);
+            this.metroButton2.Size = new System.Drawing.Size(84, 25);
             this.metroButton2.TabIndex = 1;
-            this.metroButton2.Text = "Save all...";
+            this.metroButton2.Text = "Export &all...";
             this.metroButton2.UseSelectable = true;
             this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
@@ -781,9 +800,9 @@
             this.metroButton3.Name = "metroButton3";
             this.metroButton3.Size = new System.Drawing.Size(59, 25);
             this.metroButton3.TabIndex = 2;
-            this.metroButton3.Text = "Clear...";
+            this.metroButton3.Text = "&Clear...";
             this.metroButton3.UseSelectable = true;
-            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
+            this.metroButton3.Click += new System.EventHandler(this.metroButtonClear_Click);
             // 
             // betterFolderBrowser1
             // 
@@ -804,6 +823,7 @@
             this.Text = "Timbre Manager";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -865,5 +885,7 @@
         private MetroFramework.Controls.MetroButton metroButtonRefresh;
         private MetroFramework.Controls.MetroButton metroButtonExplorer;
         private MetroFramework.Controls.MetroButton metroButton3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
     }
 }

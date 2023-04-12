@@ -59,6 +59,10 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InitializeComponent();
 
+            Size = Settings.Default.TimbreManagerWinSize;
+
+            this.Instrument = inst;
+
             for (int nn = 0; nn < 128; nn++)
             {
                 toolStripComboBoxNote.Items.Add(MidiManager.GetNoteName((SevenBitNumber)nn) + "(" + nn + ")");
@@ -86,7 +90,6 @@ namespace zanac.MAmidiMEmo.Gui
             }
 
             //pianoControl1.TargetTimbres = new TimbreBase[] { timbre };
-            this.Instrument = inst;
 
             timbreType = Instrument.BaseTimbres[0].GetType();
             drumTimbreType = Instrument.DrumTimbres[0].GetType();
@@ -152,9 +155,6 @@ namespace zanac.MAmidiMEmo.Gui
                     return true;
             });
             fileFolderList1.ItemSelectionChanged += fileFolderList1_SelectedIndexChanged;
-
-            fileFolderList1.CurrentDirectory = Settings.Default.ToneLibLastDir;
-            metroTextBox1.Text = Settings.Default.ToneLibLastDir;
         }
 
         /// <summary>
@@ -169,7 +169,21 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (ColumnHeader c in listViewCurrentTimbres.Columns)
                 c.Width = -1;
 
-            fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            fileFolderList1.CurrentDirectory =  Program.GetToneLibLastDir();
+
+            try
+            {
+                metroTextBox1.Text = fileFolderList1.CurrentDirectory;
+                fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+            }
 
             toolStripComboBoxCh.Focus();
             base.OnShown(e);
@@ -191,6 +205,8 @@ namespace zanac.MAmidiMEmo.Gui
             Settings.Default.FmNote = toolStripComboBoxNote.SelectedIndex;
             Settings.Default.FmCC = toolStripComboBoxCC.SelectedIndex;
             Settings.Default.FmCh = toolStripComboBoxCh.SelectedIndex;
+
+            Settings.Default.TimbreManagerWinSize = Size;
 
             base.OnClosing(e);
         }
@@ -472,7 +488,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (ti == null)
                 return;
 
-            if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
+            if (e.IsSelected && toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
                 await testPlay();
         }
 
@@ -494,7 +510,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (ti == null)
                 return;
 
-            if (toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
+            if (e.IsSelected && toolStripButtonPlay.Checked && ignorePlayingFlag == 0 && Visible)
                 await testPlay();
         }
 
@@ -885,6 +901,7 @@ namespace zanac.MAmidiMEmo.Gui
                     e.Effect = DragDropEffects.Copy;
                 try
                 {
+                    ignorePlayingFlag++;
                     ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
                     listViewCurrentTimbres.SelectedItems.Clear();
 
@@ -906,6 +923,7 @@ namespace zanac.MAmidiMEmo.Gui
                 }
                 finally
                 {
+                    ignorePlayingFlag--;
                     ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
                 }
             }
@@ -915,7 +933,7 @@ namespace zanac.MAmidiMEmo.Gui
         {
             using (var f = new FormRename())
             {
-                var result = f.ShowDialog();
+                var result = f.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
                     if (!string.IsNullOrEmpty(f.InputText))
@@ -1043,7 +1061,7 @@ namespace zanac.MAmidiMEmo.Gui
                     saveFileDialog.FileName = fname;
                     saveFileDialog.SupportMultiDottedExtensions = true;
 
-                    DialogResult res = saveFileDialog.ShowDialog();
+                    DialogResult res = saveFileDialog.ShowDialog(this);
                     if (res == DialogResult.OK)
                     {
                         fname = saveFileDialog.FileName;
@@ -1132,7 +1150,7 @@ namespace zanac.MAmidiMEmo.Gui
                     saveFileDialog.FileName = fname;
                     saveFileDialog.SupportMultiDottedExtensions = true;
 
-                    DialogResult res = saveFileDialog.ShowDialog();
+                    DialogResult res = saveFileDialog.ShowDialog(this);
                     if (res == DialogResult.OK)
                     {
                         fname = saveFileDialog.FileName;
@@ -1266,6 +1284,7 @@ namespace zanac.MAmidiMEmo.Gui
             if (dr == DialogResult.OK)
             {
                 metroTextBox1.Text = betterFolderBrowser1.SelectedFolder;
+                Settings.Default.ToneLibLastDir = betterFolderBrowser1.SelectedFolder;
             }
         }
 
@@ -1330,7 +1349,7 @@ namespace zanac.MAmidiMEmo.Gui
                 saveFileDialog.FileName = fname;
                 saveFileDialog.SupportMultiDottedExtensions = true;
 
-                DialogResult res = saveFileDialog.ShowDialog();
+                DialogResult res = saveFileDialog.ShowDialog(this);
                 if (res == DialogResult.OK)
                 {
                     fname = saveFileDialog.FileName;
@@ -1386,8 +1405,11 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void metroButton3_Click(object sender, EventArgs e)
+        private void metroButtonClear_Click(object sender, EventArgs e)
         {
+            if (listViewCurrentTimbres.SelectedItems.Count == 0)
+                return;
+
             var result = MessageBox.Show(this, "Are you sure you want to reset selected Timbres to default?",
     "Qeuestion", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 
@@ -1405,5 +1427,9 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            metroButtonClear_Click(sender, e);
+        }
     }
 }

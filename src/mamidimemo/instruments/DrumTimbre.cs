@@ -34,6 +34,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [IgnoreDataMember]
+        [ReadOnly(true)]
         public String KeyName
         {
             get;
@@ -44,6 +45,7 @@ namespace zanac.MAmidiMEmo.Instruments
         /// 
         /// </summary>
         [IgnoreDataMember]
+        [ReadOnly(true)]
         public int NoteNumber
         {
             get;

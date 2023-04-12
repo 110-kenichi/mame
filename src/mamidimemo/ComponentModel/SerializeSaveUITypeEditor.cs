@@ -69,14 +69,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                     using (SaveFileDialog saveFileDialog = new SaveFileDialog())
                     {
-
-                        string dir = Settings.Default.ToneLibLastDir;
-                        if (string.IsNullOrWhiteSpace(dir))
-                        {
-                            dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                            dir = Path.Combine(dir, "MAmi");
-                        }
-                        saveFileDialog.InitialDirectory = dir;
+                        saveFileDialog.InitialDirectory = Program.GetToneLibLastDir();
 
                         saveFileDialog.DefaultExt = "*.msd";
                         saveFileDialog.Filter = "MAmi Serialize Data Files(*.msd)|*.msd";
