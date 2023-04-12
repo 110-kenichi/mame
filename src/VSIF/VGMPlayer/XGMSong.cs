@@ -1415,6 +1415,7 @@ namespace zanac.VGMPlayer
                             else if (xgmSong.comPortOPNA != null)
                             {
                                 dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
+                                dacData += 0x80;
                                 xgmSong.DeferredWriteOPNA_PseudoDAC(xgmSong.comPortOPNA, dacData);
                             }
 
