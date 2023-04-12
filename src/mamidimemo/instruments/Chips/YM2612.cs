@@ -1002,6 +1002,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ym2612WriteData(UnitNumber, 0x27, 0, 0, (byte)(Ch3Mode << 6));
             Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(Mode5ch ? 0x80 : 0x00));
             f_Ch3ModeKeyOn = 0;
+            if(Mode5ch && !DisableDacTransfer)
+                pcmEngine.StartEngine();
         }
 
         /// <summary>
