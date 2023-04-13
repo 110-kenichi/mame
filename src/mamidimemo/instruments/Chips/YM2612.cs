@@ -340,7 +340,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Global)")]
-        [Description("Use 5ch mode. Also 6ch uses for DAC.\r\n" +
+        [Description("Use 5ch mode. Also 6ch uses for DAC PCM.\r\n" +
             "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
         public bool Mode5ch
@@ -384,6 +384,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_MaxDacPcmVoices != value && 1 <= value && value <= DEFAULT_MAX_VOICES)
                 {
                     f_MaxDacPcmVoices = value;
+                }
+            }
+        }
+
+        private bool f_DisablePcmVelocity;
+
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Disabled DAC PCM velocity.\r\nNOTE: If you use XGMDRV, please set True only.")]
+        [DefaultValue(false)]
+        public bool DisableDacPcmVelocity
+        {
+            get
+            {
+                return f_DisablePcmVelocity;
+            }
+            set
+            {
+                if (f_DisablePcmVelocity != value)
+                {
+                    f_DisablePcmVelocity = value;
                 }
             }
         }
@@ -1336,7 +1357,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 lock (engineLockObject)
                 {
-                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate);
+                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate,  parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
 
                     parentModule.XgmWriter?.RecordData(new PortWriteData()
                     { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
@@ -1412,8 +1433,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 var d = sd.GetDacData();
                                 if (d == null)
                                     continue;
+                                int val = ((int)d.Value - 0x80);
+                                if (sd.Gain != 1.0f)
+                                    val = (int)Math.Round(val * sd.Gain);
+                                if (!sd.DisableVelocity)
+                                    val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
+                                dacData += val;
 
-                                dacData += ((int)d.Value - 0x80) * sd.Note.Velocity / 127;
                                 sampleRate = sd.SampleRate;
                                 playDac = true;
                             }
@@ -1536,16 +1562,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
+            public bool DisableVelocity
+            {
+                get;
+                private set;
+            }
+
+            public float Gain
+            {
+                get;
+                private set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate)
+            public SampleData(TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain)
             {
                 Note = note;
                 PcmData = (byte[])pcmData.Clone();
                 SampleRate = sampleRate;
+                DisableVelocity = disableVelocity;
+                Gain = gain;
             }
 
             private int index;
@@ -2631,7 +2671,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
+            [Description("Set DAC PCM data. Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
             [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 0)]
             public byte[] PcmData
             {
@@ -2671,7 +2711,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("Set PCM samplerate [Hz]")]
+            [Description("Set DAC PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
             [DefaultValue(typeof(uint), "14000")]
             [SlideParametersAttribute(4000, 14000)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -2680,6 +2720,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             } = 14000;
+
+            private float f_PcmGain = 1.0f;
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM gain(0.0-*).\r\nNOTE: If you use XGMDRV, please set 1.0 only.")]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+            [DoubleSlideParameters(0d, 10d, 0.1d)]
+            public float PcmGain
+            {
+                get
+                {
+                    return f_PcmGain;
+                }
+                set
+                {
+                    if (f_PcmGain != value)
+                    {
+                        f_PcmGain = value;
+                    }
+                }
+            }
+
+            public virtual bool ShouldSerializePcmGain()
+            {
+                return f_PcmGain != 1.0f;
+            }
+
+            public virtual void ResetGainPcmGain()
+            {
+                f_PcmGain = 1.0f;
+            }
 
             //[DataMember]
             //[Category("Sound(PCM)")]
