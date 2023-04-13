@@ -17,6 +17,7 @@ using Melanchall.DryWetMidi.Core;
 using FastColoredTextBoxNS;
 using System.Collections.ObjectModel;
 using zanac.MAmidiMEmo.Properties;
+using System.Xml.Linq;
 
 namespace zanac.MAmidiMEmo.Util
 {
@@ -283,10 +284,28 @@ namespace zanac.MAmidiMEmo.Util
                     {
                         if (writeData.Type == 6 && writeData.Data == 1) //Gather PCM Play command
                         {
-                            if (!pcmIndexTable.ContainsKey(writeData.Tag))
+                            if (!pcmIndexTable.ContainsKey(writeData.Tag["PcmData"]))
                             {
-                                pcmDataTable.Add(pcmId, writeData.Tag);
-                                pcmIndexTable.Add(writeData.Tag, pcmId++);
+                                float gain = (float)writeData.Tag["PcmGain"];
+                                if (gain != 1.0f)
+                                {
+                                    byte[] dacData = (byte[])((byte[])writeData.Tag["PcmData"]).Clone();
+                                    for (int pi = 0; pi < dacData.Length; pi++)
+                                    {
+                                        int val = (int)Math.Round((float)(dacData[pi] - 0x80) * gain);
+                                        if (val > sbyte.MaxValue)
+                                            val = sbyte.MaxValue;
+                                        else if (val < sbyte.MinValue)
+                                            val = sbyte.MinValue;
+                                        dacData[pi] = (byte)(val + 0x80);
+                                    }
+                                    pcmDataTable.Add(pcmId, dacData);
+                                }
+                                else
+                                {
+                                    pcmDataTable.Add(pcmId, writeData.Tag["PcmData"]);
+                                }
+                                pcmIndexTable.Add(writeData.Tag["PcmData"], pcmId++);
                             }
                         }
                         if (pcmId > 63)
@@ -507,10 +526,10 @@ namespace zanac.MAmidiMEmo.Util
                             case 6: //PCM
                                 if (writeData.Data == 1)
                                 {
-                                    if (pcmIndexTable.ContainsKey(writeData.Tag))
+                                    if (pcmIndexTable.ContainsKey(writeData.Tag["PcmData"]))
                                     {
                                         mdata.Add((byte)(0x50 + writeData.Address));
-                                        mdata.Add((byte)(pcmIndexTable[writeData.Tag] + 1));
+                                        mdata.Add((byte)(pcmIndexTable[writeData.Tag["PcmData"]] + 1));
                                     }
                                     else
                                     {

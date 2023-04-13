@@ -1359,8 +1359,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate,  parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
 
-                    parentModule.XgmWriter?.RecordData(new PortWriteData()
-                    { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = pcmTimbre.PcmData });
+                    var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
+                    data.Tag["PcmData"] = pcmTimbre.PcmData;
+                    data.Tag["PcmGain"] = pcmTimbre.PcmGain;
+                    parentModule.XgmWriter?.RecordData(data);
                 }
             }
 
@@ -2725,7 +2727,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("Set DAC PCM gain(0.0-*).\r\nNOTE: If you use XGMDRV, please set 1.0 only.")]
+            [Description("Set DAC PCM gain(0.0-*).")]
             [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
             [DoubleSlideParameters(0d, 10d, 0.1d)]
             public float PcmGain
