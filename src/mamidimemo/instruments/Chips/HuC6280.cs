@@ -1075,7 +1075,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte[] f_PcmData = new byte[0];
 
-            [TypeConverter(typeof(TypeConverter))]
+            [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]

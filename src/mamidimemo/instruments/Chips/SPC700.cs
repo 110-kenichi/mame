@@ -1460,7 +1460,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte[] f_AdcmData = new byte[0];
 
-            [TypeConverter(typeof(TypeConverter))]
+            [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(BrrFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]

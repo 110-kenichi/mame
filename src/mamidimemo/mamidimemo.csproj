@@ -169,6 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="ComponentModel\OpenFileBrowserTypeConverter.cs" />
+    <Compile Include="ComponentModel\OpenEditorTypeConverter.cs" />
+    <Compile Include="ComponentModel\LoadDataTypeConverter.cs" />
     <Compile Include="ComponentModel\ExpandableDrumCollectionConverter.cs" />
     <Compile Include="ComponentModel\FileFolderList.cs">
       <SubType>Component</SubType>

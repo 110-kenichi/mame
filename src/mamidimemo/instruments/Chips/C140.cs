@@ -849,7 +849,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private sbyte[] f_PcmData = new sbyte[0];
 
-            [TypeConverter(typeof(TypeConverter))]
+            [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]

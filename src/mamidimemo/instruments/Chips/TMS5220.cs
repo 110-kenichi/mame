@@ -764,7 +764,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             [DataMember]
-            [TypeConverter(typeof(EmptyTypeConverter))]
+            [TypeConverter(typeof(OpenEditorTypeConverter))]
             [Category("Sound")]
             [Editor(typeof(LpcUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
             [DefaultValue(null)]
@@ -779,7 +779,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound")]
             [Editor(typeof(FormTextUITypeEditor), typeof(UITypeEditor)), Localizable(false)]
-            [TypeConverter(typeof(EmptyTypeConverter))]
+            [TypeConverter(typeof(OpenEditorTypeConverter))]
             [Description("Set LPC Data like the following format.\r\n" +
                 "RPT(0-1) NRG(1-14) PITCH(0-63) K1(0-31) K2(0-31) K3(0-15) K4(0-15) (K5(0-15) K6(0-15) K7(0-15) K8(0-7) K9(0-7) K10(0-7))\r\n" +
                 "\r\n" +

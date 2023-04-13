@@ -2188,13 +2188,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             #region FM Synth
 
+            public virtual bool ShouldSerializeDetailed()
+            {
+                return false;
+            }
+
             [Category("Sound")]
             [Editor(typeof(YM2612UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
-            [DisplayName("(Detailed) - Open FM register editor")]
+            [DisplayName("(FM resisters)")]
             [Description("Open FM register editor.")]
-            [TypeConverter(typeof(EmptyTypeConverter))]
+            [TypeConverter(typeof(OpenEditorTypeConverter))]
             public string Detailed
             {
                 get
@@ -2622,7 +2627,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte[] f_PcmData = new byte[0];
 
-            [TypeConverter(typeof(TypeConverter))]
+            [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound(PCM)")]
@@ -3184,9 +3189,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
-            [DisplayName("(Save...)")]
+            [DisplayName("(Save settings)")]
             [Description("Save all parameters as serialize data to the file.")]
-            [TypeConverter(typeof(EmptyTypeConverter))]
+            [TypeConverter(typeof(OpenFileBrowserTypeConverter))]
             public string SerializeDataSave
             {
                 get
@@ -3203,9 +3208,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [IgnoreDataMember]
             [JsonIgnore]
-            [DisplayName("(Load...)")]
+            [DisplayName("(Load settings)")]
             [Description("Load all parameters as serialize data from the file.")]
-            [TypeConverter(typeof(EmptyTypeConverter))]
+            [TypeConverter(typeof(OpenFileBrowserTypeConverter))]
             public string SerializeDataLoad
             {
                 get
@@ -3216,6 +3221,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     SerializeData = value;
                 }
+            }
+
+            public virtual bool ShouldSerializeSerializeDataSave()
+            {
+                return false;
+            }
+
+            public virtual bool ShouldSerializeSerializeDataLoad()
+            {
+                return false;
             }
 
             [Browsable(false)]

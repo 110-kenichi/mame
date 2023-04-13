@@ -217,9 +217,9 @@ namespace zanac.MAmidiMEmo.Instruments
         [Editor(typeof(SerializeSaveUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [IgnoreDataMember]
         [JsonIgnore]
-        [DisplayName("(Save...)")]
+        [DisplayName("(Save settings)")]
         [Description("Save all parameters as serialize data to the file.")]
-        [TypeConverter(typeof(EmptyTypeConverter))]
+        [TypeConverter(typeof(OpenFileBrowserTypeConverter))]
         public string SerializeDataSave
         {
             get
@@ -236,9 +236,9 @@ namespace zanac.MAmidiMEmo.Instruments
         [Editor(typeof(SerializeLoadUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [IgnoreDataMember]
         [JsonIgnore]
-        [DisplayName("(Load...)")]
+        [DisplayName("(Load settings)")]
         [Description("Load all parameters as serialize data from the file.")]
-        [TypeConverter(typeof(EmptyTypeConverter))]
+        [TypeConverter(typeof(OpenFileBrowserTypeConverter))]
         public string SerializeDataLoad
         {
             get
@@ -249,6 +249,16 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 SerializeData = value;
             }
+        }
+
+        public virtual bool ShouldSerializeSerializeDataSave()
+        {
+            return false;
+        }
+
+        public virtual bool ShouldSerializeSerializeDataLoad()
+        {
+            return false;
         }
 
         [Browsable(false)]
