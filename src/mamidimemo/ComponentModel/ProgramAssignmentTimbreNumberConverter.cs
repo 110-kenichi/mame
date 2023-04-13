@@ -25,8 +25,6 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            dynamic instance = context.Instance;
-
             if (value is string)
             {
                 if (!string.IsNullOrWhiteSpace((string)value))
@@ -52,18 +50,20 @@ namespace zanac.MAmidiMEmo.ComponentModel
         {
             if (destinationType == typeof(string) && context != null)
             {
-                dynamic instance = context.Instance;
-
+                var instance = context.Instance as CombinedTimbreSettings;
                 string text = value?.ToString();
                 if (value != null)
                 {
                     ProgramAssignmentTimbreNumber nn = (ProgramAssignmentTimbreNumber)value;
                     try
                     {
-                        InstrumentBase inst = instance.Instrument as InstrumentBase;
+                        InstrumentBase inst = instance.TimberObject.Instrument;
                         text = nn.ToString();
-                        if ((int)nn < inst.BaseTimbres.Length)
-                            text += " " + inst.BaseTimbres[(int)nn].TimbreName;
+                        if (inst != null)
+                        {
+                            if ((int)nn < inst.BaseTimbres.Length)
+                                text += " " + inst.BaseTimbres[(int)nn].TimbreName;
+                        }
                     }
                     catch { }
                 }

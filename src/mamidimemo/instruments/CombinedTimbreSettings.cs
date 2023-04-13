@@ -26,16 +26,23 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class CombinedTimbreSettings : ContextBoundObject
     {
+        private InstrumentBase f_Instrument;
+
         /// <summary>
         /// 
         /// </summary>
         [Browsable(false)]
         public InstrumentBase Instrument
         {
-            get;
-            set;
+            get
+            {
+                if (f_Instrument == null)
+                {
+                    f_Instrument = InstrumentManager.FindParentInstrument(this);
+                }
+                return f_Instrument;
+            }
         }
-
 
         [DataMember]
         [Description("Base frequency offset [Semitone]")]
@@ -221,13 +228,17 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         } = ProgramAssignmentTimbreNumber.Timbre0;
 
+        private TimbreBase f_TimberObject;
+
         [IgnoreDataMember]
         [JsonIgnore]
         public TimbreBase TimberObject
         {
             get
             {
-                return findTimbre();
+                if(f_TimberObject == null)
+                    f_TimberObject = findTimbre();
+                return f_TimberObject;
             }
         }
 

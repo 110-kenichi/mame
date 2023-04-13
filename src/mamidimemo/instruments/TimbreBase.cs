@@ -1,5 +1,6 @@
 ﻿// copyright-holders:K.Ito
 using FM_SoundConvertor;
+using Kermalis.SoundFont2;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using System;
@@ -40,21 +41,12 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
+                if (f_Instrument == null)
+                {
+                    f_Instrument = InstrumentManager.FindParentInstrument(this);
+                }
                 return f_Instrument;
             }
-            set
-            {
-                f_Instrument = value;
-                OnInstrumentChanged(value);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="instrument"></param>
-        protected virtual void OnInstrumentChanged(InstrumentBase instrument)
-        {
         }
 
         [Browsable(false)]
@@ -289,7 +281,7 @@ namespace zanac.MAmidiMEmo.Instruments
             set
             {
                 f_TimbreName = value;
-                if(f_TimbreName != null)
+                if (f_TimbreName != null)
                     f_TimbreName = f_TimbreName.Replace("\0", string.Empty);
             }
         }

@@ -71,7 +71,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
-                inst = InstrumentManager.FindParentInstrument(InstrumentType.SP0256, tim) as SP0256;
+                inst = tim.Instrument as SP0256;
             }
             finally
             {

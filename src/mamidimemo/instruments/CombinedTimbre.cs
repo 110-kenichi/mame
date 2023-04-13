@@ -26,16 +26,6 @@ namespace zanac.MAmidiMEmo.Instruments
     public class CombinedTimbre : TimbreBase
     {
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="instrument"></param>
-        protected override void OnInstrumentChanged(InstrumentBase instrument)
-        {
-            Timbres.Instrument = instrument;
-        }
-
-
         [Browsable(false)]
         [DataMember]
         [DefaultValue(null)]

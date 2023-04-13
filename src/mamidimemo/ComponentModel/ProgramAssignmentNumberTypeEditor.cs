@@ -120,8 +120,9 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     try
                     {
                         InstrumentBase inst = instance.Instrument as InstrumentBase;
+                        text = nn.ToString();
+                        if (inst != null)
                         {
-                            text = nn.ToString();
                             if ((int)nn < inst.BaseTimbres.Length)
                                 text += " " + inst.BaseTimbres[(int)nn].TimbreName;
                         }

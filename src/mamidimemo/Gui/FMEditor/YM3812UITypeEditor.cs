@@ -75,7 +75,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 //InstrumentManager.ExclusiveLockObject.EnterReadLock();
 
-                inst = InstrumentManager.FindParentInstrument(InstrumentType.YM3812, tim) as YM3812;
+                inst = tim.Instrument as YM3812;
             }
             finally
             {

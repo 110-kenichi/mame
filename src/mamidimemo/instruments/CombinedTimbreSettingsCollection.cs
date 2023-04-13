@@ -40,8 +40,6 @@ namespace zanac.MAmidiMEmo.Instruments
             set
             {
                 f_Instrument = value;
-                foreach (var item in f_list)
-                    item.Instrument = value;
             }
         }
 
@@ -62,8 +60,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public void Insert(int index, CombinedTimbreSettings item)
         {
-            item.Instrument = Instrument;
-
             lock (InstrumentBase.VstPluginContextLockObject)
                 f_list.Insert(index, item);
         }
@@ -88,8 +84,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
         public void Add(CombinedTimbreSettings item)
         {
-            item.Instrument = Instrument;
-
             lock (InstrumentBase.VstPluginContextLockObject)
                 f_list.Add(item);
         }

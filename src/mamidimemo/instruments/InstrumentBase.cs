@@ -895,12 +895,6 @@ namespace zanac.MAmidiMEmo.Instruments
             set
             {
                 f_CombinedTimbres = value;
-                if (f_CombinedTimbres != null)
-                    for (int i = 0; i < value.Length; i++)
-                    {
-                        if (f_CombinedTimbres[i] != null)
-                            f_CombinedTimbres[i].Instrument = this;
-                    }
             }
         }
 

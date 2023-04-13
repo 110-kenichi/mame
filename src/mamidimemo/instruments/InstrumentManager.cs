@@ -166,6 +166,65 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (inst != null)
                         return;
                 });
+                if (inst != null)
+                    break;
+                Parallel.ForEach(i.CombinedTimbres, t =>
+                {
+                    if (t == timbre)
+                        inst = i;
+                    if (inst != null)
+                        return;
+                });
+                if (inst != null)
+                    break;
+            }
+            return inst;
+        }
+
+        public static InstrumentBase FindParentInstrument(TimbreBase timbre)
+        {
+            InstrumentBase inst = null;
+            foreach (var i in GetAllInstruments())
+            {
+                Parallel.ForEach(i.BaseTimbres, t =>
+                {
+                    if (t == timbre)
+                        inst = i;
+                    if (inst != null)
+                        return;
+                });
+                if (inst != null)
+                    break;
+                Parallel.ForEach(i.CombinedTimbres, t =>
+                {
+                    if (t == timbre)
+                        inst = i;
+                    if (inst != null)
+                        return;
+                });
+                if (inst != null)
+                    break;
+            }
+            return inst;
+        }
+
+        public static InstrumentBase FindParentInstrument(CombinedTimbreSettings timbreSettings)
+        {
+            InstrumentBase inst = null;
+            foreach (var i in GetAllInstruments())
+            {
+                Parallel.ForEach(i.CombinedTimbres, t =>
+                {
+                    foreach (var cts in t.Timbres)
+                    {
+                        if (cts == timbreSettings)
+                            inst = i;
+                        if (inst != null)
+                            return;
+                    }
+                });
+                if (inst != null)
+                    break;
             }
             return inst;
         }

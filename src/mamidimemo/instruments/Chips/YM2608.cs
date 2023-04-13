@@ -34,6 +34,7 @@ using File = System.IO.File;
 using Path = System.IO.Path;
 using System.Diagnostics;
 using static zanac.MAmidiMEmo.Instruments.Chips.AY8910;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 //https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
@@ -3031,7 +3032,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         f_PcmData = value;
 
-                        var inst = (YM2608)InstrumentManager.FindParentInstrument(InstrumentType.YM2608, this);
+                        var inst = (YM2608)this.Instrument;
                         if (inst != null)
                             inst.updatePcmData(this);
                     }
