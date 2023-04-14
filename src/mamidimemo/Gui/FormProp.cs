@@ -282,6 +282,7 @@ namespace zanac.MAmidiMEmo.Gui
             }
             else
             {
+                e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
                 if (timbres != null)
                 {
                     for (int i = 0; i < instruments.Count; i++)

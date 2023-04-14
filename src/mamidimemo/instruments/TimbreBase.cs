@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using FastColoredTextBoxNS;
 using FM_SoundConvertor;
 using Kermalis.SoundFont2;
 using Newtonsoft.Json;
@@ -17,7 +18,9 @@ using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
+using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -46,6 +49,39 @@ namespace zanac.MAmidiMEmo.Instruments
                     f_Instrument = InstrumentManager.FindParentInstrument(this);
                 }
                 return f_Instrument;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="timbre"></param>
+        public virtual bool CanOpenTimbreEditor(InstrumentBase inst)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="timbre"></param>
+        public virtual void OpenTimbreEditor(InstrumentBase inst)
+        {
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inst"></param>
+        /// <param name="timbre"></param>
+        public virtual void OpenPropEditor(InstrumentBase inst)
+        {
+            var fp = new FormProp(new InstrumentBase[] { inst }, new TimbreBase[] { this });
+            {
+                fp.Show();
             }
         }
 

@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using System.Xml.Linq;
 using FastColoredTextBoxNS;
 using FM_SoundConvertor;
@@ -1023,7 +1024,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Ym2612WriteData(UnitNumber, 0x27, 0, 0, (byte)(Ch3Mode << 6));
             Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(Mode5ch ? 0x80 : 0x00));
             f_Ch3ModeKeyOn = 0;
-            if(Mode5ch && !DisableDacTransfer)
+            if (Mode5ch && !DisableDacTransfer)
                 pcmEngine.StartEngine();
         }
 
@@ -1357,7 +1358,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 lock (engineLockObject)
                 {
-                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate,  parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
+                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate, parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
 
                     var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
                     data.Tag["PcmData"] = pcmTimbre.PcmData;
@@ -2230,10 +2231,44 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             #region FM Synth
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="inst"></param>
+            /// <param name="timbre"></param>
+            public override bool CanOpenTimbreEditor(InstrumentBase inst)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="inst"></param>
+            /// <param name="timbre"></param>
+            public override void OpenTimbreEditor(InstrumentBase inst)
+            {
+                PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties(this);
+                PropertyDescriptor pd = pdc["Detailed"];
+                UITypeEditor ed = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
+                RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider(null, this, pd);
+                ed.EditValue(serviceProvider, serviceProvider, Detailed);
+
+                //using (var f = new FormYM2612Editor((YM2612)inst, this, true))
+                //{
+                //    var sd = SerializeData;
+                //    var r = f.ShowDialog();
+                //    if (r != System.Windows.Forms.DialogResult.OK)
+                //        SerializeData = sd;
+                //}
+            }
+
             public virtual bool ShouldSerializeDetailed()
             {
                 return false;
             }
+
+
 
             [Category("Sound")]
             [Editor(typeof(YM2612UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]

@@ -1759,6 +1759,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             #region FM Synth
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="inst"></param>
+            /// <param name="timbre"></param>
+            public override bool CanOpenTimbreEditor(InstrumentBase inst)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="inst"></param>
+            /// <param name="timbre"></param>
+            public override void OpenTimbreEditor(InstrumentBase inst)
+            {
+                PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties(this);
+                PropertyDescriptor pd = pdc["Detailed"];
+                UITypeEditor ed = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
+                RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider(null, this, pd);
+                ed.EditValue(serviceProvider, serviceProvider, Detailed);
+
+                //using (var f = new FormYM2610BEditor((YM2610B)inst, this, true))
+                //{
+                //    var sd = SerializeData;
+                //    var r = f.ShowDialog();
+                //    if (r != System.Windows.Forms.DialogResult.OK)
+                //        SerializeData = sd;
+                //}
+            }
+
             public virtual bool ShouldSerializeDetailed()
             {
                 return false;

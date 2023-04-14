@@ -43,6 +43,10 @@ namespace zanac.MAmidiMEmo.Gui
 
         private Type drumTimbreType;
 
+        private List<TimbreBase> originalTimbres;
+
+        public static Dictionary<InstrumentBase, FormTimbreManager> TimbreManagers = new Dictionary<InstrumentBase, FormTimbreManager>();
+
         /// <summary>
         /// 
         /// </summary>
@@ -94,10 +98,11 @@ namespace zanac.MAmidiMEmo.Gui
             timbreType = Instrument.BaseTimbres[0].GetType();
             drumTimbreType = Instrument.DrumTimbres[0].GetType();
 
+            originalTimbres = new List<TimbreBase>();
             for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
             {
-                TimbreBase t = (TimbreBase)JsonConvert.DeserializeObject(inst.BaseTimbres[i].SerializeData, timbreType);
-                var tim = new TimbreItem(t, i);
+                originalTimbres.Add((TimbreBase)JsonConvert.DeserializeObject(inst.BaseTimbres[i].SerializeData, timbreType));
+                var tim = new TimbreItem(inst.BaseTimbres[i], i);
                 var lvi = new ListViewItem(new string[] { i.ToString(), tim.Timbre.TimbreName, tim.Timbre.Memo });
                 lvi.Tag = tim;
                 listViewCurrentTimbres.Items.Add(lvi);
@@ -155,6 +160,8 @@ namespace zanac.MAmidiMEmo.Gui
                     return true;
             });
             fileFolderList1.ItemSelectionChanged += fileFolderList1_SelectedIndexChanged;
+
+            TimbreManagers.Add(inst, this); 
         }
 
         /// <summary>
@@ -169,7 +176,7 @@ namespace zanac.MAmidiMEmo.Gui
             foreach (ColumnHeader c in listViewCurrentTimbres.Columns)
                 c.Width = -1;
 
-            fileFolderList1.CurrentDirectory =  Program.GetToneLibLastDir();
+            fileFolderList1.CurrentDirectory = Program.GetToneLibLastDir();
 
             try
             {
@@ -196,6 +203,8 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
+            TimbreManagers.Remove(Instrument);
+
             Midi.MidiManager.MidiEventHooked -= MidiManager_MidiEventHooked;
 
             Settings.Default.FmPlayOnEdit = toolStripButtonPlay.Checked;
@@ -229,25 +238,18 @@ namespace zanac.MAmidiMEmo.Gui
         /// <param name="e"></param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
-            {
-                TimbreItem ttim = (TimbreItem)(listViewCurrentTimbres.Items[i].Tag);
-                Instrument.BaseTimbres[i] = ttim.Timbre;
-            }
-
             Settings.Default.ToneLibLastDir = fileFolderList1.CurrentDirectory;
 
             DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-        }
+            for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
+                Instrument.BaseTimbres[i] = originalTimbres[i];
 
-        private void metroButtonAbort_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Abort;
+            DialogResult = DialogResult.Cancel;
         }
 
         private void Default_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
@@ -353,6 +355,19 @@ namespace zanac.MAmidiMEmo.Gui
         private SevenBitNumber vi;
 
         private int ignorePlayingFlag;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private void testStop()
+        {
+            if (playing != null)
+            {
+                PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
+                playing = null;
+            }
+        }
 
         /// <summary>
         /// 
@@ -1432,9 +1447,32 @@ namespace zanac.MAmidiMEmo.Gui
             metroButtonClear_Click(sender, e);
         }
 
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(listViewCurrentTimbres.PointToClient(contextMenuStrip1.Bounds.Location));
+
+            TimbreItem ttim = (TimbreItem)info.Item.Tag;
+
+            editToolStripMenuItem.Enabled = ttim.Timbre.CanOpenTimbreEditor(Instrument);
+        }
+
         private void listViewCurrentTimbres_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(e.Location);
+            if (info.Item != null)
+            {
+                TimbreItem ttim = (TimbreItem)info.Item.Tag;
+
+                testStop();
+
+                ttim.Timbre.OpenTimbreEditor(Instrument);
+            }
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(listViewCurrentTimbres.PointToClient(contextMenuStrip1.Bounds.Location));
             if (info.SubItem == null)
                 return;
             if (info.Item.SubItems[0] == info.SubItem)
@@ -1443,11 +1481,16 @@ namespace zanac.MAmidiMEmo.Gui
             TimbreItem ttim = (TimbreItem)info.Item.Tag;
             using (var f = new FormRename())
             {
-                f.InputText = info.SubItem.Text;
                 if (info.Item.SubItems[1] == info.SubItem)
+                {
+                    f.InputText = ttim.Timbre.TimbreName;
                     f.TitleText = "Specify the Timbre name";
+                }
                 else if (info.Item.SubItems[2] == info.SubItem)
+                {
+                    f.InputText = ttim.Timbre.Memo;
                     f.TitleText = "Specify the Timbre memo";
+                }
 
                 var dr = f.ShowDialog(this);
                 if (dr == DialogResult.OK)
@@ -1458,6 +1501,32 @@ namespace zanac.MAmidiMEmo.Gui
                     else if (info.Item.SubItems[2] == info.SubItem)
                         ttim.Timbre.Memo = f.InputText;
                 }
+            }
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(listViewCurrentTimbres.PointToClient(contextMenuStrip1.Bounds.Location));
+            if (info.Item != null)
+            {
+                TimbreItem ttim = (TimbreItem)info.Item.Tag;
+
+                testStop();
+
+                ttim.Timbre.OpenTimbreEditor(Instrument);
+            }
+        }
+
+        private void propertyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListViewHitTestInfo info = listViewCurrentTimbres.HitTest(listViewCurrentTimbres.PointToClient(contextMenuStrip1.Bounds.Location));
+            if (info.Item != null)
+            {
+                TimbreItem ttim = (TimbreItem)info.Item.Tag;
+
+                testStop();
+
+                ttim.Timbre.OpenPropEditor(Instrument);
             }
         }
     }

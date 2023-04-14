@@ -68,9 +68,18 @@ namespace zanac.MAmidiMEmo.ComponentModel
             InstrumentBase inst = (InstrumentBase)context.Instance;
             if (inst != null)
             {
-                using (FormTimbreManager ed = new FormTimbreManager(inst))
+                //using (FormTimbreManager ed = new FormTimbreManager(inst))
                 {
-                    editorService.ShowDialog(ed);
+                    if (FormTimbreManager.TimbreManagers.ContainsKey(inst))
+                    {
+                        FormTimbreManager.TimbreManagers[inst].BringToFront();
+                    }
+                    else
+                    {
+                        FormTimbreManager ed = new FormTimbreManager(inst);
+                        ed.Show();
+                    }
+                    //editorService.ShowDialog(ed);
                     return value;
                 }
             }

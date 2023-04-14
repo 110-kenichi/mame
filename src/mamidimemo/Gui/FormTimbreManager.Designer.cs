@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
             this.toolStripComboBoxCh = new System.Windows.Forms.ToolStripComboBox();
@@ -53,6 +53,9 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.propertyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonOK = new MetroFramework.Controls.MetroButton();
@@ -388,10 +391,10 @@
             this.listViewCurrentTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
-            listViewGroup1.Header = "Default";
-            listViewGroup1.Name = "listViewGroup1";
+            listViewGroup3.Header = "Default";
+            listViewGroup3.Name = "listViewGroup1";
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1});
+            listViewGroup3});
             this.listViewCurrentTimbres.HideSelection = false;
             this.listViewCurrentTimbres.Location = new System.Drawing.Point(745, 34);
             this.listViewCurrentTimbres.Name = "listViewCurrentTimbres";
@@ -423,14 +426,40 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editToolStripMenuItem,
+            this.propertyToolStripMenuItem,
+            this.renameToolStripMenuItem,
             this.clearToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(121, 28);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 100);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold);
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
+            this.editToolStripMenuItem.Text = "&Edit...";
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // propertyToolStripMenuItem
+            // 
+            this.propertyToolStripMenuItem.Name = "propertyToolStripMenuItem";
+            this.propertyToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
+            this.propertyToolStripMenuItem.Text = "Property...";
+            this.propertyToolStripMenuItem.Click += new System.EventHandler(this.propertyToolStripMenuItem_Click);
+            // 
+            // renameToolStripMenuItem
+            // 
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
+            this.renameToolStripMenuItem.Text = "&Rename...";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(120, 24);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
             this.clearToolStripMenuItem.Text = "&Clear...";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -439,7 +468,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.buttonOK, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 0);
@@ -457,7 +486,7 @@
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(827, 8);
+            this.buttonOK.Location = new System.Drawing.Point(927, 8);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(100, 29);
@@ -470,13 +499,14 @@
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(935, 8);
+            this.buttonCancel.Location = new System.Drawing.Point(1035, 8);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(1, 29);
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseSelectable = true;
+            this.buttonCancel.Visible = false;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // fileFolderList1
@@ -617,10 +647,10 @@
             this.columnHeader7});
             this.listViewFilesTimbres.FullRowSelect = true;
             this.listViewFilesTimbres.GridLines = true;
-            listViewGroup2.Header = "Default";
-            listViewGroup2.Name = "listViewGroup1";
+            listViewGroup1.Header = "Default";
+            listViewGroup1.Name = "listViewGroup1";
             this.listViewFilesTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup2});
+            listViewGroup1});
             this.listViewFilesTimbres.HideSelection = false;
             this.listViewFilesTimbres.Location = new System.Drawing.Point(401, 34);
             this.listViewFilesTimbres.Name = "listViewFilesTimbres";
@@ -888,5 +918,8 @@
         private MetroFramework.Controls.MetroButton metroButton3;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem propertyToolStripMenuItem;
     }
 }
