@@ -26,7 +26,7 @@ namespace zanac.MAmidiMEmo.VSIF
         //The maximum BAUD rate for the FT232R chip is 3M BAUD
 
         public const int FTDI_BAUDRATE_GEN = 11;
-        public const int FTDI_BAUDRATE_GEN_CLK_WIDTH = 8;
+        public const int FTDI_BAUDRATE_GEN_CLK_WIDTH = 9;
 
         public const int FTDI_BAUDRATE_NES = 57600 / 16;
         public const int FTDI_BAUDRATE_NES_MUL = 100;

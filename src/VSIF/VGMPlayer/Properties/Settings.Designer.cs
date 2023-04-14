@@ -156,7 +156,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
         public decimal BitBangWaitDCSG {
             get {
                 return ((decimal)(this["BitBangWaitDCSG"]));
@@ -228,7 +228,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
         public decimal BitBangWaitOPN2 {
             get {
                 return ((decimal)(this["BitBangWaitOPN2"]));

@@ -36,7 +36,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="BitBangWaitDCSG" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">9</Value>
     </Setting>
     <Setting Name="FocusedItem" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
@@ -54,7 +54,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="BitBangWaitOPN2" Type="System.Decimal" Scope="User">
-      <Value Profile="(Default)">8</Value>
+      <Value Profile="(Default)">9</Value>
     </Setting>
     <Setting Name="BitBangWaitOPLL" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">25</Value>

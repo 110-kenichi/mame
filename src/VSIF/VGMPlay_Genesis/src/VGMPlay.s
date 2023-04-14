@@ -312,6 +312,7 @@ Reset_FTDI2XX:
     move.b  #0xC0,%d1                  | for And Data(Hi 2bit)
     move.b  #6,%d2                     | for Check Bit 6
     move.l  #_VGM_ADDRESS_FTDI2XX, %a3 | Jmp Address
+    move.b  #0x00, (%a0) 
 
 _VGM_ADDRESS_FTDI2XX:
 

@@ -273,6 +273,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 		Improved DAC performance of VGMPlayer.
 		Added Timbre Manager. You can manage Timbres more easily.
 		Improved Drum Editor function.
+		Fixed VGMPlayer not sounding sound on Genesis/MD with some flashcart.
 4.7.1.0 Improved data transfer speed for FTDI.
 4.7.0.0 Supported XGM recording by NRPN. For more information, see the manual.
 		Fixed XGM DAC playing issue created by MAmi.
