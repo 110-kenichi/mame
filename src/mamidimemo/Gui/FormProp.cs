@@ -62,7 +62,7 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     if (instruments[0].BaseTimbres[i] == timbres[0])
                     {
-                        TimbreNo = i + 1;
+                        TimbreNo = i;
                         break;
                     }
                 }
@@ -97,6 +97,8 @@ namespace zanac.MAmidiMEmo.Gui
             pianoControl1.NoteOn += PianoControl1_NoteOn;
             pianoControl1.NoteOff += PianoControl1_NoteOff;
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
+
+            Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
         }
 
         private void setTitle()
@@ -174,6 +176,48 @@ namespace zanac.MAmidiMEmo.Gui
                 Close();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MidiManager_MidiEventHooked(object sender, CancelMidiEventReceivedEventArgs e)
+        {
+            if (!this.IsHandleCreated || ActiveForm != this)
+                return;
+
+            if (this.IsDisposed)
+                return;
+
+            this.Invoke(new MethodInvoker(() =>
+            {
+                if (this.IsDisposed)
+                    return;
+
+                //if (toolStripButtonHook.Checked)
+                {
+                    switch (e.Event.Event)
+                    {
+                        case NoteOnEvent non:
+                            if (non.Velocity != 0)
+                                PianoControl1_NoteOn(null, new TaggedNoteOnEvent(non) { MonitorEvent = true });
+                            else
+                                PianoControl1_NoteOff(null, new NoteOffEvent(non.NoteNumber, (SevenBitNumber)0) { Channel = non.Channel, DeltaTime = non.DeltaTime });
+                            break;
+                        case NoteOffEvent noff:
+                            PianoControl1_NoteOff(null, noff);
+                            break;
+                        default:
+                            for (int i = 0; i < instruments.Count; i++)
+                                instruments[i].NotifyMidiEvent(e.Event.Event);
+                            break;
+                    }
+                    e.Cancel = true;
+                }
+            }));
+        }
+
         private void toolStripButtonCat_Click(object sender, EventArgs e)
         {
             propertyGrid.PropertySort = PropertySort.Categorized;
@@ -245,7 +289,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == (Keys.W | Keys.Control))
+            if (keyData == (Keys.W | Keys.Control) || keyData == Keys.Escape)
             {
                 Close();
                 return true;
