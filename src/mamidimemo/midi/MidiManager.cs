@@ -196,12 +196,18 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        public static void SendMidiEvent(MidiPort port, long eventId, long frameId, byte data1, byte data2, byte data3)
+        public static void MidiEventReceived(MidiPort port, long eventId, long frameId, byte data1, byte data2, byte data3)
         {
             long count;
             QueryPerformanceCounter(out count);
             var me = midiConverter.Convert(new byte[] { data1, data2, data3 });
             me.DeltaTime = count;
+
+            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
+            MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+            if (ea.Cancel)
+                return;
+
             SendMidiEvent(port, me);
         }
 
@@ -211,7 +217,7 @@ namespace zanac.MAmidiMEmo.Midi
         /// <summary>
         /// 
         /// </summary>
-        unsafe public static void SendMidiEvents(MidiPort port, long eventId, long frameId, byte* data1, byte* data2, byte* data3, int length)
+        unsafe public static void MidiEventsReceived(MidiPort port, long eventId, long frameId, byte* data1, byte* data2, byte* data3, int length)
         {
 #if DEBUG
             //while (!Debugger.IsAttached)
@@ -228,13 +234,25 @@ namespace zanac.MAmidiMEmo.Midi
                 me.DeltaTime = count;
                 events.Add(me);
             }
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(events[i]));
+                MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+                if (ea.Cancel)
+                {
+                    events.RemoveAt(i);
+                    i--;
+                }
+            }
+
             SendMidiEvents(port, events.ToArray());
         }
 
         /// <summary>
         /// 
         /// </summary>
-        unsafe public static void SendMidiSysEvent(MidiPort port, long eventId, long frameId, byte* data, int length)
+        unsafe public static void MidiSysEventReceived(MidiPort port, long eventId, long frameId, byte* data, int length)
         {
             long count;
             QueryPerformanceCounter(out count);
@@ -243,6 +261,12 @@ namespace zanac.MAmidiMEmo.Midi
                 buf.Add(data[i]);
             var me = midiConverter.Convert(buf.ToArray());
             me.DeltaTime = count;
+
+            var ea = new CancelMidiEventReceivedEventArgs(MidiPort.PortB, new MidiEventReceivedEventArgs(me));
+            MidiEventHooked?.Invoke(typeof(MidiManager), ea);
+            if (ea.Cancel)
+                return;
+
             SendMidiEvent(port, me);
         }
 
