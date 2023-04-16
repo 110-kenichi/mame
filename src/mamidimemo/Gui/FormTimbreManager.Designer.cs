@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Default", System.Windows.Forms.HorizontalAlignment.Left);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTimbreManager));
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
             this.toolStripComboBoxCh = new System.Windows.Forms.ToolStripComboBox();
@@ -93,17 +92,13 @@
             // 
             // pianoControl1
             // 
-            this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pianoControl1.Location = new System.Drawing.Point(7, 687);
-            this.pianoControl1.Margin = new System.Windows.Forms.Padding(5);
+            resources.ApplyResources(this.pianoControl1, "pianoControl1");
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(1042, 72);
-            this.pianoControl1.TabIndex = 2;
             this.pianoControl1.TargetTimbres = null;
             // 
             // toolStrip2
             // 
-            this.toolStrip2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            resources.ApplyResources(this.toolStrip2, "toolStrip2");
             this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxCh,
@@ -121,286 +116,265 @@
             this.toolStripSeparator2,
             this.toolStripLabel5,
             this.toolStripComboBoxCC});
-            this.toolStrip2.Location = new System.Drawing.Point(7, 659);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1042, 28);
-            this.toolStrip2.TabIndex = 1;
             // 
             // toolStripComboBoxCh
             // 
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
             this.toolStripComboBoxCh.Items.AddRange(new object[] {
-            "A0(1ch)",
-            "A1(2ch)",
-            "A2(3ch)",
-            "A3(4ch)",
-            "A4(5ch)",
-            "A5(6ch)",
-            "A6(7ch)",
-            "A7(8ch)",
-            "A8(9ch)",
-            "A9(10ch)",
-            "A10(11ch)",
-            "A11(12ch)",
-            "A12(13ch)",
-            "A13(14ch)",
-            "A14(15ch)",
-            "A15(16ch)"});
+            resources.GetString("toolStripComboBoxCh.Items"),
+            resources.GetString("toolStripComboBoxCh.Items1"),
+            resources.GetString("toolStripComboBoxCh.Items2"),
+            resources.GetString("toolStripComboBoxCh.Items3"),
+            resources.GetString("toolStripComboBoxCh.Items4"),
+            resources.GetString("toolStripComboBoxCh.Items5"),
+            resources.GetString("toolStripComboBoxCh.Items6"),
+            resources.GetString("toolStripComboBoxCh.Items7"),
+            resources.GetString("toolStripComboBoxCh.Items8"),
+            resources.GetString("toolStripComboBoxCh.Items9"),
+            resources.GetString("toolStripComboBoxCh.Items10"),
+            resources.GetString("toolStripComboBoxCh.Items11"),
+            resources.GetString("toolStripComboBoxCh.Items12"),
+            resources.GetString("toolStripComboBoxCh.Items13"),
+            resources.GetString("toolStripComboBoxCh.Items14"),
+            resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(99, 28);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(54, 25);
-            this.toolStripLabel2.Text = "Key Ch";
             // 
             // toolStripButtonPlay
             // 
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
-            this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(105, 25);
-            this.toolStripButtonPlay.Text = "PlayOnEdit";
             // 
             // toolStripButtonHook
             // 
+            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.CheckOnClick = true;
-            this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
-            this.toolStripButtonHook.Size = new System.Drawing.Size(79, 25);
-            this.toolStripButtonHook.Text = "HookMidi";
-            this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
             // toolStripButton1
             // 
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
-            this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(68, 25);
-            this.toolStripButton1.Text = "Panic!";
             // 
             // toolStripSeparator1
             // 
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripLabel1
             // 
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(42, 25);
-            this.toolStripLabel1.Text = "Note";
             // 
             // toolStripComboBoxNote
             // 
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            this.toolStripComboBoxNote.Size = new System.Drawing.Size(99, 28);
             // 
             // toolStripLabel4
             // 
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(61, 25);
-            this.toolStripLabel4.Text = "Velocity";
             // 
             // toolStripComboBoxVelo
             // 
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(99, 28);
             // 
             // toolStripLabel3
             // 
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(40, 25);
-            this.toolStripLabel3.Text = "Gate";
             // 
             // toolStripComboBoxGate
             // 
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
-            "500ms",
-            "1000ms",
-            "2000ms",
-            "5000ms"});
+            resources.GetString("toolStripComboBoxGate.Items"),
+            resources.GetString("toolStripComboBoxGate.Items1"),
+            resources.GetString("toolStripComboBoxGate.Items2"),
+            resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 28);
             // 
             // toolStripSeparator2
             // 
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripLabel5
             // 
+            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(27, 25);
-            this.toolStripLabel5.Text = "CC";
             // 
             // toolStripComboBoxCC
             // 
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100",
-            "101",
-            "102",
-            "103",
-            "104",
-            "105",
-            "106",
-            "107",
-            "108",
-            "109",
-            "110",
-            "111",
-            "112",
-            "113",
-            "114",
-            "115",
-            "116",
-            "117",
-            "118",
-            "119",
-            "120",
-            "121",
-            "122",
-            "123",
-            "124",
-            "125",
-            "126",
-            "127"});
+            resources.GetString("toolStripComboBoxCC.Items"),
+            resources.GetString("toolStripComboBoxCC.Items1"),
+            resources.GetString("toolStripComboBoxCC.Items2"),
+            resources.GetString("toolStripComboBoxCC.Items3"),
+            resources.GetString("toolStripComboBoxCC.Items4"),
+            resources.GetString("toolStripComboBoxCC.Items5"),
+            resources.GetString("toolStripComboBoxCC.Items6"),
+            resources.GetString("toolStripComboBoxCC.Items7"),
+            resources.GetString("toolStripComboBoxCC.Items8"),
+            resources.GetString("toolStripComboBoxCC.Items9"),
+            resources.GetString("toolStripComboBoxCC.Items10"),
+            resources.GetString("toolStripComboBoxCC.Items11"),
+            resources.GetString("toolStripComboBoxCC.Items12"),
+            resources.GetString("toolStripComboBoxCC.Items13"),
+            resources.GetString("toolStripComboBoxCC.Items14"),
+            resources.GetString("toolStripComboBoxCC.Items15"),
+            resources.GetString("toolStripComboBoxCC.Items16"),
+            resources.GetString("toolStripComboBoxCC.Items17"),
+            resources.GetString("toolStripComboBoxCC.Items18"),
+            resources.GetString("toolStripComboBoxCC.Items19"),
+            resources.GetString("toolStripComboBoxCC.Items20"),
+            resources.GetString("toolStripComboBoxCC.Items21"),
+            resources.GetString("toolStripComboBoxCC.Items22"),
+            resources.GetString("toolStripComboBoxCC.Items23"),
+            resources.GetString("toolStripComboBoxCC.Items24"),
+            resources.GetString("toolStripComboBoxCC.Items25"),
+            resources.GetString("toolStripComboBoxCC.Items26"),
+            resources.GetString("toolStripComboBoxCC.Items27"),
+            resources.GetString("toolStripComboBoxCC.Items28"),
+            resources.GetString("toolStripComboBoxCC.Items29"),
+            resources.GetString("toolStripComboBoxCC.Items30"),
+            resources.GetString("toolStripComboBoxCC.Items31"),
+            resources.GetString("toolStripComboBoxCC.Items32"),
+            resources.GetString("toolStripComboBoxCC.Items33"),
+            resources.GetString("toolStripComboBoxCC.Items34"),
+            resources.GetString("toolStripComboBoxCC.Items35"),
+            resources.GetString("toolStripComboBoxCC.Items36"),
+            resources.GetString("toolStripComboBoxCC.Items37"),
+            resources.GetString("toolStripComboBoxCC.Items38"),
+            resources.GetString("toolStripComboBoxCC.Items39"),
+            resources.GetString("toolStripComboBoxCC.Items40"),
+            resources.GetString("toolStripComboBoxCC.Items41"),
+            resources.GetString("toolStripComboBoxCC.Items42"),
+            resources.GetString("toolStripComboBoxCC.Items43"),
+            resources.GetString("toolStripComboBoxCC.Items44"),
+            resources.GetString("toolStripComboBoxCC.Items45"),
+            resources.GetString("toolStripComboBoxCC.Items46"),
+            resources.GetString("toolStripComboBoxCC.Items47"),
+            resources.GetString("toolStripComboBoxCC.Items48"),
+            resources.GetString("toolStripComboBoxCC.Items49"),
+            resources.GetString("toolStripComboBoxCC.Items50"),
+            resources.GetString("toolStripComboBoxCC.Items51"),
+            resources.GetString("toolStripComboBoxCC.Items52"),
+            resources.GetString("toolStripComboBoxCC.Items53"),
+            resources.GetString("toolStripComboBoxCC.Items54"),
+            resources.GetString("toolStripComboBoxCC.Items55"),
+            resources.GetString("toolStripComboBoxCC.Items56"),
+            resources.GetString("toolStripComboBoxCC.Items57"),
+            resources.GetString("toolStripComboBoxCC.Items58"),
+            resources.GetString("toolStripComboBoxCC.Items59"),
+            resources.GetString("toolStripComboBoxCC.Items60"),
+            resources.GetString("toolStripComboBoxCC.Items61"),
+            resources.GetString("toolStripComboBoxCC.Items62"),
+            resources.GetString("toolStripComboBoxCC.Items63"),
+            resources.GetString("toolStripComboBoxCC.Items64"),
+            resources.GetString("toolStripComboBoxCC.Items65"),
+            resources.GetString("toolStripComboBoxCC.Items66"),
+            resources.GetString("toolStripComboBoxCC.Items67"),
+            resources.GetString("toolStripComboBoxCC.Items68"),
+            resources.GetString("toolStripComboBoxCC.Items69"),
+            resources.GetString("toolStripComboBoxCC.Items70"),
+            resources.GetString("toolStripComboBoxCC.Items71"),
+            resources.GetString("toolStripComboBoxCC.Items72"),
+            resources.GetString("toolStripComboBoxCC.Items73"),
+            resources.GetString("toolStripComboBoxCC.Items74"),
+            resources.GetString("toolStripComboBoxCC.Items75"),
+            resources.GetString("toolStripComboBoxCC.Items76"),
+            resources.GetString("toolStripComboBoxCC.Items77"),
+            resources.GetString("toolStripComboBoxCC.Items78"),
+            resources.GetString("toolStripComboBoxCC.Items79"),
+            resources.GetString("toolStripComboBoxCC.Items80"),
+            resources.GetString("toolStripComboBoxCC.Items81"),
+            resources.GetString("toolStripComboBoxCC.Items82"),
+            resources.GetString("toolStripComboBoxCC.Items83"),
+            resources.GetString("toolStripComboBoxCC.Items84"),
+            resources.GetString("toolStripComboBoxCC.Items85"),
+            resources.GetString("toolStripComboBoxCC.Items86"),
+            resources.GetString("toolStripComboBoxCC.Items87"),
+            resources.GetString("toolStripComboBoxCC.Items88"),
+            resources.GetString("toolStripComboBoxCC.Items89"),
+            resources.GetString("toolStripComboBoxCC.Items90"),
+            resources.GetString("toolStripComboBoxCC.Items91"),
+            resources.GetString("toolStripComboBoxCC.Items92"),
+            resources.GetString("toolStripComboBoxCC.Items93"),
+            resources.GetString("toolStripComboBoxCC.Items94"),
+            resources.GetString("toolStripComboBoxCC.Items95"),
+            resources.GetString("toolStripComboBoxCC.Items96"),
+            resources.GetString("toolStripComboBoxCC.Items97"),
+            resources.GetString("toolStripComboBoxCC.Items98"),
+            resources.GetString("toolStripComboBoxCC.Items99"),
+            resources.GetString("toolStripComboBoxCC.Items100"),
+            resources.GetString("toolStripComboBoxCC.Items101"),
+            resources.GetString("toolStripComboBoxCC.Items102"),
+            resources.GetString("toolStripComboBoxCC.Items103"),
+            resources.GetString("toolStripComboBoxCC.Items104"),
+            resources.GetString("toolStripComboBoxCC.Items105"),
+            resources.GetString("toolStripComboBoxCC.Items106"),
+            resources.GetString("toolStripComboBoxCC.Items107"),
+            resources.GetString("toolStripComboBoxCC.Items108"),
+            resources.GetString("toolStripComboBoxCC.Items109"),
+            resources.GetString("toolStripComboBoxCC.Items110"),
+            resources.GetString("toolStripComboBoxCC.Items111"),
+            resources.GetString("toolStripComboBoxCC.Items112"),
+            resources.GetString("toolStripComboBoxCC.Items113"),
+            resources.GetString("toolStripComboBoxCC.Items114"),
+            resources.GetString("toolStripComboBoxCC.Items115"),
+            resources.GetString("toolStripComboBoxCC.Items116"),
+            resources.GetString("toolStripComboBoxCC.Items117"),
+            resources.GetString("toolStripComboBoxCC.Items118"),
+            resources.GetString("toolStripComboBoxCC.Items119"),
+            resources.GetString("toolStripComboBoxCC.Items120"),
+            resources.GetString("toolStripComboBoxCC.Items121"),
+            resources.GetString("toolStripComboBoxCC.Items122"),
+            resources.GetString("toolStripComboBoxCC.Items123"),
+            resources.GetString("toolStripComboBoxCC.Items124"),
+            resources.GetString("toolStripComboBoxCC.Items125"),
+            resources.GetString("toolStripComboBoxCC.Items126"),
+            resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 28);
             // 
             // listViewCurrentTimbres
             // 
+            resources.ApplyResources(this.listViewCurrentTimbres, "listViewCurrentTimbres");
             this.listViewCurrentTimbres.AllowDrop = true;
             this.listViewCurrentTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listViewCurrentTimbres.ContextMenuStrip = this.contextMenuStrip1;
-            this.listViewCurrentTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
-            listViewGroup3.Header = "Default";
-            listViewGroup3.Name = "listViewGroup1";
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3});
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewCurrentTimbres.Groups")))});
             this.listViewCurrentTimbres.HideSelection = false;
-            this.listViewCurrentTimbres.Location = new System.Drawing.Point(745, 34);
             this.listViewCurrentTimbres.Name = "listViewCurrentTimbres";
             this.listViewCurrentTimbres.ShowGroups = false;
-            this.listViewCurrentTimbres.Size = new System.Drawing.Size(291, 509);
-            this.listViewCurrentTimbres.TabIndex = 8;
             this.listViewCurrentTimbres.UseCompatibleStateImageBehavior = false;
             this.listViewCurrentTimbres.View = System.Windows.Forms.View.Details;
             this.listViewCurrentTimbres.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewCurrentTimbres_ItemDrag);
@@ -412,18 +386,19 @@
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "No";
+            resources.ApplyResources(this.columnHeader1, "columnHeader1");
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Name";
+            resources.ApplyResources(this.columnHeader2, "columnHeader2");
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Memo";
+            resources.ApplyResources(this.columnHeader3, "columnHeader3");
             // 
             // contextMenuStrip1
             // 
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
@@ -431,128 +406,112 @@
             this.renameToolStripMenuItem,
             this.clearToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 100);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // editToolStripMenuItem
             // 
-            this.editToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Bold);
+            resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
-            this.editToolStripMenuItem.Text = "&Edit...";
             this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // propertyToolStripMenuItem
             // 
+            resources.ApplyResources(this.propertyToolStripMenuItem, "propertyToolStripMenuItem");
             this.propertyToolStripMenuItem.Name = "propertyToolStripMenuItem";
-            this.propertyToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
-            this.propertyToolStripMenuItem.Text = "Property...";
             this.propertyToolStripMenuItem.Click += new System.EventHandler(this.propertyToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
+            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
-            this.renameToolStripMenuItem.Text = "&Rename...";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // clearToolStripMenuItem
             // 
+            resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(142, 24);
-            this.clearToolStripMenuItem.Text = "&Clear...";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 8F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.buttonOK, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(7, 759);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1042, 46);
-            this.tableLayoutPanel1.TabIndex = 3;
             // 
             // buttonOK
             // 
-            this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
+            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(927, 8);
-            this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
-            this.buttonOK.TabIndex = 0;
-            this.buttonOK.Text = "&OK";
             this.buttonOK.UseSelectable = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(1035, 8);
-            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(1, 29);
-            this.buttonCancel.TabIndex = 1;
-            this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseSelectable = true;
-            this.buttonCancel.Visible = false;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // fileFolderList1
             // 
+            resources.ApplyResources(this.fileFolderList1, "fileFolderList1");
             this.fileFolderList1.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.fileFolderList1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
             this.tableLayoutPanel2.SetColumnSpan(this.fileFolderList1, 3);
             this.fileFolderList1.CurrentDirectory = "C:\\";
-            this.fileFolderList1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileFolderList1.FileValidator = null;
             this.fileFolderList1.FilterExts = null;
             this.fileFolderList1.FullRowSelect = true;
             this.fileFolderList1.GridLines = true;
             this.fileFolderList1.HideSelection = false;
             this.fileFolderList1.isSoloBrowser = true;
-            this.fileFolderList1.Location = new System.Drawing.Point(3, 34);
             this.fileFolderList1.Name = "fileFolderList1";
-            this.fileFolderList1.Size = new System.Drawing.Size(392, 509);
-            this.fileFolderList1.TabIndex = 3;
             this.fileFolderList1.UseCompatibleStateImageBehavior = false;
             this.fileFolderList1.View = System.Windows.Forms.View.Details;
             this.fileFolderList1.CurrentDirectoryChanged += new System.EventHandler(this.fileFolderList1_CurrentDirectoryChanged);
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "File name";
+            resources.ApplyResources(this.columnHeader4, "columnHeader4");
             // 
             // metroTextBox1
             // 
+            resources.ApplyResources(this.metroTextBox1, "metroTextBox1");
             // 
             // 
             // 
-            this.metroTextBox1.CustomButton.Image = null;
-            this.metroTextBox1.CustomButton.Location = new System.Drawing.Point(266, 1);
+            this.metroTextBox1.CustomButton.AccessibleDescription = resources.GetString("resource.AccessibleDescription");
+            this.metroTextBox1.CustomButton.AccessibleName = resources.GetString("resource.AccessibleName");
+            this.metroTextBox1.CustomButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("resource.Anchor")));
+            this.metroTextBox1.CustomButton.AutoSize = ((bool)(resources.GetObject("resource.AutoSize")));
+            this.metroTextBox1.CustomButton.AutoSizeMode = ((System.Windows.Forms.AutoSizeMode)(resources.GetObject("resource.AutoSizeMode")));
+            this.metroTextBox1.CustomButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("resource.BackgroundImage")));
+            this.metroTextBox1.CustomButton.BackgroundImageLayout = ((System.Windows.Forms.ImageLayout)(resources.GetObject("resource.BackgroundImageLayout")));
+            this.metroTextBox1.CustomButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("resource.Dock")));
+            this.metroTextBox1.CustomButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("resource.FlatStyle")));
+            this.metroTextBox1.CustomButton.Font = ((System.Drawing.Font)(resources.GetObject("resource.Font")));
+            this.metroTextBox1.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
+            this.metroTextBox1.CustomButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.ImageAlign")));
+            this.metroTextBox1.CustomButton.ImageIndex = ((int)(resources.GetObject("resource.ImageIndex")));
+            this.metroTextBox1.CustomButton.ImageKey = resources.GetString("resource.ImageKey");
+            this.metroTextBox1.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode")));
+            this.metroTextBox1.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location")));
+            this.metroTextBox1.CustomButton.MaximumSize = ((System.Drawing.Size)(resources.GetObject("resource.MaximumSize")));
             this.metroTextBox1.CustomButton.Name = "";
-            this.metroTextBox1.CustomButton.Size = new System.Drawing.Size(23, 23);
+            this.metroTextBox1.CustomButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("resource.RightToLeft")));
+            this.metroTextBox1.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size")));
             this.metroTextBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox1.CustomButton.TabIndex = 1;
+            this.metroTextBox1.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex")));
+            this.metroTextBox1.CustomButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.TextAlign")));
+            this.metroTextBox1.CustomButton.TextImageRelation = ((System.Windows.Forms.TextImageRelation)(resources.GetObject("resource.TextImageRelation")));
             this.metroTextBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
             this.metroTextBox1.CustomButton.UseSelectable = true;
-            this.metroTextBox1.CustomButton.Visible = false;
-            this.metroTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBox1.Lines = new string[] {
-        "c:\\"};
-            this.metroTextBox1.Location = new System.Drawing.Point(73, 3);
+            this.metroTextBox1.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible")));
+            this.metroTextBox1.Lines = new string[0];
             this.metroTextBox1.MaxLength = 32767;
             this.metroTextBox1.Name = "metroTextBox1";
             this.metroTextBox1.PasswordChar = '\0';
@@ -561,9 +520,6 @@
             this.metroTextBox1.SelectionLength = 0;
             this.metroTextBox1.SelectionStart = 0;
             this.metroTextBox1.ShortcutsEnabled = true;
-            this.metroTextBox1.Size = new System.Drawing.Size(290, 25);
-            this.metroTextBox1.TabIndex = 1;
-            this.metroTextBox1.Text = "c:\\";
             this.metroTextBox1.UseSelectable = true;
             this.metroTextBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.metroTextBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
@@ -571,38 +527,17 @@
             // 
             // metroLabelDir
             // 
-            this.metroLabelDir.AutoSize = true;
-            this.metroLabelDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabelDir.Location = new System.Drawing.Point(4, 0);
-            this.metroLabelDir.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            resources.ApplyResources(this.metroLabelDir, "metroLabelDir");
             this.metroLabelDir.Name = "metroLabelDir";
-            this.metroLabelDir.Size = new System.Drawing.Size(62, 31);
-            this.metroLabelDir.TabIndex = 0;
-            this.metroLabelDir.Text = "&Directry:";
             // 
             // metroLabel1
             // 
-            this.metroLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel1.Location = new System.Drawing.Point(402, 0);
-            this.metroLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            resources.ApplyResources(this.metroLabel1, "metroLabel1");
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(288, 31);
-            this.metroLabel1.TabIndex = 4;
-            this.metroLabel1.Text = "Loaded &Timbres: (Drag to right pane)";
-            this.metroLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel2.ColumnCount = 6;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 48F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
             this.tableLayoutPanel2.Controls.Add(this.metroLabelDir, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.fileFolderList1, 0, 1);
@@ -614,49 +549,28 @@
             this.tableLayoutPanel2.Controls.Add(this.metroButton1, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 5, 3);
             this.tableLayoutPanel2.Controls.Add(this.listViewCurrentTimbres, 5, 1);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(10, 79);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1039, 577);
-            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // metroLabel2
             // 
-            this.metroLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel2.Location = new System.Drawing.Point(746, 0);
-            this.metroLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            resources.ApplyResources(this.metroLabel2, "metroLabel2");
             this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(289, 31);
-            this.metroLabel2.TabIndex = 7;
-            this.metroLabel2.Text = "C&urrent Timbres: (Drag(+shift) to copy(exchg) order)";
-            this.metroLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // listViewFilesTimbres
             // 
+            resources.ApplyResources(this.listViewFilesTimbres, "listViewFilesTimbres");
             this.listViewFilesTimbres.AllowDrop = true;
-            this.listViewFilesTimbres.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewFilesTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5,
             this.columnHeader6,
             this.columnHeader7});
             this.listViewFilesTimbres.FullRowSelect = true;
             this.listViewFilesTimbres.GridLines = true;
-            listViewGroup1.Header = "Default";
-            listViewGroup1.Name = "listViewGroup1";
             this.listViewFilesTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1});
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("listViewFilesTimbres.Groups")))});
             this.listViewFilesTimbres.HideSelection = false;
-            this.listViewFilesTimbres.Location = new System.Drawing.Point(401, 34);
             this.listViewFilesTimbres.Name = "listViewFilesTimbres";
             this.listViewFilesTimbres.ShowGroups = false;
-            this.listViewFilesTimbres.Size = new System.Drawing.Size(290, 509);
-            this.listViewFilesTimbres.TabIndex = 5;
             this.listViewFilesTimbres.UseCompatibleStateImageBehavior = false;
             this.listViewFilesTimbres.View = System.Windows.Forms.View.Details;
             this.listViewFilesTimbres.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewFilesTimbres_ItemDrag);
@@ -667,171 +581,92 @@
             // 
             // columnHeader5
             // 
-            this.columnHeader5.Text = "No";
+            resources.ApplyResources(this.columnHeader5, "columnHeader5");
             // 
             // columnHeader6
             // 
-            this.columnHeader6.Text = "Name";
+            resources.ApplyResources(this.columnHeader6, "columnHeader6");
             // 
             // columnHeader7
             // 
-            this.columnHeader7.Text = "Memo";
+            resources.ApplyResources(this.columnHeader7, "columnHeader7");
             // 
             // metroLabel3
             // 
-            this.metroLabel3.AutoSize = true;
-            this.metroLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabel3.Location = new System.Drawing.Point(697, 31);
+            resources.ApplyResources(this.metroLabel3, "metroLabel3");
             this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(42, 515);
-            this.metroLabel3.TabIndex = 6;
-            this.metroLabel3.Text = "⇒";
-            this.metroLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.AutoSize = true;
-            this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel3.ColumnCount = 5;
+            resources.ApplyResources(this.tableLayoutPanel3, "tableLayoutPanel3");
             this.tableLayoutPanel2.SetColumnSpan(this.tableLayoutPanel3, 3);
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel3.Controls.Add(this.metroButtonNewDir, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.metroButtonDelete, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.metroButtonRefresh, 4, 0);
             this.tableLayoutPanel3.Controls.Add(this.metroButtonExplorer, 3, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 546);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(398, 31);
-            this.tableLayoutPanel3.TabIndex = 9;
             // 
             // metroButtonNewDir
             // 
-            this.metroButtonNewDir.AutoSize = true;
-            this.metroButtonNewDir.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButtonNewDir.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButtonNewDir.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.metroButtonNewDir, "metroButtonNewDir");
             this.metroButtonNewDir.Name = "metroButtonNewDir";
-            this.metroButtonNewDir.Size = new System.Drawing.Size(110, 25);
-            this.metroButtonNewDir.TabIndex = 0;
-            this.metroButtonNewDir.Text = "Create &folder...";
             this.metroButtonNewDir.UseSelectable = true;
             this.metroButtonNewDir.Click += new System.EventHandler(this.metroButtonNewDir_Click);
             // 
             // metroButtonDelete
             // 
-            this.metroButtonDelete.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButtonDelete.Location = new System.Drawing.Point(119, 3);
+            resources.ApplyResources(this.metroButtonDelete, "metroButtonDelete");
             this.metroButtonDelete.Name = "metroButtonDelete";
-            this.metroButtonDelete.Size = new System.Drawing.Size(75, 25);
-            this.metroButtonDelete.TabIndex = 1;
-            this.metroButtonDelete.Text = "D&elete...";
             this.metroButtonDelete.UseSelectable = true;
             this.metroButtonDelete.Click += new System.EventHandler(this.metroButtonDelete_Click);
             // 
             // metroButtonRefresh
             // 
-            this.metroButtonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroButtonRefresh.AutoSize = true;
-            this.metroButtonRefresh.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButtonRefresh.Location = new System.Drawing.Point(328, 3);
+            resources.ApplyResources(this.metroButtonRefresh, "metroButtonRefresh");
             this.metroButtonRefresh.Name = "metroButtonRefresh";
-            this.metroButtonRefresh.Size = new System.Drawing.Size(67, 25);
-            this.metroButtonRefresh.TabIndex = 3;
-            this.metroButtonRefresh.Text = "&Refresh";
             this.metroButtonRefresh.UseSelectable = true;
             this.metroButtonRefresh.Click += new System.EventHandler(this.metroButtonRefresh_Click);
             // 
             // metroButtonExplorer
             // 
-            this.metroButtonExplorer.AutoSize = true;
-            this.metroButtonExplorer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButtonExplorer.Location = new System.Drawing.Point(254, 3);
+            resources.ApplyResources(this.metroButtonExplorer, "metroButtonExplorer");
             this.metroButtonExplorer.Name = "metroButtonExplorer";
-            this.metroButtonExplorer.Size = new System.Drawing.Size(68, 25);
-            this.metroButtonExplorer.TabIndex = 2;
-            this.metroButtonExplorer.Text = "E&xplorer";
             this.metroButtonExplorer.UseSelectable = true;
             this.metroButtonExplorer.Click += new System.EventHandler(this.metroButtonExplorer_Click);
             // 
             // metroButton1
             // 
-            this.metroButton1.AutoSize = true;
-            this.metroButton1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButton1.Location = new System.Drawing.Point(369, 3);
+            resources.ApplyResources(this.metroButton1, "metroButton1");
             this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(26, 25);
-            this.metroButton1.TabIndex = 2;
-            this.metroButton1.Text = "...";
             this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.AutoSize = true;
-            this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel4.ColumnCount = 3;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
             this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.metroButton2, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.metroButton3, 2, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(742, 546);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(297, 31);
-            this.tableLayoutPanel4.TabIndex = 10;
             // 
             // metroButtonExport
             // 
-            this.metroButtonExport.AutoSize = true;
-            this.metroButtonExport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButtonExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButtonExport.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.Size = new System.Drawing.Size(117, 25);
-            this.metroButtonExport.TabIndex = 0;
-            this.metroButtonExport.Text = "Ex&port slected...";
             this.metroButtonExport.UseSelectable = true;
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
             // metroButton2
             // 
-            this.metroButton2.AutoSize = true;
-            this.metroButton2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButton2.Location = new System.Drawing.Point(126, 3);
+            resources.ApplyResources(this.metroButton2, "metroButton2");
             this.metroButton2.Name = "metroButton2";
-            this.metroButton2.Size = new System.Drawing.Size(84, 25);
-            this.metroButton2.TabIndex = 1;
-            this.metroButton2.Text = "Export &all...";
             this.metroButton2.UseSelectable = true;
             this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
             // metroButton3
             // 
-            this.metroButton3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroButton3.AutoSize = true;
-            this.metroButton3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButton3.Location = new System.Drawing.Point(235, 3);
+            resources.ApplyResources(this.metroButton3, "metroButton3");
             this.metroButton3.Name = "metroButton3";
-            this.metroButton3.Size = new System.Drawing.Size(59, 25);
-            this.metroButton3.TabIndex = 2;
-            this.metroButton3.Text = "&Clear...";
             this.metroButton3.UseSelectable = true;
             this.metroButton3.Click += new System.EventHandler(this.metroButtonClear_Click);
             // 
@@ -843,15 +678,13 @@
             // 
             // FormTimbreManager
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1056, 817);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.pianoControl1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FormTimbreManager";
-            this.Text = "Timbre Manager";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);

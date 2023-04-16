@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<MidiDriverSettings>))]
     [DataContract]
     [InstLock]
-    public class MidiDriverSettings : ContextBoundObject
+    public class MidiDriverSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
         [DataMember]
         [Description("Whether to ignore the keyoff event")]

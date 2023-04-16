@@ -1145,12 +1145,23 @@ namespace zanac.MAmidiMEmo.Gui
         {
             var item = propertyGrid.SelectedGridItem;
             ITypeDescriptorContext context = item as ITypeDescriptorContext;
+            if (item != null && item.Value is ISerializeDataSaveLoad)
+            {
+                string sd = ((ISerializeDataSaveLoad)Activator.CreateInstance(item.Value.GetType())).SerializeData;
+                ((ISerializeDataSaveLoad)item.Value).SerializeData = sd;
+                return;
+            }
             bool enabled = false;
             try
             {
                 enabled = item != null &&
                     item.GridItemType == GridItemType.Property &&
                     context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+                if (enabled)
+                {
+                    propertyGrid.ResetSelectedProperty();
+                    propertyGrid.Refresh();
+                }
             }
             catch (Exception ex)
             {
@@ -1159,11 +1170,26 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
-            if (enabled)
-            {
-                propertyGrid.ResetSelectedProperty();
-                propertyGrid.Refresh();
-            }
+
+
+            //try
+            //{
+            //    enabled = item != null &&
+            //        item.GridItemType == GridItemType.Property &&
+            //        context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+            //}
+            //catch (Exception ex)
+            //{
+            //    if (ex.GetType() == typeof(Exception))
+            //        throw;
+            //    else if (ex.GetType() == typeof(SystemException))
+            //        throw;
+            //}
+            //if (enabled)
+            //{
+            //    propertyGrid.ResetSelectedProperty();
+            //    propertyGrid.Refresh();
+            //}
         }
 
         private void toolStripButton19_Click(object sender, EventArgs e)
@@ -2522,9 +2548,8 @@ namespace zanac.MAmidiMEmo.Gui
             bool enabled = false;
             try
             {
-                enabled = item != null &&
-                    item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled = item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled |= item != null && item.Value is ISerializeDataSaveLoad;
             }
             catch (Exception ex)
             {
@@ -2535,8 +2560,16 @@ namespace zanac.MAmidiMEmo.Gui
             }
             if (enabled)
             {
-                copiedValue = item.PropertyDescriptor.GetValue(context.Instance) as string;
-                copiedValueInstance = context.Instance;
+                if (item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad"))
+                {
+                    copiedValue = item.PropertyDescriptor.GetValue(context.Instance) as string;
+                    copiedValueInstance = context.Instance;
+                }
+                else if (item != null && item.Value is ISerializeDataSaveLoad)
+                {
+                    copiedValue = ((ISerializeDataSaveLoad)item.Value).SerializeData;
+                    copiedValueInstance = item.Value;
+                }
             }
         }
 
@@ -2547,9 +2580,8 @@ namespace zanac.MAmidiMEmo.Gui
             bool enabled = false;
             try
             {
-                enabled = item != null &&
-                    item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled = item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled |= item != null && item.Value is ISerializeDataSaveLoad;
             }
             catch (Exception ex)
             {
@@ -2558,9 +2590,19 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
-            if (enabled && copiedValue != null && copiedValueInstance != null && copiedValueInstance.GetType() == context.Instance.GetType())
+            if (enabled && copiedValue != null && copiedValueInstance != null)
             {
-                item.PropertyDescriptor.SetValue(context.Instance, copiedValue);
+                if (item != null &&
+                    (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad"))
+                {
+                    if (copiedValueInstance.GetType() == context.Instance.GetType())
+                        item.PropertyDescriptor.SetValue(context.Instance, copiedValue);
+                }
+                else if (item != null && item.Value is ISerializeDataSaveLoad)
+                {
+                    if (copiedValueInstance.GetType() == item.Value.GetType())
+                        ((ISerializeDataSaveLoad)item.Value).SerializeData = copiedValue;
+                }
             }
         }
 
@@ -2569,26 +2611,30 @@ namespace zanac.MAmidiMEmo.Gui
             var item = propertyGrid.SelectedGridItem;
             ITypeDescriptorContext context = item as ITypeDescriptorContext;
 
-            try
             {
-                bool enabled = item != null &&
-                    item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+                bool enabled = false;
+                try
+                {
+                    enabled = item != null &&
+                        item.GridItemType == GridItemType.Property &&
+                        context != null && context.Instance != null && item.PropertyDescriptor.CanResetValue(context.Instance);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(Exception))
+                        throw;
+                    else if (ex.GetType() == typeof(SystemException))
+                        throw;
+                }
+                enabled |= item != null && item.Value is ISerializeDataSaveLoad;
                 resetToDefaultThisPropertyToolStripMenuItem.Enabled = enabled;
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(Exception))
-                    throw;
-                else if (ex.GetType() == typeof(SystemException))
-                    throw;
             }
 
             try
             {
-                bool enabled = item != null &&
-                    item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                bool enabled = item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled |= item != null && item.Value is ISerializeDataSaveLoad;
+
                 copySerializeDataToolStripMenuItem.Enabled = enabled;
             }
             catch (Exception ex)
@@ -2602,10 +2648,24 @@ namespace zanac.MAmidiMEmo.Gui
 
             try
             {
-                bool enabled = item != null &&
-                    item.GridItemType == GridItemType.Property &&
-                    context != null && context.Instance != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
-                pasteSerializeDataToolStripMenuItem.Enabled = (enabled && copiedValue != null && copiedValueInstance != null && copiedValueInstance.GetType() == context.Instance.GetType());
+                bool enabled = item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad");
+                enabled |= item != null && item.Value is ISerializeDataSaveLoad;
+
+                if (enabled && copiedValue != null && copiedValueInstance != null)
+                {
+                    if (item != null && (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad"))
+                    {
+                        pasteSerializeDataToolStripMenuItem.Enabled = (copiedValueInstance.GetType() == context.Instance.GetType());
+                    }
+                    else if (item != null && item.Value is ISerializeDataSaveLoad)
+                    {
+                        pasteSerializeDataToolStripMenuItem.Enabled = (copiedValueInstance.GetType() == item.Value.GetType());
+                    }
+                    else
+                        pasteSerializeDataToolStripMenuItem.Enabled = false;
+                }
+                else
+                    pasteSerializeDataToolStripMenuItem.Enabled = false;
             }
             catch (Exception ex)
             {

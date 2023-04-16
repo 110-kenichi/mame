@@ -41,7 +41,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [TypeConverter(typeof(CustomExpandableObjectConverter))]
     [InstLock]
     [DataContract]
-    public abstract class InstrumentBase : ContextBoundObject, IDisposable
+    public abstract class InstrumentBase : ContextBoundObject, IDisposable, ISerializeDataSaveLoad
     {
         public static readonly object VstPluginContextLockObject = new object();
 

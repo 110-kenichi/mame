@@ -2360,7 +2360,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2610BOperator>))]
         [DataContract]
         [InstLock]
-        public class YM2610BOperator : ContextBoundObject
+        public class YM2610BOperator : ContextBoundObject, ISerializeDataSaveLoad
         {
             private byte f_Enable = 1;
 

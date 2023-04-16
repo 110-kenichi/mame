@@ -21,7 +21,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<SoundControlChangeSettings>))]
     [DataContract]
     [InstLock]
-    public class SoundControlChangeSettings : ContextBoundObject
+    public class SoundControlChangeSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
 
         [DataMember]

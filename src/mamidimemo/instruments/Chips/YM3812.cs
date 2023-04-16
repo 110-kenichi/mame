@@ -1105,7 +1105,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM3812Operator>))]
         [DataContract]
         [InstLock]
-        public class YM3812Operator : ContextBoundObject
+        public class YM3812Operator : ContextBoundObject, ISerializeDataSaveLoad
         {
 
             private byte f_AR;

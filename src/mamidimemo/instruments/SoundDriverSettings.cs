@@ -24,7 +24,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<SoundDriverSettings>))]
     [DataContract]
     [InstLock]
-    public class SoundDriverSettings : ContextBoundObject
+    public class SoundDriverSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
         /// <summary>
         /// 

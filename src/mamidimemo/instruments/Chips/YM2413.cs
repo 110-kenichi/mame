@@ -2503,7 +2503,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Modulator>))]
         [DataContract]
         [InstLock]
-        public class YM2413Modulator : YM2413Operator
+        public class YM2413Modulator : YM2413Operator, ISerializeDataSaveLoad
         {
 
             private byte f_TL;
@@ -2680,7 +2680,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Career>))]
         [DataContract]
         [InstLock]
-        public class YM2413Career : YM2413Operator
+        public class YM2413Career : YM2413Operator, ISerializeDataSaveLoad
         {
 
             #region Etc

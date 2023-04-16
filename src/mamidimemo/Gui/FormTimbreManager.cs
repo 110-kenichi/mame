@@ -1433,9 +1433,9 @@ namespace zanac.MAmidiMEmo.Gui
                 for (int i = 0; i < listViewCurrentTimbres.SelectedItems.Count; i++)
                 {
                     TimbreItem ttim = (TimbreItem)(listViewCurrentTimbres.SelectedItems[i].Tag);
-
-                    ttim = new TimbreItem((TimbreBase)Activator.CreateInstance(timbreType), ttim.Number);
-                    listViewCurrentTimbres.SelectedItems[i].Tag = ttim;
+                    ttim.Timbre.SerializeData = ((TimbreBase)Activator.CreateInstance(timbreType)).SerializeData;
+                    //ttim = new TimbreItem((TimbreBase)Activator.CreateInstance(timbreType), ttim.Number);
+                    //listViewCurrentTimbres.SelectedItems[i].Tag = ttim;
                     listViewCurrentTimbres.SelectedItems[i].SubItems[1].Text = ttim.Timbre.TimbreName;
                     listViewCurrentTimbres.SelectedItems[i].SubItems[2].Text = ttim.Timbre.Memo;
                 }

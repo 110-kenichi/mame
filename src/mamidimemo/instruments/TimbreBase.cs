@@ -32,7 +32,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
     [DataContract]
     [InstLock]
-    public abstract class TimbreBase : ContextBoundObject
+    public abstract class TimbreBase : ContextBoundObject , ISerializeDataSaveLoad
     {
         private InstrumentBase f_Instrument;
 

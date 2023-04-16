@@ -1892,7 +1892,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Operator>))]
         [DataContract]
         [InstLock]
-        public class YMF262Operator : ContextBoundObject
+        public class YMF262Operator : ContextBoundObject, ISerializeDataSaveLoad
         {
 
             private byte f_AR;

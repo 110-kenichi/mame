@@ -23,7 +23,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [EditorAttribute(typeof(GraphicEqulizerEditor), typeof(UITypeEditor))]
     [DataContract]
     [InstLock]
-    public class GraphicEqualizerSettings : ContextBoundObject
+    public class GraphicEqualizerSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
         [DataMember]
         [Description("Whether enable graphic equalizer.")]

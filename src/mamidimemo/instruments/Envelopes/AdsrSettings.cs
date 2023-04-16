@@ -18,7 +18,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [JsonConverter(typeof(NoTypeConverterJsonConverter<AdsrSettings>))]
     [DataContract]
     [InstLock]
-    public class AdsrSettings : ContextBoundObject
+    public class AdsrSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
         #region ADSR 
 

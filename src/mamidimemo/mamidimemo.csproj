@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="ComponentModel\ISerializeDataSaveLoad.cs" />
     <Compile Include="ComponentModel\OpenFileBrowserTypeConverter.cs" />
     <Compile Include="ComponentModel\OpenEditorTypeConverter.cs" />
     <Compile Include="ComponentModel\LoadDataTypeConverter.cs" />
@@ -978,6 +979,9 @@
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormDrumTableEditor.ja-JP.resx">
+      <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormMidiTest.resx">
       <DependentUpon>FormMidiTest.cs</DependentUpon>
     </EmbeddedResource>
@@ -1023,6 +1027,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormLpcEditor.resx">
       <DependentUpon>FormLpcEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormTimbreManager.ja-JP.resx">
+      <DependentUpon>FormTimbreManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormTimbreManager.resx">
       <DependentUpon>FormTimbreManager.cs</DependentUpon>

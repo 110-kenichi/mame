@@ -20,7 +20,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<GeneralPurposeControlSettings>))]
     [DataContract]
     [InstLock]
-    public class GeneralPurposeControlSettings : ContextBoundObject
+    public class GeneralPurposeControlSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
 
         [DataMember]

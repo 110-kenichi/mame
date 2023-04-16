@@ -1746,7 +1746,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
         [DataContract]
         [InstLock]
-        public class YM3806Operator : YMOperatorBase
+        public class YM3806Operator : YMOperatorBase, ISerializeDataSaveLoad
         {
             private byte f_Enable = 1;
 

@@ -76,11 +76,11 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             // listViewPcmSounds
             // 
+            resources.ApplyResources(this.listViewPcmSounds, "listViewPcmSounds");
             this.listViewPcmSounds.AllowDrop = true;
             this.listViewPcmSounds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            resources.ApplyResources(this.listViewPcmSounds, "listViewPcmSounds");
             this.listViewPcmSounds.FullRowSelect = true;
             this.listViewPcmSounds.GridLines = true;
             this.listViewPcmSounds.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -216,6 +216,7 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             // toolStripComboBoxCh
             // 
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
@@ -237,67 +238,67 @@ namespace zanac.MAmidiMEmo.Gui
             resources.GetString("toolStripComboBoxCh.Items14"),
             resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             // 
             // toolStripLabel2
             // 
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             // 
             // toolStripButtonPlay
             // 
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
-            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
             // 
             // toolStripButtonHook
             // 
-            this.toolStripButtonHook.CheckOnClick = true;
             resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
+            this.toolStripButtonHook.CheckOnClick = true;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
             // 
             // toolStripButton1
             // 
-            this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
             resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
+            this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
             this.toolStripButton1.Name = "toolStripButton1";
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
             // 
             // toolStripLabel1
             // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
             resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+            this.toolStripLabel1.Name = "toolStripLabel1";
             // 
             // toolStripComboBoxNote
             // 
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             // 
             // toolStripLabel4
             // 
-            this.toolStripLabel4.Name = "toolStripLabel4";
             resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
+            this.toolStripLabel4.Name = "toolStripLabel4";
             // 
             // toolStripComboBoxVelo
             // 
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             // 
             // toolStripLabel3
             // 
-            this.toolStripLabel3.Name = "toolStripLabel3";
             resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
+            this.toolStripLabel3.Name = "toolStripLabel3";
             // 
             // toolStripComboBoxGate
             // 
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
@@ -306,20 +307,20 @@ namespace zanac.MAmidiMEmo.Gui
             resources.GetString("toolStripComboBoxGate.Items2"),
             resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // toolStripLabel5
             // 
-            this.toolStripLabel5.Name = "toolStripLabel5";
             resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
+            this.toolStripLabel5.Name = "toolStripLabel5";
             // 
             // toolStripComboBoxCC
             // 
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
@@ -452,20 +453,19 @@ namespace zanac.MAmidiMEmo.Gui
             resources.GetString("toolStripComboBoxCC.Items126"),
             resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
             // contextMenuStrip1
             // 
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             // 
             // clearToolStripMenuItem
             // 
-            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // FormDrumTableEditor
