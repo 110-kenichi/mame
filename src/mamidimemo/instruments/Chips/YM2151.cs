@@ -2032,6 +2032,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class YM2151Operator : YMOperatorBase, ISerializeDataSaveLoad
         {
+
             private byte f_Enable = 1;
 
             /// <summary>

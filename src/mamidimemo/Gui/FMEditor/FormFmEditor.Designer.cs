@@ -467,6 +467,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroTextBoxTarget.MaxLength = 32767;
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
             this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxTarget.SelectedText = "";
             this.metroTextBoxTarget.SelectionLength = 0;

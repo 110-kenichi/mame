@@ -117,7 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolTipSlider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>347, 20</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>ドラム音色登録(&amp;A):  ((Shift+)ドラッグでコピー(入れ替え))</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 20</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>ドラム音色設定</value>
+  </data>
+  <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>284, 3</value>
+  </data>
+  <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 29</value>
+  </data>
+  <data name="metroButton3.Text" xml:space="preserve">
+    <value>クリア(&amp;C)...</value>
+  </data>
+  <data name="metroButtonImport.Text" xml:space="preserve">
+    <value>読み込み(&amp;I)...</value>
+  </data>
+  <data name="metroButtonExport.Text" xml:space="preserve">
+    <value>全保存(&amp;A)...</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>ドラム音色エディタ</value>
+  </data>
 </root>

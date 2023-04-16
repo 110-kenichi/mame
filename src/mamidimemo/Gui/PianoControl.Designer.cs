@@ -43,19 +43,31 @@ namespace zanac.MAmidiMEmo.Gui
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            this.toolTipSlider = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
+            // 
+            // toolTipSlider
+            // 
+            this.toolTipSlider.ShowAlways = true;
+            this.toolTipSlider.UseAnimation = false;
+            this.toolTipSlider.UseFading = false;
             // 
             // PianoControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PianoControl";
-            this.Size = new System.Drawing.Size(562, 150);
+            this.Size = new System.Drawing.Size(749, 188);
+            this.MouseHover += new System.EventHandler(this.PianoControl_MouseHover);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.ToolTip toolTipSlider;
     }
 }

@@ -26,6 +26,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class CombinedTimbreSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
+
         private InstrumentBase f_Instrument;
 
         /// <summary>

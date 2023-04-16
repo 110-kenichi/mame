@@ -13,6 +13,7 @@ using System.Drawing.Drawing2D;
 using zanac.MAmidiMEmo.Midi;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using System.Windows.Media.Media3D;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -78,6 +79,7 @@ namespace zanac.MAmidiMEmo.Gui
                         entryDataValue = 127 * SystemInformation.MouseWheelScrollDelta;
 
                     EntryDataChanged?.Invoke(this, EventArgs.Empty);
+                    toolTipSlider.Show($"Data Entry: {EntryDataValue}", this, 0, Height, 3000);
 
                     Invalidate(new Rectangle(0, 0, wKeyW, Height));
                 }
@@ -161,7 +163,7 @@ namespace zanac.MAmidiMEmo.Gui
                             break;
                         }
                     }
-                    if(!found)
+                    if (!found)
                         return;
                 }
 
@@ -622,6 +624,13 @@ namespace zanac.MAmidiMEmo.Gui
                     }
                 }
             }
+        }
+
+        private void PianoControl_MouseHover(object sender, EventArgs e)
+        {
+            var pt = this.PointToClient(Cursor.Position);
+            if (0 <= pt.X && pt.X < wKeyW && 0<= pt.Y && pt.Y < Height)
+                toolTipSlider.Show($"Data Entry: {EntryDataValue}", this, 0, Height, 3000);
         }
     }
 }

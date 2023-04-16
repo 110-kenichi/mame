@@ -2936,6 +2936,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class YM2612Operator : ContextBoundObject, ISerializeDataSaveLoad
         {
+
             private byte f_Enable = 1;
 
             /// <summary>

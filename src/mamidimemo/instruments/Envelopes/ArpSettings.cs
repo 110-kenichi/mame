@@ -20,6 +20,7 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
     [InstLock]
     public class ArpSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
+
         private bool f_Enable;
 
         [DataMember]

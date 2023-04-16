@@ -1149,7 +1149,7 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 string sd = ((ISerializeDataSaveLoad)Activator.CreateInstance(item.Value.GetType())).SerializeData;
                 ((ISerializeDataSaveLoad)item.Value).SerializeData = sd;
-                return;
+                SoftRefreshPropertyGrid();
             }
             bool enabled = false;
             try
@@ -1160,7 +1160,7 @@ namespace zanac.MAmidiMEmo.Gui
                 if (enabled)
                 {
                     propertyGrid.ResetSelectedProperty();
-                    propertyGrid.Refresh();
+                    SoftRefreshPropertyGrid();
                 }
             }
             catch (Exception ex)
@@ -2596,12 +2596,18 @@ namespace zanac.MAmidiMEmo.Gui
                     (item.PropertyDescriptor.Name == "SerializeDataSave" || item.PropertyDescriptor.Name == "SerializeDataLoad"))
                 {
                     if (copiedValueInstance.GetType() == context.Instance.GetType())
+                    {
                         item.PropertyDescriptor.SetValue(context.Instance, copiedValue);
+                        SoftRefreshPropertyGrid();
+                    }
                 }
                 else if (item != null && item.Value is ISerializeDataSaveLoad)
                 {
                     if (copiedValueInstance.GetType() == item.Value.GetType())
+                    {
                         ((ISerializeDataSaveLoad)item.Value).SerializeData = copiedValue;
+                        SoftRefreshPropertyGrid();
+                    }
                 }
             }
         }
@@ -2674,6 +2680,25 @@ namespace zanac.MAmidiMEmo.Gui
                 else if (ex.GetType() == typeof(SystemException))
                     throw;
             }
+        }
+
+
+
+        public void SoftRefreshPropertyGrid()
+        {
+            //TODO: 
+            //propertyGrid.Refresh();
+
+            //var peMain = propertyGrid.GetType().GetField("peMain", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(propertyGrid) as GridItem;
+            //if (peMain != null)
+            //{
+            //    var refreshMethod = peMain.GetType().GetMethod("Refresh");
+            //    if (refreshMethod != null)
+            //    {
+            //        refreshMethod.Invoke(peMain, null);
+            //        //propertyGrid.Invalidate();
+            //    }
+            //}
         }
     }
 }

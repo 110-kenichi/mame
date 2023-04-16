@@ -25,6 +25,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class GraphicEqualizerSettings : ContextBoundObject, ISerializeDataSaveLoad
     {
+
         [DataMember]
         [Description("Whether enable graphic equalizer.")]
         [DefaultValue(false)]
