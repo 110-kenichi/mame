@@ -35,7 +35,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "4.7.2.0";
+        public const string FILE_VERSION = "4.7.3.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2023 Itoken.All rights reserved.";
