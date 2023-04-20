@@ -90,7 +90,7 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="FmTarget" Type="System.String" Scope="User">
-      <Value Profile="(Default)">!ALG</Value>
+      <Value Profile="(Default)">!SSG</Value>
     </Setting>
     <Setting Name="MidiIF_B" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -178,6 +178,9 @@
     </Setting>
     <Setting Name="DrumEditorWinSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">800, 600</Value>
+    </Setting>
+    <Setting Name="FmTargetMinMax" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TL=20-60</Value>
     </Setting>
   </Settings>
 </SettingsFile>

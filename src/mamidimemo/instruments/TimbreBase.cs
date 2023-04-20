@@ -32,7 +32,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<TimbreBase>))]
     [DataContract]
     [InstLock]
-    public abstract class TimbreBase : ContextBoundObject , ISerializeDataSaveLoad
+    public abstract class TimbreBase : ContextBoundObject, ISerializeDataSaveLoad, IDisplayName
     {
         private InstrumentBase f_Instrument;
 
@@ -198,7 +198,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Assign MIDI channel to hardware channel.\r\n" +
             "Currently supported OPN2, DCSG only.")]
         [DefaultValue(false)]
-        public bool AssignMIDIChtoSlotNum
+        public virtual  bool AssignMIDIChtoSlotNum
         {
             get;
             set;
@@ -209,7 +209,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Description("Assign MIDI channel offset to hardware channel.\r\n" +
     "Currently supported OPN2, DCSG only.")]
         [DefaultValue(0)]
-        public int AssignMIDIChtoSlotNumOffset
+        public virtual int AssignMIDIChtoSlotNumOffset
         {
             get;
             set;
@@ -318,7 +318,10 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 f_TimbreName = value;
                 if (f_TimbreName != null)
+                {
                     f_TimbreName = f_TimbreName.Replace("\0", string.Empty);
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayName)));
+                }
             }
         }
 
@@ -556,6 +559,38 @@ namespace zanac.MAmidiMEmo.Instruments
 
             return new InstancePropertyInfo(lobj, pi);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string DisplayName
+        {
+            get
+            {
+                return TimbreName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(DisplayName):
+                    FormMain.AppliactionForm.SoftRefreshPropertyGrid();
+                    break;
+            }
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
     }
 }

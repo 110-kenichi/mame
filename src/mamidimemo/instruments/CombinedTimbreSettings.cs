@@ -24,7 +24,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<CombinedTimbreSettings>))]
     [DataContract]
     [InstLock]
-    public class CombinedTimbreSettings : ContextBoundObject, ISerializeDataSaveLoad
+    public class CombinedTimbreSettings : ContextBoundObject, ISerializeDataSaveLoad, IDisplayName
     {
 
         private InstrumentBase f_Instrument;
@@ -45,6 +45,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        [Category("Sound")]
         [DataMember]
         [Description("Base frequency offset [Semitone]")]
         [DefaultValue(0)]
@@ -58,6 +59,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_PitchShift;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Base frequency offset [Cent]")]
         [DefaultValue(0)]
@@ -78,6 +80,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_PanShift;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Base pan pot offset (-127 - 0 - 127)")]
         [DefaultValue(0)]
@@ -98,6 +101,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private double f_VolumeOffest;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Volume offset (-1.0 - 0 - 1.0)")]
         [DefaultValue(0d)]
@@ -118,6 +122,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_KeyOnDelayOffset;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Key On Delay Offset [ms]")]
         [DefaultValue(0)]
@@ -136,6 +141,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_KeyOffDelayOffset;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Key Off Delay Offset [ms]")]
         [DefaultValue(0)]
@@ -154,6 +160,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private NoteNames f_KeyRangeLow = NoteNames.C_1;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Lower key range")]
         [DefaultValue(NoteNames.C_1)]
@@ -167,6 +174,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private NoteNames f_KeyRangeHigh = NoteNames.G9;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Higher key range")]
         [DefaultValue(NoteNames.G9)]
@@ -180,6 +188,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_VelocityRangeLow;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Lower velocity range")]
         [DefaultValue(0)]
@@ -200,6 +209,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private int f_VelocityRangeHigh = 127;
 
+        [Category("Sound")]
         [DataMember]
         [Description("Higher velocity range")]
         [DefaultValue(127)]
@@ -218,6 +228,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        [Category(" Timbre")]
         [DataMember]
         [Description("Set the timbre numbers to bind this Combibed Timbre.")]
         [DefaultValue(ProgramAssignmentTimbreNumber.Timbre0)]
@@ -231,13 +242,14 @@ namespace zanac.MAmidiMEmo.Instruments
 
         private TimbreBase f_TimberObject;
 
+        [Category(" Timbre")]
         [IgnoreDataMember]
         [JsonIgnore]
         public TimbreBase TimberObject
         {
             get
             {
-                if(f_TimberObject == null)
+                if (f_TimberObject == null)
                     f_TimberObject = findTimbre();
                 return f_TimberObject;
             }
@@ -359,7 +371,7 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 var obj = JsonConvert.DeserializeObject<CombinedTimbreSettings>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -372,6 +384,61 @@ namespace zanac.MAmidiMEmo.Instruments
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string DisplayName
+        {
+            get
+            {
+                return TimbreNumber.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(DisplayName):
+                    FormMain.AppliactionForm.SoftRefreshPropertyGrid();
+                    break;
+            }
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private ProgramAssignmentTimbreNumberConverter converter = new ProgramAssignmentTimbreNumberConverter();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            ProgramAssignmentTimbreNumber nn = (ProgramAssignmentTimbreNumber)TimbreNumber;
+            string text = nn.ToString();
+            if(TimberObject != null){
+                InstrumentBase inst = TimberObject.Instrument;
+                if (inst != null)
+                {
+                    if ((int)nn < inst.BaseTimbres.Length)
+                        text += " " + inst.BaseTimbres[(int)nn].TimbreName;
+                }
+            }
+            return text;
+            //return (string)converter.ConvertTo(null, null, TimbreNumber, typeof(String));
+        }
+
 
     }
 

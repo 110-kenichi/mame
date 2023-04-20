@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="ComponentModel\IDisplayName.cs" />
     <Compile Include="ComponentModel\ISerializeDataSaveLoad.cs" />
     <Compile Include="ComponentModel\OpenFileBrowserTypeConverter.cs" />
     <Compile Include="ComponentModel\OpenEditorTypeConverter.cs" />
@@ -664,6 +665,7 @@
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="Util\FM-SoundConvertor\FFOPM.cs" />
     <Compile Include="Util\FM-SoundConvertor\FF.cs" />
+    <Compile Include="Util\PropertyGridUtility.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
     <Compile Include="Util\XGMWriter.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />

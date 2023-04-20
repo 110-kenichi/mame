@@ -5,7 +5,9 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Windows.Forms;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Instruments
@@ -17,7 +19,7 @@ namespace zanac.MAmidiMEmo.Instruments
     [JsonConverter(typeof(NoTypeConverterJsonConverter<DrumTimbre>))]
     [DataContract]
     [InstLock]
-    public class DrumTimbre : ContextBoundObject
+    public class DrumTimbre : ContextBoundObject, IDisplayName
     {
         /// <summary>
         /// 
@@ -161,7 +163,11 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
-                f_TimbreName = value;
+                if (f_TimbreName != value)
+                {
+                    f_TimbreName = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayName)));
+                }
             }
         }
 
@@ -177,5 +183,37 @@ namespace zanac.MAmidiMEmo.Instruments
             TimbreNumber = timbreNumber;
             BaseNote = NoteNames.C4;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public string DisplayName
+        {
+            get
+            {
+                return TimbreName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(DisplayName):
+                    FormMain.AppliactionForm.SoftRefreshPropertyGrid();
+                    break;
+            }
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
     }
 }

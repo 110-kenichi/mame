@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
 using zanac.MAmidiMEmo.Instruments;
+using Microsoft.WindowsAPICodePack.Shell;
+using System.Xml.Linq;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -49,18 +51,6 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     {
                         case ProgramAssignmentNumber pan:
                             break;
-                        case CombinedTimbreSettings cts:
-                            name += " " + cts.TimbreNumber;
-                            break;
-                        case CombinedTimbre ctim:
-                            name += " " + ctim.TimbreName;
-                            break;
-                        case TimbreBase tim:
-                            name += " " + tim.TimbreName;
-                            break;
-                        case DrumTimbre dtim:
-                            name += " " + dtim.TimbreName;
-                            break;
                         case Object obj:
                             //dynamic dobj = obj;
                             //try
@@ -79,7 +69,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                             //}
                             break;
                     }
-                    CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o.GetType(), i);
+                    CollectionPropertyDescriptor cpd = new CollectionPropertyDescriptor(context, type, name, o as IDisplayName, o.GetType(), i);
                     array[i] = cpd;
                     i++;
                 }
@@ -103,6 +93,28 @@ namespace zanac.MAmidiMEmo.ComponentModel
             private object defaultValue;
 
             private int index;
+
+            private IDisplayName dname;
+
+            public override string Name
+            {
+                get
+                {
+                    if (dname != null && dname.DisplayName != null)
+                        return base.Name + dname.DisplayName;
+                    return base.Name;
+                }
+            }
+
+            public override string DisplayName
+            {
+                get
+                {
+                    if (dname != null && dname.DisplayName != null)
+                        return base.Name + dname.DisplayName;
+                    return base.DisplayName;
+                }
+            }
 
             public override bool IsReadOnly
             {
@@ -135,11 +147,12 @@ namespace zanac.MAmidiMEmo.ComponentModel
             /// <param name="name"></param>
             /// <param name="elementType"></param>
             /// <param name="index"></param>
-            public CollectionPropertyDescriptor(ITypeDescriptorContext context, Type componentType, string name, Type elementType, int index)
+            public CollectionPropertyDescriptor(ITypeDescriptorContext context, Type componentType, string name, IDisplayName dname, Type elementType, int index)
                 : base(componentType, name, elementType)
             {
                 this.context = context;
                 this.index = index;
+                this.dname = dname;
 
                 CollectionDefaultValueAttribute datt = (CollectionDefaultValueAttribute)context.PropertyDescriptor.Attributes[typeof(CollectionDefaultValueAttribute)];
                 if (datt != null)

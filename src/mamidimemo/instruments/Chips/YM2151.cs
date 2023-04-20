@@ -1384,6 +1384,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.Ym2151WriteData(unitNumber, 0x38, 0, Slot, (byte)((timbre.PMS << 4 | timbre.AMS)));
                 for (int op = 0; op < 4; op++)
                 {
+                    parentModule.Ym2151WriteData(unitNumber, 0x40, op, Slot, (byte)((timbre.Ops[op].DT1 << 4 | timbre.Ops[op].MUL)));
+
                     switch (timbre.ALG)
                     {
                         case 0:

@@ -373,7 +373,7 @@ namespace zanac.MAmidiMEmo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("!ALG")]
+        [global::System.Configuration.DefaultSettingValueAttribute("!SSG")]
         public string FmTarget {
             get {
                 return ((string)(this["FmTarget"]));
@@ -727,6 +727,18 @@ namespace zanac.MAmidiMEmo.Properties {
             }
             set {
                 this["DrumEditorWinSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TL=20-60")]
+        public string FmTargetMinMax {
+            get {
+                return ((string)(this["FmTargetMinMax"]));
+            }
+            set {
+                this["FmTargetMinMax"] = value;
             }
         }
     }

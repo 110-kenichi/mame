@@ -77,6 +77,24 @@ namespace zanac.MAmidiMEmo.Instruments
         [Browsable(false)]
         [JsonIgnore]
         [IgnoreDataMember]
+        public override bool AssignMIDIChtoSlotNum
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public override int AssignMIDIChtoSlotNumOffset
+        {
+            get;
+            set;
+        }
+
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
         public override MidiDriverSettings MDS
         {
             get;

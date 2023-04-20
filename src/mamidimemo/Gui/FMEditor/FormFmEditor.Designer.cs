@@ -59,7 +59,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonRand1 = new MetroFramework.Controls.MetroButton();
             this.metroButtonParams = new MetroFramework.Controls.MetroButton();
-            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
@@ -78,6 +77,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonExportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonTimbre = new MetroFramework.Controls.MetroButton();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
+            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
+            this.metroTextBoxTargetMinMax = new MetroFramework.Controls.MetroTextBox();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -99,10 +100,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // pianoControl1
             // 
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pianoControl1.Location = new System.Drawing.Point(0, 28);
+            this.pianoControl1.Location = new System.Drawing.Point(0, 31);
             this.pianoControl1.Margin = new System.Windows.Forms.Padding(5);
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(1053, 72);
+            this.pianoControl1.Size = new System.Drawing.Size(1053, 69);
             this.pianoControl1.TabIndex = 0;
             this.pianoControl1.TargetTimbres = null;
             // 
@@ -127,7 +128,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripComboBoxCC});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1053, 28);
+            this.toolStrip2.Size = new System.Drawing.Size(1053, 31);
             this.toolStrip2.TabIndex = 2;
             // 
             // toolStripComboBoxCh
@@ -153,14 +154,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             "A14(15ch)",
             "A15(16ch)"});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(99, 28);
+            this.toolStripComboBoxCh.Size = new System.Drawing.Size(99, 31);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(54, 25);
+            this.toolStripLabel2.Size = new System.Drawing.Size(54, 28);
             this.toolStripLabel2.Text = "Key Ch";
             // 
             // toolStripButtonPlay
@@ -169,7 +170,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
             this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(105, 25);
+            this.toolStripButtonPlay.Size = new System.Drawing.Size(105, 28);
             this.toolStripButtonPlay.Text = "PlayOnEdit";
             // 
             // toolStripButtonHook
@@ -177,7 +178,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripButtonHook.CheckOnClick = true;
             this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
-            this.toolStripButtonHook.Size = new System.Drawing.Size(79, 25);
+            this.toolStripButtonHook.Size = new System.Drawing.Size(79, 28);
             this.toolStripButtonHook.Text = "HookMidi";
             this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
@@ -187,43 +188,43 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(68, 25);
+            this.toolStripButton1.Size = new System.Drawing.Size(68, 28);
             this.toolStripButton1.Text = "Panic!";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(42, 25);
+            this.toolStripLabel1.Size = new System.Drawing.Size(42, 28);
             this.toolStripLabel1.Text = "Note";
             // 
             // toolStripComboBoxNote
             // 
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            this.toolStripComboBoxNote.Size = new System.Drawing.Size(99, 28);
+            this.toolStripComboBoxNote.Size = new System.Drawing.Size(99, 31);
             // 
             // toolStripLabel4
             // 
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(61, 25);
+            this.toolStripLabel4.Size = new System.Drawing.Size(61, 28);
             this.toolStripLabel4.Text = "Velocity";
             // 
             // toolStripComboBoxVelo
             // 
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(99, 28);
+            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(99, 31);
             // 
             // toolStripLabel3
             // 
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(40, 25);
+            this.toolStripLabel3.Size = new System.Drawing.Size(40, 28);
             this.toolStripLabel3.Text = "Gate";
             // 
             // toolStripComboBoxGate
@@ -236,17 +237,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             "2000ms",
             "5000ms"});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 28);
+            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 31);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 28);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripLabel5
             // 
             this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(27, 25);
+            this.toolStripLabel5.Size = new System.Drawing.Size(27, 28);
             this.toolStripLabel5.Text = "CC";
             // 
             // toolStripComboBoxCC
@@ -383,14 +384,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             "126",
             "127"});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 28);
+            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 31);
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 7;
+            this.tableLayoutPanel1.ColumnCount = 8;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -398,14 +400,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonParams, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTarget, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 4, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 5, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 5, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 6, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 6, 2);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 6, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 5, 0);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonAbort, 7, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 7, 0);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 6, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonExport, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTargetMinMax, 4, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 726);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
@@ -442,52 +445,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonParams.UseSelectable = true;
             this.metroButtonParams.Click += new System.EventHandler(this.metroButtonRandParams_Click);
             // 
-            // metroTextBoxTarget
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 3);
-            // 
-            // 
-            // 
-            this.metroTextBoxTarget.CustomButton.Image = null;
-            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(577, 2);
-            this.metroTextBoxTarget.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTarget.CustomButton.Name = "";
-            this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(27, 27);
-            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxTarget.CustomButton.TabIndex = 1;
-            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
-            this.metroTextBoxTarget.CustomButton.Visible = false;
-            this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.metroTextBoxTarget.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxTarget.Lines = new string[] {
-        "!ALG"};
-            this.metroTextBoxTarget.Location = new System.Drawing.Point(223, 6);
-            this.metroTextBoxTarget.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTarget.MaxLength = 32767;
-            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
-            this.metroTextBoxTarget.PasswordChar = '\0';
-            this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-    " with comma. )";
-            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxTarget.SelectedText = "";
-            this.metroTextBoxTarget.SelectionLength = 0;
-            this.metroTextBoxTarget.SelectionStart = 0;
-            this.metroTextBoxTarget.ShortcutsEnabled = true;
-            this.metroTextBoxTarget.Size = new System.Drawing.Size(607, 32);
-            this.metroTextBoxTarget.TabIndex = 2;
-            this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
-            this.metroTextBoxTarget.UseSelectable = true;
-            this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-    " with comma. )";
-            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            // 
             // buttonOK
             // 
             this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(730, 54);
+            this.buttonOK.Location = new System.Drawing.Point(729, 54);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(100, 29);
@@ -501,7 +463,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(838, 54);
+            this.buttonCancel.Location = new System.Drawing.Point(837, 54);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(100, 29);
@@ -542,7 +504,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             this.metroButtonAbort.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.metroButtonAbort.DialogResult = System.Windows.Forms.DialogResult.Abort;
-            this.metroButtonAbort.Location = new System.Drawing.Point(946, 54);
+            this.metroButtonAbort.Location = new System.Drawing.Point(945, 54);
             this.metroButtonAbort.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonAbort.Name = "metroButtonAbort";
             this.metroButtonAbort.Size = new System.Drawing.Size(100, 29);
@@ -555,7 +517,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // metroButtonPaste
             // 
             this.metroButtonPaste.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonPaste.Location = new System.Drawing.Point(946, 7);
+            this.metroButtonPaste.Location = new System.Drawing.Point(945, 7);
             this.metroButtonPaste.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonPaste.Name = "metroButtonPaste";
             this.metroButtonPaste.Size = new System.Drawing.Size(100, 29);
@@ -567,7 +529,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // metroButtonCopy
             // 
             this.metroButtonCopy.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonCopy.Location = new System.Drawing.Point(838, 7);
+            this.metroButtonCopy.Location = new System.Drawing.Point(837, 7);
             this.metroButtonCopy.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonCopy.Name = "metroButtonCopy";
             this.metroButtonCopy.Size = new System.Drawing.Size(100, 29);
@@ -711,6 +673,85 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
+            // metroTextBoxTarget
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 2);
+            // 
+            // 
+            // 
+            this.metroTextBoxTarget.CustomButton.Image = null;
+            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(269, 2);
+            this.metroTextBoxTarget.CustomButton.Margin = new System.Windows.Forms.Padding(4);
+            this.metroTextBoxTarget.CustomButton.Name = "";
+            this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(27, 27);
+            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxTarget.CustomButton.TabIndex = 1;
+            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
+            this.metroTextBoxTarget.CustomButton.Visible = false;
+            this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroTextBoxTarget.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroTextBoxTarget.Lines = new string[] {
+        "!SSG"};
+            this.metroTextBoxTarget.Location = new System.Drawing.Point(223, 6);
+            this.metroTextBoxTarget.Margin = new System.Windows.Forms.Padding(4);
+            this.metroTextBoxTarget.MaxLength = 32767;
+            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
+            this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxTarget.SelectedText = "";
+            this.metroTextBoxTarget.SelectionLength = 0;
+            this.metroTextBoxTarget.SelectionStart = 0;
+            this.metroTextBoxTarget.ShortcutsEnabled = true;
+            this.metroTextBoxTarget.Size = new System.Drawing.Size(299, 32);
+            this.metroTextBoxTarget.TabIndex = 2;
+            this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
+            this.toolTip1.SetToolTip(this.metroTextBoxTarget, "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+        " with comma. )");
+            this.metroTextBoxTarget.UseSelectable = true;
+            this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
+            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
+            // metroTextBoxTargetMinMax
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTargetMinMax, 2);
+            // 
+            // 
+            // 
+            this.metroTextBoxTargetMinMax.CustomButton.Image = null;
+            this.metroTextBoxTargetMinMax.CustomButton.Location = new System.Drawing.Point(269, 2);
+            this.metroTextBoxTargetMinMax.CustomButton.Margin = new System.Windows.Forms.Padding(4);
+            this.metroTextBoxTargetMinMax.CustomButton.Name = "";
+            this.metroTextBoxTargetMinMax.CustomButton.Size = new System.Drawing.Size(27, 27);
+            this.metroTextBoxTargetMinMax.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxTargetMinMax.CustomButton.TabIndex = 1;
+            this.metroTextBoxTargetMinMax.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxTargetMinMax.CustomButton.UseSelectable = true;
+            this.metroTextBoxTargetMinMax.CustomButton.Visible = false;
+            this.metroTextBoxTargetMinMax.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTargetMinMax", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroTextBoxTargetMinMax.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroTextBoxTargetMinMax.Lines = new string[] {
+        "TL=20-60"};
+            this.metroTextBoxTargetMinMax.Location = new System.Drawing.Point(530, 6);
+            this.metroTextBoxTargetMinMax.Margin = new System.Windows.Forms.Padding(4);
+            this.metroTextBoxTargetMinMax.MaxLength = 32767;
+            this.metroTextBoxTargetMinMax.Name = "metroTextBoxTargetMinMax";
+            this.metroTextBoxTargetMinMax.PasswordChar = '\0';
+            this.metroTextBoxTargetMinMax.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxTargetMinMax.SelectedText = "";
+            this.metroTextBoxTargetMinMax.SelectionLength = 0;
+            this.metroTextBoxTargetMinMax.SelectionStart = 0;
+            this.metroTextBoxTargetMinMax.ShortcutsEnabled = true;
+            this.metroTextBoxTargetMinMax.Size = new System.Drawing.Size(299, 32);
+            this.metroTextBoxTargetMinMax.TabIndex = 2;
+            this.metroTextBoxTargetMinMax.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTargetMinMax;
+            this.metroTextBoxTargetMinMax.UseSelectable = true;
+            this.metroTextBoxTargetMinMax.WaterMark = "(Write randomize target register min max value here. Separated with comma. )";
+            this.metroTextBoxTargetMinMax.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxTargetMinMax.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
             // FormFmEditor
             // 
             this.AcceptButton = this.buttonOK;
@@ -784,5 +825,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private MetroFramework.Controls.MetroButton metroButtonExport;
         private MetroFramework.Controls.MetroButton metroButtonExportAll;
         private MetroFramework.Controls.MetroButton metroButtonTimbre;
+        private MetroFramework.Controls.MetroTextBox metroTextBoxTargetMinMax;
     }
 }

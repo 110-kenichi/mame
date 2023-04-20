@@ -649,6 +649,27 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 else if (names[i].Length > 1)
                     untargetName.Add(names[i].Substring(1).Trim());
             }
+            var minmaxnames = metroTextBoxTargetMinMax.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<string, (int min, int max)> targetNameMinMax = new Dictionary<string, (int, int)>();
+            for (int i = 0; i < minmaxnames.Length; i++)
+            {
+                string[] nmm = minmaxnames[i].Trim().Split(new char[] { '=', '-' }, StringSplitOptions.RemoveEmptyEntries);
+                if (nmm.Length == 3)
+                {
+                    try
+                    {
+                        targetNameMinMax.Add(nmm[0], (int.Parse(nmm[1]), int.Parse(nmm[2])));
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
+                    }
+                }
+            }
 
             try
             {
@@ -693,6 +714,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                             var v = rand.Next(-1, 2);
 
+                            int min = rv.Minimum;
+                            int max = rv.Maximum;
+                            if (targetNameMinMax.ContainsKey(rv.ItemName))
+                            {
+                                var minmax = targetNameMinMax[rv.ItemName];
+                                if (min <= minmax.min && minmax.min <= max)
+                                    min = minmax.min;
+                                if (min <= minmax.max && minmax.max <= max)
+                                    max = minmax.max;
+                            }
+
                             if (rv.IsNullable)
                             {
                                 var cv = rv.NullableValue;
@@ -702,8 +734,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                     cv = v;
                                 if (cv < rv.Minimum)
                                     cv = null;
-                                else if (cv > rv.Maximum)
-                                    cv = rv.Maximum;
+                                else if (cv < min)
+                                    cv = min;
+                                else if (cv > max)
+                                    cv = max;
 
                                 rv.NullableValue = cv;
                             }
@@ -712,10 +746,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                 var cv = rv.Value;
 
                                 cv += v;
-                                if (cv < rv.Minimum)
-                                    cv = rv.Minimum;
-                                else if (cv > rv.Maximum)
-                                    cv = rv.Maximum;
+                                if (cv < min)
+                                    cv = min;
+                                else if (cv > max)
+                                    cv = max;
 
                                 rv.Value = cv;
                             }
@@ -741,6 +775,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     targetName.Add(names[i].Trim());
                 else if (names[i].Length > 1)
                     untargetName.Add(names[i].Substring(1).Trim());
+            }
+
+            var minmaxnames = metroTextBoxTargetMinMax.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<string,(int min ,int max)> targetNameMinMax = new Dictionary<string, (int, int)>();
+            for (int i = 0; i < minmaxnames.Length; i++)
+            {
+                string[] nmm = minmaxnames[i].Trim().Split(new char[] { '=', '-' }, StringSplitOptions.RemoveEmptyEntries);
+                if (nmm.Length == 3)
+                {
+                    try
+                    {
+                        targetNameMinMax.Add(nmm[0], (int.Parse(nmm[1]), int.Parse(nmm[2])));
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
+                    }
+                }
             }
 
             try
@@ -783,10 +839,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                                 if (match)
                                     continue;
                             }
+                            int min = rv.Minimum;
+                            int max = rv.Maximum;
+                            if (targetNameMinMax.ContainsKey(rv.ItemName))
+                            {
+                                var minmax = targetNameMinMax[rv.ItemName];
+                                if (min <= minmax.min && minmax.min <= max)
+                                    min = minmax.min;
+                                if (min <= minmax.max && minmax.max <= max)
+                                    max = minmax.max;
+                            }
 
                             if (rv.IsNullable)
                             {
-                                var v = rand.Next(rv.Minimum - 1, rv.Maximum + 1);
+                                var v = rand.Next(min - 1, max + 1);
                                 if (v < rv.Minimum)
                                     rv.NullableValue = null;
                                 else
@@ -794,7 +860,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
                             else
                             {
-                                rv.Value = rand.Next(rv.Minimum, rv.Maximum + 1);
+                                rv.Value = rand.Next(min, max + 1);
                             }
                         }
                     }

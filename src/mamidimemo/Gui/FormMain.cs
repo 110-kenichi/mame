@@ -2686,19 +2686,55 @@ namespace zanac.MAmidiMEmo.Gui
 
         public void SoftRefreshPropertyGrid()
         {
-            //TODO: 
-            //propertyGrid.Refresh();
+            timer1.Start();
+            /*
+            try
+            {
+                foreach (Control c in propertyGrid.Controls)
+                    PropertyGridUtility.BeginUpdate(c);
 
-            //var peMain = propertyGrid.GetType().GetField("peMain", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(propertyGrid) as GridItem;
-            //if (peMain != null)
-            //{
-            //    var refreshMethod = peMain.GetType().GetMethod("Refresh");
-            //    if (refreshMethod != null)
-            //    {
-            //        refreshMethod.Invoke(peMain, null);
-            //        //propertyGrid.Invalidate();
-            //    }
-            //}
+                //var sgi = propertyGrid.SelectedGridItem;
+                //string sname = null;
+                //string cname = null;
+                //if (sgi != null)
+                //{
+                //    cname = sgi.Label;
+                //    if (sgi.PropertyDescriptor != null)
+                //        sname = sgi.PropertyDescriptor.Name;
+                //}
+
+                ScrollBar sb = PropertyGridUtility.GetPropertyGridViewScrollBar(propertyGrid);
+                int lsv = -1;
+                if (sb != null)
+                    lsv = sb.Value;
+                bool vis = PropertyGridUtility.GridViewEditVisible(propertyGrid);
+
+                propertyGrid.Refresh();
+
+                if (sb != null)
+                    PropertyGridUtility.SetPropertyGridViewScrollOffset(propertyGrid, lsv);
+                if (!vis)
+                    PropertyGridUtility.CommonEditorHide(propertyGrid);
+
+                //PropertyGridUtility.SelectGridItem(propertyGrid, cname, sname);
+            }
+            finally
+            {
+                foreach (Control c in propertyGrid.Controls)
+                {
+                    PropertyGridUtility.EndUpdate(c);
+                    c.Invalidate(true);
+                    c.Update();
+                }
+            }
+            */
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            if(!propertyGrid.IsDisposed)
+                propertyGrid.Refresh();
+            timer1.Stop();
         }
     }
 }
