@@ -271,6 +271,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 4.7.3.0 Added Min Max values for Randmizer on FM Timbre Editor.
 		Improved Reset menu behavior for Property
+		Fixed YM2151 Timbre Settings (Degraded at v4.6.9.0)
 4.7.2.0 Added UseExprForModulator, ExprTargetModulators property for the FM Synth Timbre. You can change FM Modulator(Operator) TL by MIDI Expression.
 		Improved DAC performance of VGMPlayer.
 		Added Timbre Manager. You can manage Timbres more easily.

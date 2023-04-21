@@ -38,6 +38,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFmEditor));
             this.panelPiano = new System.Windows.Forms.Panel();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
             this.toolStrip2 = new zanac.MAmidiMEmo.ComponentModel.ToolStripBase();
@@ -59,6 +60,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.metroButtonRand1 = new MetroFramework.Controls.MetroButton();
             this.metroButtonParams = new MetroFramework.Controls.MetroButton();
+            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
             this.buttonOK = new MetroFramework.Controls.MetroButton();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
@@ -67,6 +69,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonPaste = new MetroFramework.Controls.MetroButton();
             this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
             this.metroButtonExport = new MetroFramework.Controls.MetroButton();
+            this.metroTextBoxTargetMinMax = new MetroFramework.Controls.MetroTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -77,8 +80,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonExportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonTimbre = new MetroFramework.Controls.MetroButton();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
-            this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
-            this.metroTextBoxTargetMinMax = new MetroFramework.Controls.MetroTextBox();
             this.panelPiano.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -88,27 +89,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // panelPiano
             // 
+            resources.ApplyResources(this.panelPiano, "panelPiano");
             this.panelPiano.Controls.Add(this.pianoControl1);
             this.panelPiano.Controls.Add(this.toolStrip2);
-            this.panelPiano.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelPiano.Location = new System.Drawing.Point(9, 626);
-            this.panelPiano.Margin = new System.Windows.Forms.Padding(4);
             this.panelPiano.Name = "panelPiano";
-            this.panelPiano.Size = new System.Drawing.Size(1053, 100);
-            this.panelPiano.TabIndex = 4;
+            this.metroToolTip1.SetToolTip(this.panelPiano, resources.GetString("panelPiano.ToolTip"));
+            this.toolTip1.SetToolTip(this.panelPiano, resources.GetString("panelPiano.ToolTip1"));
             // 
             // pianoControl1
             // 
-            this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pianoControl1.Location = new System.Drawing.Point(0, 31);
-            this.pianoControl1.Margin = new System.Windows.Forms.Padding(5);
+            resources.ApplyResources(this.pianoControl1, "pianoControl1");
             this.pianoControl1.Name = "pianoControl1";
-            this.pianoControl1.Size = new System.Drawing.Size(1053, 69);
-            this.pianoControl1.TabIndex = 0;
             this.pianoControl1.TargetTimbres = null;
+            this.metroToolTip1.SetToolTip(this.pianoControl1, resources.GetString("pianoControl1.ToolTip"));
+            this.toolTip1.SetToolTip(this.pianoControl1, resources.GetString("pianoControl1.ToolTip1"));
             // 
             // toolStrip2
             // 
+            resources.ApplyResources(this.toolStrip2, "toolStrip2");
             this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxCh,
@@ -126,277 +124,255 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripSeparator2,
             this.toolStripLabel5,
             this.toolStripComboBoxCC});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(1053, 31);
-            this.toolStrip2.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.toolStrip2, resources.GetString("toolStrip2.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.toolStrip2, resources.GetString("toolStrip2.ToolTip1"));
             // 
             // toolStripComboBoxCh
             // 
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
             this.toolStripComboBoxCh.Items.AddRange(new object[] {
-            "A0(1ch)",
-            "A1(2ch)",
-            "A2(3ch)",
-            "A3(4ch)",
-            "A4(5ch)",
-            "A5(6ch)",
-            "A6(7ch)",
-            "A7(8ch)",
-            "A8(9ch)",
-            "A9(10ch)",
-            "A10(11ch)",
-            "A11(12ch)",
-            "A12(13ch)",
-            "A13(14ch)",
-            "A14(15ch)",
-            "A15(16ch)"});
+            resources.GetString("toolStripComboBoxCh.Items"),
+            resources.GetString("toolStripComboBoxCh.Items1"),
+            resources.GetString("toolStripComboBoxCh.Items2"),
+            resources.GetString("toolStripComboBoxCh.Items3"),
+            resources.GetString("toolStripComboBoxCh.Items4"),
+            resources.GetString("toolStripComboBoxCh.Items5"),
+            resources.GetString("toolStripComboBoxCh.Items6"),
+            resources.GetString("toolStripComboBoxCh.Items7"),
+            resources.GetString("toolStripComboBoxCh.Items8"),
+            resources.GetString("toolStripComboBoxCh.Items9"),
+            resources.GetString("toolStripComboBoxCh.Items10"),
+            resources.GetString("toolStripComboBoxCh.Items11"),
+            resources.GetString("toolStripComboBoxCh.Items12"),
+            resources.GetString("toolStripComboBoxCh.Items13"),
+            resources.GetString("toolStripComboBoxCh.Items14"),
+            resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
-            this.toolStripComboBoxCh.Size = new System.Drawing.Size(99, 31);
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(54, 28);
-            this.toolStripLabel2.Text = "Key Ch";
             // 
             // toolStripButtonPlay
             // 
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
-            this.toolStripButtonPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
-            this.toolStripButtonPlay.Size = new System.Drawing.Size(105, 28);
-            this.toolStripButtonPlay.Text = "PlayOnEdit";
             // 
             // toolStripButtonHook
             // 
+            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.CheckOnClick = true;
-            this.toolStripButtonHook.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHook.Name = "toolStripButtonHook";
-            this.toolStripButtonHook.Size = new System.Drawing.Size(79, 28);
-            this.toolStripButtonHook.Text = "HookMidi";
-            this.toolStripButtonHook.ToolTipText = "Hook all MIDI event for editor.";
             // 
             // toolStripButton1
             // 
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
-            this.toolStripButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(68, 28);
-            this.toolStripButton1.Text = "Panic!";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripLabel1
             // 
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(42, 28);
-            this.toolStripLabel1.Text = "Note";
             // 
             // toolStripComboBoxNote
             // 
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
-            this.toolStripComboBoxNote.Size = new System.Drawing.Size(99, 31);
             // 
             // toolStripLabel4
             // 
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(61, 28);
-            this.toolStripLabel4.Text = "Velocity";
             // 
             // toolStripComboBoxVelo
             // 
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
-            this.toolStripComboBoxVelo.Size = new System.Drawing.Size(99, 31);
             // 
             // toolStripLabel3
             // 
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(40, 28);
-            this.toolStripLabel3.Text = "Gate";
             // 
             // toolStripComboBoxGate
             // 
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
-            "500ms",
-            "1000ms",
-            "2000ms",
-            "5000ms"});
+            resources.GetString("toolStripComboBoxGate.Items"),
+            resources.GetString("toolStripComboBoxGate.Items1"),
+            resources.GetString("toolStripComboBoxGate.Items2"),
+            resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
-            this.toolStripComboBoxGate.Size = new System.Drawing.Size(75, 31);
             // 
             // toolStripSeparator2
             // 
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
             // 
             // toolStripLabel5
             // 
+            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(27, 28);
-            this.toolStripLabel5.Text = "CC";
             // 
             // toolStripComboBoxCC
             // 
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100",
-            "101",
-            "102",
-            "103",
-            "104",
-            "105",
-            "106",
-            "107",
-            "108",
-            "109",
-            "110",
-            "111",
-            "112",
-            "113",
-            "114",
-            "115",
-            "116",
-            "117",
-            "118",
-            "119",
-            "120",
-            "121",
-            "122",
-            "123",
-            "124",
-            "125",
-            "126",
-            "127"});
+            resources.GetString("toolStripComboBoxCC.Items"),
+            resources.GetString("toolStripComboBoxCC.Items1"),
+            resources.GetString("toolStripComboBoxCC.Items2"),
+            resources.GetString("toolStripComboBoxCC.Items3"),
+            resources.GetString("toolStripComboBoxCC.Items4"),
+            resources.GetString("toolStripComboBoxCC.Items5"),
+            resources.GetString("toolStripComboBoxCC.Items6"),
+            resources.GetString("toolStripComboBoxCC.Items7"),
+            resources.GetString("toolStripComboBoxCC.Items8"),
+            resources.GetString("toolStripComboBoxCC.Items9"),
+            resources.GetString("toolStripComboBoxCC.Items10"),
+            resources.GetString("toolStripComboBoxCC.Items11"),
+            resources.GetString("toolStripComboBoxCC.Items12"),
+            resources.GetString("toolStripComboBoxCC.Items13"),
+            resources.GetString("toolStripComboBoxCC.Items14"),
+            resources.GetString("toolStripComboBoxCC.Items15"),
+            resources.GetString("toolStripComboBoxCC.Items16"),
+            resources.GetString("toolStripComboBoxCC.Items17"),
+            resources.GetString("toolStripComboBoxCC.Items18"),
+            resources.GetString("toolStripComboBoxCC.Items19"),
+            resources.GetString("toolStripComboBoxCC.Items20"),
+            resources.GetString("toolStripComboBoxCC.Items21"),
+            resources.GetString("toolStripComboBoxCC.Items22"),
+            resources.GetString("toolStripComboBoxCC.Items23"),
+            resources.GetString("toolStripComboBoxCC.Items24"),
+            resources.GetString("toolStripComboBoxCC.Items25"),
+            resources.GetString("toolStripComboBoxCC.Items26"),
+            resources.GetString("toolStripComboBoxCC.Items27"),
+            resources.GetString("toolStripComboBoxCC.Items28"),
+            resources.GetString("toolStripComboBoxCC.Items29"),
+            resources.GetString("toolStripComboBoxCC.Items30"),
+            resources.GetString("toolStripComboBoxCC.Items31"),
+            resources.GetString("toolStripComboBoxCC.Items32"),
+            resources.GetString("toolStripComboBoxCC.Items33"),
+            resources.GetString("toolStripComboBoxCC.Items34"),
+            resources.GetString("toolStripComboBoxCC.Items35"),
+            resources.GetString("toolStripComboBoxCC.Items36"),
+            resources.GetString("toolStripComboBoxCC.Items37"),
+            resources.GetString("toolStripComboBoxCC.Items38"),
+            resources.GetString("toolStripComboBoxCC.Items39"),
+            resources.GetString("toolStripComboBoxCC.Items40"),
+            resources.GetString("toolStripComboBoxCC.Items41"),
+            resources.GetString("toolStripComboBoxCC.Items42"),
+            resources.GetString("toolStripComboBoxCC.Items43"),
+            resources.GetString("toolStripComboBoxCC.Items44"),
+            resources.GetString("toolStripComboBoxCC.Items45"),
+            resources.GetString("toolStripComboBoxCC.Items46"),
+            resources.GetString("toolStripComboBoxCC.Items47"),
+            resources.GetString("toolStripComboBoxCC.Items48"),
+            resources.GetString("toolStripComboBoxCC.Items49"),
+            resources.GetString("toolStripComboBoxCC.Items50"),
+            resources.GetString("toolStripComboBoxCC.Items51"),
+            resources.GetString("toolStripComboBoxCC.Items52"),
+            resources.GetString("toolStripComboBoxCC.Items53"),
+            resources.GetString("toolStripComboBoxCC.Items54"),
+            resources.GetString("toolStripComboBoxCC.Items55"),
+            resources.GetString("toolStripComboBoxCC.Items56"),
+            resources.GetString("toolStripComboBoxCC.Items57"),
+            resources.GetString("toolStripComboBoxCC.Items58"),
+            resources.GetString("toolStripComboBoxCC.Items59"),
+            resources.GetString("toolStripComboBoxCC.Items60"),
+            resources.GetString("toolStripComboBoxCC.Items61"),
+            resources.GetString("toolStripComboBoxCC.Items62"),
+            resources.GetString("toolStripComboBoxCC.Items63"),
+            resources.GetString("toolStripComboBoxCC.Items64"),
+            resources.GetString("toolStripComboBoxCC.Items65"),
+            resources.GetString("toolStripComboBoxCC.Items66"),
+            resources.GetString("toolStripComboBoxCC.Items67"),
+            resources.GetString("toolStripComboBoxCC.Items68"),
+            resources.GetString("toolStripComboBoxCC.Items69"),
+            resources.GetString("toolStripComboBoxCC.Items70"),
+            resources.GetString("toolStripComboBoxCC.Items71"),
+            resources.GetString("toolStripComboBoxCC.Items72"),
+            resources.GetString("toolStripComboBoxCC.Items73"),
+            resources.GetString("toolStripComboBoxCC.Items74"),
+            resources.GetString("toolStripComboBoxCC.Items75"),
+            resources.GetString("toolStripComboBoxCC.Items76"),
+            resources.GetString("toolStripComboBoxCC.Items77"),
+            resources.GetString("toolStripComboBoxCC.Items78"),
+            resources.GetString("toolStripComboBoxCC.Items79"),
+            resources.GetString("toolStripComboBoxCC.Items80"),
+            resources.GetString("toolStripComboBoxCC.Items81"),
+            resources.GetString("toolStripComboBoxCC.Items82"),
+            resources.GetString("toolStripComboBoxCC.Items83"),
+            resources.GetString("toolStripComboBoxCC.Items84"),
+            resources.GetString("toolStripComboBoxCC.Items85"),
+            resources.GetString("toolStripComboBoxCC.Items86"),
+            resources.GetString("toolStripComboBoxCC.Items87"),
+            resources.GetString("toolStripComboBoxCC.Items88"),
+            resources.GetString("toolStripComboBoxCC.Items89"),
+            resources.GetString("toolStripComboBoxCC.Items90"),
+            resources.GetString("toolStripComboBoxCC.Items91"),
+            resources.GetString("toolStripComboBoxCC.Items92"),
+            resources.GetString("toolStripComboBoxCC.Items93"),
+            resources.GetString("toolStripComboBoxCC.Items94"),
+            resources.GetString("toolStripComboBoxCC.Items95"),
+            resources.GetString("toolStripComboBoxCC.Items96"),
+            resources.GetString("toolStripComboBoxCC.Items97"),
+            resources.GetString("toolStripComboBoxCC.Items98"),
+            resources.GetString("toolStripComboBoxCC.Items99"),
+            resources.GetString("toolStripComboBoxCC.Items100"),
+            resources.GetString("toolStripComboBoxCC.Items101"),
+            resources.GetString("toolStripComboBoxCC.Items102"),
+            resources.GetString("toolStripComboBoxCC.Items103"),
+            resources.GetString("toolStripComboBoxCC.Items104"),
+            resources.GetString("toolStripComboBoxCC.Items105"),
+            resources.GetString("toolStripComboBoxCC.Items106"),
+            resources.GetString("toolStripComboBoxCC.Items107"),
+            resources.GetString("toolStripComboBoxCC.Items108"),
+            resources.GetString("toolStripComboBoxCC.Items109"),
+            resources.GetString("toolStripComboBoxCC.Items110"),
+            resources.GetString("toolStripComboBoxCC.Items111"),
+            resources.GetString("toolStripComboBoxCC.Items112"),
+            resources.GetString("toolStripComboBoxCC.Items113"),
+            resources.GetString("toolStripComboBoxCC.Items114"),
+            resources.GetString("toolStripComboBoxCC.Items115"),
+            resources.GetString("toolStripComboBoxCC.Items116"),
+            resources.GetString("toolStripComboBoxCC.Items117"),
+            resources.GetString("toolStripComboBoxCC.Items118"),
+            resources.GetString("toolStripComboBoxCC.Items119"),
+            resources.GetString("toolStripComboBoxCC.Items120"),
+            resources.GetString("toolStripComboBoxCC.Items121"),
+            resources.GetString("toolStripComboBoxCC.Items122"),
+            resources.GetString("toolStripComboBoxCC.Items123"),
+            resources.GetString("toolStripComboBoxCC.Items124"),
+            resources.GetString("toolStripComboBoxCC.Items125"),
+            resources.GetString("toolStripComboBoxCC.Items126"),
+            resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
-            this.toolStripComboBoxCC.Size = new System.Drawing.Size(75, 31);
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 8;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonParams, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTarget, 2, 0);
@@ -409,80 +385,110 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 6, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonExport, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTargetMinMax, 4, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 726);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1053, 89);
-            this.tableLayoutPanel1.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.tableLayoutPanel1, resources.GetString("tableLayoutPanel1.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.tableLayoutPanel1, resources.GetString("tableLayoutPanel1.ToolTip1"));
             // 
             // metroButtonRand1
             // 
-            this.metroButtonRand1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonRand1.Location = new System.Drawing.Point(7, 7);
-            this.metroButtonRand1.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonRand1, "metroButtonRand1");
             this.metroButtonRand1.Name = "metroButtonRand1";
-            this.metroButtonRand1.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonRand1.TabIndex = 0;
-            this.metroButtonRand1.Text = "&Rand all";
+            this.toolTip1.SetToolTip(this.metroButtonRand1, resources.GetString("metroButtonRand1.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonRand1, resources.GetString("metroButtonRand1.ToolTip1"));
             this.metroButtonRand1.UseSelectable = true;
             this.metroButtonRand1.Click += new System.EventHandler(this.metroButtonRandAll_Click);
             // 
             // metroButtonParams
             // 
-            this.metroButtonParams.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonParams.Location = new System.Drawing.Point(115, 7);
-            this.metroButtonParams.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonParams, "metroButtonParams");
             this.metroButtonParams.Name = "metroButtonParams";
-            this.metroButtonParams.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonParams.TabIndex = 1;
-            this.metroButtonParams.Text = "Rand &fine";
+            this.toolTip1.SetToolTip(this.metroButtonParams, resources.GetString("metroButtonParams.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonParams, resources.GetString("metroButtonParams.ToolTip1"));
             this.metroButtonParams.UseSelectable = true;
             this.metroButtonParams.Click += new System.EventHandler(this.metroButtonRandParams_Click);
             // 
+            // metroTextBoxTarget
+            // 
+            resources.ApplyResources(this.metroTextBoxTarget, "metroTextBoxTarget");
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 2);
+            // 
+            // 
+            // 
+            this.metroTextBoxTarget.CustomButton.AccessibleDescription = resources.GetString("resource.AccessibleDescription");
+            this.metroTextBoxTarget.CustomButton.AccessibleName = resources.GetString("resource.AccessibleName");
+            this.metroTextBoxTarget.CustomButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("resource.Anchor")));
+            this.metroTextBoxTarget.CustomButton.AutoSize = ((bool)(resources.GetObject("resource.AutoSize")));
+            this.metroTextBoxTarget.CustomButton.AutoSizeMode = ((System.Windows.Forms.AutoSizeMode)(resources.GetObject("resource.AutoSizeMode")));
+            this.metroTextBoxTarget.CustomButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("resource.BackgroundImage")));
+            this.metroTextBoxTarget.CustomButton.BackgroundImageLayout = ((System.Windows.Forms.ImageLayout)(resources.GetObject("resource.BackgroundImageLayout")));
+            this.metroTextBoxTarget.CustomButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("resource.Dock")));
+            this.metroTextBoxTarget.CustomButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("resource.FlatStyle")));
+            this.metroTextBoxTarget.CustomButton.Font = ((System.Drawing.Font)(resources.GetObject("resource.Font")));
+            this.metroTextBoxTarget.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
+            this.metroTextBoxTarget.CustomButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.ImageAlign")));
+            this.metroTextBoxTarget.CustomButton.ImageIndex = ((int)(resources.GetObject("resource.ImageIndex")));
+            this.metroTextBoxTarget.CustomButton.ImageKey = resources.GetString("resource.ImageKey");
+            this.metroTextBoxTarget.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode")));
+            this.metroTextBoxTarget.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location")));
+            this.metroTextBoxTarget.CustomButton.Margin = ((System.Windows.Forms.Padding)(resources.GetObject("resource.Margin")));
+            this.metroTextBoxTarget.CustomButton.MaximumSize = ((System.Drawing.Size)(resources.GetObject("resource.MaximumSize")));
+            this.metroTextBoxTarget.CustomButton.Name = "";
+            this.metroTextBoxTarget.CustomButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("resource.RightToLeft")));
+            this.metroTextBoxTarget.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size")));
+            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxTarget.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex")));
+            this.metroTextBoxTarget.CustomButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.TextAlign")));
+            this.metroTextBoxTarget.CustomButton.TextImageRelation = ((System.Windows.Forms.TextImageRelation)(resources.GetObject("resource.TextImageRelation")));
+            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
+            this.metroTextBoxTarget.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible")));
+            this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroTextBoxTarget.Lines = new string[] {
+        "!SSG"};
+            this.metroTextBoxTarget.MaxLength = 32767;
+            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
+            this.metroTextBoxTarget.PasswordChar = '\0';
+            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxTarget.SelectedText = "";
+            this.metroTextBoxTarget.SelectionLength = 0;
+            this.metroTextBoxTarget.SelectionStart = 0;
+            this.metroTextBoxTarget.ShortcutsEnabled = true;
+            this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
+            this.metroToolTip1.SetToolTip(this.metroTextBoxTarget, resources.GetString("metroTextBoxTarget.ToolTip"));
+            this.toolTip1.SetToolTip(this.metroTextBoxTarget, resources.GetString("metroTextBoxTarget.ToolTip1"));
+            this.metroTextBoxTarget.UseSelectable = true;
+            this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
+    " with comma. )";
+            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
             // buttonOK
             // 
-            this.buttonOK.Anchor = System.Windows.Forms.AnchorStyles.None;
+            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(729, 54);
-            this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
-            this.buttonOK.TabIndex = 8;
-            this.buttonOK.Text = "&OK";
-            this.metroToolTip1.SetToolTip(this.buttonOK, "Close and apply editor data.");
+            this.toolTip1.SetToolTip(this.buttonOK, resources.GetString("buttonOK.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.buttonOK, resources.GetString("buttonOK.ToolTip1"));
             this.buttonOK.UseSelectable = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(837, 54);
-            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 29);
-            this.buttonCancel.TabIndex = 9;
-            this.buttonCancel.Text = "&Cancel";
-            this.metroToolTip1.SetToolTip(this.buttonCancel, "Close and undo data to initial data.");
+            this.toolTip1.SetToolTip(this.buttonCancel, resources.GetString("buttonCancel.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.buttonCancel, resources.GetString("buttonCancel.ToolTip1"));
             this.buttonCancel.UseSelectable = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // metroButtonImport
             // 
+            resources.ApplyResources(this.metroButtonImport, "metroButtonImport");
             this.metroButtonImport.AllowDrop = true;
-            this.metroButtonImport.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonImport.Location = new System.Drawing.Point(7, 54);
-            this.metroButtonImport.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImport.Name = "metroButtonImport";
-            this.metroButtonImport.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonImport.TabIndex = 5;
-            this.metroButtonImport.Text = "&Import...";
+            this.toolTip1.SetToolTip(this.metroButtonImport, resources.GetString("metroButtonImport.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonImport, resources.GetString("metroButtonImport.ToolTip1"));
             this.metroButtonImport.UseSelectable = true;
             this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);
             this.metroButtonImport.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragDrop);
@@ -490,139 +496,148 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // metroButtonImportGit
             // 
-            this.metroButtonImportGit.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonImportGit.Location = new System.Drawing.Point(115, 54);
-            this.metroButtonImportGit.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonImportGit, "metroButtonImportGit");
             this.metroButtonImportGit.Name = "metroButtonImportGit";
-            this.metroButtonImportGit.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonImportGit.TabIndex = 6;
-            this.metroButtonImportGit.Text = "Import &Git...";
+            this.toolTip1.SetToolTip(this.metroButtonImportGit, resources.GetString("metroButtonImportGit.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonImportGit, resources.GetString("metroButtonImportGit.ToolTip1"));
             this.metroButtonImportGit.UseSelectable = true;
             this.metroButtonImportGit.Click += new System.EventHandler(this.metroButtonImportGit_Click);
             // 
             // metroButtonAbort
             // 
-            this.metroButtonAbort.Anchor = System.Windows.Forms.AnchorStyles.None;
+            resources.ApplyResources(this.metroButtonAbort, "metroButtonAbort");
             this.metroButtonAbort.DialogResult = System.Windows.Forms.DialogResult.Abort;
-            this.metroButtonAbort.Location = new System.Drawing.Point(945, 54);
-            this.metroButtonAbort.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonAbort.Name = "metroButtonAbort";
-            this.metroButtonAbort.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonAbort.TabIndex = 10;
-            this.metroButtonAbort.Text = "&Abort";
-            this.metroToolTip1.SetToolTip(this.metroButtonAbort, "Close and does not undo data to initial data.");
+            this.toolTip1.SetToolTip(this.metroButtonAbort, resources.GetString("metroButtonAbort.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonAbort, resources.GetString("metroButtonAbort.ToolTip1"));
             this.metroButtonAbort.UseSelectable = true;
             this.metroButtonAbort.Click += new System.EventHandler(this.metroButtonAbort_Click);
             // 
             // metroButtonPaste
             // 
-            this.metroButtonPaste.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonPaste.Location = new System.Drawing.Point(945, 7);
-            this.metroButtonPaste.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonPaste, "metroButtonPaste");
             this.metroButtonPaste.Name = "metroButtonPaste";
-            this.metroButtonPaste.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonPaste.TabIndex = 4;
-            this.metroButtonPaste.Text = "&Paste data";
+            this.toolTip1.SetToolTip(this.metroButtonPaste, resources.GetString("metroButtonPaste.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonPaste, resources.GetString("metroButtonPaste.ToolTip1"));
             this.metroButtonPaste.UseSelectable = true;
             this.metroButtonPaste.Click += new System.EventHandler(this.metroButtonPaste_Click);
             // 
             // metroButtonCopy
             // 
-            this.metroButtonCopy.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonCopy.Location = new System.Drawing.Point(837, 7);
-            this.metroButtonCopy.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonCopy, "metroButtonCopy");
             this.metroButtonCopy.Name = "metroButtonCopy";
-            this.metroButtonCopy.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonCopy.TabIndex = 3;
-            this.metroButtonCopy.Text = "Cop&y data";
+            this.toolTip1.SetToolTip(this.metroButtonCopy, resources.GetString("metroButtonCopy.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonCopy, resources.GetString("metroButtonCopy.ToolTip1"));
             this.metroButtonCopy.UseSelectable = true;
             this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
             // metroButtonExport
             // 
-            this.metroButtonExport.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonExport.Location = new System.Drawing.Point(223, 54);
-            this.metroButtonExport.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.Size = new System.Drawing.Size(100, 29);
-            this.metroButtonExport.TabIndex = 7;
-            this.metroButtonExport.Text = "Ex&port...";
+            this.toolTip1.SetToolTip(this.metroButtonExport, resources.GetString("metroButtonExport.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonExport, resources.GetString("metroButtonExport.ToolTip1"));
             this.metroButtonExport.UseSelectable = true;
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
+            // metroTextBoxTargetMinMax
+            // 
+            resources.ApplyResources(this.metroTextBoxTargetMinMax, "metroTextBoxTargetMinMax");
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTargetMinMax, 2);
+            // 
+            // 
+            // 
+            this.metroTextBoxTargetMinMax.CustomButton.AccessibleDescription = resources.GetString("resource.AccessibleDescription1");
+            this.metroTextBoxTargetMinMax.CustomButton.AccessibleName = resources.GetString("resource.AccessibleName1");
+            this.metroTextBoxTargetMinMax.CustomButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("resource.Anchor1")));
+            this.metroTextBoxTargetMinMax.CustomButton.AutoSize = ((bool)(resources.GetObject("resource.AutoSize1")));
+            this.metroTextBoxTargetMinMax.CustomButton.AutoSizeMode = ((System.Windows.Forms.AutoSizeMode)(resources.GetObject("resource.AutoSizeMode1")));
+            this.metroTextBoxTargetMinMax.CustomButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("resource.BackgroundImage1")));
+            this.metroTextBoxTargetMinMax.CustomButton.BackgroundImageLayout = ((System.Windows.Forms.ImageLayout)(resources.GetObject("resource.BackgroundImageLayout1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("resource.Dock1")));
+            this.metroTextBoxTargetMinMax.CustomButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("resource.FlatStyle1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Font = ((System.Drawing.Font)(resources.GetObject("resource.Font1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
+            this.metroTextBoxTargetMinMax.CustomButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.ImageAlign1")));
+            this.metroTextBoxTargetMinMax.CustomButton.ImageIndex = ((int)(resources.GetObject("resource.ImageIndex1")));
+            this.metroTextBoxTargetMinMax.CustomButton.ImageKey = resources.GetString("resource.ImageKey1");
+            this.metroTextBoxTargetMinMax.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Margin = ((System.Windows.Forms.Padding)(resources.GetObject("resource.Margin1")));
+            this.metroTextBoxTargetMinMax.CustomButton.MaximumSize = ((System.Drawing.Size)(resources.GetObject("resource.MaximumSize1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Name = "";
+            this.metroTextBoxTargetMinMax.CustomButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("resource.RightToLeft1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
+            this.metroTextBoxTargetMinMax.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex1")));
+            this.metroTextBoxTargetMinMax.CustomButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.TextAlign1")));
+            this.metroTextBoxTargetMinMax.CustomButton.TextImageRelation = ((System.Windows.Forms.TextImageRelation)(resources.GetObject("resource.TextImageRelation1")));
+            this.metroTextBoxTargetMinMax.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroTextBoxTargetMinMax.CustomButton.UseSelectable = true;
+            this.metroTextBoxTargetMinMax.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible1")));
+            this.metroTextBoxTargetMinMax.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTargetMinMax", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroTextBoxTargetMinMax.Lines = new string[] {
+        "TL=20-60"};
+            this.metroTextBoxTargetMinMax.MaxLength = 32767;
+            this.metroTextBoxTargetMinMax.Name = "metroTextBoxTargetMinMax";
+            this.metroTextBoxTargetMinMax.PasswordChar = '\0';
+            this.metroTextBoxTargetMinMax.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxTargetMinMax.SelectedText = "";
+            this.metroTextBoxTargetMinMax.SelectionLength = 0;
+            this.metroTextBoxTargetMinMax.SelectionStart = 0;
+            this.metroTextBoxTargetMinMax.ShortcutsEnabled = true;
+            this.metroTextBoxTargetMinMax.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTargetMinMax;
+            this.metroToolTip1.SetToolTip(this.metroTextBoxTargetMinMax, resources.GetString("metroTextBoxTargetMinMax.ToolTip"));
+            this.toolTip1.SetToolTip(this.metroTextBoxTargetMinMax, resources.GetString("metroTextBoxTargetMinMax.ToolTip1"));
+            this.metroTextBoxTargetMinMax.UseSelectable = true;
+            this.metroTextBoxTargetMinMax.WaterMark = "(Write randomize target register min max value here. Separated with comma. )";
+            this.metroTextBoxTargetMinMax.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.metroTextBoxTargetMinMax.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            // 
             // panel1
             // 
-            this.panel1.AutoScroll = true;
+            resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Controls.Add(this.flowLayoutPanel1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(9, 133);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(4);
-            this.panel1.Size = new System.Drawing.Size(1053, 493);
-            this.panel1.TabIndex = 5;
+            this.metroToolTip1.SetToolTip(this.panel1, resources.GetString("panel1.ToolTip"));
+            this.toolTip1.SetToolTip(this.panel1, resources.GetString("panel1.ToolTip1"));
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(8, 8);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
-            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(67, 62);
+            resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(67, 62);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.flowLayoutPanel1, resources.GetString("flowLayoutPanel1.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.flowLayoutPanel1, resources.GetString("flowLayoutPanel1.ToolTip1"));
             // 
             // metroComboBoxTimbres
             // 
-            this.metroComboBoxTimbres.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.metroComboBoxTimbres, "metroComboBoxTimbres");
             this.metroComboBoxTimbres.FormattingEnabled = true;
-            this.metroComboBoxTimbres.ItemHeight = 24;
-            this.metroComboBoxTimbres.Location = new System.Drawing.Point(89, 4);
-            this.metroComboBoxTimbres.Margin = new System.Windows.Forms.Padding(4);
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.metroComboBoxTimbres.Size = new System.Drawing.Size(605, 30);
-            this.metroComboBoxTimbres.TabIndex = 1;
+            this.metroToolTip1.SetToolTip(this.metroComboBoxTimbres, resources.GetString("metroComboBoxTimbres.ToolTip"));
+            this.toolTip1.SetToolTip(this.metroComboBoxTimbres, resources.GetString("metroComboBoxTimbres.ToolTip1"));
             this.metroComboBoxTimbres.UseSelectable = true;
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.AutoSize = true;
-            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 5;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
             this.tableLayoutPanel2.Controls.Add(this.metroComboBoxTimbres, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAll, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonImportAllGit, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonExportAll, 4, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonTimbre, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 94);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1053, 39);
-            this.tableLayoutPanel2.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.tableLayoutPanel2, resources.GetString("tableLayoutPanel2.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.tableLayoutPanel2, resources.GetString("tableLayoutPanel2.ToolTip1"));
             // 
             // metroButtonImportAll
             // 
+            resources.ApplyResources(this.metroButtonImportAll, "metroButtonImportAll");
             this.metroButtonImportAll.AllowDrop = true;
-            this.metroButtonImportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonImportAll.AutoSize = true;
-            this.metroButtonImportAll.Location = new System.Drawing.Point(702, 4);
-            this.metroButtonImportAll.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonImportAll.Name = "metroButtonImportAll";
-            this.metroButtonImportAll.Size = new System.Drawing.Size(112, 31);
-            this.metroButtonImportAll.TabIndex = 2;
-            this.metroButtonImportAll.Text = "Import &all...";
+            this.toolTip1.SetToolTip(this.metroButtonImportAll, resources.GetString("metroButtonImportAll.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonImportAll, resources.GetString("metroButtonImportAll.ToolTip1"));
             this.metroButtonImportAll.UseSelectable = true;
             this.metroButtonImportAll.Click += new System.EventHandler(this.metroButtonImportAll_Click);
             this.metroButtonImportAll.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragDrop);
@@ -630,40 +645,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // metroButtonImportAllGit
             // 
-            this.metroButtonImportAllGit.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonImportAllGit.AutoSize = true;
-            this.metroButtonImportAllGit.Location = new System.Drawing.Point(822, 4);
-            this.metroButtonImportAllGit.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonImportAllGit, "metroButtonImportAllGit");
             this.metroButtonImportAllGit.Name = "metroButtonImportAllGit";
-            this.metroButtonImportAllGit.Size = new System.Drawing.Size(112, 31);
-            this.metroButtonImportAllGit.TabIndex = 3;
-            this.metroButtonImportAllGit.Text = "Import all Gi&t...";
+            this.toolTip1.SetToolTip(this.metroButtonImportAllGit, resources.GetString("metroButtonImportAllGit.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonImportAllGit, resources.GetString("metroButtonImportAllGit.ToolTip1"));
             this.metroButtonImportAllGit.UseSelectable = true;
             this.metroButtonImportAllGit.Click += new System.EventHandler(this.metroButtonImportAllGit_Click);
             // 
             // metroButtonExportAll
             // 
-            this.metroButtonExportAll.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.metroButtonExportAll.AutoSize = true;
-            this.metroButtonExportAll.Location = new System.Drawing.Point(942, 4);
-            this.metroButtonExportAll.Margin = new System.Windows.Forms.Padding(4);
+            resources.ApplyResources(this.metroButtonExportAll, "metroButtonExportAll");
             this.metroButtonExportAll.Name = "metroButtonExportAll";
-            this.metroButtonExportAll.Size = new System.Drawing.Size(107, 31);
-            this.metroButtonExportAll.TabIndex = 3;
-            this.metroButtonExportAll.Text = "&Export all...";
+            this.toolTip1.SetToolTip(this.metroButtonExportAll, resources.GetString("metroButtonExportAll.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonExportAll, resources.GetString("metroButtonExportAll.ToolTip1"));
             this.metroButtonExportAll.UseSelectable = true;
             this.metroButtonExportAll.Click += new System.EventHandler(this.metroButtonExportAll_Click);
             // 
             // metroButtonTimbre
             // 
-            this.metroButtonTimbre.AutoSize = true;
-            this.metroButtonTimbre.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.metroButtonTimbre.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroButtonTimbre.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.metroButtonTimbre, "metroButtonTimbre");
             this.metroButtonTimbre.Name = "metroButtonTimbre";
-            this.metroButtonTimbre.Size = new System.Drawing.Size(79, 33);
-            this.metroButtonTimbre.TabIndex = 0;
-            this.metroButtonTimbre.Text = "Edit &name";
+            this.toolTip1.SetToolTip(this.metroButtonTimbre, resources.GetString("metroButtonTimbre.ToolTip"));
+            this.metroToolTip1.SetToolTip(this.metroButtonTimbre, resources.GetString("metroButtonTimbre.ToolTip1"));
             this.metroButtonTimbre.UseSelectable = true;
             this.metroButtonTimbre.Click += new System.EventHandler(this.metroButtonTimbre_Click);
             // 
@@ -673,108 +676,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroToolTip1.StyleManager = null;
             this.metroToolTip1.Theme = MetroFramework.MetroThemeStyle.Light;
             // 
-            // metroTextBoxTarget
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 2);
-            // 
-            // 
-            // 
-            this.metroTextBoxTarget.CustomButton.Image = null;
-            this.metroTextBoxTarget.CustomButton.Location = new System.Drawing.Point(269, 2);
-            this.metroTextBoxTarget.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTarget.CustomButton.Name = "";
-            this.metroTextBoxTarget.CustomButton.Size = new System.Drawing.Size(27, 27);
-            this.metroTextBoxTarget.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxTarget.CustomButton.TabIndex = 1;
-            this.metroTextBoxTarget.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxTarget.CustomButton.UseSelectable = true;
-            this.metroTextBoxTarget.CustomButton.Visible = false;
-            this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.metroTextBoxTarget.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxTarget.Lines = new string[] {
-        "!SSG"};
-            this.metroTextBoxTarget.Location = new System.Drawing.Point(223, 6);
-            this.metroTextBoxTarget.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTarget.MaxLength = 32767;
-            this.metroTextBoxTarget.Name = "metroTextBoxTarget";
-            this.metroTextBoxTarget.PasswordChar = '\0';
-            this.metroTextBoxTarget.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxTarget.SelectedText = "";
-            this.metroTextBoxTarget.SelectionLength = 0;
-            this.metroTextBoxTarget.SelectionStart = 0;
-            this.metroTextBoxTarget.ShortcutsEnabled = true;
-            this.metroTextBoxTarget.Size = new System.Drawing.Size(299, 32);
-            this.metroTextBoxTarget.TabIndex = 2;
-            this.metroTextBoxTarget.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTarget;
-            this.toolTip1.SetToolTip(this.metroTextBoxTarget, "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-        " with comma. )");
-            this.metroTextBoxTarget.UseSelectable = true;
-            this.metroTextBoxTarget.WaterMark = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
-    " with comma. )";
-            this.metroTextBoxTarget.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxTarget.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            // 
-            // metroTextBoxTargetMinMax
-            // 
-            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTargetMinMax, 2);
-            // 
-            // 
-            // 
-            this.metroTextBoxTargetMinMax.CustomButton.Image = null;
-            this.metroTextBoxTargetMinMax.CustomButton.Location = new System.Drawing.Point(269, 2);
-            this.metroTextBoxTargetMinMax.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTargetMinMax.CustomButton.Name = "";
-            this.metroTextBoxTargetMinMax.CustomButton.Size = new System.Drawing.Size(27, 27);
-            this.metroTextBoxTargetMinMax.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxTargetMinMax.CustomButton.TabIndex = 1;
-            this.metroTextBoxTargetMinMax.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxTargetMinMax.CustomButton.UseSelectable = true;
-            this.metroTextBoxTargetMinMax.CustomButton.Visible = false;
-            this.metroTextBoxTargetMinMax.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTargetMinMax", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.metroTextBoxTargetMinMax.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxTargetMinMax.Lines = new string[] {
-        "TL=20-60"};
-            this.metroTextBoxTargetMinMax.Location = new System.Drawing.Point(530, 6);
-            this.metroTextBoxTargetMinMax.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxTargetMinMax.MaxLength = 32767;
-            this.metroTextBoxTargetMinMax.Name = "metroTextBoxTargetMinMax";
-            this.metroTextBoxTargetMinMax.PasswordChar = '\0';
-            this.metroTextBoxTargetMinMax.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxTargetMinMax.SelectedText = "";
-            this.metroTextBoxTargetMinMax.SelectionLength = 0;
-            this.metroTextBoxTargetMinMax.SelectionStart = 0;
-            this.metroTextBoxTargetMinMax.ShortcutsEnabled = true;
-            this.metroTextBoxTargetMinMax.Size = new System.Drawing.Size(299, 32);
-            this.metroTextBoxTargetMinMax.TabIndex = 2;
-            this.metroTextBoxTargetMinMax.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTargetMinMax;
-            this.metroTextBoxTargetMinMax.UseSelectable = true;
-            this.metroTextBoxTargetMinMax.WaterMark = "(Write randomize target register min max value here. Separated with comma. )";
-            this.metroTextBoxTargetMinMax.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxTargetMinMax.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            // 
             // FormFmEditor
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(1071, 830);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelPiano);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel2);
-            this.Margin = new System.Windows.Forms.Padding(5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormFmEditor";
-            this.Padding = new System.Windows.Forms.Padding(9, 94, 9, 15);
             this.ShowIcon = false;
-            this.Text = "FM Synthesis Editor";
+            this.toolTip1.SetToolTip(this, resources.GetString("$this.ToolTip"));
+            this.metroToolTip1.SetToolTip(this, resources.GetString("$this.ToolTip1"));
             this.panelPiano.ResumeLayout(false);
             this.panelPiano.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);

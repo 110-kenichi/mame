@@ -857,6 +857,9 @@
     <EmbeddedResource Include="Gui\FMEditor\FormDownloadTone.resx">
       <DependentUpon>FormDownloadTone.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FMEditor\FormFmEditor.ja-JP.resx">
+      <DependentUpon>FormFmEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormToneSelector.resx">
       <DependentUpon>FormToneSelector.cs</DependentUpon>
     </EmbeddedResource>
