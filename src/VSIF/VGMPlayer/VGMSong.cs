@@ -56,6 +56,8 @@ namespace zanac.VGMPlayer
 
         private SegaPcm segaPcm;
 
+        private K053260 k053260;
+
         /// <summary>
         /// 
         /// </summary>
@@ -447,7 +449,7 @@ namespace zanac.VGMPlayer
                 }
                 if (field.Name == "lngDataOffset")
                 {
-                    if(curHead.lngVersion >= 0x0150)
+                    if (curHead.lngVersion >= 0x0150)
                         lngDataOffset = 0x34 + curHead.lngDataOffset;
                 }
                 if (position >= lngDataOffset)
@@ -621,7 +623,7 @@ namespace zanac.VGMPlayer
                         comPortOPN2.Tag["ProxyOPNB"] = true;
                         if (Settings.Default.Y8910_Enable && connectToPSG())
                         {
-                                comPortY8910.Tag["ProxyOPNB"] = true;
+                            comPortY8910.Tag["ProxyOPNB"] = true;
                         }
                     }
                 }
@@ -715,6 +717,30 @@ namespace zanac.VGMPlayer
 
                     segaPcm = new SegaPcm(this);
                     segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, comPortOPNA);
+                }
+            }
+            if (curHead.lngHzK053260 != 0 && curHead.lngVersion >= 0x00000161)
+            {
+                SongChipInformation += $"K053260@{curHead.lngHzK053260 / 1000000f}MHz ";
+                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                {
+                    comPortOPN2.Tag["ProxyK053260"] = true;
+                    //Enable Dac
+                    deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+
+                    k053260 = new K053260(this);
+                    k053260.device_start_k053260(0, (int)curHead.lngHzK053260, comPortOPN2);
+                }
+                else if (Settings.Default.OPNA_Enable && connectToOPNA(7987200))
+                {
+                    comPortOPNA.Tag["ProxyK053260"] = true;
+                    //Force OPNA mode
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    //Enable Dac
+                    EnableDacYM2608(comPortOPNA, true);
+
+                    k053260 = new K053260(this);
+                    k053260.device_start_k053260(0, (int)curHead.lngHzK053260, comPortOPNA);
                 }
             }
             return curHead;
@@ -1711,6 +1737,12 @@ namespace zanac.VGMPlayer
                     t.Priority = ThreadPriority.Highest;
                     t.Start();
                 }
+                if (k053260 != null)
+                {
+                    Thread t = new Thread(new ThreadStart(k053260.StreamSong));
+                    t.Priority = ThreadPriority.Highest;
+                    t.Start();
+                }
 
                 while (true)
                 {
@@ -2595,6 +2627,23 @@ namespace zanac.VGMPlayer
                                                             flushDeferredWriteData();
                                                         }
                                                         break;
+                                                    case 0x8E:  //K053260 PCM
+                                                        {
+                                                            uint romSize = vgmReader.ReadUInt32();
+                                                            uint saddr = vgmReader.ReadUInt32();
+                                                            size -= 8;
+
+#if DEBUG
+                                                            /*
+                                                            Console.WriteLine("K053260: (" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+                                                            */
+#endif
+                                                            k053260?.k053260_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+
+                                                            break;
+                                                        }
                                                     default:
                                                         vgmReader.ReadBytes((int)size);
                                                         break;
@@ -2949,7 +2998,31 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xB8 <= cmd && cmd <= 0xBF:
+                                    case int cmd when 0xB8 <= cmd && cmd <= 0xB9:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xBA:  //K053260
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            k053260?.k053260_w(0, adrs, (byte)dt);
+                                        }
+                                        break;
+
+                                    case int cmd when 0xBB <= cmd && cmd <= 0xBF:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -4251,6 +4324,8 @@ namespace zanac.VGMPlayer
                 comPortOPN = null;
                 segaPcm?.Dispose();
                 segaPcm = null;
+                k053260?.Dispose();
+                k053260 = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

@@ -45,13 +45,14 @@ namespace zanac.VGMPlayer
         /// </summary>
         public void StreamSong()
         {
-            //bool firstKeyon = false;    //TODO: true
             long freq, before, after;
             QueryPerformanceFrequency(out freq);
             QueryPerformanceCounter(out before);
             double sampleRate = 31250;
-            int lastData = 0;
-            int count = 0;
+            int multiply = 2;
+            int[][] outputs = new int[2][];
+
+            //int count = 0;
 
             while (true)
             {
@@ -75,51 +76,39 @@ namespace zanac.VGMPlayer
                     continue;
                 }
 
-                int[][] outputs = new int[2][];
 
-                outputs[0] = new int[1];
-                outputs[1] = new int[1];
+                outputs[0] = new int[multiply];
+                outputs[1] = new int[multiply];
+                SEGAPCM_update(0, outputs, multiply);
 
-                SEGAPCM_update(0, outputs, 1);
-
-                int dtL = (int)Math.Round((double)outputs[0][0] * (double)Settings.Default.DacVolume / 100d);
-                int dtR = (int)Math.Round((double)outputs[1][0] * (double)Settings.Default.DacVolume / 100d);
+                int dtL = 0;
+                int dtR = 0;
+                for (int i = 0; i < multiply; i++)
+                {
+                    dtL += outputs[0][i];
+                    dtR += outputs[1][i];
+                }
+                dtL /= multiply;
+                dtR /= multiply;
+                dtL = (int)Math.Round((double)dtL * (double)Settings.Default.DacVolume / 100d);
+                dtR = (int)Math.Round((double)dtR * (double)Settings.Default.DacVolume / 100d);
 
                 if (vsifClient != null)
                 {
                     if (vsifClient.ChipClockHz.ContainsKey("OPN2") && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
                     {
-                        int dt = Math.Max(dtL, dtR) >> 7;
+                        int dt = ((dtL + dtR) / 2) >> 7;
 
-                        dt = (dt + lastData) / 2;
                         if (dt > sbyte.MaxValue)
                             dt = sbyte.MaxValue;
                         else if (dt < sbyte.MinValue)
                             dt = sbyte.MinValue;
 
                         parentSong.DeferredWriteOPN2_DAC(vsifClient, (byte)(dt + 128));
-                        /*
-                        if ((count & 1) == 1)
-                        {
-                            dt = (dt + lastData) / 2;
-                            if (dt > sbyte.MaxValue)
-                                dt = sbyte.MaxValue;
-                            else if (dt < sbyte.MinValue)
-                                dt = sbyte.MinValue;
-
-                            parentSong.DeferredWriteOPN2_DAC(vsifClient, (byte)(dt + 128));
-                        }
-                        else
-                        {
-                            lastData = dt;
-                        }
-                        count++;
-                        count = count & 1;
-                        //*/
                     }
                     else if (vsifClient.ChipClockHz.ContainsKey("OPNA") && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
                     {
-                        int dt = Math.Max(dtL, dtR) >> 7;
+                        int dt = ((dtL + dtR) / 2) >> 7;
 
                         if (dt > sbyte.MaxValue)
                             dt = sbyte.MaxValue;
@@ -127,30 +116,11 @@ namespace zanac.VGMPlayer
                             dt = sbyte.MinValue;
 
                         parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
-                        /*
-                        if ((count & 1) == 1)
-                        {
-                            dt = (dt + lastData) / 2;
-
-                            if (dt > sbyte.MaxValue)
-                                dt = sbyte.MaxValue;
-                            else if (dt < sbyte.MinValue)
-                                dt = sbyte.MinValue;
-
-                            parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
-                        }
-                        else
-                        {
-                            lastData = dt;
-                        }
-                        count++;
-                        count = count & 1;
-                        //*/
                     }
                 }
 
                 QueryPerformanceCounter(out after);
-                while (((double)(after - before) / (double)freq) <= 1d / sampleRate)
+                while (((double)(after - before) / (double)freq) <= 1d / (sampleRate / multiply))
                     QueryPerformanceCounter(out after);
                 before = after;
             }

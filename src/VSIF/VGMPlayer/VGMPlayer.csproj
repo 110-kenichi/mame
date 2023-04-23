@@ -178,6 +178,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="K053260.cs" />
     <Compile Include="SegaPcm.cs" />
     <Compile Include="SongBase.cs" />
     <Compile Include="VsifClient.cs" />
