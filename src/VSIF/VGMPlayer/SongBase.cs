@@ -1056,7 +1056,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="dt"></param>
-        protected void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int inputValue)
+        public void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int inputValue)
         {
             if (Settings.Default.DisableDAC)
                 return;
@@ -1119,7 +1119,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="inputValue"></param>
-        protected void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
+        public void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
         {
             if (Settings.Default.DisableDAC)
                 return;

@@ -54,6 +54,8 @@ namespace zanac.VGMPlayer
 
         private Dictionary<int, StreamData> streamTable = new Dictionary<int, StreamData>();
 
+        private SegaPcm segaPcm;
+
         /// <summary>
         /// 
         /// </summary>
@@ -177,6 +179,8 @@ namespace zanac.VGMPlayer
                     deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
                     deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x00);  //STOP
                 }
+
+                EnableDacYM2608(comPortOPNA, false);
             }
 
             if (comPortOPN != null)
@@ -403,7 +407,8 @@ namespace zanac.VGMPlayer
             VGM_HEADER curHead = new VGM_HEADER();
             curHead.lngDataOffset = 0x100;
             FieldInfo[] fields = typeof(VGM_HEADER).GetFields();
-            //int position = 4;
+            int position = 4;
+            long lngDataOffset = 0x40;
             foreach (FieldInfo field in fields)
             {
                 if (field.FieldType == typeof(uint))
@@ -411,7 +416,7 @@ namespace zanac.VGMPlayer
                     uint val = hFile.ReadUInt32();
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
-                    //position += 4;
+                    position += 4;
                     if (field.Name.StartsWith("lngHz"))
                         val = (uint)(val & ~0x40000000);
                     field.SetValue(curHead, val);
@@ -421,7 +426,7 @@ namespace zanac.VGMPlayer
                     ushort val = hFile.ReadUInt16();
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
-                    //position += 2;
+                    position += 2;
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(sbyte))
@@ -429,7 +434,7 @@ namespace zanac.VGMPlayer
                     sbyte val = hFile.ReadSByte();
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
-                    //position += 1;
+                    position += 1;
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(byte))
@@ -437,9 +442,16 @@ namespace zanac.VGMPlayer
                     byte val = hFile.ReadByte();
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
-                    //position += 1;
+                    position += 1;
                     field.SetValue(curHead, val);
                 }
+                if (field.Name == "lngDataOffset")
+                {
+                    if(curHead.lngVersion >= 0x0150)
+                        lngDataOffset = 0x34 + curHead.lngDataOffset;
+                }
+                if (position >= lngDataOffset)
+                    break;
             }
 
             // Header preperations
@@ -486,9 +498,9 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPN2();
                 }
-                else if (Settings.Default.OPNA_Enable)
+                else
                 {
-                    if (connectToOPNA(curHead.lngHzYM2612))
+                    if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzYM2612))
                     {
                         comPortOPNA.Tag["ProxyOPN2"] = true;
                         //Force OPNA mode
@@ -515,10 +527,12 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPL3();
                 }
-                else if (Settings.Default.Y8950_Enable)
+                else
                 {
-                    if (connectToMsxAudio())
+                    if (Settings.Default.Y8950_Enable && connectToMsxAudio())
+                    {
                         comPortY8950.Tag["ProxyOPL"] = true;
+                    }
                 }
             }
             if (curHead.lngHzYM3812 != 0 && curHead.lngVersion >= 0x00000151)
@@ -529,10 +543,12 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPL3();
                 }
-                else if (Settings.Default.Y8950_Enable)
+                else
                 {
-                    if (connectToMsxAudio())
+                    if (Settings.Default.Y8950_Enable && connectToMsxAudio())
+                    {
                         comPortY8950.Tag["ProxyOPL2"] = true;
+                    }
                 }
             }
             if (curHead.lngHzYMF262 != 0 && curHead.lngVersion >= 0x00000151)
@@ -552,20 +568,20 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPN();
                 }
-                else if (Settings.Default.OPNA_Enable)
+                else
                 {
-                    if (connectToOPNA(curHead.lngHzYM2203 * 2))
+                    if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzYM2203 * 2))
+                    {
                         comPortOPNA.Tag["ProxyOPN"] = true;
-                }
-                else if (Settings.Default.OPN2_Enable)
-                {
-                    if (connectToOPN2())
+                        //Force OPNA mode
+                        deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    }
+                    else if (Settings.Default.OPN2_Enable && connectToOPN2())
                     {
                         comPortOPN2.Tag["ProxyOPN"] = true;
-                        if (Settings.Default.Y8910_Enable)
+                        if (Settings.Default.Y8910_Enable && connectToPSG())
                         {
-                            if (connectToPSG())
-                                comPortY8910.Tag["ProxyOPN"] = true;
+                            comPortY8910.Tag["ProxyOPN"] = true;
                         }
                     }
                 }
@@ -578,15 +594,14 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPNA(curHead.lngHzYM2608);
                 }
-                else if (Settings.Default.OPN2_Enable)
+                else
                 {
-                    if (connectToOPN2())
+                    if (Settings.Default.OPN2_Enable && connectToOPN2())
                     {
                         comPortOPN2.Tag["ProxyOPNA"] = true;
-                        if (Settings.Default.Y8910_Enable)
+                        if (Settings.Default.Y8910_Enable && connectToPSG())
                         {
-                            if (connectToPSG())
-                                comPortY8910.Tag["ProxyOPNA"] = true;
+                            comPortY8910.Tag["ProxyOPNA"] = true;
                         }
                     }
                 }
@@ -599,14 +614,13 @@ namespace zanac.VGMPlayer
                 {
                     connectToOPNA(curHead.lngHzYM2610);
                 }
-                else if (Settings.Default.OPN2_Enable)
+                else
                 {
-                    if (connectToOPN2())
+                    if (Settings.Default.OPN2_Enable && connectToOPN2())
                     {
                         comPortOPN2.Tag["ProxyOPNB"] = true;
-                        if (Settings.Default.Y8910_Enable)
+                        if (Settings.Default.Y8910_Enable && connectToPSG())
                         {
-                            if (connectToPSG())
                                 comPortY8910.Tag["ProxyOPNB"] = true;
                         }
                     }
@@ -622,15 +636,13 @@ namespace zanac.VGMPlayer
                 }
                 else
                 {
-                    if (Settings.Default.OPL3_Enable)
+                    if (Settings.Default.OPL3_Enable && connectToOPL3())
                     {
-                        if (connectToOPL3())
-                            comPortOPL3.Tag["ProxyY8950"] = true;
+                        comPortOPL3.Tag["ProxyY8950"] = true;
                     }
-                    if (Settings.Default.OPNA_Enable)
+                    else if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzY8950))
                     {
-                        if (connectToOPNA(curHead.lngHzY8950))
-                            comPortOPNA.Tag["ProxyY8950"] = true;
+                        comPortOPNA.Tag["ProxyY8950"] = true;
                     }
                 }
             }
@@ -666,28 +678,45 @@ namespace zanac.VGMPlayer
                 oki6258_clock_buffer[0x02] = (oki6258_master_clock & 0x00FF0000) >> 16;
                 oki6258_clock_buffer[0x03] = (oki6258_master_clock & 0xFF000000) >> 24;
 
-                if (Settings.Default.OPN2_Enable)
+                if (Settings.Default.OPN2_Enable && connectToOPN2())
                 {
-                    if (connectToOPN2())
-                    {
-                        comPortOPN2.Tag["ProxyOKIM6258"] = true;
-                        //Enable Dac
-                        deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
-                    }
+                    comPortOPN2.Tag["ProxyOKIM6258"] = true;
+                    //Enable Dac
+                    deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
                 }
-                else if (Settings.Default.OPNA_Enable)
+                else if (Settings.Default.OPNA_Enable && connectToOPNA(7987200))
                 {
-                    if (connectToOPNA(7987200))
-                    {
-                        comPortOPNA.Tag["ProxyOKIM6258"] = true;
-                        //Force OPNA mode
-                        deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
-                        //Enable Dac
-                        EnableDacYM2608(comPortOPNA, true);
-                    }
+                    comPortOPNA.Tag["ProxyOKIM6258"] = true;
+                    //Force OPNA mode
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    //Enable Dac
+                    EnableDacYM2608(comPortOPNA, true);
                 }
             }
+            if (curHead.lngHzSPCM != 0 && curHead.lngVersion >= 0x00000151)
+            {
+                SongChipInformation += $"SEGA PCM@{curHead.lngHzSPCM / 1000000f}MHz ";
+                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                {
+                    comPortOPN2.Tag["ProxySegaPcm"] = true;
+                    //Enable Dac
+                    deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
 
+                    segaPcm = new SegaPcm(this);
+                    segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, comPortOPN2);
+                }
+                else if (Settings.Default.OPNA_Enable && connectToOPNA(7987200))
+                {
+                    comPortOPNA.Tag["ProxySegaPcm"] = true;
+                    //Force OPNA mode
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    //Enable Dac
+                    EnableDacYM2608(comPortOPNA, true);
+
+                    segaPcm = new SegaPcm(this);
+                    segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, comPortOPNA);
+                }
+            }
             return curHead;
         }
 
@@ -1676,6 +1705,13 @@ namespace zanac.VGMPlayer
                 int streamChipType = 0;
                 OKIM6258 okim6258 = null;
 
+                if (segaPcm != null)
+                {
+                    Thread t = new Thread(new ThreadStart(segaPcm.StreamSong));
+                    t.Priority = ThreadPriority.Highest;
+                    t.Start();
+                }
+
                 while (true)
                 {
 
@@ -2473,6 +2509,23 @@ namespace zanac.VGMPlayer
                                                             //File.WriteAllText("d:\\aaa"+dacData.Count+".csv", sb.ToString());
                                                         }
                                                         break;
+                                                    case 0x80:  //SEGA PCM
+                                                        {
+                                                            uint romSize = vgmReader.ReadUInt32();
+                                                            uint saddr = vgmReader.ReadUInt32();
+                                                            size -= 8;
+
+#if DEBUG
+                                                            /*
+                                                            Console.WriteLine("SEGAPCM: (" +
+                                                                (saddr).ToString("x") + " - " + ((saddr + size - 1)).ToString("x") +
+                                                                " (" + size.ToString("x") + ")");
+                                                            */
+#endif
+                                                            segaPcm?.sega_pcm_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+
+                                                            break;
+                                                        }
                                                     case 0x81:  //YM2608
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -2907,7 +2960,24 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xC0 <= cmd && cmd <= 0xD1:
+                                    case 0xC0:  //SEGA PCM
+                                        {
+                                            var bb = readByte();
+                                            if (bb < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+
+                                            segaPcm?.sega_pcm_w(0, (aa << 8) | bb, (byte)dd);
+
+                                            break;
+                                        }
+
+                                    case int cmd when 0xC1 <= cmd && cmd <= 0xD1:
                                         {
                                             var pp = readByte();
                                             if (pp < 0)
@@ -4179,6 +4249,8 @@ namespace zanac.VGMPlayer
                 comPortY8950 = null;
                 comPortOPN?.Dispose();
                 comPortOPN = null;
+                segaPcm?.Dispose();
+                segaPcm = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

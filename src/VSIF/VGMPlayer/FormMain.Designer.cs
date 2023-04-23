@@ -682,6 +682,16 @@ namespace zanac.VGMPlayer
             this.numericUpDown1.AutoSize = true;
             this.numericUpDown1.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "DacVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDown1.Location = new System.Drawing.Point(3, 3);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(51, 22);
             this.numericUpDown1.TabIndex = 1;
@@ -826,6 +836,7 @@ namespace zanac.VGMPlayer
             // textBoxUseSystem
             // 
             this.textBoxUseSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxUseSystem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxUseSystem.Location = new System.Drawing.Point(497, 34);
             this.textBoxUseSystem.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxUseSystem.Name = "textBoxUseSystem";
@@ -837,6 +848,7 @@ namespace zanac.VGMPlayer
             // textBoxSongSystem
             // 
             this.textBoxSongSystem.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxSongSystem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxSongSystem.Location = new System.Drawing.Point(71, 34);
             this.textBoxSongSystem.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxSongSystem.Name = "textBoxSongSystem";
@@ -4766,7 +4778,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.55 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.56 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

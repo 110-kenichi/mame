@@ -1363,8 +1363,6 @@ namespace zanac.VGMPlayer
             /// </summary>
             private void processDac()
             {
-                double streamWaitDelta = 0;
-                double lastWaitRemain = 0;
                 int overflowed = 0;
 
                 long freq, before, after;
@@ -1381,7 +1379,6 @@ namespace zanac.VGMPlayer
                     int dacData = 0;
                     bool playDac = false;
 
-                    //if (streamWaitDelta <= 0)
                     {
                         lock (engineLockObject)
                         {
@@ -1418,35 +1415,12 @@ namespace zanac.VGMPlayer
                                 dacData += 0x80;
                                 xgmSong.DeferredWriteOPNA_PseudoDAC(xgmSong.comPortOPNA, dacData);
                             }
-
-                            streamWaitDelta = 44100d / sampleRate;
                         }
                     }
-
-                    if (streamWaitDelta <= 0)
-                        continue;
-
                     QueryPerformanceCounter(out after);
+                    while (((double)(after - before) / (double)freq) <= 1d / sampleRate)
+                        QueryPerformanceCounter(out after);
                     before = after;
-                    double pwait = streamWaitDelta + lastWaitRemain;
-                    if (pwait > 0)
-                    {
-                        if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
-                        {
-                            double lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
-                            lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                            xgmSong.dacHighLoad = true;
-                            xgmSong.NotifyProcessLoadOccurred();
-                        }
-                        else
-                        {
-                            while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
-                                QueryPerformanceCounter(out after);
-                            lastWaitRemain = 0;
-                            xgmSong.dacHighLoad = false;
-                        }
-                    }
-                    streamWaitDelta = 0;
                 }
             }
 
