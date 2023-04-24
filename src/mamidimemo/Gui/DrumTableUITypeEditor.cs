@@ -71,7 +71,20 @@ namespace zanac.MAmidiMEmo.Gui
                         cd[i].NoteNumber = od[i].NoteNumber;
                         cd[i].KeyName = od[i].KeyName;
                     }
-                    frm.DrumData = cd;
+
+                    frm.DrumData = (DrumTimbre[])value;
+
+                    DialogResult dr = editorService.ShowDialog(frm);
+                    if (dr == DialogResult.OK)
+                    {
+                        return value;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < cd.Length; i++)
+                            ((DrumTimbre[])value)[i] = cd[i];
+                        return value;                   // エディタ呼び出し直前の設定値をそのまま返す
+                    }
                 }
                 else
                 {
@@ -80,18 +93,20 @@ namespace zanac.MAmidiMEmo.Gui
                         drumTimbres[i] = new DrumTimbre(i, null);
 
                     frm.DrumData = drumTimbres;
+
+                    DialogResult dr = editorService.ShowDialog(frm);
+                    if (dr == DialogResult.OK)
+                    {
+                        for (int i = 0; i < frm.DrumData.Length; i++)
+                            ((DrumTimbre[])value)[i] = frm.DrumData[i];
+                        return value;
+                    }
+                    else
+                    {
+                        return value;                   // エディタ呼び出し直前の設定値をそのまま返す
+                    }
                 }
-                DialogResult dr = editorService.ShowDialog(frm);
-                if (dr == DialogResult.OK)
-                {
-                    for (int i = 0; i < frm.DrumData.Length; i++)
-                        ((DrumTimbre[])value)[i] = frm.DrumData[i];
-                    return value;
-                }
-                else
-                {
-                    return value;                   // エディタ呼び出し直前の設定値をそのまま返す
-                }
+
             }
         }
     }

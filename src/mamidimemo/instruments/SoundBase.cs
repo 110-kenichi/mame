@@ -190,7 +190,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
 
-            if (DrumTimbre != null)
+            if (DrumTimbre != null && DrumTimbre.GateTime != 0)
             {
                 HighPrecisionTimer.SetPeriodicCallback
                     (new Func<object, double>(processGateTime), DrumTimbre.GateTime, this, true);

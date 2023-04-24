@@ -99,7 +99,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private uint f_GateTime = 500;
 
         [DataMember]
-        [Description("Gate Time[ms]")]
+        [Description("Gate Time[ms]. 0 is infinite.")]
         [DefaultValue(typeof(uint), "500")]
         [SlideParametersAttribute(1, 10000)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -113,7 +113,7 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 if (value > 10000)
                     value = 10000;
-                if (f_GateTime != value && value >= 1)
+                if (f_GateTime != value && value >= 0)
                 {
                     f_GateTime = value;
                 }

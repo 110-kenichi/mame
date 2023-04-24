@@ -202,6 +202,9 @@ namespace zanac.MAmidiMEmo.Gui
             if (listViewPcmSounds.TopItem != null)
                 ti = listViewPcmSounds.TopItem.Index;
 
+            List<int> sis = new List<int>();
+            foreach (var si in listViewPcmSounds.SelectedIndices)
+                sis.Add((int)si);
             listViewPcmSounds.BeginUpdate();
             try
             {
@@ -220,6 +223,9 @@ namespace zanac.MAmidiMEmo.Gui
                     c.Width = -2;
                 listViewPcmSounds.Items[listViewPcmSounds.Items.Count - 1].EnsureVisible();
                 listViewPcmSounds.Items[ti].EnsureVisible();
+                listViewPcmSounds.SelectedIndices.Clear();
+                foreach (int si in sis)
+                    listViewPcmSounds.SelectedIndices.Add(si);
             }
             finally
             {
@@ -648,10 +654,10 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                         if (tb != null)
                         {
-                            e.Tag = new NoteOnTimbreInfo(tb, 0);
-                            e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
-                            Instrument.NotifyMidiEvent(e);
-                        }
+                                e.Tag = new NoteOnTimbreInfo(tb, 0);
+                                e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
+                                Instrument.NotifyMidiEvent(e);
+                            }
                     }
                 }
             }

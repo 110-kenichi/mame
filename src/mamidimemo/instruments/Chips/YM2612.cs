@@ -1298,6 +1298,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class PcmEngine : IDisposable
         {
+            private YM2612Sound sound;
 
             private object engineLockObject;
 
@@ -1354,11 +1355,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="pcmData"></param>
-            public void Play(TaggedNoteOnEvent note, int slot, YM2612Timbre pcmTimbre)
+            public void Play(YM2612Sound sound, TaggedNoteOnEvent note, int slot, YM2612Timbre pcmTimbre)
             {
+                this.sound = sound;
                 lock (engineLockObject)
                 {
-                    currentSampleData[slot] = new SampleData(note, pcmTimbre.PcmData, pcmTimbre.SampleRate, parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
+                    currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.PcmData, pcmTimbre.SampleRate, parentModule.DisableDacPcmVelocity, pcmTimbre.PcmGain);
 
                     var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
                     data.Tag["PcmData"] = pcmTimbre.PcmData;
@@ -1524,6 +1526,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private class SampleData
         {
+            private YM2612Sound sound;
+
             public byte[] PcmData
             {
                 get;
@@ -1559,8 +1563,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain)
+            public SampleData(YM2612Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain)
             {
+                this.sound = sound;
                 Note = note;
                 PcmData = (byte[])pcmData.Clone();
                 SampleRate = sampleRate;
@@ -1578,7 +1583,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public byte? GetDacData()
             {
                 if (index >= PcmData.Length)
+                {
+                    sound.TrySoundOff();
                     return null;
+                }
 
                 return PcmData[index++];
             }
@@ -1656,7 +1664,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (!parentModule.Mode5ch)
                                 break;
-                            parentModule.pcmEngine.Play(NoteOnEvent, Slot, timbre);
+                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre);
                             break;
                         }
                 }
