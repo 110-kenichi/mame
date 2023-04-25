@@ -1409,12 +1409,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void processDac()
             {
                 int overflowed = 0;
-
-                long freq, before, after;
-                QueryPerformanceFrequency(out freq);
-                QueryPerformanceCounter(out before);
                 uint sampleRate = 14000;
 
+                long freq, before, after;
+                double dbefore;
+                QueryPerformanceFrequency(out freq);
+                QueryPerformanceCounter(out before);
+                dbefore = before;
                 while (!stopEngineFlag)
                 {
                     if (disposedValue)
@@ -1478,9 +1479,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
 
                     QueryPerformanceCounter(out after);
-                    while (((double)(after - before) / (double)freq) <= 1d / sampleRate)
+                    double nextTime = dbefore + ((double)freq / (double)sampleRate);
+                    while (after < nextTime)
                         QueryPerformanceCounter(out after);
-                    before = after;
+                    dbefore = nextTime;
                 }
             }
 

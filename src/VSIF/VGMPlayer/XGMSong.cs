@@ -34,24 +34,6 @@ namespace zanac.VGMPlayer
 
         private byte[] vgmData;
 
-        private bool xgmHighLoad;
-
-        private bool dacHighLoad;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override bool HighLoad
-        {
-            get
-            {
-                return xgmHighLoad | dacHighLoad;
-            }
-            set
-            {
-            }
-        }
-
         private SampleData[] SampleDataTable = new SampleData[63];
 
         private class SampleData
@@ -229,8 +211,11 @@ namespace zanac.VGMPlayer
             }
             else //Genesis
             {
-                comPortOPN2.DeferredWriteData(0, 0x04, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x08, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteDataPrior(
+                    new byte[] { 0, 0 },
+                    new byte[] { 0x04, 0x8 },
+                    new byte[] { (byte)adrs, (byte)dt },
+                    (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 
@@ -247,8 +232,11 @@ namespace zanac.VGMPlayer
             }
             else //Genesis
             {
-                comPortOPN2.DeferredWriteData(0, 0x0C, (byte)adrs, (int)Settings.Default.BitBangWaitOPN2);
-                comPortOPN2.DeferredWriteData(0, 0x10, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteDataPrior(
+                    new byte[] { 0, 0 },
+                    new byte[] { 0x0C, 0x10 },
+                    new byte[] { (byte)adrs, (byte)dt },
+                    (int)Settings.Default.BitBangWaitOPN2);
             }
         }
 
@@ -706,14 +694,14 @@ namespace zanac.VGMPlayer
             pcmEngine.StartEngine();
 
             xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
-            double lastWaitRemain = 0;
-            double xgmWaitDelta = 0;
+            double wait = 0;
             {
                 //bool firstKeyon = false;    //TODO: true
                 long freq, before, after;
+                double dbefore;
                 QueryPerformanceFrequency(out freq);
-
                 QueryPerformanceCounter(out before);
+                dbefore = before;
                 while (true)
                 {
                     if (RequestedStat == SoundState.Stopped)
@@ -729,6 +717,7 @@ namespace zanac.VGMPlayer
                         }
                         Thread.Sleep(1);
                         QueryPerformanceCounter(out before);
+                        dbefore = before;
                         continue;
                     }
                     else if (RequestedStat == SoundState.Freezed)
@@ -737,12 +726,13 @@ namespace zanac.VGMPlayer
                             State = SoundState.Freezed;
                         Thread.Sleep(1);
                         QueryPerformanceCounter(out before);
+                        dbefore = before;
                         continue;
                     }
                     State = SoundState.Playing;
                     try
                     {
-                        if (xgmWaitDelta <= 0)
+                        if (wait <= 0)
                         {
 
                             int command = readByte();
@@ -755,10 +745,10 @@ namespace zanac.VGMPlayer
                                             switch (xgmMHead.bytNTSC_PAL & 1)
                                             {
                                                 case 0:
-                                                    xgmWaitDelta += 735;
+                                                    wait += 44100d / 60d;
                                                     break;
                                                 case 1:
-                                                    xgmWaitDelta += 882;
+                                                    wait += 44100d / 50d;
                                                     break;
                                             }
                                             flushDeferredWriteData();
@@ -964,31 +954,26 @@ namespace zanac.VGMPlayer
                         xgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }
 
-                    //if (wait <= (double)Settings.Default.VGMWait)
-                    if (xgmWaitDelta <= 0)
+                    if (wait <= 0)
                         continue;
 
                     flushDeferredWriteData();
 
+                    double pwait = wait / PlaybackSpeed;
+                    double nextTime = dbefore + (pwait * ((double)freq / (double)(44.1 * 1000)));
                     QueryPerformanceCounter(out after);
-                    double pwait = ((xgmWaitDelta + lastWaitRemain) / PlaybackSpeed);
-                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                    if (after > nextTime)
                     {
-                        double lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
-                        lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        xgmWaitDelta = 0;
-                        xgmHighLoad = true;
                         NotifyProcessLoadOccurred();
                     }
                     else
                     {
-                        while (((double)(after - before) / freq) <= (pwait / (44.1 * 1000)))
+                        HighLoad = false;
+                        while (after < nextTime)
                             QueryPerformanceCounter(out after);
-                        xgmWaitDelta = 0;
-                        lastWaitRemain = 0;
-                        xgmHighLoad = false;
                     }
-                    before = after;
+                    wait = 0;
+                    dbefore = nextTime;
                 }
             }
             StopAllSounds(true);
@@ -1364,13 +1349,13 @@ namespace zanac.VGMPlayer
             private void processDac()
             {
                 int overflowed = 0;
-
-                long freq, before, after;
-                QueryPerformanceFrequency(out freq);
-
-                QueryPerformanceCounter(out before);
                 uint sampleRate = 14000;
 
+                long freq, before, after;
+                double dbefore;
+                QueryPerformanceFrequency(out freq);
+                QueryPerformanceCounter(out before);
+                dbefore = before;
                 while (!stopEngineFlag)
                 {
                     if (disposedValue)
@@ -1418,9 +1403,10 @@ namespace zanac.VGMPlayer
                         }
                     }
                     QueryPerformanceCounter(out after);
-                    while (((double)(after - before) / (double)freq) <= 1d / sampleRate)
+                    double nextTime = dbefore + ((double)freq / (double)sampleRate);
+                    while (after < nextTime)
                         QueryPerformanceCounter(out after);
-                    before = after;
+                    dbefore = nextTime;
                 }
             }
 

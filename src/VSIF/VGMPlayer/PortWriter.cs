@@ -115,54 +115,6 @@ namespace zanac.VGMPlayer
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
 
-        /*
-         *  long before, after;
-            byte[] osd = new byte[1024];
-            for (int i = 0; i < osd.Length; i++)
-                osd[i] = (byte)(i & 0xff);
-            int wait = 25;
-
-            QueryPerformanceCounter(out before);
-            {
-                byte[] sd = new byte[1024 * (int)wait];
-                unsafe
-                {
-                    fixed (byte* bp2 = sd)
-                    {
-                        byte* bp = bp2;
-                        for (int i = 0; i < osd.Length; i++)
-                        {
-                            var dt = osd[i];
-                            for (int j = 0; j < wait; j++)
-                                *bp++ = dt;
-                        }
-                    }
-                }
-            }
-            QueryPerformanceCounter(out after);
-            Console.WriteLine(after - before);
-
-            QueryPerformanceCounter(out before);
-            {
-                byte[] sd = new byte[1024 * (int)25];
-                unsafe
-                {
-                    fixed (byte* bp2 = sd)
-                    {
-                        byte* bp = bp2;
-                        for (int i = 0; i < osd.Length; i++)
-                        {
-                            var dt = osd[i];
-                            MemSet((IntPtr)bp, dt, (int)wait);
-                            bp += (int)wait;
-                        }
-                    }
-                }
-            }
-            QueryPerformanceCounter(out after);
-            Console.WriteLine(after - before);
-         */
-
         protected void SendDataByFtdi(byte[] sendData, int wait)
         {
             var rawSendData = new byte[sendData.Length * (int)wait];

@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using zanac.VGMPlayer.Properties;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.AxHost;
 
 namespace zanac.VGMPlayer
@@ -48,12 +49,14 @@ namespace zanac.VGMPlayer
         /// </summary>
         public void StreamSong()
         {
-            long freq, before, after;
-            QueryPerformanceFrequency(out freq);
-            QueryPerformanceCounter(out before);
             int multiply = 6;
             int[][] outputs = new int[2][];
 
+            long freq, before, after;
+            double dbefore;
+            QueryPerformanceFrequency(out freq);
+            QueryPerformanceCounter(out before);
+            dbefore = before;
             while (true)
             {
                 if (disposedValue)
@@ -67,12 +70,14 @@ namespace zanac.VGMPlayer
                 {
                     Thread.Sleep(1);
                     QueryPerformanceCounter(out before);
+                    dbefore = before;
                     continue;
                 }
                 else if (parentSong.State == SoundState.Freezed)
                 {
                     Thread.Sleep(1);
                     QueryPerformanceCounter(out before);
+                    dbefore = before;
                     continue;
                 }
 
@@ -119,9 +124,10 @@ namespace zanac.VGMPlayer
                 }
 
                 QueryPerformanceCounter(out after);
-                while (((double)(after - before) / (double)freq) <= 1d / (sampleRate / multiply))
+                double nextTime = dbefore + ((double)freq / (sampleRate / (double)multiply));
+                while (after < nextTime)
                     QueryPerformanceCounter(out after);
-                before = after;
+                dbefore = nextTime ;
             }
         }
 

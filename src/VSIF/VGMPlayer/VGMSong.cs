@@ -1711,14 +1711,11 @@ namespace zanac.VGMPlayer
         {
             vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
             double wait = 0;
-            double lastWaitRemain = 0;
             double vgmWaitDelta = 0;
             double streamWaitDelta = 0;
-            double lastDiff = 0;
+            //double lastDiff = 0;
             {
                 //bool firstKeyon = false;    //TODO: true
-                long freq, before, after;
-                QueryPerformanceFrequency(out freq);
 
                 bool streaming = false;
                 int currentStreamIdx = 0;
@@ -1726,7 +1723,6 @@ namespace zanac.VGMPlayer
                 StreamData currentStreamData = null;
                 StreamParam streamParam = null;
                 StreamParam currentStreamParam = null;
-                QueryPerformanceCounter(out before);
                 bool oki6285Adpcm2ndNibble = false;
                 int streamChipType = 0;
                 OKIM6258 okim6258 = null;
@@ -1744,6 +1740,11 @@ namespace zanac.VGMPlayer
                     t.Start();
                 }
 
+                long freq, before, after;
+                double dbefore;
+                QueryPerformanceFrequency(out freq);
+                QueryPerformanceCounter(out before);
+                dbefore = before;
                 while (true)
                 {
 
@@ -1760,6 +1761,7 @@ namespace zanac.VGMPlayer
                         }
                         Thread.Sleep(1);
                         QueryPerformanceCounter(out before);
+                        dbefore = before;
                         continue;
                     }
                     else if (RequestedStat == SoundState.Freezed)
@@ -1768,6 +1770,7 @@ namespace zanac.VGMPlayer
                             State = SoundState.Freezed;
                         Thread.Sleep(1);
                         QueryPerformanceCounter(out before);
+                        dbefore = before;
                         continue;
                     }
                     State = SoundState.Playing;
@@ -2160,6 +2163,7 @@ namespace zanac.VGMPlayer
                                                     comPortOPNA.FlushDeferredWriteDataAndWait();
                                                     //HACK:
                                                     QueryPerformanceCounter(out before);
+                                                    dbefore = before;
                                                 }
                                             }
                                         }
@@ -2409,6 +2413,7 @@ namespace zanac.VGMPlayer
                                                     comPortY8950.FlushDeferredWriteDataAndWait();
                                                     //HACK:
                                                     QueryPerformanceCounter(out before);
+                                                    dbefore = before;
                                                 }
                                             }
                                         }
@@ -2653,6 +2658,7 @@ namespace zanac.VGMPlayer
 
                                             //HACK:
                                             QueryPerformanceCounter(out before);
+                                            dbefore = before;
                                         }
                                         break;
 
@@ -3308,36 +3314,30 @@ namespace zanac.VGMPlayer
                         }
                     }
 
-                    //if (wait <= (double)Settings.Default.VGMWait)
-                    //    continue;
-                    if (wait + lastWaitRemain <= 0)
+                    if (wait <= 0)
                         continue;
 
                     //while (!IsDeferredDataFlushed()) ;
 
                     flushDeferredWriteData();
-                    lastWaitRemain = 0;
 
-                    QueryPerformanceCounter(out after);
-                    double pwait = ((wait + lastWaitRemain) / PlaybackSpeed);
+                    double pwait = wait / PlaybackSpeed;
                     if (vgmHead.lngRate > 0)
                         pwait *= (double)vgmHead.lngRate / 60d;
-                    if (((double)(after - before) / freq) > (pwait / (44.1 * 1000)))
+                    double nextTime = dbefore + (pwait * ((double)freq / (double)(44.1 * 1000)));
+                    QueryPerformanceCounter(out after);
+                    if (after > nextTime)
                     {
-                        lastDiff = ((double)(after - before) / freq) - (pwait / (44.1 * 1000));
-                        lastWaitRemain = -(lastDiff * 44.1 * 1000);
-                        wait = 0;
                         NotifyProcessLoadOccurred();
                     }
                     else
                     {
-                        while (((double)(after - before) / freq) < (pwait / (44.1 * 1000)))
-                            QueryPerformanceCounter(out after);
-                        wait = 0;
-                        lastWaitRemain = 0;
                         HighLoad = false;
+                        while (after < nextTime)
+                            QueryPerformanceCounter(out after);
                     }
-                    before = after;
+                    wait = 0;
+                    dbefore = nextTime;
                 }
             }
             StopAllSounds(true);
