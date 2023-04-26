@@ -885,5 +885,29 @@ namespace zanac.VGMPlayer.Properties {
                 this["DacVolume"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SegaPcmRate {
+            get {
+                return ((int)(this["SegaPcmRate"]));
+            }
+            set {
+                this["SegaPcmRate"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int K053260Rate {
+            get {
+                return ((int)(this["K053260Rate"]));
+            }
+            set {
+                this["K053260Rate"] = value;
+            }
+        }
     }
 }

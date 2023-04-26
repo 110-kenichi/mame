@@ -165,6 +165,7 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNDiv = new System.Windows.Forms.NumericUpDown();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.oPTIONSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
@@ -207,6 +208,7 @@ namespace zanac.VGMPlayer
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fILEToolStripMenuItem,
+            this.oPTIONSToolStripMenuItem,
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -4760,6 +4762,13 @@ namespace zanac.VGMPlayer
             this.columnHeaderFile.Text = "File name";
             this.columnHeaderFile.Width = 325;
             // 
+            // oPTIONSToolStripMenuItem
+            // 
+            this.oPTIONSToolStripMenuItem.Name = "oPTIONSToolStripMenuItem";
+            this.oPTIONSToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.oPTIONSToolStripMenuItem.Text = "&OPTIONS";
+            this.oPTIONSToolStripMenuItem.Click += new System.EventHandler(this.oPTIONSToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -4778,7 +4787,7 @@ namespace zanac.VGMPlayer
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.59 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.60 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -4960,5 +4969,6 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.ToolStripMenuItem oPTIONSToolStripMenuItem;
     }
 }

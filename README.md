@@ -269,6 +269,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.7.6.1 Improved DAC PCM souding.
+        Added option dialog for VGMPlayer.
 4.7.6.0 Improved DAC PCM souding timing & XGM/VGM player souding timing.
 4.7.5.1 Fixed DAC nosie for VSIF for Genesis/MD.
 4.7.5.0 Supported DrumTibre.GateTime = 0 for YM2612 DAC PCM to play end of PCM.

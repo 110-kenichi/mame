@@ -1431,6 +1431,13 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private void oPTIONSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (Form f = new FormSettings())
+            {
+                f.ShowDialog(this);
+            }
+        }
     }
 
     internal static class NativeConstants
