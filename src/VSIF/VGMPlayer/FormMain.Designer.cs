@@ -42,6 +42,7 @@ namespace zanac.VGMPlayer
             this.saveAsThePlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.eXITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oPTIONSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBOUTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
             this.buttonPrev = new System.Windows.Forms.Button();
@@ -165,7 +166,6 @@ namespace zanac.VGMPlayer
             this.numericUpDownOPNDiv = new System.Windows.Forms.NumericUpDown();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.oPTIONSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
@@ -263,6 +263,13 @@ namespace zanac.VGMPlayer
             this.eXITToolStripMenuItem.Name = "eXITToolStripMenuItem";
             this.eXITToolStripMenuItem.Size = new System.Drawing.Size(356, 26);
             this.eXITToolStripMenuItem.Text = "&Exit";
+            // 
+            // oPTIONSToolStripMenuItem
+            // 
+            this.oPTIONSToolStripMenuItem.Name = "oPTIONSToolStripMenuItem";
+            this.oPTIONSToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
+            this.oPTIONSToolStripMenuItem.Text = "&OPTIONS";
+            this.oPTIONSToolStripMenuItem.Click += new System.EventHandler(this.oPTIONSToolStripMenuItem_Click);
             // 
             // aBOUTToolStripMenuItem
             // 
@@ -1521,10 +1528,10 @@ namespace zanac.VGMPlayer
             this.comboBoxDCSG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDCSG.FormattingEnabled = true;
             this.comboBoxDCSG.Items.AddRange(new object[] {
-            "VSIF - Genesis(UART 163Kbps)",
-            "VSIF - Genesis(FTDI2XX)",
+            "VSIF - MD/Genesis(UART 163Kbps)",
+            "VSIF - MD/Genesis(FTDI2XX)",
             "VSIF - SMS",
-            "VSIF - Genesis(UART 115Kbps)",
+            "VSIF - MD/Genesis(UART 115Kbps)",
             "VSIF - MSX(FTDI2XX)"});
             this.comboBoxDCSG.Location = new System.Drawing.Point(204, 62);
             this.comboBoxDCSG.Margin = new System.Windows.Forms.Padding(4);
@@ -2493,9 +2500,9 @@ namespace zanac.VGMPlayer
             this.comboBoxOPN2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPN2.FormattingEnabled = true;
             this.comboBoxOPN2.Items.AddRange(new object[] {
-            "VSIF - Genesis(UART 163Kbps)",
-            "VSIF - Genesis(FTDI2XX)",
-            "VSIF - Genesis(UART 115Kbps)",
+            "VSIF - MD/Genesis(UART 163Kbps)",
+            "VSIF - MD/Genesis(FTDI2XX)",
+            "VSIF - MD/Genesis(UART 115Kbps)",
             "VSIF - MSX/PC-6001(FTDI2XX)"});
             this.comboBoxOPN2.Location = new System.Drawing.Point(204, 31);
             this.comboBoxOPN2.Margin = new System.Windows.Forms.Padding(4);
@@ -4761,13 +4768,6 @@ namespace zanac.VGMPlayer
             // 
             this.columnHeaderFile.Text = "File name";
             this.columnHeaderFile.Width = 325;
-            // 
-            // oPTIONSToolStripMenuItem
-            // 
-            this.oPTIONSToolStripMenuItem.Name = "oPTIONSToolStripMenuItem";
-            this.oPTIONSToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
-            this.oPTIONSToolStripMenuItem.Text = "&OPTIONS";
-            this.oPTIONSToolStripMenuItem.Click += new System.EventHandler(this.oPTIONSToolStripMenuItem_Click);
             // 
             // FormMain
             // 

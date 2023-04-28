@@ -185,6 +185,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="K053260.cs" />
+    <Compile Include="DacStream.cs" />
+    <Compile Include="OKIM6295.cs" />
     <Compile Include="SegaPcm.cs" />
     <Compile Include="SongBase.cs" />
     <Compile Include="VsifClient.cs" />

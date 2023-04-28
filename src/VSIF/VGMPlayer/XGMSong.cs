@@ -1286,7 +1286,7 @@ namespace zanac.VGMPlayer
                 {
                     stopEngineFlag = false;
                     Thread t = new Thread(processDac);
-                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Priority = ThreadPriority.Highest;
                     t.Start();
                 }
             }

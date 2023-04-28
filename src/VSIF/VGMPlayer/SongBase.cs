@@ -1079,7 +1079,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="inputValue"></param>
-        protected void DeferredWriteOPNA_PseudoDAC(VsifClient comPortOPNA, int inputValue)
+        public void DeferredWriteOPNA_PseudoDAC(VsifClient comPortOPNA, int inputValue)
         {
             if (Settings.Default.DisableDAC)
                 return;

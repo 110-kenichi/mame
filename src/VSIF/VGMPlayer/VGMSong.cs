@@ -58,6 +58,10 @@ namespace zanac.VGMPlayer
 
         private K053260 k053260;
 
+        private OKIM6295 okim6295;
+
+        private DacStream dacStream;
+
         /// <summary>
         /// 
         /// </summary>
@@ -693,6 +697,30 @@ namespace zanac.VGMPlayer
                     deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
                     //Enable Dac
                     EnableDacYM2608(comPortOPNA, true);
+                }
+            }
+            if (curHead.lngHzOKIM6295 != 0 && curHead.lngVersion >= 0x00000161)
+            {
+                SongChipInformation += $"OKIM6295@{(curHead.lngHzOKIM6295 & 0x7FFFFFFFu) / 1000000f}MHz ";
+                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                {
+                    comPortOPN2.Tag["ProxyOKIM6295"] = true;
+                    //Enable Dac
+                    deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+
+                    okim6295 = new OKIM6295(this);
+                    okim6295.device_start_okim6295(0, (int)curHead.lngHzOKIM6295, comPortOPN2);
+                }
+                else if (Settings.Default.OPNA_Enable && connectToOPNA(7987200))
+                {
+                    comPortOPNA.Tag["ProxyOKIM6295"] = true;
+                    //Force OPNA mode
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    //Enable Dac
+                    EnableDacYM2608(comPortOPNA, true);
+
+                    okim6295 = new OKIM6295(this);
+                    okim6295.device_start_okim6295(0, (int)curHead.lngHzOKIM6295, comPortOPNA);
                 }
             }
             if (curHead.lngHzSPCM != 0 && curHead.lngVersion >= 0x00000151)
@@ -1717,9 +1745,6 @@ namespace zanac.VGMPlayer
             {
                 //bool firstKeyon = false;    //TODO: true
 
-                bool streaming = false;
-                int currentStreamIdx = 0;
-                int currentStreamIdxDir = 0;
                 StreamData currentStreamData = null;
                 StreamParam streamParam = null;
                 StreamParam currentStreamParam = null;
@@ -1736,6 +1761,12 @@ namespace zanac.VGMPlayer
                 if (k053260 != null)
                 {
                     Thread t = new Thread(new ThreadStart(k053260.StreamSong));
+                    t.Priority = ThreadPriority.Highest;
+                    t.Start();
+                }
+                if (okim6295 != null)
+                {
+                    Thread t = new Thread(new ThreadStart(okim6295.StreamSong));
                     t.Priority = ThreadPriority.Highest;
                     t.Start();
                 }
@@ -2632,6 +2663,15 @@ namespace zanac.VGMPlayer
                                                             flushDeferredWriteData();
                                                         }
                                                         break;
+                                                    case 0x8b: //OKIM6295
+                                                        {
+                                                            uint romSize = vgmReader.ReadUInt32();
+                                                            uint saddr = vgmReader.ReadUInt32();
+                                                            size -= 8;
+
+                                                            okim6295?.okim6295_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+                                                        }
+                                                        break;
                                                     case 0x8E:  //K053260 PCM
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -2731,12 +2771,20 @@ namespace zanac.VGMPlayer
                                                         {
                                                             //nop
                                                         }
+
+                                                        {
+                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
+                                                        }
                                                     }
+
+
                                                     break;
                                                 case 23: //OKIM6258
                                                     if (port == 0x00 && cmd == 0x1)    //ADPCM ENABLE
                                                     {
-                                                        okim6258 = new OKIM6258();
                                                         if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
@@ -2744,6 +2792,14 @@ namespace zanac.VGMPlayer
                                                         else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             //nop
+                                                        }
+
+                                                        {
+                                                            okim6258 = new OKIM6258();
+                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
                                                         }
                                                     }
                                                     break;
@@ -3004,7 +3060,20 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xB8 <= cmd && cmd <= 0xB9:
+
+                                    case 0xB8:  //okim6295
+                                        {
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+
+                                            okim6295?.okim6295_w(0, aa, (byte)dd);
+                                        }
+                                        break;
+                                    case int cmd when 0xB9 <= cmd && cmd <= 0xB9:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3152,118 +3221,12 @@ namespace zanac.VGMPlayer
                             currentStreamParam = streamParam;
                             if (currentStreamParam == null)
                             {
-                                streaming = false;
+                                dacStream.Stop();
                             }
                             else
                             {
-                                if ((currentStreamParam.Mode & StreamModes.Reverse) != StreamModes.Reverse)
-                                {
-                                    currentStreamIdx = currentStreamParam.Offset;
-                                    currentStreamIdxDir = 1;
-                                }
-                                else
-                                {
-                                    currentStreamIdx = currentStreamParam.Offset + currentStreamParam.Length - 1;
-                                    currentStreamIdxDir = -1;
-                                }
                                 currentStreamData = streamTable[currentStreamParam.StreamID];
-                                streamWaitDelta = 0;
-                                streaming = true;
-                            }
-                        }
-                        if (streaming)
-                        {
-                            if (streamWaitDelta <= 0)
-                            {
-                                if (currentStreamIdxDir > 0)
-                                {
-                                    if (currentStreamIdx >= currentStreamParam.Offset + currentStreamParam.Length)
-                                    {
-                                        if ((currentStreamParam.Mode & StreamModes.Loop) != StreamModes.Loop)
-                                            streaming = false;
-                                        else
-                                            currentStreamIdx = currentStreamParam.Offset;
-                                    }
-                                }
-                                else
-                                {
-                                    if (currentStreamIdx < currentStreamParam.Offset)
-                                    {
-                                        if ((currentStreamParam.Mode & StreamModes.Loop) != StreamModes.Loop)
-                                            streaming = false;
-                                        else
-                                            currentStreamIdx = currentStreamParam.Offset + currentStreamParam.Length - 1;
-                                    }
-                                }
-                                if (streaming)
-                                {
-                                    byte data = dacData[currentStreamIdx];
-                                    currentStreamIdx += currentStreamIdxDir;
-
-                                    switch (streamChipType)
-                                    {
-                                        case 0x2:
-                                            if (comPortOPN2 != null)
-                                            {
-                                                DeferredWriteOPN2_DAC(comPortOPN2, data);
-                                            }
-                                            else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
-                                            {
-                                                data = (byte)Math.Round((double)data * (double)Settings.Default.DacVolume / 100d);
-                                                DeferredWriteOPNA_PseudoDAC(comPortOPNA, data);
-                                            }
-                                            streamWaitDelta += 44.1 * 1000 / currentStreamData.Frequency;
-                                            break;
-                                        case 23:
-                                            {
-                                                if (okim6258 != null)
-                                                {
-                                                    if (!oki6285Adpcm2ndNibble)
-                                                    {
-                                                        var ddata = okim6258.decode(data & 0xf);
-                                                        //var ddata = decodeOpnaAdpcm(data & 0xf);
-
-                                                        ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
-
-                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
-                                                        {
-                                                            byte bdata = (byte)((ddata >> 8) + 128);
-                                                            DeferredWriteOPN2_DAC(comPortOPN2, bdata);
-                                                        }
-                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
-                                                        {
-                                                            //var ddata = decodeOpnaAdpcm(data & 0xf);
-                                                            byte bdata = (byte)((ddata >> 8));
-                                                            DeferredWriteOPNA_DAC(comPortOPNA, bdata);
-                                                        }
-                                                        currentStreamIdx -= currentStreamIdxDir;
-                                                        oki6285Adpcm2ndNibble = true;
-                                                    }
-                                                    else
-                                                    {
-                                                        var ddata = okim6258.decode(data >> 4);
-                                                        //var ddata = decodeOpnaAdpcm(data >> 4);
-
-                                                        ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
-
-                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
-                                                        {
-                                                            byte bdata = (byte)((ddata >> 8) + 128);
-                                                            DeferredWriteOPN2_DAC(comPortOPN2, bdata);
-                                                        }
-                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
-                                                        {
-                                                            byte bdata = (byte)((ddata >> 8));
-                                                            DeferredWriteOPNA_DAC(comPortOPNA, bdata);
-                                                        }
-                                                        oki6285Adpcm2ndNibble = false;
-                                                    }
-                                                }
-                                            }
-                                            streamWaitDelta += 44.1 * 1000 / (currentStreamData.Frequency << 1);
-                                            break;
-                                    }
-                                }
+                                dacStream.Play(currentStreamParam, currentStreamData, streamChipType, dacData);
                             }
                         }
                     }
@@ -4326,27 +4289,15 @@ namespace zanac.VGMPlayer
                 segaPcm = null;
                 k053260?.Dispose();
                 k053260 = null;
+                okim6295?.Dispose();
+                okim6295 = null;
+                dacStream?.Dispose();
+                dacStream = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
             }
             base.Dispose(disposing);
-        }
-
-        private class StreamParam
-        {
-            public int StreamID;
-            public int BlockID;
-            public int Offset;
-            public int Length;
-            public StreamModes Mode;
-        }
-
-        [Flags]
-        private enum StreamModes
-        {
-            Loop = 0x01,
-            Reverse = 0x02,
         }
 
         // 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
@@ -4370,7 +4321,6 @@ namespace zanac.VGMPlayer
         uint oki6258_sample_rate;
 
         uint[] oki6258_clock_buffer = new uint[4];
-
 
         /// <summary>
         /// PCM値

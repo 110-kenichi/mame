@@ -909,5 +909,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["K053260Rate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OKIM6295Rate {
+            get {
+                return ((int)(this["OKIM6295Rate"]));
+            }
+            set {
+                this["OKIM6295Rate"] = value;
+            }
+        }
     }
 }

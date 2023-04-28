@@ -1,5 +1,12 @@
 ﻿//https://github.com/kuma4649/MDPlayer
 //kumatan
+
+// license:BSD-3-Clause
+// copyright-holders:Hiromitsu Shioya, Olivier Galibert
+/*********************************************************/
+/*    SEGA 16ch 8bit PCM                                 */
+/*********************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Data;
