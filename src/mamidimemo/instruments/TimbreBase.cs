@@ -566,7 +566,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Browsable(false)]
         [JsonIgnore]
         [IgnoreDataMember]
-        public string DisplayName
+        public virtual string DisplayName
         {
             get
             {

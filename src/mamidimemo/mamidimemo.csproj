@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brr\BrrEncoder.cs" />
+    <Compile Include="ComponentModel\ExpandableProgramAssignmentNumberCollectionConverter.cs" />
     <Compile Include="ComponentModel\IDisplayName.cs" />
     <Compile Include="ComponentModel\ISerializeDataSaveLoad.cs" />
     <Compile Include="ComponentModel\OpenFileBrowserTypeConverter.cs" />

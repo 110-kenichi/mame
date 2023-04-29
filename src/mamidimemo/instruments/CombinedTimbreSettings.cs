@@ -228,6 +228,8 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+        private ProgramAssignmentTimbreNumber f_TimbreNumber = ProgramAssignmentTimbreNumber.Timbre0;
+
         [Category(" Timbre")]
         [DataMember]
         [Description("Set the timbre numbers to bind this Combibed Timbre.")]
@@ -236,9 +238,19 @@ namespace zanac.MAmidiMEmo.Instruments
         [EditorAttribute(typeof(ProgramAssignmentNumberTypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public ProgramAssignmentTimbreNumber TimbreNumber
         {
-            get;
-            set;
-        } = ProgramAssignmentTimbreNumber.Timbre0;
+            get
+            {
+                return f_TimbreNumber;
+            }
+            set
+            {
+                if (f_TimbreNumber != value)
+                {
+                    f_TimbreNumber = value;
+                    f_TimberObject = null;
+                }
+            }
+        }
 
         private TimbreBase f_TimberObject;
 
@@ -396,7 +408,7 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get
             {
-                return TimbreNumber.ToString();
+                return ToString();
             }
         }
 
@@ -427,7 +439,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             ProgramAssignmentTimbreNumber nn = (ProgramAssignmentTimbreNumber)TimbreNumber;
             string text = nn.ToString();
-            if(TimberObject != null){
+            if (TimberObject != null)
+            {
                 InstrumentBase inst = TimberObject.Instrument;
                 if (inst != null)
                 {

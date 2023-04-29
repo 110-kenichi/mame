@@ -30,7 +30,8 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [DefaultValue(null)]
         [Obsolete]
-        public ProgramAssignmentTimbreNumber?[] BindTimbres {
+        public ProgramAssignmentTimbreNumber?[] BindTimbres
+        {
             get
             {
                 return null;
@@ -148,7 +149,7 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 var obj = JsonConvert.DeserializeObject<CombinedTimbre>(serializeData);
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -159,6 +160,38 @@ namespace zanac.MAmidiMEmo.Instruments
 
 
                 System.Windows.Forms.MessageBox.Show(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public override string DisplayName
+        {
+            get
+            {
+                if (TimbreName != null)
+                {
+                    return TimbreName;
+                }
+                else if (Timbres.Count != 0)
+                {
+                    string name = string.Empty;
+                    foreach (var t in Timbres)
+                    {
+                        if (t.DisplayName != null)
+                        {
+                            if (name.Length != 0)
+                                name += ",";
+                            name += t.TimberObject.DisplayName;
+                        }
+                    }
+                    return name;
+                }
+                return TimbreName;
             }
         }
 

@@ -1294,7 +1294,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category("MIDI(Dedicated)")]
         [Description("Assign the Timbre/CombinedTimbre to program number.")]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
-        [TypeConverter(typeof(ExpandableCollectionConverter))]
+        [TypeConverter(typeof(ExpandableProgramAssignmentNumberCollectionConverter))]
         public virtual ProgramAssignmentNumber[] ProgramAssignments
         {
             get;
