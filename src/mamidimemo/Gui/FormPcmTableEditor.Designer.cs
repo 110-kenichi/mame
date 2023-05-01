@@ -42,15 +42,20 @@ namespace zanac.MAmidiMEmo.Gui
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new MetroFramework.Controls.MetroLabel();
             this.label2 = new MetroFramework.Controls.MetroLabel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // listViewPcmSounds
             // 
             this.listViewPcmSounds.AllowDrop = true;
-            resources.ApplyResources(this.listViewPcmSounds, "listViewPcmSounds");
             this.listViewPcmSounds.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
+            this.tableLayoutPanel2.SetColumnSpan(this.listViewPcmSounds, 3);
+            resources.ApplyResources(this.listViewPcmSounds, "listViewPcmSounds");
             this.listViewPcmSounds.FullRowSelect = true;
             this.listViewPcmSounds.GridLines = true;
             this.listViewPcmSounds.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -112,6 +117,7 @@ namespace zanac.MAmidiMEmo.Gui
             // label1
             // 
             resources.ApplyResources(this.label1, "label1");
+            this.tableLayoutPanel2.SetColumnSpan(this.label1, 3);
             this.label1.Name = "label1";
             // 
             // label2
@@ -119,20 +125,32 @@ namespace zanac.MAmidiMEmo.Gui
             resources.ApplyResources(this.label2, "label2");
             this.label2.Name = "label2";
             // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 1);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // tableLayoutPanel2
+            // 
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Controls.Add(this.propertyGrid1, 3, 1);
+            this.tableLayoutPanel2.Controls.Add(this.buttonAdd, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.listViewPcmSounds, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.buttonDelete, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label2, 3, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            // 
             // FormPcmTableEditor
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.buttonAdd);
-            this.Controls.Add(this.buttonDelete);
-            this.Controls.Add(this.buttonOk);
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.propertyGrid1);
-            this.Controls.Add(this.listViewPcmSounds);
+            this.Controls.Add(this.tableLayoutPanel2);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -140,8 +158,10 @@ namespace zanac.MAmidiMEmo.Gui
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -158,5 +178,7 @@ namespace zanac.MAmidiMEmo.Gui
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private MetroFramework.Controls.MetroLabel label1;
         private MetroFramework.Controls.MetroLabel label2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
     }
 }
