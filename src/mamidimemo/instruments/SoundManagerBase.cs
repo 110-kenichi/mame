@@ -7,11 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Midi;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2151;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -882,6 +885,7 @@ namespace zanac.MAmidiMEmo.Instruments
             return null;
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -1302,7 +1306,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         if (onSnd.IsSoundingStarted)
                         {
                             bool keyoff = onSnd.IsKeyOff;
-                            if(inst.LegatoFootSwitch[newNote.Channel] >= 64 &&
+                            if (inst.LegatoFootSwitch[newNote.Channel] >= 64 &&
                                 mono == 1 &&
                                 inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
                                 onSnd.FakeSoundOff();
@@ -1571,7 +1575,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
 
-                            if (!keyoff)
+                            if (!keyoff && onSnd.BaseTimbreIndex == 0)
                             {
                                 //Store removed keyon event;
                                 bool onfound = false;

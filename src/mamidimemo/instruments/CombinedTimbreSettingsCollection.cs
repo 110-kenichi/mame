@@ -61,13 +61,19 @@ namespace zanac.MAmidiMEmo.Instruments
         public void Insert(int index, CombinedTimbreSettings item)
         {
             lock (InstrumentBase.VstPluginContextLockObject)
+            {
+                item.Parent = this;
                 f_list.Insert(index, item);
+            }
         }
 
         public void RemoveAt(int index)
         {
             lock (InstrumentBase.VstPluginContextLockObject)
+            {
+                f_list[index].Parent = null;
                 f_list.RemoveAt(index);
+            }
         }
 
         public CombinedTimbreSettings this[int index]
@@ -78,6 +84,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
             set
             {
+                value.Parent = this;
                 f_list[index] = value;
             }
         }
@@ -85,13 +92,20 @@ namespace zanac.MAmidiMEmo.Instruments
         public void Add(CombinedTimbreSettings item)
         {
             lock (InstrumentBase.VstPluginContextLockObject)
+            {
+                item.Parent = this;
                 f_list.Add(item);
+            }
         }
 
         public void Clear()
         {
             lock (InstrumentBase.VstPluginContextLockObject)
+            {
+                foreach (var v in f_list)
+                    v.Parent = null;
                 f_list.Clear();
+            }
         }
 
         public bool Contains(CombinedTimbreSettings item)

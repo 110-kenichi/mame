@@ -26,6 +26,12 @@ namespace zanac.MAmidiMEmo.Instruments
     [InstLock]
     public class CombinedTimbreSettings : ContextBoundObject, ISerializeDataSaveLoad, IDisplayName
     {
+        [Browsable(false)]
+        public CombinedTimbreSettingsCollection Parent
+        {
+            get;
+            set;
+        }
 
         private InstrumentBase f_Instrument;
 
@@ -136,6 +142,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 f_KeyOnDelayOffset = value;
                 if (f_KeyOnDelayOffset < 0)
                     f_KeyOnDelayOffset = 0;
+                if(Parent != null && Parent.IndexOf(this) == 0)
+                    f_KeyOnDelayOffset = 0;
             }
         }
 
@@ -155,6 +163,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 f_KeyOffDelayOffset = value;
                 if (f_KeyOffDelayOffset < 0)
                     f_KeyOffDelayOffset = 0;
+                if (Parent != null && Parent.IndexOf(this) == 0)
+                    f_KeyOnDelayOffset = 0;
             }
         }
 

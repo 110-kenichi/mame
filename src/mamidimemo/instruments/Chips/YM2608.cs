@@ -328,6 +328,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (CurrentSoundEngine == SoundEngineType.GIMIC)
                         value = GimicManager.SetClock(gimicPtr, value);
                     f_MasterClock = value;
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                        setSoundEngine(f_SoundEngineType);
                     SetClock(UnitNumber, (uint)value);
                 }
             }
@@ -1248,32 +1250,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             if (pcmData.Count != 0 && CurrentSoundEngine != SoundEngineType.Software)
             {
-                if (Program.IsWriteLockHeld())
+                //transferPcmOnlyDiffData(pcmData.ToArray(), null);
+
+                FormMain.OutputLog(this, Resources.UpdatingADPCM);
+                //if (Program.IsWriteLockHeld())
+                //{
+                try
                 {
-                    try
+                    FormMain.AppliactionForm.Enabled = false;
+                    using (FormProgress f = new FormProgress())
                     {
-                        FormMain.AppliactionForm.Enabled = false;
-                        using (FormProgress f = new FormProgress())
-                        {
-                            f.StartPosition = FormStartPosition.CenterScreen;
-                            f.Message = Resources.UpdatingADPCM;
-                            f.Show();
-                            transferPcmOnlyDiffData(pcmData.ToArray(), f);
-                        }
-                    }
-                    finally
-                    {
-                        FormMain.AppliactionForm.Enabled = true;
+                        f.StartPosition = FormStartPosition.CenterScreen;
+                        f.Message = Resources.UpdatingADPCM;
+                        f.Show();
+                        transferPcmOnlyDiffData(pcmData.ToArray(), f);
                     }
                 }
-                else
-                {
-                    FormProgress.RunDialog(Resources.UpdatingADPCM,
-                            new Action<FormProgress>((f) =>
-                            {
-                                transferPcmOnlyDiffData(pcmData.ToArray(), f);
-                            }));
+                finally
+                    {
+                    FormMain.AppliactionForm.Enabled = true;
                 }
+                //}
+                //else
+                //{
+                //    FormProgress.RunDialog(Resources.UpdatingADPCM,
+                //            new Action<FormProgress>((f) =>
+                //            {
+                //                transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                //            }));
+                //}
                 FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsed, pcmData.Count / 1024));
             }
         }
@@ -1331,8 +1336,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
                 {
-                    fp.Percentage = percentage;
-                    Application.DoEvents();
+                    if (fp != null)
+                    {
+                        fp.Percentage = percentage;
+                        Application.DoEvents();
+                    }
                     switch (CurrentSoundEngine)
                     {
                         case SoundEngineType.SPFM:

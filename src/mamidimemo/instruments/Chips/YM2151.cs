@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using FM_SoundConvertor;
@@ -337,6 +338,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (CurrentSoundEngine == SoundEngineType.GIMIC)
                         value = GimicManager.SetClock(gimicPtr, value);
                     f_MasterClock = value;
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                        setSoundEngine(f_SoundEngineType);
                     SetClock(UnitNumber, (uint)value);
                 }
             }

@@ -322,6 +322,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_MasterClock != value)
                 {
                     f_MasterClock = value;
+                    if (CurrentSoundEngine == SoundEngineType.SPFM)
+                        setSoundEngine(f_SoundEngineType);
                     SetClock(UnitNumber, (uint)value);
                 }
             }
