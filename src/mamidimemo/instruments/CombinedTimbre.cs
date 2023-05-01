@@ -116,7 +116,9 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
-        [DataMember]
+        [Browsable(false)]
+        [JsonIgnore]
+        [IgnoreDataMember]
         [Description("Sound Driver Settings")]
         [DisplayName("Sound Driver Settings[CSDS]")]
         public CombinedSoundDriverSettings CSDS

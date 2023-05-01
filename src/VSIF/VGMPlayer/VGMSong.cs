@@ -2669,7 +2669,8 @@ namespace zanac.VGMPlayer
                                                             uint saddr = vgmReader.ReadUInt32();
                                                             size -= 8;
 
-                                                            okim6295?.okim6295_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+                                                            var dat = vgmReader.ReadBytes((int)size);
+                                                            okim6295?.okim6295_write_rom(0, (int)romSize, (int)saddr, (int)size, dat);
                                                         }
                                                         break;
                                                     case 0x8E:  //K053260 PCM
@@ -2685,7 +2686,8 @@ namespace zanac.VGMPlayer
                                                                 " (" + size.ToString("x") + ")");
                                                             */
 #endif
-                                                            k053260?.k053260_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+                                                            var dat = vgmReader.ReadBytes((int)size);
+                                                            k053260?.k053260_write_rom(0, (int)romSize, (int)saddr, (int)size, dat);
 
                                                             break;
                                                         }

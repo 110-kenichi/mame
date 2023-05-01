@@ -59,12 +59,14 @@
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.comboBoxTV = new MetroFramework.Controls.MetroComboBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -120,8 +122,8 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "XgmErrorCorrection", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.numericUpDown1, "numericUpDown1");
+            this.numericUpDown1.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "XgmErrorCorrection", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.numericUpDown1.Maximum = new decimal(new int[] {
             1920,
             0,
@@ -143,8 +145,8 @@
             // comboBoxAudioLatency
             // 
             this.comboBoxAudioLatency.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "AudioLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.comboBoxAudioLatency.FormattingEnabled = true;
             resources.ApplyResources(this.comboBoxAudioLatency, "comboBoxAudioLatency");
+            this.comboBoxAudioLatency.FormattingEnabled = true;
             this.comboBoxAudioLatency.Items.AddRange(new object[] {
             resources.GetString("comboBoxAudioLatency.Items"),
             resources.GetString("comboBoxAudioLatency.Items1"),
@@ -161,8 +163,8 @@
             // comboBoxSoundType
             // 
             this.comboBoxSoundType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SoundType", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.comboBoxSoundType.FormattingEnabled = true;
             resources.ApplyResources(this.comboBoxSoundType, "comboBoxSoundType");
+            this.comboBoxSoundType.FormattingEnabled = true;
             this.comboBoxSoundType.Items.AddRange(new object[] {
             resources.GetString("comboBoxSoundType.Items"),
             resources.GetString("comboBoxSoundType.Items1"),
@@ -174,8 +176,8 @@
             // comboBoxSampleRate
             // 
             this.comboBoxSampleRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SampleRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.comboBoxSampleRate.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             resources.ApplyResources(this.comboBoxSampleRate, "comboBoxSampleRate");
+            this.comboBoxSampleRate.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBoxSampleRate.FormattingEnabled = true;
             this.comboBoxSampleRate.Items.AddRange(new object[] {
             resources.GetString("comboBoxSampleRate.Items"),
@@ -384,8 +386,8 @@
             // metroComboBox1
             // 
             this.metroComboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OctaveDisplay", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.metroComboBox1.FormattingEnabled = true;
             resources.ApplyResources(this.metroComboBox1, "metroComboBox1");
+            this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.Items.AddRange(new object[] {
             resources.GetString("metroComboBox1.Items"),
             resources.GetString("metroComboBox1.Items1")});
@@ -417,6 +419,13 @@
             // 
             resources.ApplyResources(this.folderBrowserDialog1, "folderBrowserDialog1");
             // 
+            // tableLayoutPanel5
+            // 
+            resources.ApplyResources(this.tableLayoutPanel5, "tableLayoutPanel5");
+            this.tableLayoutPanel5.Controls.Add(this.buttonOk, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.buttonCancel, 2, 0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            // 
             // FormSettings
             // 
             this.AcceptButton = this.buttonOk;
@@ -424,8 +433,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.buttonOk);
-            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.tableLayoutPanel5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormSettings";
@@ -442,6 +450,7 @@
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            this.tableLayoutPanel5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -478,5 +487,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private MetroFramework.Controls.MetroLabel metroLabel4;
         private MetroFramework.Controls.MetroComboBox comboBoxTV;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
     }
 }
