@@ -1,4 +1,4 @@
-MAmidiMEmo 4.7.8.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.7.8.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -34,6 +34,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 1. Extract downloaded zip file.
    Execute "DelZoneID.ps1" on PowerShell to remove "Zone.Identifier" flag.
+
+   ★日本語フォルダには現状対応していません★
 
 2. Install VC++ runtime 2012 and .NET Framework 4.7 or lator.
 
@@ -252,10 +254,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** ★Known issues and limitations★ *** 
 
-   1. MT-32 & CM32-P can not store/restore last settings.
-   2. HuC6820 suddenly stop sounding. Please restart MAmi.
-   3. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
-   4. You need to save the data manually on the DAW (Cubase and so on). Or, keep open the dummy editor window of the MAmidiMemo.
+   1. ★日本語フォルダには現状対応していません★
+   2. MT-32 & CM32-P can not store/restore last settings.
+   3. HuC6820 suddenly stop sounding. Please restart MAmi.
+   4. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
+   5. You need to save the data manually on the DAW (Cubase and so on). Or, keep open the dummy editor window of the MAmidiMemo.
    
 *** How to create build environment ***
 
@@ -269,6 +272,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.7.8.1 Fixed GUI layout of the Dialog.
 4.7.8.0 Fixed GUI layout of the Dialog for Hi-DPI display. Thanks Akibasuki-san!
         Fixed freezing while YM2608 ADPCM transferring.
         Fixed MasterClock handling for SPFM
