@@ -23,6 +23,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             labelVer.Text = string.Format(Program.FILE_COPYRIGHT, Program.FILE_VERSION);
 
+            if (!Program.IsVSTiMode())
+                labelWarn.Visible = false;
+
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
 

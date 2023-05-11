@@ -1022,6 +1022,9 @@
     <EmbeddedResource Include="Gui\FormSettings.ja-JP.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormSplash.ja-JP.resx">
+      <DependentUpon>FormSplash.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSplash.resx">
       <DependentUpon>FormSplash.cs</DependentUpon>
     </EmbeddedResource>

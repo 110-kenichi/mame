@@ -156,8 +156,8 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	}
 	PathCombineA(m_mamiPath, dllDir, mamiPath);
 
-	AEffEditor* editor = new DummyVstEditor(this);
-	setEditor(editor);
+	//AEffEditor* editor = new DummyVstEditor(this);
+	//setEditor(editor);
 
 	m_vstCtor = true;
 }
