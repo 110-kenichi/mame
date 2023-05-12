@@ -330,6 +330,7 @@ DWORD WINAPI closeRpcServer(LPVOID lpParam)
 		catch (...)
 		{
 		}
+		m_rpcSrv = NULL;
 	}
 
 	return 0;
@@ -368,7 +369,6 @@ void MAmiVSTi::close()
 		{
 			DWORD dwThreadId = 0L;
 			CreateThread(NULL, 0, closeRpcServer, (void*)m_rpcSrv, 0, &dwThreadId);
-			m_rpcSrv = NULL;
 		}
 
 		//if (m_rpcSrv != NULL)
@@ -695,147 +695,3 @@ void MAmiVSTi::setProgram(VstInt32 program)
 	curProgram = program;
 }
 
-DummyVstEditor::DummyVstEditor(AudioEffect* effectx)
-	: AEffEditor(effectx), hwnd_e(NULL), fParam1(1.0f) {}
-
-bool DummyVstEditor::getRect(ERect** erect) {
-	static ERect r = { 0, 0, HEIGHT, WIDTH };
-	*erect = &r;
-	return true;
-}
-
-bool DummyVstEditor::open(void* ptr) {
-	systemWindow = ptr;
-
-	if (regist_count == 0) {
-		WNDCLASS wd;
-		wd.style = 0;
-		wd.lpfnWndProc = WindowProc;
-		wd.cbClsExtra = 0;
-		wd.cbWndExtra = 0;
-		wd.hInstance = (HINSTANCE)hInstance;
-		wd.hIcon = NULL;
-		wd.hCursor = NULL;
-		wd.hbrBackground = GetSysColorBrush(COLOR_BTNFACE);
-		wd.lpszMenuName = NULL;
-		wd.lpszClassName = lpszAppName;
-
-		RegisterClass(&wd);
-	}
-
-	regist_count++;
-
-	HWND hwnd = CreateWindowEx(
-		NULL,
-		lpszAppName,
-		"",
-		WS_CHILD | WS_VISIBLE,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		WIDTH,
-		HEIGHT,
-		(HWND)systemWindow,
-		NULL,
-		(HINSTANCE)hInstance,
-		NULL);
-
-	hwnd_e = hwnd;
-
-	SetProp(hwnd, PROP_WINPROC, this);
-
-	SetWindowLong(hwnd, GWLP_USERDATA, (LONG_PTR)this);
-
-	return true;
-}
-
-void DummyVstEditor::close() {
-	hwnd_e = NULL;
-
-	regist_count--;
-
-	if (regist_count == 0) {
-		UnregisterClass(lpszAppName, (HINSTANCE)hInstance);
-	}
-}
-
-void DummyVstEditor::idle() {
-	AEffEditor::idle();
-	effect->setParameterAutomated(0, 0);
-}
-
-void DummyVstEditor::setParameter(VstInt32 index, float value) {
-	if (hwnd_e == NULL) {
-		return;
-	}
-
-	setParam1(effect->getParameter(index));
-
-	InvalidateRect(hwnd_e, NULL, TRUE);
-}
-
-void DummyVstEditor::valueChanged(VstInt32 index, float value) {
-	effect->setParameterAutomated(index, value);
-}
-
-/* プロシージャ */
-LRESULT WINAPI DummyVstEditor::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	static char buf[256];
-	static HWND hButton1;
-
-	switch (message) {
-	case WM_CREATE:
-		//hButton1 = CreateWindow(
-		//	"BUTTON",
-		//	"0.5",
-		//	WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		//	10,
-		//	10,
-		//	80,
-		//	20,
-		//	hWnd,
-		//	(HMENU)ID_B1,
-		//	(HINSTANCE)hInstance
-		//	, NULL);
-		return 0;
-	case WM_COMMAND:
-		switch (LOWORD(wParam)) {
-			//ボタン１を押したとき
-		case ID_B1:
-			DummyVstEditor* nmve = (DummyVstEditor*)GetProp(hWnd, PROP_WINPROC);
-			nmve->valueChanged(0, 0.5f);
-			return 0;
-		}
-		break;
-	case WM_PAINT:
-	{
-		RECT rect;
-		SIZE size;
-		PAINTSTRUCT ps;
-		HDC hDC = BeginPaint(hWnd, &ps);
-
-		GetClientRect(hWnd, &rect);
-
-		//nmVstEditor* nmve = (nmVstEditor*)GetProp(hWnd, PROP_WINPROC);
-
-		//sprintf(buf, "%f", nmve->getParam1());
-		sprintf_s(buf, "Keep this window open to prevent DATA LOSS or save data manually.");
-
-		GetTextExtentPoint32(hDC, buf, strlen(buf), &size);
-
-		SetBkMode(hDC, TRANSPARENT);
-
-		TextOut(hDC, ((rect.right - rect.left) - size.cx) / 2, ((rect.bottom - rect.top) - size.cy) / 2, buf, strlen(buf));
-
-		EndPaint(hWnd, &ps);
-	}
-	return 0;
-	case WM_DESTROY:
-		RemoveProp(hWnd, PROP_WINPROC);
-		PostQuitMessage(0);
-		return 0;
-	default:
-		break;
-	}
-
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
