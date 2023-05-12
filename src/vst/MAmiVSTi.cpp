@@ -156,9 +156,6 @@ MAmiVSTi::MAmiVSTi(audioMasterCallback audioMaster)
 	}
 	PathCombineA(m_mamiPath, dllDir, mamiPath);
 
-	//AEffEditor* editor = new DummyVstEditor(this);
-	//setEditor(editor);
-
 	m_vstCtor = true;
 }
 
@@ -183,6 +180,15 @@ DWORD WINAPI MAmidiMEmoMainStartedProc(LPVOID lpParam)
 	MAmiVSTi* mami = (MAmiVSTi*)lpParam;
 
 	mami->initVst();
+
+	return 0;
+}
+
+DWORD WINAPI startRpcServerCore(LPVOID lpParam)
+{
+	rpc::server* m_rpcSrv = reinterpret_cast<rpc::server*>(lpParam);
+
+	m_rpcSrv->run();
 
 	return 0;
 }
@@ -218,7 +224,11 @@ void MAmiVSTi::startRpcServer()
 			setParameterAutomated(0, 0);
 		});
 
-	m_rpcSrv->async_run();
+	{
+		DWORD dwThreadId = 0L;
+		//CreateThread(NULL, 0, startRpcServerCore, (void*)m_rpcSrv, 0, &dwThreadId);
+		m_rpcSrv->async_run();
+	}
 }
 
 int MAmiVSTi::isVstDisabled()
@@ -322,6 +332,7 @@ DWORD WINAPI closeRpcServer(LPVOID lpParam)
 
 	if (m_rpcSrv != NULL)
 	{
+		m_rpcSrv->suppress_exceptions(true);
 		m_rpcSrv->close_sessions();
 		try {
 			m_rpcSrv->stop();
@@ -329,8 +340,8 @@ DWORD WINAPI closeRpcServer(LPVOID lpParam)
 		}
 		catch (...)
 		{
+			MessageBox(0, _T("MAmiVST: rpc error"), 0, 0);
 		}
-		m_rpcSrv = NULL;
 	}
 
 	return 0;
@@ -368,16 +379,18 @@ void MAmiVSTi::close()
 		if (m_rpcSrv != NULL)
 		{
 			DWORD dwThreadId = 0L;
-			CreateThread(NULL, 0, closeRpcServer, (void*)m_rpcSrv, 0, &dwThreadId);
-		}
+			//CreateThread(NULL, 0, closeRpcServer, (void*)m_rpcSrv, 0, &dwThreadId);
 
-		//if (m_rpcSrv != NULL)
-		//{
-		//	m_rpcSrv->close_sessions();
-		//	m_rpcSrv->stop();
-		//	m_rpcSrv->~server();
-		//	m_rpcSrv = NULL;
-		//}
+			//try {
+			//	m_rpcSrv->stop();
+			//	m_rpcSrv->~server();
+			//}
+			//catch (...)
+			//{
+			//}
+			
+			m_rpcSrv = NULL;
+		}
 
 		m_vstInited = false;
 	}
