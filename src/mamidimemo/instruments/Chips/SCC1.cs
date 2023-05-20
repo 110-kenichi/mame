@@ -169,6 +169,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         private SCCSlotNo f_extSCCSlot = SCCSlotNo.Id0;

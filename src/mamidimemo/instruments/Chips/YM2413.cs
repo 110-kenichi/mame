@@ -184,8 +184,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
-                initGlobalRegisters();
             }
+
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         private int f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH;

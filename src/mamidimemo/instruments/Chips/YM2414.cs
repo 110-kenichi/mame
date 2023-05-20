@@ -181,6 +181,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+            ClearWrittenDataCache();
             PrepareSound();
         }
 

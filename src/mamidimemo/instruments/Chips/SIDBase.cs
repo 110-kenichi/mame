@@ -137,8 +137,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                 }
-                initGlobalRegisters();
             }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
         }
 
         private void initGlobalRegisters()
