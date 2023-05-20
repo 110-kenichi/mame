@@ -2062,7 +2062,7 @@ namespace zanac.MAmidiMEmo.Instruments
             var now = DateTime.Now;
             string op = System.IO.Path.Combine(vgmPath, this.Name + "_" + this.UnitNumber + "_" +
                 now.ToShortDateString().Replace('/', '-') + "_" + now.ToLongTimeString().Replace(':', '-'));
-
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(op));
             StartVgmRecordingToInternal(UnitNumber, SoundInterfaceTagNamePrefix, op);
 
             PrepareSound();
