@@ -196,5 +196,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 OnValueChanged(new PropertyChangedEventArgs(registerName));
             };
         }
+
+        private static int toolTipPopupCount;
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+            if (toolTipPopupCount != 0)
+            {
+                e.Cancel = true;
+            }
+            toolTipPopupCount = 1;
+        }
     }
 }
