@@ -182,5 +182,8 @@
     <Setting Name="FmTargetMinMax" Type="System.String" Scope="User">
       <Value Profile="(Default)">TL=20-60</Value>
     </Setting>
+    <Setting Name="WsgTypeEdSize" Type="System.Drawing.Size" Scope="User">
+      <Value Profile="(Default)">800, 600</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -401,4 +401,10 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="ConnectingGimic" xml:space="preserve">
     <value>c86ctlで物理音源GIMICに接続しています...</value>
   </data>
+  <data name="WsgMorphError1" xml:space="preserve">
+    <value>最後の項目以外を選択してください。</value>
+  </data>
+  <data name="WsgMorphTitle" xml:space="preserve">
+    <value>追加する項目数を入力してください。</value>
+  </data>
 </root>

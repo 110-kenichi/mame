@@ -1064,6 +1064,24 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Please select all items except the last one に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string WsgMorphError1 {
+            get {
+                return ResourceManager.GetString("WsgMorphError1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter the number of items to be added に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string WsgMorphTitle {
+            get {
+                return ResourceManager.GetString("WsgMorphTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap YM2151 {

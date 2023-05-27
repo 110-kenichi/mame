@@ -1315,7 +1315,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        [Editor(typeof(RefreshingCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(SccMorphUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
         [RefreshProperties(RefreshProperties.All)]
         public class SCCWsgMorphDataCollection : IList<SCCWsgMorphData>, IList
@@ -1498,7 +1498,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class SCCWsgMorphData : ContextBoundObject
         {
-            private sbyte[] wsgData = new sbyte[32];
+            private sbyte[] wsgData;
 
             [TypeConverter(typeof(ArrayConverter))]
             [Editor(typeof(WsgUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -1514,7 +1514,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    wsgData = value;
+                    for (int i = 0; i < wsgData.Length; i++)
+                        wsgData[i] = value[i];
                     calcWsgDataHashCode();
                 }
             }
@@ -1551,7 +1552,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public void ResetWsgData()
             {
-                WsgData = new sbyte[32];
+                for(int i = 0; i < wsgData.Length; i++)
+                    wsgData[i] = 0;
             }
 
             [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
@@ -1597,6 +1599,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     sb.Append(data[i].ToString((IFormatProvider)null));
                 }
                 return sb.ToString();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public SCCWsgMorphData()
+            {
+                this.wsgData = new sbyte[32];
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="wsgData"></param>
+            public SCCWsgMorphData(sbyte[] wsgData)
+            {
+                this.wsgData = wsgData;
             }
         }
 

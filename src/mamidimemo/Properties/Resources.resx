@@ -454,4 +454,10 @@ Or, install the loopMIDI application to the PC.</value>
   <data name="ConnectingGimic" xml:space="preserve">
     <value>Connecting to a real chip via c86ctl for GIMIC...</value>
   </data>
+  <data name="WsgMorphError1" xml:space="preserve">
+    <value>Please select all items except the last one</value>
+  </data>
+  <data name="WsgMorphTitle" xml:space="preserve">
+    <value>Please enter the number of items to be added</value>
+  </data>
 </root>

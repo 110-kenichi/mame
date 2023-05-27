@@ -60,35 +60,55 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 frm.WsgBitWide = watt.BitWide;
                 frm.Tag = context;
+                byte[] orgByteValue = null;
+                sbyte[] orgSbyteValue = null;
 
                 if (value.GetType() == typeof(byte[]))
                 {
                     frm.ByteWsgData = (byte[])value;
                     frm.ValueChanged += Frm_ValueChangedByte;
+                    orgByteValue = new byte[frm.ByteWsgData.Length];
+                    for (int i = 0; i < frm.ByteWsgData.Length; i++)
+                        orgByteValue[i] = frm.ByteWsgData[i];
                 }
                 else if (value.GetType() == typeof(sbyte[]))
                 {
                     frm.WsgSigned = true;
                     frm.SbyteWsgData = (sbyte[])value;
                     frm.ValueChanged += Frm_ValueChangedSbyte;
+                    orgSbyteValue = new sbyte[frm.SbyteWsgData.Length];
+                    for (int i = 0; i < frm.SbyteWsgData.Length; i++)
+                        orgSbyteValue[i] = frm.SbyteWsgData[i];
                 }
 
                 DialogResult dr = frm.ShowDialog();
-                if (dr == DialogResult.OK)
+                if (dr != DialogResult.OK)
                 {
                     if (value.GetType() == typeof(byte[]))
-                        value = frm.ByteWsgData;
-                    else if (value.GetType() == typeof(sbyte[]))
-                        value = frm.SbyteWsgData;
-                }
-                else
-                {
-                    if (value.GetType() == typeof(byte[]))
-                        value = ((byte[])value).Clone();
+                    {
+                        try
+                        {
+                            //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                            context.PropertyDescriptor.SetValue(context.Instance, orgByteValue);
+                        }
+                        finally
+                        {
+                            //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                        }
+                    }
                     else if (value.GetType() == typeof(sbyte[]))
                     {
-                        value = ((sbyte[])value).Clone();
-                        frm.WsgSigned = true;
+                        try
+                        {
+                            //InstrumentManager.ExclusiveLockObject.EnterWriteLock();
+
+                            context.PropertyDescriptor.SetValue(context.Instance, orgSbyteValue);
+                        }
+                        finally
+                        {
+                            //InstrumentManager.ExclusiveLockObject.ExitWriteLock();
+                        }
                     }
                 }
             }

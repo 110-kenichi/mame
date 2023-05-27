@@ -211,6 +211,13 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Gui\FormInputNumber.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormInputNumber.Designer.cs">
+      <DependentUpon>FormInputNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\SccMorphUITypeEditor.cs" />
     <Compile Include="Gui\CancelListViewItemDragEventArgs.cs" />
     <Compile Include="Gui\DraggableListView.cs">
       <SubType>Component</SubType>
@@ -265,6 +272,12 @@
       <DependentUpon>YM3806OperatorContainer.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\FMEditor\YM3806UITypeEditor.cs" />
+    <Compile Include="Gui\FormSccMorphEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormSccMorphEditor.Designer.cs">
+      <DependentUpon>FormSccMorphEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormMidiTest.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -984,6 +997,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormInputNumber.resx">
+      <DependentUpon>FormInputNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormSccMorphEditor.resx">
+      <DependentUpon>FormSccMorphEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormDrumTableEditor.ja-JP.resx">
       <DependentUpon>FormDrumTableEditor.cs</DependentUpon>
