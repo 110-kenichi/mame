@@ -10,29 +10,101 @@
 
 .segment	"FILE0_DAT"
 
-.macro FTDI2XX_BITBANG	ADRS
+;http://hp.vector.co.jp/authors/VA042397/nes/6502.html#calculate
+;https://www.nesdev.org/wiki/Input_devices#Other_I/O_devices
+;https://www.nesdev.org/wiki/Expansion_port
+
+.macro FTDI2XX_BITBANG_A	ADRS
 .scope
 	lda		#$02	; 2	2
 :					; Retreive Address	Hi
 	bit		$4016	; 4 6
+	beq     :-		; 2	8
+:					; Retreive Address	Hi
+	bit		$4017	; 4 12
+	beq     :-		; 2	14
+
+	lda		$4017	; 4 18
+	and		#$1C	; 2 20
+	asl		a		; 2 22
+	asl		a		; 2 24
+	asl		a		; 2 26
+	sta		ADRS	; 3 29
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	lda		#$02	; 2	2
+:					; Retreive Address	Mid
+	bit		$4016	; 4 6
 	bne     :-		; 2	8
+:					; Retreive Address	Mid
+	bit		$4017	; 4 12
+	bne     :-		; 2	14
 
-	lda		$4017	; 4 12
-	asl		a		; 2 14
-	asl		a		; 2 16
-	asl		a		; 2 18
-	and		#$F0	; 2 20
-	sta		ADRS	; 3 23
-
+	lda		$4017	; 4 18
+	and		#$1C	; 2 20
+	ora		ADRS	; 3 23
+	sta     ADRS	; 3 26
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
 :					; Retreive Address	Lo
 	bit		$4016	; 4 6
-	beq     :-		; 2	8
+	bne     :-		; 2	8
+:					; Retreive Address	Lo
+	bit		$4017	; 4 12
+	beq     :-		; 2	14
 
-	lda		$4017	; 4 12
-	lsr		a		; 2 14
-	and		#$0F	; 2 16
-	ora		ADRS	; 3 19
+	lda		$4017	; 4 18
+	and		#$0C	; 2 20
+	lsr		a		; 2 22
+	lsr		a		; 2 24
+	ora		ADRS	; 3 27
+
+.endscope
+.endmacro
+
+.macro FTDI2XX_BITBANG_D	ADRS
+.scope
+	lda		#$02	; 2	2
+:					; Retreive Data	Hi
+	bit		$4016	; 4 6
+	bne     :-		; 2	8
+:					; Retreive Data	Hi
+	bit		$4017	; 4 12
+	bne     :-		; 2	14
+
+	lda		$4017	; 4 18
+	and		#$1C	; 2 20
+	asl		a		; 2 22
+	asl		a		; 2 24
+	asl		a		; 2 26
+	sta		ADRS	; 3 29
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	lda		#$02	; 2	2
+:					; Retreive Data	Mid
+	bit		$4016	; 4 6
+	bne     :-		; 2	8
+:					; Retreive Data	Mid
+	bit		$4017	; 4 12
+	beq     :-		; 2	14
+
+	lda		$4017	; 4 18
+	and		#$1C	; 2 20
+	ora		ADRS	; 3 23
+	sta     ADRS	; 3 26
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	lda		#$02	; 2	2
+:					; Retreive Data	Lo
+	bit		$4016	; 4 6
+	bne     :-		; 2	8
+:					; Retreive Data	Lo
+	bit		$4017	; 4 12
+	bne     :-		; 2	14
+
+	lda		$4017	; 4 18
+	and		#$0C	; 2 20
+	lsr		a		; 2 22
+	lsr		a		; 2 24
+	ora		ADRS	; 3 27
+
 .endscope
 .endmacro
 
@@ -41,10 +113,16 @@
 	lda		ADRS				;  2 25 31
 	sta		$73					;  2 27 33	//DPCM BUFFER ADDRESS(HI)
 Loop:
-	FTDI2XX_BITBANG	$7f			; 19 19
-	sta		($72),Y				;  6 25
-	iny							;  2 27
-	bne		Loop				;  2 29
+	FTDI2XX_BITBANG_A	$7f		; 27 27
+	sta		($72),Y				;  6 33
+	iny							;  2 35
+	FTDI2XX_BITBANG_D	$7f		; 27 27
+	sta		($72),Y				;  6 33
+	iny							;  2 35
+	bne		Loop				;  2 37
+
+	jmp		Loop
+LoopEnd:
 .endscope
 .endmacro
 
@@ -57,51 +135,38 @@ Loop:
 	lda		#00				;  2
 	sta		$72				;  2	//DPCM BUFFER ADDRESS(LO)
 LoopBITBANG:
-	FTDI2XX_BITBANG	$70		; 19 19
-	cmp		DPCM_CMD		;  2 21 
-	beq		LoadDPCM		;  2 23
-	tax						;  2 25	X = address/idx
+	FTDI2XX_BITBANG_A	$70	; 27 27
+	cmp		DPCM_CMD		;  2 29 
+	beq		LoadDPCM		;  2 31
+	tax						;  2 33	X = address/idx
 
-	FTDI2XX_BITBANG	$71		; 19 19
-	WR_DATA					; 5/6	24/25
-	jmp		LoopBITBANG		; 3 27/28
+	FTDI2XX_BITBANG_D	$71	; 27 27
+	WR_DATA					; 5/6	32/33
+	jmp		LoopBITBANG		; 3 35/36
 
 LoadDPCM:
-	FTDI2XX_BITBANG	$71		; 19 19	//dummy
+	FTDI2XX_BITBANG_D	$71		; 19 19	//dummy
+
 	ldy		#0				;  2 29 27
-	
-	FTDI2XX_DPCM	#$c0
-	FTDI2XX_DPCM	#$c1
-	FTDI2XX_DPCM	#$c2
-	FTDI2XX_DPCM	#$c3
-	FTDI2XX_DPCM	#$c4
-	FTDI2XX_DPCM	#$c5
-	FTDI2XX_DPCM	#$c6
-	FTDI2XX_DPCM	#$c7
-	FTDI2XX_DPCM	#$c8
-	FTDI2XX_DPCM	#$c9
-	FTDI2XX_DPCM	#$ca
-	FTDI2XX_DPCM	#$cb
-	FTDI2XX_DPCM	#$cc
-	FTDI2XX_DPCM	#$cd
-	FTDI2XX_DPCM	#$ce
-	FTDI2XX_DPCM	#$cf
-	FTDI2XX_DPCM	#$d0
-	FTDI2XX_DPCM	#$d1
-	FTDI2XX_DPCM	#$d2
-	FTDI2XX_DPCM	#$d3
-	FTDI2XX_DPCM	#$d4
-	FTDI2XX_DPCM	#$d5
-	FTDI2XX_DPCM	#$d6
-	FTDI2XX_DPCM	#$d7
-	FTDI2XX_DPCM	#$d8
-	FTDI2XX_DPCM	#$d9
-	FTDI2XX_DPCM	#$da
-	FTDI2XX_DPCM	#$db
-	FTDI2XX_DPCM	#$dc
-	FTDI2XX_DPCM	#$dd
-	FTDI2XX_DPCM	#$de
-	FTDI2XX_DPCM	#$df
+	lda		#$c0
+	sta		$74
+.scope
+LoadLoopStart:
+	lda		ADRS				;  2 25 31
+	sta		$73					;  2 27 33	//DPCM BUFFER ADDRESS(HI)
+Loop256:
+	FTDI2XX_BITBANG_A	$7f		; 27 27
+	sta		($72),Y				;  6 33
+	iny							;  2 35
+	FTDI2XX_BITBANG_D	$7f		; 27 27
+	sta		($72),Y				;  6 33
+	iny							;  2 35
+	bne		Loop256				;  2 37
+	inc		$74
+	lda		#$e0
+	cmp		$74
+	bne		LoadLoopStart
+.endscope
 	jmp		LoopBITBANG			; 3 27/28
 .endscope
 .endmacro
@@ -149,6 +214,7 @@ _VGMPlay_FTDI2XX_DIRECT:
 	TEST_SOUNDS_OFF
 	TEST_SOUNDS_ON
 	TEST_SOUNDS_OFF
+
 	FTDI2XX_CORE {sta $4000,x},{#$16}	; 6 24	write A data to address
 
 _VGMPlay_FTDI2XX_INDIRECT:

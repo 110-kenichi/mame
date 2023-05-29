@@ -70,20 +70,23 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private byte[] convertToDataPacket(byte[] sendData)
         {
-            byte[] ret = new byte[sendData.Length * 2];
+            List<byte> ret = new List<byte>();
 
             for (int i = 0; i < sendData.Length; i += 2)
             {
                 byte adr = (byte)~(sendData[i + 0] << 1);   //INDIRECT ADDRESS INDEX
                 byte dat = (byte)~sendData[i + 1];
 
-                ret[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
-                ret[(i * 2) + 1] = (byte)(0x00 | adr & 0xf);
-                ret[(i * 2) + 2] = (byte)(0x10 | dat >> 4);
-                ret[(i * 2) + 3] = (byte)(0x00 | dat & 0xf);
+                ret.Add((byte)(0x00 | ((adr >> 4) & 0xe) | 0));
+                ret.Add((byte)(0x10 | ((adr >> 1) & 0xe) | 1));
+                ret.Add((byte)(0x10 | ((adr << 1) & 0x6) | 0));
+
+                ret.Add((byte)(0x10 | ((dat >> 4) & 0xe) | 1));
+                ret.Add((byte)(0x10 | ((dat >> 1) & 0xe) | 0));
+                ret.Add((byte)(0x10 | ((dat << 1) & 0x6) | 1));
             }
 
-            return ret;
+            return ret.ToArray();
         }
 
     }

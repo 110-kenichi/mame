@@ -224,10 +224,9 @@ namespace zanac.MAmidiMEmo.VSIF
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
                                     ftdi.GetPinStates(ref ps);
-                                    if ((ps & 0x10) == 0x10)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x00 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0xff }, 1, ref dummy);
                                     }
 
                                     VsifClient client = null;

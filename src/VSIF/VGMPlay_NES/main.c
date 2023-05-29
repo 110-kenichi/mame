@@ -33,13 +33,13 @@ void init_zp_for_vrc6()
 int main(void) {
   clrscr();
 
-  cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
-  if (((*port4016) & 0x02) == 0) {
-    cputsxy(0, 2, "*WAITING FOR VSIF FTDI*");
-    while (((*port4016) & 0x02) == 0)
-      ;
-    clrscr();
-  }
+  // cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
+  // if (((*port4016) & 0x02) == 0) {
+  //   cputsxy(0, 2, "*WAITING FOR VSIF FTDI*");
+  //   while (((*port4016) & 0x02) == 0)
+  //     ;
+  //   clrscr();
+  // }
   cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
 
   cputsxy(0, 2, "FTDI2XX MODE READY TO PLAY.");
@@ -58,31 +58,52 @@ int main(void) {
   // *port9002 = 0x01;
 
   while (1) {
+    /*
     unsigned char adrs = 0;
     unsigned char data = 0;
 
-    // while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
-    //   ;
-    // adrs = ((*port4017) << 3) & 0xf0;
+    while ((*(volatile unsigned char *)0x4016 & 0x02) == 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) == 0)
+      ;
+    adrs = ((*port4017) & 0x1c) << 3;
 
-    // while ((*(volatile unsigned char *)0x4016 & 0x02) == 0)
-    //   ;
-    // adrs |= ((*port4017) >> 1) & 0x0f;
+    while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) != 0)
+      ;
+    adrs |= ((*port4017) & 0x1c);
 
-    // while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
-    //   ;
-    // data = ((*port4017) << 3) & 0xf0;
+    while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) == 0)
+      ;
+    adrs |= ((*port4017) & 0x0c) >> 2;
 
-    // while ((*(volatile unsigned char *)0x4016 & 0x02) == 0)
-    //   ;
-    // data |= ((*port4017) >> 1) & 0x0f;
+    while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) != 0)
+      ;
+    data = ((*port4017) & 0x1c) << 3;
 
+    while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) == 0)
+      ;
+    data |= ((*port4017) & 0x1c);
+
+    while ((*(volatile unsigned char *)0x4016 & 0x02) != 0)
+      ;
+    while ((*(volatile unsigned char *)0x4017 & 0x02) != 0)
+      ;
+    data |= ((*port4017) & 0x0c) >> 2;
+
+    cprintf("%4x = %2x \r\n", 0x4000 + adrs, data);
     // // adrs = (*port4017);
     // // data = (*port4016);
-
+    *(volatile unsigned char *)(0x4000+adrs) = data;
     // // cputsxy(0,1,"");
-    // cprintf("%4x = %2x ", 0x4000 + adrs, data);
-
+  }*/
 #ifdef DIRECT_ADDRESS
     VGMPlay_FTDI2XX_DIRECT();
 #endif

@@ -111,7 +111,8 @@ namespace zanac.MAmidiMEmo.Gui
                                 if (rvalue != null)
                                 {
                                     TimbreBase tim = context.Instance as TimbreBase;
-                                    tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                    if (tim != null)
+                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                     return rvalue;
                                 }
                             }

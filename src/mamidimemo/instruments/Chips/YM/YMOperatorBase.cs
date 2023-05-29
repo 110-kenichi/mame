@@ -26,7 +26,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips.YM
         [DataMember]
         [Category("Sound(Driver)")]
         [Description("Level Scaling(0-99")]
-        [DefaultValue(0)]
+        [DefaultValue((byte)0)]
         [SlideParametersAttribute(0, 99)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte LS

@@ -15,15 +15,15 @@ all: $(PROGRAM) $(PROGRAM_VRC6) $(PROGRAM_FDS) $(PROGRAM_MMC5)
 
 $(PROGRAM): main_direct.o VGMPlay.o
 	$(LD65) -t nes -m $@.map $^ nes.lib -o $(PROGRAM)
-#	cmd.exe /C copy.bat
+	cmd.exe /C copy.bat
 
 $(PROGRAM_VRC6): boot_vrc6.o VGMPlay.o
 	$(LD65)  -m $@.map $^ -o $(PROGRAM_VRC6) --config vrc6.cfg
-#	cmd.exe /C copy_vrc6.bat
+	cmd.exe /C copy_vrc6.bat
 
 $(PROGRAM_FDS): boot_fds.o VGMPlay.o
 	$(LD65)  -m $@.map $^ -o $(PROGRAM_FDS) --config fds.cfg
-#	cmd.exe /C copy_fds.bat
+	cmd.exe /C copy_fds.bat
 
 $(PROGRAM_MMC5): boot_mmc5.o VGMPlay.o
 	$(LD65)  -m $@.map $^ -o $(PROGRAM_MMC5) --config mmc5.cfg
@@ -35,7 +35,7 @@ run:
 #	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes.nes
 #	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes_fds.fds
 #	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes_vrc6.nes
-	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes_mmc5.nes
+	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes.nes
 
 main_direct.s: main.c
 	$(CC65) -D DIRECT_ADDRESS $(CFLAGS) -o main_direct.s $<

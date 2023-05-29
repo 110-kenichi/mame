@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
@@ -26,6 +28,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.NAMCO_CUS30;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 //http://hp.vector.co.jp/authors/VA042397/nes/apu.html
 //https://wiki.nesdev.com/w/index.php/APU
@@ -40,6 +43,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     [InstLock]
     public partial class RP2A03 : InstrumentBase
     {
+        private const int MAX_DAC_VOICES = 4;
 
         public override string Name => "RP2A03";
 
@@ -188,8 +192,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-
+            ignoreUpdatePcmData = true;
             ClearWrittenDataCache();
+            ignoreUpdatePcmData = false;
             PrepareSound();
         }
 
@@ -384,6 +389,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 lastTransferPcmData = pcmData.ToArray();
 
+                try
+                {
+                    FormMain.AppliactionForm.Enabled = false;
+                    using (FormProgress f = new FormProgress())
+                    {
+                        f.StartPosition = FormStartPosition.CenterScreen;
+                        f.Message = Resources.UpdatingADPCM;
+                        f.Show();
+
+                        lock (sndEnginePtrLock)
+                        {
+                            if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
+                            {
+                                //Write DPCM
+                                vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
+                                for (int i = 0; i < pcmData.Count; i += 2)
+                                    vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
+                            }
+                            else if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_MMC5)
+                            {
+                                for (int bn = 0; bn < pcmData.Count >> 13; bn++)
+                                {
+                                    //Switch bank
+                                    vsifClient.WriteData(0, (byte)0x17, (byte)bn, f_ftdiClkWidth);
+
+                                    //Write DPCM
+                                    vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
+                                    for (int i = bn * 0x2000; i < (bn * 0x2000) + 0x2000; i += 2)
+                                        vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
+                                }
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    FormMain.AppliactionForm.Enabled = true;
+                }
+                /*
                 FormProgress.RunDialog(Resources.UpdatingDPCM,
                         new Action<FormProgress>((f) =>
                         {
@@ -411,7 +455,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 }
                             }
                         }));
+                */
                 FormMain.OutputLog(this, string.Format(Resources.DpcmBufferUsed, pcmData.Count));
+
                 ClearWrittenDataCache();
             }
         }
@@ -733,6 +779,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Timbres[i] = new RP2A03Timbre();
             deltaPcmSoundTable = new DPcmSoundTable();
 
+            this.pcmEngine = new PcmEngine(this);
+            this.pcmEngine.StartEngine();
+
             setPresetInstruments();
 
             this.soundManager = new RP2A03SoundManager(this);
@@ -744,6 +793,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+            pcmEngine?.Dispose();
 
             lock (sndEnginePtrLock)
             {
@@ -754,26 +804,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.Dispose();
         }
 
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        private void initGlobalRegisters()
+        {
+
+
+            lock (sndEnginePtrLock)
+                lastTransferPcmData = new byte[] { };
+
+            if (!IsDisposing && !ignoreUpdatePcmData)
+                updateDpcmData();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         private void setPresetInstruments()
         {
-        }
 
-
-        private void initSounds()
-        {
-            lock (sndEnginePtrLock)
-                lastTransferPcmData = new byte[] { };
-            updateDpcmData();
-        }
-
-        internal override void PrepareSound()
-        {
-            base.PrepareSound();
-
-            initSounds();
         }
 
         /// <summary>
@@ -890,6 +944,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private static SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
 
+            private static SoundList<RP2A03Sound> dacOnSounds = new SoundList<RP2A03Sound>(1);
+
             private RP2A03 parentModule;
 
             /// <summary>
@@ -947,6 +1003,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case ToneType.VRC6_SAW:
                             vrc6SawOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn VRC6(Saw) ch" + emptySlot + " " + note.ToString());
+                            break;
+                        case ToneType.DAC:
+                            dacOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn DAC ch" + emptySlot + " " + note.ToString());
                             break;
                     }
                     rv.Add(snd);
@@ -1013,6 +1073,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             emptySlot = SearchEmptySlotAndOffForLeader(parentModule, vrc6SawOnSounds, note, 1);
                             break;
                         }
+                    case ToneType.DAC:
+                        {
+                            return SearchEmptySlotAndOffForLeader(parentModule, dacOnSounds, note, MAX_DAC_VOICES);
+                        }
                 }
 
                 return emptySlot;
@@ -1032,9 +1096,315 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (1 << 12)), 0x00);
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0xb002, 0x00);
+
+                for (int i = 0; i < MAX_DAC_VOICES; i++)
+                    parentModule.pcmEngine.Stop(i);
             }
         }
 
+        private PcmEngine pcmEngine;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PcmEngine : IDisposable
+        {
+            private RP2A03Sound sound;
+
+            private object engineLockObject;
+
+            private AutoResetEvent autoResetEvent;
+
+            private bool stopEngineFlag;
+
+            private bool disposedValue;
+
+
+            private RP2A03 parentModule;
+
+            private uint unitNumber;
+
+            private SampleData[] currentSampleData;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PcmEngine(RP2A03 parentModule)
+            {
+                this.parentModule = parentModule;
+                unitNumber = parentModule.UnitNumber;
+                engineLockObject = new object();
+                stopEngineFlag = true;
+                autoResetEvent = new AutoResetEvent(false);
+                currentSampleData = new SampleData[RP2A03.MAX_DAC_VOICES];
+            }
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StartEngine()
+            {
+                if (stopEngineFlag)
+                {
+                    stopEngineFlag = false;
+                    Thread t = new Thread(processDac);
+                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Start();
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StopEngine()
+            {
+                stopEngineFlag = true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Play(RP2A03Sound sound, TaggedNoteOnEvent note, int slot, RP2A03Timbre pcmTimbre)
+            {
+                this.sound = sound;
+                lock (engineLockObject)
+                {
+                    currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain);
+
+                    var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
+                    data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
+                    data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
+                    //parentModule.XgmWriter?.RecordData(data);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Stop(int slot)
+            {
+                lock (engineLockObject)
+                {
+                    currentSampleData[slot] = null;
+
+                    //parentModule.XgmWriter?.RecordData(new PortWriteData()
+                    //{ Type = (byte)6, Address = (byte)slot, Data = 0 });
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void StopAll()
+            {
+                lock (engineLockObject)
+                {
+                    for (int i = 0; i < currentSampleData.Length; i++)
+                        currentSampleData[i] = null;
+                }
+            }
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceFrequency(out long frequency);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void processDac()
+            {
+                int overflowed = 0;
+                uint sampleRate = 14000;
+
+                long freq, before, after;
+                double dbefore;
+                QueryPerformanceFrequency(out freq);
+                QueryPerformanceCounter(out before);
+                dbefore = before;
+                while (!stopEngineFlag)
+                {
+                    if (disposedValue)
+                        break;
+
+                    int dacData = 0;
+                    bool playDac = false;
+
+                    {
+                        lock (engineLockObject)
+                        {
+                            foreach (var sd in currentSampleData)
+                            {
+                                if (sd == null)
+                                    continue;
+
+                                var d = sd.GetDacData();
+                                if (d == null)
+                                    continue;
+                                int val = ((int)d.Value - 0x80);
+                                if (sd.Gain != 1.0f)
+                                    val = (int)Math.Round(val * sd.Gain);
+                                if (!sd.DisableVelocity)
+                                    val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
+                                dacData += val;
+
+                                sampleRate = sd.SampleRate;
+                                playDac = true;
+                            }
+                        }
+
+                        if (playDac || overflowed != 0)
+                        {
+                            //dacData += overflowed;
+                            overflowed = 0;
+                            if (dacData > sbyte.MaxValue)
+                            {
+                                //overflowed = dacData - sbyte.MaxValue;
+                                dacData = sbyte.MaxValue;
+                            }
+                            else if (dacData < sbyte.MinValue)
+                            {
+                                //overflowed = dacData - sbyte.MinValue;
+                                dacData = sbyte.MinValue;
+                            }
+                            //parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
+                            parentModule.RP2A03WriteData(unitNumber, 0x11, (byte)((dacData + 0x80) >> 1), false, false);
+                            /*
+                            try
+                            {
+                                Program.SoundUpdating();
+                                Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
+                                Ym2612_write(unitNumber, (uint)1, (byte)(dacData + 0x80));
+                            }
+                            finally
+                            {
+                                Program.SoundUpdated();
+                            }
+                            //*/
+                        }
+                    }
+
+                    QueryPerformanceCounter(out after);
+                    double nextTime = dbefore + ((double)freq / (double)sampleRate);
+                    while (after < nextTime)
+                        QueryPerformanceCounter(out after);
+                    dbefore = nextTime;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="disposing"></param>
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                        stopEngineFlag = true;
+
+                        autoResetEvent?.Dispose();
+                    }
+
+                    // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                    // TODO: 大きなフィールドを null に設定します
+                    disposedValue = true;
+                }
+            }
+
+            // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+            // ~PcmEngine()
+            // {
+            //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            //     Dispose(disposing: false);
+            // }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class SampleData
+        {
+            private RP2A03Sound sound;
+
+            public byte[] PcmData
+            {
+                get;
+                private set;
+            }
+
+            public uint SampleRate
+            {
+                get;
+                private set;
+            }
+
+            public TaggedNoteOnEvent Note
+            {
+                get;
+                private set;
+            }
+
+            public bool DisableVelocity
+            {
+                get;
+                private set;
+            }
+
+            public float Gain
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="adress"></param>
+            /// <param name="size"></param>
+            public SampleData(RP2A03Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain)
+            {
+                this.sound = sound;
+                Note = note;
+                PcmData = (byte[])pcmData.Clone();
+                SampleRate = sampleRate;
+                DisableVelocity = disableVelocity;
+                Gain = gain;
+            }
+
+            private int index;
+
+            public void Restart()
+            {
+                index = 0;
+            }
+
+            public byte? GetDacData()
+            {
+                if (index >= PcmData.Length)
+                {
+                    sound.TrySoundOff();
+                    return null;
+                }
+
+                return PcmData[index++];
+            }
+        }
 
         /// <summary>
         /// 
@@ -1202,6 +1572,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         updateVrc6SawVolume();
                         updateVrc6SawPitch();
                         break;
+                    case ToneType.DAC:
+                        {
+                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre);
+                            break;
+                        }
                 }
             }
 
@@ -1321,6 +1696,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.VRC6_SAW:
                         break;
+                    case ToneType.DAC:
+                        {
+                            break;
+                        }
                 }
 
                 base.OnSoundParamsUpdated();
@@ -1354,6 +1733,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.VRC6_SAW:
                         updateVrc6SawVolume();
                         break;
+                    case ToneType.DAC:
+                        {
+                            break;
+                        }
                 }
             }
 
@@ -1520,6 +1903,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.VRC6_SAW:
                         updateVrc6SawPitch();
                         break;
+                    case ToneType.DAC:
+                        {
+                            break;
+                        }
                 }
 
                 base.OnPitchUpdated();
@@ -1677,6 +2064,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.VRC6_SAW:
                         {
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0xb002, 0x00);
+                            break;
+                        }
+                    case ToneType.DAC:
+                        {
+                            parentModule.pcmEngine.Stop(Slot);
                             break;
                         }
                 }
@@ -1955,6 +2347,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            [DataMember]
+            [Category("Sound(DAC)")]
+            [Description("DAC Settings")]
+            public DacSettings DAC
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1963,6 +2364,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 SQSweep = new SQSweepSettings();
                 FDS = new FdsSettings();
                 VRC6 = new Vrc6Settings();
+                DAC = new DacSettings();
             }
 
             protected override void InitializeFxS()
@@ -2306,6 +2708,135 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_SQDuty = (byte)(value & 0x7);
                 }
             }
+
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<DacSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [InstLock]
+        public class DacSettings : ContextBoundObject
+        {
+
+            private byte[] f_PcmData = new byte[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM data. Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 0)]
+            public byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    f_PcmData = value;
+                }
+            }
+
+            public bool ShouldSerializePcmData()
+            {
+                return PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                PcmData = new byte[0];
+            }
+
+            /*
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set PCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "440")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 440;
+            */
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
+            [DefaultValue(typeof(uint), "14000")]
+            [SlideParametersAttribute(4000, 14000)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 14000;
+
+            private float f_PcmGain = 1.0f;
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM gain(0.0-*).")]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+            [DoubleSlideParameters(0d, 10d, 0.1d)]
+            public float PcmGain
+            {
+                get
+                {
+                    return f_PcmGain;
+                }
+                set
+                {
+                    if (f_PcmGain != value)
+                    {
+                        f_PcmGain = value;
+                    }
+                }
+            }
+
+            public virtual bool ShouldSerializePcmGain()
+            {
+                return f_PcmGain != 1.0f;
+            }
+
+            public virtual void ResetGainPcmGain()
+            {
+                f_PcmGain = 1.0f;
+            }
+
+            //[DataMember]
+            //[Category("Sound(PCM)")]
+            //[Description("Set loop point (0 - 65535")]
+            //[DefaultValue(typeof(ushort), "0")]
+            //[SlideParametersAttribute(0, 65535)]
+            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            //public ushort LoopPoint
+            //{
+            //    get;
+            //    set;
+            //}
+
+            //private bool f_LoopEnable;
+
+            //[DataMember]
+            //[Category("Sound(PCM)")]
+            //[Description("Loop point enable")]
+            //[SlideParametersAttribute(0, 1)]
+            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            //[DefaultValue(false)]
+            //public bool LoopEnable
+            //{
+            //    get
+            //    {
+            //        return f_LoopEnable;
+            //    }
+            //    set
+            //    {
+            //        f_LoopEnable = value;
+            //    }
+            //}
 
         }
 
@@ -3241,6 +3772,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             FDS,
             VRC6_SQ,
             VRC6_SAW,
+            DAC,
         }
 
         /// <summary>

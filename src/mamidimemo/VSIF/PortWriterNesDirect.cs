@@ -38,18 +38,12 @@ namespace zanac.MAmidiMEmo.VSIF
         /// <param name="wait"></param>
         public override void Write(PortWriteData[] data)
         {
-            List<byte> ds = new List<byte>();
-            foreach (var dt in data)
-            {
-                ds.Add(dt.Address);
-                ds.Add(dt.Data);
-            }
-            byte[] dsa = ds.ToArray();
-
             lock (LockObject)
             {
                 if (FtdiPort != null)
-                    sendData(convertToDataPacket(dsa), data[0].Wait);
+                {
+                    sendData(convertToDataPacket(data), data[0].Wait);
+                }
             }
         }
 
@@ -75,22 +69,33 @@ namespace zanac.MAmidiMEmo.VSIF
             SendDataByFtdi(sendData, wait);
         }
 
-        private byte[] convertToDataPacket(byte[] sendData)
+        private byte[] convertToDataPacket(PortWriteData[] sendData)
         {
-            byte[] ret = new byte[sendData.Length * 2];
+            List<byte> ret = new List<byte>();
 
-            for (int i = 0; i < sendData.Length; i += 2)
+            for (int i = 0; i < sendData.Length; i ++)
             {
-                byte adr = (byte)~sendData[i + 0];  //DIRECT ADDRESS
-                byte dat = (byte)~sendData[i + 1];
+                byte adr = (byte)~sendData[i].Address;  //DIRECT ADDRESS
+                byte dat = (byte)~sendData[i].Data;
+                if (sendData[i].Type == 1)
+                {
+                    ret.Add((byte)(0x00 | ((dat >> 4) & 0xe) | 1));
+                    ret.Add((byte)(0x10 | ((dat >> 1) & 0xe) | 1));
+                    ret.Add((byte)(0x10 | ((dat << 1) & 0x6) | 0));
+                }
+                else
+                {
+                    ret.Add((byte)(0x00 | ((adr >> 4) & 0xe) | 0));
+                    ret.Add((byte)(0x10 | ((adr >> 1) & 0xe) | 1));
+                    ret.Add((byte)(0x10 | ((adr << 1) & 0x6) | 0));
 
-                ret[(i * 2) + 0] = (byte)(0x10 | adr >> 4);
-                ret[(i * 2) + 1] = (byte)(0x00 | adr & 0xf);
-                ret[(i * 2) + 2] = (byte)(0x10 | dat >> 4);
-                ret[(i * 2) + 3] = (byte)(0x00 | dat & 0xf);
+                    ret.Add((byte)(0x10 | ((dat >> 4) & 0xe) | 1));
+                    ret.Add((byte)(0x10 | ((dat >> 1) & 0xe) | 0));
+                    ret.Add((byte)(0x10 | ((dat << 1) & 0x6) | 1));
+                }
             }
 
-            return ret;
+            return ret.ToArray();
         }
 
     }
