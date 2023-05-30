@@ -1198,6 +1198,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain);
 
+                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)0x10,(byte)(0xf));
+
                     //var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
                     //data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
                     //data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
@@ -1245,7 +1247,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void processDac()
             {
                 int overflowed = 0;
-                uint sampleRate = 8000;
+                uint sampleRate = 11025;
 
                 long freq, before, after;
                 double dbefore;
@@ -2789,14 +2791,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(PCM)")]
             [Description("Set DAC PCM sample rate [Hz].")]
-            [DefaultValue(typeof(uint), "8000")]
+            [DefaultValue(typeof(uint), "11025")]
             [SlideParametersAttribute(4000, 14000)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 8000;
+            } = 11025;
 
             private float f_PcmGain = 1.0f;
 

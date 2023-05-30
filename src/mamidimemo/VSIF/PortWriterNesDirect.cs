@@ -41,9 +41,7 @@ namespace zanac.MAmidiMEmo.VSIF
             lock (LockObject)
             {
                 if (FtdiPort != null)
-                {
                     sendData(convertToDataPacket(data), data[0].Wait);
-                }
             }
         }
 
@@ -64,8 +62,6 @@ namespace zanac.MAmidiMEmo.VSIF
 
         private void sendData(byte[] sendData, int wait)
         {
-            wait = (int)(VsifManager.FTDI_BAUDRATE_NES_MUL * wait) / 100;
-
             SendDataByFtdi(sendData, wait);
         }
 

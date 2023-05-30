@@ -16,8 +16,9 @@
 
 .macro FTDI2XX_BITBANG_A	ADRS
 .scope
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Address	Hi
+:					; Retreive Address Hi(3bit)/DAC data(3bit)
 	bit		$4016	; 4 6
 	beq     :-		; 2	8
 	bit		$4017	; 4 12
@@ -27,19 +28,20 @@ PlayDac:
 	and		#$1C	; 2 20
 	asl		a		; 2 22
 	asl		a		; 2 24
-	sta		ADRS	; 3 29
+	sta		ADRS	; 3 27
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Address	Mid
+:					; Retreive DAC data(4bit)
 	bit		$4016	; 4 6
 	bne     :-		; 2	8
 
-	lda		$4017	; 4 18
-	and		#$1E	; 2 20
-	lsr		a		; 2 22
-	ora		ADRS	; 3 25
-	sta 	$4011	; 4 29
+	lda		$4017	; 4 12
+	and		#$1E	; 2 14
+	lsr		a		; 2 16
+	ora		ADRS	; 3 19
+	sta 	$4011	; 4 23
 	jmp		LoopBITBANG
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Normal:
 	lda		$4017	; 4 18
 	and		#$1C	; 2 20
@@ -74,7 +76,7 @@ Normal:
 	lsr		a		; 2 22
 	lsr		a		; 2 24
 	ora		ADRS	; 3 27
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .endscope
 .endmacro
 
