@@ -1,4 +1,4 @@
-MAmidiMEmo 4.8.1.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.8.2.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.8.2.0 Added Copy button on the SCC WSG Morph Editor.
 4.8.1.0 Improved VSIF stability and supported DAC PCM(Real only) for Famicom ★Please update VGMPlay_nes*.nes
 4.8.0.0 Added SCC WSG Morph Editor.
 		Displayed the ToolTip in the FM Timbe Editor only once.

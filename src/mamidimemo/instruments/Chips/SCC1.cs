@@ -1190,16 +1190,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get
                 {
-                    return createWsgDataMmlData(WsgData);
+                    return CreateWsgDataMmlData(WsgData);
                 }
                 set
                 {
-                    applyWsgMmlData(value, WsgData);
+                    ApplyWsgMmlData(value, WsgData);
                     calcWsgDataHashCode();
                 }
             }
 
-            private static string createWsgDataMmlData(sbyte[] data)
+            public static string CreateWsgDataMmlData(sbyte[] data)
             {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < data.Length; i++)
@@ -1211,7 +1211,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return sb.ToString();
             }
 
-            private void applyWsgMmlData(string value, sbyte[] data)
+            public static void ApplyWsgMmlData(string value, sbyte[] data)
             {
                 string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 var vs = new List<sbyte>();
@@ -1599,6 +1599,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     sb.Append(data[i].ToString((IFormatProvider)null));
                 }
                 return sb.ToString();
+            }
+
+            [Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+typeof(UITypeEditor)), Localizable(false)]
+            [Category("Sound")]
+            [Description("MML Data")]
+            [IgnoreDataMember]
+            [JsonIgnore]
+            public string WsgDataMmlData
+            {
+                get
+                {
+                    return SCC1Timbre.CreateWsgDataMmlData(WsgData);
+                }
+                set
+                {
+                    SCC1Timbre.ApplyWsgMmlData(value, WsgData);
+                    calcWsgDataHashCode();
+                }
             }
 
             /// <summary>

@@ -41,12 +41,15 @@
             // 
             this.pianoControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pianoControl1.Location = new System.Drawing.Point(0, 25);
+            this.pianoControl1.Margin = new System.Windows.Forms.Padding(4);
             this.pianoControl1.Name = "pianoControl1";
             this.pianoControl1.Size = new System.Drawing.Size(803, 75);
             this.pianoControl1.TabIndex = 0;
+            this.pianoControl1.TargetTimbres = null;
             // 
             // toolStrip2
             // 
+            this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBox1,
             this.toolStripLabel2});
@@ -84,19 +87,22 @@
             // 
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
+            this.toolStripLabel2.Size = new System.Drawing.Size(54, 22);
             this.toolStripLabel2.Text = "Key Ch";
             // 
             // FormYM2151Editor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 441);
+            this.ClientSize = new System.Drawing.Size(832, 551);
+            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "FormYM2151Editor";
+            this.Padding = new System.Windows.Forms.Padding(12, 118, 12, 19);
             this.Text = "YM2151 Editor";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

@@ -39,6 +39,7 @@
             this.metroButtonDelete = new MetroFramework.Controls.MetroButton();
             this.metroButtonInsert = new MetroFramework.Controls.MetroButton();
             this.metroButtonDuplicate = new MetroFramework.Controls.MetroButton();
+            this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -65,20 +66,22 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 6, 2);
-            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 5, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 6, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 5, 3);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonAdd, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonInterpolate, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonDelete, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonInsert, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonDuplicate, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonInterpolate, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 5, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 94);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -99,7 +102,7 @@
             // 
             // metroButtonAdd
             // 
-            this.metroButtonAdd.Location = new System.Drawing.Point(4, 421);
+            this.metroButtonAdd.Location = new System.Drawing.Point(4, 384);
             this.metroButtonAdd.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonAdd.Name = "metroButtonAdd";
             this.metroButtonAdd.Size = new System.Drawing.Size(100, 29);
@@ -121,7 +124,7 @@
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(776, 411);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(776, 374);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // propertyGrid1
@@ -129,7 +132,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(391, 3);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(382, 405);
+            this.propertyGrid1.Size = new System.Drawing.Size(382, 368);
             this.propertyGrid1.TabIndex = 1;
             // 
             // listBoxWsgList
@@ -139,14 +142,14 @@
             this.listBoxWsgList.ItemHeight = 15;
             this.listBoxWsgList.Location = new System.Drawing.Point(3, 3);
             this.listBoxWsgList.Name = "listBoxWsgList";
-            this.listBoxWsgList.Size = new System.Drawing.Size(382, 405);
+            this.listBoxWsgList.Size = new System.Drawing.Size(382, 368);
             this.listBoxWsgList.TabIndex = 0;
             this.listBoxWsgList.SelectedValueChanged += new System.EventHandler(this.listBoxWsgList_SelectedValueChanged);
             // 
             // metroButtonInterpolate
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.metroButtonInterpolate, 2);
-            this.metroButtonInterpolate.Location = new System.Drawing.Point(4, 458);
+            this.metroButtonInterpolate.Location = new System.Drawing.Point(4, 421);
             this.metroButtonInterpolate.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonInterpolate.Name = "metroButtonInterpolate";
             this.metroButtonInterpolate.Size = new System.Drawing.Size(185, 29);
@@ -157,7 +160,7 @@
             // 
             // metroButtonDelete
             // 
-            this.metroButtonDelete.Location = new System.Drawing.Point(328, 421);
+            this.metroButtonDelete.Location = new System.Drawing.Point(328, 384);
             this.metroButtonDelete.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonDelete.Name = "metroButtonDelete";
             this.metroButtonDelete.Size = new System.Drawing.Size(100, 29);
@@ -168,7 +171,7 @@
             // 
             // metroButtonInsert
             // 
-            this.metroButtonInsert.Location = new System.Drawing.Point(112, 421);
+            this.metroButtonInsert.Location = new System.Drawing.Point(112, 384);
             this.metroButtonInsert.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonInsert.Name = "metroButtonInsert";
             this.metroButtonInsert.Size = new System.Drawing.Size(100, 29);
@@ -179,7 +182,7 @@
             // 
             // metroButtonDuplicate
             // 
-            this.metroButtonDuplicate.Location = new System.Drawing.Point(220, 421);
+            this.metroButtonDuplicate.Location = new System.Drawing.Point(220, 384);
             this.metroButtonDuplicate.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonDuplicate.Name = "metroButtonDuplicate";
             this.metroButtonDuplicate.Size = new System.Drawing.Size(100, 29);
@@ -187,6 +190,17 @@
             this.metroButtonDuplicate.Text = "D&uplicate";
             this.metroButtonDuplicate.UseSelectable = true;
             this.metroButtonDuplicate.Click += new System.EventHandler(this.metroButtonDuplicate_Click);
+            // 
+            // metroButtonCopy
+            // 
+            this.metroButtonCopy.Location = new System.Drawing.Point(570, 384);
+            this.metroButtonCopy.Margin = new System.Windows.Forms.Padding(4);
+            this.metroButtonCopy.Name = "metroButtonCopy";
+            this.metroButtonCopy.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonCopy.TabIndex = 0;
+            this.metroButtonCopy.Text = "&Copy Hex values";
+            this.metroButtonCopy.UseSelectable = true;
+            this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
             // FormSccMorphEditor
             // 
@@ -224,5 +238,6 @@
         private MetroFramework.Controls.MetroButton metroButtonInterpolate;
         private MetroFramework.Controls.MetroButton metroButtonInsert;
         private MetroFramework.Controls.MetroButton metroButtonDuplicate;
+        private MetroFramework.Controls.MetroButton metroButtonCopy;
     }
 }

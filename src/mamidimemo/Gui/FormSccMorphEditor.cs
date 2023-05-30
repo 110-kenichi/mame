@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
@@ -277,6 +278,32 @@ namespace zanac.MAmidiMEmo.Gui
                     listBoxWsgList.DisplayMember = "Name";
                 }
             }
+        }
+
+        private void metroButtonCopy_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < listBoxWsgList.Items.Count; i++)
+            {
+                WsgDataItem item = (WsgDataItem)listBoxWsgList.Items[i];
+                if (i == 0)
+                    sb.AppendLine(createWsgDataMmlData(item.Timbre.WsgData));
+                else
+                    sb.AppendLine(createWsgDataMmlData(item.Timbre.WsgDataMorphs[i - 1].WsgData));
+            }
+            Clipboard.SetText(sb.ToString());
+        }
+
+        private static string createWsgDataMmlData(sbyte[] data)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (sb.Length != 0)
+                    sb.Append(' ');
+                sb.Append(data[i].ToString("X2", (IFormatProvider)null));
+            }
+            return sb.ToString();
         }
     }
 }
