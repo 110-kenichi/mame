@@ -40,7 +40,7 @@ PlayDac:
 	lsr		a		; 2 16
 	ora		ADRS	; 3 19
 	sta 	$4011	; 4 23
-	jmp		LoopBITBANG
+	jmp		LoopBITBANG ;26
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Normal:
 	lda		$4017	; 4 18
@@ -51,9 +51,9 @@ Normal:
 	sta		ADRS	; 3 29
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Address	Mid
-	bit		$4016	; 4 6
-	bne     :-		; 2	8
+;:					; Retreive Address	Mid
+;	bit		$4016	; 4 6
+;	bne     :-		; 2	8
 :					; Retreive Address	Mid
 	bit		$4017	; 4 12
 	bne     :-		; 2	14
@@ -64,9 +64,9 @@ Normal:
 	sta     ADRS	; 3 26
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Address	Lo
-	bit		$4016	; 4 6
-	bne     :-		; 2	8
+;:					; Retreive Address	Lo
+;	bit		$4016	; 4 6
+;	bne     :-		; 2	8
 :					; Retreive Address	Lo
 	bit		$4017	; 4 12
 	beq     :-		; 2	14
@@ -83,9 +83,9 @@ Normal:
 .macro FTDI2XX_BITBANG_D	ADRS
 .scope
 	lda		#$02	; 2	2
-:					; Retreive Data	Hi
-	bit		$4016	; 4 6
-	bne     :-		; 2	8
+;:					; Retreive Data	Hi
+;	bit		$4016	; 4 6
+;	bne     :-		; 2	8
 :					; Retreive Data	Hi
 	bit		$4017	; 4 12
 	bne     :-		; 2	14
@@ -98,9 +98,9 @@ Normal:
 	sta		ADRS	; 3 29
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Data	Mid
-	bit		$4016	; 4 6
-	bne     :-		; 2	8
+;:					; Retreive Data	Mid
+;	bit		$4016	; 4 6
+;	bne     :-		; 2	8
 :					; Retreive Data	Mid
 	bit		$4017	; 4 12
 	beq     :-		; 2	14
@@ -111,9 +111,9 @@ Normal:
 	sta     ADRS	; 3 26
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	lda		#$02	; 2	2
-:					; Retreive Data	Lo
-	bit		$4016	; 4 6
-	bne     :-		; 2	8
+;:					; Retreive Data	Lo
+;	bit		$4016	; 4 6
+;	bne     :-		; 2	8
 :					; Retreive Data	Lo
 	bit		$4017	; 4 12
 	bne     :-		; 2	14

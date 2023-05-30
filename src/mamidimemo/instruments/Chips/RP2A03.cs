@@ -1198,7 +1198,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain);
 
-                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)0x10,(byte)(0xf));
+                    //keyoff
+                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
+                    parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)data);
 
                     //var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
                     //data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
@@ -1299,20 +1301,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
-                            //parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
                             parentModule.RP2A03WriteData(unitNumber, 0x11, (byte)((dacData + 0x80) >> 1), false, false);
-                            /*
-                            try
-                            {
-                                Program.SoundUpdating();
-                                Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
-                                Ym2612_write(unitNumber, (uint)1, (byte)(dacData + 0x80));
-                            }
-                            finally
-                            {
-                                Program.SoundUpdated();
-                            }
-                            //*/
                         }
                     }
 

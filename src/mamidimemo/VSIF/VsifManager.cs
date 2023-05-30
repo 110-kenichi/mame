@@ -29,7 +29,7 @@ namespace zanac.MAmidiMEmo.VSIF
         public const int FTDI_BAUDRATE_GEN_CLK_WIDTH = 9;
 
         public const int FTDI_BAUDRATE_NES = 352941;
-        public const int FTDI_BAUDRATE_NES_CLK_WIDTH = 13;
+        public const int FTDI_BAUDRATE_NES_CLK_WIDTH = 11;
 
         public const int FTDI_BAUDRATE_C64 = 72289;
         public const int FTDI_BAUDRATE_C64_CLK_WIDTH = 25;

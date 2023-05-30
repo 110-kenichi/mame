@@ -42,15 +42,14 @@ int main(void) {
   // }
   cputsxy(0, 0, "MAMI VGM SOUND DRIVER BY ITOKEN");
 
-  cputsxy(0, 2, "FTDI2XX MODE READY TO PLAY.");
+  cputsxy(0, 2, "*PUSH PANIC BTN WHEN GET WEIRD");
   cputsxy(0, 3, "*PLEASE RESET AFTER RECONNECTED");
 
-  cputsxy(0, 5, " 1  4567 -> GND,CTS,RTS,RX,TX");
-  cputsxy(0, 6, "___________");
-  cputsxy(0, 7, "\\*oo****o /");
-  cputsxy(0, 8, " \\oooo*oo/ ");
-  cputsxy(0, 9, "  -------  ");
-  cputsxy(0, 10, "     13 ->  DTR");
+  cputsxy(0, 6, "____________");
+  cputsxy(0, 7, "\\ 1**4567* /->GND,CTS,RTS,RX,TX");
+  cputsxy(0, 8, " \\oooo13oo/ ->DTR");
+  cputsxy(0, 9, "  --------");
+  cputsxy(0,10, "                                ");
   waitvsync();
 
   // *port9000 = 0x0f;
