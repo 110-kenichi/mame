@@ -20,10 +20,27 @@
 :					; Retreive Address	Hi
 	bit		$4016	; 4 6
 	beq     :-		; 2	8
-:					; Retreive Address	Hi
 	bit		$4017	; 4 12
-	beq     :-		; 2	14
+	bne     Normal	; 2	14
+PlayDac:
+	lda		$4017	; 4 18
+	and		#$1C	; 2 20
+	asl		a		; 2 22
+	asl		a		; 2 24
+	sta		ADRS	; 3 29
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	lda		#$02	; 2	2
+:					; Retreive Address	Mid
+	bit		$4016	; 4 6
+	bne     :-		; 2	8
 
+	lda		$4017	; 4 18
+	and		#$1E	; 2 20
+	lsr		a		; 2 22
+	ora		ADRS	; 3 25
+	sta 	$4011	; 4 29
+	jmp		LoopBITBANG
+Normal:
 	lda		$4017	; 4 18
 	and		#$1C	; 2 20
 	asl		a		; 2 22
@@ -145,29 +162,32 @@ LoopBITBANG:
 	jmp		LoopBITBANG		; 3 35/36
 
 LoadDPCM:
-	FTDI2XX_BITBANG_D	$71		; 19 19	//dummy
+	FTDI2XX_BITBANG_D	$71		; 27 27	//dummy
 
-	ldy		#0				;  2 29 27
-	lda		#$c0
-	sta		$74
+	ldy		#0					;  2 29 27
+	lda		#$c0				;  2 31
+	sta		$74					;  2 33
 .scope
 LoadLoopStart:
-	lda		ADRS				;  2 25 31
-	sta		$73					;  2 27 33	//DPCM BUFFER ADDRESS(HI)
+	sta		$73					;  2  2 //DPCM BUFFER ADDRESS(HI)
 Loop256:
-	FTDI2XX_BITBANG_A	$7f		; 27 27
-	sta		($72),Y				;  6 33
-	iny							;  2 35
+	FTDI2XX_BITBANG_A	$7f		; 27 29
+	sta		($72),Y				;  6 35
+	iny							;  2 37
 	FTDI2XX_BITBANG_D	$7f		; 27 27
 	sta		($72),Y				;  6 33
 	iny							;  2 35
-	bne		Loop256				;  2 37
-	inc		$74
-	lda		#$e0
-	cmp		$74
-	bne		LoadLoopStart
+	beq		NextLoop			;  2 37
+	jmp		Loop256				;  3 40
+NextLoop:
+	inc		$74					;  5 45
+	lda		#$e0				;  2 47
+	cmp		$74					;  2 49
+	beq		EndLoop				;  2 51
+	jmp		LoadLoopStart		;  3 54
+EndLoop:
 .endscope
-	jmp		LoopBITBANG			; 3 27/28
+	jmp		LoopBITBANG			;  3 57
 .endscope
 .endmacro
 

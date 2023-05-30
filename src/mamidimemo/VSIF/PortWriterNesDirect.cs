@@ -79,9 +79,8 @@ namespace zanac.MAmidiMEmo.VSIF
                 byte dat = (byte)~sendData[i].Data;
                 if (sendData[i].Type == 1)
                 {
-                    ret.Add((byte)(0x00 | ((dat >> 4) & 0xe) | 1));
-                    ret.Add((byte)(0x10 | ((dat >> 1) & 0xe) | 1));
-                    ret.Add((byte)(0x10 | ((dat << 1) & 0x6) | 0));
+                    ret.Add((byte)(0x00 | ((dat >> 3) & 0xe) | 1));
+                    ret.Add((byte)(0x10 | ((dat << 0) & 0xf) | 0));
                 }
                 else
                 {

@@ -43,6 +43,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
    Note: You can change the value of audio latency, sampling rate and audio output interface by [Tool] menu.
          PortAudio is a low latency sound engine. See http://www.portaudio.com/
+   Note: Allow ★firewall communication to MAmidiMEmo and your DAW.
 
 4. Select MIDI I/F from toolbar. MAmidiMEmo will recevie MIDI message from the selected MIDI I/F.
 
@@ -255,10 +256,11 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** ★Known issues and limitations★ *** 
 
    1. ★日本語フォルダには現状対応していません★
-   2. MT-32 & CM32-P can not store/restore last settings.
-   3. HuC6820 suddenly stop sounding. Please restart MAmi.
-   4. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
-   5. You need to save the data manually on the DAW (Cubase and so on). Or, keep open the dummy editor window of the MAmidiMemo.
+   2. You need to ★save the data ★manually on the DAW (Cubase and so on). Or, keep open the dummy editor window of the MAmidiMemo.
+   3. Allow ★firewall communication to MAmidiMEmo and your DAW.
+   4. MT-32 & CM32-P can not store/restore last settings.
+   5. HuC6820 suddenly stop sounding. Please restart MAmi.
+   6. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
    
 *** How to create build environment ***
 

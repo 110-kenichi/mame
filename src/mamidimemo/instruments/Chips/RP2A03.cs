@@ -404,8 +404,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 //Write DPCM
                                 vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
-                                for (int i = 0; i < pcmData.Count; i += 2)
+                                for (int i = 0; i < pcmData.Count; i += 4)
+                                {
                                     vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
+                                    vsifClient.WriteData(0, pcmData[i + 2], pcmData[i + 3], f_ftdiClkWidth);
+                                    vsifClient.RawWriteData(new byte[] { 0xff }, f_ftdiClkWidth);   //dummy wait
+                                }
                             }
                             else if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_MMC5)
                             {
@@ -416,8 +420,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                                     //Write DPCM
                                     vsifClient.WriteData(0, (byte)0x16, 0, f_ftdiClkWidth);
-                                    for (int i = bn * 0x2000; i < (bn * 0x2000) + 0x2000; i += 2)
+                                    for (int i = bn * 0x2000; i < (bn * 0x2000) + 0x2000; i += 4)
+                                    {
                                         vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
+                                        vsifClient.WriteData(0, pcmData[i + 2], pcmData[i + 3], f_ftdiClkWidth);
+                                        vsifClient.RawWriteData(new byte[] { 0xff }, f_ftdiClkWidth);   //dummy wait
+                                    }
                                 }
                             }
                         }
@@ -517,7 +525,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<RP2A03>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -605,6 +613,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_NES_FTDI:
                         switch (address)
                         {
+                            case 0x11:
+                                lock (sndEnginePtrLock)
+                                    vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                break;
                             case uint cmd when 0x0 <= address && address <= 0x15:
                                 lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
@@ -614,6 +626,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_NES_FTDI_FDS:
                         switch (address)
                         {
+                            case 0x11:
+                                lock (sndEnginePtrLock)
+                                    vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                break;
                             case uint cmd when 0x0 <= address && address <= 0xff:
                                 lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
@@ -623,6 +639,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_NES_FTDI_VRC6:
                         switch (address)
                         {
+                            case 0x11:
+                                lock (sndEnginePtrLock)
+                                    vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                break;
                             case uint cmd when 0x0 <= address && address <= 0x15:
                                 lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
@@ -644,6 +664,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundEngineType.VSIF_NES_FTDI_MMC5:
                         switch (address)
                         {
+                            case 0x11:
+                                lock (sndEnginePtrLock)
+                                    vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                break;
                             case uint cmd when 0x0 <= address && address <= 0x17:
                                 lock (sndEnginePtrLock)
                                     vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
@@ -1174,9 +1198,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain);
 
-                    var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
-                    data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
-                    data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
+                    //var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
+                    //data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
+                    //data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
                     //parentModule.XgmWriter?.RecordData(data);
                 }
             }
@@ -1221,7 +1245,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void processDac()
             {
                 int overflowed = 0;
-                uint sampleRate = 14000;
+                uint sampleRate = 8000;
 
                 long freq, before, after;
                 double dbefore;
@@ -1549,7 +1573,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(timbre.FDS.LfoData[i]));
 
                                 double dlfrq = timbre.FDS.LfoFreq;
-                                if(timbre.FDS.LfoFreqMultiply > 0)
+                                if (timbre.FDS.LfoFreqMultiply > 0)
                                     dlfrq = calcFdsPitch() * timbre.FDS.LfoFreqMultiply;
                                 ushort lfrq = (ushort)Math.Round(dlfrq);
                                 if (lfrq > 0x7ff)
@@ -2381,7 +2405,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<RP2A03Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2540,7 +2564,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    if(value >= 0)
+                    if (value >= 0)
                         f_LfoFreqMultiply = value;
                 }
             }
@@ -2764,15 +2788,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("Set DAC PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
-            [DefaultValue(typeof(uint), "14000")]
+            [Description("Set DAC PCM sample rate [Hz].")]
+            [DefaultValue(typeof(uint), "8000")]
             [SlideParametersAttribute(4000, 14000)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
                 get;
                 set;
-            } = 14000;
+            } = 8000;
 
             private float f_PcmGain = 1.0f;
 
@@ -3311,7 +3335,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DefaultValue(-1)]
             public int LfoGainEnvelopesReleasePoint { get; set; } = -1;
 
-            
+
             private string f_lfoFreqMultiplyEnvelopes;
 
             [DataMember]
