@@ -2045,13 +2045,10 @@ namespace zanac.VGMPlayer
                                             break;
                                         }
                                     case 0x56: //YM2608 Write Port 0
-                                    case 0x58: //YM2610 Write Port 0
                                         {
                                             uint dclk = vgmHead.lngHzYM2608;
                                             if (command == 0x55)
                                                 dclk = vgmHead.lngHzYM2203 * 2;
-                                            else if (command == 0x58)
-                                                dclk = vgmHead.lngHzYM2610;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2108,12 +2105,59 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
+                                    case 0x58: //YM2610 Write Port 0
+                                        {
+                                            uint dclk = vgmHead.lngHzYM2610;
+
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortOPNA != null)
+                                            {
+                                                switch (adrs)
+                                                {
+                                                    case 0x2d:
+                                                        comPortOPNA.ChipClockHz["OPNA"] = (int)comPortOPNA.ChipClockHz["OPNA_org"];
+                                                        comPortOPNA.ChipClockHz["OPNA_SSG"] = (int)comPortOPNA.ChipClockHz["OPNA_org"];
+                                                        break;
+                                                    case 0x2e:
+                                                        comPortOPNA.ChipClockHz["OPNA"] = (int)comPortOPNA.ChipClockHz["OPNA_org"] / 2;
+                                                        comPortOPNA.ChipClockHz["OPNA_SSG"] = (int)comPortOPNA.ChipClockHz["OPNA_org"] / 2;
+                                                        break;
+                                                    case 0x2f:
+                                                        comPortOPNA.ChipClockHz["OPNA"] = (int)comPortOPNA.ChipClockHz["OPNA_org"] / 3;
+                                                        comPortOPNA.ChipClockHz["OPNA_SSG"] = (int)comPortOPNA.ChipClockHz["OPNA_org"] / 4;
+                                                        break;
+                                                }
+                                            }
+
+                                            if (comPortOPNA != null)
+                                            {
+                                                if(!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
+                                                    deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
+                                            }
+                                            else if (comPortOPN2 != null)
+                                            {
+                                                if (adrs <= 0xd)
+                                                {
+                                                    if (comPortY8910 != null && comPortY8910.Tag.ContainsKey("ProxyOPN"))
+                                                        deferredWriteY8910(adrs, dt, dclk / 3);
+                                                    break;
+                                                }
+
+                                                if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
+                                                    deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
+                                            }
+                                        }
+                                        break;
+
                                     case 0x57: //YM2608 Write Port 1
-                                    case 0x59: //YM2610 Write Port 1
                                         {
                                             uint dclk = vgmHead.lngHzYM2608;
-                                            if (command == 0x59)
-                                                dclk = vgmHead.lngHzYM2610;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2195,6 +2239,31 @@ namespace zanac.VGMPlayer
                                                     //HACK:
                                                     QueryPerformanceCounter(out before);
                                                     dbefore = before;
+                                                }
+                                            }
+                                        }
+                                        break;
+
+                                    case 0x59: //YM2610 Write Port 1
+                                        {
+                                            uint dclk = vgmHead.lngHzYM2610;
+
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (adrs >= 0x30)    //ignore ADPCM adrs
+                                            {
+                                                if (comPortOPNA != null)
+                                                {
+                                                    deferredWriteOPNA_P1(comPortOPNA, adrs, dt, dclk);
+                                                }
+                                                else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOPNA"))
+                                                {
+                                                    deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                                 }
                                             }
                                         }
