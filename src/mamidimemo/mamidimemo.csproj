@@ -692,49 +692,57 @@
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
     <Content Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">
-      <Link>VGMPlay_md.bin</Link>
+      <Link>VSIF\VGMPlay_md.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_MSX\VGM_msx.rom">
-      <Link>VGM_msx.rom</Link>
+      <Link>VSIF\VGM_msx.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes.nes">
-      <Link>VGMPlay_nes.nes</Link>
+      <Link>VSIF\VGMPlay_nes.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_fds.fds">
-      <Link>VGMPlay_nes_fds.fds</Link>
+      <Link>VSIF\VGMPlay_nes_fds.fds</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_mmc5.nes">
-      <Link>VGMPlay_nes_mmc5.nes</Link>
+      <Link>VSIF\VGMPlay_nes_mmc5.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_NES\VGMPlay_nes_vrc6.nes">
-      <Link>VGMPlay_nes_vrc6.nes</Link>
+      <Link>VSIF\VGMPlay_nes_vrc6.nes</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_P6\VGM_P6T_01.wav">
-      <Link>VGM_P6T_01.wav</Link>
+      <Link>VSIF\VGM_P6T_01.wav</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_P6\VGM_P6T_02.wav">
-      <Link>VGM_P6T_02.wav</Link>
+      <Link>VSIF\VGM_P6T_02.wav</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_SMS\VGMPlay_sms.sms">
-      <Link>VGMPlay_sms.sms</Link>
+      <Link>VSIF\VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_MSX\VGM_msx_Vkey.rom">
-      <Link>VGM_msx_Vkey.rom</Link>
+      <Link>VSIF\VGM_msx_Vkey.rom</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\VSIF\VGMPlay_P6\VGM_P6.ROM">
-      <Link>VGM_P6.ROM</Link>
+      <Link>VSIF\VGM_P6.ROM</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\VSIF\VGMPlay_C64\VSIF_C64.prg">
+      <Link>VSIF\VSIF_C64.prg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\VSIF\VGMPlay_P6\VGM_P6M.bin">
+      <Link>VSIF\VGM_P6M.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\cm32p_user_internal_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

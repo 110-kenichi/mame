@@ -218,6 +218,9 @@
       <Link>VGMPlay_sms.sms</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\VGMPlay_P6\VGM_P6M.bin">
+      <Link>VGM_P6M.bin</Link>
+    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
