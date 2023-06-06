@@ -205,7 +205,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DefaultValue(VsifManager.FTDI_BAUDRATE_NES_CLK_WIDTH)]
-        [Description("Set FTDI Clock Width[%].")]
+        [Description("Set FTDI Clock Width[%].\r\n" +
+            "FT232R:11~\r\n" +
+            "FT232H:26~")]
         public int FtdiClkWidth
         {
             get
