@@ -423,6 +423,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Disable DAC data transfer to keep USB bandwidth.\r\n" +
             "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
+        [Browsable(false)]
         public bool DisableDacTransfer
         {
             get
@@ -1564,6 +1565,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 get;
                 private set;
+            }
+
+            public double BaseFreq
+            {
+                get;
+                set;
+            }
+
+            public double Pitch
+            {
+                get;
+                set;
+            }
+
+            public bool LoopEnabled
+            {
+                get;
+                set;
+            }
+
+            public uint LoopPoint
+            {
+                get;
+                set;
             }
 
             /// <summary>
@@ -2785,17 +2810,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             //[DataMember]
             //[Category("Sound(PCM)")]
-            //[Description("Set loop point (0 - 65535")]
+            //[Description("Set loop point")]
             //[DefaultValue(typeof(ushort), "0")]
             //[SlideParametersAttribute(0, 65535)]
             //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            //public ushort LoopPoint
+            //public uint LoopPoint
             //{
             //    get;
             //    set;
             //}
 
-            //private bool f_LoopEnable;
+            //private bool f_LoopEnabled;
 
             //[DataMember]
             //[Category("Sound(PCM)")]
@@ -2803,15 +2828,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             //[SlideParametersAttribute(0, 1)]
             //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             //[DefaultValue(false)]
-            //public bool LoopEnable
+            //public bool LoopEnabled
             //{
             //    get
             //    {
-            //        return f_LoopEnable;
+            //        return f_LoopEnabled;
             //    }
             //    set
             //    {
-            //        f_LoopEnable = value;
+            //        f_LoopEnabled = value;
             //    }
             //}
 

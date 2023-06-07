@@ -44,7 +44,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     [InstLock]
     public partial class RP2A03 : InstrumentBase
     {
-        private const int MAX_DAC_VOICES = 4;
+        private const int MAX_DAC_VOICES = 8;
 
         public override string Name => "RP2A03";
 
@@ -1194,7 +1194,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="pcmData"></param>
-            public void Play(RP2A03Sound sound, TaggedNoteOnEvent note, int slot, RP2A03Timbre pcmTimbre, double freq)
+            public void Play(RP2A03Sound sound, TaggedNoteOnEvent note, int slot, RP2A03Timbre pcmTimbre, double freq, double volume)
             {
                 this.sound = sound;
                 lock (engineLockObject)
@@ -1206,8 +1206,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     */
                     double basefreq = ((RP2A03Timbre)sound.Timbre).DAC.BaseFreqency;
 
-                    var sd = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain, basefreq);
+                    var sd = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, basefreq);
+                    sd.Gain = pcmTimbre.DAC.PcmGain;
                     sd.Pitch = freq / basefreq;
+                    sd.Volume = volume;
+                    sd.LoopEnabled = pcmTimbre.DAC.LoopEnabled;
+                    sd.LoopPoint = pcmTimbre.DAC.LoopPoint;
                     currentSampleData[slot] = sd;
 
                     //keyoff
@@ -1231,6 +1235,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     if(currentSampleData[slot] != null)
                         currentSampleData[slot].Pitch = freq / currentSampleData[slot].BaseFreq;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Volume(int slot, double volume)
+            {
+                lock (engineLockObject)
+                {
+                    if (currentSampleData[slot] != null)
+                        currentSampleData[slot].Volume = volume;
                 }
             }
 
@@ -1318,6 +1335,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     val = (int)Math.Round(val * sd.Gain);
                                 if (!sd.DisableVelocity)
                                     val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
+                                if (sd.Volume != 1.0f)
+                                    val = (int)Math.Round(val * sd.Volume);
                                 dacData += val;
 
                                 playDac = true;
@@ -1421,7 +1440,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public float Gain
             {
                 get;
-                private set;
+                set;
+            }
+
+            public double Volume
+            {
+                get;
+                set;
             }
 
             public double BaseFreq
@@ -1436,21 +1461,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            public bool LoopEnabled
+            {
+                get;
+                set;
+            }
+
+            public uint LoopPoint
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(RP2A03Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain, double baseFreq)
+            public SampleData(RP2A03Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, double baseFreq)
             {
                 this.sound = sound;
                 Note = note;
                 PcmData = (byte[])pcmData.Clone();
                 SampleRate = sampleRate;
                 DisableVelocity = disableVelocity;
-                Gain = gain;
                 BaseFreq = baseFreq;
+                Gain = 1;
+                Volume = 1;
                 Pitch = 1;
+                LoopEnabled = false;
+                LoopPoint = 0;
             }
 
             private double index;
@@ -1462,29 +1502,43 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public byte? PeekDacData()
             {
-                int idx = (int)Math.Round(index);
+                uint idx = (uint)Math.Round(index);
                 if (idx >= PcmData.Length)
                 {
-                    sound.TrySoundOff();
-                    return null;
+                    if (LoopEnabled && LoopPoint < PcmData.Length)
+                    {
+                        idx = LoopPoint;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
-                if (idx >= PcmData.Length - 1)
-                    return PcmData[idx];
-
                 return PcmData[idx];
             }
 
             public byte? GetDacData(uint sampleRate)
             {
-                int idx = (int)Math.Round(index);
+                uint idx = (uint)Math.Round(index);
                 if (idx >= PcmData.Length)
                 {
-                    sound.TrySoundOff();
-                    return null;
+                    if (LoopEnabled && LoopPoint < PcmData.Length)
+                    {
+                        index = LoopPoint;
+                        idx = LoopPoint;
+                    }
+                    else
+                    {
+                        sound.TrySoundOff();
+                        return null;
+                    }
                 }
 
                 if (idx >= PcmData.Length - 1)
+                {
+                    index += (Pitch * (double)sampleRate) / (double)SampleRate;
                     return PcmData[idx];
+                }
 
                 var ret = (lerp(PcmData[idx], PcmData[idx + 1], index - idx)) + 128;
                 index += (Pitch * (double)sampleRate) / (double)SampleRate;
@@ -1667,7 +1721,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.DAC:
                         {
-                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre, CalcCurrentFrequency());
+                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre, CalcCurrentFrequency(), CalcCurrentVolume());
                             break;
                         }
                 }
@@ -1828,6 +1882,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.DAC:
                         {
+                            parentModule.pcmEngine.Volume(Slot, CalcCurrentVolume());
                             break;
                         }
                 }
@@ -2899,37 +2954,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_PcmGain = 1.0f;
             }
 
-            //[DataMember]
-            //[Category("Sound(PCM)")]
-            //[Description("Set loop point (0 - 65535")]
-            //[DefaultValue(typeof(ushort), "0")]
-            //[SlideParametersAttribute(0, 65535)]
-            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            //public ushort LoopPoint
-            //{
-            //    get;
-            //    set;
-            //}
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set loop point")]
+            [DefaultValue(typeof(uint), "0")]
+            [SlideParametersAttribute(0, 65535)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint LoopPoint
+            {
+                get;
+                set;
+            }
 
-            //private bool f_LoopEnable;
+            private bool f_LoopEnabled;
 
-            //[DataMember]
-            //[Category("Sound(PCM)")]
-            //[Description("Loop point enable")]
-            //[SlideParametersAttribute(0, 1)]
-            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            //[DefaultValue(false)]
-            //public bool LoopEnable
-            //{
-            //    get
-            //    {
-            //        return f_LoopEnable;
-            //    }
-            //    set
-            //    {
-            //        f_LoopEnable = value;
-            //    }
-            //}
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Loop point enable")]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(false)]
+            public bool LoopEnabled
+            {
+                get
+                {
+                    return f_LoopEnabled;
+                }
+                set
+                {
+                    f_LoopEnabled = value;
+                }
+            }
 
         }
 
