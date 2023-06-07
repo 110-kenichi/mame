@@ -17,6 +17,7 @@ using System.Windows.Forms.Design;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
+using Melanchall.DryWetMidi.Tools;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
@@ -1193,12 +1194,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <param name="pcmData"></param>
-            public void Play(RP2A03Sound sound, TaggedNoteOnEvent note, int slot, RP2A03Timbre pcmTimbre)
+            public void Play(RP2A03Sound sound, TaggedNoteOnEvent note, int slot, RP2A03Timbre pcmTimbre, double freq)
             {
                 this.sound = sound;
                 lock (engineLockObject)
                 {
-                    currentSampleData[slot] = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain);
+                    /*
+                    int nn = (int)NoteNames.C3;
+                    double noteNum = Math.Pow(2.0, ((double)nn - 69.0) / 12.0);
+                    double basefreq = 440.0 * noteNum;
+                    */
+                    double basefreq = ((RP2A03Timbre)sound.Timbre).DAC.BaseFreqency;
+
+                    var sd = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, pcmTimbre.DAC.PcmGain, basefreq);
+                    sd.Pitch = freq / basefreq;
+                    currentSampleData[slot] = sd;
 
                     //keyoff
                     byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
@@ -1208,6 +1218,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
                     //data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
                     //parentModule.XgmWriter?.RecordData(data);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Pitch(int slot, double freq)
+            {
+                lock (engineLockObject)
+                {
+                    if(currentSampleData[slot] != null)
+                        currentSampleData[slot].Pitch = freq / currentSampleData[slot].BaseFreq;
                 }
             }
 
@@ -1251,7 +1274,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void processDac()
             {
                 int overflowed = 0;
-                uint sampleRate = 11025;
 
                 long freq, before, after;
                 double dbefore;
@@ -1265,6 +1287,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     int dacData = 0;
                     bool playDac = false;
+                    uint sampleRate = 11025;
 
                     {
                         lock (engineLockObject)
@@ -1274,9 +1297,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (sd == null)
                                     continue;
 
-                                var d = sd.GetDacData();
+                                var d = sd.PeekDacData();
                                 if (d == null)
                                     continue;
+
+                                sampleRate = Math.Max(sampleRate, sd.SampleRate);
+                            }
+
+                            foreach (var sd in currentSampleData)
+                            {
+                                if (sd == null)
+                                    continue;
+
+                                var d = sd.GetDacData(sampleRate);
+                                if (d == null)
+                                    continue;
+
                                 int val = ((int)d.Value - 0x80);
                                 if (sd.Gain != 1.0f)
                                     val = (int)Math.Round(val * sd.Gain);
@@ -1284,7 +1320,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
                                 dacData += val;
 
-                                sampleRate = sd.SampleRate;
                                 playDac = true;
                             }
                         }
@@ -1389,12 +1424,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 private set;
             }
 
+            public double BaseFreq
+            {
+                get;
+                set;
+            }
+
+            public double Pitch
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
             /// <param name="adress"></param>
             /// <param name="size"></param>
-            public SampleData(RP2A03Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain)
+            public SampleData(RP2A03Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, float gain, double baseFreq)
             {
                 this.sound = sound;
                 Note = note;
@@ -1402,24 +1449,53 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 SampleRate = sampleRate;
                 DisableVelocity = disableVelocity;
                 Gain = gain;
+                BaseFreq = baseFreq;
+                Pitch = 1;
             }
 
-            private int index;
+            private double index;
 
             public void Restart()
             {
                 index = 0;
             }
 
-            public byte? GetDacData()
+            public byte? PeekDacData()
             {
-                if (index >= PcmData.Length)
+                int idx = (int)Math.Round(index);
+                if (idx >= PcmData.Length)
+                {
+                    sound.TrySoundOff();
+                    return null;
+                }
+                if (idx >= PcmData.Length - 1)
+                    return PcmData[idx];
+
+                return PcmData[idx];
+            }
+
+            public byte? GetDacData(uint sampleRate)
+            {
+                int idx = (int)Math.Round(index);
+                if (idx >= PcmData.Length)
                 {
                     sound.TrySoundOff();
                     return null;
                 }
 
-                return PcmData[index++];
+                if (idx >= PcmData.Length - 1)
+                    return PcmData[idx];
+
+                var ret = (lerp(PcmData[idx], PcmData[idx + 1], index - idx)) + 128;
+                index += (Pitch * (double)sampleRate) / (double)SampleRate;
+                return (byte)Math.Round(ret);
+            }
+
+            static double lerp(double y0, double y1, double x)
+            {
+                y0 -= 128;
+                y1 -= 128;
+                return y0 + (y1 - y0) * x;
             }
         }
 
@@ -1591,7 +1667,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.DAC:
                         {
-                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre);
+                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre, CalcCurrentFrequency());
                             break;
                         }
                 }
@@ -1922,6 +1998,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.DAC:
                         {
+                            parentModule.pcmEngine.Pitch(Slot, CalcCurrentFrequency());
                             break;
                         }
                 }
@@ -2765,7 +2842,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
-            /*
             [DataMember]
             [Category("Sound(PCM)")]
             [Description("Set PCM base frequency [Hz]")]
@@ -2777,7 +2853,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 get;
                 set;
             } = 440;
-            */
+
 
             [DataMember]
             [Category("Sound(PCM)")]
