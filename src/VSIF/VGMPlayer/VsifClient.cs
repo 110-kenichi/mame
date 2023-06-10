@@ -347,6 +347,36 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
+        public virtual void WriteData(PortWriteData[] data)
+        {
+            try
+            {
+                PortWriteData[] dd;
+                lock (lockObject)
+                {
+                    if (disposedValue)
+                        return;
+
+                    deferredWriteAdrAndData.AddRange(data);
+                    dd = deferredWriteAdrAndData.ToArray();
+                    deferredWriteAdrAndData.Clear();
+                }
+                DataWriter?.Write(dd);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
         public virtual void WriteData(byte type, byte address, byte data, int wait)
         {
             try

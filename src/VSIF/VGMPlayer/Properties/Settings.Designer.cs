@@ -921,5 +921,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["OKIM6295Rate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int NES_IF {
+            get {
+                return ((int)(this["NES_IF"]));
+            }
+            set {
+                this["NES_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NES_Enable {
+            get {
+                return ((bool)(this["NES_Enable"]));
+            }
+            set {
+                this["NES_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal NESDiv {
+            get {
+                return ((decimal)(this["NESDiv"]));
+            }
+            set {
+                this["NESDiv"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int NES_Port {
+            get {
+                return ((int)(this["NES_Port"]));
+            }
+            set {
+                this["NES_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public decimal BitBangWaitNES {
+            get {
+                return ((decimal)(this["BitBangWaitNES"]));
+            }
+            set {
+                this["BitBangWaitNES"] = value;
+            }
+        }
     }
 }

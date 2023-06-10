@@ -19,6 +19,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using Microsoft.Win32;
 using zanac.MAmidiMEmo.Gimic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Net;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -43,6 +45,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPNA;
         private VsifClient comPortY8950;
         private VsifClient comPortOPN;
+        private VsifClient comPortNES;
 
         private BinaryReader vgmReader;
 
@@ -302,6 +305,11 @@ namespace zanac.VGMPlayer
                     comPortY8910.DeferredWriteData(0, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
                     comPortY8910.DeferredWriteData(0, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
                 }
+            }
+            //NES
+            if (comPortNES != null)
+            {
+                comPortNES.DeferredWriteData(0, 0x15, 0, (int)Settings.Default.BitBangWaitNES);
             }
 
             flushDeferredWriteDataAndWait();
@@ -771,8 +779,51 @@ namespace zanac.VGMPlayer
                     k053260.device_start_k053260(0, (int)curHead.lngHzK053260, comPortOPNA);
                 }
             }
+            if (curHead.lngHzNESAPU != 0 && curHead.lngVersion >= 0x00000161)
+            {
+                curHead.lngHzNESAPU = (uint)(curHead.lngHzNESAPU & ~0x80000000);    //FDS
+                SongChipInformation += $"NES APU@{curHead.lngHzNESAPU / 1000000f}MHz ";
+
+                if (Settings.Default.NES_Enable)
+                {
+                    connectToNES();
+                }
+            }
             return curHead;
         }
+
+
+        private bool connectToNES()
+        {
+            if (comPortNES == null)
+            {
+                switch (Settings.Default.NES_IF)
+                {
+                    case 0:
+                        if (comPortNES == null)
+                        {
+                            comPortNES = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT,
+                                (PortId)Settings.Default.NES_Port);
+
+                            if (comPortNES != null)
+                            {
+                                comPortNES.ChipClockHz["NES"] = 1789772;
+                                comPortNES.ChipClockHz["NES_org"] = 1789772;
+                                UseChipInformation += "NES APU@1.789772MHz ";
+                            }
+                        }
+                        break;
+                }
+                if (comPortNES != null)
+                {
+                    Accepted = true;
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         private bool connectToPSG()
         {
@@ -2137,7 +2188,7 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPNA != null)
                                             {
-                                                if(!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
+                                                if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
                                                     deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
                                             }
                                             else if (comPortOPN2 != null)
@@ -2646,6 +2697,16 @@ namespace zanac.VGMPlayer
                                                             //File.WriteAllText("d:\\aaa"+dacData.Count+".csv", sb.ToString());
                                                         }
                                                         break;
+                                                    case 7: //NES DPCM data for use with associated commands
+                                                        {
+                                                            dacDataOffset.Add(dacData.Count);
+                                                            dacDataLength.Add((int)size);
+                                                            if (size == 0)
+                                                                dacData.AddRange(new byte[] { 0 });
+                                                            else
+                                                                dacData.AddRange(vgmReader.ReadBytes((int)size));
+                                                        }
+                                                        break;
                                                     case 0x80:  //SEGA PCM
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -2760,6 +2821,18 @@ namespace zanac.VGMPlayer
 
                                                             break;
                                                         }
+                                                    case 0xc2:
+                                                        {
+                                                            //NES
+                                                            {
+                                                                uint saddr = vgmReader.ReadUInt16();
+                                                                size -= 2;
+
+                                                                var dat = vgmReader.ReadBytes((int)size);
+                                                                //TODO:
+                                                            }
+                                                            break;
+                                                        }
                                                     default:
                                                         vgmReader.ReadBytes((int)size);
                                                         break;
@@ -2844,7 +2917,7 @@ namespace zanac.VGMPlayer
                                                         }
 
                                                         {
-                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258);
+                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -2853,6 +2926,18 @@ namespace zanac.VGMPlayer
 
 
                                                     break;
+
+                                                case 20:   //NES
+                                                    if (port == 0x00 && cmd == 0x11)    //PCM ENABLE
+                                                    {
+                                                        dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
+                                                        Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                        t.Priority = ThreadPriority.Highest;
+                                                        t.Start();
+                                                    }
+
+                                                    break;
+
                                                 case 23: //OKIM6258
                                                     if (port == 0x00 && cmd == 0x1)    //ADPCM ENABLE
                                                     {
@@ -2867,7 +2952,7 @@ namespace zanac.VGMPlayer
 
                                                         {
                                                             okim6258 = new OKIM6258();
-                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258);
+                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -3030,7 +3115,37 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xB0 <= cmd && cmd <= 0xB6:
+                                    case int cmd when 0xB0 <= cmd && cmd <= 0xB3:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xB4:  //NES APU
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortNES != null)
+                                            {
+                                                uint dclk = vgmHead.lngHzNESAPU;
+
+                                                DeferredWriteNES(adrs, dt, dclk);
+                                            }
+                                            break;
+                                        }
+
+                                    case 0xB5:
+                                    case 0xB6:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3582,6 +3697,54 @@ namespace zanac.VGMPlayer
             }
         }
 
+        public void DeferredWriteNES(int adrs, int dt, uint dclk)
+        {
+            if (0x20 <= adrs && adrs <= 0x3e)
+            {
+                adrs += 0x60;
+            }
+            else if (0x3f == adrs)
+            {
+                adrs = 0x23;
+            }
+            comPortNES.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                //LO
+                case 2:
+                case 6:
+                case 0xA:
+                    if (!ConvertChipClock || (double)comPortNES.ChipClockHz["NES"] == (double)dclk)
+                        goto default;
+                    {
+                        var ret = convertNesFrequency(comPortNES.RegTable[adrs + 1] & 0x7, dt, comPortNES.ChipClockHz["NES"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        deferredWriteNES(adrs, ret.Lo);
+                        deferredWriteNES(adrs + 1, (comPortNES.RegTable[adrs + 1] & 0xf8) | ret.Hi);
+                    }
+                    break;
+                //HI
+                case 3:
+                case 7:
+                case 0xB:
+                    if (!ConvertChipClock || (double)comPortNES.ChipClockHz["NES"] == (double)dclk)
+                        goto default;
+                    {
+                        var ret = convertNesFrequency(dt & 0x7, comPortNES.RegTable[adrs - 1], comPortNES.ChipClockHz["NES"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+                        deferredWriteNES(adrs - 1, ret.Lo);
+                        deferredWriteNES(adrs, (dt & 0xf8) | ret.Hi);
+                    }
+                    break;
+                default:
+                    deferredWriteNES(adrs, dt);
+                    break;
+            }
+        }
+
         private void deferredWriteY8910(int adrs, int dt, uint dclk)
         {
             if (adrs == 7)
@@ -3739,6 +3902,23 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.Generic_UART:
                     comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
+                    break;
+            }
+        }
+
+        protected void deferredWriteNES(int adrs, int dt)
+        {
+            switch (comPortNES.SoundModuleType)
+            {
+                case VsifSoundModuleType.NES_FTDI_INDIRECT:
+                case VsifSoundModuleType.NES_FTDI_DIRECT:
+                    if (adrs == 0x11)
+                    {
+                        //DAC
+                        comPortNES.DeferredWriteData(1, (byte)0x11, (byte)dt, (int)Settings.Default.BitBangWaitNES);
+                    }
+                    else
+                        comPortNES.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitNES);
                     break;
             }
         }
@@ -4266,6 +4446,7 @@ namespace zanac.VGMPlayer
             comPortOPNA?.FlushDeferredWriteData();
             comPortY8950?.FlushDeferredWriteData();
             comPortOPN?.FlushDeferredWriteData();
+            comPortNES?.FlushDeferredWriteDataAndWait();
         }
 
         /// <summary>
@@ -4283,6 +4464,7 @@ namespace zanac.VGMPlayer
             comPortOPNA?.FlushDeferredWriteDataAndWait();
             comPortY8950?.FlushDeferredWriteDataAndWait();
             comPortOPN?.FlushDeferredWriteDataAndWait();
+            comPortNES?.FlushDeferredWriteDataAndWait();
         }
 
 
@@ -4301,6 +4483,7 @@ namespace zanac.VGMPlayer
             comPortOPNA?.Abort();
             comPortY8950?.Abort();
             comPortOPN?.Abort();
+            comPortNES?.Abort();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -4364,6 +4547,8 @@ namespace zanac.VGMPlayer
                 okim6295 = null;
                 dacStream?.Dispose();
                 dacStream = null;
+                comPortNES?.Dispose();
+                comPortNES = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

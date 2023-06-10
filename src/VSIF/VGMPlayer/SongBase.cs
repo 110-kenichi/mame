@@ -602,6 +602,18 @@ namespace zanac.VGMPlayer
             return ret;
         }
 
+        protected (byte Hi, byte Lo, bool noConverted) convertNesFrequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (int)Math.Round((freqValueHi << 3 | freqValueLo) * dataClock/ chipClock);
+            if (freq > 0x7ff)
+                freq = 0x7ff;
+
+            var ret = ((byte)(freq >> 3), (byte)(freq & 0x7), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
+        }
+
         /// <summary>
         /// 
         /// </summary>

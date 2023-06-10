@@ -25,14 +25,16 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPN2 = null;
         private VsifClient comPortOPNA = null;
         private OKIM6258 okim6258 = null;
+        private VsifClient comPortNES = null;
 
-        public DacStream(SongBase parentSong, VsifClient comPortOPN2, VsifClient comPortOPNA, OKIM6258 okim6258)
+        public DacStream(SongBase parentSong, VsifClient comPortOPN2, VsifClient comPortOPNA, OKIM6258 okim6258, VsifClient comPortNES)
         {
             this.parentSong = parentSong;
 
             this.comPortOPN2 = comPortOPN2;
             this.comPortOPNA = comPortOPNA;
             this.okim6258 = okim6258;
+            this.comPortNES = comPortNES;
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -131,6 +133,13 @@ namespace zanac.VGMPlayer
                         {
                             data = (byte)Math.Round((double)data * (double)Settings.Default.DacVolume / 100d);
                             parentSong.DeferredWriteOPNA_PseudoDAC(comPortOPNA, data);
+                        }
+                        sampleRate = pd.CurrentStreamData.Frequency;
+                        break;
+                    case 20:
+                        if (comPortNES != null)
+                        {
+                            ((VGMSong)parentSong).DeferredWriteNES(0x11, data, (uint)Settings.Default.BitBangWaitNES);
                         }
                         sampleRate = pd.CurrentStreamData.Frequency;
                         break;

@@ -46,6 +46,7 @@ namespace zanac.VGMPlayer
             comboBoxOPNA.SelectedIndex = 0;
             comboBoxY8950.SelectedIndex = 0;
             comboBoxOPN.SelectedIndex = 0;
+            comboBoxNES.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -68,6 +69,7 @@ namespace zanac.VGMPlayer
             checkBoxConnOPNA.Checked = false;
             checkBoxConnY8950.Checked = false;
             checkBoxConnOPN.Checked = false;
+            checkBoxConnNES.Checked = false;
 
             //HACK: To avoid layout glith
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
@@ -165,6 +167,7 @@ namespace zanac.VGMPlayer
             comPortOPNA?.Dispose();
             comPortY8950?.Dispose();
             comPortOPN?.Dispose();
+            comPortNES?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -1147,6 +1150,36 @@ namespace zanac.VGMPlayer
                 numericUpDown8950Div.Enabled = true;
 
                 comPortY8950?.Dispose();
+            }
+        }
+
+
+        private VsifClient comPortNES;
+
+        private void checkBoxConnNES_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnNES.Checked)
+            {
+                switch (Settings.Default.NES_IF)
+                {
+                    case 0:
+                        comPortNES = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT,
+                            (PortId)Settings.Default.NES_Port, (int)Settings.Default.NESDiv, false);
+                        break;
+                }
+
+                checkBoxConnNES.Checked = comPortNES != null;
+                comboBoxNES.Enabled = comPortNES == null;
+                comboBoxPortNES.Enabled = comPortNES == null;
+                numericUpDownNESDiv.Enabled = comPortNES == null;
+            }
+            else
+            {
+                comboBoxNES.Enabled = true;
+                comboBoxPortNES.Enabled = true;
+                numericUpDownNESDiv.Enabled = true;
+
+                comPortNES?.Dispose();
             }
         }
 

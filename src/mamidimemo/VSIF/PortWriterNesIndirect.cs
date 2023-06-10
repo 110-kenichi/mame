@@ -47,9 +47,12 @@ namespace zanac.MAmidiMEmo.VSIF
 
         public override void RawWrite(byte[] data, int wait)
         {
-            if (FtdiPort != null)
+            lock (LockObject)
             {
-                sendData(data, wait);
+                if (FtdiPort != null)
+                {
+                    sendData(data, wait);
+                }
             }
         }
 

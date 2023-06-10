@@ -29,8 +29,8 @@ namespace zanac.VGMPlayer
         // 260870 = 3000000 / 11.5
         public const int FTDI_BAUDRATE_GEN = 11;
 
-        public const int FTDI_BAUDRATE_NES = 57600 / 16;
-        public const int FTDI_BAUDRATE_NES_MUL = 100;
+        public const int FTDI_BAUDRATE_NES = 352941;
+        public const int FTDI_BAUDRATE_NES_CLK_WIDTH = 11;
 
         // 240000 = 3000000 / 12.5
         public const int FTDI_BAUDRATE_MSX = 12;
@@ -245,7 +245,7 @@ namespace zanac.VGMPlayer
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_NES * FTDI_BAUDRATE_NES_MUL);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_NES);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
                                     byte ps = 0;
@@ -253,7 +253,7 @@ namespace zanac.VGMPlayer
                                     if ((ps & 0x10) == 0x10)
                                     {
                                         uint dummy = 0;
-                                        ftdi.Write(new byte[] { 0x00 }, 1, ref dummy);
+                                        ftdi.Write(new byte[] { 0xff }, 1, ref dummy);
                                     }
 
                                     VsifClient client = null;
@@ -370,7 +370,7 @@ namespace zanac.VGMPlayer
         Generic_UART,
         Spfm,
         SpfmLight,
-        Gimic
+        Gimic,
     }
 
 
