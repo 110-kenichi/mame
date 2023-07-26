@@ -17,6 +17,7 @@ using Melanchall.DryWetMidi.Core;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Gui;
 using Melanchall.DryWetMidi.Common;
+using zanac.MAmidiMEmo.Instruments.Chips;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -30,6 +31,8 @@ namespace zanac.MAmidiMEmo.Instruments
         public static ReaderWriterLockSlim InstExclusiveLockObject = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         private static List<List<InstrumentBase>> instruments = new List<List<InstrumentBase>>();
+
+        private static List<InstrumentBase> midithru = new List<InstrumentBase>();
 
         public static GeneralPurposeControlSettings GPCS
         {
@@ -104,6 +107,8 @@ namespace zanac.MAmidiMEmo.Instruments
                     foreach (var i in iss)
                         i.Dispose();
                 }
+                foreach (var i in midithru)
+                    i.Dispose();
             }
             finally
             {
@@ -128,6 +133,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 foreach (List<InstrumentBase> i in instruments)
                     insts.AddRange(i);
+
+                insts.AddRange(midithru);
             }
             finally
             {
@@ -145,6 +152,9 @@ namespace zanac.MAmidiMEmo.Instruments
             try
             {
                 InstrumentManager.InstExclusiveLockObject.EnterReadLock();
+
+                if (deviceId == 0x1000)
+                    return midithru;
 
                 return instruments[(int)deviceId - 1];
             }
@@ -263,6 +273,12 @@ namespace zanac.MAmidiMEmo.Instruments
                         instruments[i].RemoveAt(j);
                     }
                 }
+                for (int j = midithru.Count - 1; j >= 0; j--)
+                {
+                    midithru[j].Dispose();
+                    midithru.RemoveAt(j);
+                }
+
                 InstrumentRemoved?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
             }
             finally
@@ -321,6 +337,43 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
+                if (settings.MidiThru != null)
+                {
+                    {
+                        {
+                            try
+                            {
+                                Program.SoundUpdating();
+                                //clear current insts
+                                for (int i = midithru.Count - 1; i >= 0; i--)
+                                {
+                                    midithru[i].Dispose();
+                                    midithru.RemoveAt(i);
+                                }
+                                //prepare new insts
+                                foreach (InstrumentBase inst in settings.MidiThru)
+                                    inst.PrepareSound();
+                                //set new insts
+                                InstrumentManager.midithru = settings.MidiThru;
+                            }
+                            catch (Exception ex)
+                            {
+                                if (ex.GetType() == typeof(Exception))
+                                    throw;
+                                else if (ex.GetType() == typeof(SystemException))
+                                    throw;
+
+
+                                System.Windows.Forms.MessageBox.Show(ex.ToString());
+                            }
+                            finally
+                            {
+                                Program.SoundUpdated();
+                            }
+                        }
+                    }
+                }
+
                 InstrumentChanged?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
             }
             finally
@@ -335,6 +388,7 @@ namespace zanac.MAmidiMEmo.Instruments
         public static void SaveSettings(EnvironmentSettings settings)
         {
             settings.Instruments = instruments;
+            settings.MidiThru = midithru;
         }
 
         /// <summary>
@@ -376,6 +430,35 @@ namespace zanac.MAmidiMEmo.Instruments
                     InstrumentAdded?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
                     if (VgmRecodring)
                         inst.StartVgmRecordingTo(LastVgmOutputDir);
+
+                    return inst;
+                }
+            }
+            finally
+            {
+                Program.SoundUpdated();
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instrumentType"></param>
+        public static InstrumentBase AddMidiThru()
+        {
+            try
+            {
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
+                Program.SoundUpdating();
+
+                if (midithru.Count < 8)
+                {
+                    var inst = new MIDITHRU((uint)midithru.Count);
+                    inst.PrepareSound();
+                    midithru.Add(inst);
+                    InstrumentAdded?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
 
                     return inst;
                 }
@@ -470,6 +553,26 @@ namespace zanac.MAmidiMEmo.Instruments
                 var list = instruments[(int)instrumentType];
                 list[list.Count - 1].Dispose();
                 list.RemoveAt(list.Count - 1);
+                InstrumentRemoved?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
+            }
+            finally
+            {
+                InstrumentManager.InstExclusiveLockObject.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="instrumentType"></param>
+        public static void RemoveMidiThru()
+        {
+            try
+            {
+                InstrumentManager.InstExclusiveLockObject.EnterWriteLock();
+
+                midithru[midithru.Count - 1].Dispose();
+                midithru.RemoveAt(midithru.Count - 1);
                 InstrumentRemoved?.Invoke(typeof(InstrumentManager), EventArgs.Empty);
             }
             finally
@@ -582,6 +685,15 @@ namespace zanac.MAmidiMEmo.Instruments
                                     }
                                 }*/
                             });
+
+
+                        midithru.ForEach((dev) =>
+                        {
+                            if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                                dev.MidiPort == Midi.MidiPort.PortB)
+                                dev.NotifyMidiEvent(e);
+                        });
+
                     }
                     finally
                     {
@@ -806,7 +918,13 @@ namespace zanac.MAmidiMEmo.Instruments
                                     dev.MidiPort == Midi.MidiPort.PortB)
                                     dev.NotifyMidiEvent(e);
                             });
-                    }
+                        midithru.ForEach((dev) =>
+                            {
+                                if (dev.MidiPort == Midi.MidiPort.PortAB ||
+                                    dev.MidiPort == Midi.MidiPort.PortB)
+                                    dev.NotifyMidiEvent(e);
+                            });
+                        }
                     finally
                     {
                         //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
@@ -1186,7 +1304,7 @@ namespace zanac.MAmidiMEmo.Instruments
             {
                 InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
-                if(unit < instruments[(int)device_id - 1].Count)
+                if (unit < instruments[(int)device_id - 1].Count)
                     instruments[(int)device_id - 1][unit].DirectAccessToChip(address, data);
             }
             finally

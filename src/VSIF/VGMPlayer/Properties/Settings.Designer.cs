@@ -981,5 +981,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWaitNES"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int NesDpcmRate {
+            get {
+                return ((int)(this["NesDpcmRate"]));
+            }
+            set {
+                this["NesDpcmRate"] = value;
+            }
+        }
     }
 }

@@ -53,6 +53,9 @@ namespace zanac.VGMPlayer
         private List<int> dacDataOffset = new List<int>();
         private List<int> dacDataLength = new List<int>();
 
+        private byte[] dpcmData;
+        private static int[] dpcmFreqTable = new int[] { 428, 380, 340, 320, 286, 254, 226, 214, 190, 160, 142, 128, 106, 85, 72, 54 };
+
         private int dacOffset = 0;
 
         private Dictionary<int, StreamData> streamTable = new Dictionary<int, StreamData>();
@@ -64,6 +67,8 @@ namespace zanac.VGMPlayer
         private OKIM6295 okim6295;
 
         private DacStream dacStream;
+
+        private NesDpcm nesDpcm;
 
         /// <summary>
         /// 
@@ -488,7 +493,7 @@ namespace zanac.VGMPlayer
                 if (curHead.bytPSG_SRWidth == 0)
                     curHead.bytPSG_SRWidth = 0x10;
 
-                SongChipInformation += "DCSG@3.579545MHz ";
+                SongChipInformation += $"DCSG@{curHead.lngHzDCSG / 1000000f}MHz ";
 
                 if (Settings.Default.DCSG_Enable)
                 {
@@ -786,7 +791,11 @@ namespace zanac.VGMPlayer
 
                 if (Settings.Default.NES_Enable)
                 {
-                    connectToNES();
+                    if (connectToNES())
+                    {
+                        nesDpcm = new NesDpcm(curHead.lngHzNESAPU, this);
+                        nesDpcm.StartEngine();
+                    }
                 }
             }
             return curHead;
@@ -2823,14 +2832,12 @@ namespace zanac.VGMPlayer
                                                         }
                                                     case 0xc2:
                                                         {
-                                                            //NES
-                                                            {
-                                                                uint saddr = vgmReader.ReadUInt16();
-                                                                size -= 2;
-
-                                                                var dat = vgmReader.ReadBytes((int)size);
-                                                                //TODO:
-                                                            }
+                                                            //NES DPCM
+                                                            uint saddr = vgmReader.ReadUInt16();
+                                                            size -= 2;
+                                                            List<byte> dd = new List<byte>(new byte[(int)saddr - 0xc000]);
+                                                            dd.AddRange(vgmReader.ReadBytes((int)size));
+                                                            dpcmData = dd.ToArray();
                                                             break;
                                                         }
                                                     default:
@@ -3138,7 +3145,6 @@ namespace zanac.VGMPlayer
                                             if (comPortNES != null)
                                             {
                                                 uint dclk = vgmHead.lngHzNESAPU;
-
                                                 DeferredWriteNES(adrs, dt, dclk);
                                             }
                                             break;
@@ -3739,6 +3745,44 @@ namespace zanac.VGMPlayer
                         deferredWriteNES(adrs, (dt & 0xf8) | ret.Hi);
                     }
                     break;
+                case 0x10:
+                    {
+                        //int dpcmFreq = (int)comPortNES.ChipClockHz["NES"] / dpcmFreqTable[dt & 0xf];
+                        //nesDpcm.SetSampleRate(dpcmFreq);
+                        //nesDpcm.SetLoopEnable((dt & 0x40) == 0x40);
+                    }
+                    //goto default;
+                    break;
+                case 0x12:
+                    //nesDpcm.SetLoopStart((int)dt << 6);
+                    //goto default;
+                    break;
+                case 0x13:
+                    //nesDpcm.SetLoopLength((int)dt << 4);
+                    //goto default;
+                    break;
+                case 0x15:
+                    if ((dt & 0x10) != 0)
+                    {
+                        if (!nesDpcm.IsPlaying())
+                        {
+                            int dpcmFreq = (int)comPortNES.ChipClockHz["NES"] / dpcmFreqTable[comPortNES.RegTable[0x10] & 0xf];
+
+                            if (dpcmData != null)
+                            {
+                                nesDpcm.Play(dpcmFreq, dpcmData,
+                                    (int)comPortNES.RegTable[0x12] << 6,
+                                    (int)comPortNES.RegTable[0x13] << 4,
+                                    (comPortNES.RegTable[0x10] & 0x40) == 0x40);
+                            }
+                        }
+                        dt -= 0x10;
+                    }
+                    else
+                    {
+                        nesDpcm.Stop();
+                    }
+                    goto default;
                 default:
                     deferredWriteNES(adrs, dt);
                     break;
@@ -3904,6 +3948,13 @@ namespace zanac.VGMPlayer
                     comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
                     break;
             }
+        }
+
+
+        public void DeferredWriteNESDAC(int dt)
+        {
+            //DAC
+            comPortNES.DeferredWriteData(1, (byte)0x11, (byte)dt, (int)Settings.Default.BitBangWaitNES);
         }
 
         protected void deferredWriteNES(int adrs, int dt)
@@ -4484,6 +4535,7 @@ namespace zanac.VGMPlayer
             comPortY8950?.Abort();
             comPortOPN?.Abort();
             comPortNES?.Abort();
+            nesDpcm?.Stop();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -4549,6 +4601,8 @@ namespace zanac.VGMPlayer
                 dacStream = null;
                 comPortNES?.Dispose();
                 comPortNES = null;
+                nesDpcm?.Dispose();
+                nesDpcm = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;

@@ -235,7 +235,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("Filter")]
         [Description("Audio Filter Type")]
-        public FilterMode FilterMode
+        public virtual FilterMode FilterMode
         {
             get => f_FilterMode;
             set
@@ -271,7 +271,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0.01d, 0.99d, 0.01d)]
         [DefaultValue(0.99d)]
-        public double FilterCutoff
+        public virtual double FilterCutoff
         {
             get
             {
@@ -306,7 +306,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
         [DoubleSlideParameters(0.01d, 1.00d, 0.01d)]
         [DefaultValue(0.01d)]
-        public double FilterResonance
+        public virtual double FilterResonance
         {
             get
             {
@@ -357,7 +357,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category("Filter")]
         [Description("Set VST effect plugins. Effects are applied in order from the first VST to the last VST.\r\n" +
             "Affected only for Software Engine.")]
-        public VSTPluginCollection VSTPlugins
+        public virtual VSTPluginCollection VSTPlugins
         {
             get
             {

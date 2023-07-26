@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using zanac.VGMPlayer.Properties;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace zanac.VGMPlayer
@@ -194,6 +195,9 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte type, byte address, byte data, int wait)
         {
+            if (type == 1 && Settings.Default.DisableDAC)
+                return;
+
             lock (lockObject)
             {
                 if (disposedValue)

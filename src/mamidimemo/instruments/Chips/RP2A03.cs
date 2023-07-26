@@ -208,7 +208,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DefaultValue(VsifManager.FTDI_BAUDRATE_NES_CLK_WIDTH)]
         [Description("Set FTDI Clock Width[%].\r\n" +
             "FT232R:11~\r\n" +
-            "FT232H:26~")]
+            "FT232H:27~")]
         public int FtdiClkWidth
         {
             get
@@ -1141,8 +1141,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private object engineLockObject;
 
-            private AutoResetEvent autoResetEvent;
-
             private bool stopEngineFlag;
 
             private bool disposedValue;
@@ -1163,7 +1161,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 unitNumber = parentModule.UnitNumber;
                 engineLockObject = new object();
                 stopEngineFlag = true;
-                autoResetEvent = new AutoResetEvent(false);
                 currentSampleData = new SampleData[RP2A03.MAX_DAC_VOICES];
             }
 
@@ -1381,8 +1378,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         // TODO: マネージド状態を破棄します (マネージド オブジェクト)
                         stopEngineFlag = true;
-
-                        autoResetEvent?.Dispose();
                     }
 
                     // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします

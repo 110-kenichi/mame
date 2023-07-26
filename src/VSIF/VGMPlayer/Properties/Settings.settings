@@ -242,5 +242,8 @@
     <Setting Name="BitBangWaitNES" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">12</Value>
     </Setting>
+    <Setting Name="NesDpcmRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

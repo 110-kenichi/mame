@@ -201,6 +201,7 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.mIDITHRUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1504,7 +1505,8 @@
             // 
             this.lAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mT32ToolStripMenuItem,
-            this.extendCM32PToolStripMenuItem});
+            this.extendCM32PToolStripMenuItem,
+            this.mIDITHRUToolStripMenuItem});
             this.lAToolStripMenuItem.Name = "lAToolStripMenuItem";
             resources.ApplyResources(this.lAToolStripMenuItem, "lAToolStripMenuItem");
             // 
@@ -1827,6 +1829,12 @@
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
+            // mIDITHRUToolStripMenuItem
+            // 
+            this.mIDITHRUToolStripMenuItem.Name = "mIDITHRUToolStripMenuItem";
+            resources.ApplyResources(this.mIDITHRUToolStripMenuItem, "mIDITHRUToolStripMenuItem");
+            this.mIDITHRUToolStripMenuItem.Click += new System.EventHandler(this.mIDITHRUToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
@@ -2037,6 +2045,7 @@
         private System.Windows.Forms.ToolStripMenuItem copySerializeDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSerializeDataToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripMenuItem mIDITHRUToolStripMenuItem;
     }
 }
 

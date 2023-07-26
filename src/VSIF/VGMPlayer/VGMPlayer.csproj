@@ -161,6 +161,7 @@
     </Compile>
     <Compile Include="MGSSong.cs" />
     <Compile Include="ListViewItemDragEventArgs.cs" />
+    <Compile Include="NesDpcm.cs" />
     <Compile Include="OKIM6258.cs" />
     <Compile Include="PortWriteData.cs" />
     <Compile Include="PortWriterGimic.cs" />

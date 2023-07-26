@@ -591,6 +591,16 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap MIDITHRU {
+            get {
+                object obj = ResourceManager.GetObject("MIDITHRU", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap MOS6581 {
             get {
                 object obj = ResourceManager.GetObject("MOS6581", resourceCulture);

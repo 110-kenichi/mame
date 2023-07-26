@@ -477,6 +477,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        [Browsable(false)]
+        public override ushort[] FineTunes { get => base.FineTunes; set => base.FineTunes = value; }
+
+        [Browsable(false)]
+        public override byte[] LegatoFootSwitch { get => base.LegatoFootSwitch; set => base.LegatoFootSwitch = value; }
+
+        [Browsable(false)]
+        public override SlotAssignmentType[] SlotAssignAlgorithm { get => base.SlotAssignAlgorithm; set => base.SlotAssignAlgorithm = value; }
+
+        [Browsable(false)]
+        public override ScaleTuning[] ScaleTunings { get => base.ScaleTunings; set => base.ScaleTunings = value; }
+
+
         private const float DEFAULT_GAIN = 1.0f;
 
         public override bool ShouldSerializeGainLeft()

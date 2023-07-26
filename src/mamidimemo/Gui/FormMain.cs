@@ -269,6 +269,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("uPD1771C", Resources.uPD1771C);
             imageList1.Images.Add("YM2414", Resources.YM2414);
             imageList1.Images.Add("YM3806", Resources.YM3806);
+            imageList1.Images.Add("MIDITHRU", Resources.MIDITHRU);
 
             if (Program.IsVSTiMode())
             {
@@ -805,6 +806,11 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.CM32P);
         }
 
+        private void mIDITHRUToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddMidiThru();
+        }
+
         private void extendYMF262ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.YMF262);
@@ -855,9 +861,17 @@ namespace zanac.MAmidiMEmo.Gui
             Dictionary<InstrumentType, object> insts = new Dictionary<InstrumentType, object>();
             foreach (ListViewItem item in listViewIntruments.SelectedItems)
             {
-                var tp = ((InstrumentBase)item.Tag).InstrumentType;
-                if (!insts.ContainsKey(tp))
-                    insts.Add(tp, null);
+                var inst = (InstrumentBase)item.Tag;
+                if (inst is MIDITHRU)
+                {
+                    InstrumentManager.RemoveMidiThru();
+                }
+                else
+                {
+                    var tp = inst.InstrumentType;
+                    if (!insts.ContainsKey(tp))
+                        insts.Add(tp, null);
+                }
             }
             foreach (var tp in insts.Keys)
                 InstrumentManager.RemoveInstrument(tp);
@@ -873,10 +887,20 @@ namespace zanac.MAmidiMEmo.Gui
             var item = listViewIntruments.FocusedItem;
             if (item != null)
             {
-                var tp = ((InstrumentBase)item.Tag).InstrumentType;
-                var inst = InstrumentManager.AddInstrument(tp);
-                if (inst != null)
-                    inst.SerializeData = ((InstrumentBase)item.Tag).SerializeData;
+                var oinst = (InstrumentBase)item.Tag;
+                if (oinst is MIDITHRU)
+                {
+                    var inst = InstrumentManager.AddMidiThru();
+                    if (inst != null)
+                        inst.SerializeData = oinst.SerializeData;
+                }
+                else
+                {
+                    var tp = oinst.InstrumentType;
+                    var inst = InstrumentManager.AddInstrument(tp);
+                    if (inst != null)
+                        inst.SerializeData = oinst.SerializeData;
+                }
             }
         }
 
@@ -2736,5 +2760,7 @@ namespace zanac.MAmidiMEmo.Gui
                 propertyGrid.Refresh();
             timer1.Stop();
         }
+
+
     }
 }

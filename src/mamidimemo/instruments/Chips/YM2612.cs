@@ -1309,8 +1309,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private object engineLockObject;
 
-            private AutoResetEvent autoResetEvent;
-
             private bool stopEngineFlag;
 
             private bool disposedValue;
@@ -1331,7 +1329,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 unitNumber = parentModule.UnitNumber;
                 engineLockObject = new object();
                 stopEngineFlag = true;
-                autoResetEvent = new AutoResetEvent(false);
                 currentSampleData = new SampleData[YM2612.DEFAULT_MAX_VOICES];
             }
 
@@ -1505,8 +1502,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         // TODO: マネージド状態を破棄します (マネージド オブジェクト)
                         stopEngineFlag = true;
-
-                        autoResetEvent?.Dispose();
                     }
 
                     // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします

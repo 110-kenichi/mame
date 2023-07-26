@@ -19,7 +19,11 @@ namespace zanac.MAmidiMEmo.ComponentModel
         [JsonConverter(typeof(NoTypeConverterJsonConverterObject<InstrumentBase>))]
         [DataMember]
         public List<List<InstrumentBase>> Instruments;
-        
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverterObject<InstrumentBase>))]
+        [DataMember]
+        public List<InstrumentBase> MidiThru;
+
     }
 
 }

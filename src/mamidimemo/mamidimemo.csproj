@@ -643,6 +643,7 @@
     <Compile Include="Gui\VstUITypeEditor.cs" />
     <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
+    <Compile Include="Instruments\Chips\MIDITHRU.cs" />
     <Compile Include="Instruments\Chips\uPD1771C.cs" />
     <Compile Include="Instruments\Chips\SN76477.cs" />
     <Compile Include="Instruments\Chips\CM32P.cs" />
@@ -1414,6 +1415,7 @@
     <None Include="Resources\Play11.png" />
     <None Include="Resources\ALG5Q.png" />
     <None Include="Resources\ALG8Q.png" />
+    <Content Include="Resources\MIDITHRU.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />
