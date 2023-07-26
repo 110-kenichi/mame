@@ -690,7 +690,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         midithru.ForEach((dev) =>
                         {
                             if (dev.MidiPort == Midi.MidiPort.PortAB ||
-                                dev.MidiPort == Midi.MidiPort.PortB)
+                                dev.MidiPort == Midi.MidiPort.PortA)
                                 dev.NotifyMidiEvent(e);
                         });
 
