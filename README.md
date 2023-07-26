@@ -276,6 +276,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 4.9.0.1 Fixed Receiving ch is not working properly.
 4.9.0.0 Added MIDI THRU instrument.
+        Supported variable pitch and volume for RP2A03 DPCM.
 4.8.2.1 Added VGM_P6M.bin for ROM Cartridge of PC-6001.
 4.8.2.0 Added Copy button on the SCC WSG Morph Editor.
 4.8.1.0 Improved VSIF stability and supported DAC PCM(Real only) for Famicom ★Please update VGMPlay_nes*.nes
