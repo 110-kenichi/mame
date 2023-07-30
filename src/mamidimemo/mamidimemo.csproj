@@ -211,6 +211,12 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Gui\FormInputNumberScc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\FormInputNumberScc.Designer.cs">
+      <DependentUpon>FormInputNumberScc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\FormInputNumber.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1007,8 +1013,14 @@
     <EmbeddedResource Include="Gui\FMEditor\RegisterContainerBase.resx">
       <DependentUpon>RegisterContainerBase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormInputNumberScc.resx">
+      <DependentUpon>FormInputNumberScc.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormInputNumber.resx">
       <DependentUpon>FormInputNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormSccMorphEditor.ja-JP.resx">
+      <DependentUpon>FormSccMorphEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSccMorphEditor.resx">
       <DependentUpon>FormSccMorphEditor.cs</DependentUpon>
@@ -1463,19 +1475,19 @@
       <Version>1.2.1</Version>
     </PackageReference>
     <PackageReference Include="Melanchall.DryWetMidi">
-      <Version>5.2.1</Version>
+      <Version>7.0.0</Version>
     </PackageReference>
     <PackageReference Include="MetroModernUI">
       <Version>1.4.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core">
-      <Version>1.1.4</Version>
+      <Version>1.1.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell">
-      <Version>1.1.4</Version>
+      <Version>1.1.5</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
       <Version>4.5.5</Version>

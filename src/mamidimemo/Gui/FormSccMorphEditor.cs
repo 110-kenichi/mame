@@ -1,24 +1,15 @@
-﻿using Melanchall.DryWetMidi.Common;
-using Melanchall.DryWetMidi.Core;
-using MetroFramework.Controls;
-using MetroFramework.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments.Chips;
-using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
-using static zanac.MAmidiMEmo.Instruments.Chips.SP0256;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -242,7 +233,7 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
             }
 
-            using (FormInputNumber f = new FormInputNumber())
+            using (FormInputNumberScc f = new FormInputNumberScc())
             {
                 f.TitleText = Resources.WsgMorphTitle;
                 var r = f.ShowDialog();
@@ -261,17 +252,20 @@ namespace zanac.MAmidiMEmo.Gui
                     sbyte[] lastData = last.Timbre.WsgDataMorphs[last.Index - 1].WsgData;
 
                     List<WsgDataItem> list = new List<WsgDataItem>();
-                    for (int i = 0; i < num; i++)
+                    if (f.MethodSimple)
                     {
-                        listBoxWsgList.Items.Insert(idx + 1, new WsgDataItem(timbre, listBoxWsgList));
-                        timbre.WsgDataMorphs.Insert(idx, new SCCWsgMorphData());
-                        for (int wi = 0; wi < firstData.Length; wi++)
+                        for (int i = 0; i < num; i++)
                         {
-                            var diff = (double)lastData[wi] - (double)firstData[wi];
-                            var step = diff / (num + 1);
-                            timbre.WsgDataMorphs[idx].WsgData[wi] = (sbyte)(Math.Round((double)firstData[wi] + step * (i + 1)));
+                            listBoxWsgList.Items.Insert(idx + 1, new WsgDataItem(timbre, listBoxWsgList));
+                            timbre.WsgDataMorphs.Insert(idx, new SCCWsgMorphData());
+                            for (int wi = 0; wi < firstData.Length; wi++)
+                            {
+                                var diff = (double)lastData[wi] - (double)firstData[wi];
+                                var step = diff / (num + 1);
+                                timbre.WsgDataMorphs[idx].WsgData[wi] = (sbyte)(Math.Round((double)firstData[wi] + step * (i + 1)));
+                            }
+                            idx++;
                         }
-                        idx++;
                     }
 
                     listBoxWsgList.DisplayMember = "";
@@ -305,5 +299,7 @@ namespace zanac.MAmidiMEmo.Gui
             }
             return sb.ToString();
         }
+
     }
 }
+

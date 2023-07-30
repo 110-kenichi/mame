@@ -1,5 +1,4 @@
 ﻿// copyright-holders:K.Ito
-using Melanchall.DryWetMidi.Devices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +30,7 @@ using System.Runtime.CompilerServices;
 using zanac.MAmidiMEmo.VSIF;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using System.Xml.Linq;
+using Melanchall.DryWetMidi.Multimedia;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -1638,7 +1638,8 @@ namespace zanac.MAmidiMEmo.Gui
                 labelTitle.Tag = new object();
 
                 midiPlayback?.Dispose();
-                midiPlayback = midiFile.GetPlayback(new InternalMidiPlayerDevice());
+                PlaybackSettings ps = new PlaybackSettings();
+                midiPlayback = midiFile.GetPlayback(new InternalMidiPlayerDevice(), ps);
                 midiPlayback.EventPlayed += MidiPlayback_EventPlayed;
                 midiPlayback.Finished += MidiPlayback_Finished;
 

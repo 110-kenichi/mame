@@ -753,5 +753,41 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["WsgTypeEdSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SccInterporateMethodSimple {
+            get {
+                return ((bool)(this["SccInterporateMethodSimple"]));
+            }
+            set {
+                this["SccInterporateMethodSimple"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SccInterporateMethodFft {
+            get {
+                return ((bool)(this["SccInterporateMethodFft"]));
+            }
+            set {
+                this["SccInterporateMethodFft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public decimal SccInterporateNum {
+            get {
+                return ((decimal)(this["SccInterporateNum"]));
+            }
+            set {
+                this["SccInterporateNum"] = value;
+            }
+        }
     }
 }

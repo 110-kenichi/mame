@@ -344,6 +344,8 @@ namespace zanac.MAmidiMEmo.Gui
                 ByteWsgData[i] = vs[i] > f_WsgMaxValue ? (byte)f_WsgMaxValue : vs[i];
 
             graphControl.Invalidate();
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void updateText()

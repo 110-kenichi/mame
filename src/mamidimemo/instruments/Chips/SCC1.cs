@@ -928,7 +928,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SCC1Timbre timbre;
 
-            private int lastWaveTable;
+            private int wsgDataHashCode;
+
+            private sbyte[] wsgData;
 
             /// <summary>
             /// 
@@ -941,6 +943,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 this.parentModule = parentModule;
                 this.timbre = (SCC1Timbre)timbre;
+                wsgDataHashCode = this.timbre.GetWsgDataHashCode();
+                wsgData = this.timbre.WsgData;
             }
 
             /// <summary>
@@ -966,7 +970,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void SetTimbre()
             {
-                parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), timbre.WsgData, timbre.GetWsgDataHashCode());
+                parentModule.Scc1WriteWaveData(parentModule.UnitNumber,
+                    (uint)(Slot << 5), wsgData, wsgDataHashCode);
             }
 
             /// <summary>
@@ -1003,22 +1008,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (eng.MorphValue.Value <= timbre.WsgDataMorphs.Count)
                         {
                             var no = eng.MorphValue.Value;
-                            if (lastWaveTable != no)
                             {
-                                lastWaveTable = no;
-                                sbyte[] wsgData;
-                                int hashCode = 0;
                                 if (no != 0 && no - 1 < timbre.WsgDataMorphs.Count)
                                 {
                                     wsgData = timbre.WsgDataMorphs[no - 1].WsgData;
-                                    hashCode = timbre.WsgDataMorphs[no - 1].GetWsgDataHashCode();
+                                    wsgDataHashCode = timbre.WsgDataMorphs[no - 1].GetWsgDataHashCode();
                                 }
                                 else
                                 {
                                     wsgData = timbre.WsgData;
-                                    hashCode = timbre.GetWsgDataHashCode();
+                                    wsgDataHashCode = timbre.GetWsgDataHashCode();
                                 }
-                                parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5), wsgData, hashCode);
+                                parentModule.Scc1WriteWaveData(parentModule.UnitNumber, (uint)(Slot << 5),
+                                    wsgData, wsgDataHashCode);
                             }
                         }
                     }

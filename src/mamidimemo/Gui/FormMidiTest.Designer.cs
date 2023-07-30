@@ -1,4 +1,4 @@
-﻿using Melanchall.DryWetMidi.Devices;
+﻿using Melanchall.DryWetMidi.Multimedia;
 using zanac.MAmidiMEmo.Midi;
 
 namespace zanac.MAmidiMEmo.Gui

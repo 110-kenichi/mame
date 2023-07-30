@@ -1560,7 +1560,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private ToneType lastToneType;
 
-            private byte lastLfoTable;
+            private sbyte[] lastLfoData;
 
             /// <summary>
             /// 
@@ -1575,6 +1575,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.timbre = (RP2A03Timbre)timbre;
 
                 lastToneType = this.timbre.ToneType;
+                lastLfoData = this.timbre.FDS.LfoData;
             }
 
             /// <summary>
@@ -1687,8 +1688,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x84, (byte)(0x80 | timbre.FDS.LfoGain));
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)0x00);
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
-                                for (int i = 0; i < timbre.FDS.LfoData.Length; i++)
-                                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(timbre.FDS.LfoData[i]));
+                                for (int i = 0; i < lastLfoData.Length; i++)
+                                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i]));
 
                                 double dlfrq = timbre.FDS.LfoFreq;
                                 if (timbre.FDS.LfoFreqMultiply > 0)
@@ -1807,27 +1808,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (eng.MorphValue != null)
                                 {
                                     var no = (byte)(eng.MorphValue.Value & 3);
-                                    if (lastLfoTable != no)
                                     {
                                         parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)0x00);
                                         parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
 
-                                        lastLfoTable = no;
-                                        sbyte[] lfoData;
+                                        //lastLfoTable = no;
+                                        //sbyte[] lfoData;
                                         switch (no)
                                         {
                                             case 1:
                                             case 2:
                                             case 3:
-                                                lfoData = timbre.FDS.LfoMorphData[no - 1].LfoData;
+                                                lastLfoData = timbre.FDS.LfoMorphData[no - 1].LfoData;
                                                 break;
                                             default:
-                                                lfoData = timbre.FDS.LfoData;
+                                                lastLfoData = timbre.FDS.LfoData;
                                                 break;
                                         }
 
-                                        for (int i = 0; i < lfoData.Length; i++)
-                                            parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lfoData[i]));
+                                        for (int i = 0; i < lastLfoData.Length; i++)
+                                            parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i]));
                                     }
                                 }
                             }

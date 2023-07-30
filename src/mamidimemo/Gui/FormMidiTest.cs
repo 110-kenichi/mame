@@ -1,7 +1,7 @@
 ﻿// copyright-holders:K.Ito
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
-using Melanchall.DryWetMidi.Devices;
+using Melanchall.DryWetMidi.Multimedia;
 using MetroFramework.Forms;
 using System;
 using System.Collections.Generic;

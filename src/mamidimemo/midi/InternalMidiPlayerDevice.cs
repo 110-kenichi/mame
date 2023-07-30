@@ -1,5 +1,5 @@
 ﻿using Melanchall.DryWetMidi.Core;
-using Melanchall.DryWetMidi.Devices;
+using Melanchall.DryWetMidi.Multimedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +15,10 @@ namespace zanac.MAmidiMEmo.Midi
     public class InternalMidiPlayerDevice : IOutputDevice
     {
         public event EventHandler<MidiEventSentEventArgs> EventSent;
+
+        public void Dispose()
+        {
+        }
 
         public void PrepareForEventsSending()
         {

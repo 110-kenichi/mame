@@ -629,7 +629,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private SoundType lastSoundType;
 
-            private byte lastLfoTable;
+            private byte[] lastLfoData;
 
             /// <summary>
             /// 
@@ -644,6 +644,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 this.timbre = (HuC6280Timbre)timbre;
 
                 lastSoundType = this.timbre.SoundType;
+                lastLfoData = this.timbre.LfoData;
             }
 
             /// <summary>
@@ -667,7 +668,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             //ch1 LFO
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 1));
-                            foreach (var d in timbre.LfoData)
+
+                            foreach (var d in lastLfoData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
                             C6280WriteData(parentModule.UnitNumber, 0x808, null, timbre.LfoFreq);
@@ -719,25 +721,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (eng?.LfoValue != null)
                     {
                         var no = (byte)(eng.LfoValue.Value & 3);
-                        if (lastLfoTable != no)
                         {
-                            lastLfoTable = no;
-                            byte[] lfoData;
                             switch (no)
                             {
                                 case 1:
                                 case 2:
                                 case 3:
-                                    lfoData = timbre.LfoMorphData[no - 1].LfoData;
+                                    lastLfoData = timbre.LfoMorphData[no - 1].LfoData;
                                     break;
                                 default:
-                                    lfoData = timbre.LfoData;
+                                    lastLfoData = timbre.LfoData;
                                     break;
                             }
 
                             //ch1 LFO
                             C6280WriteData(parentModule.UnitNumber, 0x800, null, (byte)(Slot + 1));
-                            foreach (var d in lfoData)
+                            foreach (var d in lastLfoData)
                                 C6280WriteData(parentModule.UnitNumber, 0x806, null, d);
 
                             C6280WriteData(parentModule.UnitNumber, 0x808, null, timbre.LfoFreq);

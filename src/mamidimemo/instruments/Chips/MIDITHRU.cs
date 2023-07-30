@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
-using Melanchall.DryWetMidi.Devices;
+using Melanchall.DryWetMidi.Multimedia;
 using Melanchall.DryWetMidi.MusicTheory;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
@@ -74,7 +74,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip")]
-        [Description("Set inserted SN-U110 card No.")]
+        [Description("Output input MIDI event to specified MIDI OUT")]
         [DefaultValue(SN_U110_Cards.None)]
         [TypeConverter(typeof(MidiOutConverter))]
         public string MidiOut
