@@ -1601,7 +1601,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(pan << 6 | fv));
                         break;
                     case ToneType.ADPCM_B:
-                        YM2610BWriteData(unitNumber, (byte)(0x01), 0, 3, (byte)(pan << 6));
+                        YM2610BWriteData(unitNumber, (byte)(0x11), 0, 0, (byte)(pan << 6));
                         break;
                 }
             }
