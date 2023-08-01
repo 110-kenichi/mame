@@ -506,8 +506,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainRight = DEFAULT_GAIN;
         }
 
-        private byte lastDrumKeyOn;
-
         /// <summary>
         /// 
         /// </summary>
@@ -1169,8 +1167,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             YM2610BWriteData(unitNumber, (byte)(0x20 + Slot), 0, 3, (byte)(len & 0xff));
                             YM2610BWriteData(unitNumber, (byte)(0x28 + Slot), 0, 3, (byte)(len >> 8));
                             //KeyOn
-                            parentModule.lastDrumKeyOn |= (byte)(1 << Slot);
-                            YM2610BWriteData(unitNumber, (byte)(0), 0, 3, parentModule.lastDrumKeyOn);
+                            YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(1 << Slot));
                         }
                         break;
                     case ToneType.ADPCM_B:
@@ -1598,7 +1595,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_A:
                         byte fv = (byte)(((byte)Math.Round(31 * CalcCurrentVolume()) & 0x1f));
-                        YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 0, (byte)(pan << 6 | fv));
+                        YM2610BWriteData(unitNumber, (byte)(0x08 + Slot), 0, 3, (byte)(pan << 6 | fv));
                         break;
                     case ToneType.ADPCM_B:
                         YM2610BWriteData(unitNumber, (byte)(0x11), 0, 0, (byte)(pan << 6));
@@ -1689,9 +1686,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_A:
                         {
-
-                            parentModule.lastDrumKeyOn &= (byte)(~(1 << Slot));
-                            YM2610BWriteData(unitNumber, (byte)(0), 0, 0, parentModule.lastDrumKeyOn);
+                            YM2610BWriteData(unitNumber, (byte)(0), 0, 3, (byte)(0x80 | (1 << Slot)));
                         }
                         break;
                     case ToneType.ADPCM_B:
