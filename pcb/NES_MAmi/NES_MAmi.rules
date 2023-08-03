@@ -1,0 +1,161 @@
+
+(rules PCB NES_MAmi
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 8)
+    (layer_rule F.Cu
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 2.3)
+    )
+    (layer_rule B.Cu
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.8)
+    )
+  )
+  (rule
+    (width 250.0)
+    (clear 200.0)
+    (clear 125.0 (type smd_to_turn_gap))
+    (clear 50.0 (type smd-smd))
+  )
+  (padstack "Via[0-1]_800:400_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_1000:600_um"
+    (shape
+      (circle F.Cu 1000.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 1000.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (padstack "Via[0-1]_1400:1000_um"
+    (shape
+      (circle F.Cu 1400.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 1400.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_800:400_um" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_1000:600_um" "Via[0-1]_1000:600_um" default
+  )
+  (via 
+    "Via[0-1]_1400:1000_um" "Via[0-1]_1400:1000_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-kicad_default" "Via[0-1]_800:400_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_1000:600_um-kicad_default" "Via[0-1]_1000:600_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_1400:1000_um-kicad_default" "Via[0-1]_1400:1000_um" "kicad_default"
+  )
+  (via 
+    "Via[0-1]_800:400_um-0.5" "Via[0-1]_800:400_um" 0.5
+  )
+  (via 
+    "Via[0-1]_1000:600_um-0.5" "Via[0-1]_1000:600_um" 0.5
+  )
+  (via 
+    "Via[0-1]_1400:1000_um-0.5" "Via[0-1]_1400:1000_um" 0.5
+  )
+  (via 
+    "Via[0-1]_800:400_um-1" "Via[0-1]_800:400_um" 1
+  )
+  (via 
+    "Via[0-1]_1000:600_um-1" "Via[0-1]_1000:600_um" 1
+  )
+  (via 
+    "Via[0-1]_1400:1000_um-1" "Via[0-1]_1400:1000_um" 1
+  )
+  (via_rule
+    default "Via[0-1]_800:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_800:400_um-kicad_default"
+  )
+  (via_rule
+    0.5 "Via[0-1]_1000:600_um-0.5"
+  )
+  (via_rule
+    1 "Via[0-1]_1400:1000_um-1"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    "PPU A12" "PPU A07" "PPU A06" "PPU A05" "PPU A04" "PPU A03" "PPU A02" "PPU A01"
+    "PPU A00" "PPU D0" "PPU D1" "PPU D2" "PPU D3" "PPU D4" "PPU D5" "PPU D6"
+    "PPU D7" "PPU ~{A13}" "PPU A10" "PPU ~{RD}" "PPU A11" "PPU A09" "PPU A08" "unconnected-(CHRROM1-NC-Pad26)"
+    "CPU R{slash}~{W}" ~{IRQ} "VRAM ~{A10}" "CPU A11" "CPU A10" "CPU A09" "CPU A08" "CPU A07"
+    "CPU A06" "CPU A05" "CPU A04" "CPU A03" "CPU A02" "CPU A01" "CPU A00" "CPU A12"
+    "CPU A13" "CPU A14" "CPU D7" "CPU D6" "CPU D5" "CPU D4" "CPU D3" "CPU D2"
+    "CPU D1" "CPU D0" "PPU ~{WR}" "~{IN_ROMSEL}" "Net-(SOUNDCART1-Pin_17)" "unconnected-(SOUNDCART1-Pin_30-Pad30)" "unconnected-(SOUNDCART1-Pin_29-Pad29)" "unconnected-(SOUNDCART1-Pin_28-Pad28)"
+    "unconnected-(SOUNDCART1-Pin_27-Pad27)" "unconnected-(SOUNDCART1-Pin_26-Pad26)" "unconnected-(SOUNDCART1-Pin_25-Pad25)" "unconnected-(SOUNDCART1-Pin_24-Pad24)" "unconnected-(SOUNDCART1-Pin_23-Pad23)" "unconnected-(SOUNDCART1-Pin_22-Pad22)" "unconnected-(SOUNDCART1-Pin_21-Pad21)" "unconnected-(SOUNDCART1-Pin_20-Pad20)"
+    "unconnected-(SOUNDCART1-Pin_19-Pad19)" "unconnected-(SOUNDCART1-Pin_18-Pad18)" "unconnected-(SOUNDCART1-Pin_15-Pad15)" "unconnected-(SOUNDCART1-Pin_60-Pad60)" "unconnected-(SOUNDCART1-Pin_59-Pad59)" "unconnected-(SOUNDCART1-Pin_58-Pad58)" "unconnected-(SOUNDCART1-Pin_57-Pad57)" "unconnected-(SOUNDCART1-Pin_56-Pad56)"
+    "unconnected-(SOUNDCART1-Pin_55-Pad55)" "unconnected-(SOUNDCART1-Pin_54-Pad54)" "unconnected-(SOUNDCART1-Pin_53-Pad53)" "unconnected-(SOUNDCART1-Pin_52-Pad52)" "unconnected-(SOUNDCART1-Pin_51-Pad51)" "unconnected-(SOUNDCART1-Pin_50-Pad50)" "unconnected-(SOUNDCART1-Pin_49-Pad49)" "unconnected-(SOUNDCART1-Pin_48-Pad48)"
+    "unconnected-(SOUNDCART1-Pin_47-Pad47)" "~{OUT_ROMSEL}" "Net-(U1-Pad10)" "Net-(U1-Pad11)" CLK "~{ROMSEL}(~{A15}+~{CLK})"
+    (clearance_class "kicad_default")
+    (via_rule "kicad_default")
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class 0.5
+    VCC GND "SOUND IN" "SOUND OUT"
+    (clearance_class 0.5)
+    (via_rule 0.5)
+    (rule
+      (width 500.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class 1
+    (clearance_class 1)
+    (via_rule 1)
+    (rule
+      (width 1000.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)
