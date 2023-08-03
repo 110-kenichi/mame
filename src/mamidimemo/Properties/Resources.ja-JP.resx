@@ -407,4 +407,7 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="WsgMorphTitle" xml:space="preserve">
     <value>追加する項目数を入力してください。</value>
   </data>
+  <data name="AdpcmBufferUsedSPC700" xml:space="preserve">
+    <value>ADPCM バッファを {0}/63 KB 使っています。</value>
+  </data>
 </root>

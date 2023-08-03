@@ -1352,6 +1352,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataContract]
         public class YMF262Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             #region FM Synth
 
             /// <summary>

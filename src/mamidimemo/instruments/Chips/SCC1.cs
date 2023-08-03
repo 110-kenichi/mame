@@ -1081,6 +1081,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class SCC1Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             private sbyte[] wsgData = new sbyte[32];
 
             [TypeConverter(typeof(ArrayConverter))]

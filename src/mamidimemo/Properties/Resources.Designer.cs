@@ -79,6 +79,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   ADPCM buffer used {0}/63 KB. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AdpcmBufferUsedSPC700 {
+            get {
+                return ResourceManager.GetString("AdpcmBufferUsedSPC700", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap ALG1 {

@@ -6,11 +6,14 @@ using System.Diagnostics;
 using System.Drawing.Design;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FM_SoundConvertor;
 using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -19,11 +22,14 @@ using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2608;
 
 //https://wiki.superfamicom.org/spc700-reference
@@ -64,6 +70,109 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return 17;
+            }
+        }
+
+        private object sndEnginePtrLock = new object();
+
+        private int gimicPtr = -1;
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports Software and SPFM/VSIF/G.I.M.I.C .")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value &&
+                    (value == SoundEngineType.Software ||
+                    value == SoundEngineType.GIMIC))
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeSPFM : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.GIMIC,
+                });
+
+                return sc;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        private void setSoundEngine(SoundEngineType value)
+        {
+            try
+            {
+                ignoreUpdatePcmData = true;
+                AllSoundOff();
+            }
+            finally
+            {
+                ignoreUpdatePcmData = false;
+            }
+
+            lock (sndEnginePtrLock)
+            {
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.GIMIC:
+                        gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_SPC);
+                        if (gimicPtr >= 0)
+                        {
+                            GimicManager.SetClock(gimicPtr, (uint)(2.048*1000*1000));
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
             }
         }
 
@@ -553,7 +662,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<SPC700>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 SPC700SetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
@@ -607,13 +716,51 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }*/
         }
 
+        private void SPC700RegWriteData(uint unitNumber, byte reg, byte data)
+        {
+            SPC700RegWriteData(unitNumber, reg, data, false, false);
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        private static void SPC700RegWriteData(uint unitNumber, byte reg, byte data)
+        private void SPC700RegWriteData(uint unitNumber, byte reg, byte data, bool useCache, bool internalOnly)
         {
-            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf2, reg);
-            DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf3, data);
+            WriteData(reg, data, useCache, new Action(() =>
+            {
+                if (!internalOnly)
+                {
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.GIMIC:
+                                //GimicManager.SetRegister2(gimicPtr, reg, data);
+                                GimicManager.SetRegisterDirect(gimicPtr, reg, data, false);
+
+                                //GimicManager.SetRegisterDirect(gimicPtr, 0x2, reg, false);
+                                //GimicManager.SetRegisterDirect(gimicPtr, 0x3, data, false);
+                                break;
+                        }
+                    }
+                }
+
+                DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf2, reg);
+                DeferredWriteData(spc_ram_w, unitNumber, (uint)0xf3, data);
+
+                //FormMain.OutputDebugLog(this, "adr:" + (byte)(address + (op * 4) + (slot % 3)) + " dat:" + data);
+                //try
+                //{
+                //    Program.SoundUpdating();
+                //    YM2608_write(unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                //    YM2608_write(unitNumber, yreg + 1, data);
+                //}
+                //finally
+                //{
+                //    Program.SoundUpdated();
+                //}
+            }));
+
             /*
             try
             {
@@ -862,6 +1009,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
+
+            base.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (gimicPtr >= 0)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
+            }
+
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
             GC.SuppressFinalize(this);
         }
@@ -888,12 +1047,185 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             return 0;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal override void PrepareSound()
+        {
+            base.PrepareSound();
+
+            initGlobalRegisters();
+        }
+
+        private bool ignoreUpdatePcmData;
+
+        private void initGlobalRegisters()
+        {
+            lock (sndEnginePtrLock)
+                lastTransferPcmData = new byte[] { };
+
+            if (!IsDisposing && !ignoreUpdatePcmData)
+                updatePcmData(null);
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
         private void setPresetInstruments()
         {
             Timbres[0].SoundType = SoundType.INST;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void updatePcmData(SPC700Timbre timbre)
+        {
+            lock (sndEnginePtrLock)
+            {
+                if (CurrentSoundEngine == SoundEngineType.Software)
+                    return;
+            }
+            List<byte> pcmData = new List<byte>();
+            uint nextStartAddress = 0;
+            for (int i = 0; i < Timbres.Length; i++)
+            {
+                var tim = Timbres[i];
+
+                tim.PcmAddressStart = 0;
+                tim.PcmAddressEnd = 0;
+                if (tim.AdpcmData.Length != 0)
+                {
+                    int tlen = tim.AdpcmData.Length;
+                    int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
+                                                                //check bank
+                    if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
+                    {
+                        for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
+                            pcmData.Add(0);
+                        nextStartAddress |= 0xffff;
+                        nextStartAddress += 1;
+                    }
+                    if (nextStartAddress + tlen + pad - 1 < 0xFDC0)   //MAX 63KB
+                    {
+                        tim.PcmAddressStart = nextStartAddress;
+                        tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
+
+                        //Write PCM data
+                        pcmData.AddRange(tim.AdpcmData);
+                        //Add 32 byte pad
+                        for (int j = 0; j < pad; j++)
+                            pcmData.Add(0x80);  //Adds silent data
+
+                        nextStartAddress = Timbres[i].PcmAddressEnd + 1;
+                    }
+                    else
+                    {
+                        MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
+                        break;
+                    }
+                }
+            }
+            if (pcmData.Count != 0 && CurrentSoundEngine != SoundEngineType.Software)
+            {
+                //transferPcmOnlyDiffData(pcmData.ToArray(), null);
+
+                FormMain.OutputLog(this, Resources.UpdatingADPCM);
+                //if (Program.IsWriteLockHeld())
+                //{
+                try
+                {
+                    FormMain.AppliactionForm.Enabled = false;
+                    using (FormProgress f = new FormProgress())
+                    {
+                        f.StartPosition = FormStartPosition.CenterScreen;
+                        f.Message = Resources.UpdatingADPCM;
+                        f.Show();
+                        transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                    }
+                }
+                finally
+                {
+                    FormMain.AppliactionForm.Enabled = true;
+                }
+                //}
+                //else
+                //{
+                //    FormProgress.RunDialog(Resources.UpdatingADPCM,
+                //            new Action<FormProgress>((f) =>
+                //            {
+                //                transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                //            }));
+                //}
+                FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsedSPC700, pcmData.Count / 1024));
+            }
+        }
+
+        private byte[] lastTransferPcmData;
+
+        private void transferPcmOnlyDiffData(byte[] transferData, FormProgress fp)
+        {
+            for (int i = 0; i < transferData.Length; i++)
+            {
+                if (i >= lastTransferPcmData.Length || transferData[i] != lastTransferPcmData[i])
+                {
+                    sendPcmData(transferData, i, fp);
+                    lastTransferPcmData = transferData;
+                    break;
+                }
+            }
+        }
+
+        private void sendPcmData(byte[] transferData, int i, FormProgress fp)
+        {
+            int endAddress = transferData.Length;
+            if (endAddress > 0xFDC0)
+                endAddress = 0xFDC0;
+
+            //Transfer
+            int startAddress = (i / 9) * 9;
+            int len = endAddress - startAddress;
+            int index = 0;
+            int percentage = 0;
+            int lastPercentage = 0;
+            for (int adr = startAddress; adr < endAddress; adr++)
+            {
+                //YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[adr], false);
+
+                percentage = (100 * index) / len;
+                if (percentage != lastPercentage)
+                {
+                    if (fp != null)
+                    {
+                        fp.Percentage = percentage;
+                        Application.DoEvents();
+                    }
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.GIMIC:
+                            break;
+                    }
+                }
+                lastPercentage = percentage;
+                index++;
+            }
+
+            //Zero padding
+            for (int j = endAddress; j < endAddress + (9 - (endAddress % 9)); j++)
+                //YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);   //Adds silent data
+
+            // Finish
+            //YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);  //RESET
+
+            // Wait
+            switch (CurrentSoundEngine)
+            {
+                case SoundEngineType.GIMIC:
+                    break;
+            }
         }
 
         /// <summary>
@@ -961,7 +1293,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         internal override void AllSoundOff()
         {
-            soundManager.ProcessAllSoundOff();
+            soundManager?.ProcessAllSoundOff();
+            lock (sndEnginePtrLock)
+            {
+                //HACK:
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.GIMIC:
+                        if (CurrentSoundEngine == SoundEngineType.GIMIC)
+                            GimicManager.Reset(gimicPtr);
+                        break;
+                }
+            }
+            ClearWrittenDataCache();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void ClearWrittenDataCache()
+        {
+            base.ClearWrittenDataCache();
+            initGlobalRegisters();
         }
 
         /// <summary>
@@ -1072,9 +1424,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     byte bitPos = (byte)(1 << i);
 
                     byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) & ~bitPos);
-                    SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
                     byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) | bitPos);
-                    SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 }
             }
 
@@ -1194,7 +1546,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (lastSoundType == SoundType.INST)
                 {
                     //prognum no
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), timbreIndex);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), timbreIndex);
                 }
                 /*
                 else if (lastSoundType == SoundType.DRUM)
@@ -1212,13 +1564,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //ADSR
                 if (timbre.AdsrEnable)
                 {
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), (byte)(0x80 | (timbre.AdsrDR << 4) | timbre.AdsrAR));
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 6), (byte)((timbre.AdsrSL << 5) | timbre.AdsrSR));
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), (byte)(0x80 | (timbre.AdsrDR << 4) | timbre.AdsrAR));
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 6), (byte)((timbre.AdsrSL << 5) | timbre.AdsrSR));
                 }
                 else
                 {
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), 0);
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 7), 0x7f);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), 0);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 7), 0x7f);
                 }
                 //PMON
                 //byte pmon = SPC700RegReadData(parentModule.UnitNumber, 0x2d);
@@ -1229,18 +1581,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte non = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
                 non &= (byte)~bitPos;
                 non |= (byte)(timbre.NON << Slot);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
                 //EON
                 byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
 
                 //KON
                 byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) & ~bitPos);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) | bitPos);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
             }
 
 
@@ -1294,13 +1646,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //ADSR
                 if (timbre.AdsrEnable)
                 {
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), (byte)(0x80 | (timbre.AdsrDR << 4) | timbre.AdsrAR));
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 6), (byte)((timbre.AdsrSL << 5) | timbre.AdsrSR));
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), (byte)(0x80 | (timbre.AdsrDR << 4) | timbre.AdsrAR));
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 6), (byte)((timbre.AdsrSL << 5) | timbre.AdsrSR));
                 }
                 else
                 {
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), 0);
-                    SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 7), 0x7f);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 5), 0);
+                    parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 7), 0x7f);
                 }
                 //PMON
                 //byte pmon = SPC700RegReadData(parentModule.UnitNumber, 0x2d);
@@ -1311,12 +1663,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte non = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
                 non &= (byte)~bitPos;
                 non |= (byte)(timbre.NON << Slot);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
                 //EON
                 byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
 
                 base.OnSoundParamsUpdated();
             }
@@ -1344,8 +1696,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 byte left = (byte)Math.Round(127d * vol * Math.Cos(Math.PI / 2 * (pan / 127d)));
                 byte right = (byte)Math.Round(127d * vol * Math.Sin(Math.PI / 2 * (pan / 127d)));
-                SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 0), left);
-                SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 1), right);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 0), left);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 1), right);
             }
 
             /// <summary>
@@ -1373,8 +1725,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (freq > 0x3fff)
                     freq = 0x3fff;
 
-                SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 2), (byte)(freq & 0xff));
-                SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 3), (byte)((freq >> 8) & 0xff));
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 2), (byte)(freq & 0xff));
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 3), (byte)((freq >> 8) & 0xff));
 
                 base.OnPitchUpdated();
             }
@@ -1389,9 +1741,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte bitPos = (byte)(1 << Slot);
 
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) & ~bitPos);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
                 byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) | bitPos);
-                SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
             }
 
         }
@@ -1404,6 +1756,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class SPC700Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             [DataMember]
             [Category("Sound")]
             [Description("Sound Type")]
@@ -1464,8 +1830,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(BrrFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("BRR ADPCM Data (MAX 64KB)")]
-            [BrrFileLoaderEditor("Audio File(*.brr)|*.brr", 65536)]
+            [Description("BRR ADPCM Data (MAX 63KB)")]
+            [BrrFileLoaderEditor("Audio File(*.brr)|*.brr", 0xFDC0)]
             //[BrrFileLoaderEditor("Audio File(*.brr, *.wav)|*.brr;*.wav", 65536)]
             public byte[] AdpcmData
             {
@@ -1476,6 +1842,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set
                 {
                     f_AdcmData = value;
+
+
+                    var inst = (SPC700)this.Instrument;
+                    if (inst != null)
+                        inst.updatePcmData(this);
                 }
             }
 
@@ -1487,6 +1858,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void ResetAdpcmData()
             {
                 AdpcmData = new byte[0];
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressStart
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
+            [Browsable(false)]
+            public uint PcmAddressEnd
+            {
+                get;
+                set;
             }
 
             [DataMember]
@@ -1676,7 +2063,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<SPC700Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {

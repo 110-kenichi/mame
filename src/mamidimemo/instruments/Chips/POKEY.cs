@@ -988,6 +988,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class PokeyTimbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             [DataMember]
             [Category("Sound")]
             [Description("Sound Type")]

@@ -669,6 +669,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class MidiThruTimbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>

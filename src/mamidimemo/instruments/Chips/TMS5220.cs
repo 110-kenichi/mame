@@ -752,6 +752,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class TMS5220Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
 
             [DataMember]
             [Category("Sound")]

@@ -1098,6 +1098,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class YM3806Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
+
             #region FM Synth
 
             /// <summary>

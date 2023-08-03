@@ -2007,7 +2007,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SawVolume()
             {
-                byte fv = (byte)((byte)Math.Round(15 * CalcCurrentVolume()) & 0xf);
+                byte fv = (byte)((byte)Math.Round(63 * CalcCurrentVolume()) & 0x3f);
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xb000), fv);
             }
@@ -2146,6 +2146,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SQPitch()
             {
+                if(IsSoundOff)
+                    return;
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round(parentModule.MasterClock / (16 * freq)) - 1;
                 var n = (ushort)freq;
@@ -2158,6 +2160,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SawPitch()
             {
+                if (IsSoundOff)
+                    return;
                 double freq = CalcCurrentFrequency();
                 //t = (CPU / (14 * f)) - 1
                 freq = Math.Round((parentModule.MasterClock / (14 * freq)) - 1);
@@ -2166,7 +2170,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     n = 0x7ff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB001), (byte)(n & 0xff), false, false);
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | (n >> 8) & 0x7), false, false);
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | ((n >> 8) & 0x7)), false, false);
             }
 
             public override void SoundOff()
@@ -2227,6 +2231,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class RP2A03Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
 
             [DataMember]
             [Category("Sound")]

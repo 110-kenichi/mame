@@ -1679,6 +1679,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class SN76477Timbre : TimbreBase
         {
+            [Browsable(false)]
+            public override bool AssignMIDIChtoSlotNum
+            {
+                get;
+                set;
+            }
+
+            [Browsable(false)]
+            public override int AssignMIDIChtoSlotNumOffset
+            {
+                get;
+                set;
+            }
 
             private bool f_AssignOneShot = true;
 
