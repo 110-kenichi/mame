@@ -119,7 +119,7 @@ unsigned int WINAPI C86CtlMain::threadMain(LPVOID param)
 
 			case WM_MYDEVCHANGE:
 				//::OutputDebugString(L"DEVICE CHANGED!\r\n");
-				GimicHID::UpdateInstances(pThis->gGIMIC);
+				//GimicHID::UpdateInstances(pThis->gGIMIC);
 				GimicWinUSB::UpdateInstances(pThis->gGIMIC);
 				pwnd->deviceUpdate();
 				break;
@@ -229,7 +229,7 @@ int C86CtlMain::initialize(void)
 		return C86CTL_ERR_UNKNOWN;
 	
 	// インスタンス生成
-	GimicHID::UpdateInstances(gGIMIC);
+	//GimicHID::UpdateInstances(gGIMIC);
 	GimicWinUSB::UpdateInstances(gGIMIC);
 	//gGIMIC = GimicMIDI::CreateInstances(); // deprecated.
 	

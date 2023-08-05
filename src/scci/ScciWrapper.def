@@ -13,7 +13,6 @@ EXPORTS
 	GimicGetModule
 	GimicSetClock
 	GimicSetReset
-	GimicSetRegister
 	GimicSetRegisterDirect
 	GimicSetRegister2
 	GimicGetWrittenRegisterData

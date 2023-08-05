@@ -74,6 +74,7 @@
 #include "chip/opna.h"
 #include "chip/opn3l.h"
 #include "chip/opl3.h"
+#include "chip/spc700.h"
 
 extern "C" {
 #include "hidsdi.h"
@@ -308,7 +309,9 @@ int GimicHID::init(void)
 	}else if( !memcmp( info.Devname, "GMC-OPLMN", 9 ) ){
 		chiptype = CHIP_OPN3L;
 		chip = new COPN3L(this);
-	//	}else if( !memcmp( info.Devname, "GMC-SPC", 8 ) ){
+	}else if( !memcmp( info.Devname, "GMC-SPC", 7 ) ){
+		chiptype = CHIP_SPC;
+		chip = new CSPC700();
 	}
 	
 	// 値をキャッシュさせるためのダミー呼び出し
@@ -517,6 +520,10 @@ void GimicHID::directOut(UINT addr, UCHAR data)
 		if( 0xfc<=addr && addr<=0xff )
 			addr -= 0xe0;
 		break;
+	case CHIP_SPC:
+		MSG d = { 2, { addr & 0x03, data } };
+		sendMsg(&d);
+		return;
 	}
 	if( addr < 0xfc ){
 		MSG d = { 2, { addr&0xff, data } };
@@ -550,6 +557,10 @@ void GimicHID::directOut2(DWORD* addr, UCHAR* data, DWORD sz)
 			if (0xfc <= a && a <= 0xff)
 				a -= 0xe0;
 			break;
+		case CHIP_SPC:
+			//MSG d = { 9, { 0xfd, 0xb3, 0, 0, 0b00000000, a & 0xff , ((a >> 8) & 0xff), dt, 0xff } };
+			//sendMsg(&d);
+			continue;
 		}
 		if (a < 0xfc) {
 			MSG d = { 3, { a & 0xff, dt, 0xff } };
@@ -580,6 +591,10 @@ void GimicHID::out2buf(UINT addr, UCHAR data)
 			if( 0xfc<=addr && addr<=0xff )
 				addr -= 0xe0;
 			break;
+		case CHIP_SPC:
+			MSG d = { 2, { addr & 0x03, data } };
+			rbuff.push(d);
+			return;
 		}
 		if( addr < 0xfc ){
 			MSG d = { 2, { addr&0xff, data } };

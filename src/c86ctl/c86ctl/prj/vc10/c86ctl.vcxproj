@@ -188,14 +188,13 @@
     <None Include="res\c86ctl.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\c700\SpcControlDevice.cpp" />
     <ClCompile Include="..\..\src\chip\opm.cpp" />
     <ClCompile Include="..\..\src\chip\opn3l.cpp" />
     <ClCompile Include="..\..\src\chip\opna.cpp" />
     <ClCompile Include="..\..\src\chip\opnx.cpp" />
     <ClCompile Include="..\..\src\chip\opx.cpp" />
     <ClCompile Include="..\..\src\common\ringbuff.cpp" />
-    <ClCompile Include="..\..\src\interface\if_gimic_hid.cpp" />
-    <ClCompile Include="..\..\src\interface\if_gimic_midi.cpp" />
     <ClCompile Include="..\..\src\interface\if_gimic_winsub.cpp" />
     <ClCompile Include="..\..\src\vis\vis_bitmap.cpp" />
     <ClCompile Include="..\..\src\vis\vis_c86fm.cpp" />
@@ -216,6 +215,7 @@
     <ClCompile Include="..\..\src\win\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\c700\SpcControlDevice.h" />
     <ClInclude Include="..\..\src\c86ctl.h" />
     <ClInclude Include="..\..\src\chip\chip.h" />
     <ClInclude Include="..\..\src\chip\opl3.h" />
@@ -224,12 +224,11 @@
     <ClInclude Include="..\..\src\chip\opna.h" />
     <ClInclude Include="..\..\src\chip\opnx.h" />
     <ClInclude Include="..\..\src\chip\opx.h" />
+    <ClInclude Include="..\..\src\chip\spc700.h" />
     <ClInclude Include="..\..\src\common\mydef.h" />
     <ClInclude Include="..\..\src\common\ringbuff.h" />
     <ClInclude Include="..\..\src\common\withlock.h" />
     <ClInclude Include="..\..\src\interface\if.h" />
-    <ClInclude Include="..\..\src\interface\if_gimic_hid.h" />
-    <ClInclude Include="..\..\src\interface\if_gimic_midi.h" />
     <ClInclude Include="..\..\src\interface\if_gimic_winusb.h" />
     <ClInclude Include="..\..\src\version.h" />
     <ClInclude Include="..\..\src\vis\vis_bitmap.h" />

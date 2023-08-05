@@ -21,11 +21,9 @@ extern "C" {
 
 	__declspec(dllexport) DWORD __cdecl  GimicSetClock(DWORD moduleIndex, DWORD clock);
 
-	__declspec(dllexport) void __cdecl  GimicSetRegister(DWORD moduleIndex, DWORD addr, DWORD data);
-
 	__declspec(dllexport) void __cdecl  GimicSetRegisterDirect(DWORD moduleIndex, DWORD addr, DWORD data);
 
-	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD* addr, UCHAR* data, DWORD sz);
+	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD* addr, UCHAR* data, DWORD sz, UCHAR type);
 
 	__declspec(dllexport) DWORD __cdecl  GimicGetWrittenRegisterData(DWORD moduleIndex, DWORD addr);
 

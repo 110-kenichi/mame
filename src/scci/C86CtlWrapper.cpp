@@ -98,23 +98,6 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void __cdecl  GimicSetRegister(DWORD moduleIndex, DWORD addr, DWORD data)
-	{
-		c86ctl::IGimic2* pGimicModule;
-		if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IGimic2, (void**)&pGimicModule)) {
-
-			c86ctl::IRealChip2* pRC = NULL;
-			if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IRealChip2, (void**)&pRC))
-			{
-				pRC->out(addr, (UCHAR)data);
-
-				pRC->Release();
-			}
-
-			pGimicModule->Release();
-		}
-	}
-
 	__declspec(dllexport) void __cdecl  GimicSetRegisterDirect(DWORD moduleIndex, DWORD addr, DWORD data)
 	{
 		c86ctl::IGimic2* pGimicModule;
@@ -132,7 +115,7 @@ extern "C"
 		}
 	}
 
-	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD *addr, UCHAR *data, DWORD sz)
+	__declspec(dllexport) void __cdecl  GimicSetRegister2(DWORD moduleIndex, DWORD *addr, UCHAR *data, DWORD sz, UCHAR type)
 	{
 		c86ctl::IGimic2* pGimicModule;
 		if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IGimic2, (void**)&pGimicModule)) {
@@ -140,7 +123,7 @@ extern "C"
 			c86ctl::IRealChip2* pRC = NULL;
 			if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IRealChip2, (void**)&pRC))
 			{
-				pRC->directOut2(addr, data, sz);
+				pRC->directOut2(addr, data, sz, type);
 
 				pRC->Release();
 			}

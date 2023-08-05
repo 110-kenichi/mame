@@ -20,6 +20,9 @@
 #include "ringbuff.h"
 #include "withlock.h"
 #include "chip/chip.h"
+#include <string>
+
+class SpcControlDevice;
 
 namespace c86ctl{
 
@@ -61,7 +64,7 @@ public:
 	// IRealChip2
 	virtual int __stdcall getChipStatus(UINT addr, UCHAR *status);
 	virtual void __stdcall directOut(UINT addr, UCHAR data);
-	virtual void __stdcall directOut2(DWORD* addr, UCHAR* data, DWORD size);
+	virtual void __stdcall directOut2(DWORD* addr, UCHAR* data, DWORD size, UCHAR type);
 
 
 // 実験中 -----------------------------------------------
@@ -134,7 +137,32 @@ private:
 	GimicParam gimicParam;
 
 	LARGE_INTEGER freq;
-	
+
+	//C700------------------------------------- 
+public:
+	bool		resetrPipe();
+	bool		resetwPipe();
+	int			bulkWrite(UINT8* buf, UINT32 size);
+	int			bulkWriteAsync(UINT8* buf, UINT32 size);
+	int			bulkRead(UINT8* buf, UINT32 size, UINT32 timeout);
+	int		    read(UINT8* buf, UINT32 size);
+	int		    getReadableBytes();
+
+private:
+	SpcControlDevice *spcControlDevice;
+
+	static const int			WRITE_BUFFER_SIZE = 4096;
+	static const int			READ_BUFFER_SIZE = 4096;
+	UINT8						mWriteBuffer[WRITE_BUFFER_SIZE];
+	int							mWriteBufferPtr;
+	UINT8						mReadBuffer[READ_BUFFER_SIZE];
+	int							mReadBufferReadPtr;
+	int							mReadBufferWritePtr;
+	//C700------------------------------------- 
+
+	//DSP------------------------------------- 
+
+	//DSP------------------------------------- 
 };
 
 typedef std::shared_ptr<GimicWinUSB> GimicWinUSBPtr;

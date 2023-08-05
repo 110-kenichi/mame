@@ -61,7 +61,7 @@ public:
 	// IRealChip2
 	virtual int __stdcall getChipStatus( UINT addr, UCHAR *status ){ return C86CTL_ERR_NOT_IMPLEMENTED; };
 	virtual void __stdcall directOut(UINT addr, UCHAR data){};
-	virtual void __stdcall directOut2(DWORD* addr, UCHAR* data, DWORD size) {};
+	virtual void __stdcall directOut2(DWORD* addr, UCHAR* data, DWORD size, UCHAR type) {};
 
 public:
 	// 実験中

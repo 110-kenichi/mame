@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
@@ -220,6 +221,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_ftdiClkWidth = value;
             }
         }
+
+        private bool f_UseAltVRC6Cart;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(0, 1)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(false)]
+        [Description("Use alternative VRC6 Cart.")]
+        public bool UseAltVRC6Cart
+        {
+            get
+            {
+                return f_UseAltVRC6Cart;
+            }
+            set
+            {
+                f_UseAltVRC6Cart = value;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -640,28 +662,83 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                     case SoundEngineType.VSIF_NES_FTDI_VRC6:
-                        switch (address)
+                        if (!UseAltVRC6Cart)
                         {
-                            case 0x11:
-                                lock (sndEnginePtrLock)
-                                    vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
-                                break;
-                            case uint cmd when 0x0 <= address && address <= 0x15:
-                                lock (sndEnginePtrLock)
-                                    vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
-                                break;
-                            case uint cmd when 0x9000 <= address && address <= 0x9003:
-                                lock (sndEnginePtrLock)
-                                    vsifClient.WriteData(0, (byte)(24 + (cmd & 0x03)), data, f_ftdiClkWidth);
-                                break;
-                            case uint cmd when 0xa000 <= address && address <= 0xa003:
-                                lock (sndEnginePtrLock)
-                                    vsifClient.WriteData(0, (byte)(28 + (cmd & 0x03)), data, f_ftdiClkWidth);
-                                break;
-                            case uint cmd when 0xb000 <= address && address <= 0xb003:
-                                lock (sndEnginePtrLock)
-                                    vsifClient.WriteData(0, (byte)(32 + (cmd & 0x03)), data, f_ftdiClkWidth);
-                                break;
+                            switch (address)
+                            {
+                                case 0x11:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                    break;
+                                case uint cmd when 0x0 <= address && address <= 0x15:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
+                                    break;
+                                case uint cmd when 0x9000 <= address && address <= 0x9003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(24 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case uint cmd when 0xa000 <= address && address <= 0xa003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(28 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case uint cmd when 0xb000 <= address && address <= 0xb003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(32 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (address)
+                            {
+                                case 0x11:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(new PortWriteData[] { new PortWriteData() { Address = (byte)address, Data = data, Type = 1, Wait = f_ftdiClkWidth } });
+                                    break;
+                                case uint cmd when 0x0 <= address && address <= 0x15:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)address, data, f_ftdiClkWidth);
+                                    break;
+
+                                case 0x9001:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(24 + (0x02 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case 0x9002:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(24 + (0x01 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case 0xa001:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(28 + (0x02 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case 0xa002:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(28 + (0x01 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case 0xb001:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(32 + (0x02 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case 0xb002:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(32 + (0x01 & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+
+                                case uint cmd when 0x9000 <= address && address <= 0x9003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(24 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case uint cmd when 0xa000 <= address && address <= 0xa003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(28 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                                case uint cmd when 0xb000 <= address && address <= 0xb003:
+                                    lock (sndEnginePtrLock)
+                                        vsifClient.WriteData(0, (byte)(32 + (cmd & 0x03)), data, f_ftdiClkWidth);
+                                    break;
+                            }
                         }
                         break;
                     case SoundEngineType.VSIF_NES_FTDI_MMC5:

@@ -1,4 +1,4 @@
-MAmidiMEmo 4.9.2.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.9.3.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.9.3.0 Supported a real chip of the SPC700 on the G.I.M.I.C .
 4.9.2.0 Supported MAmi VRC6 CART for RP2A03.
 4.9.1.2 Fixed YM2610B ADPCM-A keyon/keyoff is not working properly.
 4.9.1.1 Fixed YM2610B ADPCM-B panpot is not working properly.
@@ -799,13 +800,16 @@ https://github.com/kirnbas/MathParserTK
 https://github.com/filoe/cscore/blob/master/CSCore/DSP/PeakFilter.cs
 
 *ymfm - Aaron Giles
-https://github.com/aaronsgiles/ymfm/blob/main/LICENSE
+https://github.com/aaronsgiles/ymfm/tree/main
+License: BSD 3-Clause License https://github.com/aaronsgiles/ymfm/blob/main/LICENSE
 
 *WinRing0 - hiyohiyo
-https://openlibsys.org/manual-ja/License.html
+https://crystaldew.info/2010/02/28/winring0-end/
+License: 修正 BSD ライセンス https://openlibsys.org/manual-ja/License.html
 
 *c86ctl - honet
 http://c86box.com/software.html
+License: BSD-3-Clause license https://github.com/honet/c86ctl/blob/development/LICENSE
 
 *oki - Copyright (c) 2001 Tetsuya Isaki. All rights reserved.
 http://www.pastel-flower.jp/~isaki/NetBSD/src/?sys/dev/ic/msm6258.c
@@ -814,6 +818,12 @@ https://github.com/umjammer/vavi-sound/blob/master/src/main/java/vavi/sound/adpc
 
 *airfont 380Final by Milton Paredes, mpj factory studios
 https://musical-artifacts.com/artifacts/635
+License: Public Domain
 
 *MDPlayer - kumatan
 https://github.com/kuma4649/MDPlayer
+License: MIT https://github.com/kuma4649/MDPlayer/blob/stable/LICENSE.txt
+
+*C700 - osoumen
+https://github.com/osoumen/C700
+License: LGPL2.1 https://github.com/osoumen/C700/blob/master/COPYING

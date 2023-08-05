@@ -31,6 +31,7 @@
 
 #include "stdafx.h"
 #include "if_gimic_winusb.h"
+#include "../c700/SpcControlDevice.h"
 
 #ifdef SUPPORT_WINUSB
 
@@ -42,6 +43,7 @@
 #include "chip/opna.h"
 #include "chip/opn3l.h"
 #include "chip/opl3.h"
+#include "chip/spc700.h"
 
 using namespace c86ctl;
 
@@ -63,7 +65,9 @@ using namespace c86ctl;
 ----------------------------------------------------------------------------*/
 GimicWinUSB::GimicWinUSB()
 	: hDev(0), hWinUsb(0), chip(0), chiptype(CHIP_UNKNOWN), cps(0), cal(0), calcount(0), delay(0),
-	  inPipeId(0), outPipeId(0), inPipeMaxPktSize(0), outPipeMaxPktSize(0)
+	  inPipeId(0), outPipeId(0), inPipeMaxPktSize(0), outPipeMaxPktSize(0),
+	mWriteBufferPtr(0), mReadBufferReadPtr(0), mReadBufferWritePtr(0),
+	spcControlDevice(NULL)
 {
 	rbuff.alloc( 128 );
 	dqueue.alloc(1024*16);
@@ -189,7 +193,16 @@ bool GimicWinUSB::OpenDevice(std::basic_string<TCHAR> devpath)
 		}else if( chiptype != CHIP_OPN3L ){
 			goto MODULE_CHANGED;
 		}
-	//	}else if( !memcmp( info.Devname, "GMC-SPC", 8 ) ){
+	}else if( !memcmp( info.Devname, "GMC-SPC", 7 ) ){
+		if (chiptype == 0 && chip == 0) {
+			chiptype = CHIP_SPC;
+			chip = new CSPC700();
+			spcControlDevice = new SpcControlDevice(this);
+			return true;
+		}
+		else if (chiptype != CHIP_SPC) {
+			goto MODULE_CHANGED;
+		}
 	}
 	
 	// 値をキャッシュさせるためのダミー呼び出し
@@ -206,6 +219,7 @@ MODULE_CHANGED:
 	WinUsb_Free(hWinUsb);
 	hDev = NULL;
 	hWinUsb = NULL;
+	spcControlDevice = NULL;
 	return false;
 }
 
@@ -410,10 +424,16 @@ int GimicWinUSB::reset(void)
 	// ディレイキューの廃棄
 	dqueue.flush();
 
-	// リセットコマンド送信
-	MSG d = { 2, { 0xfd, 0x82, 0 } };
-	ret =  sendMsg( &d );
-	
+	if (chiptype == CHIP_SPC)
+	{
+		ret = spcControlDevice->Init();
+	}
+	else
+	{
+		// リセットコマンド送信
+		MSG d = { 2, { 0xfd, 0x82, 0 } };
+		ret = sendMsg(&d);
+	}
 	if( C86CTL_ERR_NONE == ret ){
 		// 各ステータス値リセット
 		//   マスクの適用をreset内でする（送信処理が発生する）ので
@@ -600,6 +620,9 @@ void GimicWinUSB::directOut(UINT addr, UCHAR data)
 		if( 0xfc<=addr && addr<=0xff )
 			addr -= 0xe0;
 		break;
+	case CHIP_SPC:
+		spcControlDevice->doWriteDspHw(addr, data);
+		return;
 	}
 	if( addr < 0xfc ){
 		MSG d = { 2, { addr&0xff, data } };
@@ -610,7 +633,7 @@ void GimicWinUSB::directOut(UINT addr, UCHAR data)
 	}
 }
 
-void GimicWinUSB::directOut2(DWORD* addr, UCHAR* data, DWORD sz)
+void GimicWinUSB::directOut2(DWORD* addr, UCHAR* data, DWORD sz, UCHAR type)
 {
 	for (int i = 0; i < sz; i++)
 	{
@@ -633,6 +656,13 @@ void GimicWinUSB::directOut2(DWORD* addr, UCHAR* data, DWORD sz)
 			if (0xfc <= a && a <= 0xff)
 				a -= 0xe0;
 			break;
+		case CHIP_SPC:
+			if(type == 0)
+				spcControlDevice->doWriteDspHw(a, dt);
+			else if (type == 1)
+				spcControlDevice->doWriteRamHw(a, dt);
+			cal += 8;
+			continue;
 		}
 		if (a < 0xfc) {
 			MSG d = { 3, { a & 0xff, dt, 0xff } };
@@ -665,6 +695,10 @@ void GimicWinUSB::out2buf(UINT addr, UCHAR data)
 			if( 0xfc<=addr && addr<=0xff )
 				addr -= 0xe0;
 			break;
+		case CHIP_SPC:
+			MSG d = { 3, { 0x11, data, addr & 0xff } };
+			rbuff.push(d);
+			return;
 		}
 		if( addr < 0xfc ){
 			MSG d = { 2, { addr&0xff, data } };
@@ -789,6 +823,75 @@ int GimicWinUSB::getDelay(int *d)
 		return C86CTL_ERR_NONE;
 	}
 	return C86CTL_ERR_INVALID_PARAM;
+}
+
+// C700 -----------------------------------------------------
+
+bool GimicWinUSB::resetrPipe()
+{
+	WinUsb_FlushPipe(hWinUsb, inPipeId);
+	return true;
+}
+bool GimicWinUSB::resetwPipe()
+{
+	WinUsb_FlushPipe(hWinUsb, outPipeId);
+	return true;
+}
+
+int	 GimicWinUSB::bulkWrite(UINT8* buf, UINT32 size)
+{
+	if (!isValid()) return -1;
+
+	ULONG len = size;
+	UINT32	bufferRest = WRITE_BUFFER_SIZE - mWriteBufferPtr;
+	if (bufferRest < len) {
+		mWriteBufferPtr = 0;
+	}
+	memcpy(&mWriteBuffer[mWriteBufferPtr], buf, len);
+
+	DWORD wlen;
+	::EnterCriticalSection(&csection);
+	BOOL ret = WinUsb_WritePipe(hWinUsb, outPipeId, &mWriteBuffer[mWriteBufferPtr], len, &wlen, NULL);
+	::LeaveCriticalSection(&csection);
+
+	if (ret == FALSE || size != wlen) {
+		//printf("Write error in bulkWrite.\n");
+		//DWORD err = GetLastError();
+		//printErr(err);
+		return -1;
+	}
+	mWriteBufferPtr += len;
+	return wlen;
+}
+int	 GimicWinUSB::bulkWriteAsync(UINT8* buf, UINT32 size)
+{
+	return bulkWrite(buf, size);
+}
+int	 GimicWinUSB::bulkRead(UINT8* buf, UINT32 size, UINT32 timeout)
+{
+	if (!isValid()) return -1;
+
+	DWORD rlen;
+
+	::EnterCriticalSection(&csection);
+	BOOL ret = WinUsb_ReadPipe(hWinUsb, inPipeId, buf, size, &rlen, NULL);
+	::LeaveCriticalSection(&csection);
+
+	if (ret == FALSE) {
+		//printf("Write error in bulkRead.\n");
+		//DWORD err = GetLastError();
+		//printErr(err);
+		return -1;
+	}
+	return rlen;
+}
+int	 GimicWinUSB::read(UINT8* buf, UINT32 size)
+{
+	return 0;
+}
+int	 GimicWinUSB::getReadableBytes()
+{
+	return 0;
 }
 
 #endif

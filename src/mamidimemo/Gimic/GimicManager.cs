@@ -165,51 +165,6 @@ namespace zanac.MAmidiMEmo.Gimic
         /// <param name="pChip"></param>
         /// <param name="dAddr"></param>
         /// <param name="pData"></param>
-        public static void SetRegister(int moduleIndex, uint dAddr, uint pData)
-        {
-            SetRegister(moduleIndex, dAddr, pData, true);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="pChip"></param>
-        /// <param name="dAddr"></param>
-        /// <param name="pData"></param>
-        /// <param name="useCache"></param>
-        public static void SetRegister(int moduleIndex, uint dAddr, uint pData, bool useCache)
-        {
-            lock (lockObject)
-            {
-                if (initialized)
-                {
-                    if (useCache)
-                    {
-                        var prevData = GetWrittenRegisterData(moduleIndex, dAddr);
-                        if (prevData != pData)
-                        {
-                            wrapperClient.SetRegister(moduleIndex, dAddr, pData);
-                            if (writtenDataCache.ContainsKey(moduleIndex))
-                                writtenDataCache[moduleIndex][dAddr] = pData;
-                        }
-                    }
-                    else
-                    {
-                        wrapperClient.SetRegister(moduleIndex, dAddr, pData);
-                        if (writtenDataCache.ContainsKey(moduleIndex))
-                            writtenDataCache[moduleIndex][dAddr] = pData;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="pChip"></param>
-        /// <param name="dAddr"></param>
-        /// <param name="pData"></param>
         /// <param name="useCache"></param>
         public static void SetRegisterDirect(int moduleIndex, uint dAddr, uint pData, bool useCache)
         {
@@ -254,6 +209,25 @@ namespace zanac.MAmidiMEmo.Gimic
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pChip"></param>
+        /// <param name="dAddr"></param>
+        /// <param name="pData"></param>
+        /// <param name="useCache"></param>
+        public static void SetRegister2(int moduleIndex, uint dAddr, byte pData, byte type)
+        {
+            lock (lockObject)
+            {
+                if (initialized)
+                {
+                    wrapperClient.SetRegister2(moduleIndex, dAddr, pData, 1, type);
+                }
+            }
+        }
+
 
         /// <summary>
         /// 

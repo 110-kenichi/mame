@@ -12,6 +12,7 @@
 #include "chip/opm.h"
 #include "chip/opn3l.h"
 #include "chip/opl3.h"
+#include "chip/spc700.h"
 #include "vis_c86wnd.h"
 
 namespace c86ctl{

@@ -32,7 +32,8 @@ enum ChipType {
 	CHIP_OPNA,
 	CHIP_OPM,
 	CHIP_OPN3L,
-	CHIP_OPL3
+	CHIP_OPL3,
+	CHIP_SPC,
 };
 
 /*----------------------------------------------------------------------------*/
@@ -80,7 +81,7 @@ interface IRealChip2 : public IRealChip
 {
 	virtual int __stdcall getChipStatus( UINT addr, UCHAR *status ) = 0;
 	virtual void __stdcall directOut(UINT addr, UCHAR data) = 0;
-	virtual void __stdcall directOut2(DWORD *addr, UCHAR *data, DWORD size) = 0;
+	virtual void __stdcall directOut2(DWORD *addr, UCHAR *data, DWORD size, UCHAR type) = 0;
 
 };
 

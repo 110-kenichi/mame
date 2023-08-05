@@ -16,6 +16,9 @@
     <Filter Include="interface">
       <UniqueIdentifier>{90aca024-fbc9-4b77-9d51-8bcfdd1b97c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="c700">
+      <UniqueIdentifier>{764c69db-80d9-4236-b6ac-c7b7088a6150}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ReadMe.txt" />
@@ -42,12 +45,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\win\stdafx.cpp">
       <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\interface\if_gimic_hid.cpp">
-      <Filter>interface</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\interface\if_gimic_midi.cpp">
-      <Filter>interface</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\interface\if_gimic_winsub.cpp">
       <Filter>interface</Filter>
@@ -109,6 +106,9 @@
     <ClCompile Include="..\..\src\vis\vis_dlg_config.cpp">
       <Filter>vis</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\c700\SpcControlDevice.cpp">
+      <Filter>c700</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\win\config.h">
@@ -124,12 +124,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\interface\if.h">
-      <Filter>interface</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\interface\if_gimic_hid.h">
-      <Filter>interface</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\interface\if_gimic_midi.h">
       <Filter>interface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\interface\if_gimic_winusb.h">
@@ -209,6 +203,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\vis\vis_dlg_config.h">
       <Filter>vis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\chip\spc700.h">
+      <Filter>module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\c700\SpcControlDevice.h">
+      <Filter>c700</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

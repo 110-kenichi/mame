@@ -746,10 +746,14 @@
       <Link>VSIF\VSIF_C64.prg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\VSIF\VGMPlay_P6\VGM_P6M.bin">
+    <Content Include="..\VSIF\VGMPlay_NES_VRC6\VGMPlay_nes_mamicart_vrc6.nes.prg.bin">
+      <Link>VSIF\VGMPlay_nes_mamicart_vrc6.nes.prg.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_P6\VGM_P6M.bin">
       <Link>VSIF\VGM_P6M.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="Data\cm32p_user_internal_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

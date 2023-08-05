@@ -153,7 +153,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_SPC);
                         if (gimicPtr >= 0)
                         {
-                            GimicManager.SetClock(gimicPtr, (uint)(2.048*1000*1000));
+                            //GimicManager.SetClock(gimicPtr, (uint)(2.048*1000*1000));
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }
@@ -276,12 +276,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private byte f_NOISE_CLOCK;
+        private byte f_NOISE_CLOCK = 31;
 
         [DataMember]
         [Category("Chip")]
         [Description("Designates the frequency for the white noise.")]
-        [DefaultValue((byte)0)]
+        [DefaultValue((byte)31)]
         [SlideParametersAttribute(0, 31)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public byte NOISE_CLOCK
@@ -373,6 +373,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     f_EDL = (byte)(value & 15);
 
                     SPC700RegWriteData(UnitNumber, (byte)0x7d, f_EDL);
+                    updatePcmData(null);
                 }
             }
         }
@@ -701,9 +702,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static void SPC700RamWriteData(uint unitNumber, uint address, byte data)
+        private void SPC700RamWriteData(uint unitNumber, uint address, byte data, byte dest)
         {
-            DeferredWriteData(spc_ram_w, unitNumber, address, data);
+            if ((dest & 1) != 0)
+            {
+                WriteData(address, data, true, new Action(() =>
+                {
+                    lock (sndEnginePtrLock)
+                    {
+                        switch (CurrentSoundEngine)
+                        {
+                            case SoundEngineType.GIMIC:
+                                GimicManager.SetRegister2(gimicPtr, address, data, 1);
+                                break;
+                        }
+                    }
+                }));
+            }
+            if ((dest & 2) != 0)
+            {
+                WriteData(0x10000 + address, data, true, new Action(() =>
+                {
+                    DeferredWriteData(spc_ram_w, unitNumber, address, data);
+
+                }));
+            }
             /*
             try
             {
@@ -735,11 +758,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         switch (CurrentSoundEngine)
                         {
                             case SoundEngineType.GIMIC:
-                                //GimicManager.SetRegister2(gimicPtr, reg, data);
-                                GimicManager.SetRegisterDirect(gimicPtr, reg, data, false);
+                                GimicManager.SetRegister2(gimicPtr, reg, data, 0);
 
-                                //GimicManager.SetRegisterDirect(gimicPtr, 0x2, reg, false);
-                                //GimicManager.SetRegisterDirect(gimicPtr, 0x3, data, false);
+                                //GimicManager.SetRegister2(gimicPtr, 0xf2, reg);
+                                //GimicManager.SetRegister2(gimicPtr, 0xf3, data);
+
                                 break;
                         }
                     }
@@ -773,7 +796,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Program.SoundUpdated();
             }*/
         }
-
 
         /// <summary>
         /// 
@@ -934,11 +956,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            //DIR 0x200 - 0x5ff
-            SPC700RegWriteData(UnitNumber, (byte)0x5d, (byte)2);
-            //ESA 0x600 - (0x7B00-1)
-            SPC700RegWriteData(UnitNumber, (byte)0x6d, (byte)6);
-
             EDL = 1;
             EFB = 31;
             NOISE_CLOCK = 0;
@@ -960,6 +977,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             readSoundFontForDrumTimbre = new ToolStripMenuItem(Resources.ImportSF2Drum);
             readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
+
+
         }
 
         #region IDisposable Support
@@ -1062,6 +1081,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void initGlobalRegisters()
         {
+            SPC700RegWriteData(UnitNumber, 0xc, f_LMVOL);
+            SPC700RegWriteData(UnitNumber, 0x1c, f_RMVOL);
+            SPC700RegWriteData(UnitNumber, 0x2c, (byte)f_LEVOL);
+            SPC700RegWriteData(UnitNumber, 0x2c, (byte)f_REVOL);
+            SPC700RegWriteData(UnitNumber, (byte)0x6c, (byte)(((~f_ECEN & 1) << 5) | f_NOISE_CLOCK));
+            SPC700RegWriteData(UnitNumber, (byte)0x0d, (byte)f_EFB);
+            SPC700RegWriteData(UnitNumber, (byte)0x7d, f_EDL);
+            SPC700RegWriteData(UnitNumber, (byte)0x0f, (byte)f_COEF1);
+            SPC700RegWriteData(UnitNumber, (byte)0x1f, (byte)f_COEF2);
+            SPC700RegWriteData(UnitNumber, (byte)0x2f, (byte)f_COEF3);
+            SPC700RegWriteData(UnitNumber, (byte)0x3f, (byte)f_COEF4);
+            SPC700RegWriteData(UnitNumber, (byte)0x4f, (byte)f_COEF5);
+            SPC700RegWriteData(UnitNumber, (byte)0x5f, (byte)f_COEF6);
+            SPC700RegWriteData(UnitNumber, (byte)0x6f, (byte)f_COEF7);
+            SPC700RegWriteData(UnitNumber, (byte)0x7f, (byte)f_COEF8);
+
+            //DIR 0x200 - 0x5ff
+            SPC700RegWriteData(UnitNumber, (byte)0x5d, (byte)2);
+            //ESA 0x600 - (MAX: 0x7B00-1)
+            SPC700RegWriteData(UnitNumber, (byte)0x6d, (byte)6);
+
             lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
 
@@ -1090,7 +1130,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return;
             }
             List<byte> pcmData = new List<byte>();
-            uint nextStartAddress = 0;
+            //uint nextStartAddress = (uint)(0x600 + (f_ECEN * f_EDL * 2048));
+            uint nextStartAddress = (uint)(0x600 + (f_EDL * 2048));
+            if (nextStartAddress == 0)
+                nextStartAddress += 4;
             for (int i = 0; i < Timbres.Length; i++)
             {
                 var tim = Timbres[i];
@@ -1100,23 +1143,28 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (tim.AdpcmData.Length != 0)
                 {
                     int tlen = tim.AdpcmData.Length;
-                    int pad = (0x20 - (tlen & 0x1f)) & 0x1f;    //32 byte pad
-                                                                //check bank
-                    if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
-                    {
-                        for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
-                            pcmData.Add(0);
-                        nextStartAddress |= 0xffff;
-                        nextStartAddress += 1;
-                    }
+                    int pad = 9 - (tlen % 9);    //9 byte pad
+
+                    ////check bank
+                    //if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
+                    //{
+                    //    for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
+                    //        pcmData.Add(0);
+                    //    nextStartAddress |= 0xffff;
+                    //    nextStartAddress += 1;
+                    //}
+
                     if (nextStartAddress + tlen + pad - 1 < 0xFDC0)   //MAX 63KB
                     {
                         tim.PcmAddressStart = nextStartAddress;
                         tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
 
+                        SPC700RamWriteData(UnitNumber, (uint)(0x200 + (i * 4) + 0), (byte)(nextStartAddress & 0xff), 0x1);
+                        SPC700RamWriteData(UnitNumber, (uint)(0x200 + (i * 4) + 1), (byte)(nextStartAddress >> 8), 0x1);
+
                         //Write PCM data
                         pcmData.AddRange(tim.AdpcmData);
-                        //Add 32 byte pad
+                        //Add 9 byte pad
                         for (int j = 0; j < pad; j++)
                             pcmData.Add(0x80);  //Adds silent data
 
@@ -1191,9 +1239,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             int index = 0;
             int percentage = 0;
             int lastPercentage = 0;
+            //uint baseAddress = (uint)(0x600 + (f_ECEN * f_EDL * 2048));
+            uint baseAddress = (uint)(0x600 + (f_EDL * 2048));
+
             for (int adr = startAddress; adr < endAddress; adr++)
             {
-                //YM2608WriteData(UnitNumber, 0x08, 0, 3, transferData[adr], false);
+                SPC700RamWriteData(UnitNumber, (uint)(baseAddress + adr), transferData[adr], 0x1);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -1203,11 +1254,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         fp.Percentage = percentage;
                         Application.DoEvents();
                     }
-                    switch (CurrentSoundEngine)
-                    {
-                        case SoundEngineType.GIMIC:
-                            break;
-                    }
                 }
                 lastPercentage = percentage;
                 index++;
@@ -1215,17 +1261,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             //Zero padding
             for (int j = endAddress; j < endAddress + (9 - (endAddress % 9)); j++)
-                //YM2608WriteData(UnitNumber, 0x08, 0, 3, 0x80, false);   //Adds silent data
+                SPC700RamWriteData(UnitNumber, (uint)j, 0x00, 0x1);
 
             // Finish
-            //YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x01, false);  //RESET
-
             // Wait
-            switch (CurrentSoundEngine)
-            {
-                case SoundEngineType.GIMIC:
-                    break;
-            }
         }
 
         /// <summary>
@@ -1515,8 +1554,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.REVOL = gs.REVOL.Value;
                     if (gs.NOISE_CLOCK.HasValue)
                         parentModule.NOISE_CLOCK = gs.NOISE_CLOCK.Value;
-                    if (gs.ECEN.HasValue)
-                        parentModule.ECEN = gs.ECEN.Value;
+                    //if (gs.ECEN.HasValue)
+                    //    parentModule.ECEN = gs.ECEN.Value;
                     if (gs.EFB.HasValue)
                         parentModule.EFB = gs.EFB.Value;
                     if (gs.EDL.HasValue)
@@ -1545,6 +1584,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (lastSoundType == SoundType.INST)
                 {
+                    //SRCN
                     //prognum no
                     parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), timbreIndex);
                 }
@@ -1556,10 +1596,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 4), (byte)(nn + 128));
                 }
                 */
-                //loop
-                ushort lpos = (ushort)(loopPoint * 9);
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff));
-                SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8));
+                //DIR loop
+                {
+                    //for Real
+                    ushort lpos = (ushort)(timbre.PcmAddressStart + loopPoint * 9);
+                    parentModule.SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff), 0x1);
+                    parentModule.SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8), 0x1);
+                }
+                {
+                    //for Emu
+                    ushort lpos = (ushort)(loopPoint * 9);
+                    parentModule.SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 2), (byte)(lpos & 0xff), 0x2);
+                    parentModule.SPC700RamWriteData(parentModule.UnitNumber, (uint)(0x200 + (timbreIndex * 4) + 3), (byte)(lpos >> 8), 0x2);
+                }
 
                 //ADSR
                 if (timbre.AdsrEnable)
@@ -1583,14 +1632,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 non |= (byte)(timbre.NON << Slot);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
                 //EON
-                byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
+                byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x4d);
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
 
                 //KON
-                byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) & ~bitPos);
-                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                //byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) & ~bitPos);
+                //parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) | bitPos);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
             }
@@ -1615,8 +1664,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.REVOL = gs.REVOL.Value;
                     if (gs.NOISE_CLOCK.HasValue)
                         parentModule.NOISE_CLOCK = gs.NOISE_CLOCK.Value;
-                    if (gs.ECEN.HasValue)
-                        parentModule.ECEN = gs.ECEN.Value;
+                    //if (gs.ECEN.HasValue)
+                    //    parentModule.ECEN = gs.ECEN.Value;
                     if (gs.EFB.HasValue)
                         parentModule.EFB = gs.EFB.Value;
                     if (gs.EDL.HasValue)
@@ -1665,7 +1714,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 non |= (byte)(timbre.NON << Slot);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x3d, non);
                 //EON
-                byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x3d);
+                byte eon = SPC700RegReadData(parentModule.UnitNumber, 0x4d);
                 eon &= (byte)~bitPos;
                 eon |= (byte)(timbre.EON << Slot);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
@@ -1727,6 +1776,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 2), (byte)(freq & 0xff));
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, (byte)(reg + 3), (byte)((freq >> 8) & 0xff));
+
+                if (timbre.NON == 1 && timbre.SetNoiseClk)
+                    parentModule.NOISE_CLOCK = (byte)(freq >> 9);
 
                 base.OnPitchUpdated();
             }
@@ -2004,6 +2056,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_NON = (byte)(value & 1);
                 }
+            }
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("Set NOISE_CLOCK by Note No.")]
+            [DefaultValue(false)]
+            public bool SetNoiseClk
+            {
+                get;
+                set;
             }
 
             private byte f_EON;
@@ -2312,12 +2374,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte? f_ECEN;
 
-            [DataMember]
+            [Browsable(false)]
+            //[DataMember]
             [Category("Chip(Filter)")]
             [Description("Echo enable")]
             [DefaultValue(null)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            //[SlideParametersAttribute(0, 1)]
+            //[EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public byte? ECEN
             {
                 get
