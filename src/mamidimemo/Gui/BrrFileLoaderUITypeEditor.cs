@@ -81,6 +81,7 @@ namespace zanac.MAmidiMEmo.Gui
                             List<byte> buf = new List<byte>(File.ReadAllBytes(fn));
                             var fi = new FileInfo(fn);
                             SPC700Timbre tim = context.Instance as SPC700Timbre;
+                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                             switch (fi.Length % 9)
                             {
                                 case 2:

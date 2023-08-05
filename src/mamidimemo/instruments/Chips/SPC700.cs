@@ -2877,10 +2877,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tim.AdpcmData = buf.ToArray();
                         Timbres[i] = tim;
 
+                        tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(fileName);
+
                         //Drum
                         if (drum)
                         {
                             DrumTimbres[dtn].TimbreNumber = (ProgramAssignmentNumber)(dtn + offset);
+                            DrumTimbres[dtn].TimbreName = System.IO.Path.GetFileNameWithoutExtension(fileName);
                             dtn++;
                             if (dtn == 128)
                                 break;
