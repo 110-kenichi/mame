@@ -276,7 +276,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private byte f_NOISE_CLOCK = 31;
+        private byte f_NOISE_CLOCK;
 
         [DataMember]
         [Category("Chip")]
@@ -956,15 +956,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             GainLeft = DEFAULT_GAIN;
             GainRight = DEFAULT_GAIN;
 
-            EDL = 1;
-            EFB = 31;
-            NOISE_CLOCK = 0;
-            ECEN = 1;
-            LEVOL = 127;
-            REVOL = 127;
-            LMVOL = 127;
-            RMVOL = 127;
-            COEF1 = 127;
+            f_EDL = 1;
+            f_EFB = 31;
+            f_NOISE_CLOCK = 31;
+            f_ECEN = 1;
+            f_LEVOL = 127;
+            f_REVOL = 127;
+            f_LMVOL = 127;
+            f_RMVOL = 127;
+            f_COEF1 = 127;
 
             readSpcFileForTimbre = new ToolStripMenuItem(Resources.ImportSpcTimbre);
             readSpcFileForTimbre.Click += ReadSpcFileForTimbre_Click;
@@ -977,8 +977,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             readSoundFontForDrumTimbre = new ToolStripMenuItem(Resources.ImportSF2Drum);
             readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
-
-
         }
 
         #region IDisposable Support
@@ -1340,7 +1338,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case SoundEngineType.GIMIC:
                         if (CurrentSoundEngine == SoundEngineType.GIMIC)
-                            GimicManager.Reset(gimicPtr);
+                        {
+                            SPC700RegWriteData(UnitNumber, (byte)0x6c, (byte)(0xc0 | ((~ECEN & 1) << 5) | f_NOISE_CLOCK));
+                            SPC700RegWriteData(UnitNumber, (byte)0x6c, (byte)(((~ECEN & 1) << 5) | f_NOISE_CLOCK));
+                            //GimicManager.Reset(gimicPtr);
+                        }
                         break;
                 }
             }
@@ -1638,8 +1640,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4d, eon);
 
                 //KON
-                //byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) & ~bitPos);
-                //parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
+                byte koff = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x5c) & ~bitPos);
+                parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x5c, koff);
                 byte kon = (byte)(SPC700RegReadData(parentModule.UnitNumber, 0x4c) | bitPos);
                 parentModule.SPC700RegWriteData(parentModule.UnitNumber, 0x4c, kon);
             }

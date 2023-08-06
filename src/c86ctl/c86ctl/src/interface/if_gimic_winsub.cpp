@@ -219,6 +219,7 @@ MODULE_CHANGED:
 	WinUsb_Free(hWinUsb);
 	hDev = NULL;
 	hWinUsb = NULL;
+	delete spcControlDevice;
 	spcControlDevice = NULL;
 	return false;
 }
