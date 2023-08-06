@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.9.3.1 Fixed SPC700 emulator keyon/keyoff
 4.9.3.0 Supported a real chip of the SPC700 on the G.I.M.I.C .
 4.9.2.0 Supported MAmi VRC6 CART for RP2A03.
 4.9.1.2 Fixed YM2610B ADPCM-A keyon/keyoff is not working properly.
