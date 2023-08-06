@@ -153,9 +153,9 @@ private:
 
 	static const int			WRITE_BUFFER_SIZE = 4096;
 	static const int			READ_BUFFER_SIZE = 4096;
-	UINT8						mWriteBuffer[WRITE_BUFFER_SIZE];
+	UINT8						mWriteBuffer[WRITE_BUFFER_SIZE] = {};
 	int							mWriteBufferPtr;
-	UINT8						mReadBuffer[READ_BUFFER_SIZE];
+	UINT8						mReadBuffer[READ_BUFFER_SIZE] = {};
 	int							mReadBufferReadPtr;
 	int							mReadBufferWritePtr;
 	//C700------------------------------------- 

@@ -80,8 +80,8 @@ private:
 
     //ControlUSB      *mUsbDev;
     c86ctl::GimicWinUSB     *mUsbDev;
-    unsigned char   mWriteBuf[64];
-    unsigned char   mReadBuf[64];
+    unsigned char   mWriteBuf[64] = {};
+    unsigned char   mReadBuf[64] = {};
     int             mWriteBytes;
     
     //int mNumReads;  // Read待ちのパケット数

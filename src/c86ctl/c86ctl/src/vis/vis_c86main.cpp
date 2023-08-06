@@ -330,7 +330,7 @@ void CVisC86Main::onCommand(HWND hwnd, DWORD id, DWORD notifyCode)
 		C86CtlMainWnd::getInstance()->openConfigDialog();
 		break;
 	case ID_POPUP_SHOWVIS:
-		::PostMessage(hMaster, WM_COMMAND, (notifyCode<<16)|id, (DWORD)hwnd);
+		::PostMessage(hMaster, WM_COMMAND, (notifyCode<<16)|id, (LPARAM)hwnd);
 
 		break;
 	}

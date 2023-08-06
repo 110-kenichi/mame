@@ -131,6 +131,7 @@ void printBytes(const unsigned char* data, int bytes)
 }
 
 SpcControlDevice::SpcControlDevice(c86ctl::GimicWinUSB* usb)
+	: mWriteBytes(BLOCKWRITE_CMD_LEN), mPort0stateHw(0)
 {
 	mUsbDev = usb;
 	//* mUsbDev = new ControlUSB();
@@ -353,7 +354,7 @@ unsigned char SpcControlDevice::PortRead(int addr)
 void SpcControlDevice::BlockWrite(int addr, unsigned char data)
 {
 	// 残り2バイト未満なら書き込んでから追加する
-	if (mWriteBytes > (PACKET_SIZE - 2)) {
+	if (mWriteBytes >= (PACKET_SIZE - 2)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = addr & 0x03;
@@ -365,7 +366,7 @@ void SpcControlDevice::BlockWrite(int addr, unsigned char data)
 void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char data2)
 {
 	// 残り3バイト未満なら書き込んでから追加する
-	if (mWriteBytes > (PACKET_SIZE - 3)) {
+	if (mWriteBytes >= (PACKET_SIZE - 3)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = (addr & 0x03) | 0x10;
@@ -379,7 +380,7 @@ void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char da
 void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char data2, unsigned char data3)
 {
 	// 残り4バイト未満なら書き込んでから追加する
-	if (mWriteBytes > (PACKET_SIZE - 4)) {
+	if (mWriteBytes >= (PACKET_SIZE - 4)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = (addr & 0x03) | 0x20;
@@ -395,7 +396,7 @@ void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char da
 void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char data2, unsigned char data3, unsigned char data4)
 {
 	// 残り5バイト未満なら書き込んでから追加する
-	if (mWriteBytes > (PACKET_SIZE - 5)) {
+	if (mWriteBytes >= (PACKET_SIZE - 5)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = (addr & 0x03) | 0x30;
@@ -412,7 +413,7 @@ void SpcControlDevice::BlockWrite(int addr, unsigned char data, unsigned char da
 
 void SpcControlDevice::ReadAndWait(int addr, unsigned char waitValue)
 {
-	if (mWriteBytes > (PACKET_SIZE - 2)) {
+	if (mWriteBytes >= (PACKET_SIZE - 2)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = addr | 0x80;
@@ -423,7 +424,7 @@ void SpcControlDevice::ReadAndWait(int addr, unsigned char waitValue)
 
 void SpcControlDevice::WriteAndWait(int addr, unsigned char waitValue)
 {
-	if (mWriteBytes > (PACKET_SIZE - 2)) {
+	if (mWriteBytes >= (PACKET_SIZE - 2)) {
 		WriteBuffer();
 	}
 	mWriteBuf[mWriteBytes] = addr | 0xc0;
@@ -434,9 +435,6 @@ void SpcControlDevice::WriteAndWait(int addr, unsigned char waitValue)
 
 void SpcControlDevice::WriteBuffer()
 {
-	if (!mUsbDev->isValid()) {
-		return;
-	}
 	/*
 	if (mWriteBytes > 62) {
 		// TODO: Assert
@@ -471,16 +469,15 @@ void SpcControlDevice::WriteBuffer()
 		//if (mWriteBuf[6] == 0x7d && mWriteBuf[7] == 0xc0) {
 		printBytes(mWriteBuf, mWriteBytes);
 		//}
-		mUsbDev->bulkWrite(mWriteBuf, mWriteBytes);
+		if (mUsbDev->isValid()) {
+			mUsbDev->bulkWrite(mWriteBuf, mWriteBytes);
+		}
 		mWriteBytes = BLOCKWRITE_CMD_LEN;
 	}
 }
 
 void SpcControlDevice::WriteBufferAsync()
 {
-	if (!mUsbDev->isValid()) {
-	    return;
-	}
 	if (mWriteBytes > BLOCKWRITE_CMD_LEN) {
 		mWriteBuf[0] = 0xfd;
 		mWriteBuf[1] = 0xb2;
@@ -499,7 +496,9 @@ void SpcControlDevice::WriteBufferAsync()
 		//if (mWriteBuf[6] == 0x7d && mWriteBuf[7] == 0xc0) {
 		printBytes(mWriteBuf, mWriteBytes);
 		//}
-		mUsbDev->bulkWriteAsync(mWriteBuf, mWriteBytes);
+		if (mUsbDev->isValid()) {
+			mUsbDev->bulkWriteAsync(mWriteBuf, mWriteBytes);
+		}
 		mWriteBytes = BLOCKWRITE_CMD_LEN;
 	}
 }

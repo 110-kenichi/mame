@@ -260,6 +260,8 @@ int GimicWinUSB::UpdateInstances( withlock< std::vector< std::shared_ptr<GimicIF
 			// 必要なバッファサイズ取得
 			bResult = SetupDiGetDeviceInterfaceDetail(devinf, &spid, NULL, 0, &sz, NULL);
 			PSP_INTERFACE_DEVICE_DETAIL_DATA dev_det = (PSP_INTERFACE_DEVICE_DETAIL_DATA)(malloc(sz));
+			if(dev_det == NULL)
+				break;
 			dev_det->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
 			// デバイスノード取得
@@ -636,7 +638,7 @@ void GimicWinUSB::directOut(UINT addr, UCHAR data)
 
 void GimicWinUSB::directOut2(DWORD* addr, UCHAR* data, DWORD sz, UCHAR type)
 {
-	for (int i = 0; i < sz; i++)
+	for (DWORD i = 0; i < sz; i++)
 	{
 		UINT a = addr[i];
 		UCHAR dt = data[i];

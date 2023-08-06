@@ -229,7 +229,7 @@ public:
 	bool isToneOn(){ return tone; };
 	
 	bool isNoiseOn(){ return noise; };
-	bool isOn(){ return (tone|noise); };
+	bool isOn(){ return (tone||noise); };
 
 	void getNote(int &oct, int &note){
 		// tp = M/(f*64) より

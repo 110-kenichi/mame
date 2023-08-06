@@ -261,6 +261,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    4. MT-32 & CM32-P can not store/restore last settings.
    5. HuC6820 suddenly stop sounding. Please restart MAmi.
    6. MAmidiMEmo process stuck after sound interface changed if you used SCCI interface.
+   7. Unstable reconnection of the SPC700 on G.I.M.I.C . Please close the MAmi, turn off the G.I.M.I.C and then turn it on again before re-starting the MAmi.
    
 *** How to create build environment ***
 
