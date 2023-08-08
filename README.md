@@ -1,4 +1,4 @@
-MAmidiMEmo 4.9.3.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.9.4.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -275,6 +275,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.9.4.0 Preliminary supported VRC7 (VSIF - Famicom VRC6/7) as YM2413 variant chip DS1001.
 4.9.3.1 Fixed SPC700 emulator keyon/keyoff
 4.9.3.0 Supported a real chip of the SPC700 on the G.I.M.I.C .
 4.9.2.0 Supported MAmi VRC6 CART for RP2A03.
