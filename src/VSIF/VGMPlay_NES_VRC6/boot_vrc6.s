@@ -285,9 +285,9 @@ snd_port_address_s:
 	.word	$B002
 	.word	$0000
 	.word	$0000
+	.word	$9010 ; VRC7
 	.word	$0000
-	.word	$0000
-	.word	$0000
+	.word	$9030 ; VRC7
 snd_port_address_e:
 
 .endproc

@@ -183,6 +183,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_NES_FTDI_VRC6:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_INDIRECT, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -197,7 +210,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
         [DefaultValue(VsifManager.FTDI_BAUDRATE_MSX_CLK_WIDTH)]
-        [Description("Set FTDI Clock Width[%].")]
+        [Description("Set FTDI Clock Width[%].\r\n" +
+            "MSX FT232R:25~\r\n" +
+            "MSX FT232H:32~\r\n" +
+            "NES FT232R:11~\r\n" +
+            "NES FT232H:27~")]
         public int FtdiClkWidth
         {
             get
@@ -520,6 +537,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 vsifClient.WriteData(1, address, data, f_ftdiClkWidth);
                             else
                                 vsifClient.WriteData(0xC, address, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_NES_FTDI_VRC6:
+                            vsifClient.WriteData(0, (byte)(36 + 1), address, f_ftdiClkWidth);
+                            vsifClient.WriteData(0, (byte)(36 + 3), data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -3536,7 +3557,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
-                    SoundEngineType.VSIF_MSX_FTDI});
+                    SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.VSIF_NES_FTDI_VRC6
+                });
 
                 return sc;
             }

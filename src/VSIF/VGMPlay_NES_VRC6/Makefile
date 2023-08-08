@@ -16,7 +16,7 @@ $(PROGRAM_VRC6): boot_vrc6.o VGMPlay.o
 
 .PHONY: run
 run:
-	cmd.exe /C copy.bat
+#	cmd.exe /C copy.bat
 	/mnt/e/Emu/Mesen/Mesen.exe VGMPlay_nes_mamicart_vrc6.nes
 
 main_direct.s: main.c

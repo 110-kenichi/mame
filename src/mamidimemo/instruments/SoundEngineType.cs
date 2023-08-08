@@ -28,7 +28,7 @@ namespace zanac.MAmidiMEmo.Instruments
         VSIF_Genesis_FTDI,
         [Description("Real(VSIF Famicom(FTDI))")]
         VSIF_NES_FTDI,
-        [Description("Real(VSIF Famicom VRC6(FTDI))")]
+        [Description("Real(VSIF Famicom VRC6/7(FTDI))")]
         VSIF_NES_FTDI_VRC6,
         [Description("Real(VSIF Famicom FDS(FTDI))")]
         VSIF_NES_FTDI_FDS,

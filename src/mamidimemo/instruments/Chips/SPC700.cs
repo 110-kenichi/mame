@@ -759,10 +759,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             case SoundEngineType.GIMIC:
                                 GimicManager.SetRegister2(gimicPtr, reg, data, 0);
-
-                                //GimicManager.SetRegister2(gimicPtr, 0xf2, reg);
-                                //GimicManager.SetRegister2(gimicPtr, 0xf3, data);
-
                                 break;
                         }
                     }
@@ -1143,15 +1139,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     int tlen = tim.AdpcmData.Length;
                     int pad = 9 - (tlen % 9);    //9 byte pad
 
-                    ////check bank
-                    //if (nextStartAddress >> 16 != (nextStartAddress + (uint)(tlen + pad - 1)) >> 16)
-                    //{
-                    //    for (var j = nextStartAddress; j <= (nextStartAddress | 0xffff); j++)
-                    //        pcmData.Add(0);
-                    //    nextStartAddress |= 0xffff;
-                    //    nextStartAddress += 1;
-                    //}
-
                     if (nextStartAddress + tlen + pad - 1 < 0xFDC0)   //MAX 63KB
                     {
                         tim.PcmAddressStart = nextStartAddress;
@@ -1175,6 +1162,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
             }
+            FormMain.OutputLog(this, "Remaining ADPCM RAM capacity is " + (0xFDC0 - nextStartAddress) + " bytes");
+
             if (pcmData.Count != 0 && CurrentSoundEngine != SoundEngineType.Software)
             {
                 //transferPcmOnlyDiffData(pcmData.ToArray(), null);
