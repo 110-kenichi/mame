@@ -1172,7 +1172,7 @@ void sp0256_device::ald_w(uint8_t data)
 READ_LINE_MEMBER( sp0256_device::lrq_r )
 {
 	// force stream update
-	m_stream->update();
+	//m_stream->update();
 
 	return m_lrq == 0x8000;
 }
@@ -1273,6 +1273,9 @@ void sp0256_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 	stream_sample_t *output1 = outputs[1];
 	int output_index = 0;
 	int length, did_samp/*, old_idx*/;
+	//mamidimemo
+	int last_output_index = 0;
+	int noprocessed = 0;
 
 	while (output_index < samples)
 	{
@@ -1280,6 +1283,7 @@ void sp0256_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 		/*  First, drain as much of our scratch buffer as we can into the   */
 		/*  sound buffer.                                                  */
 		/* ---------------------------------------------------------------- */
+		last_output_index = output_index;
 
 		while (m_sc_tail != m_sc_head)
 		{
@@ -1346,5 +1350,11 @@ void sp0256_device::sound_stream_update(sound_stream &stream, stream_sample_t **
 			m_sc_head &= SCBUF_MASK;
 
 		} while (m_filt.rpt >= 0 && length > did_samp);
+
+		//mamidimemo
+		if (last_output_index == output_index)
+			noprocessed++;
+		if (noprocessed > 1)
+			break;
 	}
 }

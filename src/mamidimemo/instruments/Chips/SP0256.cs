@@ -464,6 +464,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -482,6 +483,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -498,7 +500,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Program.SoundUpdated();
             }
         }
-
+        */
 
         /// <summary>
         /// 
@@ -518,6 +520,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -534,6 +537,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 Program.SoundUpdated();
             }
         }
+        */
 
         /// 
         /// </summary>
@@ -584,11 +588,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 sp0256_ald_w = (delegate_sp0256_ald_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_sp0256_ald_w));
             }
+            /*
             funcPtr = MameIF.GetProcAddress("sp0256_sby_r");
             if (funcPtr != IntPtr.Zero)
             {
                 sp0256_sby_r = (delegate_sp0256_sby_r)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_sp0256_sby_r));
             }
+            */
             funcPtr = MameIF.GetProcAddress("sp0256_lrq_r");
             if (funcPtr != IntPtr.Zero)
             {

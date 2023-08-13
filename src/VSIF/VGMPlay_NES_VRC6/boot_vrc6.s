@@ -284,8 +284,8 @@ snd_port_address_s:
 	.word	$B001
 	.word	$B002
 	.word	$0000
-	.word	$0000
-	.word	$9010 ; VRC7
+	.word	$9008 ; VRC7 TT2 https://www.nesdev.org/wiki/VRC7_pinout
+	.word	$9010 ; VRC7 LP
 	.word	$0000
 	.word	$9030 ; VRC7
 snd_port_address_e:

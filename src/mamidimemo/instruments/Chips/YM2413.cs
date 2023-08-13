@@ -227,6 +227,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private bool f_UseAltVRC7Cart;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(0, 1)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue(false)]
+        [Description("Use alternative VRC7 Cart.")]
+        public bool UseAltVRC7Cart
+        {
+            get
+            {
+                return f_UseAltVRC7Cart;
+            }
+            set
+            {
+                f_UseAltVRC7Cart = value;
+            }
+        }
 
         private OPLLSlotNo f_extOPLLSlot = OPLLSlotNo.IO;
 
@@ -539,8 +558,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 vsifClient.WriteData(0xC, address, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_NES_FTDI_VRC6:
-                            vsifClient.WriteData(0, (byte)(36 + 1), address, f_ftdiClkWidth);
-                            vsifClient.WriteData(0, (byte)(36 + 3), data, f_ftdiClkWidth);
+                            if (!UseAltVRC7Cart)
+                            {
+                                vsifClient.WriteData(0, (byte)(36 + 1), address, f_ftdiClkWidth);
+                                vsifClient.WriteData(0, (byte)(36 + 3), data, f_ftdiClkWidth);
+                            }
+                            else
+                            {
+                                vsifClient.WriteData(0, (byte)(36 + 0), address, f_ftdiClkWidth);
+                                vsifClient.WriteData(0, (byte)(36 + 3), data, f_ftdiClkWidth);
+                            }
                             break;
                     }
                 }
@@ -891,7 +918,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (RHY == 0)
                 {
-                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
+                    if(parentModule.Variation != OpllType.DS1001)
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
+                    else
+                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
 
                     //sound off diffrent custom sound
                     {
@@ -1022,10 +1052,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (parentModule.RHY == 0)
                 {
-                    for (int i = 0; i < 9; i++)
-                        parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
-                    for (int i = 0; i < 9; i++)
-                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                    if (parentModule.Variation != OpllType.DS1001)
+                    {
+                        for (int i = 0; i < 9; i++)
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                        for (int i = 0; i < 9; i++)
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 6; i++)
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                        for (int i = 0; i < 6; i++)
+                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                    }
                 }
                 else
                 {
