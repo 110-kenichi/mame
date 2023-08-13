@@ -143,7 +143,6 @@ public:
 	bool		resetrPipe();
 	bool		resetwPipe();
 	int			bulkWrite(UINT8* buf, UINT32 size);
-	int			bulkWriteAsync(UINT8* buf, UINT32 size);
 	int			bulkRead(UINT8* buf, UINT32 size, UINT32 timeout);
 	int		    read(UINT8* buf, UINT32 size);
 	int		    getReadableBytes();

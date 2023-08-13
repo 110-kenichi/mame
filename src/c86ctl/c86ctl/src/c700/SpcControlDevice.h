@@ -51,14 +51,13 @@ public:
     bool CheckHasRequiredModule();
     void PortWrite(int addr, unsigned char data);
     unsigned char PortRead(int addr);
-    void BlockWrite(int addr, unsigned char data);
-    void BlockWrite(int addr, unsigned char data, unsigned char data2);
-    void BlockWrite(int addr, unsigned char data, unsigned char data2, unsigned char data3);
-    void BlockWrite(int addr, unsigned char data, unsigned char data2, unsigned char data3, unsigned char data4);
+    void BlockPush(int addr, unsigned char data);
+    void BlockPush(int addr, unsigned char data, unsigned char data2);
+    void BlockPush(int addr, unsigned char data, unsigned char data2, unsigned char data3);
+    void BlockPush(int addr, unsigned char data, unsigned char data2, unsigned char data3, unsigned char data4);
     void ReadAndWait(int addr, unsigned char waitValue);
-    void WriteAndWait(int addr, unsigned char waitValue);
-    void WriteBuffer();
-    void WriteBufferAsync();
+    void PushAndWait(int addr, unsigned char waitValue);
+    void SendBuffer();
     
     int UploadRAMDataIPL(const unsigned char *ram, int addr, int size, unsigned char initialP0state);
     int WaitReady();

@@ -88,6 +88,8 @@ GimicWinUSB::~GimicWinUSB(void)
 	WinUsb_Free(hWinUsb);
 	hDev = NULL;
 	hWinUsb = NULL;
+	if (spcControlDevice)
+		delete spcControlDevice;
 	if( chip )
 		delete chip;
 }
@@ -219,8 +221,6 @@ MODULE_CHANGED:
 	WinUsb_Free(hWinUsb);
 	hDev = NULL;
 	hWinUsb = NULL;
-	delete spcControlDevice;
-	spcControlDevice = NULL;
 	return false;
 }
 
@@ -330,9 +330,9 @@ int GimicWinUSB::sendMsg( MSG *data )
 	UINT sz = data->len;
 	if( 0<sz ){
 		memcpy( &buff[0], &data->dat[0], sz );
-		if( sz<64 )
-			memset( &buff[sz], 0xff, 64-sz );
-
+		//if( sz<66 )
+		//	memset( &buff[sz], 0xff, 66-sz );
+		buff[sz] = 0xff;
 		::EnterCriticalSection(&csection);
 		ret = devWrite(buff, sz + 1);
 		::LeaveCriticalSection(&csection);
@@ -358,20 +358,24 @@ int GimicWinUSB::transaction( MSG *txdata, uint8_t *rxdata, uint32_t rxsz )
 
 	::EnterCriticalSection(&csection);
 	{
-		UINT sz = txdata->len;
-		if( 0<sz ){
-			memcpy( &buff[0], &txdata->dat[0], sz );
-			if( sz<64 )
-				memset( &buff[sz], 0xff, 64-sz );
+		for (int i = 0; i < 3; i++)	//HACK: for SPC700
+		{
+			UINT sz = txdata->len;
+			if (0 < sz) {
+				memcpy(&buff[0], &txdata->dat[0], sz);
+				//if (sz < 66)
+				//	memset(&buff[sz], 0xff, 66 - sz);
+				buff[sz] = 0xff;
 
-			ret = devWrite(buff, 65);
-		}
+				ret = devWrite(buff, sz + 1);
+			}
 
-		if( C86CTL_ERR_NONE==ret ){
-			len = 0;
-			ret = devRead(buff);
-			if( C86CTL_ERR_NONE == ret )
-				memcpy( rxdata, &buff[0], rxsz );
+			if (C86CTL_ERR_NONE == ret) {
+				len = 0;
+				ret = devRead(buff);
+				if (C86CTL_ERR_NONE == ret)
+					memcpy(rxdata, &buff[0], rxsz);
+			}
 		}
 	}
 	::LeaveCriticalSection(&csection);
@@ -766,14 +770,15 @@ void GimicWinUSB::tick(void)
 				break;
 		}
 
-		if( sz<64 )
-			memset( &buff[sz], 0xff, 64-sz );
+		//if( sz<64 )
+		//	memset( &buff[sz], 0xff, 64-sz );
+		buff[sz] = 0xff;
 
 		// WriteFileがスレッドセーフかどうかよく分からないので
 		// 念のため保護しているが、たぶんいらない。
 		// (directOut()と重なる可能性がある)
 		::EnterCriticalSection(&csection);
-		ret = devWrite(buff, 64);
+		ret = devWrite(buff, sz+1);
 		::LeaveCriticalSection(&csection);
 
 		if( ret == C86CTL_ERR_NONE )
@@ -866,10 +871,7 @@ int	 GimicWinUSB::bulkWrite(UINT8* buf, UINT32 size)
 	mWriteBufferPtr += len;
 	return wlen;
 }
-int	 GimicWinUSB::bulkWriteAsync(UINT8* buf, UINT32 size)
-{
-	return bulkWrite(buf, size);
-}
+
 int	 GimicWinUSB::bulkRead(UINT8* buf, UINT32 size, UINT32 timeout)
 {
 	if (!isValid()) return -1;
