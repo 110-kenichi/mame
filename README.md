@@ -1,4 +1,4 @@
-MAmidiMEmo 4.9.5.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.9.6.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,10 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.9.6.0 Fixed RP2A03 VRC6 and FDS upper pitch is 4bit from 3bit.
+        Fixed RP2A03 FDS velocity calculation and added FdsMasterVolume property.
+		Fixed RP2A03 LFO values are not set properly and caclulated.
+		Added RP2A03 Lfo Bias properly.
 4.9.5.0 Fixed SP0256 freezing on high frequency sound.
         Added the UseAltVRC7Cart property for YM2413 as experimental
 		Fixed unstable reconnection to the SPC700 on the G.I.M.I.C .

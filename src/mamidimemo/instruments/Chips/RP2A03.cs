@@ -222,6 +222,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        private byte f_FdsMasterVolume;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("FDS Master Volume(0: full; 1: 2/3; 2: 2/4; 3: 2/5)")]
+        [SlideParametersAttribute(0, 3)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        public byte FdsMasterVolume
+        {
+            get
+            {
+                return f_FdsMasterVolume;
+            }
+            set
+            {
+                if (f_FdsMasterVolume != (byte)(value & 3))
+                {
+                    f_FdsMasterVolume = (byte)(value & 3);
+                    if(SoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
+                        RP2A03WriteData(UnitNumber, 0x89, f_FdsMasterVolume);
+                }
+            }
+        }
+
         private bool f_UseAltVRC6Cart;
 
         [DataMember]
@@ -785,7 +811,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="unitNumber"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        private static byte RP2A03ReadData(uint unitNumber, uint address)
+        private byte RP2A03ReadData(uint unitNumber, uint address)
         {
             try
             {
@@ -924,6 +950,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             if (!IsDisposing && !ignoreUpdatePcmData)
                 updateDpcmData();
+
+            if (SoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
+                RP2A03WriteData(UnitNumber, 0x89, f_FdsMasterVolume);
         }
 
         /// <summary>
@@ -1289,7 +1318,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     currentSampleData[slot] = sd;
 
                     //keyoff
-                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
+                    byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)data);
 
                     //var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
@@ -1666,7 +1695,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.SQUARE:
                         {
-                            byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                            byte data = (byte)parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15);
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << Slot)));
 
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((Slot * 4) + 0x01),
@@ -1682,7 +1711,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.TRIANGLE:
                         {
-                            byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                            byte data = (byte)parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15);
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
 
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
@@ -1698,7 +1727,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case ToneType.NOISE:
                         {
-                            byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                            byte data = (byte)parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15);
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | 8));
 
                             //Volume
@@ -1715,7 +1744,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             int noteNum = NoteOnEvent.NoteNumber;
 
                             //keyoff
-                            byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
+                            byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 4));
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)data);
 
                             // Loop / Smple Rate
@@ -1750,30 +1779,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.FDS:
                         {
                             //Set WSG
-                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x80);
+                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)(0x80 | parentModule.FdsMasterVolume));
                             for (int i = 0; i < timbre.FDS.WsgData.Length; i++)
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x40 + i), (byte)(timbre.FDS.WsgData[i]));
-                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x03);
+                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, parentModule.FdsMasterVolume);
+                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)timbre.FDS.LfoBias);
 
                             //Set LFO
                             if (timbre.FDS.LfoFreq == 0 && timbre.FDS.LfoFreqMultiply == 0)
                             {
-                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
+                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)0);
+                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0);
                             }
                             else
                             {
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x84, (byte)(0x80 | timbre.FDS.LfoGain));
-                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)0x00);
+
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
                                 for (int i = 0; i < lastLfoData.Length; i++)
-                                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i]));
+                                    parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i] & 7), false, false);
 
                                 double dlfrq = timbre.FDS.LfoFreq;
                                 if (timbre.FDS.LfoFreqMultiply > 0)
                                     dlfrq = calcFdsPitch() * timbre.FDS.LfoFreqMultiply;
                                 ushort lfrq = (ushort)Math.Round(dlfrq);
-                                if (lfrq > 0x7ff)
-                                    lfrq = 0x7ff;
+                                if (lfrq > 0xfff)
+                                    lfrq = 0xfff;
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)(lfrq & 0xff));
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)((lfrq >> 8) & 0xf));
                             }
@@ -1834,10 +1865,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.FDS:
                         {
                             //Set WSG
-                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x80);
+                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)(0x80 | parentModule.FdsMasterVolume));
                             for (int i = 0; i < timbre.FDS.WsgData.Length; i++)
                                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x40 + i), (byte)(timbre.FDS.WsgData[i]));
-                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, (byte)0x03);
+                            parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, parentModule.FdsMasterVolume);
 
                             //Set LFO
                             var eng = FxEngine as NesFxEngine;
@@ -1863,8 +1894,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     {
                                         var dlfrq = calcFdsPitch() * lmul;
                                         lfreq = (uint)Math.Round(dlfrq);
-                                        if (lfreq > 0x7ff)
-                                            lfreq = 0x7ff;
+                                        if (lfreq > 0xfff)
+                                            lfreq = 0xfff;
                                     }
                                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)(lfreq & 0xff));
                                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)((lfreq >> 8) & 0xf));
@@ -1874,11 +1905,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     var lgain = (byte)(eng.LfoGainValue.Value & 63);
                                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x84, (byte)(0x80 | lgain));
                                 }
+                                if (eng.LfoBiasValue != null)
+                                {
+                                    var lbias = (sbyte)(eng.LfoBiasValue.Value & 0x7f);
+                                    parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)lbias);
+                                }
                             }
 
                             if (lfreq == 0 && lmul == 0)
                             {
-                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
+                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)0x00);
+                                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x00);
                             }
                             else
                             {
@@ -1886,7 +1923,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 {
                                     var no = (byte)(eng.MorphValue.Value & 3);
                                     {
-                                        parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x85, (byte)0x00);
+                                        var ov = parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x87);
                                         parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)0x80);
 
                                         //lastLfoTable = no;
@@ -1904,7 +1941,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                         }
 
                                         for (int i = 0; i < lastLfoData.Length; i++)
-                                            parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i]));
+                                            parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x88), (byte)(lastLfoData[i] & 0x7), false, false);
+
+                                        parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)(ov & 0xf));
                                     }
                                 }
                             }
@@ -1993,12 +2032,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (fv < 0.01)
                 {
-                    byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
+                    byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                 }
                 else
                 {
-                    byte data = (byte)RP2A03ReadData(parentModule.UnitNumber, 0x15);
+                    byte data = (byte)parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15);
                     parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, (byte)(data | (1 << 2)));
 
                     parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)((2 * 4) + 0x00),
@@ -2035,8 +2074,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void updateFdsVolume()
             {
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x80, (byte)0xbf);
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, calcFdsVol());
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x80, (byte)(0x80 + (int)(CalcCurrentVolume() * 32)));
+                //parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x89, 0); //calcFdsVol());
             }
 
             private byte calcFdsVol()
@@ -2110,8 +2149,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             double dlfrq = calcFdsPitch() * timbre.FDS.LfoFreqMultiply;
                             ushort lfrq = (ushort)Math.Round(dlfrq);
-                            if (lfrq > 0x7ff)
-                                lfrq = 0x7ff;
+                            if (lfrq > 0xfff)
+                                lfrq = 0xfff;
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x86, (byte)(lfrq & 0xff));
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x87, (byte)((lfrq >> 8) & 0xf));
                         }
@@ -2205,7 +2244,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 ushort n = calcFdsPitch();
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x82, (byte)(n & 0xff));
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x83, (byte)((n >> 8) & 0x7));
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x83, (byte)((n >> 8) & 0xf));
 
                 return;
             }
@@ -2216,8 +2255,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 // p = 65536 * f / 1789773d
                 freq = Math.Round(64 * 65536 * freq / parentModule.MasterClock);
                 var n = (ushort)freq;
-                if (n > 0x7ff)
-                    n = 0x7ff;
+                if (n > 0xfff)
+                    n = 0xfff;
                 return n;
             }
 
@@ -2228,11 +2267,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round(parentModule.MasterClock / (16 * freq)) - 1;
                 var n = (ushort)freq;
-                if (n > 0x7ff)
-                    n = 0x7ff;
+                if (n > 0xfff)
+                    n = 0xfff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9001 + (Slot << 12)), (byte)(n & 0xff), false, false);
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (Slot << 12)), (byte)(0x80 | (n >> 8) & 0x7), false, false);
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0x9002 + (Slot << 12)), (byte)(0x80 | (n >> 8) & 0xf), false, false);
             }
 
             private void updateVrc6SawPitch()
@@ -2243,11 +2282,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //t = (CPU / (14 * f)) - 1
                 freq = Math.Round((parentModule.MasterClock / (14 * freq)) - 1);
                 var n = (ushort)freq;
-                if (n > 0x7ff)
-                    n = 0x7ff;
+                if (n > 0xfff)
+                    n = 0xfff;
 
                 parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB001), (byte)(n & 0xff), false, false);
-                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | ((n >> 8) & 0x7)), false, false);
+                parentModule.RP2A03WriteData(parentModule.UnitNumber, (uint)(0xB002), (byte)(0x80 | ((n >> 8) & 0xf)), false, false);
             }
 
             public override void SoundOff()
@@ -2258,7 +2297,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.SQUARE:
                         {
-                            byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << Slot));
+                            byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << Slot));
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
                         }
@@ -2266,13 +2305,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x08, 0x80);
 
-                            byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
+                            byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~(1 << 2));
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
                         }
                     case ToneType.NOISE:
                         {
-                            byte data = (byte)(RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~8);
+                            byte data = (byte)(parentModule.RP2A03ReadData(parentModule.UnitNumber, 0x15) & ~8);
                             parentModule.RP2A03WriteData(parentModule.UnitNumber, 0x15, data);
                             break;
                         }
@@ -2762,12 +2801,35 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private sbyte f_LfoBias;
+
+            [DataMember]
+            [Category("Sound(FDS)")]
+            [Description("Set FDS LFO Bias Directly(-64 - 63) when LfoGain and LfoFreq is 0")]
+            [SlideParametersAttribute(-64, 63)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(typeof(sbyte), "0")]
+            public sbyte LfoBias
+            {
+                get
+                {
+                    return f_LfoBias;
+                }
+                set
+                {
+                    if (value > 63)
+                        value = 63;
+                    else if (value < -64)
+                        value = -64;
+                    f_LfoBias = (sbyte)value;
+                }
+            }
+
             private double f_LfoFreqMultiply;
 
             [DataMember]
             [Category("Sound(FDS)")]
-            [Description("FDS LFO Frequency multiply.\r\n" +
-                "Synchronize LFO frequency with Note frequency when set the value.")]
+            [Description("Synchronize LFO frequency with multiplied Note frequency when set the value.")]
             [DoubleSlideParametersAttribute(0, 8, 0.01)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public double LfoFreqMultiply
@@ -2800,7 +2862,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [WsgBitWideAttribute(3)]
             [DataMember]
             [Category("Sound(FDS)")]
-            [Description("FDS LFO Table (32 steps, 0-7 levels)")]
+            [Description("FDS LFO Table (32 steps, -3～0～+3 levels)\r\n" +
+                "-4 resets LFO bias.")]
             public sbyte[] LfoData
             {
                 get
@@ -2910,6 +2973,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new NesLfoMorphData()
                 };
             }
+
         }
 
         [JsonConverter(typeof(NoTypeConverterJsonConverter<Vrc6Settings>))]
@@ -3549,6 +3613,101 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public int LfoGainEnvelopesReleasePoint { get; set; } = -1;
 
 
+            private string f_LfoBiasEnvelopes;
+
+            [DataMember]
+            [Description("Set FDS LFO Bias envelop by text. Input FDS LFO Bias value and split it with space like the FamiTracker.\r\n" +
+                       "-64 - 63 \"|\" is repeat point. \"/\" is release point.")]
+            [Editor(typeof(EnvelopeUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [EnvelopeEditorAttribute(-64, 63)]
+            public string LfoBiasEnvelopes
+            {
+                get
+                {
+                    return f_LfoBiasEnvelopes;
+                }
+                set
+                {
+                    if (f_LfoBiasEnvelopes != value)
+                    {
+                        LfoBiasEnvelopesRepeatPoint = -1;
+                        LfoBiasEnvelopesReleasePoint = -1;
+                        if (value == null)
+                        {
+                            LfoBiasEnvelopesNums = new int[] { };
+                            f_LfoBiasEnvelopes = string.Empty;
+                            return;
+                        }
+                        f_LfoBiasEnvelopes = value;
+                        string[] vals = value.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                        List<int> vs = new List<int>();
+                        for (int i = 0; i < vals.Length; i++)
+                        {
+                            string val = vals[i];
+                            if (val.Equals("|", StringComparison.Ordinal))
+                                LfoBiasEnvelopesRepeatPoint = vs.Count;
+                            else if (val.Equals("/", StringComparison.Ordinal))
+                                LfoBiasEnvelopesReleasePoint = vs.Count;
+                            else
+                            {
+                                int v;
+                                if (int.TryParse(val, out v))
+                                {
+                                    if (v < -64)
+                                        v = -64;
+                                    else if (v > 63)
+                                        v = 63;
+                                    vs.Add(v);
+                                }
+                            }
+                        }
+                        LfoBiasEnvelopesNums = vs.ToArray();
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < LfoBiasEnvelopesNums.Length; i++)
+                        {
+                            if (sb.Length != 0)
+                                sb.Append(' ');
+                            if (LfoBiasEnvelopesRepeatPoint == i)
+                                sb.Append("| ");
+                            if (LfoBiasEnvelopesReleasePoint == i)
+                                sb.Append("/ ");
+                            if (i < LfoBiasEnvelopesNums.Length)
+                                sb.Append(LfoBiasEnvelopesNums[i].ToString((IFormatProvider)null));
+                        }
+                        f_LfoBiasEnvelopes = sb.ToString();
+                    }
+                }
+            }
+
+            public bool ShouldSerializeLfoBiasEnvelopes()
+            {
+                return !string.IsNullOrEmpty(LfoBiasEnvelopes);
+            }
+
+            public void ResetLfoBiasEnvelopes()
+            {
+                LfoBiasEnvelopes = null;
+            }
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            public int[] LfoBiasEnvelopesNums { get; set; } = new int[] { };
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int LfoBiasEnvelopesRepeatPoint { get; set; } = -1;
+
+            [Browsable(false)]
+            [JsonIgnore]
+            [IgnoreDataMember]
+            [DefaultValue(-1)]
+            public int LfoBiasEnvelopesReleasePoint { get; set; } = -1;
+
+
             private string f_lfoFreqMultiplyEnvelopes;
 
             [DataMember]
@@ -3693,6 +3852,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private uint f_lfoGainCounter;
 
             public byte? LfoGainValue
+            {
+                get;
+                private set;
+            }
+
+
+            private uint f_lfoBiasCounter;
+
+            public sbyte? LfoBiasValue
             {
                 get;
                 private set;
@@ -3862,6 +4030,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         int vol = settings.LfoGainEnvelopesNums[f_lfoGainCounter++];
 
                         LfoGainValue = (byte)vol;
+                        process = true;
+                    }
+                }
+
+                LfoBiasValue = null;
+                if (settings.LfoBiasEnvelopesNums.Length > 0)
+                {
+                    if (!isKeyOff)
+                    {
+                        var vm = settings.LfoBiasEnvelopesNums.Length;
+                        if (settings.LfoBiasEnvelopesReleasePoint >= 0)
+                            vm = settings.LfoBiasEnvelopesReleasePoint;
+                        if (f_lfoBiasCounter >= vm)
+                        {
+                            if (settings.LfoBiasEnvelopesRepeatPoint >= 0)
+                                f_lfoBiasCounter = (uint)settings.LfoBiasEnvelopesRepeatPoint;
+                            else
+                                f_lfoBiasCounter = (uint)vm;
+                        }
+                    }
+                    else
+                    {
+                        //if (settings.LfoBiasEnvelopesReleasePoint < 0)
+                        //    f_lfoCounter = (uint)settings.LfoBiasEnvelopesNums.Length;
+
+                        if (f_lfoBiasCounter < settings.LfoBiasEnvelopesNums.Length)
+                        {
+                            if (settings.LfoBiasEnvelopesReleasePoint >= 0 && f_lfoBiasCounter <= (uint)settings.LfoBiasEnvelopesReleasePoint)
+                                f_lfoBiasCounter = (uint)settings.LfoBiasEnvelopesReleasePoint;
+                            else if (settings.LfoBiasEnvelopesReleasePoint < 0)
+                                f_lfoBiasCounter = (uint)settings.LfoBiasEnvelopesNums.Length;
+
+                        }
+                    }
+                    if (f_lfoBiasCounter < settings.LfoBiasEnvelopesNums.Length)
+                    {
+                        int vol = settings.LfoBiasEnvelopesNums[f_lfoBiasCounter++];
+
+                        LfoBiasValue = (sbyte)vol;
                         process = true;
                     }
                 }
