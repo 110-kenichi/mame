@@ -28,7 +28,7 @@ L5:
     SLA B               ; 10 122
 
 ;__VGM_ADRS_LO:
-    LD  H,$01         ;  8
+    LD  H,$01           ;  8
     LD  A,E             ;  5
     OUT (OPNAAD1),A     ; 12
 L6:

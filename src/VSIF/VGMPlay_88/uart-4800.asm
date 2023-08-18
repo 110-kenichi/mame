@@ -31,9 +31,9 @@ _uart_processVgm:
     DI
 
     LD  A,$0
-    OUT ($51),A          ; Stop DMA
-    OUT	($E6),A          ;Disable interrupts
-    OUT	($E4),A
+    ;OUT ($51),A         ; Stop DMA (for pre SR machine)
+    OUT	($E6),A          ; Disable interrupts
+    OUT	($E4),A          ; Disable interrupts
 
     TRANSFER_PROC $1000,S_X000,E_X000
     TRANSFER_PROC $1100,S_X100,E_X100

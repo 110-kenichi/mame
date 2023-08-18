@@ -1,0 +1,128 @@
+﻿using FTD2XX_NET;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO.Ports;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace zanac.MAmidiMEmo.VSIF
+{
+    public class PortWriterPC88 : PortWriter
+    {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serialPort"></param>
+        public PortWriterPC88(SerialPort serialPort) : base(serialPort)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ftdiPort"></param>
+        public PortWriterPC88(FTDI ftdiPort, PortId portNo) : base(ftdiPort, portNo)
+        {
+        }
+
+        private byte lastDataType = 0xff;
+        private byte lastWriteAddress;
+
+        public override void ClearDataCache()
+        {
+            base.ClearDataCache();
+
+            lastDataType = 0xff;
+            lastWriteAddress = 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void Write(PortWriteData[] data)
+        {
+            List<byte> ds = new List<byte>();
+            foreach (var dt in data)
+            {
+                switch (dt.Type)
+                {
+                    default:
+                        {
+                            if ((dt.Type == 0x2 || dt.Type == 0x6) && lastWriteAddress == 0x8 && //OPNA ADPCM write
+                                lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0xf               | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if ((dt.Type == 0x1 || dt.Type == 0x2 ||  //OPNA
+                                dt.Type == 0x5 || dt.Type == 0x6 //OPNA SB2
+                                )
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0xf              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else
+                            {
+                                byte[] sd = new byte[5] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            lastDataType = dt.Type;
+                            lastWriteAddress = dt.Address;
+                            break;
+                        }
+                }
+            }
+            byte[] dsa = ds.ToArray();
+
+            lock (LockObject)
+            {
+                if (FtdiPort != null)
+                {
+                    sendData(dsa, data[0].Wait);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="wait"></param>
+        public override void RawWrite(byte[] data, int wait)
+        {
+            lock (LockObject)
+            {
+                if (FtdiPort != null)
+                {
+                    sendData(data, wait);
+                }
+            }
+        }
+
+        private void sendData(byte[] sendData, int wait)
+        {
+            SendDataByFtdi(sendData, wait);
+        }
+
+    }
+
+}

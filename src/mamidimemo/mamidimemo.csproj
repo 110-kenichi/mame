@@ -691,6 +691,7 @@
     <Compile Include="Util\XGMWriter.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterC64.cs" />
+    <Compile Include="VSIF\PortWriterPC88.cs" />
     <Compile Include="VSIF\PortWriterMsx.cs" />
     <Compile Include="VSIF\PortWriterNesDirect.cs" />
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />
@@ -742,6 +743,9 @@
       <Link>VSIF\VGM_P6.ROM</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\VSIF\VGMPlay_88\VGM_88.d88">
+      <Link>VSIF\VGM_88.d88</Link>
+    </None>
     <None Include="..\VSIF\VGMPlay_C64\VSIF_C64.prg">
       <Link>VSIF\VSIF_C64.prg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

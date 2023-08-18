@@ -37,8 +37,6 @@ __endasm;
     printf("  \\6 7 * 9/ ->DTR,DSR,GND\r\n");
     printf("   -------\r\n\r\n");
     printf("\r\n");
-    printf("READY................\r\n");
-    printf("GO\r\n");
 
     uart_processVgm();
 }

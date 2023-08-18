@@ -132,7 +132,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     value == SoundEngineType.SPFM ||
                     value == SoundEngineType.VSIF_MSX_FTDI ||
                     value == SoundEngineType.VSIF_P6_FTDI ||
-                    value == SoundEngineType.GIMIC))
+                    value == SoundEngineType.GIMIC) ||
+                    value == SoundEngineType.VSIF_PC88_FTDI
+                    )
                 {
                     setSoundEngine(value);
                 }
@@ -149,6 +151,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
                     SoundEngineType.GIMIC,
+                    SoundEngineType.VSIF_PC88_FTDI,
                 });
 
                 return sc;
@@ -236,6 +239,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_PC88_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.PC88_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                     case SoundEngineType.GIMIC:
                         gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
                         if (gimicPtr >= 0)
@@ -276,6 +292,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return f_CurrentSoundEngineType;
+            }
+        }
+
+        private PC88FMType f_PC88FMType = PC88FMType.OPN;
+
+        [Category("Chip(Dedicated)")]
+        [Description("FM type for PC-8801.")]
+        [DefaultValue(PC88FMType.OPN)]
+        public PC88FMType FMType
+        {
+            get
+            {
+                return f_PC88FMType;
+            }
+            set
+            {
+                if (f_PC88FMType != value)
+                {
+                    try
+                    {
+                        ignoreUpdatePcmData = true;
+                        AllSoundOff();
+                    }
+                    finally
+                    {
+                        ignoreUpdatePcmData = false;
+                    }
+
+                    f_PC88FMType = value;
+
+                    ClearWrittenDataCache();
+                    PrepareSound();
+                }
             }
         }
 
@@ -608,6 +657,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     vsifClient.WriteData(0x10, (byte)adrs, (byte)data, f_ftdiClkWidth);
                                 else
                                     vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                break;
+                            case SoundEngineType.VSIF_PC88_FTDI:
+                                if (f_PC88FMType != PC88FMType.SB2)
+                                {
+                                    if (adrs < 0x100)
+                                        vsifClient.WriteData(0x01, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x02, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                }
+                                else
+                                {
+                                    if (adrs < 0x100)
+                                        vsifClient.WriteData(0x05, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x06, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                }
                                 break;
                             case SoundEngineType.GIMIC:
                                 GimicManager.SetRegister2(gimicPtr, adrs, data);
@@ -1352,6 +1417,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
+                        case SoundEngineType.VSIF_PC88_FTDI:
                         case SoundEngineType.GIMIC:
                             break;
                     }
@@ -1377,6 +1443,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
                 case SoundEngineType.VSIF_MSX_FTDI:
                 case SoundEngineType.VSIF_P6_FTDI:
+                case SoundEngineType.VSIF_PC88_FTDI:
                 case SoundEngineType.GIMIC:
                     break;
             }
@@ -1657,7 +1724,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
+                            if (parentModule.f_PC88FMType == PC88FMType.OPN)
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 3);
+                            else
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                             break;
                         }
                     case ToneType.RHYTHM:
@@ -4085,6 +4155,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             SSG,
             RHYTHM,
             ADPCM_B,
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum PC88FMType
+        {
+            OPN,
+            OPNA,
+            SB2,
         }
 
         /// <summary>

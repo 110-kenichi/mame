@@ -160,7 +160,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 };
                                 ds.AddRange(sd);
                             }
-                            if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
+                            else if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
                                 dt.Type == 4 || dt.Type == 5 || //SCC
                                 dt.Type == 0xa || dt.Type == 0xb || //OPL3
                                 dt.Type == 0xe || //OPM
