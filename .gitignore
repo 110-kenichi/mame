@@ -171,3 +171,4 @@ Release(but Debug .NET)
 obj
 bin
 /src/VSIF/VGMPlay_Genesis/out
+/src/VSIF/VGMPlay_88/.vscode
