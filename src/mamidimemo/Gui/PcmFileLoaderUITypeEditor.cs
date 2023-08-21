@@ -157,15 +157,18 @@ namespace zanac.MAmidiMEmo.Gui
             }
             else if (context.PropertyDescriptor.PropertyType == typeof(ushort[]))
             {
-                ushort[] sbuf = new ushort[buf.Length / 2];
+                short[] sbuf = new short[buf.Length / 2];
                 Buffer.BlockCopy(buf.ToArray(), 0, sbuf, 0, sbuf.Length);
+
+                ushort[] ssbuf = new ushort[sbuf.Length];
+                for (int i = 0; i < sbuf.Length; i++)
+                    ssbuf[i] = (ushort)((int)sbuf[i] + 0x8000);
+
                 rvalue = sbuf;
             }
-            else if (context.PropertyDescriptor.PropertyType == typeof(ushort[]))
+            else if (context.PropertyDescriptor.PropertyType == typeof(short[]))
             {
                 short[] sbuf = new short[buf.Length / 2];
-                for (int i = 0; i < buf.Length / 2; i++)
-                    sbuf[i] = (short)(((buf[(i * 2) + 1] << 8) + buf[i * 2]) - 0x8000);
                 Buffer.BlockCopy(buf.ToArray(), 0, sbuf, 0, sbuf.Length);
                 rvalue = sbuf;
             }

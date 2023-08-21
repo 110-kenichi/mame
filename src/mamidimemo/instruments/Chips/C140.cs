@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -230,7 +231,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="data"></param>
         /// <returns></returns>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate sbyte delg_callback(byte pn, int pos);
+        private delegate int delg_callback(byte pn, int pos);
 
         /// <summary>
         /// 
@@ -268,7 +269,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
-        private Dictionary<int, sbyte[]> tmpPcmDataTable = new Dictionary<int, sbyte[]>();
+        private Dictionary<int, short[]> tmpPcmDataTable = new Dictionary<int, short[]>();
 
         /// <summary>
         /// 
@@ -371,14 +372,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         /// <param name="pn"></param>
         /// <param name="pos"></param>
-        private sbyte read_byte_callback(byte pn, int pos)
+        private int read_byte_callback(byte pn, int pos)
         {
             lock (tmpPcmDataTable)
             {
                 if (tmpPcmDataTable.ContainsKey(pn))
                 {
                     //HACK: Thread UNSAFE
-                    sbyte[] pd = tmpPcmDataTable[pn];
+                    short[] pd = tmpPcmDataTable[pn];
                     if (pd != null && pd.Length != 0 && pos < pd.Length)
                         return pd[pos];
                 }
@@ -520,7 +521,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.SoundType == SoundType.INST)
                     {
                         lock (parentModule.tmpPcmDataTable)
-                            parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
+                            parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData12;
                     }
                     /*
                     else if (timbre.SoundType == SoundType.DRUM)
@@ -660,8 +661,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     C140WriteData(parentModule.UnitNumber, (reg + 7), 0);
                     //pcm end
                     ushort len = 0;
-                    if (timbre.PcmData.Length > 0)
-                        len = (ushort)((timbre.PcmData.Length - 1) & 0xffff);
+                    if (timbre.PcmData12.Length > 0)
+                        len = (ushort)((timbre.PcmData12.Length - 1) & 0xffff);
                     C140WriteData(parentModule.UnitNumber, (reg + 8), (byte)(len >> 8));
                     C140WriteData(parentModule.UnitNumber, (reg + 9), (byte)(len & 0xff));
                     //loop
@@ -867,7 +868,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64KB, 1ch)")]
+            [Description("Signed 8bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch)\r\n" +
+                "Need to increase the Gain value to sound 8bit PCM data.")]
             [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
             public sbyte[] PcmData
             {
@@ -877,7 +879,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    f_PcmData = value;
+                    f_PcmData12 = new short[value.Length];
+                    for (int i = 0; i < value.Length; i++)
+                        f_PcmData12[i] = (short)(value[i] << 4);
                 }
             }
 
@@ -889,6 +893,38 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void ResetPcmData()
             {
                 PcmData = new sbyte[0];
+            }
+
+            private short[] f_PcmData12 = new short[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("Signed 16bit PCM Raw Data or WAV Data. (MAX 64K samples, 1ch). 16bit data will be converted to 12bit data")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 16, 1, 65535)]
+            public short[] PcmData12
+            {
+                get
+                {
+                    return f_PcmData12;
+                }
+                set
+                {
+                    f_PcmData12 = new short[value.Length];
+                    for (int i = 0; i < value.Length; i++)
+                        f_PcmData12[i] = (short)(value[i] & 0xfff0);
+                }
+            }
+
+            public bool ShouldSerializePcmData12()
+            {
+                return PcmData12.Length != 0;
+            }
+
+            public void ResetPcmData12()
+            {
+                PcmData12 = new short[0];
             }
 
             /// <summary>
@@ -1273,11 +1309,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (loopP > 65535)
                         loopP = 65535;
 
-                    sbyte[] samples = new sbyte[len];
+                    short[] samples = new short[len];
                     for (uint i = 0; i < len; i++)
-                        samples[i] = (sbyte)(spl[start + i] >> 8);
+                        samples[i] = spl[start + i];
 
-                    tim.PcmData = samples;
+                    tim.PcmData12 = samples;
                     tim.LoopPoint = (ushort)loopP;
                     tim.LoopEnable = s.LoopStart < s.LoopEnd;
 

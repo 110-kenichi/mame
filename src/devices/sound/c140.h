@@ -17,7 +17,7 @@
 // ======================> c140_device
  // Verified from schematics (24 bit address, 12(16? for C219) bit data)
 
-typedef int8_t (*C140_CALLBACK)(u8 pn, int32_t pos);
+typedef s32 (*C140_CALLBACK)(u8 pn, int32_t pos);
 
 class c140_device : public device_t,
 					public device_sound_interface,
