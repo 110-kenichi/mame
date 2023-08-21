@@ -1521,7 +1521,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            uint freq = (uint)Math.Round(((55.5 * (CalcCurrentFrequency() / baseFreq)) / 55.5) * 65536);
+                            uint freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * 65536d);
                             if (freq > 0xffff)
                                 freq = 0xffff;
 

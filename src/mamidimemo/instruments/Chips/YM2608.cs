@@ -295,11 +295,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private PC88FMType f_PC88FMType = PC88FMType.OPN;
+        private PC88FMType f_PC88FMType = PC88FMType.OPNA;
 
         [Category("Chip(Dedicated)")]
         [Description("FM type for PC-8801.")]
-        [DefaultValue(PC88FMType.OPN)]
+        [DefaultValue(PC88FMType.OPNA)]
         public PC88FMType FMType
         {
             get
@@ -2420,7 +2420,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
-                            uint freq = (uint)Math.Round(((55.5 * (CalcCurrentFrequency() / baseFreq)) / 55.5) * 65536);
+                            uint freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * ((double)parentModule.MasterClock / 8000000d) * 65536d);
                             if (freq > 0xffff)
                                 freq = 0xffff;
 
@@ -4163,9 +4163,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         public enum PC88FMType
         {
-            OPN,
             OPNA,
             SB2,
+            OPN,
         }
 
         /// <summary>
