@@ -517,7 +517,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             enableScc(SCCChipType, ExtSCCSlot, false);
                             vsifClient.WriteData(type, address, (byte)(freq & 0xff), f_ftdiClkWidth);
-
+                            vsifClient.FlushDeferredWriteDataAndWait();
                             byte freq_h = (byte)((freq >> 8) & 0xf);
                             vsifClient.RawWriteData(new byte[] {
                                 (byte)((freq_h    >> 4) | 0x00),
@@ -641,6 +641,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                         byte address = (byte)(0x00 + offset);
                                         enableScc(SCCChipType, ExtSCCSlot, false);
                                         vsifClient.WriteData(type, address, (byte)data[0], f_ftdiClkWidth);
+                                        vsifClient.FlushDeferredWriteDataAndWait();
 
                                         for (int i = 1; i < data.Length; i++)
                                         {

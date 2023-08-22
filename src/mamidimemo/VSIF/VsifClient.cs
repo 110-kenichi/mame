@@ -177,6 +177,38 @@ namespace zanac.MAmidiMEmo.VSIF
         /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
+        public virtual void FlushDeferredWriteDataAndWait()
+        {
+            try
+            {
+                PortWriteData[] dd;
+                lock (lockObject)
+                {
+                    if (disposedValue)
+                        return;
+
+                    if (deferredWriteAdrAndData.Count == 0)
+                        return;
+                    dd = deferredWriteAdrAndData.ToArray();
+                    deferredWriteAdrAndData.Clear();
+                }
+                if (dd.Length != 0)
+                    DataWriter?.Write(dd);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
         public virtual void WriteData(PortWriteData[] data)
         {
             lock (lockObject)
