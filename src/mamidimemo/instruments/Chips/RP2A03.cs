@@ -169,6 +169,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT, PortId, false);
                         if (vsifClient != null)
                         {
+                            if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
+                            {
+                                if (FtdiClkWidth < 11)
+                                    FtdiClkWidth = 11;
+                            }
+                            else
+                            {
+                                if (FtdiClkWidth < 27)
+                                    FtdiClkWidth = 27;
+                            }
+
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }

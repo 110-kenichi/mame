@@ -187,6 +187,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
                         if (vsifClient != null)
                         {
+                            if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
+                            {
+                                if (FtdiClkWidth < 25)
+                                    FtdiClkWidth = 25;
+                            }
+                            else
+                            {
+                                if (FtdiClkWidth < 32)
+                                    FtdiClkWidth = 32;
+                            }
+
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }
@@ -200,6 +211,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
                         if (vsifClient != null)
                         {
+                            if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
+                            {
+                                if (FtdiClkWidth < 25)
+                                    FtdiClkWidth = 25;
+                            }
+                            else
+                            {
+                                if (FtdiClkWidth < 32)
+                                    FtdiClkWidth = 32;
+                            }
+
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }

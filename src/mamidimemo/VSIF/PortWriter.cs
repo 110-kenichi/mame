@@ -43,6 +43,12 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
+        public FTDI.FT_DEVICE FtdiDeviceType
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -69,6 +75,11 @@ namespace zanac.MAmidiMEmo.VSIF
         public PortWriter(FTDI ftdiPort, PortId portNo)
         {
             this.ftdiPort = ftdiPort;
+
+            FTDI.FT_DEVICE dev = FTDI.FT_DEVICE.FT_DEVICE_UNKNOWN;
+            ftdiPort.GetDeviceType(ref dev);
+            FtdiDeviceType = dev;
+
             PortName = "FTDI_COM" + (int)portNo;
         }
 

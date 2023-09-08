@@ -1,4 +1,4 @@
-MAmidiMEmo 4.9.7.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 4.9.8.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+4.9.8.0 FtdiClkWidth to be adjusted when the VSIF connection is to FT232R or not.
 4.9.7.1 Fixed SCC not sounding properly.
 4.9.7.0 Added PcmData12 property to support 12bit PCM data for C140 chip. *Warning* For 12-bit PCM data, the Gain value should be lower than for 8-bit PCM data.
 4.9.6.1 Fixed OPNA/B BaseFreq calculation algorithm when WAV file loading. ( 55000Hz -> 55555.55...Hz )
