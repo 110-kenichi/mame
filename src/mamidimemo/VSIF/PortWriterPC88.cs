@@ -56,34 +56,73 @@ namespace zanac.MAmidiMEmo.VSIF
                 {
                     default:
                         {
-                            if ((dt.Type == 0x2 || dt.Type == 0x6) && lastWriteAddress == 0x8 && //OPNA ADPCM write
-                                lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            if ((dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA DAC write
+                                dt.Type == 0x4 || dt.Type == 0xc)     //OPNA ADPCM data write
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
                             {
-                                byte[] sd = new byte[3] {
-                                    (byte)(0xf               | 0x20),
-                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                byte[] sd = new byte[] {
+                                    (byte)(0x0f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
                                 };
                                 ds.AddRange(sd);
                             }
-                            else if ((dt.Type == 0x1 || dt.Type == 0x2 ||  //OPNA
-                                dt.Type == 0x5 || dt.Type == 0x6 //OPNA SB2
+                            else
+                            if ((dt.Type == 0x2 || dt.Type == 0xa)   // Rhythm
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
+                            {
+                                byte[] sd = new byte[] {
+                                    (byte)(0x0f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
+                                    0x10, //FM Wait
+                                };
+                                ds.AddRange(sd);
+                                ds.AddRange(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
+                            }
+                            else
+                            if ((dt.Type == 0x0 || dt.Type == 0x1 ||  //OPNA
+                                dt.Type == 0x8 || dt.Type == 0xa //OPNA SB2
                                 )
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
                             {
-                                byte[] sd = new byte[3] {
-                                    (byte)(0xf              | 0x20),
-                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                byte[] sd = new byte[] {
+                                    (byte)(0x0f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
+                                    0x10, //FM Wait
                                 };
                                 ds.AddRange(sd);
                             }
                             else
                             {
-                                byte[] sd = new byte[5] {
-                                    (byte)(dt.Type           | 0x20),
-                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
-                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
-                                };
-                                ds.AddRange(sd);
+                                if (dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA DAC write
+                                    dt.Type == 0x4 || dt.Type == 0xc)    //OPNA ADPCM data write
+                                {
+                                    byte[] sd = new byte[] {
+                                        (byte)(dt.Type           | 0x20),
+                                        (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
+                                    };
+                                    ds.AddRange(sd);
+                                }
+                                else if (dt.Type == 2 || dt.Type == 0xa)   // Rhythm
+                                {
+                                    byte[] sd = new byte[] {
+                                        (byte)(dt.Type           | 0x20),
+                                        (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
+                                        (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
+                                        0x10,   //FM Wait
+                                    };
+                                    ds.AddRange(sd);
+                                    ds.AddRange(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
+                                }
+                                else
+                                {
+                                    byte[] sd = new byte[] {
+                                        (byte)(dt.Type           | 0x20),
+                                        (byte)((dt.Address >> 4) | 0x10), (byte)((dt.Address & 0x0f) | 0x00),
+                                        (byte)((dt.Data    >> 4) | 0x10), (byte)((dt.Data &    0x0f) | 0x00),
+                                        0x10,   //FM Wait
+                                    };
+                                    ds.AddRange(sd);
+                                }
                             }
                             lastDataType = dt.Type;
                             lastWriteAddress = dt.Address;

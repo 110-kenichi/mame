@@ -1058,7 +1058,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     for (int op = 0; op < 4; op++)
                         YM2610BWriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
-                YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0xff);
+                YM2610BWriteData(parentModule.UnitNumber, 7, 0, 0, (byte)0x3f);
                 YM2610BWriteData(parentModule.UnitNumber, (byte)(0), 0, 3, (byte)0xff);
                 YM2610BWriteData(parentModule.UnitNumber, (byte)(0x10), 0, 0, (byte)(0x00));
             }

@@ -267,13 +267,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
                             {
-                                if (FtdiClkWidth < 25)
-                                    FtdiClkWidth = 25;
+                                if (FtdiClkWidth < 10)
+                                    FtdiClkWidth = 10;
                             }
                             else
                             {
-                                if (FtdiClkWidth < 32)
-                                    FtdiClkWidth = 32;
+                                if (FtdiClkWidth < 20)
+                                    FtdiClkWidth = 20;
                             }
 
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -328,12 +328,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private PC88FMType f_PC88FMType = PC88FMType.OPNA;
+        private BoardType f_PC88FMType = BoardType.Internal;
 
         [Category("Chip(Dedicated)")]
-        [Description("FM type for PC-8801.")]
-        [DefaultValue(PC88FMType.OPNA)]
-        public PC88FMType FMType
+        [Description("Board type for PC-8801.")]
+        [DefaultValue(BoardType.Internal)]
+        public BoardType PC88BoardType
         {
             get
             {
@@ -692,19 +692,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                 break;
                             case SoundEngineType.VSIF_PC88_FTDI:
-                                if (f_PC88FMType != PC88FMType.SB2)
+                                if (f_PC88FMType == BoardType.Internal)
                                 {
                                     if (adrs < 0x100)
-                                        vsifClient.WriteData(0x01, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    {
+                                        if (0x10 <= adrs && adrs <= 0x1f)
+                                            vsifClient.WriteData(0x02, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                        else
+                                            vsifClient.WriteData(0x00, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    }
                                     else
-                                        vsifClient.WriteData(0x02, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                    {
+                                        if (adrs == 0x108)
+                                            vsifClient.WriteData(0x04, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                        else
+                                            vsifClient.WriteData(0x01, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                    }
                                 }
                                 else
                                 {
                                     if (adrs < 0x100)
-                                        vsifClient.WriteData(0x05, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    {
+                                        if (0x10 <= adrs && adrs <= 0x1f)
+                                            vsifClient.WriteData(0x0a, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                        else
+                                            vsifClient.WriteData(0x08, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                                    }
                                     else
-                                        vsifClient.WriteData(0x06, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                    {
+                                        if (adrs == 0x108)
+                                            vsifClient.WriteData(0x0c, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                        else
+                                            vsifClient.WriteData(0x09, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                    }
                                 }
                                 break;
                             case SoundEngineType.GIMIC:
@@ -1368,7 +1388,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                 }
                 finally
-                    {
+                {
                     FormMain.AppliactionForm.Enabled = true;
                 }
                 //}
@@ -1476,8 +1496,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
                 case SoundEngineType.VSIF_MSX_FTDI:
                 case SoundEngineType.VSIF_P6_FTDI:
-                case SoundEngineType.VSIF_PC88_FTDI:
                 case SoundEngineType.GIMIC:
+                    break;
+                case SoundEngineType.VSIF_PC88_FTDI:
+                    //Thread.Sleep(5000);
                     break;
             }
         }
@@ -1757,10 +1779,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            if (parentModule.f_PC88FMType == PC88FMType.OPN)
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 3);
-                            else
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
+                            //if (parentModule.f_PC88FMType == PC88FMType.OPN)
+                            //    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 3);
+                            //else
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                             break;
                         }
                     case ToneType.RHYTHM:
@@ -1865,7 +1887,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2608WriteData(parentModule.UnitNumber, 0x40, op, i, 127);
                 }
                 //SSG
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x07, 0, 0, (byte)0xff);
+                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x07, 0, 0, (byte)0x3f);
                 //ADPCM
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01, false);   //RESET
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00, false);   //STOP
@@ -2445,9 +2467,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     }
                                 }
 
+                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(12), 0, 0, parentModule.EnvelopeFrequencyCoarse);
                                 parentModule.YM2608WriteData(unitNumber, (byte)(11), 0, 0, parentModule.EnvelopeFrequencyFine);
-                                parentModule.YM2608WriteData(unitNumber, (byte)(13), 0, 0, parentModule.EnvelopeType);
                             }
                         }
                         break;
@@ -2457,8 +2479,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (freq > 0xffff)
                                 freq = 0xffff;
 
-                            parentModule.YM2608WriteData(unitNumber, (byte)(0x09), 0, 3, (byte)(freq & 0xff));
                             parentModule.YM2608WriteData(unitNumber, (byte)(0x0A), 0, 3, (byte)(freq >> 8));
+                            parentModule.YM2608WriteData(unitNumber, (byte)(0x09), 0, 3, (byte)(freq & 0xff));
                         }
                         break;
                 }
@@ -4194,11 +4216,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        public enum PC88FMType
+        public enum BoardType
         {
-            OPNA,
-            SB2,
-            OPN,
+            Internal,
+            SoundBoard2,
+            //OPN,
         }
 
         /// <summary>

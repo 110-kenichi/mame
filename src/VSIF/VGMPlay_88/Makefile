@@ -15,9 +15,10 @@ all: $(PROGRAM)
 $(PROGRAM): player_code.c uart-4800.asm const.inc macro.inc
 	$(CC) +pc88 -create-app -subtype=disk -o $(PROGRAM) player_code.c uart-4800.asm 
 	$(CC) +pc88 -create-app -subtype=disk -o $(PROGRAM) player_code.c uart-4800.asm 
+	hxcfe.exe -finput:$(PROGRAM) -foutput:VGM_88_d88.hfe -conv:HXC_HFE
 #	makebin.exe -s 65536 VGM_88.hex > VGM_88.bin
 #	perl romout.pl VGM_88.bin > VGM_88.rom
-#	cmd.exe /C copy.bat
+	cmd.exe /C copy.bat
 
 #	/mnt/e/Emu/blueMSX/blueMSX.exe VGM_msx.rom
 
