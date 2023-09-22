@@ -743,9 +743,10 @@
       <Link>VSIF\VGM_P6.ROM</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="..\VSIF\VGMPlay_88\VGM_88.d88">
+    <Content Include="..\VSIF\VGMPlay_88\VGM_88.d88">
       <Link>VSIF\VGM_88.d88</Link>
-    </None>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="..\VSIF\VGMPlay_C64\VSIF_C64.prg">
       <Link>VSIF\VSIF_C64.prg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1089,7 +1089,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private static SoundList<RP2A03Sound> vrc6SawOnSounds = new SoundList<RP2A03Sound>(1);
 
-            private static SoundList<RP2A03Sound> dacOnSounds = new SoundList<RP2A03Sound>(1);
+            private static SoundList<RP2A03Sound> dacOnSounds = new SoundList<RP2A03Sound>(MAX_DAC_VOICES);
 
             private RP2A03 parentModule;
 

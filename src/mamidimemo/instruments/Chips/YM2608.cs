@@ -33,8 +33,7 @@ using zanac.MAmidiMEmo.VSIF;
 using File = System.IO.File;
 using Path = System.IO.Path;
 using System.Diagnostics;
-using static zanac.MAmidiMEmo.Instruments.Chips.AY8910;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 
 //https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
@@ -431,6 +430,46 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             MasterClock = (uint)MasterClockType.Default;
         }
 
+
+        private bool pseudoDacMode;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("(Bonus feature)Pseudo DAC PCM mode for real chip. Exclusive to PCM-B.")]
+        [DefaultValue(false)]
+        public bool PseudoDacMode
+        {
+            get
+            {
+                lock (sndEnginePtrLock)
+                {
+                    if (CurrentSoundEngine == SoundEngineType.Software)
+                        return false;
+                }
+                return pseudoDacMode;
+            }
+            set
+            {
+                if (pseudoDacMode != value)
+                {
+                    try
+                    {
+                        ignoreUpdatePcmData = true;
+                        AllSoundOff();
+                    }
+                    finally
+                    {
+                        ignoreUpdatePcmData = false;
+                    }
+
+                    pseudoDacMode = value;
+
+                    updatePcmData(null);
+                }
+            }
+        }
+
+
         private byte f_EnvelopeFrequencyCoarse = 2;
 
         /// <summary>
@@ -689,7 +728,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (adrs < 0x100)
                                     vsifClient.WriteData(0x10, (byte)adrs, (byte)data, f_ftdiClkWidth);
                                 else
-                                    vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                {
+                                    if (adrs == 0x10b)
+                                        vsifClient.WriteData(0x13, (byte)0xb, (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x11, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                }
                                 break;
                             case SoundEngineType.VSIF_PC88_FTDI:
                                 if (f_PC88FMType == BoardType.Internal)
@@ -705,6 +749,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     {
                                         if (adrs == 0x108)
                                             vsifClient.WriteData(0x04, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                        else if (adrs == 0x10b)
+                                            vsifClient.WriteData(0x03, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                         else
                                             vsifClient.WriteData(0x01, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                     }
@@ -722,6 +768,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     {
                                         if (adrs == 0x108)
                                             vsifClient.WriteData(0x0c, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
+                                        else if (adrs == 0x10b)
+                                            vsifClient.WriteData(0x0b, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                         else
                                             vsifClient.WriteData(0x09, (byte)(adrs & 0xff), (byte)data, f_ftdiClkWidth);
                                     }
@@ -1008,6 +1056,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             Timbres = new YM2608Timbre[256];
             for (int i = 0; i < 256; i++)
                 Timbres[i] = new YM2608Timbre();
+
+            this.pcmEngine = new PcmEngine(this);
+            this.pcmEngine.StartEngine();
+
             setPresetInstruments();
 
             this.soundManager = new YM2608SoundManager(this);
@@ -1042,6 +1094,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+            pcmEngine?.Dispose();
 
             base.Dispose();
 
@@ -1329,6 +1382,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (CurrentSoundEngine == SoundEngineType.Software)
                     return;
             }
+            if (PseudoDacMode)
+            {
+                enablePseudoDacYM2608(true);
+                return;
+            }
+
             List<byte> pcmData = new List<byte>();
             uint nextStartAddress = 0;
             for (int i = 0; i < Timbres.Length; i++)
@@ -1625,6 +1684,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private static SoundList<YM2608Sound> pcmbOnSounds = new SoundList<YM2608Sound>(1);
 
+            private static SoundList<YM2608Sound> dacOnSounds = new SoundList<YM2608Sound>(MAX_DAC_VOICES);
+
             private YM2608 parentModule;
 
             /// <summary>
@@ -1736,6 +1797,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                             break;
                         case ToneType.ADPCM_B:
+                            if (parentModule.PseudoDacMode)
+                                break;
+
                             pcmbOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn PCM-B ch" + emptySlot + " " + note.ToString());
 
@@ -1743,6 +1807,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             lock (parentModule.tmpPcmDataTable)
                                 parentModule.tmpPcmDataTable[ids[i]] = timbre.PcmData;
                             break;
+
+                        case ToneType.DAC:
+                            if (!parentModule.PseudoDacMode)
+                                break;
+                            dacOnSounds.Add(snd);
+                            FormMain.OutputDebugLog(parentModule, "KeyOn DAC ch" + emptySlot + " " + note.ToString());
+                            break;
+
                         case ToneType.SSG:
                             ssgOnSounds.Add(snd);
                             FormMain.OutputDebugLog(parentModule, "KeyOn SSG ch" + emptySlot + " " + note.ToString());
@@ -1779,10 +1851,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case ToneType.FM:
                         {
-                            //if (parentModule.f_PC88FMType == PC88FMType.OPN)
-                            //    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 3);
-                            //else
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
+                            if (parentModule.f_PC88FMType == BoardType.InternalOPN)
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 3);
+                            else
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
                             break;
                         }
                     case ToneType.RHYTHM:
@@ -1862,6 +1934,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             emptySlot = SearchEmptySlotAndOffForLeader(parentModule, pcmbOnSounds, note, 1);
                             break;
                         }
+                    case ToneType.DAC:
+                        {
+                            return SearchEmptySlotAndOffForLeader(parentModule, dacOnSounds, note, MAX_DAC_VOICES);
+                        }
                     case ToneType.SSG:
                         {
                             emptySlot = SearchEmptySlotAndOffForLeader(parentModule, ssgOnSounds, note, 3);
@@ -1889,8 +1965,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //SSG
                 parentModule.YM2608WriteData(parentModule.UnitNumber, 0x07, 0, 0, (byte)0x3f);
                 //ADPCM
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01, false);   //RESET
-                parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00, false);   //STOP
+                if (parentModule.PseudoDacMode)
+                {
+                    for (int i = 0; i < MAX_DAC_VOICES; i++)
+                        parentModule.pcmEngine.Stop(i);
+                }
+                else
+                {
+                    parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x01, false);   //RESET
+                    parentModule.YM2608WriteData(parentModule.UnitNumber, 0x00, 0, 3, (byte)0x00, false);   //STOP
+                }
             }
         }
 
@@ -2008,6 +2092,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
+                            if (parentModule.PseudoDacMode)
+                                break;
+
                             parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x1B, false); //CLEAR FLAGS
                             parentModule.YM2608WriteData(unitNumber, 0x10, 0, 3, 0x80, false); //IRQ RESET
 
@@ -2049,6 +2136,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, (byte)(0x80 | 0x20 | loop), false);   //PLAY, ACCESS TO MEM, LOOP
                         }
                         break;
+                    case ToneType.DAC:
+                        {
+                            if (!parentModule.PseudoDacMode)
+                                break;
+                            lock (parentModule.sndEnginePtrLock)
+                                if (parentModule.CurrentSoundEngine == SoundEngineType.Software)
+                                    break;
+                            
+                            parentModule.pcmEngine.Play(this, NoteOnEvent, Slot, timbre, CalcCurrentFrequency(), CalcCurrentVolume());
+                            break;
+                        }
                 }
             }
 
@@ -2225,6 +2323,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         break;
+                    case ToneType.DAC:
+                        break;
                 }
 
                 base.OnSoundParamsUpdated();
@@ -2325,7 +2425,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2608WriteData(unitNumber, 0x11, 0, 0, (byte)fv);
                         break;
                     case ToneType.ADPCM_B:
+                        if (parentModule.PseudoDacMode)
+                            break;
                         parentModule.YM2608WriteData(unitNumber, 0x0B, 0, 3, (byte)(Math.Round(127 * CalcCurrentVolume())));
+                        break;
+                    case ToneType.DAC:
+                        if (!parentModule.PseudoDacMode)
+                            break;
+                        lock (parentModule.sndEnginePtrLock)
+                            if (parentModule.CurrentSoundEngine == SoundEngineType.Software)
+                                break;
+
+                        parentModule.pcmEngine.Volume(Slot, CalcCurrentVolume());
                         break;
                 }
             }
@@ -2475,6 +2586,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
+                            if (parentModule.PseudoDacMode)
+                                break;
+
                             uint freq = (uint)Math.Round((CalcCurrentFrequency() / baseFreq) * ((double)parentModule.MasterClock / 8000000d) * 65536d);
                             if (freq > 0xffff)
                                 freq = 0xffff;
@@ -2483,6 +2597,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             parentModule.YM2608WriteData(unitNumber, (byte)(0x09), 0, 3, (byte)(freq & 0xff));
                         }
                         break;
+                    case ToneType.DAC:
+                        {
+                            if (!parentModule.PseudoDacMode)
+                                break;
+                            lock (parentModule.sndEnginePtrLock)
+                                if (parentModule.CurrentSoundEngine == SoundEngineType.Software)
+                                    break;
+
+                            parentModule.pcmEngine.Pitch(Slot, CalcCurrentFrequency());
+                            break;
+                        }
                 }
                 base.OnPitchUpdated();
             }
@@ -2561,6 +2686,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                         break;
                     case ToneType.ADPCM_B:
+                    case ToneType.DAC:
                         parentModule.YM2608WriteData(unitNumber, 0x01, 0, 3, (byte)(pan << 6 | 0x02)); //LR, 8bit RAM
                         break;
                 }
@@ -2661,11 +2787,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case ToneType.ADPCM_B:
                         {
+                            if (parentModule.PseudoDacMode)
+                                break;
+
                             parentModule.YM2608WriteData(unitNumber, 0x0B, 0, 3, 0);    //VOLUME 0
-                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x01, false);  //RESET
                             parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x00, false);  //STOP
+                            parentModule.YM2608WriteData(unitNumber, 0x00, 0, 3, 0x01, false);  //RESET
                         }
                         break;
+                    case ToneType.DAC:
+                        {
+                            if (!parentModule.PseudoDacMode)
+                                break;
+                            lock (parentModule.sndEnginePtrLock)
+                                if (parentModule.CurrentSoundEngine == SoundEngineType.Software)
+                                    break;
+
+                            parentModule.pcmEngine.Stop(Slot);
+                            break;
+                        }
                 }
             }
 
@@ -3239,6 +3379,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
+            [DataMember]
+            [Category("Sound(DAC)")]
+            [Description("DAC Settings")]
+            public YM2608DacSettings DAC
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -3311,6 +3460,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     new YM2608Operator() };
                 GlobalSettings = new YM2608GlobalSettings();
                 SsgSoundType = SsgSoundType.PSG;
+                DAC = new YM2608DacSettings();
             }
 
             protected override void InitializeFxS()
@@ -4210,6 +4360,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             SSG,
             RHYTHM,
             ADPCM_B,
+            DAC,
         }
 
 
@@ -4220,7 +4371,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             Internal,
             SoundBoard2,
-            //OPN,
+            InternalOPN,
         }
 
         /// <summary>
@@ -4272,6 +4423,639 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 tim.Ops[i].SSG = (byte)tone.aOp[i].SSG;
             }
             timbre.TimbreName = tone.Name;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="transferData"></param>
+        /// <param name="saddr"></param>
+        /// <param name="fp"></param>
+        private void enablePseudoDacYM2608(bool enable)
+        {
+            lock (sndEnginePtrLock)
+                lastTransferPcmData = new byte[] { };
+
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 3, false);  //RESET
+            if (enable)
+            {
+                //https://www.piece-me.org/piece-lab/adpcm/adpcm2.html
+                //MAX Attenuation
+                byte[] adpcmdata = new byte[32];
+                for (int i = 0; i < adpcmdata.Length; i++)
+                    adpcmdata[i] = 0x80;
+                sendPcmData(adpcmdata, 0, null);
+
+                //*
+                //ADPCM mode
+                YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x17, false);        //ENA FLAG BRDY
+                YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x80, false);   //RESET FLAGS
+                YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x80, false);   //CPU->OPNA
+                YM2608WriteData(UnitNumber, 0x01, 0, 3, 0xC0, false);   //LR
+
+                // (f / 55.5) * 65536
+                // 8KHz = 9447
+                //int f = (int)Math.Round((44.1 / 55.5) * 65536);
+                //YM2608WriteData(comPort, 0x09, 0, 3, (byte)(f & 0xff), false);   //14KHz
+                //YM2608WriteData(comPort, 0x0A, 0, 3, (byte)((f >> 8) & 0xff), false);   //14KHz
+
+                YM2608WriteData(UnitNumber, 0x09, 0, 3, 0xff, false);   //55.5KHz
+                YM2608WriteData(UnitNumber, 0x0A, 0, 3, 0xff, false);   //55.5KHz
+
+                YM2608WriteData(UnitNumber, 0x0B, 0, 3, 0x00, false);   // Volume 0
+
+                //playAdpcmDataYM2608(0, 0, false);
+                //Thread.Sleep(1);
+                playAdpcmDataYM2608(0, 0, false);
+
+                /*
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);  //255
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0x77);  //119
+                deferredWriteOPNA_P1(comPort, 0x08, 0xff);  //255
+                deferredWriteOPNA_P1(comPort, 0x08, 0x70);  //112
+                deferredWriteOPNA_P1(comPort, 0x08, 0x80);  //128
+                //*/
+
+                /*/
+                //* DAC mode
+                //flag
+                deferredWriteOPNA_P1(comPort, 0x10, 0x1B);   //ENA FLAG EOS
+                deferredWriteOPNA_P1(comPort, 0x10, 0x80);   //RESET FLAGS
+                deferredWriteOPNA_P1(comPort, 0x06, 0xF4);   //16KHz
+                deferredWriteOPNA_P1(comPort, 0x07, 0x01);   //16KHz
+                deferredWriteOPNA_P1(comPort, 0x01, 0xCC);   //Sart
+                deferredWriteOPNA_P1(comPort, 0x0B, 0xff);   // Volume 
+
+                //*/
+            }
+        }
+
+        private void playAdpcmDataYM2608(uint saddr, uint eaddr, bool loop)
+        {
+            YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x1B, false); //CLEAR FLAGS
+            YM2608WriteData(UnitNumber, 0x10, 0, 3, 0x80, false); //IRQ RESET
+
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, 0x20, false); //ACCESS TO MEM
+
+            //pcm start
+            YM2608WriteData(UnitNumber, 0x02, 0, 3, (byte)((saddr >> 5) & 0xff), false);
+            YM2608WriteData(UnitNumber, 0x03, 0, 3, (byte)((saddr >> (5 + 8) & 0xff)), false);
+            //pcm end
+            YM2608WriteData(UnitNumber, 0x04, 0, 3, (byte)((eaddr >> 5) & 0xff), false);
+            YM2608WriteData(UnitNumber, 0x05, 0, 3, (byte)((eaddr >> (5 + 8)) & 0xff), false);
+            //limit
+            YM2608WriteData(UnitNumber, 0x0C, 0, 3, (byte)(0xff), false);
+            YM2608WriteData(UnitNumber, 0x0D, 0, 3, (byte)(0xff), false);
+
+            //KeyOn
+            YM2608WriteData(UnitNumber, 0x00, 0, 3, (byte)(0x80 | 0x20 | (loop ? (byte)0x10 : (byte)0x00)), false);   //PLAY, ACCESS TO MEM, LOOP
+        }
+
+        private PcmEngine pcmEngine;
+
+        private const int MAX_DAC_VOICES = 8;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class PcmEngine : IDisposable
+        {
+            private YM2608Sound sound;
+
+            private object engineLockObject;
+
+            private bool stopEngineFlag;
+
+            private bool disposedValue;
+
+
+            private YM2608 parentModule;
+
+            private uint unitNumber;
+
+            private SampleData[] currentSampleData;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public PcmEngine(YM2608 parentModule)
+            {
+                this.parentModule = parentModule;
+                unitNumber = parentModule.UnitNumber;
+                engineLockObject = new object();
+                stopEngineFlag = true;
+                currentSampleData = new SampleData[YM2608.MAX_DAC_VOICES];
+            }
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StartEngine()
+            {
+                if (stopEngineFlag)
+                {
+                    stopEngineFlag = false;
+                    Thread t = new Thread(processDac);
+                    t.Priority = ThreadPriority.AboveNormal;
+                    t.Start();
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public void StopEngine()
+            {
+                stopEngineFlag = true;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Play(YM2608Sound sound, TaggedNoteOnEvent note, int slot, YM2608Timbre pcmTimbre, double freq, double volume)
+            {
+                this.sound = sound;
+                lock (engineLockObject)
+                {
+                    /*
+                    int nn = (int)NoteNames.C3;
+                    double noteNum = Math.Pow(2.0, ((double)nn - 69.0) / 12.0);
+                    double basefreq = 440.0 * noteNum;
+                    */
+                    double basefreq = ((YM2608Timbre)sound.Timbre).DAC.BaseFreqency;
+
+                    var sd = new SampleData(sound, note, pcmTimbre.DAC.PcmData, pcmTimbre.DAC.SampleRate, false, basefreq);
+                    sd.Gain = pcmTimbre.DAC.PcmGain;
+                    sd.Pitch = freq / basefreq;
+                    sd.Volume = volume;
+                    sd.LoopEnabled = pcmTimbre.DAC.LoopEnabled;
+                    sd.LoopPoint = pcmTimbre.DAC.LoopPoint;
+                    currentSampleData[slot] = sd;
+
+                    //var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 1, Tag = new Dictionary<string, object>() };
+                    //data.Tag["PcmData"] = pcmTimbre.DAC.PcmData;
+                    //data.Tag["PcmGain"] = pcmTimbre.DAC.PcmGain;
+                    //parentModule.XgmWriter?.RecordData(data);
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Pitch(int slot, double freq)
+            {
+                lock (engineLockObject)
+                {
+                    if (currentSampleData[slot] != null)
+                        currentSampleData[slot].Pitch = freq / currentSampleData[slot].BaseFreq;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Volume(int slot, double volume)
+            {
+                lock (engineLockObject)
+                {
+                    if (currentSampleData[slot] != null)
+                        currentSampleData[slot].Volume = volume;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void Stop(int slot)
+            {
+                lock (engineLockObject)
+                {
+                    currentSampleData[slot] = null;
+
+                    //parentModule.XgmWriter?.RecordData(new PortWriteData()
+                    //{ Type = (byte)6, Address = (byte)slot, Data = 0 });
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="pcmData"></param>
+            public void StopAll()
+            {
+                lock (engineLockObject)
+                {
+                    for (int i = 0; i < currentSampleData.Length; i++)
+                        currentSampleData[i] = null;
+                }
+            }
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool QueryPerformanceFrequency(out long frequency);
+
+            /// <summary>
+            /// 
+            /// </summary>
+            private void processDac()
+            {
+                int overflowed = 0;
+
+                long freq, before, after;
+                double dbefore;
+                QueryPerformanceFrequency(out freq);
+                QueryPerformanceCounter(out before);
+                dbefore = before;
+                while (!stopEngineFlag)
+                {
+                    if (disposedValue)
+                        break;
+
+                    int dacData = 0;
+                    bool playDac = false;
+                    uint sampleRate = 15600;
+
+                    {
+                        lock (engineLockObject)
+                        {
+                            foreach (var sd in currentSampleData)
+                            {
+                                if (sd == null)
+                                    continue;
+
+                                var d = sd.PeekDacData();
+                                if (d == null)
+                                    continue;
+
+                                sampleRate = Math.Max(sampleRate, sd.SampleRate);
+                            }
+
+                            foreach (var sd in currentSampleData)
+                            {
+                                if (sd == null)
+                                    continue;
+
+                                var d = sd.GetDacData(sampleRate);
+                                if (d == null)
+                                    continue;
+
+                                int val = ((int)d.Value - 0x80);
+                                if (sd.Gain != 1.0f)
+                                    val = (int)Math.Round(val * sd.Gain);
+                                if (!sd.DisableVelocity)
+                                    val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
+                                if (sd.Volume != 1.0f)
+                                    val = (int)Math.Round(val * sd.Volume);
+                                dacData += val;
+
+                                playDac = true;
+                            }
+                        }
+
+                        if (playDac || overflowed != 0)
+                        {
+                            //dacData += overflowed;
+                            overflowed = 0;
+                            if (dacData > sbyte.MaxValue)
+                            {
+                                //overflowed = dacData - sbyte.MaxValue;
+                                dacData = sbyte.MaxValue;
+                            }
+                            else if (dacData < sbyte.MinValue)
+                            {
+                                //overflowed = dacData - sbyte.MinValue;
+                                dacData = sbyte.MinValue;
+                            }
+                            parentModule.YM2608WriteData(unitNumber, 0x0b, 0, 3, (byte)(dacData + 0x80), false, false);
+                        }
+                    }
+
+                    QueryPerformanceCounter(out after);
+                    double nextTime = dbefore + ((double)freq / (double)sampleRate);
+                    while (after < nextTime)
+                        QueryPerformanceCounter(out after);
+                    dbefore = nextTime;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="disposing"></param>
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                        stopEngineFlag = true;
+                    }
+
+                    // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                    // TODO: 大きなフィールドを null に設定します
+                    disposedValue = true;
+                }
+            }
+
+            // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+            // ~PcmEngine()
+            // {
+            //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            //     Dispose(disposing: false);
+            // }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class SampleData
+        {
+            private YM2608Sound sound;
+
+            public byte[] PcmData
+            {
+                get;
+                private set;
+            }
+
+            public uint SampleRate
+            {
+                get;
+                private set;
+            }
+
+            public TaggedNoteOnEvent Note
+            {
+                get;
+                private set;
+            }
+
+            public bool DisableVelocity
+            {
+                get;
+                private set;
+            }
+
+            public float Gain
+            {
+                get;
+                set;
+            }
+
+            public double Volume
+            {
+                get;
+                set;
+            }
+
+            public double BaseFreq
+            {
+                get;
+                set;
+            }
+
+            public double Pitch
+            {
+                get;
+                set;
+            }
+
+            public bool LoopEnabled
+            {
+                get;
+                set;
+            }
+
+            public uint LoopPoint
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="adress"></param>
+            /// <param name="size"></param>
+            public SampleData(YM2608Sound sound, TaggedNoteOnEvent note, byte[] pcmData, uint sampleRate, bool disableVelocity, double baseFreq)
+            {
+                this.sound = sound;
+                Note = note;
+                PcmData = (byte[])pcmData.Clone();
+                SampleRate = sampleRate;
+                DisableVelocity = disableVelocity;
+                BaseFreq = baseFreq;
+                Gain = 1;
+                Volume = 1;
+                Pitch = 1;
+                LoopEnabled = false;
+                LoopPoint = 0;
+            }
+
+            private double index;
+
+            public void Restart()
+            {
+                index = 0;
+            }
+
+            public byte? PeekDacData()
+            {
+                uint idx = (uint)Math.Round(index);
+                if (idx >= PcmData.Length)
+                {
+                    if (LoopEnabled && LoopPoint < PcmData.Length)
+                    {
+                        idx = LoopPoint;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                return PcmData[idx];
+            }
+
+            public byte? GetDacData(uint sampleRate)
+            {
+                uint idx = (uint)Math.Round(index);
+                if (idx >= PcmData.Length)
+                {
+                    if (LoopEnabled && LoopPoint < PcmData.Length)
+                    {
+                        index = LoopPoint;
+                        idx = LoopPoint;
+                    }
+                    else
+                    {
+                        sound.TrySoundOff();
+                        return null;
+                    }
+                }
+
+                if (idx >= PcmData.Length - 1)
+                {
+                    index += (Pitch * (double)sampleRate) / (double)SampleRate;
+                    return PcmData[idx];
+                }
+
+                var ret = (lerp(PcmData[idx], PcmData[idx + 1], index - idx)) + 128;
+                index += (Pitch * (double)sampleRate) / (double)SampleRate;
+                return (byte)Math.Round(ret);
+            }
+
+            static double lerp(double y0, double y1, double x)
+            {
+                y0 -= 128;
+                y1 -= 128;
+                return y0 + (y1 - y0) * x;
+            }
+        }
+
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608DacSettings>))]
+        [TypeConverter(typeof(CustomExpandableObjectConverter))]
+        [DataContract]
+        [InstLock]
+        public class YM2608DacSettings : ContextBoundObject
+        {
+
+            private byte[] f_PcmData = new byte[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM data. Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
+            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 0)]
+            public byte[] PcmData
+            {
+                get
+                {
+                    return f_PcmData;
+                }
+                set
+                {
+                    f_PcmData = value;
+                }
+            }
+
+            public bool ShouldSerializePcmData()
+            {
+                return PcmData.Length != 0;
+            }
+
+            public void ResetPcmData()
+            {
+                PcmData = new byte[0];
+            }
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set PCM base frequency [Hz]")]
+            [DefaultValue(typeof(double), "440")]
+            [DoubleSlideParametersAttribute(100, 2000, 1)]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public double BaseFreqency
+            {
+                get;
+                set;
+            } = 440;
+
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM sample rate [Hz].")]
+            [DefaultValue(typeof(uint), "15600")]
+            [SlideParametersAttribute(3900, 15600)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint SampleRate
+            {
+                get;
+                set;
+            } = 15600;
+
+            private float f_PcmGain = 1.0f;
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set DAC PCM gain(0.0-*).")]
+            [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
+            [DoubleSlideParameters(0d, 10d, 0.1d)]
+            public float PcmGain
+            {
+                get
+                {
+                    return f_PcmGain;
+                }
+                set
+                {
+                    if (f_PcmGain != value)
+                    {
+                        f_PcmGain = value;
+                    }
+                }
+            }
+
+            public virtual bool ShouldSerializePcmGain()
+            {
+                return f_PcmGain != 1.0f;
+            }
+
+            public virtual void ResetGainPcmGain()
+            {
+                f_PcmGain = 1.0f;
+            }
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Set loop point")]
+            [DefaultValue(typeof(uint), "0")]
+            [SlideParametersAttribute(0, 65535)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            public uint LoopPoint
+            {
+                get;
+                set;
+            }
+
+            private bool f_LoopEnabled;
+
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("Loop point enable")]
+            [SlideParametersAttribute(0, 1)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue(false)]
+            public bool LoopEnabled
+            {
+                get
+                {
+                    return f_LoopEnabled;
+                }
+                set
+                {
+                    f_LoopEnabled = value;
+                }
+            }
+
         }
     }
 }
