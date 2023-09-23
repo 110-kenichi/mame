@@ -211,6 +211,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             f_CurrentSoundEngineType = SoundEngineType.Software;
                             SetDevicePassThru(false);
                         }
+                        MasterClock = (int)MasterClockType.Default;
                         break;
                     case SoundEngineType.VSIF_MSX_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
@@ -235,6 +236,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             f_CurrentSoundEngineType = SoundEngineType.Software;
                             SetDevicePassThru(false);
                         }
+                        MasterClock = (int)MasterClockType.Default;
                         break;
                     case SoundEngineType.VSIF_P6_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.P6_FTDI, PortId, false);
@@ -259,6 +261,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             f_CurrentSoundEngineType = SoundEngineType.Software;
                             SetDevicePassThru(false);
                         }
+                        MasterClock = (int)MasterClockType.Default;
                         break;
                     case SoundEngineType.VSIF_PC88_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.PC88_FTDI, PortId, false);
@@ -283,6 +286,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             f_CurrentSoundEngineType = SoundEngineType.Software;
                             SetDevicePassThru(false);
                         }
+                        MasterClock = (int)MasterClockType.NEC;
                         break;
                     case SoundEngineType.GIMIC:
                         gimicPtr = GimicManager.GetModuleIndex(GimicManager.ChipType.CHIP_OPNA);
@@ -308,6 +312,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 SetDevicePassThru(false);
                             }
                         }
+                        MasterClock = (int)MasterClockType.Default;
                         break;
                 }
             }

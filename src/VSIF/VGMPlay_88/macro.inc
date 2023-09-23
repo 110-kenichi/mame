@@ -422,7 +422,7 @@ L1:
     endm
 ;=======================================================
 
-    macro __WRITE_OPNA_DAC
+    macro __WRITE_OPNA_PSEUDO_DAC
     LOCAL L0,L1
 ;__WRITE_OPNA_DAC:
 L0:
@@ -456,7 +456,7 @@ L1:
     JP  (HL)            ;  5  ; Jump to other ID
     endm
 
-    macro __WRITE_SB2_DAC
+    macro __WRITE_SB2_PSEUDO_DAC
     LOCAL L0,L1
 ;__WRITE_SB2_DAC:
 L0:
@@ -464,6 +464,76 @@ L0:
     READ_DATA          ; 89
 
     LD  A,$0B           ; 
+    OUT (SB2AD2),A     ; 
+    LD  A,D            ; 
+    OUT (SB2WR2),A     ; 37+89=126
+
+    ; Continuous Write (Do not increment)
+    ;INC B               ; 
+    ;=======================
+    LD  A,E             ;  5
+    OUT (OPNAAD1),A     ; 12
+L1:
+    IN  A,(OPNAWR1)     ; 12
+    AND $02             ;  8
+    JP  Z,L1            ; 11
+    LD  A,C             ;  5
+    OUT (OPNAAD1),A     ; 12
+    IN  A,(OPNAWR1)     ; 12
+    AND	E               ;  5
+    CP  E               ;  5
+    JP  Z,L0            ; 11  ; Continuous Write
+
+    OR  JPOFST          ;  8
+    LD  H,A             ;  5
+    LD  L,0             ;  8
+    JP  (HL)            ;  5  ; Jump to other ID
+    endm
+
+;=======================================================
+
+    macro __WRITE_OPNA_DAC
+    LOCAL L0,L1
+;__WRITE_OPNA_DAC:
+L0:
+;=======================
+    READ_DATA           ; 89
+
+    LD  A,$0E            ; 
+    OUT (OPNAAD2),A     ; 
+    LD  A,D             ; 
+    OUT (OPNAWR2),A     ; 37+89=126
+
+    ; Continuous Write (Do not increment)
+    ;INC B               ; 
+    ;=======================
+    LD  A,E             ;  5
+    OUT (OPNAAD1),A     ; 12
+L1:
+    IN  A,(OPNAWR1)     ; 12
+    AND $02             ;  8
+    JP  Z,L1            ; 11
+    LD  A,C             ;  5
+    OUT (OPNAAD1),A     ; 12
+    IN  A,(OPNAWR1)     ; 12
+    AND	E               ;  5
+    CP  E               ;  5
+    JP  Z,L0            ; 11  ; Continuous Write
+
+    OR  JPOFST          ;  8
+    LD  H,A             ;  5
+    LD  L,0             ;  8
+    JP  (HL)            ;  5  ; Jump to other ID
+    endm
+
+    macro __WRITE_SB2_DAC
+    LOCAL L0,L1
+;__WRITE_SB2_DAC:
+L0:
+;=======================
+    READ_DATA          ; 89
+
+    LD  A,$0E           ; 
     OUT (SB2AD2),A     ; 
     LD  A,D            ; 
     OUT (SB2WR2),A     ; 37+89=126

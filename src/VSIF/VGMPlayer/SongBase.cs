@@ -964,6 +964,16 @@ namespace zanac.VGMPlayer
                     else
                         comPortOPNA.DeferredWriteData(3, (byte)adrs, (byte)dt, 0);
                     break;
+                case VsifSoundModuleType.PC88_FTDI:
+                    if (0x10 <= adrs && adrs <= 0x1f)
+                    {
+                        comPortOPNA.DeferredWriteData(0x02, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    }
+                    else
+                    {
+                        comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    }
+                    break;
             }
         }
 
@@ -1041,6 +1051,16 @@ namespace zanac.VGMPlayer
                     else
                         comPortOPNA.DeferredWriteData(4, (byte)adrs, (byte)dt, 0);
                     break;
+                case VsifSoundModuleType.PC88_FTDI:
+                    if (adrs == 0x08)
+                        comPortOPNA.DeferredWriteData(0x04, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    else if (adrs == 0x0b)
+                        comPortOPNA.DeferredWriteData(0x03, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    else if (adrs == 0x0e)
+                        comPortOPNA.DeferredWriteData(0x05, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    else
+                        comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
             }
         }
 
@@ -1113,6 +1133,10 @@ namespace zanac.VGMPlayer
                     else
                         comPortOPNA.DeferredWriteData(4, 0x0b, (byte)inputValue, 0);
                     break;
+                case VsifSoundModuleType.PC88_FTDI:
+                    //Set volume for pseudo DAC
+                    comPortOPNA.DeferredWriteData(0x03, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    break;
             }
         }
 
@@ -1140,6 +1164,10 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.Gimic:
                     if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
                         comPortOPNA.DeferredWriteData(1, 0x0e, (byte)inputValue, 0);
+                    break;
+                case VsifSoundModuleType.PC88_FTDI:
+                    deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)inputValue);
+                    //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
             }
         }

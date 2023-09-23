@@ -220,7 +220,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 {
                                     ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
                                     ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
-                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_88);
                                     ftdi.SetTimeouts(500, 500);
                                     ftdi.SetLatency(0);
 

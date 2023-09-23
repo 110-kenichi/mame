@@ -56,8 +56,9 @@ namespace zanac.MAmidiMEmo.VSIF
                 {
                     default:
                         {
-                            if ((dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA DAC write
-                                dt.Type == 0x4 || dt.Type == 0xc)     //OPNA ADPCM data write
+                            if ((dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA Pseudo DAC write
+                                dt.Type == 0x4 || dt.Type == 0xc ||     //OPNA ADPCM data write
+                                dt.Type == 0x5 || dt.Type == 0xd)     //OPNA DAC  write
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
                             {
                                 byte[] sd = new byte[] {
@@ -93,8 +94,9 @@ namespace zanac.MAmidiMEmo.VSIF
                             }
                             else
                             {
-                                if (dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA DAC write
-                                    dt.Type == 0x4 || dt.Type == 0xc)    //OPNA ADPCM data write
+                                if (dt.Type == 0x3 || dt.Type == 0xb ||  //OPNA Pseudo DAC write
+                                    dt.Type == 0x4 || dt.Type == 0xc ||    //OPNA ADPCM data write
+                                    dt.Type == 0x5 || dt.Type == 0xd)    //OPNA DAC write
                                 {
                                     byte[] sd = new byte[] {
                                         (byte)(dt.Type           | 0x20),
