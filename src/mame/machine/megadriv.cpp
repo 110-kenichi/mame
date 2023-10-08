@@ -1100,7 +1100,7 @@ void md_base_state::md_ntsc(machine_config &config)
 		(*m_ymfm_opq[i])->add_route(0, "lspeaker", 2.00);
 		(*m_ymfm_opq[i])->add_route(1, "rspeaker", 2.00);
 
-		MULTIPCM(config, *m_multipcm[i], 32215900/4);
+		MULTIPCM(config, *m_multipcm[i], 9878400);
 		(*m_multipcm[i])->add_route(0, "lspeaker", 2.00);
 		(*m_multipcm[i])->add_route(1, "rspeaker", 2.00);
 	}

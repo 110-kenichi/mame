@@ -1,4 +1,4 @@
-MAmidiMEmo 5.0.0.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.0.0.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.0.0.1 Fixed frequency and master clock for SEGA MultiPCM.
 5.0.0.0 Supported SEGA MultiPCM.
 4.9.10.1 Updated VGMPlayer(only) to support PC-8801 OPNA/OPN
 4.9.10.0 Added DAC PCM mode for OPNA. Just a bonus feature :-)
