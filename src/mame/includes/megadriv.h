@@ -37,6 +37,7 @@
 #include "sound/samples.h"
 #include "sound/sn76477.h"
 #include "sound/upd1771.h"
+#include "sound/multipcm.h"
 #include "sound/ymfm/src/ymfm_opz.h"
 #include "sound/ymfm/src/ymfm_opn.h"
 #include "sound/ymfm/src/ymfm_opl.h"
@@ -215,6 +216,10 @@ public:
 			strcpy(device_names[didx][i], (std::string("ymfm_opq_") + num).c_str());
 			m_ymfm_opq[i] = new optional_device<ymfm_opq_device>(*this, device_names[didx][i]);
 			didx++;
+			//m_multipcm
+			strcpy(device_names[didx][i], (std::string("multipcm_") + num).c_str());
+			m_multipcm[i] = new optional_device<multipcm_device>(*this, device_names[didx][i]);
+			didx++;
 		}
 	}
 
@@ -249,6 +254,7 @@ public:
 	optional_device<upd1771c_device>* m_upd1771[8];	//28
 	optional_device<ymfm_opz_device>* m_ymfm_opz[8];	//29
 	optional_device<ymfm_opq_device>* m_ymfm_opq[8];	//30
+	optional_device<multipcm_device>* m_multipcm[8];	//31
 
 	required_device<m68000_base_device> m_maincpu;
 	/*

@@ -218,6 +218,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\gew.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\multipcm.h" />
+    <ClInclude Include="..\..\..\..\..\src\devices\sound\segapcm.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\sound\upd1771.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\bus\generic\carts.h" />
     <ClInclude Include="..\..\..\..\..\src\devices\bus\generic\rom.h" />
@@ -356,14 +359,17 @@
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fm2612.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\fmopl.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\gb.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\gew.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\k051649.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\mos6581.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\msm5232.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\mt32.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\multipcm.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\namco.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\nes_apu.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\pokey.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\samples.cpp" />
+    <ClCompile Include="..\..\..\..\..\src\devices\sound\segapcm.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sid.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sidenvel.cpp" />
     <ClCompile Include="..\..\..\..\..\src\devices\sound\sidvoice.cpp" />

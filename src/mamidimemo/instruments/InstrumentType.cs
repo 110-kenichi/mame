@@ -42,5 +42,6 @@ namespace zanac.MAmidiMEmo.Instruments
         uPD1771C,    //28
         YM2414,     //29
         YM3806,     //30
+        MultiPCM,     //31
     }
 }

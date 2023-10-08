@@ -38,6 +38,7 @@
 #include "..\devices\sound\samples.h"
 #include "..\devices\sound\sn76477.h"
 #include "..\devices\sound\upd1771.h"
+#include "..\devices\sound\multipcm.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
@@ -2093,4 +2094,48 @@ extern "C"
 		ymfm_opq_devices[unitNumber]->write(address, data);
 	}
 
+
+	multipcm_device* multipcm_device_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void multipcm_device_reg_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (multipcm_device_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			multipcm_device* multipcm = dynamic_cast<multipcm_device*>(rm->device((std::string("multipcm_") + num).c_str()));
+			if (multipcm == nullptr)
+				return;
+
+			multipcm_device_devices[unitNumber] = multipcm;
+		}
+		multipcm_device_devices[unitNumber]->write(address, data);
+	}
+
+	DllExport void multipcm_device_mem_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (multipcm_device_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			multipcm_device* multipcm = dynamic_cast<multipcm_device*>(rm->device((std::string("multipcm_") + num).c_str()));
+			if (multipcm == nullptr)
+				return;
+
+			multipcm_device_devices[unitNumber] = multipcm;
+		}
+		multipcm_device_devices[unitNumber]->write_byte(address, data);
+	}
 }

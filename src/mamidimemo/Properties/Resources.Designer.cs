@@ -650,6 +650,16 @@ namespace zanac.MAmidiMEmo.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap MultiPCM {
+            get {
+                object obj = ResourceManager.GetObject("MultiPCM", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap NAMCO_CUS30 {
             get {
                 object obj = ResourceManager.GetObject("NAMCO_CUS30", resourceCulture);

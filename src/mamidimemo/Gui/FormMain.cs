@@ -270,6 +270,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("YM2414", Resources.YM2414);
             imageList1.Images.Add("YM3806", Resources.YM3806);
             imageList1.Images.Add("MIDITHRU", Resources.MIDITHRU);
+            imageList1.Images.Add("MultiPCM", Resources.MultiPCM);
 
             if (Program.IsVSTiMode())
             {
@@ -849,6 +850,12 @@ namespace zanac.MAmidiMEmo.Gui
         private void yM3806OPQToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.YM3806);
+        }
+
+
+        private void multiPCMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.MultiPCM);
         }
 
         /// <summary>
@@ -2761,7 +2768,6 @@ namespace zanac.MAmidiMEmo.Gui
                 propertyGrid.Refresh();
             timer1.Stop();
         }
-
 
     }
 }
