@@ -93,7 +93,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
-        [Browsable(false)]
         public uint MasterClock
         {
             get
@@ -399,7 +398,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 tim.PcmAddressStart = 0;
                 tim.PcmAddressEnd = 0;
-                if (tim.PcmData.Length != 0)
+                if (tim.PcmData12.Length != 0)
+                {
+                    int tlen = tim.PcmData12.Length;
+                    if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
+                    {
+                        tim.PcmAddressStart = nextStartAddress;
+                        tim.PcmAddressEnd = (uint)(0xffff - tlen);
+
+                        //Write PCM data
+                        pcmData.AddRange(tim.PcmData);
+
+                        nextStartAddress = (uint)(nextStartAddress + tlen);
+                    }
+                    else
+                    {
+                        MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
+                        break;
+                    }
+                }
+                else if (tim.PcmData.Length != 0)
                 {
                     int tlen = tim.PcmData.Length;
                     if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
@@ -730,7 +748,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     uint adrs = (uint)(timbreIndex * 12);
                     //start address
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)((timbre.PcmAddressStart >> 16) & 0xff));
+                    if(timbre.PcmData12.Length != 0)
+                        //12bit linear
+                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x04));
+                    else
+                        //8bit linear
+                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)((timbre.PcmAddressStart >> 16) & 0xff));
                     parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 1, (byte)((timbre.PcmAddressStart >> 8) & 0xff));
                     parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 2, (byte)((timbre.PcmAddressStart) & 0xff));
                     //loop address
@@ -795,7 +818,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public override void OnPitchUpdated()
             {
                 var cfreq = CalcCurrentFrequency() * timbre.SampleRate / 44100d;
-                cfreq *= 39513600d / parentModule.MasterClock;
+                //No need for PCM chip
+                //cfreq *= 39513600d / parentModule.MasterClock;
 
                 int fn = 0;
                 int oct = 1;
@@ -941,6 +965,40 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             public void ResePcmData()
             {
                 PcmData = new byte[0];
+            }
+
+            private byte[] f_PcmData12 = new byte[0];
+
+            [TypeConverter(typeof(LoadDataTypeConverter))]
+            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DataMember]
+            [Category("Sound")]
+            [Description("12bit PCM Raw Data. (MAX 64K samples)")]
+            [PcmFileLoaderEditor("Audio File(*.raw)|*.raw", 0, 0, 0, 65535)]
+            public byte[] PcmData12
+            {
+                get
+                {
+                    return f_PcmData12;
+                }
+                set
+                {
+                    f_PcmData12 = value;
+
+                    var inst = (MultiPCM)this.Instrument;
+                    if (inst != null)
+                        inst.updatePcmData(this);
+                }
+            }
+
+            public bool ShouldSerializePcmData12()
+            {
+                return PcmData12.Length != 0;
+            }
+
+            public void ResetPcmData12()
+            {
+                f_PcmData12 = new byte[0];
             }
 
             [DataMember]
