@@ -1575,7 +1575,7 @@ namespace zanac.MAmidiMEmo.Gui
                 toolStripButton21.Checked = false;
 
             midiPlayback.Stop();
-            InstrumentManager.Panic();
+            InstrumentManager.Stop();
             midiPlayback.MoveToStart();
             if (this.labelStat.Image != null)
                 this.labelStat.Image.Dispose();

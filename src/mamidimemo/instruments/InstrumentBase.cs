@@ -2974,6 +2974,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
         abstract internal void AllSoundOff();
 
+        abstract internal void ResetAll();
+
         protected virtual void OnNrpnDataEntered(ControlChangeEvent dataMsb, ControlChangeEvent dataLsb)
         {
             if (dataMsb != null)

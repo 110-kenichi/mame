@@ -630,6 +630,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             soundManager.ProcessAllSoundOff();
         }
 
+        internal override void ResetAll()
+        {
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
         /// <summary>
         /// 
         /// </summary>

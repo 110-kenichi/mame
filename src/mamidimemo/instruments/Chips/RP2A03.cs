@@ -138,15 +138,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private void setSoundEngine(SoundEngineType value)
         {
-            try
-            {
-                ignoreUpdatePcmData = true;
-                AllSoundOff();
-            }
-            finally
-            {
-                ignoreUpdatePcmData = false;
-            }
+            AllSoundOff();
 
             lock (sndEnginePtrLock)
             {
@@ -205,9 +197,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-            ignoreUpdatePcmData = true;
             ClearWrittenDataCache();
-            ignoreUpdatePcmData = false;
             PrepareSound();
         }
 
@@ -960,7 +950,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
 
-            if (!IsDisposing && !ignoreUpdatePcmData)
+            if (!IsDisposing)
                 updateDpcmData();
 
             if (SoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
@@ -1041,20 +1031,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager?.ProcessAllSoundOff();
-            ClearWrittenDataCache();
         }
 
-        private bool ignoreUpdatePcmData;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void ClearWrittenDataCache()
+        internal override void ResetAll()
         {
-            base.ClearWrittenDataCache();
-
-            if (!IsDisposing && !ignoreUpdatePcmData)
-                updateDpcmData();
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         /// <summary>

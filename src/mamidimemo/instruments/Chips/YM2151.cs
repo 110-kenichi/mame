@@ -932,7 +932,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
+        }
+
+        internal override void ResetAll()
+        {
             ClearWrittenDataCache();
+            PrepareSound();
         }
 
         /// <summary>
@@ -943,8 +948,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             base.ClearWrittenDataCache();
 
             enableOpm(f_extOPMSlot, false);
-
-            initGlobalRegisters();
         }
 
         /// <summary>

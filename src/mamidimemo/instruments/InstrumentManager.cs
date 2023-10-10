@@ -1007,7 +1007,6 @@ namespace zanac.MAmidiMEmo.Instruments
                                                     //GM RESET
                                                     case 0x01:
                                                         {
-                                                            Panic();
                                                             Reset();
                                                             break;
                                                         }
@@ -1042,7 +1041,6 @@ namespace zanac.MAmidiMEmo.Instruments
                                                             //GS RESET
                                                             if (data[4] == 0x40 && data[5] == 0x00 && data[6] == 0x7f)
                                                             {
-                                                                Panic();
                                                                 Reset();
                                                             }
                                                             break;
@@ -1243,6 +1241,28 @@ namespace zanac.MAmidiMEmo.Instruments
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void Stop()
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                //All Note Off
+                var me = new ControlChangeEvent((SevenBitNumber)123, (SevenBitNumber)0);
+                me.Channel = (FourBitNumber)i;
+                MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+
+                //All Sounds Off
+                me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
+                me.Channel = (FourBitNumber)i;
+                MidiManager.SendMidiEvent(MidiPort.PortAB, me);
+            }
+            foreach (var inst in InstrumentManager.GetAllInstruments())
+                inst.AllSoundOff();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1261,7 +1281,10 @@ namespace zanac.MAmidiMEmo.Instruments
                 MidiManager.SendMidiEvent(MidiPort.PortAB, me);
             }
             foreach (var inst in InstrumentManager.GetAllInstruments())
+            {
                 inst.AllSoundOff();
+                inst.ResetAll();
+            }
         }
 
 
@@ -1272,6 +1295,8 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             foreach (var inst in InstrumentManager.GetAllInstruments())
             {
+                inst.AllSoundOff();
+
                 for (int i = 0; i < 16; i++)
                 {
                     inst.Pitchs[i] = 8192;

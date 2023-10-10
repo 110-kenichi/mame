@@ -123,15 +123,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="value"></param>
         private void setSoundEngine(SoundEngineType value)
         {
-            try
-            {
-                ignoreUpdatePcmData = true;
-                AllSoundOff();
-            }
-            finally
-            {
-                ignoreUpdatePcmData = false;
-            }
+            AllSoundOff();
 
             lock (sndEnginePtrLock)
             {
@@ -1071,8 +1063,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             initGlobalRegisters();
         }
 
-        private bool ignoreUpdatePcmData;
-
         private void initGlobalRegisters()
         {
             SPC700RegWriteData(UnitNumber, 0xc, f_LMVOL);
@@ -1099,7 +1089,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             lock (sndEnginePtrLock)
                 lastTransferPcmData = new byte[] { };
 
-            if (!IsDisposing && !ignoreUpdatePcmData)
+            if (!IsDisposing)
                 updatePcmData(null);
         }
 
@@ -1335,15 +1325,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-            ClearWrittenDataCache();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void ClearWrittenDataCache()
+
+        internal override void ResetAll()
         {
-            base.ClearWrittenDataCache();
-            initGlobalRegisters();
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         /// <summary>

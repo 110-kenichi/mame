@@ -587,16 +587,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         internal override void AllSoundOff()
         {
             soundManager?.ProcessAllSoundOff();
-
-            ClearWrittenDataCache();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void ClearWrittenDataCache()
+
+        internal override void ResetAll()
         {
-            base.ClearWrittenDataCache();
-            initGlobalRegisters();
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         /// <summary>
@@ -748,7 +744,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     uint adrs = (uint)(timbreIndex * 12);
                     //start address
-                    if(timbre.PcmData12.Length != 0)
+                    if (timbre.PcmData12.Length != 0)
                         //12bit linear
                         parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x04));
                     else
@@ -826,15 +822,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (cfreq >= baseFreq)
                 {
                     var log = Math.Log(cfreq / baseFreq, 2);
-                    int f = (int)Math.Round(log * 1024d);
-                    fn = f & 1023;
+                    fn = (int)(1024d * (Math.Pow(2, (log % 1d)) - 1d));
                     oct = 1 + (int)Math.Floor(log);
                 }
                 else
                 {
                     var log = Math.Log(baseFreq / cfreq, 2);
-                    int f = (int)Math.Round(log * 1024d);
-                    fn = (1024 - (f % 1024)) & 1023;
+                    fn = (int)(1024d * (Math.Pow(2, 1d - (log % 1d)) - 1d));
                     oct = 1 - (int)Math.Ceiling(log);
                 }
                 if (oct < -7)

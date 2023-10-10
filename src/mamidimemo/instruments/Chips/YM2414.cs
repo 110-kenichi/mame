@@ -1261,16 +1261,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-            ClearWrittenDataCache();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void ClearWrittenDataCache()
+        internal override void ResetAll()
         {
-            base.ClearWrittenDataCache();
-            initGlobalRegisters();
+            ClearWrittenDataCache();
+            PrepareSound();
         }
 
         /// <summary>
