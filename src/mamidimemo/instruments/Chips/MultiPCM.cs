@@ -404,10 +404,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
                     {
                         tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(0xffff - tlen);
+                        tim.PcmAddressEnd = (uint)(0x10000 - tlen);
 
                         //Write PCM data
-                        pcmData.AddRange(tim.PcmData);
+                        pcmData.AddRange(tim.PcmData12);
 
                         nextStartAddress = (uint)(nextStartAddress + tlen);
                     }
@@ -423,7 +423,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
                     {
                         tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(0xffff - tlen);
+                        tim.PcmAddressEnd = (uint)(0x10000 - tlen);
 
                         //Write PCM data
                         pcmData.AddRange(tim.PcmData);
@@ -1375,7 +1375,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     var tim = new MultiPCMTimbre();
 
-                    double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                    double baseFreq = 440.0 * Math.Pow(2.0, (((double)s.OriginalKey - 69.0) / 12.0) + (double)(s.PitchCorrection / 100));
                     tim.BaseFreqency = baseFreq;
                     tim.SampleRate = s.SampleRate;
 

@@ -2902,7 +2902,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var tim = new SPC700Timbre();
                     uint brrLoopStart;
 
-                    double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+                    double baseFreq = 440.0 * Math.Pow(2.0, (((double)s.OriginalKey - 69.0) / 12.0) + (double)(s.PitchCorrection / 100));
                     tim.SampleRate = s.SampleRate;
 
                     uint start = 0;

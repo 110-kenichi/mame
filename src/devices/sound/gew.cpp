@@ -605,14 +605,24 @@ void gew_pcm_device::sound_stream_update(sound_stream& stream, stream_sample_t**
 				}
 
 				slot.m_offset += step;
+				//HACK: mamidimemo
+				/*
 				if (slot.m_offset >= (slot.m_sample.m_end << TL_SHIFT))
 				{
 					slot.m_offset -= (slot.m_sample.m_end - slot.m_sample.m_loop) << TL_SHIFT;
 
-					//HACK: mamidimemo
-					if (slot.m_offset >= (slot.m_sample.m_end << TL_SHIFT))
-						slot.m_offset = (slot.m_sample.m_end << TL_SHIFT);
-
+					// DD-9 expects the looped silence at the end of some samples to be the same whether reversed or not
+					slot.m_reverse = false;
+				}
+				*/
+			LOOP:
+				if (slot.m_offset >= (slot.m_sample.m_end << TL_SHIFT))
+				{
+					if (slot.m_sample.m_end - slot.m_sample.m_loop - 1 > 0)
+						slot.m_offset -= (slot.m_sample.m_end - slot.m_sample.m_loop - 1) << TL_SHIFT;
+					else
+						slot.m_offset -= 1 << TL_SHIFT;
+					goto LOOP;
 					// DD-9 expects the looped silence at the end of some samples to be the same whether reversed or not
 					slot.m_reverse = false;
 				}

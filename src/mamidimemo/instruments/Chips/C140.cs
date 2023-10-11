@@ -1299,7 +1299,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     var tim = new C140Timbre();
 
-                    double baseFreq = 440.0 * Math.Pow(2.0, ((double)s.OriginalKey - 69.0) / 12.0);
+
+                    double baseFreq = 440.0 * Math.Pow(2.0, (((double)s.OriginalKey - 69.0) / 12.0) + (double)(s.PitchCorrection / 100));
                     tim.BaseFreqency = baseFreq;
                     tim.SampleRate = s.SampleRate;
 

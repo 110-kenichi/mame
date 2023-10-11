@@ -1,4 +1,4 @@
-MAmidiMEmo 5.0.0.3 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.0.0.4 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.0.0.4 Fixed LoopPoint calculation for SEGA MultiPCM.
+        Fixed BaseFreq when import SF2.
 5.0.0.3 (Again)Fixed frequency calculation for SEGA MultiPCM.
 5.0.0.2 Supported MasterClock and 12bit RAW PCM for SEGA MultiPCM.
 5.0.0.1 Fixed frequency and master clock for SEGA MultiPCM.
