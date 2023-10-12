@@ -369,7 +369,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void initGlobalRegisters()
         {
             lock (sndEnginePtrLock)
-                lastTransferPcmData = new byte[] { };
+                lastTransferPcmData = new sbyte[] { };
 
             if (!IsDisposing)
                 updatePcmData(null);
@@ -388,7 +388,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         private void updatePcmData(MultiPCMTimbre timbre)
         {
-            List<byte> pcmData = new List<byte>();
+            List<sbyte> pcmData = new List<sbyte>();
             uint nextStartAddress = (uint)0x2000;
             if (nextStartAddress == 0)
                 nextStartAddress += 4;
@@ -407,7 +407,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tim.PcmAddressEnd = (uint)(0x10000 - tlen);
 
                         //Write PCM data
-                        pcmData.AddRange(tim.PcmData12);
+                        for(int j = 0; j < tlen; j++)
+                           pcmData.Add((sbyte)tim.PcmData12[j]);
 
                         nextStartAddress = (uint)(nextStartAddress + tlen);
                     }
@@ -474,9 +475,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private byte[] lastTransferPcmData;
+        private sbyte[] lastTransferPcmData;
 
-        private void transferPcmOnlyDiffData(byte[] transferData, FormProgress fp)
+        private void transferPcmOnlyDiffData(sbyte[] transferData, FormProgress fp)
         {
             for (int i = 0; i < transferData.Length; i++)
             {
@@ -489,7 +490,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private void sendPcmData(byte[] transferData, int i, FormProgress fp)
+        private void sendPcmData(sbyte[] transferData, int i, FormProgress fp)
         {
             int endAddress = transferData.Length;
             if (endAddress > waveMemorySize)
@@ -505,7 +506,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             for (int adr = startAddress; adr < endAddress; adr++)
             {
-                MultiPCMMemWriteData(UnitNumber, (uint)(baseAddress + adr), transferData[adr]);
+                MultiPCMMemWriteData(UnitNumber, (uint)(baseAddress + adr), (byte)transferData[adr]);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -938,15 +939,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte[] f_pcmData = new byte[0];
+            private sbyte[] f_pcmData = new sbyte[0];
 
             [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("Signed 8bit Mono PCM Data (MAX 64kb)")]
+            [Description("Signed 8bit Mono Raw PCM Data/Unsigned 8bit Mono Wave Data (MAX 64kb)")]
             [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
-            public byte[] PcmData
+            public sbyte[] PcmData
             {
                 get
                 {
@@ -967,9 +968,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return PcmData.Length != 0;
             }
 
-            public void ResePcmData()
+            public void ResetPcmData()
             {
-                PcmData = new byte[0];
+                PcmData = new sbyte[0];
             }
 
             private byte[] f_PcmData12 = new byte[0];
@@ -978,7 +979,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("12bit PCM Raw Data. (MAX 64K samples)")]
+            [Description("12bit Raw PCM Data. (MAX 64K samples)")]
             [PcmFileLoaderEditor("Audio File(*.raw)|*.raw", 0, 0, 0, 65535)]
             public byte[] PcmData12
             {
@@ -1402,9 +1403,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (loopP > 65535)
                         loopP = 65535;
 
-                    byte[] samples = new byte[len];
+                    sbyte[] samples = new sbyte[len];
                     for (uint i = 0; i < len; i++)
-                        samples[i] = (byte)(spl[start + i] >> 8);
+                        samples[i] = (sbyte)(spl[start + i] >> 8);
 
                     tim.PcmData = samples;
                     tim.LoopPoint = (ushort)loopP;

@@ -66,6 +66,10 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     waveHeader.BlockSize = BitConverter.ToInt16(br.ReadBytes(2), 0);
                     waveHeader.BitPerSample = BitConverter.ToInt16(br.ReadBytes(2), 0);
 
+                    int skip = waveHeader.FormatChunkSize - 2 - 2 - 4 - 4 - 2 - 2;
+                    if(skip > 0)
+                        br.ReadBytes(skip);
+
                     readFmtChunk = true;
                 }
                 else if (chunk.ToLower().CompareTo("data") == 0)
@@ -80,6 +84,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     waveHeader.PlayTimeMsec = (int)(((double)waveHeader.DataChunkSize / (double)bytesPerSec) * 1000);
 
                     readDataChunk = true;
+                }
+                else if (chunk.ToLower().CompareTo("smpl") == 0)
+                {
+                    // 不要なチャンクの読み捨て
+                    Int32 size = BitConverter.ToInt32(br.ReadBytes(4), 0);
+                    if (0 < size)
+                        br.ReadBytes(size);
                 }
                 else
                 {

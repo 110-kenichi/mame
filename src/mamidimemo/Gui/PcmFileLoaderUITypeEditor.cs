@@ -114,6 +114,11 @@ namespace zanac.MAmidiMEmo.Gui
                                     TimbreBase tim = context.Instance as TimbreBase;
                                     if (tim != null)
                                         tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                    try
+                                    {
+                                        dynamic dyn = tim;
+                                        dyn.SampleRate = (uint)data.SampleRate;
+                                    } catch { }
                                     return rvalue;
                                 }
                             }
