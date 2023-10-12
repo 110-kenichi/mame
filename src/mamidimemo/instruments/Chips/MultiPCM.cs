@@ -731,7 +731,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnPanpotUpdated()
             {
-                OnVolumeUpdated();
+                uint adrs = (uint)(timbreIndex * 12);
+
+                int p = CalcCurrentPanpot() + 4;
+                int pan = (int)(p >> 3) - 8;
+                if (pan <= -8)
+                    pan = -7;
+                else if (pan >= 8)
+                    pan = 7;
+
+                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 0, (byte)((byte)pan << 4));
             }
 
             /// <summary>
@@ -747,9 +756,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (timbre.PcmData12.Length != 0)
                         //12bit linear
                         parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x04));
-                    else
+                    else if (timbre.PcmData.Length != 0)
                         //8bit linear
                         parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)((timbre.PcmAddressStart >> 16) & 0xff));
+                    else
+                        return;
                     parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 1, (byte)((timbre.PcmAddressStart >> 8) & 0xff));
                     parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 2, (byte)((timbre.PcmAddressStart) & 0xff));
                     //loop address
