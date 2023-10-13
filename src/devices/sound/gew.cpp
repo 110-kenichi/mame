@@ -595,6 +595,8 @@ void gew_pcm_device::sound_stream_update(sound_stream& stream, stream_sample_t**
 				{
 					csample = (int16_t)(read_byte(slot.m_sample.m_start + spos) << 8);
 				}
+
+				//HACK: mamidimemo
 				csample = csample >> 2;
 
 				int32_t sample = (csample * fpart + slot.m_prev_sample * ((1 << TL_SHIFT) - fpart)) >> TL_SHIFT;

@@ -404,11 +404,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
                     {
                         tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(0x10000 - tlen);
+                        tim.PcmAddressEnd = (uint)(0x10000 - ((tlen * 2) / 3));
 
                         //Write PCM data
-                        for(int j = 0; j < tlen; j++)
-                           pcmData.Add((sbyte)tim.PcmData12[j]);
+                        for (int j = 0; j < tlen; j++)
+                            pcmData.Add((sbyte)tim.PcmData12[j]);
 
                         nextStartAddress = (uint)(nextStartAddress + tlen);
                     }
@@ -756,7 +756,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     //start address
                     if (timbre.PcmData12.Length != 0)
                         //12bit linear
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x04));
+                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x40));
                     else if (timbre.PcmData.Length != 0)
                         //8bit linear
                         parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)((timbre.PcmAddressStart >> 16) & 0xff));
@@ -1403,19 +1403,51 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (loopP > 65535)
                         loopP = 65535;
 
-                    sbyte[] samples = new sbyte[len];
-                    for (uint i = 0; i < len; i++)
-                        samples[i] = (sbyte)(spl[start + i] >> 8);
-
-                    tim.PcmData = samples;
-                    tim.LoopPoint = (ushort)loopP;
-
-                    if (s.LoopStart == s.LoopEnd)
+                    if (((len * 3) + 1) / 2 < 65536)
                     {
-                        tim.D1R = 0xf;
-                        tim.DL = 0;
-                        tim.LoopPoint = (uint)(samples.Length - 1);
+                        byte[] samples = new byte[((len * 3) + 1) / 2];
+                        int idx = 0;
+                        for (uint i = 0; i < len; i++)
+                        {
+                            int data = (int)spl[start + i];
+
+                            if ((i & 1) == 0)
+                            {
+                                samples[idx++] = (byte)(data >> 8);
+                                samples[idx] = (byte)((data >> 4) & 0x0f);
+                            }
+                            else
+                            {
+                                samples[idx++] |= (byte)(data & 0xf0);
+                                samples[idx++] = (byte)(data >> 8);
+                            }
+                        }
+                        tim.PcmData12 = samples;
+
+                        tim.LoopPoint = loopP;
+                        if (s.LoopStart == s.LoopEnd)
+                        {
+                            tim.D1R = 0xf;
+                            tim.DL = 0;
+                            tim.LoopPoint = (uint)(samples.Length - 1);
+                        }
                     }
+                    else
+                    {
+                        sbyte[] samples = new sbyte[len];
+                        for (uint i = 0; i < len; i++)
+                            samples[i] = (sbyte)(spl[start + i] >> 8);
+                        tim.PcmData = samples;
+
+                        tim.LoopPoint = loopP;
+                        if (s.LoopStart == s.LoopEnd)
+                        {
+                            tim.D1R = 0xf;
+                            tim.DL = 0;
+                            tim.LoopPoint = (uint)(samples.Length - 1);
+                        }
+                    }
+
                     if (drum)
                     {
                         DrumTimbres[tn].TimbreNumber = (ProgramAssignmentNumber)(tn + offset);
