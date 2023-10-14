@@ -152,6 +152,10 @@ uint32_t gew_pcm_device::get_rate(uint32_t *steps, int32_t rate, uint32_t val)
 	{
 		r = 0x3f;
 	}
+	else if (r < 0)
+	{
+		r = 0;
+	}
 	return steps[r];
 }
 
