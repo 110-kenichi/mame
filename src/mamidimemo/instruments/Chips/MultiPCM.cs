@@ -1429,7 +1429,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             tim.D1R = 0xf;
                             tim.DL = 0;
-                            tim.LoopPoint = (uint)(samples.Length - 1);
+                            tim.LoopPoint = (uint)(len - 1);
                         }
                     }
                     else
@@ -1444,7 +1444,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             tim.D1R = 0xf;
                             tim.DL = 0;
-                            tim.LoopPoint = (uint)(samples.Length - 1);
+                            tim.LoopPoint = (uint)(len - 1);
                         }
                     }
 
