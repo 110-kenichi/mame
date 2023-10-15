@@ -50,29 +50,37 @@ namespace zanac.MAmidiMEmo.ComponentModel
             foreach (var sv in vs)
             {
                 string text = "";
+                InstrumentBase inst = null;
+                try
+                {
+                    if (instance is Array)
+                        inst = ((dynamic)((Array)instance).GetValue(0)).Instrument as InstrumentBase;
+                    else
+                        inst = instance.Instrument as InstrumentBase;
+                }
+                catch
+                {
+                    break;
+                }
+                if (inst == null)
+                    break;
+
                 if (context.PropertyDescriptor.PropertyType == typeof(ProgramAssignmentNumber?))
                 {
                     if (sv != null)
                     {
                         ProgramAssignmentNumber nn = (ProgramAssignmentNumber)sv;
-                        try
+                        text = nn.ToString();
+                        if (nn < (ProgramAssignmentNumber)0x10000)
                         {
-                            InstrumentBase inst = instance.Instrument as InstrumentBase;
-                            {
-                                text = nn.ToString();
-                                if (nn < (ProgramAssignmentNumber)0x10000)
-                                {
-                                    if ((int)nn < inst.BaseTimbres.Length)
-                                        text += " " + inst.BaseTimbres[(int)nn].TimbreName;
-                                }
-                                else
-                                {
-                                    if ((int)(nn - 0x10000) < inst.CombinedTimbres.Length)
-                                        text += " " + inst.CombinedTimbres[(int)nn - 0x10000].TimbreName;
-                                }
-                            }
+                            if ((int)nn < inst.BaseTimbres.Length)
+                                text += " " + inst.BaseTimbres[(int)nn].TimbreName;
                         }
-                        catch { }
+                        else
+                        {
+                            if ((int)(nn - 0x10000) < inst.CombinedTimbres.Length)
+                                text += " " + inst.CombinedTimbres[(int)nn - 0x10000].TimbreName;
+                        }
 
                         EnumItem item = new EnumItem();
                         item.Value = sv;
@@ -87,24 +95,18 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 else if (context.PropertyDescriptor.PropertyType == typeof(ProgramAssignmentNumber))
                 {
                     ProgramAssignmentNumber nn = (ProgramAssignmentNumber)sv;
-                    try
+                    text = nn.ToString();
+                    if (nn < (ProgramAssignmentNumber)0x10000)
                     {
-                        InstrumentBase inst = instance.Instrument as InstrumentBase;
-                        {
-                            text = nn.ToString();
-                            if (nn < (ProgramAssignmentNumber)0x10000)
-                            {
-                                if ((int)nn < inst.BaseTimbres.Length)
-                                    text += " " + inst.BaseTimbres[(int)nn].TimbreName;
-                            }
-                            else
-                            {
-                                if ((int)(nn - 0x10000) < inst.CombinedTimbres.Length)
-                                    text += " " + inst.CombinedTimbres[(int)nn - 0x10000].TimbreName;
-                            }
-                        }
+                        if ((int)nn < inst.BaseTimbres.Length)
+                            text += " " + inst.BaseTimbres[(int)nn].TimbreName;
                     }
-                    catch { }
+                    else
+                    {
+                        if ((int)(nn - 0x10000) < inst.CombinedTimbres.Length)
+                            text += " " + inst.CombinedTimbres[(int)nn - 0x10000].TimbreName;
+                    }
+
                     EnumItem item = new EnumItem();
                     item.Value = sv;
 
@@ -117,17 +119,12 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 else if (context.PropertyDescriptor.PropertyType == typeof(ProgramAssignmentTimbreNumber))
                 {
                     ProgramAssignmentTimbreNumber nn = (ProgramAssignmentTimbreNumber)sv;
-                    try
+                    text = nn.ToString();
+                    if (inst != null)
                     {
-                        InstrumentBase inst = instance.Instrument as InstrumentBase;
-                        text = nn.ToString();
-                        if (inst != null)
-                        {
-                            if ((int)nn < inst.BaseTimbres.Length)
-                                text += " " + inst.BaseTimbres[(int)nn].TimbreName;
-                        }
+                        if ((int)nn < inst.BaseTimbres.Length)
+                            text += " " + inst.BaseTimbres[(int)nn].TimbreName;
                     }
-                    catch { }
                     EnumItem item = new EnumItem();
                     item.Value = sv;
 

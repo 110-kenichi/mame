@@ -35,10 +35,6 @@ namespace zanac.MAmidiMEmo.ComponentModel
             listBox.KeyDown += OnListBoxKeyDown;
             listBox.PreviewKeyDown += OnListBoxPreviewKeyDown;
 
-            Type enumType = value.GetType();
-            if (!enumType.IsEnum)
-                throw new InvalidOperationException();
-
             var converter = context.PropertyDescriptor.Converter;
             List<object> vs = null;
             if (converter != null && converter.GetStandardValuesSupported())
@@ -59,7 +55,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 item.Name = MidiManager.GetNoteName((SevenBitNumber)((byte)nn));
                 int index = listBox.Items.Add(item);
 
-                if (nn == (NoteNames)value)
+                if (nn == (NoteNames?)value)
                 {
                     listBox.SetSelected(index, true);
                 }

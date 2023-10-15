@@ -29,7 +29,12 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
             if (value is string)
             {
-                if (!string.IsNullOrWhiteSpace((string)value))
+                int n = 0;
+                if (int.TryParse((string)value, out n) && Enum.IsDefined(typeof(ProgramAssignmentNumber), n))
+                {
+                    return  (ProgramAssignmentNumber)n;
+                }
+                else if (!string.IsNullOrWhiteSpace((string)value))
                 {
                     string text = (string)value;
                     string[] tn = text.Split(' ');
