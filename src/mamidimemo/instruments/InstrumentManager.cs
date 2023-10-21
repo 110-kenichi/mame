@@ -924,7 +924,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                     dev.MidiPort == Midi.MidiPort.PortB)
                                     dev.NotifyMidiEvent(e);
                             });
-                        }
+                    }
                     finally
                     {
                         //InstrumentManager.ExclusiveLockObject.ExitUpgradeableReadLock();
@@ -1325,12 +1325,16 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         unsafe public static void DirectAccessToChip(byte device_id, byte unit, uint address, uint data)
         {
+            if (device_id < 1)
+                return;
+
             try
             {
+                int did = device_id - 1;
                 InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
-                if (unit < instruments[(int)device_id - 1].Count)
-                    instruments[(int)device_id - 1][unit].DirectAccessToChip(address, data);
+                if (did < instruments.Count && unit < instruments[did].Count)
+                    instruments[did][unit].DirectAccessToChip(address, data);
             }
             finally
             {

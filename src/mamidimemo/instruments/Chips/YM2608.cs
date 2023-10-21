@@ -681,6 +681,118 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             set;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="data"></param>
+        internal override void DirectAccessToChip(uint address, uint data)
+        {
+            switch (address)
+            {
+                case 0x07:
+                    data &= 0x3f;
+                    break;
+                case uint adr when 0x0e <= adr && adr <= 0x0f:
+                    return;
+                case 0x12:
+                case 0x21:
+                    return;
+                case uint adr when 0x23 <= adr && adr <= 0x27:
+                    return;
+                case 0x29:
+                    data &= 0x80;
+                    break;
+                case uint adr when 0x2a <= adr && adr <= 0x2f:
+                    return;
+            }
+
+            uint port1 = 0;
+            if (address >= 0x100)
+                port1 = 2;
+
+            bool useCache = true;
+            if (0x100 <= address && address <= 0x110)
+                useCache = false;
+            else if (0xa0 <= address && address < 0xb0)
+                useCache = false;
+            else if (0x1a0 <= address && address < 0x1b0)
+                useCache = false;
+
+            WriteData(address, data, useCache, new Action(() =>
+            {
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, address, data, false);
+                            break;
+                        case SoundEngineType.VSIF_MSX_FTDI:
+                        case SoundEngineType.VSIF_P6_FTDI:
+                            if (address < 0x100)
+                                vsifClient.WriteData(0x10, (byte)address, (byte)data, f_ftdiClkWidth);
+                            else
+                            {
+                                if (address == 0x10b)
+                                    vsifClient.WriteData(0x13, (byte)0xb, (byte)data, f_ftdiClkWidth);
+                                else
+                                    vsifClient.WriteData(0x11, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                            }
+                            break;
+                        case SoundEngineType.VSIF_PC88_FTDI:
+                            if (f_PC88FMType == BoardType.Internal)
+                            {
+                                if (address < 0x100)
+                                {
+                                    if (0x10 <= address && address <= 0x1f)
+                                        vsifClient.WriteData(0x02, (byte)address, (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x00, (byte)address, (byte)data, f_ftdiClkWidth);
+                                }
+                                else
+                                {
+                                    if (address == 0x108)
+                                        vsifClient.WriteData(0x04, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                    else if (address == 0x10b)
+                                        vsifClient.WriteData(0x03, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x01, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                }
+                            }
+                            else
+                            {
+                                if (address < 0x100)
+                                {
+                                    if (0x10 <= address && address <= 0x1f)
+                                        vsifClient.WriteData(0x0a, (byte)address, (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x08, (byte)address, (byte)data, f_ftdiClkWidth);
+                                }
+                                else
+                                {
+                                    if (address == 0x108)
+                                        vsifClient.WriteData(0x0c, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                    else if (address == 0x10b)
+                                        vsifClient.WriteData(0x0b, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                    else
+                                        vsifClient.WriteData(0x09, (byte)(address & 0xff), (byte)data, f_ftdiClkWidth);
+                                }
+                            }
+                            break;
+                        case SoundEngineType.GIMIC:
+                            GimicManager.SetRegister2(gimicPtr, address, (byte)data);
+                            break;
+                    }
+                }
+                //* MEMO: レジスタ書き込みで ym2608_device::update_request(OPN->ST.device); が呼ばれクラッシュするかも
+                DeferredWriteData(YM2608_write, UnitNumber, (uint)(port1 + 0), (byte)(address & 0xff));
+                DeferredWriteData(YM2608_write, UnitNumber, (uint)(port1 + 1), (byte)data);
+                //*/
+            }));
+        }
+
         private void YM2608WriteData(uint unitNumber, byte address, int op, int slot, byte data)
         {
             YM2608WriteData(unitNumber, address, op, slot, data, true);

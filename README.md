@@ -1,4 +1,4 @@
-MAmidiMEmo 5.0.1.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.1.0.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.1.0.0 Supported YM2608 for RPC server feature. Other applications can control MAmidiMEmo chips via RPC.
+        And, software emulation can also be played, but with ADPCM limitations.
 5.0.1.0 Added the ability to specify the number directly in the TimbreNumber setting.
 5.0.0.9 Fixed LoopPoint value when importing SF2 file as 12bit PCM for SEGA MultiPCM.
 5.0.0.8 Fixed noise sounding when D1R is too low for SEGA MultiPCM.

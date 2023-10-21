@@ -650,9 +650,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             uint port1 = 1;
             if (address >= 0x100)
                 port1 = 2;
-            address = address & 0xff;
 
-            WriteData(address, data, address != 0x28, new Action(() =>
+            bool useCache = true;
+            if (0xa0 <= address && address < 0xb0)
+                useCache = false;
+            else if (0x1a0 <= address && address < 0x1b0)
+                useCache = false;
+            else if (0x28 == address)
+                useCache = false;
+
+            WriteData(address, data, useCache, new Action(() =>
             {
                 lock (sndEnginePtrLock)
                 {
@@ -670,8 +677,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                     }
                 }
-                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 0, address);
-                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 1, data);
+                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 0, (byte)address);
+                DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 1, (byte)data);
             }));
         }
 
