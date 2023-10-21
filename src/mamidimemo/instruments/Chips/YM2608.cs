@@ -786,7 +786,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                     }
                 }
-                //* MEMO: レジスタ書き込みで ym2608_device::update_request(OPN->ST.device); が呼ばれクラッシュするかも
+                /* MEMO: レジスタ書き込みで ym2608_device::update_request(OPN->ST.device); が呼ばれクラッシュするかも
                 DeferredWriteData(YM2608_write, UnitNumber, (uint)(port1 + 0), (byte)(address & 0xff));
                 DeferredWriteData(YM2608_write, UnitNumber, (uint)(port1 + 1), (byte)data);
                 //*/

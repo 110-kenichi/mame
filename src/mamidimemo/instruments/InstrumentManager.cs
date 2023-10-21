@@ -1333,7 +1333,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 int did = device_id - 1;
                 InstrumentManager.InstExclusiveLockObject.EnterReadLock();
 
-                if (did < instruments.Count && unit < instruments[did].Count)
+                if (did < instruments.Count && unit < instruments[did].Count &&
+                    instruments[did] != null && instruments[did][unit] != null)
                     instruments[did][unit].DirectAccessToChip(address, data);
             }
             finally
