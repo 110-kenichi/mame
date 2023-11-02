@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "zerasul.genesis-code",
+        "imanolea.z80-asm",
+        "thenestruo.z80-asm-meter",
+        "gigabates.68kcounter",
+        "clcxce.motorola-68k-assembly"
+    ]
+}
