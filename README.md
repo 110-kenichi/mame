@@ -274,7 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
-5.2.0.0 Supported RF5C164 ans MEGA CD(VSIF Genesis(FTDI)).
+5.2.0.0 Supported RF5C164 and MEGA CD(VSIF Genesis(FTDI)).
 5.1.0.1 YM2608 Software Emulation can not be played via RPC.
 5.1.0.0 Supported YM2608 for RPC server feature. Other applications can control MAmidiMEmo chips via RPC.
 5.0.1.0 Added the ability to specify the number directly in the TimbreNumber setting.
