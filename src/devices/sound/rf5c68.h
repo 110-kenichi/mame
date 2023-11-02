@@ -74,6 +74,7 @@ private:
 	uint8_t                                           m_cbank;
 	uint16_t                                          m_wbank;
 	uint8_t                                           m_enable;
+	uint8_t											  m_pcmram[64*1024];
 
 	sample_end_cb_delegate m_sample_end_cb;
 };

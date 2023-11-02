@@ -39,6 +39,7 @@
 #include "..\devices\sound\sn76477.h"
 #include "..\devices\sound\upd1771.h"
 #include "..\devices\sound\multipcm.h"
+#include "..\devices\sound\rf5c68.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
@@ -2137,5 +2138,49 @@ extern "C"
 			multipcm_device_devices[unitNumber] = multipcm;
 		}
 		multipcm_device_devices[unitNumber]->write_byte(address, data);
+	}
+
+	rf5c68_device* rf5c68_device_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void rf5c68_device_mem_w(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (rf5c68_device_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			rf5c68_device* multipcm = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
+			if (multipcm == nullptr)
+				return;
+
+			rf5c68_device_devices[unitNumber] = multipcm;
+		}
+		rf5c68_device_devices[unitNumber]->rf5c68_mem_w(address, data);
+	}
+
+	DllExport void rf5c68_device_w(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (rf5c68_device_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			rf5c68_device* multipcm = dynamic_cast<rf5c68_device*>(rm->device((std::string("rf5c164_") + num).c_str()));
+			if (multipcm == nullptr)
+				return;
+
+			rf5c68_device_devices[unitNumber] = multipcm;
+		}
+		rf5c68_device_devices[unitNumber]->rf5c68_w(address, data);
 	}
 }

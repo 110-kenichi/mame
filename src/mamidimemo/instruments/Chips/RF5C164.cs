@@ -30,8 +30,10 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-//https://wiki.superfamicom.org/spc700-reference
+//https://segaretro.org/images/2/2d/MCDHardware_Manual_PCM_Sound_Source.pdf
+//https://www.retrodev.com/RF5C68A.pdf
 
 namespace zanac.MAmidiMEmo.Instruments.Chips
 {
@@ -40,22 +42,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
     /// </summary>
     [DataContract]
     [InstLock]
-    public class MultiPCM : InstrumentBase
+    public class RF5C164 : InstrumentBase
     {
-        public override string Name => "MultiPCM";
+        public override string Name => "RF5C164";
 
         public override string Group => "PCM";
 
-        public override InstrumentType InstrumentType => InstrumentType.MultiPCM;
+        public override InstrumentType InstrumentType => InstrumentType.RF5C164;
 
         [Browsable(false)]
-        public override string ImageKey => "MultiPCM";
+        public override string ImageKey => "RF5C164";
 
         /// <summary>
         /// 
         /// </summary>
         [Browsable(false)]
-        protected override string SoundInterfaceTagNamePrefix => "multipcm_";
+        protected override string SoundInterfaceTagNamePrefix => "rf5c164_";
 
         /// <summary>
         /// 
@@ -68,21 +70,161 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             get
             {
-                return 31;
+                return 32;
+            }
+        }
+
+
+        private PortId portId = PortId.No1;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set FTDI or COM Port No for \"VSIF - Genesis\".\r\n" +
+            "See the manual about the VSIF.")]
+        [DefaultValue(PortId.No1)]
+        public PortId PortId
+        {
+            get
+            {
+                return portId;
+            }
+            set
+            {
+                if (portId != value)
+                {
+                    portId = value;
+                    setSoundEngine(SoundEngine);
+                }
             }
         }
 
         private object sndEnginePtrLock = new object();
 
-        private int waveMemorySize = 4 * 1024 * 1024;
+        private VsifClient vsifClient;
 
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.\r\n" +
+            "Supports \"Software\" and \"VSIF\"")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeRF5C164))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value)
+                    setSoundEngine(value);
+            }
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [RefreshProperties(RefreshProperties.All)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (sndEnginePtrLock)
+            {
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                    vsifClient = null;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
+                            {
+                                if (FtdiClkWidth < 9)
+                                    FtdiClkWidth = 9;
+                            }
+                            else
+                            {
+                                if (FtdiClkWidth < 8)
+                                    FtdiClkWidth = 8;
+                            }
+
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        private int f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [SlideParametersAttribute(1, 100)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Description("Set FTDI Clock Width[%].\r\n" +
+            "FT232R:8~\r\n" +
+            "FT232H:9~")]
+        public int FtdiClkWidth
+        {
+            get
+            {
+                return f_ftdiClkWidth;
+            }
+            set
+            {
+                f_ftdiClkWidth = value;
+            }
+        }
+
+        public bool ShouldSerializeFtdiClkWidth()
+        {
+            return f_ftdiClkWidth != VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
+
+        public void ResetFtdiClkWidth()
+        {
+            f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
+        }
 
         /// <summary>
         /// 
         /// </summary>
         public enum MasterClockType : uint
         {
-            Default = 39513600,
+            Default = 12500000,
         }
 
         private uint f_MasterClock;
@@ -104,7 +246,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_MasterClock != value)
                 {
                     f_MasterClock = value;
-                    SetClock(UnitNumber, (uint)(value / 4));
+                    SetClock(UnitNumber, (uint)value);
                 }
             }
         }
@@ -131,11 +273,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                Timbres = (MultiPCMTimbre[])value;
+                Timbres = (RF5C164Timbre[])value;
             }
         }
 
-        private MultiPCMTimbre[] f_Timbres;
+        private RF5C164Timbre[] f_Timbres;
 
         /// <summary>
         /// 
@@ -145,7 +287,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Timbres")]
         [EditorAttribute(typeof(TimbresArrayUITypeEditor), typeof(UITypeEditor))]
         [TypeConverter(typeof(ExpandableCollectionConverter))]
-        public MultiPCMTimbre[] Timbres
+        public RF5C164Timbre[] Timbres
         {
             get
             {
@@ -187,7 +329,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             try
             {
-                using (var obj = JsonConvert.DeserializeObject<MultiPCM>(serializeData))
+                using (var obj = JsonConvert.DeserializeObject<RF5C164>(serializeData))
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
@@ -209,38 +351,69 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <param name="data"></param>
         /// <returns></returns>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void delegate_multipcm_device_write(uint unitNumber, uint address, byte data);
+        private delegate void delegate_rf5c164_device_w(uint unitNumber, byte address, byte data);
 
-        private static int[] SlotToChannel = new int[]{
-            00, 1, 2, 3, 4, 5, 6,
-            08, 9,10,11,12,13,14,
-            16,17,18,19,20,21,22,
-            24,25,26,27,28,29,30,
-        };
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate byte delegate_rf5c164_device_r(uint unitNumber, byte address);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_rf5c164_device_mem_w(uint unitNumber, uint address, byte data);
+
+        private byte keyOnData;
 
         /// <summary>
         /// 
         /// </summary>
-        private void MultiPCMRegWriteData(uint unitNumber, int slot, uint reg, byte data)
+        private void RF5C164RegWriteData(uint unitNumber, byte reg, byte data, bool useCache)
         {
-            try
+            if (reg == 8)
+                keyOnData = data;
+
+
+            WriteData(reg, data, useCache, new Action(() =>
             {
-                Program.SoundUpdating();
-                multipcm_reg_write(unitNumber, 1, (byte)SlotToChannel[slot]);
-                multipcm_reg_write(unitNumber, 2, (byte)reg);
-                multipcm_reg_write(unitNumber, 0, (byte)data);
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            ushort adrs = (ushort)((reg << 1) + 1);
+
+                            sendData(adrs, data, true);
+                            break;
+                    }
+                }
+
+                try
+                {
+                    Program.SoundUpdating();
+                    multipcm_reg_write(unitNumber, (byte)reg, (byte)data);
+                }
+                finally
+                {
+                    Program.SoundUpdated();
+                }
             }
-            finally
-            {
-                Program.SoundUpdated();
-            }
+            ));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private void MultiPCMMemWriteData(uint unitNumber, uint address, byte data)
+        private void RF5C164MemWriteData(uint unitNumber, uint address, byte data)
         {
+            lock (sndEnginePtrLock)
+            {
+                switch (CurrentSoundEngine)
+                {
+                    case SoundEngineType.VSIF_Genesis_FTDI:
+                        ushort adrs = (ushort)((0x2000 + (address << 1)) + 1);
+
+                        sendData(adrs, data, false);
+                        break;
+                }
+            }
+
             try
             {
                 Program.SoundUpdating();
@@ -252,10 +425,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        private void sendData(ushort address, byte data, bool wait)
+        {
+            List<PortWriteData> list = new List<PortWriteData>();
+            list.Add(new PortWriteData() { Type = 0, Address = 6*4, Data = 0, Wait = f_ftdiClkWidth });
+
+            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = (byte)((address >> 8) & 0xff), Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = (byte)(address & 0xff), Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = data, Wait = f_ftdiClkWidth });
+            if (wait)
+            {
+                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+            }
+            vsifClient.WriteData(list.ToArray());
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        private static delegate_multipcm_device_write multipcm_reg_write
+        private static delegate_rf5c164_device_w multipcm_reg_write
+        {
+            get;
+            set;
+        }
+
+        private static delegate_rf5c164_device_mem_w multipcm_mem_write
         {
             get;
             set;
@@ -264,32 +463,23 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private static delegate_multipcm_device_write multipcm_mem_write
+        static RF5C164()
         {
-            get;
-            set;
+            IntPtr funcPtr = MameIF.GetProcAddress("rf5c68_device_w");
+            if (funcPtr != IntPtr.Zero)
+                multipcm_reg_write = (delegate_rf5c164_device_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_rf5c164_device_w));
+
+            funcPtr = MameIF.GetProcAddress("rf5c68_device_mem_w");
+            if (funcPtr != IntPtr.Zero)
+                multipcm_mem_write = (delegate_rf5c164_device_mem_w)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_rf5c164_device_mem_w));
         }
+
+        private RF5C164SoundManager soundManager;
 
         /// <summary>
         /// 
         /// </summary>
-        static MultiPCM()
-        {
-            IntPtr funcPtr = MameIF.GetProcAddress("multipcm_device_reg_write");
-            if (funcPtr != IntPtr.Zero)
-                multipcm_reg_write = (delegate_multipcm_device_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_multipcm_device_write));
-
-            funcPtr = MameIF.GetProcAddress("multipcm_device_mem_write");
-            if (funcPtr != IntPtr.Zero)
-                multipcm_mem_write = (delegate_multipcm_device_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_multipcm_device_write));
-        }
-
-        private MultiPCMSoundManager soundManager;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public MultiPCM(uint unitNumber) : base(unitNumber)
+        public RF5C164(uint unitNumber) : base(unitNumber)
         {
             SetDevicePassThru(false);
 
@@ -304,13 +494,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             readSoundFontForDrumTimbre = new ToolStripMenuItem(Resources.ImportSF2Drum);
             readSoundFontForDrumTimbre.Click += ReadSoundFontForDrumTimbre_Click;
 
-            Timbres = new MultiPCMTimbre[256];
+            Timbres = new RF5C164Timbre[256];
             for (int i = 0; i < 256; i++)
-                Timbres[i] = new MultiPCMTimbre();
+                Timbres[i] = new RF5C164Timbre();
 
             setPresetInstruments();
 
-            this.soundManager = new MultiPCMSoundManager(this);
+            this.soundManager = new RF5C164SoundManager(this);
         }
 
         #region IDisposable Support
@@ -336,7 +526,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         }
 
         // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
-        ~MultiPCM()
+        ~RF5C164()
         {
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(false);
@@ -369,10 +559,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void initGlobalRegisters()
         {
             lock (sndEnginePtrLock)
-                lastTransferPcmData = new sbyte[] { };
+                lastTransferPcmData = new byte[] { };
 
             if (!IsDisposing)
+            {
+                //koff
+                RF5C164RegWriteData(UnitNumber, 8, 0xFF, true);
+
                 updatePcmData(null);
+            }
         }
 
 
@@ -383,70 +578,61 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
         }
 
+        private int waveMemorySize = 64 * 1024;
+
         /// <summary>
         /// 
         /// </summary>
-        private void updatePcmData(MultiPCMTimbre timbre)
+        private void updatePcmData(RF5C164Timbre timbre)
         {
-            List<sbyte> pcmData = new List<sbyte>();
-            uint nextStartAddress = (uint)0x2000;
-            if (nextStartAddress == 0)
-                nextStartAddress += 4;
+            List<byte> pcmData = new List<byte>();
+            uint nextStartAddress = (uint)0x0;
+
             for (int i = 0; i < Timbres.Length; i++)
             {
                 var tim = Timbres[i];
 
                 tim.PcmAddressStart = 0;
-                tim.PcmAddressEnd = 0;
-                if (tim.PcmData12.Length != 0)
+                if (tim.PcmData.Length != 0)
                 {
-                    int tlen = tim.PcmData12.Length;
-                    if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
+                    int tlen = tim.PcmData.Length + 32;
+                    int pad = (0x100 - (tlen & 0xff)) & 0xff;    //256 byte pad (contains PCM end data)
+
+                    if (nextStartAddress + tlen + pad - 1 < waveMemorySize)   //MAX 256KB
                     {
                         tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(0x10000 - ((tlen * 2) / 3));
+                        tim.PcmAddressEnd = (uint)(nextStartAddress + tlen + pad - 1);
 
                         //Write PCM data
-                        for (int j = 0; j < tlen; j++)
-                            pcmData.Add((sbyte)tim.PcmData12[j]);
+                        for (int j = 0; j < tim.PcmData.Length; j++)
+                        {
+                            var data = (byte)(Math.Round(((double)tim.PcmData[j] / 255d) * 253d) + 0);
+                            if (data < 127)
+                                data = (byte)(~data & 0x7f);
+                            else
+                                data = (byte)(data + 1);
+                            pcmData.Add(data);
+                        }
 
-                        nextStartAddress = (uint)(nextStartAddress + tlen);
+                        //Add pad
+                        for (int j = 0; j < pad + 32; j++)
+                            pcmData.Add(0xff);  //Adds end data
+
+                        nextStartAddress = tim.PcmAddressEnd + 1;
                     }
                     else
                     {
                         MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
                         break;
                     }
-                }
-                else if (tim.PcmData.Length != 0)
-                {
-                    int tlen = tim.PcmData.Length;
-                    if (nextStartAddress + tlen - 1 < waveMemorySize)   //MAX 4MB
-                    {
-                        tim.PcmAddressStart = nextStartAddress;
-                        tim.PcmAddressEnd = (uint)(0x10000 - tlen);
 
-                        //Write PCM data
-                        pcmData.AddRange(tim.PcmData);
-
-                        nextStartAddress = (uint)(nextStartAddress + tlen);
-                    }
-                    else
-                    {
-                        MessageBox.Show(Resources.AdpcmBufferExceeded, "Warning", MessageBoxButtons.OK);
-                        break;
-                    }
                 }
             }
             FormMain.OutputLog(this, "Remaining PCM RAM capacity is " + (waveMemorySize - nextStartAddress) + " bytes");
 
             if (pcmData.Count != 0)
             {
-                //transferPcmOnlyDiffData(pcmData.ToArray(), null);
-
                 FormMain.OutputLog(this, Resources.UpdatingADPCM);
-                //if (Program.IsWriteLockHeld())
-                //{
                 try
                 {
                     FormMain.AppliactionForm.Enabled = false;
@@ -455,29 +641,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         f.StartPosition = FormStartPosition.CenterScreen;
                         f.Message = Resources.UpdatingADPCM;
                         f.Show();
-                        transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                        //transferPcmOnlyDiffData(pcmData.ToArray(), f);
+                        sendPcmData(pcmData.ToArray(), 0, f);
                     }
                 }
                 finally
                 {
                     FormMain.AppliactionForm.Enabled = true;
                 }
-                //}
-                //else
-                //{
-                //    FormProgress.RunDialog(Resources.UpdatingADPCM,
-                //            new Action<FormProgress>((f) =>
-                //            {
-                //                transferPcmOnlyDiffData(pcmData.ToArray(), f);
-                //            }));
-                //}
-                //FormMain.OutputLog(this, string.Format(Resources.AdpcmBufferUsedSPC700, pcmData.Count / 1024));
             }
         }
 
-        private sbyte[] lastTransferPcmData;
+        private byte[] lastTransferPcmData;
 
-        private void transferPcmOnlyDiffData(sbyte[] transferData, FormProgress fp)
+        private void transferPcmOnlyDiffData(byte[] transferData, FormProgress fp)
         {
             for (int i = 0; i < transferData.Length; i++)
             {
@@ -490,7 +667,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-        private void sendPcmData(sbyte[] transferData, int i, FormProgress fp)
+        private void sendPcmData(byte[] transferData, int i, FormProgress fp)
         {
             int endAddress = transferData.Length;
             if (endAddress > waveMemorySize)
@@ -502,11 +679,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             int index = 0;
             int percentage = 0;
             int lastPercentage = 0;
-            uint baseAddress = 0x2000;
+            uint baseAddress = 0x0000;
 
             for (int adr = startAddress; adr < endAddress; adr++)
             {
-                MultiPCMMemWriteData(UnitNumber, (uint)(baseAddress + adr), (byte)transferData[adr]);
+                uint wadr = (uint)(baseAddress + adr);
+
+                //Write mode and select mem bank
+                RF5C164RegWriteData(UnitNumber, 0x7, (byte)(0x00 | ((wadr >> 12) & 0xf)), true);
+                //Write PCM DATA
+                RF5C164MemWriteData(UnitNumber, (uint)(wadr & 0xfff), (byte)transferData[adr]);
 
                 percentage = (100 * index) / len;
                 if (percentage != lastPercentage)
@@ -516,9 +698,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         fp.Percentage = percentage;
                         Application.DoEvents();
                     }
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.VSIF_Genesis_FTDI:
+                            vsifClient.FlushDeferredWriteDataAndWait();
+                            break;
+                    }
                 }
                 lastPercentage = percentage;
                 index++;
+            }
+            switch (CurrentSoundEngine)
+            {
+                case SoundEngineType.VSIF_Genesis_FTDI:
+                    vsifClient.FlushDeferredWriteDataAndWait();
+                    break;
             }
         }
 
@@ -599,7 +793,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private class MultiPCMSoundManager : SoundManagerBase
+        private class RF5C164SoundManager : SoundManagerBase
         {
             private static SoundList<SoundBase> allSound = new SoundList<SoundBase>(-1);
 
@@ -614,15 +808,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private static SoundList<MultiPCMSound> instOnSounds = new SoundList<MultiPCMSound>(8);
+            private static SoundList<RF5C164Sound> instOnSounds = new SoundList<RF5C164Sound>(8);
 
-            private MultiPCM parentModule;
+            private RF5C164 parentModule;
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="parent"></param>
-            public MultiPCMSoundManager(MultiPCM parent) : base(parent)
+            public RF5C164SoundManager(RF5C164 parent) : base(parent)
             {
                 this.parentModule = parent;
             }
@@ -640,14 +834,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 int tindex = 0;
                 for (int i = 0; i < bts.Length; i++)
                 {
-                    MultiPCMTimbre timbre = (MultiPCMTimbre)bts[i];
+                    RF5C164Timbre timbre = (RF5C164Timbre)bts[i];
 
                     tindex++;
                     var emptySlot = searchEmptySlot(note);
                     if (emptySlot.slot < 0)
                         continue;
 
-                    MultiPCMSound snd = new MultiPCMSound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot, (byte)ids[i]);
+                    RF5C164Sound snd = new RF5C164Sound(emptySlot.inst, this, timbre, tindex - 1, note, emptySlot.slot, (byte)ids[i]);
                     instOnSounds.Add(snd);
 
                     FormMain.OutputDebugLog(parentModule, "KeyOn INST ch" + emptySlot + " " + note.ToString());
@@ -674,9 +868,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// 
             /// </summary>
             /// <returns></returns>
-            private (MultiPCM inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
+            private (RF5C164 inst, int slot) searchEmptySlot(TaggedNoteOnEvent note)
             {
-                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 28);
+                return SearchEmptySlotAndOffForLeader(parentModule, instOnSounds, note, 8);
             }
 
             internal override void ProcessAllSoundOff()
@@ -684,11 +878,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                for (int i = 0; i < 28; i++)
-                {
-                    //koff
-                    parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, i, 4, 0x00);
-                }
+                //koff
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 8, 0xFF, true);
             }
 
         }
@@ -697,14 +888,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        private class MultiPCMSound : SoundBase
+        private class RF5C164Sound : SoundBase
         {
 
-            private MultiPCM parentModule;
+            private RF5C164 parentModule;
 
             private byte timbreIndex;
 
-            private MultiPCMTimbre timbre;
+            private RF5C164Timbre timbre;
 
             private double baseFreq;
 
@@ -717,31 +908,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="noteOnEvent"></param>
             /// <param name="programNumber"></param>
             /// <param name="slot"></param>
-            public MultiPCMSound(MultiPCM parentModule, MultiPCMSoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
+            public RF5C164Sound(RF5C164 parentModule, RF5C164SoundManager manager, TimbreBase timbre, int tindex, TaggedNoteOnEvent noteOnEvent, int slot, byte timbreIndex) : base(parentModule, manager, timbre, tindex, noteOnEvent, slot)
             {
                 this.parentModule = parentModule;
                 this.timbreIndex = timbreIndex;
-                this.timbre = (MultiPCMTimbre)timbre;
+                this.timbre = (RF5C164Timbre)timbre;
 
                 baseFreq = this.timbre.BaseFreqency;
                 loopPoint = this.timbre.LoopPoint;
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            public override void OnPanpotUpdated()
-            {
-                uint adrs = (uint)(timbreIndex * 12);
-
-                int p = CalcCurrentPanpot() + 4;
-                int pan = (int)(p >> 3) - 8;
-                if (pan <= -8)
-                    pan = -7;
-                else if (pan >= 8)
-                    pan = 7;
-
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 0, (byte)((byte)pan << 4));
             }
 
             /// <summary>
@@ -751,50 +925,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.KeyOn();
 
-                {
-                    uint adrs = (uint)(timbreIndex * 12);
-                    //start address
-                    if (timbre.PcmData12.Length != 0)
-                        //12bit linear
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)(((timbre.PcmAddressStart >> 16) & 0xff) | 0x40));
-                    else if (timbre.PcmData.Length != 0)
-                        //8bit linear
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 0, (byte)((timbre.PcmAddressStart >> 16) & 0xff));
-                    else
-                        return;
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 1, (byte)((timbre.PcmAddressStart >> 8) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 2, (byte)((timbre.PcmAddressStart) & 0xff));
-                    //loop address
-                    if (timbre.LoopEnable)
-                    {
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 3, (byte)((timbre.LoopPoint >> 8) & 0xff));
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 4, (byte)((timbre.LoopPoint) & 0xff));
-                    }
-                    else
-                    {
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 3, (byte)((timbre.PcmAddressEnd >> 8) & 0xff));
-                        parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 4, (byte)((timbre.PcmAddressEnd) & 0xff));
-                    }
-                    //end address
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 5, (byte)((timbre.PcmAddressEnd >> 8) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 6, (byte)((timbre.PcmAddressEnd) & 0xff));
+                uint adrs = (uint)(timbreIndex * 12);
+                //start address
+                if (timbre.PcmData.Length == 0)
+                    return;
 
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 7, (byte)(((timbre.LFO << 3) | timbre.VIB) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 8, (byte)(((timbre.AR << 4) | timbre.D1R) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 9, (byte)(((timbre.DL << 4) | timbre.D2R) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 10, (byte)(((timbre.KSR << 4) | timbre.RR) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 11, (byte)(timbre.AM & 0xff));
+                //Select ch
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x7, (byte)(0xc0 | Slot), true);
+
+                //PCM Start Address(Hi 8bit)
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 6, (byte)((timbre.PcmAddressStart >> 8) & 0xff), false);
+
+                //loop address
+                if (timbre.LoopEnable)
+                {
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 5, (byte)((timbre.LoopPoint >> 8) & 0xff), false);
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 4, (byte)((timbre.LoopPoint) & 0xff), false);
+                }
+                else
+                {
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 5, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length) >> 8) & 0xff), false);
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 4, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length)) & 0xff), false);
                 }
 
                 OnVolumeUpdated();
                 OnPanpotUpdated();
+
                 OnPitchUpdated();
 
-                //prognum no
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 1, timbreIndex);
-
                 //KON
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 4, 0x80);
+                byte bitPos = (byte)~(1 << Slot);
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 8, (byte)(bitPos & parentModule.keyOnData), true);
             }
 
 
@@ -804,17 +965,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 //OnPanpotUpdated();
                 //OnPitchUpdated();
 
-                {
-                    uint adrs = (uint)(timbreIndex * 12);
-
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 7, (byte)(((timbre.LFO << 3) | timbre.VIB) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 8, (byte)(((timbre.AR << 4) | timbre.D1R) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 9, (byte)(((timbre.DL << 4) | timbre.D2R) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 10, (byte)(((timbre.KSR << 4) | timbre.RR) & 0xff));
-                    parentModule.MultiPCMMemWriteData(parentModule.UnitNumber, adrs + 11, (byte)(timbre.AM & 0xff));
-                }
-
                 base.OnSoundParamsUpdated();
+            }
+
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override void OnPanpotUpdated()
+            {
+                //Pan
+                int pan = CalcCurrentPanpot();
+
+                byte left = 0xf;
+                byte right = 0xf;
+                if (pan > 64)
+                    left = (byte)((64 - (pan - 64)) >> 2);
+                if (pan < 64)
+                    right = (byte)(pan >> 2);
+
+                //Select ch
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x7, (byte)(0xc0 | Slot), false);
+                //Write Pan
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x1, (byte)(right << 4 | left), false);
             }
 
             /// <summary>
@@ -822,9 +995,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public override void OnVolumeUpdated()
             {
-                byte vol = (byte)(127 - Math.Round(127d * CalcCurrentVolume()));
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 5, (byte)(vol << 1)); //Direct Set
-                //parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 5, (byte)((vol << 1) | 1)); //Interpolate Set
+                var vol = (byte)Math.Round(255 * CalcCurrentVolume());
+
+                //Select ch
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x7, (byte)(0xc0 | Slot), false);
+                //Write Vol
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x0, vol, false);
             }
 
             /// <summary>
@@ -833,29 +1009,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <param name="slot"></param>
             public override void OnPitchUpdated()
             {
-                var cfreq = CalcCurrentFrequency() * timbre.SampleRate / (parentModule.MasterClock / (4 * 224));
+                var cfreq = (CalcCurrentFrequency() / baseFreq) * (parentModule.MasterClock / 384) / timbre.SampleRate;
 
-                int fn = 0;
-                int oct = 1;
-                if (cfreq >= baseFreq)
-                {
-                    var log = Math.Log(cfreq / baseFreq, 2);
-                    fn = (int)(1024d * (Math.Pow(2, (log % 1d)) - 1d));
-                    oct = 1 + (int)Math.Floor(log);
-                }
-                else
-                {
-                    var log = Math.Log(baseFreq / cfreq, 2);
-                    fn = (int)(1024d * (Math.Pow(2, 1d - (log % 1d)) - 1d));
-                    oct = 1 - (int)Math.Ceiling(log);
-                }
-                if (oct < -7)
-                    oct = -7;
-                if (oct > 7)
-                    oct = 7;
+                int freq = (int)Math.Round(cfreq * 1024);
+                if (freq > 0xffff)
+                    freq = 0xffff;
 
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 3, (byte)((oct << 4) | ((fn >> 6) & 0xf)));
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 2, (byte)((fn << 2) & 0xff));
+                //Select ch
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x7, (byte)(0xc0 | Slot), false);
+
+                //Write Freq L
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x2, (byte)(freq & 0xff), false);
+                //Write Freq H
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 0x3, (byte)(freq >> 8), false);
 
                 base.OnPitchUpdated();
             }
@@ -867,10 +1033,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 base.SoundOff();
 
-                byte bitPos = (byte)(1 << Slot);
-
                 //KOFF
-                parentModule.MultiPCMRegWriteData(parentModule.UnitNumber, Slot, 4, 0x00);
+                byte bitPos = (byte)(1 << Slot);
+                parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 8, (byte)(bitPos | parentModule.keyOnData), true);
             }
 
         }
@@ -878,10 +1043,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
-        [JsonConverter(typeof(NoTypeConverterJsonConverter<MultiPCMTimbre>))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<RF5C164Timbre>))]
         [DataContract]
         [InstLock]
-        public class MultiPCMTimbre : TimbreBase
+        public class RF5C164Timbre : TimbreBase
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -899,7 +1064,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("PCM base frequency @ 44.1KHz [Hz]")]
+            [Description("PCM base frequency @ 32552Hz [Hz]")]
             [DefaultValue(typeof(double), "440")]
             [DoubleSlideParametersAttribute(100, 2000, 1)]
             [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -909,13 +1074,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             } = 440;
 
-            private uint f_SampleRate = 44100;
+            private uint f_SampleRate = 32552;
 
             [DataMember]
             [Category("Sound")]
             [Description("Set PCM samplerate [Hz]")]
-            [DefaultValue(typeof(uint), "44100")]
-            [SlideParametersAttribute(4000, 44100)]
+            [DefaultValue(typeof(uint), "32552")]
+            [SlideParametersAttribute(4000, 32552)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
             public uint SampleRate
             {
@@ -945,34 +1110,32 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private uint f_LoopPoint;
+            private ushort f_LoopPoint;
 
             [DataMember]
             [Category("Sound")]
             [Description("Loop start offset address")]
-            [DefaultValue(typeof(uint), "0")]
-            [SlideParametersAttribute(0, 64 * 1024)]
+            [DefaultValue(typeof(ushort), "0")]
+            [SlideParametersAttribute(0, 65535)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public uint LoopPoint
+            public ushort LoopPoint
             {
                 get => f_LoopPoint;
                 set
                 {
-                    f_LoopPoint = value;
-                    if (f_LoopPoint > 64 * 1024)
-                        f_LoopPoint = 64 * 1024;
+                    f_LoopPoint = (ushort)(value & 0xffff);
                 }
             }
 
-            private sbyte[] f_pcmData = new sbyte[0];
+            private byte[] f_pcmData = new byte[0];
 
             [TypeConverter(typeof(LoadDataTypeConverter))]
             [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound")]
-            [Description("Signed 8bit Mono Raw PCM Data/Unsigned 8bit Mono Wave Data (MAX 64kb)")]
-            [PcmFileLoaderEditor("Audio File(*.raw, *.wav)|*.raw;*.wav", 0, 8, 1, 65535)]
-            public sbyte[] PcmData
+            [Description("Unsigned 8bit Mono Wave Data (MAX 64kb)")]
+            [PcmFileLoaderEditor("Audio File(*.wav)|*.wav", 0, 8, 1, 65535)]
+            public byte[] PcmData
             {
                 get
                 {
@@ -982,7 +1145,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     f_pcmData = value;
 
-                    var inst = (MultiPCM)this.Instrument;
+                    var inst = (RF5C164)this.Instrument;
                     if (inst != null)
                         inst.updatePcmData(this);
                 }
@@ -995,41 +1158,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public void ResetPcmData()
             {
-                PcmData = new sbyte[0];
-            }
-
-            private byte[] f_PcmData12 = new byte[0];
-
-            [TypeConverter(typeof(LoadDataTypeConverter))]
-            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DataMember]
-            [Category("Sound")]
-            [Description("12bit Raw PCM Data. (MAX 64K samples)")]
-            [PcmFileLoaderEditor("Audio File(*.raw)|*.raw", 0, 0, 0, 65535)]
-            public byte[] PcmData12
-            {
-                get
-                {
-                    return f_PcmData12;
-                }
-                set
-                {
-                    f_PcmData12 = value;
-
-                    var inst = (MultiPCM)this.Instrument;
-                    if (inst != null)
-                        inst.updatePcmData(this);
-                }
-            }
-
-            public bool ShouldSerializePcmData12()
-            {
-                return PcmData12.Length != 0;
-            }
-
-            public void ResetPcmData12()
-            {
-                f_PcmData12 = new byte[0];
+                PcmData = new byte[0];
             }
 
             [DataMember]
@@ -1048,193 +1177,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 set;
             }
 
-            private byte f_AR = 15;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Attack rate of ADSR(0-15)")]
-            [DefaultValue((byte)15)]
-            [SlideParametersAttribute(0, 15)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AR
-            {
-                get
-                {
-                    return f_AR;
-                }
-                set
-                {
-                    f_AR = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_D1R = 4;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay 1 rate of ADSR(0-15)")]
-            [DisplayName("D1R(DR)[D1R]")]
-            [DefaultValue((byte)4)]
-            [SlideParametersAttribute(0, 0xf)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte D1R
-            {
-                get
-                {
-                    return f_D1R;
-                }
-                set
-                {
-                    f_D1R = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_DL = 7;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay level of ADSR(0-15)")]
-            [DefaultValue((byte)7)]
-            [SlideParametersAttribute(0, 0xf)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte DL
-            {
-                get
-                {
-                    return f_DL;
-                }
-                set
-                {
-                    f_DL = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_D2R = 1;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Decay 2 rate of ADSR(0-15)")]
-            [DisplayName("D2R(SR)[D2R]")]
-            [DefaultValue((byte)1)]
-            [SlideParametersAttribute(0, 0xf)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte D2R
-            {
-                get
-                {
-                    return f_D2R;
-                }
-                set
-                {
-                    f_D2R = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_RR = 7;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Release rate of ADSR(0-15)")]
-            [DefaultValue((byte)7)]
-            [SlideParametersAttribute(0, 0xf)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte RR
-            {
-                get
-                {
-                    return f_RR;
-                }
-                set
-                {
-                    f_RR = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_KSR = 0x0;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Key rate correction(0-15)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 0xf)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte KSR
-            {
-                get
-                {
-                    return f_KSR;
-                }
-                set
-                {
-                    f_KSR = (byte)(value & 0xf);
-                }
-            }
-
-            private byte f_LFO = 0x0;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("LFO depth(0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 0x7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte LFO
-            {
-                get
-                {
-                    return f_LFO;
-                }
-                set
-                {
-                    f_LFO = (byte)(value & 0x7);
-                }
-            }
-
-            private byte f_VIB = 0x0;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Vibrato depth(0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 0x7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte VIB
-            {
-                get
-                {
-                    return f_VIB;
-                }
-                set
-                {
-                    f_VIB = (byte)(value & 0x7);
-                }
-            }
-
-            private byte f_AM = 0x0;
-
-            [DataMember]
-            [Category("Sound")]
-            [Description("Tremolo depth(0-7)")]
-            [DefaultValue((byte)0)]
-            [SlideParametersAttribute(0, 0x7)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            public byte AM
-            {
-                get
-                {
-                    return f_AM;
-                }
-                set
-                {
-                    f_AM = (byte)(value & 0x7);
-                }
-            }
-
             /*
             [DataMember]
             [Category("Chip")]
             [Description("Global Settings")]
-            public MultiPCMGlobalSettings GlobalSettings
+            public RF5C164GlobalSettings GlobalSettings
             {
                 get;
                 set;
@@ -1247,16 +1194,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public virtual void ResetGlobalSettings()
             {
-                GlobalSettings.InjectFrom(new LoopInjection(), new MultiPCMGlobalSettings());
+                GlobalSettings.InjectFrom(new LoopInjection(), new RF5C164GlobalSettings());
             }
             */
 
             /// <summary>
             /// 
             /// </summary>
-            public MultiPCMTimbre()
+            public RF5C164Timbre()
             {
-                //GlobalSettings = new MultiPCMGlobalSettings();
+                //GlobalSettings = new RF5C164GlobalSettings();
             }
 
             /// <summary>
@@ -1267,7 +1214,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 try
                 {
-                    var obj = JsonConvert.DeserializeObject<MultiPCMTimbre>(serializeData);
+                    var obj = JsonConvert.DeserializeObject<RF5C164Timbre>(serializeData);
                     this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
@@ -1285,10 +1232,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
 
         [TypeConverter(typeof(CustomExpandableObjectConverter))]
-        [JsonConverter(typeof(NoTypeConverterJsonConverter<MultiPCMGlobalSettings>))]
+        [JsonConverter(typeof(NoTypeConverterJsonConverter<RF5C164GlobalSettings>))]
         [DataContract]
         [InstLock]
-        public class MultiPCMGlobalSettings : ContextBoundObject
+        public class RF5C164GlobalSettings : ContextBoundObject
         {
             [DataMember]
             [Category("Chip")]
@@ -1378,7 +1325,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 for (int i = 0; i < 128; i++)
                 {
-                    var tim = (MultiPCMTimbre)Timbres[i + 128];
+                    var tim = (RF5C164Timbre)Timbres[i + 128];
 
                     DrumTimbres[i].TimbreNumber = (ProgramAssignmentNumber)(i + 128);
                     DrumTimbres[i].BaseNote =
@@ -1410,7 +1357,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (s.SampleType == SF2SampleLink.MonoSample ||
                     s.SampleType == SF2SampleLink.LeftSample)
                 {
-                    var tim = new MultiPCMTimbre();
+                    var tim = new RF5C164Timbre();
 
                     double baseFreq = 440.0 * Math.Pow(2.0, (((double)s.OriginalKey - 69.0) / 12.0) + (double)(s.PitchCorrection / 100));
                     tim.BaseFreqency = baseFreq;
@@ -1428,52 +1375,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (loopP > 65535)
                         loopP = 65535;
 
-                    if (((len * 3) + 1) / 2 < 65536)
                     {
-                        byte[] samples = new byte[((len * 3) + 1) / 2];
-                        int idx = 0;
+                        byte[] samples = new byte[len];
                         for (uint i = 0; i < len; i++)
-                        {
-                            int data = (int)spl[start + i];
-
-                            if ((i & 1) == 0)
-                            {
-                                samples[idx++] = (byte)(data >> 8);
-                                samples[idx] = (byte)((data >> 4) & 0x0f);
-                            }
-                            else
-                            {
-                                samples[idx++] |= (byte)(data & 0xf0);
-                                samples[idx++] = (byte)(data >> 8);
-                            }
-                        }
-                        tim.PcmData12 = samples;
-
-                        tim.LoopPoint = loopP;
-                        tim.LoopEnable = true;
-                        if (s.LoopStart == s.LoopEnd)
-                        {
-                            tim.D1R = 0xf;
-                            tim.DL = 0;
-                            tim.LoopPoint = (uint)(len - 1);
-                            tim.LoopEnable = false;
-                        }
-                    }
-                    else
-                    {
-                        sbyte[] samples = new sbyte[len];
-                        for (uint i = 0; i < len; i++)
-                            samples[i] = (sbyte)(spl[start + i] >> 8);
+                            samples[i] = (byte)((spl[start + i] >> 8) + 127);
                         tim.PcmData = samples;
 
-                        tim.LoopPoint = loopP;
-                        tim.LoopEnable = true;
+                        tim.LoopPoint = (ushort)loopP;
                         if (s.LoopStart == s.LoopEnd)
                         {
-                            tim.D1R = 0xf;
-                            tim.DL = 0;
-                            tim.LoopPoint = (uint)(len - 1);
-                            tim.LoopEnable = false;
+                            tim.LoopPoint = (ushort)(len - 1);
                         }
                     }
 
@@ -1500,6 +1411,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             updatePcmData(null);
             MessageBox.Show(string.Format(Resources.TimbreLoaded, num));
+        }
+
+        private class EnumConverterSoundEngineTypeRF5C164 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.VSIF_Genesis_FTDI,
+                });
+
+                return sc;
+            }
         }
 
         #endregion

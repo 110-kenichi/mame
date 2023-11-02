@@ -1647,6 +1647,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
                         case SoundEngineType.VSIF_PC88_FTDI:
+                            vsifClient.FlushDeferredWriteDataAndWait();
+                            break;
                         case SoundEngineType.GIMIC:
                             break;
                     }
@@ -1672,10 +1674,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     break;
                 case SoundEngineType.VSIF_MSX_FTDI:
                 case SoundEngineType.VSIF_P6_FTDI:
-                case SoundEngineType.GIMIC:
-                    break;
                 case SoundEngineType.VSIF_PC88_FTDI:
-                    //Thread.Sleep(5000);
+                    vsifClient.FlushDeferredWriteDataAndWait();
+                    break;
+                case SoundEngineType.GIMIC:
                     break;
             }
         }

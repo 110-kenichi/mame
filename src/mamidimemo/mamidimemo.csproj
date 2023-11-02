@@ -650,6 +650,7 @@
     <Compile Include="Gui\LpcUITypeEditor.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
     <Compile Include="Instruments\Chips\MIDITHRU.cs" />
+    <Compile Include="Instruments\Chips\RF5C164.cs" />
     <Compile Include="Instruments\Chips\MultiPCM.cs" />
     <Compile Include="Instruments\Chips\uPD1771C.cs" />
     <Compile Include="Instruments\Chips\SN76477.cs" />
@@ -758,6 +759,10 @@
     </Content>
     <Content Include="..\VSIF\VGMPlay_P6\VGM_P6M.bin">
       <Link>VSIF\VGM_P6M.bin</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\VSIF\VGMPlay_SegaCD\VGMPlay_mdcd.bin">
+      <Link>VSIF\VGMPlay_mdcd.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Data\cm32p_user_internal_tone_memo.tbl">
@@ -1413,8 +1418,6 @@
     <None Include="Resources\Rec.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Midi\multipcm.cpp" />
-    <Content Include="Midi\multipcm.h" />
     <Content Include="Resources\ALG1.PNG" />
     <Content Include="Resources\ALG10.PNG" />
     <None Include="Resources\YM3806.png" />
@@ -1441,6 +1444,7 @@
     <None Include="Resources\ALG8Q.png" />
     <Content Include="Resources\MIDITHRU.png" />
     <None Include="Resources\MultiPCM.png" />
+    <None Include="Resources\RF5C164.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

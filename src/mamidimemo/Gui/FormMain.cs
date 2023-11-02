@@ -271,6 +271,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("YM3806", Resources.YM3806);
             imageList1.Images.Add("MIDITHRU", Resources.MIDITHRU);
             imageList1.Images.Add("MultiPCM", Resources.MultiPCM);
+            imageList1.Images.Add("RF5C164", Resources.RF5C164);
 
             if (Program.IsVSTiMode())
             {
@@ -852,10 +853,14 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.YM3806);
         }
 
-
         private void multiPCMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InstrumentManager.AddInstrument(InstrumentType.MultiPCM);
+        }
+
+        private void rF5C164ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.RF5C164);
         }
 
         /// <summary>

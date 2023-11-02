@@ -157,6 +157,7 @@
             this.pCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendC140ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSPC700ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.multiPCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fMSynthesisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM2610BToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
@@ -202,7 +203,7 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.multiPCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rF5C164ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -1534,7 +1535,8 @@
             this.pCMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extendC140ToolStripMenuItem,
             this.extendSPC700ToolStripMenuItem,
-            this.multiPCMToolStripMenuItem});
+            this.multiPCMToolStripMenuItem,
+            this.rF5C164ToolStripMenuItem});
             this.pCMToolStripMenuItem.Name = "pCMToolStripMenuItem";
             resources.ApplyResources(this.pCMToolStripMenuItem, "pCMToolStripMenuItem");
             // 
@@ -1549,6 +1551,12 @@
             this.extendSPC700ToolStripMenuItem.Name = "extendSPC700ToolStripMenuItem";
             resources.ApplyResources(this.extendSPC700ToolStripMenuItem, "extendSPC700ToolStripMenuItem");
             this.extendSPC700ToolStripMenuItem.Click += new System.EventHandler(this.extendSPC700ToolStripMenuItem_Click);
+            // 
+            // multiPCMToolStripMenuItem
+            // 
+            this.multiPCMToolStripMenuItem.Name = "multiPCMToolStripMenuItem";
+            resources.ApplyResources(this.multiPCMToolStripMenuItem, "multiPCMToolStripMenuItem");
+            this.multiPCMToolStripMenuItem.Click += new System.EventHandler(this.multiPCMToolStripMenuItem_Click);
             // 
             // fMSynthesisToolStripMenuItem
             // 
@@ -1837,11 +1845,11 @@
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // multiPCMToolStripMenuItem
+            // rF5C164ToolStripMenuItem
             // 
-            this.multiPCMToolStripMenuItem.Name = "multiPCMToolStripMenuItem";
-            resources.ApplyResources(this.multiPCMToolStripMenuItem, "multiPCMToolStripMenuItem");
-            this.multiPCMToolStripMenuItem.Click += new System.EventHandler(this.multiPCMToolStripMenuItem_Click);
+            this.rF5C164ToolStripMenuItem.Name = "rF5C164ToolStripMenuItem";
+            resources.ApplyResources(this.rF5C164ToolStripMenuItem, "rF5C164ToolStripMenuItem");
+            this.rF5C164ToolStripMenuItem.Click += new System.EventHandler(this.rF5C164ToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -2055,6 +2063,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem mIDITHRUToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiPCMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rF5C164ToolStripMenuItem;
     }
 }
 

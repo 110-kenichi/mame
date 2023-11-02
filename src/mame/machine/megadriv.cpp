@@ -1103,6 +1103,10 @@ void md_base_state::md_ntsc(machine_config &config)
 		MULTIPCM(config, *m_multipcm[i], 9878400);
 		(*m_multipcm[i])->add_route(0, "lspeaker", 2.00);
 		(*m_multipcm[i])->add_route(1, "rspeaker", 2.00);
+
+		RF5C164(config, *m_rf5c68[i], 12500000);
+		(*m_rf5c68[i])->add_route(0, "lspeaker", 2.00);
+		(*m_rf5c68[i])->add_route(1, "rspeaker", 2.00);
 	}
 }
 /*

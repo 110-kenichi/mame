@@ -1953,7 +1953,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("Tone type(YM2413 tone names)")]
+            [Description("Tone type(YM2413/DS1001 tone names)")]
             [DefaultValue(ToneType.Custom)]
             public ToneType ToneType
             {
@@ -2271,39 +2271,39 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             [Description("Custom(0)")]
             Custom,
-            [Description("Violin(1)")]
+            [Description("Violin/Buzzy Bell(1)")]
             Violin,
-            [Description("Guiter(2)")]
+            [Description("Guitar/Guitar(2)")]
             Guiter,
-            [Description("Piano(3)")]
+            [Description("Piano/Wurly(3)")]
             Piano,
-            [Description("Flute(4)")]
+            [Description("Flute/Flute(4)")]
             Flute,
-            [Description("Clarinet(5)")]
+            [Description("Clarinet/Clarinet(5)")]
             Clarinet,
-            [Description("Oboe(6)")]
+            [Description("Oboe/Synth(6)")]
             Oboe,
-            [Description("Trumpet(7)")]
+            [Description("Trumpet/Trumpet(7)")]
             Trumpet,
-            [Description("Organ(8)")]
+            [Description("Organ/Organ(8)")]
             Organ,
-            [Description("Horn(9)")]
+            [Description("Horn/Bells(9)")]
             Horn,
-            [Description("Synthesizer(10)")]
+            [Description("Synthesizer/Vibraphone(10)")]
             Synthesizer,
-            [Description("Harpsichord(11)")]
+            [Description("Harpsichord/Tutti(11)")]
             Harpsichord,
-            [Description("Vibraphone(12)")]
+            [Description("Vibraphone/Vibes(12)")]
             Vibraphone,
-            [Description("SynthesizerBass(13)")]
+            [Description("SynthesizerBass/Fretless(13)")]
             SynthesizerBass,
-            [Description("AcousticBass(14)")]
+            [Description("AcousticBass/SynthBass(14)")]
             AcousticBass,
-            [Description("ElectricGuitar(15)")]
+            [Description("ElectricGuitar/Sweep(15)")]
             ElectricGuitar,
-            [Description("DrumSet")]
+            [Description("DrumSet/-")]
             DrumSet,
-            [Description("DrumSetEnhanced *Custom F-Num*")]
+            [Description("DrumSetEnhanced *Custom F-Num*/-")]
             DrumSetEnhanced,
         }
 
