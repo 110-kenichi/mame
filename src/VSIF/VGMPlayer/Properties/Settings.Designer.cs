@@ -993,5 +993,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["NesDpcmRate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MCD_Enable {
+            get {
+                return ((bool)(this["MCD_Enable"]));
+            }
+            set {
+                this["MCD_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MCD_IF {
+            get {
+                return ((int)(this["MCD_IF"]));
+            }
+            set {
+                this["MCD_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int MCD_Port {
+            get {
+                return ((int)(this["MCD_Port"]));
+            }
+            set {
+                this["MCD_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal MCD_Div {
+            get {
+                return ((decimal)(this["MCD_Div"]));
+            }
+            set {
+                this["MCD_Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public decimal BitBangWaitMCD {
+            get {
+                return ((decimal)(this["BitBangWaitMCD"]));
+            }
+            set {
+                this["BitBangWaitMCD"] = value;
+            }
+        }
     }
 }

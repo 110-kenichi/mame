@@ -203,11 +203,6 @@ namespace zanac.VGMPlayer
                                     client.WriteData(0, 0x14, (byte)(0x80 | 2 << 5 | 0x1f), 100);
                                     client.WriteData(0, 0x14, (byte)(0x80 | 3 << 5 | 0x1f), 100);
 
-                                    //ftdi.Write(new byte[] { (byte)(((0x07 << 1) & 0xe) | 0) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { (byte)(((0x38 >> 2) & 0xe) | 1) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { (byte)(((0xC0 >> 5) & 0xe) | 0) }, 1, ref dummy);
-                                    //ftdi.Write(new byte[] { 1 }, 1, ref dummy);
-
                                     client.Disposed += Client_Disposed;
                                     vsifClients.Add(client);
                                     return client;

@@ -22,7 +22,6 @@ Reset_FTDI2XX:
     clr.l   %d0                        | for Recv
     move.b  #0xC0,%d1                  | for And Data(Hi 2bit)
     move.b  #6,%d2                     | for Check Bit 6
-                                       | d4 for PCM ADRS
     move.w  #0,%d5                     | for PCM ADRS 
     move.l  #0xA00001,%d6              | for PCM ADRS MAGIC KEY
 
@@ -38,7 +37,7 @@ _VGM_ADDRESS_FTDI2XX_LOOP:
     | Get Write Address
     | 0CDDAAAA -> DDAAAA00
     lsl.b   #2,%d0                            |+10 34   Shift Left
-    move.l  (%d0.w, %a1), %a2                 |+16 50   Get Register Address
+    move.l  (d0.w, a1), a2                    |+16 50   Get Register Address
 
 _VGM_DATA_FTDI2XX_LOOP:
     btst.b  %d2,(%a0)                         | +8 8    Check CLK

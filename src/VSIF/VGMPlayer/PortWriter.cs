@@ -105,6 +105,11 @@ namespace zanac.VGMPlayer
             }
         }
 
+        public void Purge()
+        {
+            ftdiPort?.Purge(FTD2XX_NET.FTDI.FT_PURGE.FT_PURGE_TX);
+        }
+
         private bool abortRequested;
 
         public void Abort()

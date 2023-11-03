@@ -39,8 +39,19 @@ namespace zanac.VGMPlayer
         /// <param name="wait"></param>
         public override void Write(PortWriteData[] data)
         {
+            //Remove PCM Wait
+            List<PortWriteData> pdata = new List<PortWriteData>(data);
+            for (int i = 1; i < pdata.Count; i++)
+            {
+                if (pdata[i].Type == 0x0 && pdata[i - 1].Type == 0xff)
+                {
+                    pdata.RemoveAt(i - 1);
+                    i--;
+                }
+            }
+
             List<byte> ds = new List<byte>();
-            foreach (var dt in data)
+            foreach (var dt in pdata)
             {
                 ds.Add(dt.Address);
                 ds.Add(dt.Data);

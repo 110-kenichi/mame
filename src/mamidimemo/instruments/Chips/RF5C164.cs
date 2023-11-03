@@ -429,18 +429,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void sendData(ushort address, byte data, bool wait)
         {
             List<PortWriteData> list = new List<PortWriteData>();
-            list.Add(new PortWriteData() { Type = 0, Address = 6*4, Data = 0, Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 1, Address = 6*4, Data = 0, Wait = f_ftdiClkWidth });
 
-            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = (byte)((address >> 8) & 0xff), Wait = f_ftdiClkWidth });
-            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = (byte)(address & 0xff), Wait = f_ftdiClkWidth });
-            list.Add(new PortWriteData() { Type = 0, Address = 0, Data = data, Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 1, Address = 0, Data = (byte)((address >> 8) & 0xff), Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 1, Address = 0, Data = (byte)(address & 0xff), Wait = f_ftdiClkWidth });
+            list.Add(new PortWriteData() { Type = 1, Address = 0, Data = data, Wait = f_ftdiClkWidth });
             if (wait)
             {
-                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
-                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
-                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
-                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
-                list.Add(new PortWriteData() { Type = 0, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0xff, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0xff, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0xff, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0xff, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
+                list.Add(new PortWriteData() { Type = 0xff, Address = 0, Data = 0, Wait = f_ftdiClkWidth });
             }
             vsifClient.WriteData(list.ToArray());
         }
@@ -944,8 +944,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 else
                 {
-                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 5, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length) >> 8) & 0xff), false);
-                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 4, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length)) & 0xff), false);
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 5, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length - 1) >> 8) & 0xff), false);
+                    parentModule.RF5C164RegWriteData(parentModule.UnitNumber, 4, (byte)(((timbre.PcmAddressStart + timbre.PcmData.Length - 1)) & 0xff), false);
                 }
 
                 OnVolumeUpdated();

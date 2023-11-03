@@ -47,6 +47,7 @@ namespace zanac.VGMPlayer
             comboBoxY8950.SelectedIndex = 0;
             comboBoxOPN.SelectedIndex = 0;
             comboBoxNES.SelectedIndex = 0;
+            comboBoxMCD.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -70,6 +71,7 @@ namespace zanac.VGMPlayer
             checkBoxConnY8950.Checked = false;
             checkBoxConnOPN.Checked = false;
             checkBoxConnNES.Checked = false;
+            checkBoxConnMCD.Checked = false;
 
             //HACK: To avoid layout glith
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
@@ -168,6 +170,7 @@ namespace zanac.VGMPlayer
             comPortY8950?.Dispose();
             comPortOPN?.Dispose();
             comPortNES?.Dispose();
+            comPortMCD?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -732,6 +735,35 @@ namespace zanac.VGMPlayer
                         e.Handled = true;
                         break;
                 }
+            }
+        }
+
+        private VsifClient comPortMCD;
+
+        private void checkBoxConnMCD_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnMCD.Checked)
+            {
+                switch (Settings.Default.MCD_IF)
+                {
+                    case 0:
+                        comPortMCD = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                            (PortId)Settings.Default.MCD_Port, (int)Settings.Default.MCD_Div, false);
+                        break;
+                }
+
+                checkBoxConnMCD.Checked = comPortMCD != null;
+                comboBoxMCD.Enabled = comPortMCD == null;
+                comboBoxPortMCD.Enabled = comPortMCD == null;
+                numericUpDownMCDDiv.Enabled = comPortMCD == null;
+            }
+            else
+            {
+                checkBoxConnMCD.Enabled = true;
+                comboBoxPortMCD.Enabled = true;
+                numericUpDownMCDDiv.Enabled = true;
+
+                comPortMCD?.Dispose();
             }
         }
 
@@ -1479,6 +1511,8 @@ namespace zanac.VGMPlayer
                 f.ShowDialog(this);
             }
         }
+
+
     }
 
     internal static class NativeConstants

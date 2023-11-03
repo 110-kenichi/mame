@@ -336,6 +336,7 @@ namespace zanac.VGMPlayer
                 }
                 if (dd.Length != 0)
                     DataWriter?.Write(dd);
+                DataWriter?.Purge();
             }
             catch (Exception ex)
             {

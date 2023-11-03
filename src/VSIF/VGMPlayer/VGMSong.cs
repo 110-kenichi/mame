@@ -46,6 +46,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortY8950;
         private VsifClient comPortOPN;
         private VsifClient comPortNES;
+        private VsifClient comPortMCD;
 
         private BinaryReader vgmReader;
 
@@ -317,6 +318,11 @@ namespace zanac.VGMPlayer
             if (comPortNES != null)
             {
                 comPortNES.DeferredWriteData(0, 0x15, 0, (int)Settings.Default.BitBangWaitNES);
+            }
+            //MCD RF5C164
+            if (comPortMCD != null)
+            {
+                DeferredWriteMCDReg(8, (byte)0xff);
             }
 
             flushDeferredWriteDataAndWait();
@@ -800,9 +806,49 @@ namespace zanac.VGMPlayer
                     }
                 }
             }
+            if (curHead.lngHzRF5C164 != 0 && curHead.lngVersion >= 0x00000151)
+            {
+                curHead.lngHzRF5C164 = (uint)(curHead.lngHzRF5C164 & ~0x80000000);
+                SongChipInformation += $"RF5C164@{curHead.lngHzRF5C164 / 1000000f}MHz ";
+
+                if (Settings.Default.MCD_Enable)
+                {
+                    connectToMCD();
+                }
+            }
             return curHead;
         }
 
+
+        private bool connectToMCD()
+        {
+            if (comPortMCD == null)
+            {
+                switch (Settings.Default.MCD_IF)
+                {
+                    case 0:
+                        if (comPortMCD == null)
+                        {
+                            comPortMCD = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis_FTDI,
+                                (PortId)Settings.Default.MCD_Port);
+                            if (comPortMCD != null)
+                            {
+                                comPortMCD.ChipClockHz["RF5C164"] = 12500000;
+                                comPortMCD.ChipClockHz["RF5C164_org"] = 12500000;
+                                UseChipInformation += "RF5C164@12.5MHz ";
+                            }
+                        }
+                        break;
+                }
+                if (comPortMCD != null)
+                {
+                    Accepted = true;
+
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private bool connectToNES()
         {
@@ -2737,6 +2783,59 @@ namespace zanac.VGMPlayer
                                                                 dacData.AddRange(vgmReader.ReadBytes((int)size));
                                                         }
                                                         break;
+                                                    case 2: //RF5C164 PCM data for use with associated commands
+                                                        {
+                                                            uint saddr = 0;
+                                                            List<byte> dd = new List<byte>();
+                                                            dd.AddRange(vgmReader.ReadBytes((int)size));
+
+                                                            if (comPortMCD != null)
+                                                            {
+                                                                byte prevbank = 0xff;
+                                                                int percentage = 0;
+                                                                int lastPercentage = 0;
+                                                                for (var i = saddr; i < dd.Count; i++)
+                                                                {
+                                                                    if (i < 0x20)
+                                                                    {
+                                                                        DeferredWriteMCDReg((int)(i & 0x1f), dd[(int)i]);
+                                                                    }
+                                                                    else if (i >= 0x1000)
+                                                                    {
+                                                                        byte bank = (byte)(0x00 | (((i - 0x1000) >> 12) & 0xf));
+                                                                        if (bank != prevbank)
+                                                                        {
+                                                                            //Write mode and select mem bank
+                                                                            DeferredWriteMCDReg(0x7, bank);
+                                                                            prevbank = bank;
+                                                                        }
+                                                                        //Write PCM DATA
+                                                                        DeferredWriteMCDMem((int)((i - 0x1000) & 0xfff), dd[(int)i]);
+
+                                                                        percentage = (int)((100 * i) / dd.Count);
+                                                                        if (percentage != lastPercentage)
+                                                                        {
+                                                                            lastPercentage = percentage;
+                                                                            FormMain.TopForm.SetStatusText("RF5C164: Transferring PCM(" + percentage + "%)");
+                                                                            switch (comPortMCD.SoundModuleType)
+                                                                            {
+                                                                                case VsifSoundModuleType.Genesis_FTDI:
+                                                                                    comPortMCD?.FlushDeferredWriteDataAndWait();
+                                                                                    break;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                                switch (comPortMCD.SoundModuleType)
+                                                                {
+                                                                    case VsifSoundModuleType.Genesis_FTDI:
+                                                                        comPortMCD?.FlushDeferredWriteDataAndWait();
+                                                                        break;
+                                                                }
+                                                                FormMain.TopForm.SetStatusText("RF5C164: Transferred PCM.");
+                                                            }
+                                                        }
+                                                        break;
                                                     case 4: //OKIM6258 ADPCM data for use with associated commands
                                                         {
                                                             dacDataOffset.Add(dacData.Count);
@@ -2883,6 +2982,55 @@ namespace zanac.VGMPlayer
 #endif
                                                             var dat = vgmReader.ReadBytes((int)size);
                                                             k053260?.k053260_write_rom(0, (int)romSize, (int)saddr, (int)size, dat);
+
+                                                            break;
+                                                        }
+                                                    case 0xc1:  //RF5C164
+                                                        {
+                                                            uint saddr = vgmReader.ReadUInt16();
+                                                            size -= 2;
+                                                            List<byte> dd = new List<byte>();
+                                                            dd.AddRange(vgmReader.ReadBytes((int)size));
+
+                                                            if (comPortMCD != null)
+                                                            {
+                                                                byte prevbank = 0xff;
+                                                                int percentage = 0;
+                                                                int lastPercentage = 0;
+                                                                for (var i = 0; i < dd.Count; i++)
+                                                                {
+                                                                    byte bank = (byte)(0x00 | (((saddr + i) >> 12) & 0xf));
+                                                                    if (bank != prevbank)
+                                                                    {
+                                                                        //Write mode and select mem bank
+                                                                        DeferredWriteMCDReg(0x7, bank);
+                                                                        prevbank = bank;
+                                                                    }
+                                                                    //Write PCM DATA
+                                                                    DeferredWriteMCDMem((int)((saddr + i) & 0xfff), dd[(int)i]);
+
+                                                                    percentage = (int)((100 * i) / dd.Count);
+                                                                    if (percentage != lastPercentage)
+                                                                    {
+                                                                        lastPercentage = percentage;
+                                                                        FormMain.TopForm.SetStatusText("RF5C164: Transferring PCM(" + percentage + "%)");
+                                                                        switch (comPortMCD.SoundModuleType)
+                                                                        {
+                                                                            case VsifSoundModuleType.Genesis_FTDI:
+                                                                                comPortMCD?.FlushDeferredWriteDataAndWait();
+                                                                                break;
+                                                                        }
+                                                                    }
+                                                                    if (RequestedStat == SoundState.Stopped)
+                                                                        break;
+                                                                }
+                                                                switch (comPortMCD.SoundModuleType)
+                                                                {
+                                                                    case VsifSoundModuleType.Genesis_FTDI:
+                                                                        comPortMCD?.FlushDeferredWriteDataAndWait();
+                                                                        break;
+                                                                }
+                                                            }
 
                                                             break;
                                                         }
@@ -3178,7 +3326,34 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xB0 <= cmd && cmd <= 0xB3:
+                                    case 0xB0:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xB1:  //RF5C164 MCD reg
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if (comPortMCD != null)
+                                            {
+                                                DeferredWriteMCDReg(adrs, (byte)dt);
+                                            }
+                                            break;
+                                        }
+
+                                    case int cmd when 0xB2 <= cmd && cmd <= 0xB3:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3373,7 +3548,40 @@ namespace zanac.VGMPlayer
                                             break;
                                         }
 
-                                    case int cmd when 0xC1 <= cmd && cmd <= 0xD1:
+                                    case 0xC1:
+                                        {
+                                            var pp = readByte();
+                                            if (pp < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xC2:  //RF5C164 MCD Mem
+                                        {
+                                            var bb = readByte();
+                                            if (bb < 0)
+                                                break;
+                                            var aa = readByte();
+                                            if (aa < 0)
+                                                break;
+                                            var dd = readByte();
+                                            if (dd < 0)
+                                                break;
+
+                                            if (comPortMCD != null)
+                                            {
+                                                DeferredWriteMCDMem((aa << 8) | bb, (byte)dd);
+                                            }
+                                            break;
+                                        }
+
+                                    case int cmd when 0xC3 <= cmd && cmd <= 0xD1:
                                         {
                                             var pp = readByte();
                                             if (pp < 0)
@@ -3756,6 +3964,54 @@ namespace zanac.VGMPlayer
                         }
                         break;
                 }
+            }
+        }
+
+
+        public void DeferredWriteMCDReg(int adrs, byte dt)
+        {
+            if (comPortMCD == null)
+                return;
+
+            switch (comPortMCD.SoundModuleType)
+            {
+                case VsifSoundModuleType.Genesis_FTDI:
+
+                    adrs = ((adrs << 1) + 1);
+                    sendMcdData((ushort)adrs, dt, (int)Settings.Default.BitBangWaitMCD, true);
+                    break;
+            }
+        }
+
+        public void DeferredWriteMCDMem(int adrs, byte dt)
+        {
+            if (comPortMCD == null)
+                return;
+
+            switch (comPortMCD.SoundModuleType)
+            {
+                case VsifSoundModuleType.Genesis_FTDI:
+
+                    adrs = (ushort)((0x2000 + (adrs << 1)) + 1);
+                    sendMcdData((ushort)adrs, dt, (int)Settings.Default.BitBangWaitMCD, false);
+                    break;
+            }
+        }
+
+        private void sendMcdData(ushort address, byte data, int f_ftdiClkWidth, bool wait)
+        {
+            comPortMCD.DeferredWriteData(1, 6 * 4, 0, f_ftdiClkWidth);
+
+            comPortMCD.DeferredWriteData(1, 0, (byte)((address >> 8) & 0xff), f_ftdiClkWidth);
+            comPortMCD.DeferredWriteData(1, 0, (byte)(address & 0xff), f_ftdiClkWidth);
+            comPortMCD.DeferredWriteData(1, 0, data, f_ftdiClkWidth);
+            if (wait)
+            {
+                comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
+                comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
+                comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
+                comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
+                comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
             }
         }
 
@@ -4561,7 +4817,8 @@ namespace zanac.VGMPlayer
             comPortOPNA?.FlushDeferredWriteData();
             comPortY8950?.FlushDeferredWriteData();
             comPortOPN?.FlushDeferredWriteData();
-            comPortNES?.FlushDeferredWriteDataAndWait();
+            comPortNES?.FlushDeferredWriteData();
+            comPortMCD?.FlushDeferredWriteData();
         }
 
         /// <summary>
@@ -4580,6 +4837,7 @@ namespace zanac.VGMPlayer
             comPortY8950?.FlushDeferredWriteDataAndWait();
             comPortOPN?.FlushDeferredWriteDataAndWait();
             comPortNES?.FlushDeferredWriteDataAndWait();
+            comPortMCD?.FlushDeferredWriteDataAndWait();
         }
 
 
@@ -4600,6 +4858,7 @@ namespace zanac.VGMPlayer
             comPortOPN?.Abort();
             comPortNES?.Abort();
             nesDpcm?.Stop();
+            comPortMCD?.Abort();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -4667,6 +4926,8 @@ namespace zanac.VGMPlayer
                 comPortNES = null;
                 nesDpcm?.Dispose();
                 nesDpcm = null;
+                comPortMCD?.Dispose();
+                comPortMCD = null;
 
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
