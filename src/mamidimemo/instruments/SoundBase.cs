@@ -497,7 +497,27 @@ namespace zanac.MAmidiMEmo.Instruments
                 ActiveFx = FxEngine.Active;
 
                 if (ActiveFx)
-                    return FxEngine.Settings.EnvelopeInterval;
+                {
+                    var freq = MidiManager.CalcCurrentFrequency(this.NoteOnEvent.NoteNumber);
+                    var ksl = FxEngine.Settings.KeyScaleLevel;
+                    if (ksl != 0)
+                    {
+                        if (ksl > 0)
+                        {
+                            var interval = FxEngine.Settings.EnvelopeInterval * 440d / freq;
+                            return interval * ksl;
+                        }
+                        else
+                        {
+                            var interval = FxEngine.Settings.EnvelopeInterval * freq / 440d;
+                            return interval / (-ksl);
+                        }
+                    }
+                    else
+                    {
+                        return FxEngine.Settings.EnvelopeInterval;
+                    }
+                }
                 else if (IsKeyOff)
                     TrySoundOff();
             }

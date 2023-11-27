@@ -228,7 +228,7 @@ namespace zanac.VGMPlayer
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(899, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(899, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -241,7 +241,7 @@ namespace zanac.VGMPlayer
             this.toolStripSeparator1,
             this.eXITToolStripMenuItem});
             this.fILEToolStripMenuItem.Name = "fILEToolStripMenuItem";
-            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
+            this.fILEToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             this.fILEToolStripMenuItem.Text = "&FILE";
             // 
             // addPlaylistToolStripMenuItem
@@ -283,14 +283,14 @@ namespace zanac.VGMPlayer
             // oPTIONSToolStripMenuItem
             // 
             this.oPTIONSToolStripMenuItem.Name = "oPTIONSToolStripMenuItem";
-            this.oPTIONSToolStripMenuItem.Size = new System.Drawing.Size(84, 26);
+            this.oPTIONSToolStripMenuItem.Size = new System.Drawing.Size(84, 24);
             this.oPTIONSToolStripMenuItem.Text = "&OPTIONS";
             this.oPTIONSToolStripMenuItem.Click += new System.EventHandler(this.oPTIONSToolStripMenuItem_Click);
             // 
             // aBOUTToolStripMenuItem
             // 
             this.aBOUTToolStripMenuItem.Name = "aBOUTToolStripMenuItem";
-            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 26);
+            this.aBOUTToolStripMenuItem.Size = new System.Drawing.Size(71, 24);
             this.aBOUTToolStripMenuItem.Text = "&ABOUT";
             this.aBOUTToolStripMenuItem.Click += new System.EventHandler(this.aBOUTToolStripMenuItem_Click);
             // 
@@ -904,7 +904,7 @@ namespace zanac.VGMPlayer
             // 
             this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.splitter1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.splitter1.Location = new System.Drawing.Point(0, 230);
+            this.splitter1.Location = new System.Drawing.Point(0, 228);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(899, 8);
             this.splitter1.TabIndex = 6;
@@ -1100,7 +1100,7 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownMCDDiv, 5, 13);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 30);
+            this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanelPort.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(4);
@@ -5145,6 +5145,7 @@ namespace zanac.VGMPlayer
             // comboBoxMCD
             // 
             this.comboBoxMCD.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "MCD_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxMCD.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxMCD.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxMCD.FormattingEnabled = true;
             this.comboBoxMCD.Items.AddRange(new object[] {
@@ -5472,10 +5473,10 @@ namespace zanac.VGMPlayer
             this.listViewList.GridLines = true;
             this.listViewList.HideSelection = false;
             this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 238);
+            this.listViewList.Location = new System.Drawing.Point(0, 236);
             this.listViewList.Margin = new System.Windows.Forms.Padding(4);
             this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(899, 359);
+            this.listViewList.Size = new System.Drawing.Size(899, 361);
             this.listViewList.TabIndex = 2;
             this.listViewList.UseCompatibleStateImageBehavior = false;
             this.listViewList.View = System.Windows.Forms.View.Details;

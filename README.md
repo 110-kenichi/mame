@@ -1,4 +1,4 @@
-MAmidiMEmo 5.2.1.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.2.2.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.2.2.0 Added KeyScaleLevel property on the FxS.
 5.2.1.0 Suported MEGA CD(VSIF Genesis(FTDI)) vgm by VGMPlayer.
         Note1: No supported streaming vgm data.
 		Note2: There is noise at the start of playback.

@@ -65,6 +65,29 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
         }
 
+        private double f_KSL = 0d;
+
+        [DataMember]
+        [Description("Set level of key scale rate for EnvelopeInterval. " +
+            "Calculating on the basis of the last note on frequency. And base frequency is A4(440Hz).")]
+        [DefaultValue(typeof(double), "0")]
+        [DoubleSlideParameters(-5d, 5d, 0.1d)]
+        [EditorAttribute(typeof(DoubleSlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public virtual double KeyScaleLevel
+        {
+            get
+            {
+                return f_KSL;
+            }
+            set
+            {
+                if (f_KSL != value)
+                {
+                    f_KSL = value;
+                }
+            }
+        }
+
         [DataMember]
         [Description("Memo")]
         [DefaultValue(null)]
