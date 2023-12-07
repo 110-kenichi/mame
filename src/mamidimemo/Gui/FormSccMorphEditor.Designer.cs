@@ -52,7 +52,6 @@
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -73,13 +72,11 @@
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(this.buttonOk, "buttonOk");
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.UseSelectable = true;
             // 
             // metroButtonAdd
             // 
             resources.ApplyResources(this.metroButtonAdd, "metroButtonAdd");
             this.metroButtonAdd.Name = "metroButtonAdd";
-            this.metroButtonAdd.UseSelectable = true;
             this.metroButtonAdd.Click += new System.EventHandler(this.metroButtonAdd_Click);
             // 
             // tableLayoutPanel2
@@ -106,21 +103,18 @@
             // 
             resources.ApplyResources(this.metroButtonDelete, "metroButtonDelete");
             this.metroButtonDelete.Name = "metroButtonDelete";
-            this.metroButtonDelete.UseSelectable = true;
             this.metroButtonDelete.Click += new System.EventHandler(this.metroButtonDelete_Click);
             // 
             // metroButtonInsert
             // 
             resources.ApplyResources(this.metroButtonInsert, "metroButtonInsert");
             this.metroButtonInsert.Name = "metroButtonInsert";
-            this.metroButtonInsert.UseSelectable = true;
             this.metroButtonInsert.Click += new System.EventHandler(this.metroButtonInsert_Click);
             // 
             // metroButtonDuplicate
             // 
             resources.ApplyResources(this.metroButtonDuplicate, "metroButtonDuplicate");
             this.metroButtonDuplicate.Name = "metroButtonDuplicate";
-            this.metroButtonDuplicate.UseSelectable = true;
             this.metroButtonDuplicate.Click += new System.EventHandler(this.metroButtonDuplicate_Click);
             // 
             // metroButtonInterpolate
@@ -129,21 +123,19 @@
             resources.ApplyResources(this.metroButtonInterpolate, "metroButtonInterpolate");
             this.metroButtonInterpolate.Name = "metroButtonInterpolate";
             this.toolTip1.SetToolTip(this.metroButtonInterpolate, resources.GetString("metroButtonInterpolate.ToolTip"));
-            this.metroButtonInterpolate.UseSelectable = true;
             this.metroButtonInterpolate.Click += new System.EventHandler(this.metroButtonInterpolate_Click);
             // 
             // metroButtonCopy
             // 
             resources.ApplyResources(this.metroButtonCopy, "metroButtonCopy");
             this.metroButtonCopy.Name = "metroButtonCopy";
-            this.metroButtonCopy.UseSelectable = true;
             this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
             // FormSccMorphEditor
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.Controls.Add(this.tableLayoutPanel1);
             this.MinimizeBox = false;

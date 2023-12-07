@@ -41,7 +41,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.metroLabelDrop = new MetroFramework.Controls.MetroLabel();
             this.listViewIntruments = new System.Windows.Forms.ListView();
-            this.contextMenuStripInst = new MetroFramework.Controls.MetroContextMenu(this.components);
+            this.contextMenuStripInst = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.decreaseThisKindOfChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cloneSelectedChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSepInst = new System.Windows.Forms.ToolStripSeparator();
@@ -158,6 +158,7 @@
             this.extendC140ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendSPC700ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.multiPCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rF5C164ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fMSynthesisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendYM2610BToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2608 = new System.Windows.Forms.ToolStripMenuItem();
@@ -203,7 +204,6 @@
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.rF5C164ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -266,7 +266,6 @@
             // 
             resources.ApplyResources(this.metroLabelDrop, "metroLabelDrop");
             this.metroLabelDrop.Name = "metroLabelDrop";
-            this.metroLabelDrop.WrapToLine = true;
             this.metroLabelDrop.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
             this.metroLabelDrop.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
             // 
@@ -427,10 +426,9 @@
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 0;
+            this.tabControlBottom.SelectedIndex = 2;
             this.tabControlBottom.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
-            this.tabControlBottom.UseSelectable = true;
             // 
             // tabPage1
             // 
@@ -1044,9 +1042,9 @@
             // 
             resources.ApplyResources(this.metroTrackBarVol, "metroTrackBarVol");
             this.metroTrackBarVol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
+            this.metroTrackBarVol.CustomBackground = true;
             this.metroTrackBarVol.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MasterVolume", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTrackBarVol.Name = "metroTrackBarVol";
-            this.metroTrackBarVol.UseCustomBackColor = true;
             this.metroTrackBarVol.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.MasterVolume;
             this.metroTrackBarVol.ValueChanged += new System.EventHandler(this.metroTrackBar1_ValueChanged);
             // 
@@ -1558,6 +1556,12 @@
             resources.ApplyResources(this.multiPCMToolStripMenuItem, "multiPCMToolStripMenuItem");
             this.multiPCMToolStripMenuItem.Click += new System.EventHandler(this.multiPCMToolStripMenuItem_Click);
             // 
+            // rF5C164ToolStripMenuItem
+            // 
+            this.rF5C164ToolStripMenuItem.Name = "rF5C164ToolStripMenuItem";
+            resources.ApplyResources(this.rF5C164ToolStripMenuItem, "rF5C164ToolStripMenuItem");
+            this.rF5C164ToolStripMenuItem.Click += new System.EventHandler(this.rF5C164ToolStripMenuItem_Click);
+            // 
             // fMSynthesisToolStripMenuItem
             // 
             this.fMSynthesisToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1845,16 +1849,10 @@
             this.timer1.Interval = 300;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
-            // rF5C164ToolStripMenuItem
-            // 
-            this.rF5C164ToolStripMenuItem.Name = "rF5C164ToolStripMenuItem";
-            resources.ApplyResources(this.rF5C164ToolStripMenuItem, "rF5C164ToolStripMenuItem");
-            this.rF5C164ToolStripMenuItem.Click += new System.EventHandler(this.rF5C164ToolStripMenuItem_Click);
-            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -1913,7 +1911,7 @@
         private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ImageList imageList1;
-        private MetroFramework.Controls.MetroContextMenu contextMenuStripInst;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripInst;
         private System.Windows.Forms.ToolStripMenuItem decreaseThisKindOfChipToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;

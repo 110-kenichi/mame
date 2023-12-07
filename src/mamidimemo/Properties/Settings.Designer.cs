@@ -789,5 +789,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["SccInterporateNum"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal GuiScale {
+            get {
+                return ((decimal)(this["GuiScale"]));
+            }
+            set {
+                this["GuiScale"] = value;
+            }
+        }
     }
 }

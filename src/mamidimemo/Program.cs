@@ -2,6 +2,7 @@
 using Accessibility;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Multimedia;
+using MetroFramework;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -10,12 +11,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Proxies;
+using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -27,6 +32,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Properties;
+using MetroFramework.Components;
 
 namespace zanac.MAmidiMEmo
 {
@@ -35,7 +41,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "5.2.2.0";
+        public const string FILE_VERSION = "5.3.0.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2023 Itoken.All rights reserved.";
@@ -127,6 +133,53 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
             }
         }
 
+        public class InterfaceImplementer : RealProxy, IRemotingTypeInfo
+        {
+            readonly Type _type;
+            readonly Func<MethodInfo, IMethodCallMessage, object> _callback;
+
+            public InterfaceImplementer(Type type, Func<MethodInfo, IMethodCallMessage, object> callback) : base(type)
+            {
+                _callback = callback;
+                _type = type;
+            }
+
+            public override IMessage Invoke(IMessage msg)
+            {
+                var call = msg as IMethodCallMessage;
+
+                if (call == null)
+                    throw new NotSupportedException();
+
+                var method = (MethodInfo)call.MethodBase;
+
+                return new ReturnMessage(_callback(method, call), null, 0, call.LogicalCallContext, call);
+            }
+
+            public bool CanCastTo(Type fromType, object o) => fromType == _type;
+
+            public string TypeName { get; set; }
+        }
+
+        private static float guiScale;
+
+        public static float GuiScale
+        {
+            get
+            {
+                return guiScale;
+            }
+        }
+
+        static object ResolveFont(MethodInfo info, IMethodCallMessage msg)
+        {
+            float sz = (float)msg.Args[1];
+            sz = sz + (sz * guiScale);
+
+            return new Font((String)msg.Args[0], sz,
+                (System.Drawing.FontStyle)msg.Args[2], (GraphicsUnit)msg.Args[3]);
+        }
+
         /// <summary>
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
@@ -156,6 +209,17 @@ Copyright(C) 2019, 2023 Itoken.All rights reserved.";
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+
+                guiScale = (float)Settings.Default.GuiScale / 100f;
+                if (guiScale != 0)
+                {
+                    var internalType = typeof(MetroFonts).Assembly.GetType("MetroFramework.MetroFonts+IMetroFontResolver");
+                    var result = new InterfaceImplementer(internalType, ResolveFont).GetTransparentProxy();
+
+                    var field = typeof(MetroFonts).GetField("FontResolver", BindingFlags.Static | BindingFlags.NonPublic);
+                    field.SetValue(typeof(MetroFonts), result);
+                }
+                //MetroStyleManager.Default.Theme = MetroFramework.MetroThemeStyle.Dark;
 
                 using (var fs = new FormSplash())
                 {

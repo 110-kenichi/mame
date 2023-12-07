@@ -117,8 +117,69 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 27</value>
+  </data>
+  <data name="pianoControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1053, 73</value>
+  </data>
+  <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1053, 27</value>
+  </data>
+  <data name="toolStripComboBoxCh.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 27</value>
+  </data>
+  <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 24</value>
+  </data>
+  <data name="toolStripButtonPlay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 24</value>
+  </data>
+  <data name="toolStripButtonHook.Size" type="System.Drawing.Size, System.Drawing">
+    <value>64, 24</value>
+  </data>
+  <data name="toolStripButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 24</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 27</value>
+  </data>
+  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 24</value>
+  </data>
+  <data name="toolStripComboBoxNote.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 27</value>
+  </data>
+  <data name="toolStripLabel4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 24</value>
+  </data>
+  <data name="toolStripComboBoxVelo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 27</value>
+  </data>
+  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>31, 24</value>
+  </data>
+  <data name="toolStripComboBoxGate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 27</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 27</value>
+  </data>
+  <data name="toolStripLabel5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>21, 24</value>
+  </data>
+  <data name="toolStripComboBoxCC.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 27</value>
+  </data>
+  <data name="metroButtonRand1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 10</value>
+  </data>
   <data name="metroButtonRand1.Text" xml:space="preserve">
     <value>ランダム大(&amp;R)</value>
+  </data>
+  <data name="metroButtonParams.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 10</value>
   </data>
   <data name="metroButtonParams.Text" xml:space="preserve">
     <value>ランダム小(&amp;F)</value>
@@ -130,8 +191,14 @@
   <data name="metroTextBoxTarget.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
+    <value>729, 60</value>
+  </data>
   <data name="buttonOK.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>837, 60</value>
   </data>
   <data name="buttonCancel.Text" xml:space="preserve">
     <value>キャンセル(&amp;C)</value>
@@ -140,8 +207,8 @@
     <value />
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="metroButtonImport.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="metroButtonImport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 60</value>
   </data>
   <data name="metroButtonImport.Text" xml:space="preserve">
     <value>読み込み(&amp;I)...</value>
@@ -149,11 +216,14 @@
   <data name="metroButtonImportGit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left</value>
   </data>
-  <data name="metroButtonImportGit.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="metroButtonImportGit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 60</value>
   </data>
   <data name="metroButtonImportGit.Text" xml:space="preserve">
     <value>Gitから読み込み(&amp;G)...</value>
+  </data>
+  <data name="metroButtonAbort.Location" type="System.Drawing.Point, System.Drawing">
+    <value>945, 60</value>
   </data>
   <data name="metroButtonAbort.Text" xml:space="preserve">
     <value>中断(&amp;A)</value>
@@ -161,11 +231,20 @@
   <data name="metroButtonAbort.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="metroButtonPaste.Location" type="System.Drawing.Point, System.Drawing">
+    <value>945, 10</value>
+  </data>
   <data name="metroButtonPaste.Text" xml:space="preserve">
     <value>ペースト(&amp;P)</value>
   </data>
+  <data name="metroButtonCopy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>837, 10</value>
+  </data>
   <data name="metroButtonCopy.Text" xml:space="preserve">
     <value>コピー(&amp;Y)</value>
+  </data>
+  <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>223, 60</value>
   </data>
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>保存(&amp;P)...</value>
@@ -173,42 +252,47 @@
   <data name="resource.ImeMode1" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 131</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1053, 495</value>
+  </data>
+  <data name="metroComboBoxTimbres.ItemHeight" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
   <data name="metroComboBoxTimbres.Location" type="System.Drawing.Point, System.Drawing">
-    <value>107, 4</value>
+    <value>110, 4</value>
   </data>
   <data name="metroComboBoxTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>482, 30</value>
+    <value>479, 29</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1053, 37</value>
   </data>
   <data name="metroButtonImportAll.Location" type="System.Drawing.Point, System.Drawing">
-    <value>597, 4</value>
-  </data>
-  <data name="metroButtonImportAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>129, 31</value>
+    <value>597, 7</value>
   </data>
   <data name="metroButtonImportAll.Text" xml:space="preserve">
     <value>全て読み込み(&amp;A)...</value>
   </data>
   <data name="metroButtonImportAllGit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>734, 4</value>
-  </data>
-  <data name="metroButtonImportAllGit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 31</value>
+    <value>734, 7</value>
   </data>
   <data name="metroButtonImportAllGit.Text" xml:space="preserve">
     <value>Gitから全て読み込み(&amp;T)...</value>
   </data>
   <data name="metroButtonExportAll.Location" type="System.Drawing.Point, System.Drawing">
-    <value>911, 4</value>
-  </data>
-  <data name="metroButtonExportAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 31</value>
+    <value>911, 7</value>
   </data>
   <data name="metroButtonExportAll.Text" xml:space="preserve">
     <value>全て保存(&amp;E)...</value>
   </data>
-  <data name="metroButtonTimbre.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 33</value>
+  <data name="metroButtonTimbre.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonTimbre.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 7</value>
   </data>
   <data name="metroButtonTimbre.Text" xml:space="preserve">
     <value>名前変更(&amp;N)</value>

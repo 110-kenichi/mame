@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -113,9 +114,12 @@ namespace zanac.MAmidiMEmo.Gui
 
             var insertText = mb.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
 
-            var selectionIndex = metroTextBoxAllophones.SelectionStart;
+            var field = typeof(MetroTextBox).GetField("baseTextBox", BindingFlags.Instance | BindingFlags.Instance | BindingFlags.NonPublic);
+            TextBox tb = (TextBox)field.GetValue(metroTextBoxAllophones);
+
+            var selectionIndex = tb.SelectionStart;
             metroTextBoxAllophones.Text = metroTextBoxAllophones.Text.Insert(selectionIndex, insertText).Trim();
-            metroTextBoxAllophones.SelectionStart = selectionIndex + insertText.Length;
+            tb.SelectionStart = selectionIndex + insertText.Length;
         }
 
         private void metroButton2_MouseDown(object sender, MouseEventArgs e)

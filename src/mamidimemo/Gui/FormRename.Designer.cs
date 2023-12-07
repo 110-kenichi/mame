@@ -37,34 +37,11 @@
             // 
             // metroTextBoxText
             // 
-            // 
-            // 
-            // 
-            this.metroTextBoxText.CustomButton.Image = null;
-            this.metroTextBoxText.CustomButton.Location = new System.Drawing.Point(480, 1);
-            this.metroTextBoxText.CustomButton.Name = "";
-            this.metroTextBoxText.CustomButton.Size = new System.Drawing.Size(23, 23);
-            this.metroTextBoxText.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxText.CustomButton.TabIndex = 1;
-            this.metroTextBoxText.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxText.CustomButton.UseSelectable = true;
-            this.metroTextBoxText.CustomButton.Visible = false;
             this.metroTextBoxText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxText.Lines = new string[0];
             this.metroTextBoxText.Location = new System.Drawing.Point(3, 3);
-            this.metroTextBoxText.MaxLength = 32767;
             this.metroTextBoxText.Name = "metroTextBoxText";
-            this.metroTextBoxText.PasswordChar = '\0';
-            this.metroTextBoxText.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxText.SelectedText = "";
-            this.metroTextBoxText.SelectionLength = 0;
-            this.metroTextBoxText.SelectionStart = 0;
-            this.metroTextBoxText.ShortcutsEnabled = true;
-            this.metroTextBoxText.Size = new System.Drawing.Size(504, 25);
+            this.metroTextBoxText.Size = new System.Drawing.Size(504, 23);
             this.metroTextBoxText.TabIndex = 1;
-            this.metroTextBoxText.UseSelectable = true;
-            this.metroTextBoxText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxText.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
             // buttonOK
             // 
@@ -73,10 +50,9 @@
             this.buttonOK.Location = new System.Drawing.Point(312, 135);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
+            this.buttonOK.Size = new System.Drawing.Size(100, 23);
             this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "&OK";
-            this.buttonOK.UseSelectable = true;
             // 
             // buttonCancel
             // 
@@ -85,15 +61,16 @@
             this.buttonCancel.Location = new System.Drawing.Point(420, 135);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(100, 23);
             this.buttonCancel.TabIndex = 11;
             this.buttonCancel.Text = "&Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -102,14 +79,14 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(510, 31);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(510, 29);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // FormRename
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(531, 180);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -125,6 +102,7 @@
             this.Text = "Specify the name";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

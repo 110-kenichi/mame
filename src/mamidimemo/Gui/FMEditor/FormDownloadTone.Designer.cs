@@ -60,7 +60,6 @@
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 6;
             this.buttonOK.Text = "OK";
-            this.buttonOK.UseSelectable = true;
             // 
             // buttonCancel
             // 
@@ -70,7 +69,6 @@
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 7;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // metroListViewDir
             // 
@@ -181,16 +179,15 @@
             this.metroButton1.Size = new System.Drawing.Size(75, 23);
             this.metroButton1.TabIndex = 4;
             this.metroButton1.Text = "&Refresh";
-            this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButtonRefresh_Click);
             // 
             // metroLabelRemaining
             // 
             this.metroLabelRemaining.AutoSize = true;
             this.metroLabelRemaining.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroLabelRemaining.Location = new System.Drawing.Point(142, 58);
+            this.metroLabelRemaining.Location = new System.Drawing.Point(147, 58);
             this.metroLabelRemaining.Name = "metroLabelRemaining";
-            this.metroLabelRemaining.Size = new System.Drawing.Size(331, 29);
+            this.metroLabelRemaining.Size = new System.Drawing.Size(326, 29);
             this.metroLabelRemaining.TabIndex = 5;
             this.metroLabelRemaining.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -200,7 +197,7 @@
             this.metroLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroLabel2.Location = new System.Drawing.Point(3, 0);
             this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(133, 29);
+            this.metroLabel2.Size = new System.Drawing.Size(138, 29);
             this.metroLabel2.TabIndex = 0;
             this.metroLabel2.Text = "GitHub &User Name:";
             this.metroLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -211,35 +208,19 @@
             // 
             // 
             // 
-            this.metroTextBox1.CustomButton.Image = null;
-            this.metroTextBox1.CustomButton.Location = new System.Drawing.Point(471, 1);
-            this.metroTextBox1.CustomButton.Name = "";
-            this.metroTextBox1.CustomButton.Size = new System.Drawing.Size(21, 21);
-            this.metroTextBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox1.CustomButton.TabIndex = 1;
-            this.metroTextBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBox1.CustomButton.UseSelectable = true;
-            this.metroTextBox1.CustomButton.Visible = false;
             this.metroTextBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "GitHubUserName", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBox1.Lines = new string[0];
-            this.metroTextBox1.Location = new System.Drawing.Point(142, 3);
+            this.metroTextBox1.Location = new System.Drawing.Point(147, 3);
             this.metroTextBox1.MaxLength = 32767;
             this.metroTextBox1.Name = "metroTextBox1";
             this.metroTextBox1.PasswordChar = '●';
             this.metroTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBox1.SelectedText = "";
-            this.metroTextBox1.SelectionLength = 0;
-            this.metroTextBox1.SelectionStart = 0;
-            this.metroTextBox1.ShortcutsEnabled = true;
-            this.metroTextBox1.Size = new System.Drawing.Size(493, 23);
+            this.metroTextBox1.Size = new System.Drawing.Size(488, 23);
             this.metroTextBox1.TabIndex = 1;
             this.metroTextBox1.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.GitHubUserName;
-            this.metroTextBox1.UseSelectable = true;
             this.metroTextBox1.UseSystemPasswordChar = true;
-            this.metroTextBox1.WaterMark = "Enter your GitHub account here and token to to get a higher rate limit.";
-            this.metroTextBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            this.metroTextBox1.PromptText = "Enter your GitHub account here and token to to get a higher rate limit.";
             // 
             // metroTextBox2
             // 
@@ -247,52 +228,38 @@
             // 
             // 
             // 
-            this.metroTextBox2.CustomButton.Image = null;
-            this.metroTextBox2.CustomButton.Location = new System.Drawing.Point(471, 1);
-            this.metroTextBox2.CustomButton.Name = "";
-            this.metroTextBox2.CustomButton.Size = new System.Drawing.Size(21, 21);
-            this.metroTextBox2.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox2.CustomButton.TabIndex = 1;
-            this.metroTextBox2.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBox2.CustomButton.UseSelectable = true;
-            this.metroTextBox2.CustomButton.Visible = false;
             this.metroTextBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "GitHubPersonalAccessToken", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBox2.Lines = new string[0];
-            this.metroTextBox2.Location = new System.Drawing.Point(142, 32);
+            this.metroTextBox2.Location = new System.Drawing.Point(147, 32);
             this.metroTextBox2.MaxLength = 32767;
             this.metroTextBox2.Name = "metroTextBox2";
             this.metroTextBox2.PasswordChar = '●';
             this.metroTextBox2.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBox2.SelectedText = "";
-            this.metroTextBox2.SelectionLength = 0;
-            this.metroTextBox2.SelectionStart = 0;
-            this.metroTextBox2.ShortcutsEnabled = true;
-            this.metroTextBox2.Size = new System.Drawing.Size(493, 23);
+            this.metroTextBox2.Size = new System.Drawing.Size(488, 23);
             this.metroTextBox2.TabIndex = 3;
             this.metroTextBox2.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.GitHubPersonalAccessToken;
-            this.metroTextBox2.UseSelectable = true;
             this.metroTextBox2.UseSystemPasswordChar = true;
-            this.metroTextBox2.WaterMark = "Enter your personal access token here. (Needs \"read:packages\" permission)";
-            this.metroTextBox2.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBox2.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            this.metroTextBox2.PromptText = "Enter your personal access token here. (Needs \"read:packages\" permission)";
             // 
             // metroLink1
             // 
             this.metroLink1.AutoSize = true;
+            this.metroLink1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroLink1.FontSize = MetroFramework.MetroLinkSize.Medium;
+            this.metroLink1.FontWeight = MetroFramework.MetroLinkWeight.Light;
             this.metroLink1.Location = new System.Drawing.Point(3, 32);
             this.metroLink1.Name = "metroLink1";
-            this.metroLink1.Size = new System.Drawing.Size(133, 23);
+            this.metroLink1.Size = new System.Drawing.Size(138, 23);
             this.metroLink1.TabIndex = 2;
             this.metroLink1.Text = "&Personal access token:";
-            this.metroLink1.UseSelectable = true;
             this.metroLink1.Click += new System.EventHandler(this.metroLink1_Click);
             // 
             // FormDownloadTone
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(648, 482);
             this.Controls.Add(this.splitContainer1);

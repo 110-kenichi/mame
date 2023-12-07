@@ -61,7 +61,6 @@ namespace zanac.MAmidiMEmo.Gui
             resources.ApplyResources(this.button1, "button1");
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Name = "button1";
-            this.button1.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -121,7 +120,6 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             resources.ApplyResources(this.metroButtonGo, "metroButtonGo");
             this.metroButtonGo.Name = "metroButtonGo";
-            this.metroButtonGo.UseSelectable = true;
             this.metroButtonGo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButtonGo_MouseDown);
             // 
             // labelSpan
@@ -133,7 +131,8 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.AcceptButton = this.button1;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.button1;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.button1);

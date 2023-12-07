@@ -126,18 +126,8 @@
   <data name="label2.Text" xml:space="preserve">
     <value>出力方法(&amp;T):</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="numericUpDown1.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.25pt</value>
-  </data>
-  <data name="numericUpDown1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>322, 28</value>
-  </data>
   <data name="label3.Text" xml:space="preserve">
     <value>遅延レベル(&amp;L):</value>
-  </data>
-  <data name="comboBoxSampleRate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.25pt</value>
   </data>
   <data name="groupBox1.Text" xml:space="preserve">
     <value>PortAudio 設定</value>
@@ -151,9 +141,11 @@
   <data name="label4.Text" xml:space="preserve">
     <value>&amp;API:</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="metroLabel5.Text" xml:space="preserve">
+    <value>文字の拡大率(&amp;S):</value>
+  </data>
+  <data name="metroLabel8.Text" xml:space="preserve">
+    <value>注意: 文字が欠けることがあります。一部の文字には適用されません。</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>設定</value>

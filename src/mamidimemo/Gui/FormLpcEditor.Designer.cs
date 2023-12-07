@@ -45,7 +45,6 @@
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 8;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -78,7 +77,6 @@
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 7;
             this.buttonOk.Text = "OK";
-            this.buttonOk.UseSelectable = true;
             // 
             // listBox1
             // 
@@ -101,38 +99,22 @@
             // 
             // 
             // 
-            this.metroTextBoxSearch.CustomButton.Image = null;
-            this.metroTextBoxSearch.CustomButton.Location = new System.Drawing.Point(469, 1);
-            this.metroTextBoxSearch.CustomButton.Name = "";
-            this.metroTextBoxSearch.CustomButton.Size = new System.Drawing.Size(21, 21);
-            this.metroTextBoxSearch.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxSearch.CustomButton.TabIndex = 1;
-            this.metroTextBoxSearch.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxSearch.CustomButton.UseSelectable = true;
-            this.metroTextBoxSearch.CustomButton.Visible = false;
             this.metroTextBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxSearch.Lines = new string[0];
             this.metroTextBoxSearch.Location = new System.Drawing.Point(3, 3);
             this.metroTextBoxSearch.MaxLength = 32767;
             this.metroTextBoxSearch.Name = "metroTextBoxSearch";
             this.metroTextBoxSearch.PasswordChar = '\0';
             this.metroTextBoxSearch.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxSearch.SelectedText = "";
-            this.metroTextBoxSearch.SelectionLength = 0;
-            this.metroTextBoxSearch.SelectionStart = 0;
-            this.metroTextBoxSearch.ShortcutsEnabled = true;
             this.metroTextBoxSearch.Size = new System.Drawing.Size(572, 23);
             this.metroTextBoxSearch.TabIndex = 10;
-            this.metroTextBoxSearch.UseSelectable = true;
-            this.metroTextBoxSearch.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxSearch.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.metroTextBoxSearch.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
             // 
             // FormLpcEditor
             // 
             this.AcceptButton = this.buttonOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(588, 613);
             this.Controls.Add(this.tableLayoutPanel1);

@@ -32,14 +32,15 @@
             // 
             // FormBase
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(585, 503);
             this.Name = "FormBase";
             this.Padding = new System.Windows.Forms.Padding(5, 60, 5, 10);
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
+            this.ShadowType = MetroFormShadowType.SystemShadow;
             this.Text = "FormBase";
             this.Theme = MetroFramework.MetroThemeStyle.Default;
+            this.BorderStyle = MetroFramework.Drawing.MetroBorderStyle.FixedSingle;
             this.ResumeLayout(false);
 
         }

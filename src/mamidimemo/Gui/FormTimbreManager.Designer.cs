@@ -120,7 +120,6 @@
             // 
             // toolStripComboBoxCh
             // 
-            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
@@ -142,68 +141,68 @@
             resources.GetString("toolStripComboBoxCh.Items14"),
             resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             // 
             // toolStripButtonPlay
             // 
-            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
             // 
             // toolStripButtonHook
             // 
-            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.CheckOnClick = true;
+            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.Name = "toolStripButtonHook";
             // 
             // toolStripButton1
             // 
-            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Name = "toolStripButton1";
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             // 
             // toolStripComboBoxNote
             // 
-            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             // 
             // toolStripLabel4
             // 
-            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             // 
             // toolStripComboBoxVelo
             // 
-            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             // 
             // toolStripLabel3
             // 
-            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             // 
             // toolStripComboBoxGate
             // 
-            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
@@ -212,20 +211,20 @@
             resources.GetString("toolStripComboBoxGate.Items2"),
             resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // toolStripLabel5
             // 
-            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             this.toolStripLabel5.Name = "toolStripLabel5";
+            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             // 
             // toolStripComboBoxCC
             // 
-            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
@@ -358,16 +357,17 @@
             resources.GetString("toolStripComboBoxCC.Items126"),
             resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
             // listViewCurrentTimbres
             // 
-            resources.ApplyResources(this.listViewCurrentTimbres, "listViewCurrentTimbres");
             this.listViewCurrentTimbres.AllowDrop = true;
             this.listViewCurrentTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listViewCurrentTimbres.ContextMenuStrip = this.contextMenuStrip1;
+            resources.ApplyResources(this.listViewCurrentTimbres, "listViewCurrentTimbres");
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
@@ -398,7 +398,6 @@
             // 
             // contextMenuStrip1
             // 
-            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
@@ -406,6 +405,7 @@
             this.renameToolStripMenuItem,
             this.clearToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // editToolStripMenuItem
@@ -416,27 +416,27 @@
             // 
             // propertyToolStripMenuItem
             // 
-            resources.ApplyResources(this.propertyToolStripMenuItem, "propertyToolStripMenuItem");
             this.propertyToolStripMenuItem.Name = "propertyToolStripMenuItem";
+            resources.ApplyResources(this.propertyToolStripMenuItem, "propertyToolStripMenuItem");
             this.propertyToolStripMenuItem.Click += new System.EventHandler(this.propertyToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
-            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // clearToolStripMenuItem
             // 
-            resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOK, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // buttonOK
@@ -444,7 +444,6 @@
             resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.UseSelectable = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
@@ -452,17 +451,16 @@
             resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseSelectable = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // fileFolderList1
             // 
-            resources.ApplyResources(this.fileFolderList1, "fileFolderList1");
             this.fileFolderList1.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.fileFolderList1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
             this.tableLayoutPanel2.SetColumnSpan(this.fileFolderList1, 3);
             this.fileFolderList1.CurrentDirectory = "C:\\";
+            resources.ApplyResources(this.fileFolderList1, "fileFolderList1");
             this.fileFolderList1.FileValidator = null;
             this.fileFolderList1.FilterExts = null;
             this.fileFolderList1.FullRowSelect = true;
@@ -481,48 +479,7 @@
             // metroTextBox1
             // 
             resources.ApplyResources(this.metroTextBox1, "metroTextBox1");
-            // 
-            // 
-            // 
-            this.metroTextBox1.CustomButton.AccessibleDescription = resources.GetString("resource.AccessibleDescription");
-            this.metroTextBox1.CustomButton.AccessibleName = resources.GetString("resource.AccessibleName");
-            this.metroTextBox1.CustomButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("resource.Anchor")));
-            this.metroTextBox1.CustomButton.AutoSize = ((bool)(resources.GetObject("resource.AutoSize")));
-            this.metroTextBox1.CustomButton.AutoSizeMode = ((System.Windows.Forms.AutoSizeMode)(resources.GetObject("resource.AutoSizeMode")));
-            this.metroTextBox1.CustomButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("resource.BackgroundImage")));
-            this.metroTextBox1.CustomButton.BackgroundImageLayout = ((System.Windows.Forms.ImageLayout)(resources.GetObject("resource.BackgroundImageLayout")));
-            this.metroTextBox1.CustomButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("resource.Dock")));
-            this.metroTextBox1.CustomButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("resource.FlatStyle")));
-            this.metroTextBox1.CustomButton.Font = ((System.Drawing.Font)(resources.GetObject("resource.Font")));
-            this.metroTextBox1.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
-            this.metroTextBox1.CustomButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.ImageAlign")));
-            this.metroTextBox1.CustomButton.ImageIndex = ((int)(resources.GetObject("resource.ImageIndex")));
-            this.metroTextBox1.CustomButton.ImageKey = resources.GetString("resource.ImageKey");
-            this.metroTextBox1.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode")));
-            this.metroTextBox1.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location")));
-            this.metroTextBox1.CustomButton.MaximumSize = ((System.Drawing.Size)(resources.GetObject("resource.MaximumSize")));
-            this.metroTextBox1.CustomButton.Name = "";
-            this.metroTextBox1.CustomButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("resource.RightToLeft")));
-            this.metroTextBox1.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size")));
-            this.metroTextBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox1.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex")));
-            this.metroTextBox1.CustomButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("resource.TextAlign")));
-            this.metroTextBox1.CustomButton.TextImageRelation = ((System.Windows.Forms.TextImageRelation)(resources.GetObject("resource.TextImageRelation")));
-            this.metroTextBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBox1.CustomButton.UseSelectable = true;
-            this.metroTextBox1.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible")));
-            this.metroTextBox1.Lines = new string[0];
-            this.metroTextBox1.MaxLength = 32767;
             this.metroTextBox1.Name = "metroTextBox1";
-            this.metroTextBox1.PasswordChar = '\0';
-            this.metroTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBox1.SelectedText = "";
-            this.metroTextBox1.SelectionLength = 0;
-            this.metroTextBox1.SelectionStart = 0;
-            this.metroTextBox1.ShortcutsEnabled = true;
-            this.metroTextBox1.UseSelectable = true;
-            this.metroTextBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.metroTextBox1.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
             // 
             // metroLabelDir
@@ -558,8 +515,8 @@
             // 
             // listViewFilesTimbres
             // 
-            resources.ApplyResources(this.listViewFilesTimbres, "listViewFilesTimbres");
             this.listViewFilesTimbres.AllowDrop = true;
+            resources.ApplyResources(this.listViewFilesTimbres, "listViewFilesTimbres");
             this.listViewFilesTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5,
             this.columnHeader6,
@@ -610,35 +567,30 @@
             // 
             resources.ApplyResources(this.metroButtonNewDir, "metroButtonNewDir");
             this.metroButtonNewDir.Name = "metroButtonNewDir";
-            this.metroButtonNewDir.UseSelectable = true;
             this.metroButtonNewDir.Click += new System.EventHandler(this.metroButtonNewDir_Click);
             // 
             // metroButtonDelete
             // 
             resources.ApplyResources(this.metroButtonDelete, "metroButtonDelete");
             this.metroButtonDelete.Name = "metroButtonDelete";
-            this.metroButtonDelete.UseSelectable = true;
             this.metroButtonDelete.Click += new System.EventHandler(this.metroButtonDelete_Click);
             // 
             // metroButtonRefresh
             // 
             resources.ApplyResources(this.metroButtonRefresh, "metroButtonRefresh");
             this.metroButtonRefresh.Name = "metroButtonRefresh";
-            this.metroButtonRefresh.UseSelectable = true;
             this.metroButtonRefresh.Click += new System.EventHandler(this.metroButtonRefresh_Click);
             // 
             // metroButtonExplorer
             // 
             resources.ApplyResources(this.metroButtonExplorer, "metroButtonExplorer");
             this.metroButtonExplorer.Name = "metroButtonExplorer";
-            this.metroButtonExplorer.UseSelectable = true;
             this.metroButtonExplorer.Click += new System.EventHandler(this.metroButtonExplorer_Click);
             // 
             // metroButton1
             // 
             resources.ApplyResources(this.metroButton1, "metroButton1");
             this.metroButton1.Name = "metroButton1";
-            this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // tableLayoutPanel4
@@ -646,28 +598,25 @@
             resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
             this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.metroButton2, 1, 0);
-            this.tableLayoutPanel4.Controls.Add(this.metroButton3, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.metroButton3, 3, 0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             // 
             // metroButtonExport
             // 
             resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.UseSelectable = true;
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
             // metroButton2
             // 
             resources.ApplyResources(this.metroButton2, "metroButton2");
             this.metroButton2.Name = "metroButton2";
-            this.metroButton2.UseSelectable = true;
             this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
             // metroButton3
             // 
             resources.ApplyResources(this.metroButton3, "metroButton3");
             this.metroButton3.Name = "metroButton3";
-            this.metroButton3.UseSelectable = true;
             this.metroButton3.Click += new System.EventHandler(this.metroButtonClear_Click);
             // 
             // betterFolderBrowser1
@@ -679,7 +628,7 @@
             // FormTimbreManager
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.pianoControl1);

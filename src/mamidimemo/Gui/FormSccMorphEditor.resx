@@ -123,13 +123,13 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>678, 458</value>
+    <value>678, 464</value>
   </data>
   <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
@@ -157,13 +157,13 @@
     <value>Fill</value>
   </data>
   <data name="buttonOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>570, 458</value>
+    <value>570, 464</value>
   </data>
   <data name="buttonOk.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonOk.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="buttonOk.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -184,13 +184,13 @@
     <value>1</value>
   </data>
   <data name="metroButtonAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 384</value>
+    <value>4, 402</value>
   </data>
   <data name="metroButtonAdd.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonAdd.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="metroButtonAdd.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -220,7 +220,7 @@
     <value>391, 3</value>
   </data>
   <data name="propertyGrid1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>382, 368</value>
+    <value>382, 386</value>
   </data>
   <data name="propertyGrid1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -241,13 +241,13 @@
     <value>Fill</value>
   </data>
   <data name="listBoxWsgList.ItemHeight" type="System.Int32, mscorlib">
-    <value>15</value>
+    <value>12</value>
   </data>
   <data name="listBoxWsgList.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 3</value>
   </data>
   <data name="listBoxWsgList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>382, 368</value>
+    <value>382, 386</value>
   </data>
   <data name="listBoxWsgList.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -274,7 +274,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>776, 374</value>
+    <value>776, 392</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -295,13 +295,13 @@
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="propertyGrid1" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="listBoxWsgList" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Percent,50" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="metroButtonDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>328, 384</value>
+    <value>328, 402</value>
   </data>
   <data name="metroButtonDelete.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="metroButtonDelete.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -322,13 +322,13 @@
     <value>4</value>
   </data>
   <data name="metroButtonInsert.Location" type="System.Drawing.Point, System.Drawing">
-    <value>112, 384</value>
+    <value>112, 402</value>
   </data>
   <data name="metroButtonInsert.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonInsert.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="metroButtonInsert.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -349,13 +349,13 @@
     <value>5</value>
   </data>
   <data name="metroButtonDuplicate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>220, 384</value>
+    <value>220, 402</value>
   </data>
   <data name="metroButtonDuplicate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonDuplicate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="metroButtonDuplicate.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -376,13 +376,13 @@
     <value>6</value>
   </data>
   <data name="metroButtonInterpolate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 421</value>
+    <value>4, 433</value>
   </data>
   <data name="metroButtonInterpolate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonInterpolate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 29</value>
+    <value>185, 23</value>
   </data>
   <data name="metroButtonInterpolate.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -410,13 +410,13 @@ Select the first waveform and press the button.</value>
     <value>7</value>
   </data>
   <data name="metroButtonCopy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>570, 384</value>
+    <value>570, 402</value>
   </data>
   <data name="metroButtonCopy.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="metroButtonCopy.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -473,7 +473,7 @@ Select the first waveform and press the button.</value>
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 15</value>
+    <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>800, 600</value>

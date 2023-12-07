@@ -47,7 +47,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOk
             // 
@@ -58,7 +57,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "&OK";
-            this.buttonOk.UseSelectable = true;
             // 
             // textBoxWsgDataText
             // 
@@ -104,8 +102,8 @@ namespace zanac.MAmidiMEmo.Gui
             // FormTextEditor
             // 
             this.AcceptButton = this.buttonOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(725, 520);
             this.Controls.Add(this.textBoxWsgDataText);

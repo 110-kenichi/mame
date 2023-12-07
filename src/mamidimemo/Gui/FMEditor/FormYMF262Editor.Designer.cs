@@ -89,8 +89,8 @@
             // 
             // FormYMF262Editor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(624, 441);
             this.Name = "FormYMF262Editor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

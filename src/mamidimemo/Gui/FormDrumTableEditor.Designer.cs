@@ -113,14 +113,12 @@ namespace zanac.MAmidiMEmo.Gui
             resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOk
             // 
             resources.ApplyResources(this.buttonOk, "buttonOk");
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.UseSelectable = true;
             // 
             // label1
             // 
@@ -161,21 +159,18 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             resources.ApplyResources(this.metroButton3, "metroButton3");
             this.metroButton3.Name = "metroButton3";
-            this.metroButton3.UseSelectable = true;
             this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
             // 
             // metroButtonImport
             // 
             resources.ApplyResources(this.metroButtonImport, "metroButtonImport");
             this.metroButtonImport.Name = "metroButtonImport";
-            this.metroButtonImport.UseSelectable = true;
             this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);
             // 
             // metroButtonExport
             // 
             resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroButtonExport.UseSelectable = true;
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
             // openFileDialogImport
@@ -472,7 +467,8 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.toolStrip2);
@@ -489,7 +485,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);

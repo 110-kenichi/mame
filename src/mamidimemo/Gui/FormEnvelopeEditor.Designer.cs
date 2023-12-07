@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.buttonOk = new MetroFramework.Controls.MetroButton();
             this.textBoxEnvText = new MetroFramework.Controls.MetroTextBox();
@@ -57,7 +57,8 @@
             this.metroButtonMin = new MetroFramework.Controls.MetroButton();
             this.metroButtonUp = new MetroFramework.Controls.MetroButton();
             this.metroButtonDown = new MetroFramework.Controls.MetroButton();
-            this.label1 = new System.Windows.Forms.Label();
+            this.label1 = new MetroFramework.Controls.MetroLabel();
+            this.metroTextBoxInterval = new MetroFramework.Controls.MetroTextBox();
             this.metroPanel1 = new MetroFramework.Controls.MetroPanel();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -67,7 +68,6 @@
             this.metroButton5 = new MetroFramework.Controls.MetroButton();
             this.metroButton6 = new MetroFramework.Controls.MetroButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.metroTextBoxInterval = new MetroFramework.Controls.MetroTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNum)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -79,25 +79,23 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(822, 153);
+            this.buttonCancel.Location = new System.Drawing.Point(822, 151);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 21);
+            this.buttonCancel.Size = new System.Drawing.Size(100, 23);
             this.buttonCancel.TabIndex = 8;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(714, 153);
+            this.buttonOk.Location = new System.Drawing.Point(714, 151);
             this.buttonOk.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(100, 21);
+            this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 9;
             this.buttonOk.Text = "OK";
-            this.buttonOk.UseSelectable = true;
             // 
             // textBoxEnvText
             // 
@@ -107,17 +105,6 @@
             // 
             // 
             // 
-            this.textBoxEnvText.CustomButton.Image = null;
-            this.textBoxEnvText.CustomButton.Location = new System.Drawing.Point(891, 1);
-            this.textBoxEnvText.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxEnvText.CustomButton.Name = "";
-            this.textBoxEnvText.CustomButton.Size = new System.Drawing.Size(23, 23);
-            this.textBoxEnvText.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxEnvText.CustomButton.TabIndex = 1;
-            this.textBoxEnvText.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxEnvText.CustomButton.UseSelectable = true;
-            this.textBoxEnvText.CustomButton.Visible = false;
-            this.textBoxEnvText.Lines = new string[0];
             this.textBoxEnvText.Location = new System.Drawing.Point(7, 6);
             this.textBoxEnvText.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxEnvText.MaxLength = 32767;
@@ -125,14 +112,8 @@
             this.textBoxEnvText.PasswordChar = '\0';
             this.textBoxEnvText.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.textBoxEnvText.SelectedText = "";
-            this.textBoxEnvText.SelectionLength = 0;
-            this.textBoxEnvText.SelectionStart = 0;
-            this.textBoxEnvText.ShortcutsEnabled = true;
             this.textBoxEnvText.Size = new System.Drawing.Size(915, 25);
             this.textBoxEnvText.TabIndex = 7;
-            this.textBoxEnvText.UseSelectable = true;
-            this.textBoxEnvText.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBoxEnvText.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxEnvText.TextChanged += new System.EventHandler(this.textBoxText_TextChanged);
             // 
             // chart1
@@ -140,62 +121,62 @@
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.AxisX.Crossing = 0D;
-            chartArea2.AxisX.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-            chartArea2.AxisX.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
-            chartArea2.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisX2.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisY.Crossing = 0D;
-            chartArea2.AxisY.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-            chartArea2.AxisY.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
-            chartArea2.AxisY.Maximum = 8192D;
-            chartArea2.AxisY.Minimum = -8193D;
-            chartArea2.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisY2.LineColor = System.Drawing.Color.Gray;
-            chartArea2.BackColor = System.Drawing.Color.White;
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea3.AxisX.Crossing = 0D;
+            chartArea3.AxisX.LineColor = System.Drawing.Color.Gray;
+            chartArea3.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            chartArea3.AxisX.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
+            chartArea3.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea3.AxisX2.LineColor = System.Drawing.Color.Gray;
+            chartArea3.AxisY.Crossing = 0D;
+            chartArea3.AxisY.LineColor = System.Drawing.Color.Gray;
+            chartArea3.AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            chartArea3.AxisY.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
+            chartArea3.AxisY.Maximum = 8192D;
+            chartArea3.AxisY.Minimum = -8193D;
+            chartArea3.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea3.AxisY2.LineColor = System.Drawing.Color.Gray;
+            chartArea3.BackColor = System.Drawing.Color.White;
+            chartArea3.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chart1.Legends.Add(legend3);
             this.chart1.Location = new System.Drawing.Point(5, 4);
             this.chart1.Margin = new System.Windows.Forms.Padding(4);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series4.Color = System.Drawing.Color.CornflowerBlue;
-            series4.Legend = "Legend1";
-            series4.LegendText = "Repeat Start\\n(Set w/ Shift key)";
-            series4.MarkerSize = 10;
-            series4.Name = "SeriesLoop";
-            series4.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series4.YValuesPerPoint = 4;
-            series4.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series5.Color = System.Drawing.Color.DarkOrange;
-            series5.Legend = "Legend1";
-            series5.LegendText = "Release Start\\n(Set w/ Ctrl key)";
-            series5.MarkerSize = 10;
-            series5.Name = "SeriesRelease";
-            series5.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series5.YValuesPerPoint = 2;
-            series5.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Color = System.Drawing.Color.Red;
-            series6.IsValueShownAsLabel = true;
-            series6.Legend = "Legend1";
-            series6.LegendText = "Values";
-            series6.MarkerSize = 10;
-            series6.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
-            series6.Name = "SeriesValues";
-            series6.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series6.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series4);
-            this.chart1.Series.Add(series5);
-            this.chart1.Series.Add(series6);
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series7.Color = System.Drawing.Color.CornflowerBlue;
+            series7.Legend = "Legend1";
+            series7.LegendText = "Repeat Start\\n(Set w/ Shift key)";
+            series7.MarkerSize = 10;
+            series7.Name = "SeriesLoop";
+            series7.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series7.YValuesPerPoint = 4;
+            series7.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series8.Color = System.Drawing.Color.DarkOrange;
+            series8.Legend = "Legend1";
+            series8.LegendText = "Release Start\\n(Set w/ Ctrl key)";
+            series8.MarkerSize = 10;
+            series8.Name = "SeriesRelease";
+            series8.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series8.YValuesPerPoint = 2;
+            series8.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series9.Color = System.Drawing.Color.Red;
+            series9.IsValueShownAsLabel = true;
+            series9.Legend = "Legend1";
+            series9.LegendText = "Values";
+            series9.MarkerSize = 10;
+            series9.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
+            series9.Name = "SeriesValues";
+            series9.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series9.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            this.chart1.Series.Add(series7);
+            this.chart1.Series.Add(series8);
+            this.chart1.Series.Add(series9);
             this.chart1.Size = new System.Drawing.Size(918, 273);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -206,13 +187,12 @@
             // 
             this.metroToggleRepeat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.metroToggleRepeat.AutoSize = true;
-            this.metroToggleRepeat.Location = new System.Drawing.Point(185, 289);
+            this.metroToggleRepeat.Location = new System.Drawing.Point(185, 292);
             this.metroToggleRepeat.Margin = new System.Windows.Forms.Padding(4);
             this.metroToggleRepeat.Name = "metroToggleRepeat";
-            this.metroToggleRepeat.Size = new System.Drawing.Size(80, 19);
+            this.metroToggleRepeat.Size = new System.Drawing.Size(80, 16);
             this.metroToggleRepeat.TabIndex = 2;
             this.metroToggleRepeat.Text = "Off";
-            this.metroToggleRepeat.UseSelectable = true;
             this.metroToggleRepeat.CheckedChanged += new System.EventHandler(this.metroToggleRepeat_CheckedChanged);
             // 
             // metroLabel1
@@ -222,7 +202,7 @@
             this.metroLabel1.Location = new System.Drawing.Point(5, 284);
             this.metroLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(135, 20);
+            this.metroLabel1.Size = new System.Drawing.Size(129, 19);
             this.metroLabel1.TabIndex = 1;
             this.metroLabel1.Text = "Enable &Repeat Point:";
             // 
@@ -233,7 +213,7 @@
             this.metroLabel2.Location = new System.Drawing.Point(300, 284);
             this.metroLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(140, 20);
+            this.metroLabel2.Size = new System.Drawing.Size(132, 19);
             this.metroLabel2.TabIndex = 3;
             this.metroLabel2.Text = "Enable &Release Point:";
             // 
@@ -241,13 +221,12 @@
             // 
             this.metroToggleRelease.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.metroToggleRelease.AutoSize = true;
-            this.metroToggleRelease.Location = new System.Drawing.Point(484, 289);
+            this.metroToggleRelease.Location = new System.Drawing.Point(484, 292);
             this.metroToggleRelease.Margin = new System.Windows.Forms.Padding(4);
             this.metroToggleRelease.Name = "metroToggleRelease";
-            this.metroToggleRelease.Size = new System.Drawing.Size(80, 19);
+            this.metroToggleRelease.Size = new System.Drawing.Size(80, 16);
             this.metroToggleRelease.TabIndex = 4;
             this.metroToggleRelease.Text = "Off";
-            this.metroToggleRelease.UseSelectable = true;
             this.metroToggleRelease.CheckedChanged += new System.EventHandler(this.metroToggleRelease_CheckedChanged);
             // 
             // numericUpDownNum
@@ -256,7 +235,7 @@
             this.numericUpDownNum.Location = new System.Drawing.Point(743, 284);
             this.numericUpDownNum.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownNum.Name = "numericUpDownNum";
-            this.numericUpDownNum.Size = new System.Drawing.Size(107, 22);
+            this.numericUpDownNum.Size = new System.Drawing.Size(107, 19);
             this.numericUpDownNum.TabIndex = 6;
             this.numericUpDownNum.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
@@ -267,7 +246,7 @@
             this.metroLabel3.Location = new System.Drawing.Point(608, 284);
             this.metroLabel3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(99, 20);
+            this.metroLabel3.Size = new System.Drawing.Size(95, 19);
             this.metroLabel3.TabIndex = 5;
             this.metroLabel3.Text = "Point Number:";
             // 
@@ -283,8 +262,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 7, 4);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 8, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonOk, 7, 5);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 8, 5);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.textBoxEnvText, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRandom2, 1, 1);
@@ -298,18 +277,19 @@
             this.tableLayoutPanel1.Controls.Add(this.metroButtonMin, 8, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonUp, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonDown, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxInterval, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxInterval, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 405);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(929, 180);
             this.tableLayoutPanel1.TabIndex = 11;
@@ -320,10 +300,9 @@
             this.metroButtonRand1.Location = new System.Drawing.Point(7, 39);
             this.metroButtonRand1.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonRand1.Name = "metroButtonRand1";
-            this.metroButtonRand1.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonRand1.Size = new System.Drawing.Size(100, 23);
             this.metroButtonRand1.TabIndex = 2;
             this.metroButtonRand1.Text = "&Random1";
-            this.metroButtonRand1.UseSelectable = true;
             this.metroButtonRand1.Click += new System.EventHandler(this.metroButtonRand1_Click);
             // 
             // metroButtonRandom2
@@ -332,22 +311,20 @@
             this.metroButtonRandom2.Location = new System.Drawing.Point(115, 39);
             this.metroButtonRandom2.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonRandom2.Name = "metroButtonRandom2";
-            this.metroButtonRandom2.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonRandom2.Size = new System.Drawing.Size(100, 23);
             this.metroButtonRandom2.TabIndex = 3;
             this.metroButtonRandom2.Text = "R&andom2";
-            this.metroButtonRandom2.UseSelectable = true;
             this.metroButtonRandom2.Click += new System.EventHandler(this.metroButtonRandom2_Click);
             // 
             // metroButtonFir1
             // 
             this.metroButtonFir1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonFir1.Location = new System.Drawing.Point(7, 113);
+            this.metroButtonFir1.Location = new System.Drawing.Point(7, 101);
             this.metroButtonFir1.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonFir1.Name = "metroButtonFir1";
-            this.metroButtonFir1.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonFir1.Size = new System.Drawing.Size(100, 23);
             this.metroButtonFir1.TabIndex = 5;
             this.metroButtonFir1.Text = "&FIR";
-            this.metroButtonFir1.UseSelectable = true;
             this.metroButtonFir1.Click += new System.EventHandler(this.metroButtonFir1_Click);
             // 
             // metroTextBoxFirWeight
@@ -356,37 +333,19 @@
             // 
             // 
             // 
-            this.metroTextBoxFirWeight.CustomButton.Image = null;
-            this.metroTextBoxFirWeight.CustomButton.Location = new System.Drawing.Point(779, 1);
-            this.metroTextBoxFirWeight.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxFirWeight.CustomButton.Name = "";
-            this.metroTextBoxFirWeight.CustomButton.Size = new System.Drawing.Size(27, 27);
-            this.metroTextBoxFirWeight.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxFirWeight.CustomButton.TabIndex = 1;
-            this.metroTextBoxFirWeight.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxFirWeight.CustomButton.UseSelectable = true;
-            this.metroTextBoxFirWeight.CustomButton.Visible = false;
             this.metroTextBoxFirWeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "EnvFirWeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTextBoxFirWeight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxFirWeight.Lines = new string[] {
-        " 1, 1, 1, 1, 1 "};
-            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(115, 113);
+            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(115, 101);
             this.metroTextBoxFirWeight.Margin = new System.Windows.Forms.Padding(4);
             this.metroTextBoxFirWeight.MaxLength = 32767;
             this.metroTextBoxFirWeight.Name = "metroTextBoxFirWeight";
             this.metroTextBoxFirWeight.PasswordChar = '\0';
             this.metroTextBoxFirWeight.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.metroTextBoxFirWeight.SelectedText = "";
-            this.metroTextBoxFirWeight.SelectionLength = 0;
-            this.metroTextBoxFirWeight.SelectionStart = 0;
-            this.metroTextBoxFirWeight.ShortcutsEnabled = true;
-            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(807, 29);
+            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(807, 23);
             this.metroTextBoxFirWeight.TabIndex = 6;
             this.metroTextBoxFirWeight.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.EnvFirWeight;
-            this.metroTextBoxFirWeight.UseSelectable = true;
-            this.metroTextBoxFirWeight.WaterMark = "Set FIR weights like \"1,1,1,1,1\"";
-            this.metroTextBoxFirWeight.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxFirWeight.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
+            this.metroTextBoxFirWeight.PromptText = "Set FIR weights like \"1,1,1,1,1\"";
             // 
             // metroButtonMax
             // 
@@ -394,10 +353,9 @@
             this.metroButtonMax.Location = new System.Drawing.Point(822, 39);
             this.metroButtonMax.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonMax.Name = "metroButtonMax";
-            this.metroButtonMax.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonMax.Size = new System.Drawing.Size(100, 23);
             this.metroButtonMax.TabIndex = 4;
             this.metroButtonMax.Text = "&Maximize";
-            this.metroButtonMax.UseSelectable = true;
             this.metroButtonMax.Click += new System.EventHandler(this.metroButtonMax_Click);
             // 
             // metroButtonSin
@@ -406,10 +364,9 @@
             this.metroButtonSin.Location = new System.Drawing.Point(223, 39);
             this.metroButtonSin.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSin.Name = "metroButtonSin";
-            this.metroButtonSin.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonSin.Size = new System.Drawing.Size(100, 23);
             this.metroButtonSin.TabIndex = 5;
             this.metroButtonSin.Text = "&Sin";
-            this.metroButtonSin.UseSelectable = true;
             this.metroButtonSin.Click += new System.EventHandler(this.metroButtonSin_Click);
             // 
             // metroButtonSaw
@@ -418,10 +375,9 @@
             this.metroButtonSaw.Location = new System.Drawing.Point(331, 39);
             this.metroButtonSaw.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSaw.Name = "metroButtonSaw";
-            this.metroButtonSaw.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonSaw.Size = new System.Drawing.Size(100, 23);
             this.metroButtonSaw.TabIndex = 6;
             this.metroButtonSaw.Text = "Sa&wTooth";
-            this.metroButtonSaw.UseSelectable = true;
             this.metroButtonSaw.Click += new System.EventHandler(this.metroButtonSaw_Click);
             // 
             // metroButtonSq
@@ -430,10 +386,9 @@
             this.metroButtonSq.Location = new System.Drawing.Point(439, 39);
             this.metroButtonSq.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSq.Name = "metroButtonSq";
-            this.metroButtonSq.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonSq.Size = new System.Drawing.Size(100, 23);
             this.metroButtonSq.TabIndex = 7;
             this.metroButtonSq.Text = "&Square";
-            this.metroButtonSq.UseSelectable = true;
             this.metroButtonSq.Click += new System.EventHandler(this.metroButtonSq_Click);
             // 
             // metroButtonTri
@@ -442,34 +397,31 @@
             this.metroButtonTri.Location = new System.Drawing.Point(547, 39);
             this.metroButtonTri.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonTri.Name = "metroButtonTri";
-            this.metroButtonTri.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonTri.Size = new System.Drawing.Size(100, 23);
             this.metroButtonTri.TabIndex = 8;
             this.metroButtonTri.Text = "&Triangle";
-            this.metroButtonTri.UseSelectable = true;
             this.metroButtonTri.Click += new System.EventHandler(this.metroButtonTri_Click);
             // 
             // metroButtonMin
             // 
             this.metroButtonMin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonMin.Location = new System.Drawing.Point(822, 76);
+            this.metroButtonMin.Location = new System.Drawing.Point(822, 70);
             this.metroButtonMin.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonMin.Name = "metroButtonMin";
-            this.metroButtonMin.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonMin.Size = new System.Drawing.Size(100, 23);
             this.metroButtonMin.TabIndex = 4;
             this.metroButtonMin.Text = "&Shrink";
-            this.metroButtonMin.UseSelectable = true;
             this.metroButtonMin.Click += new System.EventHandler(this.metroButtonMin_Click);
             // 
             // metroButtonUp
             // 
             this.metroButtonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonUp.Location = new System.Drawing.Point(7, 76);
+            this.metroButtonUp.Location = new System.Drawing.Point(7, 70);
             this.metroButtonUp.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonUp.Name = "metroButtonUp";
-            this.metroButtonUp.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonUp.Size = new System.Drawing.Size(100, 23);
             this.metroButtonUp.TabIndex = 4;
             this.metroButtonUp.Text = "&Up";
-            this.metroButtonUp.UseSelectable = true;
             this.metroButtonUp.Click += new System.EventHandler(this.metroButtonUp_Click);
             this.metroButtonUp.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButtonUp_MouseDown);
             this.metroButtonUp.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButtonUp_MouseUp);
@@ -477,13 +429,12 @@
             // metroButtonDown
             // 
             this.metroButtonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonDown.Location = new System.Drawing.Point(115, 76);
+            this.metroButtonDown.Location = new System.Drawing.Point(115, 70);
             this.metroButtonDown.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonDown.Name = "metroButtonDown";
-            this.metroButtonDown.Size = new System.Drawing.Size(100, 29);
+            this.metroButtonDown.Size = new System.Drawing.Size(100, 23);
             this.metroButtonDown.TabIndex = 4;
             this.metroButtonDown.Text = "&Down";
-            this.metroButtonDown.UseSelectable = true;
             this.metroButtonDown.Click += new System.EventHandler(this.metroButtonDown_Click);
             this.metroButtonDown.MouseDown += new System.Windows.Forms.MouseEventHandler(this.metroButtonDown_MouseDown);
             this.metroButtonDown.MouseUp += new System.Windows.Forms.MouseEventHandler(this.metroButtonDown_MouseUp);
@@ -492,12 +443,29 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(6, 146);
+            this.label1.Location = new System.Drawing.Point(6, 144);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 32);
+            this.label1.Size = new System.Drawing.Size(102, 34);
             this.label1.TabIndex = 11;
             this.label1.Text = "Interval[ms]:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // metroTextBoxInterval
+            // 
+            // 
+            // 
+            // 
+            this.metroTextBoxInterval.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metroTextBoxInterval.Location = new System.Drawing.Point(115, 148);
+            this.metroTextBoxInterval.Margin = new System.Windows.Forms.Padding(4);
+            this.metroTextBoxInterval.MaxLength = 32767;
+            this.metroTextBoxInterval.Name = "metroTextBoxInterval";
+            this.metroTextBoxInterval.PasswordChar = '\0';
+            this.metroTextBoxInterval.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.metroTextBoxInterval.SelectedText = "";
+            this.metroTextBoxInterval.Size = new System.Drawing.Size(100, 26);
+            this.metroTextBoxInterval.TabIndex = 6;
+            this.metroTextBoxInterval.TextChanged += new System.EventHandler(this.metroTextBoxInterval_TextChanged);
             // 
             // metroPanel1
             // 
@@ -530,7 +498,6 @@
             this.metroButton1.Size = new System.Drawing.Size(75, 23);
             this.metroButton1.TabIndex = 7;
             this.metroButton1.Text = "OK";
-            this.metroButton1.UseSelectable = true;
             // 
             // tableLayoutPanel2
             // 
@@ -568,7 +535,6 @@
             this.metroButton2.Size = new System.Drawing.Size(75, 23);
             this.metroButton2.TabIndex = 8;
             this.metroButton2.Text = "Cancel";
-            this.metroButton2.UseSelectable = true;
             // 
             // metroButton3
             // 
@@ -578,7 +544,6 @@
             this.metroButton3.Size = new System.Drawing.Size(75, 23);
             this.metroButton3.TabIndex = 2;
             this.metroButton3.Text = "&Random1";
-            this.metroButton3.UseSelectable = true;
             this.metroButton3.Click += new System.EventHandler(this.metroButtonRand1_Click);
             // 
             // metroButton4
@@ -589,7 +554,6 @@
             this.metroButton4.Size = new System.Drawing.Size(75, 23);
             this.metroButton4.TabIndex = 3;
             this.metroButton4.Text = "R&andom2";
-            this.metroButton4.UseSelectable = true;
             this.metroButton4.Click += new System.EventHandler(this.metroButtonRandom2_Click);
             // 
             // metroButton5
@@ -600,7 +564,6 @@
             this.metroButton5.Size = new System.Drawing.Size(75, 23);
             this.metroButton5.TabIndex = 5;
             this.metroButton5.Text = "&FIR";
-            this.metroButton5.UseSelectable = true;
             this.metroButton5.Click += new System.EventHandler(this.metroButtonFir1_Click);
             // 
             // metroButton6
@@ -611,7 +574,6 @@
             this.metroButton6.Size = new System.Drawing.Size(75, 23);
             this.metroButton6.TabIndex = 4;
             this.metroButton6.Text = "&Maximize";
-            this.metroButton6.UseSelectable = true;
             this.metroButton6.Click += new System.EventHandler(this.metroButtonMax_Click);
             // 
             // timer1
@@ -619,45 +581,11 @@
             this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // metroTextBoxInterval
-            // 
-            // 
-            // 
-            // 
-            this.metroTextBoxInterval.CustomButton.Image = null;
-            this.metroTextBoxInterval.CustomButton.Location = new System.Drawing.Point(78, 2);
-            this.metroTextBoxInterval.CustomButton.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxInterval.CustomButton.Name = "";
-            this.metroTextBoxInterval.CustomButton.Size = new System.Drawing.Size(19, 19);
-            this.metroTextBoxInterval.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBoxInterval.CustomButton.TabIndex = 1;
-            this.metroTextBoxInterval.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBoxInterval.CustomButton.UseSelectable = true;
-            this.metroTextBoxInterval.CustomButton.Visible = false;
-            this.metroTextBoxInterval.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxInterval.Lines = new string[0];
-            this.metroTextBoxInterval.Location = new System.Drawing.Point(115, 150);
-            this.metroTextBoxInterval.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxInterval.MaxLength = 32767;
-            this.metroTextBoxInterval.Name = "metroTextBoxInterval";
-            this.metroTextBoxInterval.PasswordChar = '\0';
-            this.metroTextBoxInterval.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxInterval.SelectedText = "";
-            this.metroTextBoxInterval.SelectionLength = 0;
-            this.metroTextBoxInterval.SelectionStart = 0;
-            this.metroTextBoxInterval.ShortcutsEnabled = true;
-            this.metroTextBoxInterval.Size = new System.Drawing.Size(100, 24);
-            this.metroTextBoxInterval.TabIndex = 6;
-            this.metroTextBoxInterval.UseSelectable = true;
-            this.metroTextBoxInterval.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBoxInterval.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
-            this.metroTextBoxInterval.TextChanged += new System.EventHandler(this.metroTextBoxInterval_TextChanged);
-            // 
             // FormEnvelopeEditor
             // 
             this.AcceptButton = this.buttonOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(947, 600);
             this.Controls.Add(this.metroPanel1);
@@ -714,7 +642,7 @@
         private MetroFramework.Controls.MetroButton metroButtonMin;
         private MetroFramework.Controls.MetroButton metroButtonUp;
         private MetroFramework.Controls.MetroButton metroButtonDown;
-        private System.Windows.Forms.Label label1;
+        private MetroFramework.Controls.MetroLabel label1;
         private System.Windows.Forms.Timer timer1;
         private MetroFramework.Controls.MetroTextBox metroTextBoxInterval;
     }

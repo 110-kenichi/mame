@@ -126,7 +126,7 @@
     <value>481, 547</value>
   </data>
   <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="button1.TabIndex" type="System.Int32, mscorlib">
@@ -166,7 +166,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 29</value>
+    <value>138, 26</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -193,7 +193,7 @@
     <value>147, 3</value>
   </data>
   <data name="comboBoxOutPort.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 23</value>
+    <value>256, 20</value>
   </data>
   <data name="comboBoxOutPort.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -217,13 +217,13 @@
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 390</value>
+    <value>3, 399</value>
   </data>
   <data name="label3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 21</value>
+    <value>64, 18</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -253,13 +253,13 @@
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 411</value>
+    <value>3, 417</value>
   </data>
   <data name="label4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 21</value>
+    <value>80, 18</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -289,13 +289,13 @@
     <value>Fill</value>
   </data>
   <data name="labelSendTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 390</value>
+    <value>147, 399</value>
   </data>
   <data name="labelSendTime.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="labelSendTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 21</value>
+    <value>256, 18</value>
   </data>
   <data name="labelSendTime.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -328,13 +328,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelReceiveTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 411</value>
+    <value>147, 417</value>
   </data>
   <data name="labelReceiveTime.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="labelReceiveTime.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 21</value>
+    <value>256, 18</value>
   </data>
   <data name="labelReceiveTime.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -902,10 +902,10 @@
     <value>Fill</value>
   </data>
   <data name="pictureBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 32</value>
+    <value>3, 29</value>
   </data>
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>545, 355</value>
+    <value>545, 367</value>
   </data>
   <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -932,10 +932,10 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonGo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 435</value>
+    <value>147, 438</value>
   </data>
   <data name="metroButtonGo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>256, 25</value>
+    <value>256, 22</value>
   </data>
   <data name="metroButtonGo.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -965,13 +965,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelSpan.Location" type="System.Drawing.Point, System.Drawing">
-    <value>409, 411</value>
+    <value>409, 417</value>
   </data>
   <data name="labelSpan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="labelSpan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 21</value>
+    <value>139, 18</value>
   </data>
   <data name="labelSpan.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1024,11 +1024,11 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 15</value>
-  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>611, 593</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>

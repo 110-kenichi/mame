@@ -118,23 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="listViewPcmSounds.Size" type="System.Drawing.Size, System.Drawing">
+    <value>357, 363</value>
+  </data>
+  <data name="propertyGrid1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>546, 363</value>
+  </data>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>812, 3</value>
+  </data>
+  <data name="buttonOk.Location" type="System.Drawing.Point, System.Drawing">
+    <value>706, 3</value>
+  </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>347, 20</value>
+    <value>314, 19</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
     <value>ドラム音色登録(&amp;A):  ((Shift+)ドラッグでコピー(入れ替え))</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 20</value>
+    <value>96, 19</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
     <value>ドラム音色設定</value>
   </data>
-  <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>284, 3</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tableLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 29</value>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 610</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>915, 29</value>
   </data>
   <data name="metroButton3.Text" xml:space="preserve">
     <value>クリア(&amp;C)...</value>
@@ -144,6 +160,18 @@
   </data>
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>全保存(&amp;A)...</value>
+  </data>
+  <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 388</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>915, 417</value>
+  </data>
+  <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 538</value>
+  </data>
+  <data name="toolStrip2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 511</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>ドラム音色エディタ</value>

@@ -1110,8 +1110,8 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                     }
                 }
-                //else
-                //    Settings.Default.Reload();
+                else
+                    Settings.Default.Reload();
             }
         }
 

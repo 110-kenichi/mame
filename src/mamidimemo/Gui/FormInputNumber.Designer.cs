@@ -43,10 +43,9 @@
             this.buttonOK.Location = new System.Drawing.Point(312, 135);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
+            this.buttonOK.Size = new System.Drawing.Size(100, 23);
             this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "&OK";
-            this.buttonOK.UseSelectable = true;
             // 
             // buttonCancel
             // 
@@ -55,10 +54,9 @@
             this.buttonCancel.Location = new System.Drawing.Point(420, 135);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(100, 23);
             this.buttonCancel.TabIndex = 11;
             this.buttonCancel.Text = "&Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -85,7 +83,7 @@
             0,
             0});
             this.numericUpDown.Name = "numericUpDown";
-            this.numericUpDown.Size = new System.Drawing.Size(504, 22);
+            this.numericUpDown.Size = new System.Drawing.Size(504, 19);
             this.numericUpDown.TabIndex = 0;
             this.numericUpDown.Value = new decimal(new int[] {
             1,
@@ -96,8 +94,8 @@
             // FormInputNumber
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(531, 180);
             this.Controls.Add(this.tableLayoutPanel1);

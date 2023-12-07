@@ -157,14 +157,11 @@
   <data name="toolStripComboBoxCC.Items64" xml:space="preserve">
     <value>64</value>
   </data>
-  <data name="&gt;&gt;contextMenuStrip1.Name" xml:space="preserve">
-    <value>contextMenuStrip1</value>
+  <data name="toolStripComboBoxCC.Items39" xml:space="preserve">
+    <value>39</value>
   </data>
   <data name="toolStripComboBoxCh.Items1" xml:space="preserve">
     <value>A1(2ch)</value>
-  </data>
-  <data name="&gt;&gt;pianoControl1.Parent" xml:space="preserve">
-    <value>$this</value>
   </data>
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>Export &amp;all...</value>
@@ -208,7 +205,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewPcmSounds.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 23</value>
+    <value>3, 22</value>
   </data>
   <data name="toolStripComboBoxCC.Items" xml:space="preserve">
     <value>0</value>
@@ -216,17 +213,20 @@
   <data name="toolStripLabel1.Text" xml:space="preserve">
     <value>Note</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel3.Name" xml:space="preserve">
-    <value>toolStripLabel3</value>
+  <data name="&gt;&gt;toolStripLabel3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 29</value>
+    <value>78, 23</value>
   </data>
   <data name="toolStripButton1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 29</value>
+    <value>59, 24</value>
   </data>
   <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>54, 29</value>
+    <value>43, 24</value>
+  </data>
+  <data name="&gt;&gt;pianoControl1.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.Gui.PianoControl, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="metroButton3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Right</value>
@@ -237,11 +237,11 @@
   <data name="&gt;&gt;tableLayoutPanel4.Name" xml:space="preserve">
     <value>tableLayoutPanel4</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="listViewPcmSounds.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 371</value>
+    <value>0, 382</value>
   </data>
   <data name="toolStripComboBoxCC.Items126" xml:space="preserve">
     <value>126</value>
@@ -250,7 +250,10 @@
     <value>116</value>
   </data>
   <data name="propertyGrid1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 345</value>
+    <value>546, 357</value>
+  </data>
+  <data name="propertyGrid1.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="toolStripComboBoxCC.Items121" xml:space="preserve">
     <value>121</value>
@@ -279,14 +282,14 @@
   <data name="toolStripComboBoxCC.Items79" xml:space="preserve">
     <value>79</value>
   </data>
-  <data name="toolStripComboBoxCh.Items5" xml:space="preserve">
-    <value>A5(6ch)</value>
+  <data name="toolStripComboBoxCC.Items78" xml:space="preserve">
+    <value>78</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="&gt;&gt;buttonOk.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  <data name="&gt;&gt;toolStripLabel3.Name" xml:space="preserve">
+    <value>toolStripLabel3</value>
   </data>
   <data name="toolStripComboBoxCC.Items73" xml:space="preserve">
     <value>73</value>
@@ -306,8 +309,8 @@
   <data name="toolStripComboBoxCC.Items76" xml:space="preserve">
     <value>76</value>
   </data>
-  <data name="toolStripComboBoxCC.Items75" xml:space="preserve">
-    <value>75</value>
+  <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="toolStripComboBoxCC.Items74" xml:space="preserve">
     <value>74</value>
@@ -321,6 +324,9 @@
   <data name="metroButtonExport.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="&gt;&gt;toolStripLabel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
@@ -333,35 +339,35 @@
   <data name="toolStripButton1.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
-  <data name="&gt;&gt;listViewPcmSounds.Name" xml:space="preserve">
-    <value>listViewPcmSounds</value>
-  </data>
   <data name="&gt;&gt;metroButtonImport.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="toolStripComboBoxVelo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 32</value>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripLabel5.Text" xml:space="preserve">
-    <value>CC</value>
+  <data name="toolStripComboBoxVelo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 27</value>
   </data>
   <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 94</value>
   </data>
+  <data name="&gt;&gt;toolStripLabel5.Name" xml:space="preserve">
+    <value>toolStripLabel5</value>
+  </data>
   <data name="columnHeader2.Text" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="metroButton3.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
+  <data name="toolStripComboBoxCh.Items7" xml:space="preserve">
+    <value>A7(8ch)</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>933, 654</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 32</value>
+    <value>6, 27</value>
   </data>
   <data name="toolStripLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>27, 29</value>
+    <value>21, 24</value>
   </data>
   <data name="&gt;&gt;columnHeader1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -372,8 +378,8 @@
   <data name="toolStripButtonHook.ToolTipText" xml:space="preserve">
     <value>Hook all MIDI event for editor.</value>
   </data>
-  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
-    <value>columnHeader1</value>
+  <data name="toolStripComboBoxCC.Items124" xml:space="preserve">
+    <value>124</value>
   </data>
   <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 532</value>
@@ -411,17 +417,11 @@
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 0</value>
   </data>
-  <data name="toolStripComboBoxCC.Items13" xml:space="preserve">
-    <value>13</value>
-  </data>
   <data name="&gt;&gt;saveFileDialogExport.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="toolStripComboBoxCh.Items9" xml:space="preserve">
     <value>A9(10ch)</value>
-  </data>
-  <data name="listViewPcmSounds.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
   </data>
   <data name="toolStripComboBoxGate.Items2" xml:space="preserve">
     <value>2000ms</value>
@@ -429,8 +429,11 @@
   <data name="&gt;&gt;toolStripComboBoxCC.Name" xml:space="preserve">
     <value>toolStripComboBoxCC</value>
   </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FormDrumTableEditor</value>
+  </data>
   <data name="toolStripComboBoxCh.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 32</value>
+    <value>99, 27</value>
   </data>
   <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
     <value>109, 3</value>
@@ -438,8 +441,8 @@
   <data name="toolStripComboBoxCC.Items49" xml:space="preserve">
     <value>49</value>
   </data>
-  <data name="toolStripComboBoxCh.Items2" xml:space="preserve">
-    <value>A2(3ch)</value>
+  <data name="toolStripComboBoxCh.Items5" xml:space="preserve">
+    <value>A5(6ch)</value>
   </data>
   <data name="columnHeader1.Text" xml:space="preserve">
     <value>Note No.</value>
@@ -483,8 +486,8 @@
   <data name="pianoControl1.Size" type="System.Drawing.Size, System.Drawing">
     <value>915, 72</value>
   </data>
-  <data name="&gt;&gt;toolStripButtonHook.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripComboBoxCC.Items13" xml:space="preserve">
+    <value>13</value>
   </data>
   <data name="toolStripComboBoxCC.Items12" xml:space="preserve">
     <value>12</value>
@@ -493,13 +496,13 @@
     <value>11</value>
   </data>
   <data name="listViewPcmSounds.Size" type="System.Drawing.Size, System.Drawing">
-    <value>357, 345</value>
+    <value>357, 357</value>
   </data>
   <data name="saveFileDialogExport.Title" xml:space="preserve">
     <value>Export DrumTimbres</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="toolStripComboBoxCC.Items16" xml:space="preserve">
+    <value>16</value>
   </data>
   <data name="toolStripComboBoxCC.Items15" xml:space="preserve">
     <value>15</value>
@@ -516,11 +519,8 @@
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>915, 35</value>
   </data>
-  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items20" xml:space="preserve">
-    <value>20</value>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>9, 94, 9, 15</value>
   </data>
   <data name="toolStripButtonPlay.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
@@ -528,14 +528,17 @@
   <data name="metroButtonExport.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="toolStripComboBoxCC.Items78" xml:space="preserve">
-    <value>78</value>
+  <data name="&gt;&gt;toolStripButton1.Name" xml:space="preserve">
+    <value>toolStripButton1</value>
   </data>
   <data name="&gt;&gt;propertyGrid1.Name" xml:space="preserve">
     <value>propertyGrid1</value>
   </data>
+  <data name="&gt;&gt;clearToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="toolStripButtonPlay.Size" type="System.Drawing.Size, System.Drawing">
-    <value>105, 29</value>
+    <value>89, 24</value>
   </data>
   <data name="&gt;&gt;toolStripButtonPlay.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -550,10 +553,10 @@
     <value>9, 604</value>
   </data>
   <data name="toolStripComboBoxNote.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 32</value>
+    <value>99, 27</value>
   </data>
   <data name="toolStrip2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 500</value>
+    <value>9, 505</value>
   </data>
   <data name="toolStripComboBoxCC.Items119" xml:space="preserve">
     <value>119</value>
@@ -603,11 +606,17 @@
   <data name="metroButton3.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
+  <data name="&gt;&gt;contextMenuStrip1.Name" xml:space="preserve">
+    <value>contextMenuStrip1</value>
+  </data>
   <data name="&gt;&gt;saveFileDialogExport.Name" xml:space="preserve">
     <value>saveFileDialogExport</value>
   </data>
   <data name="tableLayoutPanel4.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
+  </data>
+  <data name="metroButtonImport.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
   </data>
   <data name="toolStripComboBoxCC.Items89" xml:space="preserve">
     <value>89</value>
@@ -619,7 +628,7 @@
     <value>48</value>
   </data>
   <data name="metroButtonExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="toolStripComboBoxCC.Items83" xml:space="preserve">
     <value>83</value>
@@ -636,8 +645,8 @@
   <data name="toolStripComboBoxCC.Items87" xml:space="preserve">
     <value>87</value>
   </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>142, 20</value>
+  <data name="toolStripComboBoxCC.Items86" xml:space="preserve">
+    <value>86</value>
   </data>
   <data name="toolStripComboBoxCC.Items85" xml:space="preserve">
     <value>85</value>
@@ -645,14 +654,14 @@
   <data name="toolStripComboBoxCC.Items84" xml:space="preserve">
     <value>84</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel2.Name" xml:space="preserve">
-    <value>toolStripLabel2</value>
+  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="toolStripComboBoxCC.Items59" xml:space="preserve">
     <value>59</value>
   </data>
-  <data name="toolStripComboBoxCh.Items3" xml:space="preserve">
-    <value>A3(4ch)</value>
+  <data name="toolStripComboBoxCC.Items58" xml:space="preserve">
+    <value>58</value>
   </data>
   <data name="&gt;&gt;toolStripComboBoxVelo.Name" xml:space="preserve">
     <value>toolStripComboBoxVelo</value>
@@ -663,11 +672,11 @@
   <data name="toolStripComboBoxCC.Items52" xml:space="preserve">
     <value>52</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel5.Name" xml:space="preserve">
-    <value>toolStripLabel5</value>
+  <data name="toolStripComboBoxCC.Items51" xml:space="preserve">
+    <value>51</value>
   </data>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>9, 94, 9, 15</value>
+  <data name="toolStripComboBoxCC.Items50" xml:space="preserve">
+    <value>50</value>
   </data>
   <data name="toolStripComboBoxCC.Items57" xml:space="preserve">
     <value>57</value>
@@ -684,9 +693,6 @@
   <data name="toolStripComboBoxCC.Items6" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="metroButton3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="&gt;&gt;toolStripComboBoxGate.Name" xml:space="preserve">
     <value>toolStripComboBoxGate</value>
   </data>
@@ -694,7 +700,7 @@
     <value>Import DrumTimbres</value>
   </data>
   <data name="toolStrip2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>915, 32</value>
+    <value>915, 27</value>
   </data>
   <data name="toolStripButtonHook.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
@@ -702,20 +708,20 @@
   <data name="toolStripComboBoxCC.Items3" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="toolStripComboBoxCC.Items7" xml:space="preserve">
-    <value>7</value>
-  </data>
   <data name="clearToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 24</value>
+    <value>108, 22</value>
   </data>
   <data name="&gt;&gt;listViewPcmSounds.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
   </data>
   <data name="&gt;&gt;toolStripComboBoxCC.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 32</value>
+    <value>6, 27</value>
   </data>
   <data name="&gt;&gt;columnHeader2.Name" xml:space="preserve">
     <value>columnHeader2</value>
@@ -735,20 +741,26 @@
   <data name="toolStrip2.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
   </data>
+  <data name="&gt;&gt;toolStripLabel4.Name" xml:space="preserve">
+    <value>toolStripLabel4</value>
+  </data>
   <data name="toolStripButtonPlay.Text" xml:space="preserve">
     <value>PlayOnEdit</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="toolStripComboBoxCC.Items127" xml:space="preserve">
+    <value>127</value>
+  </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>338, 20</value>
+    <value>321, 19</value>
   </data>
   <data name="&gt;&gt;buttonOk.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="toolStripComboBoxCC.Items51" xml:space="preserve">
-    <value>51</value>
+  <data name="&gt;&gt;toolStripComboBoxNote.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="metroButton3.Text" xml:space="preserve">
     <value>&amp;Clear...</value>
@@ -756,8 +768,8 @@
   <data name="&gt;&gt;toolStripComboBoxNote.Name" xml:space="preserve">
     <value>toolStripComboBoxNote</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel4.Name" xml:space="preserve">
-    <value>toolStripLabel4</value>
+  <data name="&gt;&gt;toolStripButtonHook.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripLabel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -768,26 +780,14 @@
   <data name="toolStripComboBoxCC.Items5" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="tableLayoutPanel4.ColumnCount" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="buttonOk.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
   </data>
   <data name="toolStripComboBoxCC.Items99" xml:space="preserve">
     <value>99</value>
   </data>
-  <data name="toolStripComboBoxCh.Items7" xml:space="preserve">
-    <value>A7(8ch)</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="toolStripComboBoxCC.Items98" xml:space="preserve">
+    <value>98</value>
   </data>
   <data name="toolStripComboBoxCC.Items93" xml:space="preserve">
     <value>93</value>
@@ -813,6 +813,9 @@
   <data name="toolStripComboBoxCC.Items94" xml:space="preserve">
     <value>94</value>
   </data>
+  <data name="toolStripComboBoxCh.Items2" xml:space="preserve">
+    <value>A2(3ch)</value>
+  </data>
   <data name="toolStripLabel4.Text" xml:space="preserve">
     <value>Velocity</value>
   </data>
@@ -828,14 +831,11 @@
   <data name="toolStripComboBoxCC.Items100" xml:space="preserve">
     <value>100</value>
   </data>
-  <data name="toolStripComboBoxCC.Items50" xml:space="preserve">
-    <value>50</value>
+  <data name="toolStripComboBoxCC.Items7" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
     <value>tableLayoutPanel1</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items86" xml:space="preserve">
-    <value>86</value>
   </data>
   <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -852,26 +852,20 @@
   <data name="&gt;&gt;metroButton3.Name" xml:space="preserve">
     <value>metroButton3</value>
   </data>
-  <data name="&gt;&gt;pianoControl1.Type" xml:space="preserve">
-    <value>zanac.MAmidiMEmo.Gui.PianoControl, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="toolStripComboBoxCC.Items10" xml:space="preserve">
+    <value>10</value>
   </data>
   <data name="&gt;&gt;toolStripComboBoxGate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>915, 406</value>
+    <value>915, 411</value>
   </data>
   <data name="tableLayoutPanel4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
   </data>
-  <data name="toolStripComboBoxGate.Items" xml:space="preserve">
-    <value>500ms</value>
-  </data>
   <data name="pianoControl1.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
-  </data>
-  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
   </data>
   <data name="toolStripLabel2.Text" xml:space="preserve">
     <value>Key Ch</value>
@@ -880,7 +874,7 @@
     <value>tableLayoutPanel4</value>
   </data>
   <data name="metroButtonImport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
+    <value>100, 23</value>
   </data>
   <data name="columnHeader2.Width" type="System.Int32, mscorlib">
     <value>196</value>
@@ -888,14 +882,17 @@
   <data name="tableLayoutPanel4.RowCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
+  <data name="toolStripComboBoxCC.Items113" xml:space="preserve">
+    <value>113</value>
+  </data>
   <data name="contextMenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 28</value>
+    <value>109, 26</value>
   </data>
   <data name="&gt;&gt;metroButtonExport.Name" xml:space="preserve">
     <value>metroButtonExport</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>FormDrumTableEditor</value>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroLabel, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -903,11 +900,11 @@
   <data name="label2.Text" xml:space="preserve">
     <value>DrumTimbre &amp;settings:</value>
   </data>
-  <data name="&gt;&gt;metroButtonExport.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="clearToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Clear...</value>
   </data>
-  <data name="toolStripComboBoxCC.Items39" xml:space="preserve">
-    <value>39</value>
+  <data name="buttonOk.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
   <data name="&gt;&gt;buttonOk.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -918,17 +915,14 @@
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
   </data>
-  <data name="toolStripButtonHook.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 29</value>
-  </data>
   <data name="toolStripComboBoxCC.Items72" xml:space="preserve">
     <value>72</value>
   </data>
-  <data name="toolStripComboBoxCC.Items98" xml:space="preserve">
-    <value>98</value>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxNote.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;buttonOk.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
     <value>1</value>
@@ -936,8 +930,8 @@
   <data name="&gt;&gt;toolStripComboBoxCh.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripComboBoxCC.Items101" xml:space="preserve">
-    <value>101</value>
+  <data name="toolStripButtonHook.Size" type="System.Drawing.Size, System.Drawing">
+    <value>64, 24</value>
   </data>
   <data name="toolStripComboBoxCh.Items4" xml:space="preserve">
     <value>A4(5ch)</value>
@@ -946,16 +940,16 @@
     <value>2</value>
   </data>
   <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>301, 3</value>
+    <value>282, 3</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Name" xml:space="preserve">
     <value>buttonCancel</value>
   </data>
   <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>363, 35</value>
+    <value>363, 29</value>
   </data>
-  <data name="toolStripComboBoxCC.Items124" xml:space="preserve">
-    <value>124</value>
+  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="toolStripComboBoxCC.Items114" xml:space="preserve">
     <value>114</value>
@@ -964,10 +958,7 @@
     <value>104</value>
   </data>
   <data name="toolStripLabel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 29</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items25" xml:space="preserve">
-    <value>25</value>
+    <value>48, 24</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -978,8 +969,8 @@
   <data name="toolStripComboBoxCC.Items17" xml:space="preserve">
     <value>17</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="toolStripComboBoxCC.Items107" xml:space="preserve">
+    <value>107</value>
   </data>
   <data name="toolStripComboBoxCC.Items4" xml:space="preserve">
     <value>4</value>
@@ -990,17 +981,14 @@
   <data name="toolStripComboBoxGate.Items3" xml:space="preserve">
     <value>5000ms</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxVelo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="metroButton3.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="&gt;&gt;pianoControl1.Name" xml:space="preserve">
     <value>pianoControl1</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items21" xml:space="preserve">
-    <value>21</value>
   </data>
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1011,11 +999,14 @@
   <data name="&gt;&gt;toolStripLabel4.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="metroButtonImport.Text" xml:space="preserve">
+    <value>&amp;Import...</value>
+  </data>
   <data name="&gt;&gt;metroButtonExport.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="buttonOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>706, 3</value>
+    <value>706, 9</value>
   </data>
   <data name="&gt;&gt;listViewPcmSounds.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -1023,8 +1014,17 @@
   <data name="toolStripComboBoxCC.Items38" xml:space="preserve">
     <value>38</value>
   </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items75" xml:space="preserve">
+    <value>75</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>134, 19</value>
+  </data>
   <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 29</value>
+    <value>31, 24</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>DrumTimbre Editor</value>
@@ -1032,11 +1032,11 @@
   <data name="&gt;&gt;propertyGrid1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroLabel, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="buttonCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -1048,16 +1048,16 @@
     <value>A8(9ch)</value>
   </data>
   <data name="toolStripComboBoxGate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 32</value>
+    <value>75, 27</value>
   </data>
-  <data name="&gt;&gt;toolStripButton1.Name" xml:space="preserve">
-    <value>toolStripButton1</value>
+  <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
+    <value>columnHeader1</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
   </data>
-  <data name="toolStripComboBoxCC.Items16" xml:space="preserve">
-    <value>16</value>
+  <data name="toolStripComboBoxCC.Items101" xml:space="preserve">
+    <value>101</value>
   </data>
   <data name="toolStripComboBoxCC.Items118" xml:space="preserve">
     <value>118</value>
@@ -1065,14 +1065,17 @@
   <data name="toolStripComboBoxCC.Items108" xml:space="preserve">
     <value>108</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
+  <data name="toolStripComboBoxCC.Items102" xml:space="preserve">
+    <value>102</value>
   </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
+  <data name="&gt;&gt;metroButtonExport.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
-  <data name="toolStripComboBoxCC.Items113" xml:space="preserve">
-    <value>113</value>
+  <data name="toolStripComboBoxCC.Items123" xml:space="preserve">
+    <value>123</value>
+  </data>
+  <data name="toolStripLabel5.Text" xml:space="preserve">
+    <value>CC</value>
   </data>
   <data name="toolStripComboBoxCC.Items103" xml:space="preserve">
     <value>103</value>
@@ -1080,20 +1083,20 @@
   <data name="toolStripComboBoxCC.Items8" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="&gt;&gt;clearToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripComboBoxCh.Items3" xml:space="preserve">
+    <value>A3(4ch)</value>
   </data>
   <data name="&gt;&gt;metroButtonImport.Parent" xml:space="preserve">
     <value>tableLayoutPanel4</value>
   </data>
-  <data name="propertyGrid1.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>96, 96</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;toolStripButtonHook.Name" xml:space="preserve">
     <value>toolStripButtonHook</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items29" xml:space="preserve">
-    <value>29</value>
   </data>
   <data name="&gt;&gt;listViewPcmSounds.Type" xml:space="preserve">
     <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1104,17 +1107,14 @@
   <data name="tableLayoutPanel4.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="toolStripComboBoxCC.Items123" xml:space="preserve">
-    <value>123</value>
-  </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>
   </data>
   <data name="propertyGrid1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>366, 23</value>
+    <value>366, 22</value>
   </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 15</value>
+  <data name="toolStripComboBoxCC.Items29" xml:space="preserve">
+    <value>29</value>
   </data>
   <data name="toolStripComboBoxCC.Items28" xml:space="preserve">
     <value>28</value>
@@ -1125,11 +1125,11 @@
   <data name="toolStripComboBoxCC.Items22" xml:space="preserve">
     <value>22</value>
   </data>
-  <data name="metroButtonImport.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="toolStripComboBoxCC.Items21" xml:space="preserve">
+    <value>21</value>
   </data>
-  <data name="toolStripComboBoxCC.Items10" xml:space="preserve">
-    <value>10</value>
+  <data name="toolStripComboBoxCC.Items20" xml:space="preserve">
+    <value>20</value>
   </data>
   <data name="toolStripComboBoxCC.Items27" xml:space="preserve">
     <value>27</value>
@@ -1137,8 +1137,8 @@
   <data name="toolStripComboBoxCC.Items26" xml:space="preserve">
     <value>26</value>
   </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="toolStripComboBoxCC.Items25" xml:space="preserve">
+    <value>25</value>
   </data>
   <data name="toolStripComboBoxCC.Items24" xml:space="preserve">
     <value>24</value>
@@ -1159,16 +1159,16 @@
     <value>toolStripComboBoxCh</value>
   </data>
   <data name="toolStripComboBoxCC.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 28</value>
+    <value>75, 27</value>
   </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
-  <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
+  <data name="&gt;&gt;toolStripLabel2.Name" xml:space="preserve">
+    <value>toolStripLabel2</value>
   </data>
   <data name="pianoControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 5, 5, 5</value>
@@ -1176,35 +1176,32 @@
   <data name="tableLayoutPanel4.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroButton3" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonImport" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonExport" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,20,AutoSize,20,Percent,100" /&gt;&lt;Rows Styles="AutoSize,60" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
-  <data name="clearToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Clear...</value>
+  <data name="tableLayoutPanel4.ColumnCount" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
-  <data name="metroButtonImport.Text" xml:space="preserve">
-    <value>&amp;Import...</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items58" xml:space="preserve">
-    <value>58</value>
+  <data name="&gt;&gt;listViewPcmSounds.Name" xml:space="preserve">
+    <value>listViewPcmSounds</value>
   </data>
   <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 29</value>
+    <value>33, 24</value>
   </data>
-  <data name="toolStripComboBoxCC.Items127" xml:space="preserve">
-    <value>127</value>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="toolStripComboBoxCC.Items117" xml:space="preserve">
     <value>117</value>
   </data>
-  <data name="toolStripComboBoxCC.Items107" xml:space="preserve">
-    <value>107</value>
+  <data name="toolStripComboBoxGate.Items" xml:space="preserve">
+    <value>500ms</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripComboBoxVelo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="toolStripComboBoxCh.Items" xml:space="preserve">
     <value>A0(1ch)</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>812, 3</value>
+    <value>812, 9</value>
   </data>
   <data name="&gt;&gt;toolStripLabel1.Name" xml:space="preserve">
     <value>toolStripLabel1</value>
@@ -1221,12 +1218,9 @@
   <data name="toolStripComboBoxCC.Items112" xml:space="preserve">
     <value>112</value>
   </data>
-  <data name="toolStripComboBoxCC.Items102" xml:space="preserve">
-    <value>102</value>
+  <data name="&gt;&gt;pianoControl1.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>ja-JP</value>
-  </metadata>
   <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>539, 17</value>
   </metadata>

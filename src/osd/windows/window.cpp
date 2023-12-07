@@ -1366,7 +1366,7 @@ LRESULT CALLBACK win_window_info::video_window_proc(HWND wnd, UINT message, WPAR
 
 		// fullscreen set
 		case WM_USER_SET_FULLSCREEN:
-			window->set_fullscreen(wparam);
+			//window->set_fullscreen(wparam);
 			break;
 
 		// minimum size set

@@ -87,13 +87,13 @@
             // 
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(54, 22);
+            this.toolStripLabel2.Size = new System.Drawing.Size(43, 22);
             this.toolStripLabel2.Text = "Key Ch";
             // 
             // FormYM2151Editor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(832, 551);
             this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "FormYM2151Editor";

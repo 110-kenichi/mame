@@ -48,25 +48,23 @@
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(305, 4);
+            this.buttonOK.Location = new System.Drawing.Point(309, 4);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
+            this.buttonOK.Size = new System.Drawing.Size(100, 23);
             this.buttonOK.TabIndex = 10;
             this.buttonOK.Text = "&OK";
-            this.buttonOK.UseSelectable = true;
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(413, 4);
+            this.buttonCancel.Location = new System.Drawing.Point(417, 4);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(100, 29);
+            this.buttonCancel.Size = new System.Drawing.Size(100, 23);
             this.buttonCancel.TabIndex = 11;
             this.buttonCancel.Text = "&Cancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -76,13 +74,13 @@
             this.tableLayoutPanel1.Controls.Add(this.numericUpDown, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(7, 75);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 60);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(517, 146);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(521, 163);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // numericUpDown
@@ -96,7 +94,7 @@
             0,
             0});
             this.numericUpDown.Name = "numericUpDown";
-            this.numericUpDown.Size = new System.Drawing.Size(511, 22);
+            this.numericUpDown.Size = new System.Drawing.Size(515, 19);
             this.numericUpDown.TabIndex = 0;
             this.numericUpDown.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.SccInterporateNum;
             // 
@@ -104,9 +102,9 @@
             // 
             this.groupBox1.Controls.Add(this.tableLayoutPanel3);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(3, 31);
+            this.groupBox1.Location = new System.Drawing.Point(3, 28);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(511, 49);
+            this.groupBox1.Size = new System.Drawing.Size(515, 49);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Interporation method";
@@ -119,20 +117,21 @@
             this.tableLayoutPanel3.Controls.Add(this.radioButtonSimple, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.radioButtonFft, 1, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 18);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 15);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(505, 28);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(509, 31);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // radioButtonSimple
             // 
             this.radioButtonSimple.AutoSize = true;
             this.radioButtonSimple.Checked = true;
+            this.radioButtonSimple.Dock = System.Windows.Forms.DockStyle.Fill;
             this.radioButtonSimple.Location = new System.Drawing.Point(3, 3);
             this.radioButtonSimple.Name = "radioButtonSimple";
-            this.radioButtonSimple.Size = new System.Drawing.Size(69, 19);
+            this.radioButtonSimple.Size = new System.Drawing.Size(248, 25);
             this.radioButtonSimple.TabIndex = 0;
             this.radioButtonSimple.TabStop = true;
             this.radioButtonSimple.Text = "&Simple";
@@ -141,9 +140,10 @@
             // radioButtonFft
             // 
             this.radioButtonFft.AutoSize = true;
-            this.radioButtonFft.Location = new System.Drawing.Point(255, 3);
+            this.radioButtonFft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButtonFft.Location = new System.Drawing.Point(257, 3);
             this.radioButtonFft.Name = "radioButtonFft";
-            this.radioButtonFft.Size = new System.Drawing.Size(53, 19);
+            this.radioButtonFft.Size = new System.Drawing.Size(249, 25);
             this.radioButtonFft.TabIndex = 0;
             this.radioButtonFft.Text = "&FFT";
             this.radioButtonFft.UseVisualStyleBackColor = true;
@@ -159,18 +159,18 @@
             this.tableLayoutPanel2.Controls.Add(this.buttonOK, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.buttonCancel, 2, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(7, 184);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(5, 192);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(517, 37);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(521, 31);
             this.tableLayoutPanel2.TabIndex = 13;
             // 
             // FormInputNumberScc
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(531, 233);
             this.Controls.Add(this.tableLayoutPanel2);

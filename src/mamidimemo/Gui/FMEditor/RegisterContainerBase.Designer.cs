@@ -50,21 +50,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1.Controls.Add(this.textBoxSR, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxFollow, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(18, 98);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(18, 102);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(346, 25);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(346, 21);
             this.tableLayoutPanel1.TabIndex = 13;
             // 
             // label1
             // 
             this.label1.AllowDrop = true;
             this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 25);
+            this.label1.Size = new System.Drawing.Size(91, 19);
             this.label1.TabIndex = 0;
             this.label1.Text = "Serialize Data:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -80,31 +79,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // 
             // 
-            this.textBoxSR.CustomButton.Image = null;
-            this.textBoxSR.CustomButton.Location = new System.Drawing.Point(100, 1);
-            this.textBoxSR.CustomButton.Name = "";
-            this.textBoxSR.CustomButton.Size = new System.Drawing.Size(17, 17);
-            this.textBoxSR.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxSR.CustomButton.TabIndex = 1;
-            this.textBoxSR.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxSR.CustomButton.UseSelectable = true;
-            this.textBoxSR.CustomButton.Visible = false;
             this.textBoxSR.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxSR.Lines = new string[0];
-            this.textBoxSR.Location = new System.Drawing.Point(100, 3);
+            this.textBoxSR.Location = new System.Drawing.Point(100, 0);
+            this.textBoxSR.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
             this.textBoxSR.MaxLength = 32767;
             this.textBoxSR.Name = "textBoxSR";
             this.textBoxSR.PasswordChar = '\0';
             this.textBoxSR.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.textBoxSR.SelectedText = "";
-            this.textBoxSR.SelectionLength = 0;
-            this.textBoxSR.SelectionStart = 0;
-            this.textBoxSR.ShortcutsEnabled = true;
-            this.textBoxSR.Size = new System.Drawing.Size(118, 19);
+            this.textBoxSR.Size = new System.Drawing.Size(118, 21);
             this.textBoxSR.TabIndex = 1;
-            this.textBoxSR.UseSelectable = true;
-            this.textBoxSR.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBoxSR.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxSR.TextChanged += new System.EventHandler(this.textBoxSR_TextChanged);
             // 
             // checkBoxFollow
@@ -115,10 +99,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.checkBoxFollow.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBoxFollow.Location = new System.Drawing.Point(224, 3);
             this.checkBoxFollow.Name = "checkBoxFollow";
-            this.checkBoxFollow.Size = new System.Drawing.Size(119, 19);
+            this.checkBoxFollow.Size = new System.Drawing.Size(119, 15);
             this.checkBoxFollow.TabIndex = 2;
             this.checkBoxFollow.Text = "Follow";
-            this.checkBoxFollow.UseSelectable = true;
             // 
             // toolTip1
             // 
@@ -140,8 +123,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // RegisterContainerBase
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.tableLayoutPanel1);

@@ -1,23 +1,34 @@
 ﻿// copyright-holders:K.Ito
+using MetroFramework.Components;
+using MetroFramework.Controls;
 using MetroFramework.Forms;
+using MetroFramework.Interfaces;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using zanac.MAmidiMEmo.Properties;
+using Point = System.Drawing.Point;
 
 namespace zanac.MAmidiMEmo.Gui
 {
     public partial class FormBase : MetroForm
     {
+
         public FormBase()
         {
             InitializeComponent();
+
+            ApplyFontSize();
         }
 
         private const int WM_NCHITTEST = 0x0084;
@@ -99,5 +110,65 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        private static MethodInfo scaleFont = typeof(Control).GetMethod("ScaleFont", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        protected override void OnControlAdded(ControlEventArgs e)
+        {
+            if (Program.GuiScale != 0)
+            {
+                SetAllControlsFontSize(e.Control, Program.GuiScale);
+                scaleFont.Invoke(e.Control, new object[] { 1f + Program.GuiScale });
+            }
+
+            base.OnControlAdded(e);
+        }
+
+        protected void SetAllControlsFontSize(Control target, float amount)
+        {
+            foreach (Control child in target.Controls)
+            {
+                // recursive
+                if (child.Controls != null)
+                    SetAllControlsFontSize(child, amount);
+                scaleFont.Invoke(child, new object[] { 1f + amount });
+            };
+            //scaleFont.Invoke(target, new object[] { 1f + amount });
+        }
+
+        private bool ignoreFontChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnFontChanged(EventArgs e)
+        {
+            if (ignoreFontChanged)
+                return;
+
+            ApplyFontSize();
+
+            base.OnFontChanged(e);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void ApplyFontSize()
+        {
+            if (Program.GuiScale != 0)
+            {
+                try
+                {
+                    ignoreFontChanged = true;
+                    SetAllControlsFontSize(this, Program.GuiScale);
+                    scaleFont.Invoke(this, new object[] { 1f + Program.GuiScale });
+                }
+                finally
+                {
+                    ignoreFontChanged = false;
+                }
+            }
+        }
     }
 }

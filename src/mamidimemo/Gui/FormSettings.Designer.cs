@@ -60,6 +60,16 @@
             this.comboBoxTV = new MetroFramework.Controls.MetroComboBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
+            this.numericUpDownScale = new System.Windows.Forms.NumericUpDown();
+            this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -67,13 +77,18 @@
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.metroTabControl1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            this.tableLayoutPanel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScale)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             resources.ApplyResources(this.buttonOk, "buttonOk");
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.UseSelectable = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
             // buttonCancel
@@ -81,7 +96,6 @@
             resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseSelectable = true;
             // 
             // labelRate
             // 
@@ -96,6 +110,7 @@
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.Window;
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 1, 6);
             this.tableLayoutPanel1.Controls.Add(this.comboBoxAudioLatency, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
@@ -153,7 +168,6 @@
             resources.GetString("comboBoxAudioLatency.Items2"),
             resources.GetString("comboBoxAudioLatency.Items3")});
             this.comboBoxAudioLatency.Name = "comboBoxAudioLatency";
-            this.comboBoxAudioLatency.UseSelectable = true;
             // 
             // label3
             // 
@@ -171,7 +185,6 @@
             resources.GetString("comboBoxSoundType.Items2"),
             resources.GetString("comboBoxSoundType.Items3")});
             this.comboBoxSoundType.Name = "comboBoxSoundType";
-            this.comboBoxSoundType.UseSelectable = true;
             // 
             // comboBoxSampleRate
             // 
@@ -211,36 +224,11 @@
             // 
             // textBoxPaLatency
             // 
-            // 
-            // 
-            // 
-            this.textBoxPaLatency.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image")));
-            this.textBoxPaLatency.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode")));
-            this.textBoxPaLatency.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location")));
-            this.textBoxPaLatency.CustomButton.Name = "";
-            this.textBoxPaLatency.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size")));
-            this.textBoxPaLatency.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxPaLatency.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex")));
-            this.textBoxPaLatency.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxPaLatency.CustomButton.UseSelectable = true;
-            this.textBoxPaLatency.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible")));
             this.textBoxPaLatency.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaLatency.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBoxPaLatency.Lines = new string[] {
-        "0.003334"};
             resources.ApplyResources(this.textBoxPaLatency, "textBoxPaLatency");
-            this.textBoxPaLatency.MaxLength = 32767;
             this.textBoxPaLatency.Name = "textBoxPaLatency";
-            this.textBoxPaLatency.PasswordChar = '\0';
-            this.textBoxPaLatency.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.textBoxPaLatency.SelectedText = "";
-            this.textBoxPaLatency.SelectionLength = 0;
-            this.textBoxPaLatency.SelectionStart = 0;
-            this.textBoxPaLatency.ShortcutsEnabled = true;
             this.textBoxPaLatency.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaLatency;
-            this.textBoxPaLatency.UseSelectable = true;
-            this.textBoxPaLatency.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBoxPaLatency.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaLatency.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             // 
             // label6
@@ -250,37 +238,11 @@
             // 
             // textBoxPaDevice
             // 
-            // 
-            // 
-            // 
-            this.textBoxPaDevice.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image1")));
-            this.textBoxPaDevice.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode1")));
-            this.textBoxPaDevice.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location1")));
-            this.textBoxPaDevice.CustomButton.Name = "";
-            this.textBoxPaDevice.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size1")));
-            this.textBoxPaDevice.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxPaDevice.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex1")));
-            this.textBoxPaDevice.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxPaDevice.CustomButton.UseSelectable = true;
-            this.textBoxPaDevice.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible1")));
             this.textBoxPaDevice.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaDevice", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaDevice.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBoxPaDevice.FontWeight = MetroFramework.MetroTextBoxWeight.Light;
-            this.textBoxPaDevice.Lines = new string[] {
-        "default"};
             resources.ApplyResources(this.textBoxPaDevice, "textBoxPaDevice");
-            this.textBoxPaDevice.MaxLength = 32767;
             this.textBoxPaDevice.Name = "textBoxPaDevice";
-            this.textBoxPaDevice.PasswordChar = '\0';
-            this.textBoxPaDevice.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.textBoxPaDevice.SelectedText = "";
-            this.textBoxPaDevice.SelectionLength = 0;
-            this.textBoxPaDevice.SelectionStart = 0;
-            this.textBoxPaDevice.ShortcutsEnabled = true;
             this.textBoxPaDevice.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaDevice;
-            this.textBoxPaDevice.UseSelectable = true;
-            this.textBoxPaDevice.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBoxPaDevice.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaDevice.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             // 
             // label5
@@ -295,36 +257,11 @@
             // 
             // textBoxPaApi
             // 
-            // 
-            // 
-            // 
-            this.textBoxPaApi.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image2")));
-            this.textBoxPaApi.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode2")));
-            this.textBoxPaApi.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location2")));
-            this.textBoxPaApi.CustomButton.Name = "";
-            this.textBoxPaApi.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size2")));
-            this.textBoxPaApi.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxPaApi.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex2")));
-            this.textBoxPaApi.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxPaApi.CustomButton.UseSelectable = true;
-            this.textBoxPaApi.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible2")));
             this.textBoxPaApi.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaApi", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaApi.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBoxPaApi.Lines = new string[] {
-        "\"Windows WASAPI\""};
             resources.ApplyResources(this.textBoxPaApi, "textBoxPaApi");
-            this.textBoxPaApi.MaxLength = 32767;
             this.textBoxPaApi.Name = "textBoxPaApi";
-            this.textBoxPaApi.PasswordChar = '\0';
-            this.textBoxPaApi.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.textBoxPaApi.SelectedText = "";
-            this.textBoxPaApi.SelectionLength = 0;
-            this.textBoxPaApi.SelectionStart = 0;
-            this.textBoxPaApi.ShortcutsEnabled = true;
             this.textBoxPaApi.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaApi;
-            this.textBoxPaApi.UseSelectable = true;
-            this.textBoxPaApi.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBoxPaApi.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             this.textBoxPaApi.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             // 
             // label7
@@ -343,40 +280,15 @@
             // 
             resources.ApplyResources(this.button1, "button1");
             this.button1.Name = "button1";
-            this.button1.UseSelectable = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // textBox1
             // 
-            // 
-            // 
-            // 
-            this.textBox1.CustomButton.Image = ((System.Drawing.Image)(resources.GetObject("resource.Image3")));
-            this.textBox1.CustomButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("resource.ImeMode3")));
-            this.textBox1.CustomButton.Location = ((System.Drawing.Point)(resources.GetObject("resource.Location3")));
-            this.textBox1.CustomButton.Name = "";
-            this.textBox1.CustomButton.Size = ((System.Drawing.Size)(resources.GetObject("resource.Size3")));
-            this.textBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBox1.CustomButton.TabIndex = ((int)(resources.GetObject("resource.TabIndex3")));
-            this.textBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBox1.CustomButton.UseSelectable = true;
-            this.textBox1.CustomButton.Visible = ((bool)(resources.GetObject("resource.Visible3")));
             this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OutputDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBox1, "textBox1");
             this.textBox1.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.textBox1.Lines = new string[0];
-            this.textBox1.MaxLength = 32767;
             this.textBox1.Name = "textBox1";
-            this.textBox1.PasswordChar = '\0';
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.textBox1.SelectedText = "";
-            this.textBox1.SelectionLength = 0;
-            this.textBox1.SelectionStart = 0;
-            this.textBox1.ShortcutsEnabled = true;
             this.textBox1.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.OutputDir;
-            this.textBox1.UseSelectable = true;
-            this.textBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.textBox1.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
             // metroLabel1
             // 
@@ -392,7 +304,6 @@
             resources.GetString("metroComboBox1.Items"),
             resources.GetString("metroComboBox1.Items1")});
             this.metroComboBox1.Name = "metroComboBox1";
-            this.metroComboBox1.UseSelectable = true;
             // 
             // metroLabel2
             // 
@@ -413,7 +324,6 @@
             resources.GetString("comboBoxTV.Items"),
             resources.GetString("comboBoxTV.Items1")});
             this.comboBoxTV.Name = "comboBoxTV";
-            this.comboBoxTV.UseSelectable = true;
             // 
             // folderBrowserDialog1
             // 
@@ -426,13 +336,83 @@
             this.tableLayoutPanel5.Controls.Add(this.buttonCancel, 2, 1);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             // 
+            // metroTabControl1
+            // 
+            this.metroTabControl1.Controls.Add(this.tabPage3);
+            this.metroTabControl1.Controls.Add(this.tabPage4);
+            resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
+            this.metroTabControl1.Name = "metroTabControl1";
+            this.metroTabControl1.SelectedIndex = 0;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.tableLayoutPanel1);
+            resources.ApplyResources(this.tabPage3, "tabPage3");
+            this.tabPage3.Name = "tabPage3";
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.tableLayoutPanel6);
+            resources.ApplyResources(this.tabPage4, "tabPage4");
+            this.tabPage4.Name = "tabPage4";
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.BackColor = System.Drawing.SystemColors.Window;
+            resources.ApplyResources(this.tableLayoutPanel6, "tableLayoutPanel6");
+            this.tableLayoutPanel6.Controls.Add(this.metroLabel5, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.tableLayoutPanel7, 1, 0);
+            this.tableLayoutPanel6.Controls.Add(this.metroLabel8, 0, 1);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            // 
+            // metroLabel5
+            // 
+            resources.ApplyResources(this.metroLabel5, "metroLabel5");
+            this.metroLabel5.Name = "metroLabel5";
+            // 
+            // tableLayoutPanel7
+            // 
+            resources.ApplyResources(this.tableLayoutPanel7, "tableLayoutPanel7");
+            this.tableLayoutPanel7.Controls.Add(this.metroLabel6, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.numericUpDownScale, 1, 0);
+            this.tableLayoutPanel7.Controls.Add(this.metroLabel7, 2, 0);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            // 
+            // metroLabel6
+            // 
+            resources.ApplyResources(this.metroLabel6, "metroLabel6");
+            this.metroLabel6.Name = "metroLabel6";
+            // 
+            // numericUpDownScale
+            // 
+            resources.ApplyResources(this.numericUpDownScale, "numericUpDownScale");
+            this.numericUpDownScale.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.MAmidiMEmo.Properties.Settings.Default, "GuiScale", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownScale.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.numericUpDownScale.Name = "numericUpDownScale";
+            this.numericUpDownScale.Value = global::zanac.MAmidiMEmo.Properties.Settings.Default.GuiScale;
+            // 
+            // metroLabel7
+            // 
+            resources.ApplyResources(this.metroLabel7, "metroLabel7");
+            this.metroLabel7.Name = "metroLabel7";
+            // 
+            // metroLabel8
+            // 
+            resources.ApplyResources(this.metroLabel8, "metroLabel8");
+            this.tableLayoutPanel6.SetColumnSpan(this.metroLabel8, 2);
+            this.metroLabel8.Name = "metroLabel8";
+            // 
             // FormSettings
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.metroTabControl1);
             this.Controls.Add(this.tableLayoutPanel5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -450,9 +430,15 @@
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
+            this.metroTabControl1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.tableLayoutPanel7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScale)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -490,5 +476,15 @@
         private MetroFramework.Controls.MetroLabel metroLabel4;
         private MetroFramework.Controls.MetroComboBox comboBoxTV;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private MetroFramework.Controls.MetroTabControl metroTabControl1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private MetroFramework.Controls.MetroLabel metroLabel5;
+        private System.Windows.Forms.NumericUpDown numericUpDownScale;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private MetroFramework.Controls.MetroLabel metroLabel6;
+        private MetroFramework.Controls.MetroLabel metroLabel7;
+        private MetroFramework.Controls.MetroLabel metroLabel8;
     }
 }

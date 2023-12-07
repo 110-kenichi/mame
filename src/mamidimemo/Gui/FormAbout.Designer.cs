@@ -43,7 +43,6 @@
             resources.ApplyResources(this.button1, "button1");
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Name = "button1";
-            this.button1.UseSelectable = true;
             // 
             // labelVer
             // 
@@ -83,7 +82,7 @@
             // 
             this.AcceptButton = this.button1;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.button1;
             this.Controls.Add(this.tableLayoutPanel1);
             this.DisplayHeader = false;

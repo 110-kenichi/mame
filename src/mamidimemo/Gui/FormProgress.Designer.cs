@@ -50,7 +50,6 @@
             // 
             resources.ApplyResources(this.metroButtonCancel, "metroButtonCancel");
             this.metroButtonCancel.Name = "metroButtonCancel";
-            this.metroButtonCancel.UseSelectable = true;
             // 
             // tableLayoutPanel1
             // 
@@ -61,7 +60,7 @@
             // FormProgress
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ControlBox = false;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.labelMessage);

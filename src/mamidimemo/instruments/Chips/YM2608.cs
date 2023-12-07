@@ -708,9 +708,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     return;
             }
 
+            /*
             uint port1 = 0;
             if (address >= 0x100)
                 port1 = 2;
+            */
 
             bool useCache = true;
             if (0x100 <= address && address <= 0x110)

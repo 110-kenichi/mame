@@ -2019,7 +2019,9 @@ C:\msys64\mingw64\bin\python.exe ../../../../../scripts/build/makelist.py  ../..
     <ResourceCompile Include="..\..\..\..\..\scripts\resources\windows\mame\mame.rc" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="..\..\..\..\..\scripts\resources\uwp\Package.appxmanifest" />
+    <AppxManifest Include="..\..\..\..\..\scripts\resources\uwp\Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\..\scripts\resources\uwp\assets\LockScreenLogo.scale-200.png">

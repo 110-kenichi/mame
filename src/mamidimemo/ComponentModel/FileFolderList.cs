@@ -466,7 +466,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
                     invalid = true;
                 }
                 else
-                    item.Font = new Font(item.Font.Name, item.Font.Size, FontStyle.Bold);
+                    item.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Bold, Font.Unit, Font.GdiCharSet, Font.GdiVerticalFont);
 
                 //if (!il16.Images.ContainsKey(fi.FullName))
                 //{
