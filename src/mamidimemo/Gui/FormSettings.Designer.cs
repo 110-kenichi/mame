@@ -342,7 +342,7 @@
             this.metroTabControl1.Controls.Add(this.tabPage4);
             resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             // 
             // tabPage3
             // 

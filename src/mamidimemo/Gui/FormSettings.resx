@@ -1059,9 +1059,9 @@
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="tableLayoutPanel4" Row="6" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxAudioLatency" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="label2" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxSoundType" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="labelRate" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxSampleRate" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="groupBox1" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="label7" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel3" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel1" Row="5" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroComboBox1" Row="5" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel2" Row="6" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel4" Row="7" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxTV" Row="7" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,144,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,18" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
-  <data name="folderBrowserDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="folderBrowserDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </data>
+  </metadata>
   <data name="folderBrowserDialog1.Description" xml:space="preserve">
     <value>Select a Wav/VGM Output Folder</value>
   </data>
@@ -1138,7 +1138,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 35</value>
+    <value>273, 35</value>
   </data>
   <data name="metroLabel5.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1180,7 +1180,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 35</value>
+    <value>121, 35</value>
   </data>
   <data name="metroLabel6.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1210,10 +1210,10 @@
     <value>Fill</value>
   </data>
   <data name="numericUpDownScale.Location" type="System.Drawing.Point, System.Drawing">
-    <value>38, 3</value>
+    <value>130, 3</value>
   </data>
   <data name="numericUpDownScale.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 29</value>
+    <value>121, 29</value>
   </data>
   <data name="numericUpDownScale.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1237,7 +1237,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>73, 0</value>
+    <value>257, 0</value>
   </data>
   <data name="metroLabel7.Size" type="System.Drawing.Size, System.Drawing">
     <value>20, 35</value>
@@ -1267,7 +1267,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>96, 0</value>
+    <value>279, 0</value>
   </data>
   <data name="tableLayoutPanel7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1276,7 +1276,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 35</value>
+    <value>280, 35</value>
   </data>
   <data name="tableLayoutPanel7.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1306,13 +1306,14 @@
     <value>3, 35</value>
   </data>
   <data name="metroLabel8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>186, 1</value>
+    <value>553, 19</value>
   </data>
   <data name="metroLabel8.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
   <data name="metroLabel8.Text" xml:space="preserve">
-    <value>NOTE: Text may be clipped. Not applicable to some text.</value>
+    <value>NOTE: Text may be clipped. Not applicable to some text.
+A restart is required.</value>
   </data>
   <data name="metroLabel8.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleRight</value>
@@ -1339,7 +1340,7 @@
     <value>3</value>
   </data>
   <data name="tableLayoutPanel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 54</value>
+    <value>559, 447</value>
   </data>
   <data name="tableLayoutPanel6.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1357,13 +1358,13 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel6.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroLabel5" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel7" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel8" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,Percent,50,Absolute,375" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroLabel5" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tableLayoutPanel7" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel8" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,Percent,50" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="tabPage4.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 42</value>
   </data>
   <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 54</value>
+    <value>559, 447</value>
   </data>
   <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1407,9 +1408,9 @@
   <data name="&gt;&gt;metroTabControl1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>96, 96</value>
   </data>

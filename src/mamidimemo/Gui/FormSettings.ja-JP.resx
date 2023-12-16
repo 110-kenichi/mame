@@ -145,7 +145,8 @@
     <value>文字の拡大率(&amp;S):</value>
   </data>
   <data name="metroLabel8.Text" xml:space="preserve">
-    <value>注意: 文字が欠けることがあります。一部の文字には適用されません。</value>
+    <value>注意: 文字が欠けることがあります。一部の文字には適用されません。
+再起動が必要です。</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>設定</value>

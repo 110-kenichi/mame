@@ -39,7 +39,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.metroLabelDrop = new MetroFramework.Controls.MetroLabel();
+            this.metroLabelDrop = new System.Windows.Forms.Label();
             this.listViewIntruments = new System.Windows.Forms.ListView();
             this.contextMenuStripInst = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.decreaseThisKindOfChipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -266,8 +266,10 @@
             // 
             resources.ApplyResources(this.metroLabelDrop, "metroLabelDrop");
             this.metroLabelDrop.Name = "metroLabelDrop";
+            this.metroLabelDrop.AllowDrop = true;
             this.metroLabelDrop.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
             this.metroLabelDrop.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
+            this.metroLabelDrop.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             // 
             // listViewIntruments
             // 
@@ -1996,7 +1998,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.OpenFileDialog openFileDialogMidi;
-        private MetroFramework.Controls.MetroLabel metroLabelDrop;
+        private System.Windows.Forms.Label metroLabelDrop;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelClock;
