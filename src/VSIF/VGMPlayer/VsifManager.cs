@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.Gimic;
+using zanac.MAmidiMEmo.VSIF;
 using zanac.VGMPlayer.Properties;
 
 namespace zanac.VGMPlayer
@@ -148,6 +149,30 @@ namespace zanac.VGMPlayer
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.SMS_FTDI:
+                            {
+                                var ftdi = new FTD2XX_NET.FTDI();
+                                var stat = ftdi.OpenByIndex((uint)comPort);
+                                if (stat == FTDI.FT_STATUS.FT_OK)
+                                {
+                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    var ofst = FTDI_BAUDRATE_MSX + offset;
+                                    if (ofst < 0)
+                                        ofst = 0;
+                                    ftdi.SetBaudRate((uint)(3000000 / (ofst + 0.5)));
+                                    ftdi.SetTimeouts(500, 500);
+                                    ftdi.SetLatency(0);
+
+                                    var client = new VsifClient(soundModule, new PortWriterSms(ftdi, comPort));
+                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
+
+                                    client.Disposed += Client_Disposed;
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                            }
+                            break;
                         case VsifSoundModuleType.Genesis:
                             {
                                 SerialPort sp = null;
@@ -392,7 +417,8 @@ namespace zanac.VGMPlayer
         Spfm,
         SpfmLight,
         Gimic,
-        PC88_FTDI
+        PC88_FTDI,
+        SMS_FTDI,
     }
 
 

@@ -46,5 +46,7 @@ namespace zanac.MAmidiMEmo.Instruments
         GIMIC,
         [Description("Real(VSIF PC-8801 V2(FTDI))")]
         VSIF_PC88_FTDI,
+        [Description("Real(VSIF SMS(FTDI)")]
+        VSIF_SMS_FTDI,
     }
 }

@@ -4,7 +4,6 @@
 
 #include "SMSlib/SMSlib.h"
 #include "Font.h"
-#include "Types.h"
 
 #define DISABLE_INTERRUPTS    __asm di __endasm
 #define ENABLE_INTERRUPTS     __asm ei __endasm

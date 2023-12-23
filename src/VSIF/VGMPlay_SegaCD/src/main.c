@@ -55,8 +55,8 @@ int main() {
   VDP_drawText("-CONNECT P2 PORT PIN1-4,6-9 TO FTDI2XX.", 0, 5);
 
   VDP_drawText("___________ ", 0, 7);
-  VDP_drawText("\\1 2 3 4 */-> FTDI2XX TX,RX,RTS,CTS", 0, 8);
-  VDP_drawText(" \\6 7 8 9/ -> FTDI2XX DTR,DCD,GND,DSR", 0, 9);
+  VDP_drawText("\\1 2 3 4 5/->FTDI2XX TX,RX,RTS,CTS,VCC", 0, 8);
+  VDP_drawText(" \\6 7 8 9/ ->FTDI2XX DTR,DCD,GND,DSR", 0, 9);
   VDP_drawText("  -------   ", 0, 10);
 
   VGMPlay_FTDI2XX();

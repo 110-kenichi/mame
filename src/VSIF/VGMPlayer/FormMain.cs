@@ -795,6 +795,10 @@ namespace zanac.VGMPlayer
                         comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                             (PortId)Settings.Default.DCSG_Port, (int)Settings.Default.DCSGDiv, false);
                         break;
+                    case 5:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI,
+                            (PortId)Settings.Default.DCSG_Port, (int)Settings.Default.DCSGDiv, false);
+                        break;
                 }
 
                 checkBoxConnDCSG.Checked = comPortDCSG != null;
@@ -829,6 +833,10 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPLL_Port, (int)Settings.Default.OPLLDiv, false);
                         if (comPortOPLL != null)
                             comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
+                        break;
+                    case 2:
+                        comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI,
+                            (PortId)Settings.Default.OPLL_Port, (int)Settings.Default.OPLLDiv, false);
                         break;
                 }
 

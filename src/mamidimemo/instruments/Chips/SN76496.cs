@@ -173,6 +173,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_SMS_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                     case SoundEngineType.VSIF_Genesis:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Genesis, PortId, false);
                         if (vsifClient != null)
@@ -273,7 +286,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Dedicated)")]
         [SlideParametersAttribute(1, 100)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [Description("Set FTDI Clock Width[%].")]
+        [Description("Set FTDI Clock Width[%].\r\n" +
+            "Genesis FT232R:9~\r\n" +
+            "Genesis FT232H:8~\r\n" +
+            "MSX FT232R:25~\r\n" +
+            "MSX FT232H:32~\r\n" +
+            "SMS FT232R:20~\r\n" +
+            "SMS FT232H:25~")]
         public int FtdiClkWidth
         {
             get
@@ -481,6 +500,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case SoundEngineType.VSIF_SMS:
                             vsifClient.WriteData(0, 0xff, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_SMS_FTDI:
+                            vsifClient.WriteData(0, 0x00, data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_Genesis:
                         case SoundEngineType.VSIF_Genesis_Low:
@@ -1176,6 +1198,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
+                    SoundEngineType.VSIF_SMS_FTDI,
                     SoundEngineType.VSIF_Genesis,
                     SoundEngineType.VSIF_Genesis_Low,
                     SoundEngineType.VSIF_Genesis_FTDI,

@@ -129,6 +129,27 @@ namespace zanac.MAmidiMEmo.VSIF
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.SMS_FTDI:
+                            {
+                                var ftdi = new FTD2XX_NET.FTDI();
+                                var stat = ftdi.OpenByIndex((uint)comPort);
+                                if (stat == FTDI.FT_STATUS.FT_OK)
+                                {
+                                    ftdi.SetBitMode(0x00, FTDI.FT_BIT_MODES.FT_BIT_MODE_RESET);
+                                    ftdi.SetBitMode(0xff, FTDI.FT_BIT_MODES.FT_BIT_MODE_ASYNC_BITBANG);
+                                    ftdi.SetBaudRate(FTDI_BAUDRATE_MSX);
+                                    ftdi.SetTimeouts(500, 500);
+                                    ftdi.SetLatency(0);
+
+                                    var client = new VsifClient(soundModule, new PortWriterSms(ftdi, comPort));
+                                    client.WriteData(0, 0, 0, (int)100);  //Dummy
+
+                                    client.Disposed += Client_Disposed;
+                                    vsifClients.Add(client);
+                                    return client;
+                                }
+                            }
+                            break;
                         case VsifSoundModuleType.Genesis:
                             {
                                 SerialPort sp = null;
@@ -341,6 +362,7 @@ namespace zanac.MAmidiMEmo.VSIF
         C64_FTDI,
         P6_FTDI,
         PC88_FTDI,
+        SMS_FTDI,
     }
 
 

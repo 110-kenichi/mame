@@ -1,9 +1,8 @@
-#include "PSGlib.h"
 #include "main.h"
-#include "player_tile.h"
-#include "uart.h"
 
-#pragma codeseg BANK_C2
+
+__sfr __at 0xDC JPORT_A;
+__sfr __at 0xDD JPORT_B;
 
 __sfr __at 0x7F PSGPort;
 
@@ -44,6 +43,10 @@ void soundAllOff() {
   OPLLPortA1 = 0x00;
 }
 
+void uart_processVgm();
+void uart_processVgm_FTDI();
+void printHex(unsigned long value, unsigned char x, unsigned char y, unsigned char width);
+
 void processPlayer(char vblank) {
   if (vblank) {
     switch (PhaseCounter) {
@@ -67,9 +70,62 @@ void processPlayer(char vblank) {
         DisableVDPProcessing = false;
         PhaseCounter++;
         SMS_displayOn();
+
+        PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
+        PrintText("PLEASE SELECT DRIVER TYPE.", 0, 3);
+
+        PrintText("(UP)", 0, 6);
+        PrintText(" -GENERAL UART(57600BPS)  -", 0, 7);
+
+        PrintText("(DOWN)", 0, 9);
+        PrintText(" -FTDI2XX DONGLE(BIT BANG)-", 0, 10);
+
         break;
       }
       case 1: {
+        unsigned int key = SMS_getKeysPressed();
+        switch(key)
+        {
+            case PORT_A_KEY_UP:
+                PhaseCounter = 2;
+                goto clear;
+                break;
+            case PORT_A_KEY_DOWN:
+                PhaseCounter = 3;
+                goto clear;
+                break;
+clear:
+                PrintText("                          ", 0, 3);
+                PrintText("    ", 0, 6);
+                PrintText("                           ", 0, 7);
+                PrintText("      ", 0, 9);
+                PrintText("                           ", 0, 10);
+                break;
+        }
+        break;
+      }
+      // case 4: {
+      //   PrintHexShort(JPORT_B & 0xf, 1, 1, 1);
+
+      //   break;
+      // }
+      case 3: {
+        PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
+        PrintText("READY TO PLAY.", 0, 1);
+
+        PrintText("-PRESS PAUSE BTN TO RESTART.", 0, 3);
+
+        PrintText("___________        ", 0, 5);
+        PrintText("\\1 2 3 4 5/->TX,RX,RTS,CTS,VCC", 0, 6);
+        PrintText(" \\6 * 8 9/ ->DTR,GND,DSR", 0,7);
+        PrintText("  -------          ", 0, 8);
+
+        //PhaseCounter = 4;
+        uart_processVgm_FTDI();
+        soundAllOff();
+        break;
+      }
+      case 2: {
         // PrintText("WAITING CONNECTION...", 0, 0);
         // while (1) {
         //   uart_getc2();
@@ -136,20 +192,15 @@ void processPlayer(char vblank) {
         //   */
         // }
 
-        // uart_waitConn();
         PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
         PrintText("READY TO PLAY.", 0, 1);
 
         PrintText("-PRESS PAUSE BTN TO RESTART.", 0, 3);
-        PrintText("-CONNECT SMS PORT2 PIN3 TO TX.", 0, 4);
-        PrintText("-CONNECT SMS PORT2 PIN8 TO GND.", 0, 5);
 
-        PrintText("      3  -> UART TX ", 0, 7);
-        PrintText(" ___________        ", 0, 8);
-        PrintText(" \\o o * o o/        ", 0, 9);
-        PrintText("  \\o o * o/         ", 0,10);
-        PrintText("   -------          ", 0, 11);
-        PrintText("       8 -> UART GND", 0, 12);
+        PrintText("___________        ", 0, 5);
+        PrintText("\\* * 3 * */-> UART TX", 0, 6);
+        PrintText(" \\* * 8 */ -> UART GND", 0,7);
+        PrintText("  -------          ", 0, 8);
 
         uart_processVgm();
         soundAllOff();

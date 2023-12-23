@@ -114,6 +114,11 @@ namespace zanac.VGMPlayer
                             comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
+                    case VsifSoundModuleType.SMS_FTDI:
+                        for (int i = 0; i < 3; i++)
+                            comPortDCSG.DeferredWriteData(0, 0x00, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.DeferredWriteData(0, 0x00, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        break;
                     case VsifSoundModuleType.MSX_FTDI:
                         for (int i = 0; i < 3; i++)
                             comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);

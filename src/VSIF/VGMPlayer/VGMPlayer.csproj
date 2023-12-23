@@ -166,6 +166,7 @@
     <Compile Include="PortWriteData.cs" />
     <Compile Include="PortWriterGimic.cs" />
     <Compile Include="PortWriter.cs" />
+    <Compile Include="PortWriterSms.cs" />
     <Compile Include="PortWriterPC88.cs" />
     <Compile Include="PortWriterSpfm.cs" />
     <Compile Include="PortWriterSpfmLight.cs" />

@@ -49,10 +49,6 @@ void processLogo(char vblank)
         }
         case 2:
         {
-            DISABLE_INTERRUPTS;
-            PcmInit();
-            PlayPcmSound(&Wave_pcmenc);
-            ENABLE_INTERRUPTS;
             PhaseCounter++;
             PhaseLocalCounter = 0;
 

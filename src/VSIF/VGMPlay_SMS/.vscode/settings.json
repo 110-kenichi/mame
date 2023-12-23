@@ -9,5 +9,8 @@
         "xev_tile.h": "c",
         "font.h": "c",
         "type_traits": "c"
+    },
+    "[m68k]": {
+        "editor.rulers": []
     }
 }

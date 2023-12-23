@@ -3,15 +3,13 @@
 #include <stdbool.h>
 
 #include "SMSlib/SMSlib.h"
-#include "PSGlib.h"
 #include "Font.h"
-#include "sound.h"
 #include "Video.h"
-#include "Types.h"
 
-extern const FixedF16 SIN_TABLE[128];
-
-extern unsigned char FreeSpace[0x400];
+typedef enum 
+{
+  G_PHASE_PLAYER = 1,
+} GamePhaseType;
 
 extern GamePhaseType GamePhase;
 extern unsigned short PhaseCounter;
@@ -19,8 +17,6 @@ extern unsigned short PhaseLocalCounter;
 extern unsigned short PhaseLocalCounter2;
 extern unsigned short PhaseLocalCounter3;
 extern unsigned short PhaseLocalCounter4;
-
-extern Character Characters[128];
 
 extern volatile bool DisableVDPProcessing;
 

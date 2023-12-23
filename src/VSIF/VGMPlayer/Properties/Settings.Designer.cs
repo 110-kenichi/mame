@@ -852,7 +852,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("899, 200")]
+        [global::System.Configuration.DefaultSettingValueAttribute("674, 200")]
         public global::System.Drawing.Size PaneHeight {
             get {
                 return ((global::System.Drawing.Size)(this["PaneHeight"]));

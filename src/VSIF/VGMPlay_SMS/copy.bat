@@ -1,2 +1,1 @@
-if exist G:\ copy VGMPlay.sms G:
-if exist F:\ copy VGMPlay.sms F:
+if exist F:\ copy VGMPlay_sms.sms F:

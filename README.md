@@ -1,4 +1,4 @@
-MAmidiMEmo 5.3.0.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.4.0.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.4.0.0 Supported SMS(FTDI). FTDI dongle is compatible with for the Genesis.
 5.3.0.1 Fixed minor bugs related with Font. 
 5.3.0.0 Added Font scale option in the Settings dialog. But not perfect.
 5.2.2.0 Added KeyScaleLevel property on the FxS.

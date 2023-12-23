@@ -100,6 +100,11 @@ namespace zanac.VGMPlayer
                             comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         comPortDCSG.DeferredWriteData(0, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
                         break;
+                    case VsifSoundModuleType.SMS_FTDI:
+                        for (int i = 0; i < 3; i++)
+                            comPortDCSG.DeferredWriteData(0, 0x00, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        comPortDCSG.DeferredWriteData(0, 0x00, (byte)(0x80 | 3 << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
+                        break;
                     case VsifSoundModuleType.MSX_FTDI:
                         for (int i = 0; i < 3; i++)
                             comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Settings.Default.BitBangWaitDCSG);
@@ -960,6 +965,19 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 2:
+                        if (comPortOPLL == null)
+                        {
+                            comPortOPLL = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI,
+                                (PortId)Settings.Default.OPLL_Port);
+                            if (comPortOPLL != null)
+                            {
+                                comPortOPLL.ChipClockHz["OPLL"] = 3579545;
+                                comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
+                                UseChipInformation += "OPLL@3.579545MHz ";
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPLL != null)
                 {
@@ -1039,6 +1057,19 @@ namespace zanac.VGMPlayer
                         {
                             comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
                                (PortId)Settings.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
+                    case 5:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI,
+                                (PortId)Settings.Default.DCSG_Port);
                             if (comPortDCSG != null)
                             {
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
@@ -2020,7 +2051,8 @@ namespace zanac.VGMPlayer
 
                                             var adrs = readByte();
                                             if (adrs < 0)
-                                                break; var dt = readByte();
+                                                break;
+                                            var dt = readByte();
                                             if (dt < 0)
                                                 break;
 
@@ -4243,6 +4275,9 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.SMS:
                     comPortDCSG.DeferredWriteData(0, 0xFF, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                     break;
+                case VsifSoundModuleType.SMS_FTDI:
+                    comPortDCSG.DeferredWriteData(0, 0x00, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
+                    break;
                 case VsifSoundModuleType.MSX_FTDI:
                     comPortDCSG.DeferredWriteData(0xF, 0, (byte)data, (int)Settings.Default.BitBangWaitDCSG);
                     break;
@@ -4318,6 +4353,9 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.SMS:
                     comPortOPLL.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPLL);
+                    break;
+                case VsifSoundModuleType.SMS_FTDI:
+                    comPortOPLL.DeferredWriteData(0, (byte)(adrs + 1), (byte)dt, (int)Settings.Default.BitBangWaitOPLL);
                     break;
             }
         }

@@ -169,6 +169,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.VSIF_SMS_FTDI:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.SMS_FTDI, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            if (vsifClient.DataWriter.FtdiDeviceType == FTD2XX_NET.FTDI.FT_DEVICE.FT_DEVICE_232R)
+                            {
+                                if (FtdiClkWidth < 20)
+                                    FtdiClkWidth = 20;
+                            }
+                            else
+                            {
+                                if (FtdiClkWidth < 25)
+                                    FtdiClkWidth = 25;
+                            }
+
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                     case SoundEngineType.VSIF_MSX_FTDI:
                         vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI, PortId, false);
                         if (vsifClient != null)
@@ -235,6 +259,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Set FTDI Clock Width[%].\r\n" +
             "MSX FT232R:25~\r\n" +
             "MSX FT232H:32~\r\n" +
+            "SMS FT232R:20~\r\n" +
+            "SMS FT232H:25~\r\n" +
             "NES FT232R:11~\r\n" +
             "NES FT232H:27~")]
         public int FtdiClkWidth
@@ -483,7 +509,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM2413>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -571,6 +597,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         case SoundEngineType.VSIF_SMS:
                             vsifClient.WriteData(0, address, data, f_ftdiClkWidth);
+                            break;
+                        case SoundEngineType.VSIF_SMS_FTDI:
+                            vsifClient.WriteData(0, (byte)(address + 1), data, f_ftdiClkWidth);
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                             enableOpll(f_extOPLLSlot, false);
@@ -943,7 +972,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 if (RHY == 0)
                 {
-                    if(parentModule.Variation != OpllType.DS1001)
+                    if (parentModule.Variation != OpllType.DS1001)
                         emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 9);
                     else
                         emptySlot = SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 6);
@@ -1612,7 +1641,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x00, 0, (byte)((m.AM << 7 | m.VIB << 6 | m.EG << 5 | m.KSR << 4 | m.MUL)));
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x01, 0, (byte)((c.AM << 7 | c.VIB << 6 | c.EG << 5 | c.KSR << 4 | c.MUL)));
                         //$02+:
-                        if(!timbre.UseExprForModulator)
+                        if (!timbre.UseExprForModulator)
                             parentModule.YM2413WriteData(parentModule.UnitNumber, 0x02, 0, (byte)((m.KSL << 6 | m.TL)));
 
                         parentModule.YM2413WriteData(parentModule.UnitNumber, 0x03, 0, (byte)((c.KSL << 6 | c.DIST << 4 | m.DIST << 3 | timbre.FB)));
@@ -2203,7 +2232,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2413Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2758,7 +2787,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2413Modulator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2910,7 +2939,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2413Career>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -3622,6 +3651,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_SMS,
+                    SoundEngineType.VSIF_SMS_FTDI,
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_NES_FTDI_VRC6
                 });
