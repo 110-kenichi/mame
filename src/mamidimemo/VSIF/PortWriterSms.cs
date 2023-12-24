@@ -51,7 +51,7 @@ namespace zanac.MAmidiMEmo.VSIF
                         {
                             byte[] sd = new byte[]
                             {
-                                (byte)(((dt.Address & 0xf0) >> 2) | 0x02), (byte)(((dt.Address & 0x0f) << 2) | 0x00),
+                                (byte)(((dt.Address & 0xf0) >> 2) | 0x03), (byte)(((dt.Address & 0x0f) << 2) | 0x00),
                                 (byte)(((dt.Data    & 0xf0) >> 2) | 0x01), (byte)(((dt.Data    & 0x0f) << 2) | 0x00),
                             };
                             ds.AddRange(sd);
