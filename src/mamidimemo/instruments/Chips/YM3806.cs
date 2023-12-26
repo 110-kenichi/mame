@@ -67,6 +67,100 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+
+        private IntPtr spfmPtr;
+
+        private object sndEnginePtrLock = new object();
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeYM3806))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value &&
+                    (value == SoundEngineType.Software ||
+                    value == SoundEngineType.SPFM))
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeYM3806 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.SPFM,
+                    });
+                return sc;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM3806, (SC_CHIP_CLOCK)MasterClock);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -289,6 +383,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             WriteData(adr, data, useCache, new Action(() =>
             {
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, adr, data, false);
+                            break;
+                    }
+                }
+
                 DeferredWriteData(Ym3806_write, unitNumber, (uint)adr, data);
                 //DeferredWriteData(Ym3806_write, unitNumber, (uint)0, adr);
                 //DeferredWriteData(Ym3806_write, unitNumber, (uint)1, data);
@@ -349,6 +453,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+            }
 
             base.Dispose();
         }

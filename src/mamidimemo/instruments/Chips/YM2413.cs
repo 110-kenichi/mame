@@ -25,6 +25,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 using static zanac.MAmidiMEmo.Instruments.Chips.SPC700;
@@ -101,14 +102,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private VsifClient vsifClient;
 
+        private IntPtr spfmPtr;
+
         private SoundEngineType f_SoundEngineType;
 
         private SoundEngineType f_CurrentSoundEngineType;
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Select a sound engine type.\r\n" +
-            "Supports \"Software\" and \"VSIF - SMS/MSX\"")]
+        [Description("Select a sound engine type.")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2413))]
         public SoundEngineType SoundEngine
@@ -142,6 +144,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                 {
                     vsifClient.Dispose();
@@ -233,6 +240,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     FtdiClkWidth = 27;
                             }
 
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM2413, SC_CHIP_CLOCK.SC_CLOCK_3579545);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }
@@ -620,6 +640,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 vsifClient.WriteData(0, (byte)(36 + 3), data, f_ftdiClkWidth);
                             }
                             break;
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, address, data, false);
+                            break;
                     }
                 }
                 DeferredWriteData(YM2413_write, unitNumber, (uint)0, address);
@@ -677,11 +700,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             soundManager?.Dispose();
 
+            base.Dispose();
+
             lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                     vsifClient.Dispose();
-
-            base.Dispose();
+            }
         }
 
         /// <summary>
@@ -3653,7 +3683,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_SMS,
                     SoundEngineType.VSIF_SMS_FTDI,
                     SoundEngineType.VSIF_MSX_FTDI,
-                    SoundEngineType.VSIF_NES_FTDI_VRC6
+                    SoundEngineType.VSIF_NES_FTDI_VRC6,
+                    SoundEngineType.SPFM
                 });
 
                 return sc;

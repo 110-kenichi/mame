@@ -1229,6 +1229,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     GimicManager.ReleaseModule(gimicPtr);
                     gimicPtr = -1;
                 }
+                if (vsifClient != null)
+                {
+                    vsifClient.Dispose();
+                }
             }
         }
 

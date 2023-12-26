@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
@@ -23,7 +24,8 @@ using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
-using static zanac.MAmidiMEmo.Instruments.Chips.YM2413;
+using zanac.MAmidiMEmo.Scci;
+using zanac.MAmidiMEmo.VSIF;
 
 //http://www.oplx.com/opl2/docs/adlib_sb.txt
 //ftp://ftp.oldskool.org/pub/drivers/Yamaha/yamaha_ym3812.pdf
@@ -66,6 +68,100 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             get
             {
                 return 8;
+            }
+        }
+
+
+        private IntPtr spfmPtr;
+
+        private object sndEnginePtrLock = new object();
+
+        private SoundEngineType f_SoundEngineType;
+
+        private SoundEngineType f_CurrentSoundEngineType;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select a sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeYM3812))]
+        public SoundEngineType SoundEngine
+        {
+            get
+            {
+                return f_SoundEngineType;
+            }
+            set
+            {
+                if (f_SoundEngineType != value &&
+                    (value == SoundEngineType.Software ||
+                    value == SoundEngineType.SPFM))
+                {
+                    setSoundEngine(value);
+                }
+            }
+        }
+
+        private class EnumConverterSoundEngineTypeYM3812 : EnumConverter<SoundEngineType>
+        {
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                var sc = new StandardValuesCollection(new SoundEngineType[] {
+                    SoundEngineType.Software,
+                    SoundEngineType.SPFM,
+                    });
+                return sc;
+            }
+        }
+
+        private void setSoundEngine(SoundEngineType value)
+        {
+            AllSoundOff();
+
+            lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+
+                f_SoundEngineType = value;
+
+                switch (f_SoundEngineType)
+                {
+                    case SoundEngineType.Software:
+                        f_CurrentSoundEngineType = f_SoundEngineType;
+                        SetDevicePassThru(false);
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YM3812, SC_CHIP_CLOCK.SC_CLOCK_3579545);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                }
+            }
+
+            ClearWrittenDataCache();
+            PrepareSound();
+        }
+
+        [Category("Chip(Dedicated)")]
+        [Description("Current sound engine type.")]
+        [DefaultValue(SoundEngineType.Software)]
+        public SoundEngineType CurrentSoundEngine
+        {
+            get
+            {
+                return f_CurrentSoundEngineType;
             }
         }
 
@@ -160,7 +256,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM3812>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -194,17 +290,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private static byte[] addressTable = new byte[] { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 };
 
+        private void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        {
+            YM3812WriteData(unitNumber, address, op, slot, data, true);
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        private static void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data)
+        private void YM3812WriteData(uint unitNumber, byte address, int op, int slot, byte data, bool useCache)
         {
             //Channel        1   2   3   4   5   6   7   8   9
             //Operator 1    00  01  02  08  09  0A  10  11  12
             //Operator 2    03  04  05  0B  0C  0D  13  14  15
 
-            DeferredWriteData(YM3812_write, unitNumber, (uint)0, (byte)(address + (op * 3) + addressTable[slot]));
-            DeferredWriteData(YM3812_write, unitNumber, (uint)1, data);
+            address = (byte)(address + (op * 3) + addressTable[slot]);
+
+            WriteData(address, data, useCache, new Action(() =>
+            {
+                lock (sndEnginePtrLock)
+                {
+                    switch (CurrentSoundEngine)
+                    {
+                        case SoundEngineType.SPFM:
+                            ScciManager.SetRegister(spfmPtr, address, data, false);
+                            break;
+                    }
+                }
+
+                DeferredWriteData(YM3812_write, unitNumber, (uint)0, address);
+                DeferredWriteData(YM3812_write, unitNumber, (uint)1, data);
+            }));
             /*
             try
             {
@@ -276,6 +392,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void Dispose()
         {
             soundManager?.Dispose();
+
+            lock (sndEnginePtrLock)
+            {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
+            }
+
             base.Dispose();
         }
 
@@ -489,10 +615,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                 for (int i = 0; i < 9; i++)
                 {
-                    YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
+                    parentModule.YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + i), 0, 0, (byte)(0));
 
                     for (int op = 0; op < 2; op++)
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, i, 64);
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x40, op, i, 64);
                 }
             }
         }
@@ -575,11 +701,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM3812Operator o = timbre.Ops[op];
                     //$40+: Scaling level/ total level
                     if (timbre.ALG == 1 || op == 1)
-                        YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | ((63 * 2 / velo) - (byte)Math.Round(((63 * 2 / velo) - (o.TL * 2 / velo)) * v))));
                     else
                     {
                         if (!timbre.UseExprForModulator)
-                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                            parentModule.YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
                         else
                         {
                             var mul = CalcModulatorMultiply();
@@ -589,7 +715,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             else if (mul < 0)
                                 vol = vol + ((vol) * mul);
                             vol = Math.Round(vol);
-                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | (byte)vol));
+                            parentModule.YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | (byte)vol));
                         }
                     }
                 }
@@ -638,8 +764,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte kon = IsKeyOff ? (byte)0 : (byte)0x20;
                 lastFreqData = (byte)(kon | octave | ((freq >> 8) & 3));
 
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xa0 + Slot), 0, 0, (byte)(0xff & freq));
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xb0 + Slot), 0, 0, lastFreqData);
+                parentModule.YM3812WriteData(parentModule.UnitNumber, (byte)(0xa0 + Slot), 0, 0, (byte)(0xff & freq), false);
+                parentModule.YM3812WriteData(parentModule.UnitNumber, (byte)(0xb0 + Slot), 0, 0, lastFreqData, false);
 
                 base.OnPitchUpdated();
             }
@@ -653,27 +779,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     YM3812Operator o = timbre.Ops[op];
                     //$20+: Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-                    YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
+                    parentModule.YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | o.EG << 5 | o.KSR << 4 | o.MFM)));
                     //$40+: Scaling level/ total level
                     if (!(timbre.ALG == 1 || op == 1))
                     {
                         if (!timbre.UseExprForModulator)
-                            YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
+                            parentModule.YM3812WriteData(parentModule.UnitNumber, 0x40, op, Slot, (byte)(o.KSL << 6 | o.TL));
                     }
                     //$60+: Attack Rate / Decay Rate
-                    YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
+                    parentModule.YM3812WriteData(parentModule.UnitNumber, 0x60, op, Slot, (byte)(o.AR << 4 | o.DR));
                     //$80+: Sustain Level / Release Rate
                     if (o.SR.HasValue && o.EG == 0)
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.SR.Value));
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.SR.Value));
                     else
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
 
                     //$e0+: Waveform Select
-                    YM3812WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)(o.WS));
+                    parentModule.YM3812WriteData(parentModule.UnitNumber, 0xe0, op, Slot, (byte)(o.WS));
                 }
 
                 //$C0+: algorithm and feedback
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xc0 + Slot), 0, 0, (byte)(timbre.FB << 1 | timbre.ALG));
+                parentModule.YM3812WriteData(parentModule.UnitNumber, (byte)(0xc0 + Slot), 0, 0, (byte)(timbre.FB << 1 | timbre.ALG));
             }
 
             /// <summary>
@@ -688,12 +814,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     YM3812Operator o = timbre.Ops[op];
                     if (o.SR.HasValue && o.EG == 0)
                     {
-                        YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
-                        YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x20, op, Slot, (byte)((o.AM << 7 | o.VR << 6 | 1 << 5 | o.KSR << 4 | o.MFM)));
+                        parentModule.YM3812WriteData(parentModule.UnitNumber, 0x80, op, Slot, (byte)(o.SL << 4 | o.RR));
                     }
                 }
 
-                YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + Slot), 0, 0, (byte)(lastFreqData & 0x1f));
+                parentModule.YM3812WriteData(parentModule.UnitNumber, (byte)(0xB0 + Slot), 0, 0, (byte)(lastFreqData & 0x1f));
             }
 
             private ushort[] freqTable = new ushort[] {
@@ -1094,7 +1220,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM3812Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -1546,7 +1672,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM3812Operator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {

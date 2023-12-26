@@ -100,6 +100,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private VsifClient vsifClient;
 
+        private IntPtr spfmPtr;
+
         private IntPtr opl3PortHandle;
 
         private object sndEnginePtrLock = new object();
@@ -110,8 +112,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Select a sound engine type.\r\n" +
-            "Supports Software and VSIF - MSX and CMI8738(x64).")]
+        [Description("Select a sound engine type.")]
         [DefaultValue(SoundEngineType.Software)]
         [TypeConverter(typeof(EnumConverterSoundEngineTypeYMF262))]
         public SoundEngineType SoundEngine
@@ -125,7 +126,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_SoundEngineType != value &&
                     (value == SoundEngineType.Software ||
                     value == SoundEngineType.VSIF_MSX_FTDI ||
-                    value == SoundEngineType.Real_OPL3
+                    value == SoundEngineType.Real_OPL3 ||
+                    value == SoundEngineType.SPFM
                     ))
                 {
                     setSoundEngine(value);
@@ -143,6 +145,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.Real_OPL3,
+                    SoundEngineType.SPFM,
                     });
                     return sc;
                 }
@@ -151,6 +154,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var sc = new StandardValuesCollection(new SoundEngineType[] {
                     SoundEngineType.Software,
                     SoundEngineType.VSIF_MSX_FTDI,
+                    SoundEngineType.SPFM,
                     });
                     return sc;
                 }
@@ -163,6 +167,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                 {
                     vsifClient.Dispose();
@@ -211,6 +220,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (handle != IntPtr.Zero)
                         {
                             opl3PortHandle = handle;
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
+                    case SoundEngineType.SPFM:
+                        spfmPtr = ScciManager.TryGetSoundChip(SoundChipType.SC_TYPE_YMF262, SC_CHIP_CLOCK.SC_CLOCK_14318180);
+                        if (spfmPtr != IntPtr.Zero)
+                        {
                             f_CurrentSoundEngineType = f_SoundEngineType;
                             SetDevicePassThru(true);
                         }
@@ -556,17 +578,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //FormMain.OutputLog(this, adrH.ToString("x") + "," + adr);
                                 //FormMain.OutputLog(this, (adrH + 1).ToString("x") + "," + data);
                                 break;
+                            case SoundEngineType.SPFM:
+                                ScciManager.SetRegister(spfmPtr, address, data, false);
+                                break;
                         }
                     }
+                    DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
+                    DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
                 }));
 #if DEBUG
                 YMF262_write(unitNumber, (uint)adrH, adr);
                 YMF262_write(unitNumber, (uint)1, data);
-#else
-            DeferredWriteData(YMF262_write, unitNumber, (uint)adrH, (byte)(adrL + (op * 3) + chofst));
-            DeferredWriteData(YMF262_write, unitNumber, (uint)1, data);
 #endif
-
 #if DEBUG
             }
             finally
@@ -657,6 +680,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
+                if (spfmPtr != IntPtr.Zero)
+                {
+                    ScciManager.ReleaseSoundChip(spfmPtr);
+                    spfmPtr = IntPtr.Zero;
+                }
                 if (vsifClient != null)
                     vsifClient.Dispose();
                 if (opl3PortHandle != IntPtr.Zero)
