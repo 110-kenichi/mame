@@ -403,7 +403,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-
         [Browsable(false)]
         public override byte[] ModulationDelays
         {
@@ -412,7 +411,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return base.ModulationDelays;
             }
         }
-
 
         [Browsable(false)]
         public override byte[] ModulationDepthRangesNote

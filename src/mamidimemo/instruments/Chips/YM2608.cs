@@ -551,7 +551,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private byte f_LFOEN;
 
         /// <summary>
-        /// LFRQ (0-255)
+        /// LFOEN (0-1)
         /// </summary>
         [DataMember]
         [Category("Chip(FM)")]
@@ -4402,7 +4402,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte? f_LFOEN;
 
             /// <summary>
-            /// LFRQ (0-255)
+            /// LFOEN (0-1)
             /// </summary>
             [DataMember]
             [Category("Chip(FM)")]

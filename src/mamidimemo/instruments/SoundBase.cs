@@ -612,8 +612,10 @@ namespace zanac.MAmidiMEmo.Instruments
                     if (modulationStartCounter < 10d * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval))
                         modulationStartCounter += 1.0;
 
-                    if (modulationStartCounter > ParentModule.GetModulationDelaySec(NoteOnEvent.Channel) * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval))
-                        mdepth = (double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] / 127d;
+                    var md = ParentModule.GetModulationDelaySec(NoteOnEvent.Channel);
+                    md = md * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval);
+                    if (modulationStartCounter > md)
+                        mdepth = ((double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] - 64d) / 64d;
                 }
                 //急激な変化を抑制
                 var mv = ((double)ParentModule.Modulations[NoteOnEvent.Channel] / 127d) + mdepth;

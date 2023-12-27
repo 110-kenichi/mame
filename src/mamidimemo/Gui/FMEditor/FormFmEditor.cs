@@ -877,7 +877,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             using (CommonOpenFileDialog openFileDialogTone = new CommonOpenFileDialog())
             {
-                openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
+                //TODO: openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
                 openFileDialogTone.Filters.Clear();
 
                 String allext = ExtensionsFilterExt;
@@ -924,7 +924,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             string ext = System.IO.Path.GetExtension(file);
             IEnumerable<Tone> tones = null;
 
-            string mext = System.IO.Path.GetExtension(ExtensionsFilterExt).ToUpper(CultureInfo.InvariantCulture);
+            var exts = ExtensionsFilterExt.Split(new char[] { ';' });
+            string mext = System.IO.Path.GetExtension(exts[0]).ToUpper(CultureInfo.InvariantCulture);
             if (ext.ToUpper(CultureInfo.InvariantCulture).Equals(mext))
             {
                 try
@@ -1216,9 +1217,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <returns></returns>
         public virtual bool IsSupportedToneExtension(String ext)
         {
-            if (ExtensionsFilterExt.Replace("*", "").Equals(ext, StringComparison.OrdinalIgnoreCase))
-                return true;
-
             var exts = ExtensionsFilterExt.Split(new char[] { ';' });
             foreach (string e in exts)
             {
@@ -1381,7 +1379,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             using (CommonOpenFileDialog openFileDialogTone = new CommonOpenFileDialog())
             {
-                openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
+                //TODO: openFileDialogTone.SelectionChanged += OpenFileDialogTone_SelectionChanged;
                 openFileDialogTone.Filters.Clear();
 
                 String allext = ExtensionsFilterExt;
@@ -1542,14 +1540,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 else
                     saveFileDialog.DefaultFileName = Timbre.TimbreName;
 
-                saveFileDialog.DefaultExtension = ExtensionsFilterExt.Replace("*", "");
-                saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, ExtensionsFilterExt));
+                var exts = ExtensionsFilterExt.Split(new char[] { ';' });
+                saveFileDialog.DefaultExtension = exts[0].Replace("*", "");
+                saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, exts[0]));
 
                 var dr = saveFileDialog.ShowDialog(this.Handle);
                 if (dr == CommonFileDialogResult.Ok)
                 {
                     StringBuilder sb = new StringBuilder();
-                    string fullTypeName = ExtensionsFilterExt;
+                    string fullTypeName = exts[0];
 
                     sb.AppendLine(fullTypeName);
                     sb.AppendLine("1.0");

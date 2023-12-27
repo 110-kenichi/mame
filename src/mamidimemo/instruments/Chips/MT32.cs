@@ -260,7 +260,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-
         [Browsable(false)]
         public override byte[] ModulationDepthRangesNote
         {

@@ -1,4 +1,4 @@
-MAmidiMEmo 5.4.2.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.4.3.0 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.4.3.0 Supported mopm/mopn file importing to OPN*/OPM
+        ★Breaking changes★ Fixed the effect of modulation effects of the ModulationDepthes property.
 5.4.2.0 Fixed incorrect soundding in mono mode.
 5.4.1.0 Supported SPFM for YM2413, YM3812, YMF262, YM3806
 5.4.0.1 Fixed SMS(FTDI) clk generator.

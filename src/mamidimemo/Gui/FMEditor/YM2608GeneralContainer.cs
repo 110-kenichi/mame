@@ -61,7 +61,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterValue("FMS", tim.FMS, 0, 7));
 
             AddControl(new RegisterFlag("LFO", "GlobalSettings.EN", tim.GlobalSettings.EN != 0 ? true : false));
-            AddControl(new RegisterValue("LFOEN", "GlobalSettings.LFOEN", tim.GlobalSettings.LFOEN == null ? -1 : tim.GlobalSettings.LFOEN.Value, 0, 255, true));
+            AddControl(new RegisterValue("LFOEN", "GlobalSettings.LFOEN", tim.GlobalSettings.LFOEN == null ? -1 : tim.GlobalSettings.LFOEN.Value, 0, 1, true));
             AddControl(new RegisterValue("LFRQ", "GlobalSettings.LFRQ", tim.GlobalSettings.LFRQ == null ? -1 : tim.GlobalSettings.LFRQ.Value, 0, 7, true));
 
             AddControl(new RegisterAlg4OpImg((RegisterValue)GetControl("ALG")));

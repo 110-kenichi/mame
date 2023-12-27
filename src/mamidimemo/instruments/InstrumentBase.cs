@@ -1510,7 +1510,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("MIDI")]
-        [Description("Modulation Depth (0-64-127) <MIDI 16ch>")]
+        [Description("Modulation Depth (0-64-127) <MIDI 16ch>\r\nValues above 65 change the effectiveness.~ ")]
         [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [Mask(127)]
@@ -1539,7 +1539,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
         [DataMember]
         [Category("MIDI")]
-        [Description("Modulation Delay (0-64-127) <MIDI 16ch>")]
+        [Description("Modulation Delay (0-64-127) <MIDI 16ch>\r\nTypical values are around 80.")]
         [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [Mask(127)]
@@ -1581,7 +1581,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
             return rate;
         }
-
 
         [DataMember]
         [Category("MIDI")]
