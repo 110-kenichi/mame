@@ -988,7 +988,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
             }
 
-            //Restore kon event remove by mono mode
+            //Restore kon event remove by mono & legato mode
             if (!koffremoved)
             {
                 if (monoNoteOnRemovedList.Count > 0)
@@ -1286,7 +1286,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 for (int i = 0; i < onSounds.Count; i++)
                 {
                     var onSnd = onSounds[i];
-                    if (onSnd.IsSoundOff)
+                    if (onSnd.IsSoundOff && !onSnd.IsFakeSoundOff)
                     {
                         offSnds.Add(onSnd);
                         continue;
@@ -1314,10 +1314,9 @@ namespace zanac.MAmidiMEmo.Instruments
                                 onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
-                            //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
 
-                            if (!keyoff)
+                            if (!keyoff && onSnd.BaseTimbreIndex == 0 && onSnd.IsFakeSoundOff)
                             {
                                 //Store removed keyon event;
                                 bool konfound = false;
@@ -1356,7 +1355,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //Use RecentlyUsedSlot
                 if (inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
                 {
-                    //Search last sound off sound
+                    //Search newest sound off sound
                     offSnds.Sort(new Comparison<SoundBase>((x, y) =>
                     {
                         if (x.SoundOffTime < y.SoundOffTime)
@@ -1374,12 +1373,12 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                 }
 
-                //Search unused slot
+                //Search completely unused slot
                 Dictionary<int, bool> usedSlotTable = new Dictionary<int, bool>();
                 foreach (var onSnd in onSnds)
-                    usedSlotTable.Add(onSnd.Slot, true);
+                    usedSlotTable[onSnd.Slot] = true;
                 foreach (var offSnd in offSnds)
-                    usedSlotTable.Add(offSnd.Slot, true);
+                    usedSlotTable[offSnd.Slot] = true;
                 for (int i = 0; i < maxSlot; i++)
                 {
                     if (!usedSlotTable.ContainsKey(i))
@@ -1414,7 +1413,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot && snd.IsSoundOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
@@ -1424,7 +1422,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot && snd.IsSoundOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
@@ -1436,7 +1433,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot && snd.IsKeyOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
@@ -1448,7 +1444,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
@@ -1460,7 +1455,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot && snd.IsKeyOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
@@ -1472,12 +1466,12 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (snd.Slot < maxSlot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return snd.Slot;
                     }
                 }
+                return 0;
             }
             else
             {
@@ -1487,7 +1481,6 @@ namespace zanac.MAmidiMEmo.Instruments
                     var snd = onSounds[i];
                     if (snd.Slot == slot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.RemoveAt(i);
                         snd.Dispose();
                         break;
@@ -1495,8 +1488,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
                 return slot;
             }
-
-            return -1;
         }
 
         /// <summary>
@@ -1544,7 +1535,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     var onSnd = onSounds[i];
                     if (usedSlotTable.ContainsKey(onSnd.ParentModule.UnitNumber))
                     {
-                        if (onSnd.IsSoundOff)
+                        if (onSnd.IsSoundOff && !onSnd.IsFakeSoundOff)
                         {
                             offSnds.Add(onSnd);
                             continue;
@@ -1575,7 +1566,7 @@ namespace zanac.MAmidiMEmo.Instruments
                                 offSnds.Add(onSnd);
                             onSnds.Remove(onSnd);
 
-                            if (!keyoff && onSnd.BaseTimbreIndex == 0)
+                            if (!keyoff && onSnd.BaseTimbreIndex == 0 && onSnd.IsFakeSoundOff)
                             {
                                 //Store removed keyon event;
                                 bool onfound = false;
@@ -1613,7 +1604,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 //Use RecentlyUsedSlot
                 if (inst.SlotAssignAlgorithm[newNote.Channel] == SlotAssignmentType.RecentlyUsedSlot)
                 {
-                    //Search last sound off sound
+                    //Search newest sound off sound
                     offSnds.Sort(new Comparison<SoundBase>((x, y) =>
                     {
                         if (x.SoundOffTime < y.SoundOffTime)
@@ -1633,9 +1624,9 @@ namespace zanac.MAmidiMEmo.Instruments
 
                 //Search completely unused slot
                 foreach (var onSnd in onSnds)
-                    usedSlotTable[onSnd.ParentModule.UnitNumber].Add(onSnd.Slot, true);
+                    usedSlotTable[onSnd.ParentModule.UnitNumber][onSnd.Slot] = true;
                 foreach (var offSnd in offSnds)
-                    usedSlotTable[offSnd.ParentModule.UnitNumber].Add(offSnd.Slot, true);
+                    usedSlotTable[offSnd.ParentModule.UnitNumber][offSnd.Slot] = true;
                 for (int i = offset; i < maxSlot; i++)
                 {
                     foreach (var ist in usedSlotTable.Keys)
@@ -1673,7 +1664,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
@@ -1683,7 +1673,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsSoundOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
@@ -1695,7 +1684,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
@@ -1707,7 +1695,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
@@ -1719,7 +1706,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot && snd.IsKeyOff)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
@@ -1731,12 +1717,12 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     if (offset <= snd.Slot && snd.Slot < maxSlot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.Remove(snd);
                         snd.Dispose();
                         return ((I)snd.ParentModule, snd.Slot);
                     }
                 }
+                return (inst, 0);
             }
             else
             {
@@ -1749,7 +1735,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
                     if (snd.Slot == slot)
                     {
-                        AllSounds.Remove(snd);
                         onSounds.RemoveAt(i);
                         snd.Dispose();
                         break;
@@ -1757,8 +1742,6 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
                 return (inst, slot);
             }
-
-            return (inst, -1);
         }
     }
 }

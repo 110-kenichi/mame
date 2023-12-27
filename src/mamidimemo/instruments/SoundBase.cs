@@ -82,6 +82,12 @@ namespace zanac.MAmidiMEmo.Instruments
             private set;
         }
 
+        public virtual bool IsFakeSoundOff
+        {
+            get;
+            private set;
+        }
+
         public static ulong soundOffTimeCounter;
 
         /// <summary>
@@ -271,6 +277,7 @@ namespace zanac.MAmidiMEmo.Instruments
             }
 
             IsSoundOff = true;
+            IsFakeSoundOff = true;
 
             SoundOffTime = soundOffTimeCounter++;
 
