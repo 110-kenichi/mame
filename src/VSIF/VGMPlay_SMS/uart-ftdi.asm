@@ -126,3 +126,26 @@ __VGM_PSG:
     READ_DATA               ; 47
     OUT (#0x7f), A          ; 11
     JP __VGM_LOOP           ; 10    +68
+
+; void uart_processVgm_FTDI()
+_uart_processVgm_FTDI_SMS::
+    DI
+    LD  H,#0x40             ; for Up Button
+    LD  L,#0x01             ; for EN
+    LD  C,#0x0F             ; for Lo bit
+__VGM_LOOP_SMS:
+    READ_ADRS               ; 44
+    JP  Z, __VGM_PSG_SMS    ; 10 0x00 = PSG
+
+__VGM_OPLL_SMS:
+    DEC A                   ;  4 58
+    OUT (#0xF0), A          ; 12 70 WRITE OPLL ADRS
+
+    READ_DATA               ; 44
+    OUT (#0xF1), A          ; 12 56 WRITE OPLL DATA
+    JP __VGM_LOOP_SMS       ; 10 66
+
+__VGM_PSG_SMS:
+    READ_DATA               ; 47
+    OUT (#0x7f), A          ; 11
+    JP __VGM_LOOP_SMS       ; 10    +68

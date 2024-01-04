@@ -41,10 +41,14 @@ void soundAllOff() {
   }
   OPLLPortA0 = 0x0E;
   OPLLPortA1 = 0x00;
+
+  //Enable OPLL and PSG
+  ConfigPort = 3;
 }
 
 void uart_processVgm();
 void uart_processVgm_FTDI();
+void uart_processVgm_FTDI_SMS();
 void printHex(unsigned long value, unsigned char x, unsigned char y, unsigned char width);
 
 void processPlayer(char vblank) {
@@ -75,10 +79,13 @@ void processPlayer(char vblank) {
         PrintText("PLEASE SELECT DRIVER TYPE.", 0, 3);
 
         PrintText("(UP)", 0, 6);
-        PrintText(" -GENERAL UART(57600BPS)  -", 0, 7);
+        PrintText(" -GENERAL UART(57600BPS)", 0, 7);
 
         PrintText("(DOWN)", 0, 9);
-        PrintText(" -FTDI2XX DONGLE(BIT BANG)-", 0, 10);
+        PrintText(" -FTDI2XX DONGLE(BIT BANG)", 0, 10);
+
+        PrintText("(LEFT)", 0, 12);
+        PrintText(" -FTDI2XX DONGLE(BIT BANG)(SMS)", 0, 13);
 
         break;
       }
@@ -94,12 +101,19 @@ void processPlayer(char vblank) {
                 PhaseCounter = 3;
                 goto clear;
                 break;
+            case PORT_A_KEY_LEFT:
+                PhaseCounter = 4;
+                goto clear;
+                break;
 clear:
                 PrintText("                          ", 0, 3);
                 PrintText("    ", 0, 6);
                 PrintText("                           ", 0, 7);
                 PrintText("      ", 0, 9);
                 PrintText("                           ", 0, 10);
+                PrintText("      ", 0, 12);
+                PrintText("                               ", 0, 13);
+
                 break;
         }
         break;
@@ -109,6 +123,21 @@ clear:
 
       //   break;
       // }
+      case 4: {
+        PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
+        PrintText("READY TO PLAY.", 0, 1);
+
+        PrintText("-PRESS PAUSE BTN TO RESTART.", 0, 3);
+
+        PrintText("___________        ", 0, 5);
+        PrintText("\\1 2 3 4 5/->TX,RX,RTS,CTS,VCC", 0, 6);
+        PrintText(" \\6 * 8 9/ ->DTR,GND,DSR", 0,7);
+        PrintText("  -------          ", 0, 8);
+
+        uart_processVgm_FTDI_SMS();
+        soundAllOff();
+        break;
+      }
       case 3: {
         PrintText("MAMI VGM SOUND DRIVER BY ITOKEN", 0, 0);
         PrintText("READY TO PLAY.", 0, 1);
@@ -120,7 +149,6 @@ clear:
         PrintText(" \\6 * 8 9/ ->DTR,GND,DSR", 0,7);
         PrintText("  -------          ", 0, 8);
 
-        //PhaseCounter = 4;
         uart_processVgm_FTDI();
         soundAllOff();
         break;
