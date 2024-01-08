@@ -1053,5 +1053,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["BitBangWaitMCD"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double PlaybackSpeed {
+            get {
+                return ((double)(this["PlaybackSpeed"]));
+            }
+            set {
+                this["PlaybackSpeed"] = value;
+            }
+        }
     }
 }

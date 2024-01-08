@@ -82,10 +82,10 @@ void processPlayer(char vblank) {
         PrintText(" -GENERAL UART(57600BPS)", 0, 7);
 
         PrintText("(DOWN)", 0, 9);
-        PrintText(" -FTDI2XX DONGLE(BIT BANG)", 0, 10);
+        PrintText(" -FTDI2XX DONGLE", 0, 10);
 
         PrintText("(LEFT)", 0, 12);
-        PrintText(" -FTDI2XX DONGLE(BIT BANG)(SMS)", 0, 13);
+        PrintText(" -FTDI2XX DONGLE(SMS ONLY)", 0, 13);
 
         break;
       }

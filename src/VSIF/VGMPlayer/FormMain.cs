@@ -53,6 +53,8 @@ namespace zanac.VGMPlayer
             SetHeight(listViewList, SystemInformation.MenuHeight);
             listViewList.ListViewItemSorter = new ListViewIndexComparer(listViewList);
 
+            labelSpeed.Text = Settings.Default.PlaybackSpeed.ToString("0.00") + "x";
+
             TopForm = this;
         }
 
@@ -224,14 +226,18 @@ namespace zanac.VGMPlayer
 
         private void buttonSlow_Click(object sender, EventArgs e)
         {
+            Settings.Default.PlaybackSpeed = Math.Max(Settings.Default.PlaybackSpeed - 0.1f, 0.1);
             if (currentSong != null)
-                currentSong.PlaybackSpeed -= 0.1f;
+                currentSong.PlaybackSpeed = Settings.Default.PlaybackSpeed;
+            labelSpeed.Text = Settings.Default.PlaybackSpeed.ToString("0.00") + "x";
         }
 
         private void buttonFast_Click(object sender, EventArgs e)
         {
+            Settings.Default.PlaybackSpeed = Math.Min(Settings.Default.PlaybackSpeed + 0.1f, 4);
             if (currentSong != null)
-                currentSong.PlaybackSpeed += 0.1f;
+                currentSong.PlaybackSpeed = Settings.Default.PlaybackSpeed;
+            labelSpeed.Text = Settings.Default.PlaybackSpeed.ToString("0.00") + "x";
         }
 
 
@@ -484,7 +490,8 @@ namespace zanac.VGMPlayer
                 currentSong.PlayStatusChanged += CurrentSong_PlayStatusChanged;
                 currentSong.SpeedChanged += CurrentSong_SpeedChanged;
                 currentSong.Finished += CurrentSong_Finished;
-                labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
+                currentSong.PlaybackSpeed = Settings.Default.PlaybackSpeed;
+                //labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
                 textBoxTitle.Text = currentSong.FileName;
                 currentSong.Play();
                 textBoxSongSystem.Text = currentSong.SongChipInformation;
@@ -524,7 +531,7 @@ namespace zanac.VGMPlayer
             if (sender != currentSong)
                 return;
 
-            labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
+            //labelSpeed.Text = Settings.Default.PlaybackSpeed.ToString("0.00") + "x";
         }
 
         private void CurrentSong_PlayStatusChanged(object sender, EventArgs e)
