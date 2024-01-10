@@ -21,14 +21,88 @@
 
 .INCLUDE "macro.inc"
 
-    JPOFST = 0x60
+SUPPORT_Z80B = 0
+
+EXPTBL = 0xFCC1
+VER_NO = 0x002D
+CHGCPU = 0x0180
+RDSLT  = 0x000C
+CALSLT = 0x001C
+
+PSGWR = #0xA1
+PSGRD = #0xA2
+
+JPOFST = 0x60
+
+    .globl STRPUT
 
     .area   _HEADER (ABS)
 ;=======================================================
     .ORG 0x5000
+
+STR_TR:	            .ascii	"\r\n*turbo R mode$"
+STR_WX_Z80B:	    .ascii	"\r\n*WX Z80B mode$"
+
 _uart_processVgm::
 	; LD	A,#'0'
  	; CALL	CHPUT
+
+; Check turboR and set turboR mode
+    LD	    A,(EXPTBL)	;Get version from EXPTBL
+	LD	    HL,#VER_NO  ;VER_NO
+	CALL	RDSLT   ;RDSLT
+	CP	    #3
+	JP	    C,chk_CKey	; VER<3 is not tR
+
+chk_ZKey:
+	IN      A,(#0xAA)	    ;Read PPI reg C
+	AND     #0xF0		    ;Select KB Row (bit=0000)
+	OR      #5		        ;Set KB Matrix 5 for "Z" key
+	OUT     (#0xAA),A	
+	NOP
+	IN	    A,(#0xA9)	    ;Read KB Matrix
+	AND     #0b10000000     ;Check "Z" key (bit0)
+	JP      NZ,chk_CKey     ;If does not press "Z" key, skip.
+
+tR_mode:
+    LD      A, #0x82    ;Change CPU
+	LD	    IX,#CHGCPU  ;CHGCPU
+	LD	    IY,(EXPTBL)
+	CALL	CALSLT  ;CALSLT
+
+	LD	    HL,#STR_TR
+	CALL	STRPUT
+    JP      endCheckCPU
+
+chk_CKey:
+.if SUPPORT_Z80B
+	IN      A,(#0xAA)	    ;Read PPI reg C
+	AND     #0xF0		    ;Select KB Row (bit=0000)
+	OR      #3		        ;Set KB Matrix 3 for "C" key
+	OUT     (#0xAA),A	
+	NOP
+	IN	    A,(#0xA9)	    ;Read KB Matrix
+	AND     #0b00000001     ;Check "C" key (bit0)
+	JP      NZ,endCheckCPU  ;If does not press "C" key, skip.
+
+chk_WX:
+	LD	    A,#8 
+	OUT	    (0x40),A
+	IN	    A,(0x40)
+	CPL
+	CP	    #8
+	JP	    NZ,endCheckCPU  ;Not exists WX hi-speed clock
+
+Z80B_mode:
+	LD	    A,#8		    ;Set WX hi-speed clock
+	OUT	    (0x40),A
+	XOR	    A
+	OUT	    (0x41),A
+
+	LD	    HL,#STR_WX_Z80B
+	CALL	STRPUT
+.endif
+endCheckCPU:
 
     DI
     LD  A,#15        ; 

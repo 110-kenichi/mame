@@ -10,5 +10,8 @@
         "font.h": "c",
         "type_traits": "c"
     },
-    "z80-asm-meter.platform": "msx"
+    "z80-asm-meter.platform": "msx",
+    "[m68k]": {
+        "editor.rulers": []
+    }
 }

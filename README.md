@@ -1,4 +1,4 @@
-MAmidiMEmo 5.4.3.1 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
+MAmidiMEmo 5.4.3.2 Itoken (c)2019, 2020, 2021, 2022, 2023 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.4.3.2 Fixed crashing while launching the x86 MAmi.
+        (Experimentaly) Supported MSX turbo R mode for VSIF. Pressing "Z" key while booting the VGM_msx.rom/VGM_msx_Vkey.rom
 5.4.3.1 Added SMS only special mode for FTDI dongle. OPLL and DSCG can sound simultenaously.
 5.4.3.0 Supported mopm/mopn file importing to OPN*/OPM
         ★Breaking changes★ Fixed the effect of modulation effects of the ModulationDepthes property.
