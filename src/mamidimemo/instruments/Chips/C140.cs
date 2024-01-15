@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -15,7 +16,9 @@ using Kermalis.SoundFont2;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
+using NAudio.Wave;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
@@ -172,7 +175,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<C140>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 C140SetCallback(UnitNumber, f_read_byte_callback);
             }
             catch (Exception ex)
@@ -949,7 +952,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<C140Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -1079,25 +1082,54 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     {
                         if (value[0] == 'R' && value[1] == 'I' && value[2] == 'F' && value[3] == 'F')
                         {
-                            var head = WaveFileReader.ReadWaveData(value);
-
-                            if (8 != head.BitPerSample || 1 != head.Channel)
+                            using (var dstream = new MemoryStream(value))
+                            using (var reader = new NAudio.Wave.WaveFileReader(dstream))
                             {
-                                throw new ArgumentOutOfRangeException(
-                                    string.Format($"Incorrect wave format(Expected Ch=1 Bit=8)"));
+                                var wf = reader.WaveFormat;
+
+                                byte[] data = null;
+
+                                if (8 != wf.BitsPerSample || 1 != wf.Channels)
+                                {
+                                    /*
+                                    var r = MessageBox.Show(null,
+                                        $"Incorrect wave format(Expected Ch=1 Bit=8)\r\n" +
+                                        "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                    if (r == DialogResult.Cancel)
+                                    {
+                                        throw new FileLoadException(
+                                        string.Format($"Incorrect wave format(Expected Ch=1 Bit=8)"));
+                                    }
+                                    */
+                                    int bits = 8;
+                                    int rate = wf.SampleRate;
+                                    int ch = 1;
+
+                                    WaveFormat format = new WaveFormat(rate, bits, ch);
+                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    {
+                                        data = new byte[stream.Length];
+                                        stream.Read(data, 0, data.Length);
+                                    }
+                                }
+                                else
+                                {
+                                    data = new byte[reader.Length];
+                                    reader.Read(data, 0, data.Length);
+                                }
+
+                                List<byte> al = new List<byte>(data);
+                                //Max 64k
+                                if (al.Count > 65535)
+                                    al.RemoveRange(65535, al.Count - 65535);
+
+                                f_PcmData = al.ToArray();
+
+                                sbyte[] sbuf = new sbyte[f_PcmData.Length];
+                                for (int i = 0; i < f_PcmData.Length; i++)
+                                    sbuf[i] = (sbyte)(f_PcmData[i] - 0x80);
+                                f_C140PcmData = sbuf;
                             }
-
-                            List<byte> al = new List<byte>(head.Data);
-                            //Max 64k
-                            if (al.Count > 65535)
-                                al.RemoveRange(65535, al.Count - 65535);
-
-                            f_PcmData = al.ToArray();
-
-                            sbyte[] sbuf = new sbyte[f_PcmData.Length];
-                            for (int i = 0; i < f_PcmData.Length; i++)
-                                sbuf[i] = (sbyte)(f_PcmData[i] - 0x80);
-                            f_C140PcmData = sbuf;
                         }
                         else
                         {

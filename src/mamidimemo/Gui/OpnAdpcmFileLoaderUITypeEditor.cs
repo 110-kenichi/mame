@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -160,44 +161,79 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                         else
                         {
-                            var data = WaveFileReader.ReadWaveFile(fn);
-
-                            if (att.Bits != 0 && att.Bits != data.BitPerSample ||
-                                att.Rate != 0 && att.Rate != data.SampleRate ||
-                                att.Channels != 0 && att.Channels != data.Channel)
+                            using (var reader = new NAudio.Wave.WaveFileReader(fn))
                             {
-                                throw new FileLoadException(
-                                    string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate},{2})"));
-                            }
+                                var wf = reader.WaveFormat;
 
-                            if (data.Data != null)
-                            {
-                                // byte[] -> short[]
-                                List<short> wav = new List<short>();
-                                for (int i = 0; i < data.Data.Length; i+=2)
-                                    wav.Add((short)((data.Data[i + 1] << 8) | data.Data[i]));
-                                // Encode
-                                int max = 0;
-                                if (att != null && att.MaxSize != 0)
-                                    max = att.MaxSize;
-                                byte[] adpcmData = encodeAdpcm(wav.ToArray(), max);
+                                byte[] data = null;
 
-                                switch(context.Instance)
+                                if (att.Bits != 0 && att.Bits != wf.BitsPerSample ||
+                                    att.Rate != 0 && att.Rate != wf.SampleRate ||
+                                    att.Channels != 0 && att.Channels != wf.Channels)
                                 {
-                                    case YM2608Timbre tim:
-                                        tim.BaseFreqency = 440d * (4000000d / 72d) / (double)data.SampleRate;
-                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
-                                        break;
-                                    case YM2610BTimbre tim:
-                                        tim.BaseFreqency = 440d * (4000000d / 72d) / (double)data.SampleRate;
-                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
-                                        break;
+                                    /*
+                                    var r = MessageBox.Show(null,
+                                        $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
+                                        "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                    if (r == DialogResult.Cancel)
+                                    {
+                                        throw new FileLoadException(
+                                        string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
+                                    }
+                                    */
+
+                                    int bits = att.Bits;
+                                    if (bits == 0)
+                                        bits = wf.BitsPerSample;
+                                    int rate = att.Rate;
+                                    if (rate == 0)
+                                        rate = wf.SampleRate;
+                                    int ch = att.Channels;
+                                    if (ch == 0)
+                                        ch = wf.Channels;
+
+                                    WaveFormat format = new WaveFormat(rate, bits, ch);
+                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    {
+                                        data = new byte[stream.Length];
+                                        stream.Read(data, 0, data.Length);
+                                    }
+                                }
+                                else
+                                {
+                                    data = new byte[reader.Length];
+                                    reader.Read(data, 0, data.Length);
                                 }
 
-                                // byte[] -> byte[]
-                                object rvalue = convertToRetValue(context, adpcmData);
-                                if (rvalue != null)
-                                    return rvalue;
+                                if (data != null)
+                                {
+                                    // byte[] -> short[]
+                                    List<short> wav = new List<short>();
+                                    for (int i = 0; i < data.Length; i += 2)
+                                        wav.Add((short)((data[i + 1] << 8) | data[i]));
+                                    // Encode
+                                    int max = 0;
+                                    if (att != null && att.MaxSize != 0)
+                                        max = att.MaxSize;
+                                    byte[] adpcmData = encodeAdpcm(wav.ToArray(), max);
+
+                                    switch (context.Instance)
+                                    {
+                                        case YM2608Timbre tim:
+                                            tim.BaseFreqency = 440d * (4000000d / 72d) / (double)wf.SampleRate;
+                                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                            break;
+                                        case YM2610BTimbre tim:
+                                            tim.BaseFreqency = 440d * (4000000d / 72d) / (double)wf.SampleRate;
+                                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                            break;
+                                    }
+
+                                    // byte[] -> byte[]
+                                    object rvalue = convertToRetValue(context, adpcmData);
+                                    if (rvalue != null)
+                                        return rvalue;
+                                }
                             }
                             return value;
                         }

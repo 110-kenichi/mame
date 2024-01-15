@@ -472,4 +472,16 @@ Or, install the loopMIDI application to the PC.</value>
   <data name="RF5C164" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\RF5C164.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ConfirmConvertSampleRate" xml:space="preserve">
+    <value>Do you want to convert sample rate to {0}Hz?</value>
+  </data>
+  <data name="ContinuousSet" xml:space="preserve">
+    <value>Please specify the number to be sequentially numbered.</value>
+  </data>
+  <data name="ContinuousSetError" xml:space="preserve">
+    <value>Please select the item for which the TimbreNumber has been set.</value>
+  </data>
+  <data name="SampleRateOver" xml:space="preserve">
+    <value>Sample rate is higher than {0}Hz.</value>
+  </data>
 </root>

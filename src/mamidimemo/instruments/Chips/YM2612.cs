@@ -6,11 +6,13 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Contexts;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
@@ -25,6 +27,7 @@ using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
+using NAudio.Wave;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
@@ -206,8 +209,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                             else
                             {
-                                if (FtdiClkWidth < 9)
-                                    FtdiClkWidth = 9;
+                                if (FtdiClkWidth < 10)
+                                    FtdiClkWidth = 10;
                             }
 
                             f_CurrentSoundEngineType = f_SoundEngineType;
@@ -330,6 +333,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
         }
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Set DAC converting default target PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
+        [DefaultValue(typeof(uint), "14000")]
+        [SlideParametersAttribute(4000, 14000)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public uint TargetSampleRate
+        {
+            get;
+            set;
+        } = 14000;
+
 
         /// <summary>
         /// 
@@ -2754,7 +2770,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private byte[] f_PcmData = new byte[0];
 
             [TypeConverter(typeof(LoadDataTypeConverter))]
-            [Editor(typeof(PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Editor(typeof(Opn2PcmFileLoaderUITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
             [DataMember]
             [Category("Sound(PCM)")]
             [Description("Set DAC PCM data. Unigned 8bit PCM Raw Data or WAV Data. (1ch)")]
@@ -3622,6 +3638,117 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 tim.Ops[i].SSG = (byte)tone.aOp[i].SSG;
             }
             timbre.TimbreName = tone.Name;
+            tim.ToneType = ToneType.FM;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public override bool CanImportBinFile
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="tone"></param>
+        public override String SupportedBinExts
+        {
+            get
+            {
+                return "*.raw;*.wav";
+            }
+        }
+
+        private static DialogResult? previousSampleRateAns;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="binFile"></param>
+        public override void ImportBinFile(TimbreBase timbre, FileInfo binFile)
+        {
+            switch (binFile.Extension.ToUpper(CultureInfo.InvariantCulture))
+            {
+                case ".WAV":
+                    YM2612Timbre tim = (YM2612Timbre)timbre;
+
+                    using (var reader = new NAudio.Wave.WaveFileReader(binFile.FullName))
+                    {
+                        var wf = reader.WaveFormat;
+
+                        byte[] data = null;
+
+                        if (8 != wf.BitsPerSample || 1 != wf.Channels || wf.SampleRate > TargetSampleRate)
+                        {
+                            /*
+                            var r = MessageBox.Show(null,
+                                $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
+                                "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                            if (r == DialogResult.Cancel)
+                            {
+                                throw new FileLoadException(
+                                string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
+                            }*/
+
+                            int bits = 8;
+                            int rate = wf.SampleRate;
+                            int ch = 1;
+
+                            if (rate > TargetSampleRate)
+                            {
+                                DialogResult r;
+                                if ((Control.ModifierKeys & Keys.Shift) == Keys.Alt)
+                                    previousSampleRateAns = null;
+
+                                if (previousSampleRateAns.HasValue)
+                                {
+                                    r = previousSampleRateAns.Value;
+                                }
+                                else
+                                {
+                                    r = MessageBox.Show(null,
+                                        String.Format(Resources.SampleRateOver + "\r\n", TargetSampleRate) +
+                                        String.Format(Resources.ConfirmConvertSampleRate, TargetSampleRate), "Qeuestion", MessageBoxButtons.YesNo);
+                                    previousSampleRateAns = r;
+                                }
+                                if (r == DialogResult.Yes)
+                                {
+                                    rate = (int)TargetSampleRate;
+                                }
+                            }
+
+                            wf = new WaveFormat(rate, bits, ch);
+                            using (WaveFormatConversionStream stream = new WaveFormatConversionStream(wf, reader))
+                            {
+                                data = new byte[stream.Length];
+                                stream.Read(data, 0, data.Length);
+                            }
+                        }
+                        else
+                        {
+                            data = new byte[reader.Length];
+                            reader.Read(data, 0, data.Length);
+                        }
+
+                        tim.PcmData = data;
+                        tim.SampleRate = (uint)wf.SampleRate;
+                        tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                        tim.ToneType = ToneType.PCM;
+                    }
+
+                    break;
+            }
         }
     }
 }

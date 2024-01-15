@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
@@ -126,6 +127,13 @@ namespace zanac.MAmidiMEmo.Gui
             if (inst.CanImportToneFile)
             {
                 var texts = Tone.SupportedExts.Split(';');
+                for (int i = 0; i < texts.Length; i++)
+                    texts[i] = texts[i].Replace("*", "");
+                extList.AddRange(texts);
+            }
+            if (inst.CanImportBinFile)
+            {
+                var texts = inst.SupportedBinExts.Split(';');
                 for (int i = 0; i < texts.Length; i++)
                     texts[i] = texts[i].Replace("*", "");
                 extList.AddRange(texts);
@@ -555,7 +563,7 @@ namespace zanac.MAmidiMEmo.Gui
                     if (!System.IO.File.Exists(file))
                         return;
 
-                    switch (Path.GetExtension(file).ToUpper())
+                    switch (Path.GetExtension(file).ToUpper(CultureInfo.InvariantCulture))
                     {
                         case ".MSD":
                             try
@@ -721,6 +729,25 @@ namespace zanac.MAmidiMEmo.Gui
                             break;
 
                         default:
+                            if (Instrument.CanImportBinFile)
+                            {
+                                var texts = Instrument.SupportedBinExts.Split(';');
+                                for (int ei = 0; ei < texts.Length; ei++)
+                                {
+                                    String ext = texts[ei].Replace("*", "");
+                                    if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
+                                    {
+                                        TimbreBase t = (TimbreBase)Activator.CreateInstance(timbreType);
+                                        Instrument.ImportBinFile(t, new FileInfo(file));
+                                        var tim = new TimbreItem(t, no);
+
+                                        var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
+                                        no++;
+                                        lvi.Tag = tim;
+                                        listViewFilesTimbres.Items.Add(lvi);
+                                    }
+                                }
+                            }
                             break;
                     }
                 }

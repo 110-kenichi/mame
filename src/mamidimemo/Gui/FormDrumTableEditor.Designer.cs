@@ -43,9 +43,10 @@ namespace zanac.MAmidiMEmo.Gui
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.metroButton3 = new MetroFramework.Controls.MetroButton();
+            this.metroButtonCont = new MetroFramework.Controls.MetroButton();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
             this.metroButtonExport = new MetroFramework.Controls.MetroButton();
+            this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.openFileDialogImport = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogExport = new System.Windows.Forms.SaveFileDialog();
             this.pianoControl1 = new zanac.MAmidiMEmo.Gui.PianoControl();
@@ -150,16 +151,17 @@ namespace zanac.MAmidiMEmo.Gui
             // tableLayoutPanel4
             // 
             resources.ApplyResources(this.tableLayoutPanel4, "tableLayoutPanel4");
-            this.tableLayoutPanel4.Controls.Add(this.metroButton3, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.metroButtonImport, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.metroButtonImport, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.metroButtonExport, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.metroButton3, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.metroButtonCont, 1, 0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             // 
-            // metroButton3
+            // metroButtonCont
             // 
-            resources.ApplyResources(this.metroButton3, "metroButton3");
-            this.metroButton3.Name = "metroButton3";
-            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
+            resources.ApplyResources(this.metroButtonCont, "metroButtonCont");
+            this.metroButtonCont.Name = "metroButtonCont";
+            this.metroButtonCont.Click += new System.EventHandler(this.metroButtonCont_Click);
             // 
             // metroButtonImport
             // 
@@ -172,6 +174,12 @@ namespace zanac.MAmidiMEmo.Gui
             resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
+            // 
+            // metroButton3
+            // 
+            resources.ApplyResources(this.metroButton3, "metroButton3");
+            this.metroButton3.Name = "metroButton3";
+            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
             // 
             // openFileDialogImport
             // 
@@ -467,7 +475,6 @@ namespace zanac.MAmidiMEmo.Gui
             // 
             this.AcceptButton = this.buttonOk;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
             this.Controls.Add(this.tableLayoutPanel2);
@@ -530,5 +537,6 @@ namespace zanac.MAmidiMEmo.Gui
         private MetroFramework.Controls.MetroButton metroButtonExport;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private MetroFramework.Controls.MetroButton metroButtonCont;
     }
 }

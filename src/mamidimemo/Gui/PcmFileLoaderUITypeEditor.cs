@@ -1,4 +1,5 @@
 ﻿// copyright-holders:K.Ito
+using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -96,30 +98,64 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                         else
                         {
-                            var data = WaveFileReader.ReadWaveFile(fn);
-
-                            if (att.Bits != 0 && att.Bits != data.BitPerSample ||
-                                att.Rate != 0 && att.Rate != data.SampleRate ||
-                                att.Channels != 0 && att.Channels != data.Channel)
+                            using (var reader = new NAudio.Wave.WaveFileReader(fn))
                             {
-                                throw new FileLoadException(
-                                    string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate},{2})"));
-                            }
+                                var wf = reader.WaveFormat;
 
-                            if (data.Data != null)
-                            {
-                                object rvalue = convertToRetValue(context, data.Data);
-                                if (rvalue != null)
+                                byte[] data = null;
+
+                                if (att.Bits != 0 && att.Bits != wf.BitsPerSample ||
+                                    att.Rate != 0 && att.Rate != wf.SampleRate ||
+                                    att.Channels != 0 && att.Channels != wf.Channels)
                                 {
-                                    TimbreBase tim = context.Instance as TimbreBase;
-                                    if (tim != null)
-                                        tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
-                                    try
+                                    /*
+                                    var r = MessageBox.Show(null,
+                                        $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
+                                        "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                    if (r == DialogResult.Cancel)
                                     {
-                                        dynamic dyn = tim;
-                                        dyn.SampleRate = (uint)data.SampleRate;
-                                    } catch { }
-                                    return rvalue;
+                                        throw new FileLoadException(
+                                        string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
+                                    }*/
+
+                                    int bits = att.Bits;
+                                    if (bits == 0)
+                                        bits = wf.BitsPerSample;
+                                    int rate = att.Rate;
+                                    if (rate == 0)
+                                        rate = wf.SampleRate;
+                                    int ch = att.Channels;
+                                    if (ch == 0)
+                                        ch = wf.Channels;
+
+                                    WaveFormat format = new WaveFormat(rate, bits, ch);
+                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    {
+                                        data = new byte[stream.Length];
+                                        stream.Read(data, 0, data.Length);
+                                    }
+                                }
+                                else
+                                {
+                                    data = new byte[reader.Length];
+                                    reader.Read(data, 0, data.Length);
+                                }
+
+                                {
+                                    object rvalue = convertToRetValue(context, data);
+                                    if (rvalue != null)
+                                    {
+                                        TimbreBase tim = context.Instance as TimbreBase;
+                                        if (tim != null)
+                                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                        try
+                                        {
+                                            dynamic dyn = tim;
+                                            dyn.SampleRate = (uint)wf.SampleRate;
+                                        }
+                                        catch { }
+                                        return rvalue;
+                                    }
                                 }
                             }
                             return value;

@@ -346,6 +346,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Do you want to convert sample rate to {0}Hz? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ConfirmConvertSampleRate {
+            get {
+                return ResourceManager.GetString("ConfirmConvertSampleRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Connecting to a real chip via c86ctl for GIMIC... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ConnectingGimic {
@@ -360,6 +369,24 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string ConnectingSPFM {
             get {
                 return ResourceManager.GetString("ConnectingSPFM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please specify the number to be sequentially numbered. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ContinuousSet {
+            get {
+                return ResourceManager.GetString("ContinuousSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select the item for which the TimbreNumber has been set. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ContinuousSetError {
+            get {
+                return ResourceManager.GetString("ContinuousSetError", resourceCulture);
             }
         }
         
@@ -833,6 +860,15 @@ namespace zanac.MAmidiMEmo.Properties {
         internal static string SampleRate {
             get {
                 return ResourceManager.GetString("SampleRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sample rate is higher than {0}Hz. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string SampleRateOver {
+            get {
+                return ResourceManager.GetString("SampleRateOver", resourceCulture);
             }
         }
         

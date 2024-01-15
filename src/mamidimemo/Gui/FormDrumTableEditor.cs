@@ -21,6 +21,7 @@ using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 using File = System.IO.File;
 using Path = System.IO.Path;
 
@@ -654,10 +655,10 @@ namespace zanac.MAmidiMEmo.Gui
                         }
                         if (tb != null)
                         {
-                                e.Tag = new NoteOnTimbreInfo(tb, 0);
-                                e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
-                                Instrument.NotifyMidiEvent(e);
-                            }
+                            e.Tag = new NoteOnTimbreInfo(tb, 0);
+                            e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
+                            Instrument.NotifyMidiEvent(e);
+                        }
                     }
                 }
             }
@@ -704,6 +705,11 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
+        /// <summary>
+        /// Clear
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void metroButton3_Click(object sender, EventArgs e)
         {
             if (listViewPcmSounds.SelectedItems.Count != 0)
@@ -727,6 +733,55 @@ namespace zanac.MAmidiMEmo.Gui
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             metroButton3_Click(sender, e);
+        }
+
+        private void metroButtonCont_Click(object sender, EventArgs e)
+        {
+            if (listViewPcmSounds.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(this, "Select the item for which the TimbreNumber has been set.", "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            var fi = listViewPcmSounds.SelectedItems[0];
+            if (fi != null)
+            {
+                DrumTimbre ttimi = (DrumTimbre)fi.Tag;
+                var tn = ttimi.TimbreNumber;
+                if (tn != null)
+                {
+                    using (FormInputNumber f = new FormInputNumber())
+                    {
+                        f.MaximumValue = 127 - fi.Index;
+                        f.MinimumValue = 0;
+                        f.TitleText = Resources.ContinuousSet;
+                        var r = f.ShowDialog();
+                        if (r == DialogResult.OK)
+                        {
+                            int n = (int)f.InputValue;
+                            int stn = (int)tn + 1;
+                            for (int i = fi.Index + 1; i < fi.Index + 1 + n; i++)
+                            {
+                                DrumTimbre sttimi = (DrumTimbre)(listViewPcmSounds.Items[i].Tag);
+                                if (Enum.IsDefined(typeof(ProgramAssignmentNumber), stn))
+                                {
+                                    sttimi.TimbreNumber = (ProgramAssignmentNumber)stn;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                                stn++;
+                            }
+                            updateList();
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(this, Resources.ContinuousSetError, "Error", MessageBoxButtons.OK);
+                }
+            }
         }
     }
 }

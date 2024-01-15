@@ -410,4 +410,16 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="AdpcmBufferUsedSPC700" xml:space="preserve">
     <value>ADPCM バッファを {0}/63 KB 使っています。</value>
   </data>
+  <data name="ConfirmConvertSampleRate" xml:space="preserve">
+    <value>サンプリング周波数を {0}Hz に変換しますか？</value>
+  </data>
+  <data name="ContinuousSet" xml:space="preserve">
+    <value>連番を設定する個数を指定してください。</value>
+  </data>
+  <data name="ContinuousSetError" xml:space="preserve">
+    <value>TimbreNumberが設定されている項目を選択してください。</value>
+  </data>
+  <data name="SampleRateOver" xml:space="preserve">
+    <value>サンプリング周波数が {0}Hz を超えています.</value>
+  </data>
 </root>

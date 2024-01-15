@@ -3172,6 +3172,41 @@ namespace zanac.MAmidiMEmo.Instruments
 
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public virtual bool CanImportBinFile
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual String SupportedBinExts
+        {
+            get
+            {
+                return "*.wav";
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timbre"></param>
+        /// <param name="binFile"></param>
+        public virtual void ImportBinFile(TimbreBase timbre, FileInfo binFile)
+        {
+
+        }
     }
 
     public enum FilterMode

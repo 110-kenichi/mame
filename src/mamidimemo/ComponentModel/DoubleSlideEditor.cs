@@ -39,7 +39,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
             track.TickFrequency = (int)freq;
 
             if (double.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value), out double result))
+            {
+                if (result > track.Maximum)
+                    result = track.Maximum;
+                if (result < track.Minimum)
+                    result = track.Minimum;
                 track.Value = result;
+            }
 
             if (att.SliderDynamicSetValue)
                 track.Tag = context;

@@ -119,10 +119,10 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewPcmSounds.Size" type="System.Drawing.Size, System.Drawing">
-    <value>357, 363</value>
+    <value>357, 334</value>
   </data>
   <data name="propertyGrid1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>546, 363</value>
+    <value>546, 334</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
     <value>812, 3</value>
@@ -152,17 +152,32 @@
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>915, 29</value>
   </data>
-  <data name="metroButton3.Text" xml:space="preserve">
-    <value>クリア(&amp;C)...</value>
+  <data name="metroButtonImport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 32</value>
   </data>
   <data name="metroButtonImport.Text" xml:space="preserve">
     <value>読み込み(&amp;I)...</value>
   </data>
+  <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 32</value>
+  </data>
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>全保存(&amp;A)...</value>
   </data>
+  <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="metroButton3.Text" xml:space="preserve">
+    <value>選択クリア(&amp;C)</value>
+  </data>
+  <data name="metroButtonCont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>109, 3</value>
+  </data>
+  <data name="metroButtonCont.Text" xml:space="preserve">
+    <value>連番設定(&amp;S)...</value>
+  </data>
   <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 388</value>
+    <value>0, 359</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
     <value>915, 417</value>

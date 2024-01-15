@@ -59,7 +59,13 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
             int result;
             if (int.TryParse(context.PropertyDescriptor.Converter.ConvertToString(value), out result))
+            {
+                if (result > track.Maximum)
+                    result = track.Maximum;
+                if (result < track.Minimum)
+                    result = track.Minimum;
                 track.Value = result;
+            }
 
             if (att != null && att.SliderDynamicSetValue)
                 track.Tag = context;

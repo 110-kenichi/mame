@@ -223,6 +223,7 @@
     <Compile Include="Gui\FormInputNumber.Designer.cs">
       <DependentUpon>FormInputNumber.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Opn2PcmFileLoaderUITypeEditor.cs" />
     <Compile Include="Gui\SccMorphUITypeEditor.cs" />
     <Compile Include="Gui\CancelListViewItemDragEventArgs.cs" />
     <Compile Include="Gui\DraggableListView.cs">
@@ -1517,6 +1518,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell">
       <Version>1.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="NAudio">
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
