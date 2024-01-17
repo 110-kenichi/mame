@@ -3708,7 +3708,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (rate > TargetSampleRate)
                             {
                                 DialogResult r;
-                                if ((Control.ModifierKeys & Keys.Shift) == Keys.Alt)
+                                if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
                                     previousSampleRateAns = null;
 
                                 if (previousSampleRateAns.HasValue)
