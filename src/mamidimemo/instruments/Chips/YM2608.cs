@@ -126,17 +126,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                if (f_SoundEngineType != value &&
-                    (value == SoundEngineType.Software ||
-                    value == SoundEngineType.SPFM ||
-                    value == SoundEngineType.VSIF_MSX_FTDI ||
-                    value == SoundEngineType.VSIF_P6_FTDI ||
-                    value == SoundEngineType.GIMIC) ||
-                    value == SoundEngineType.VSIF_PC88_FTDI
-                    )
-                {
+                if (f_SoundEngineType != value)
                     setSoundEngine(value);
-                }
             }
         }
 
@@ -4843,8 +4834,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
 
-                        if (playDac || overflowed != 0)
+                        int lastDacData = 0;
+                        if (playDac || overflowed != 0 || lastDacData != 0)
                         {
+                            if (!playDac)
+                                dacData = 0;
                             //dacData += overflowed;
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
@@ -4858,6 +4852,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 dacData = sbyte.MinValue;
                             }
                             parentModule.YM2608WriteData(unitNumber, 0x0b, 0, 3, (byte)(dacData + 0x80), false, false);
+                            lastDacData = dacData;
                         }
                     }
 

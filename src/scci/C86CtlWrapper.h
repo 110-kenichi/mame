@@ -17,7 +17,7 @@ extern "C" {
 
 	__declspec(dllexport) DWORD __cdecl  GimicGetNumberOfChip();
 
-	__declspec(dllexport) DWORD __cdecl  GimicGetModule(DWORD moduleIndex, DWORD chipType);
+	__declspec(dllexport) DWORD __cdecl  GimicGetModule(DWORD moduleIndex, DWORD chipType, char* deviceName, int deviceNameNum);
 
 	__declspec(dllexport) DWORD __cdecl  GimicSetClock(DWORD moduleIndex, DWORD clock);
 

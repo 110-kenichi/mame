@@ -1451,8 +1451,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
 
-                        if (playDac || overflowed != 0)
+                        int lastDacData = 0;
+                        if (playDac || overflowed != 0 || lastDacData != 0)
                         {
+                            if (!playDac)
+                                dacData = 0;
                             //dacData += overflowed;
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
@@ -1466,6 +1469,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 dacData = sbyte.MinValue;
                             }
                             parentModule.RP2A03WriteData(unitNumber, 0x11, (byte)((dacData + 0x80) >> 1), false, false);
+                            lastDacData = dacData;
                         }
                     }
 

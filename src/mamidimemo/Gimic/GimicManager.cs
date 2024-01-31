@@ -84,8 +84,7 @@ namespace zanac.MAmidiMEmo.Gimic
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="iSoundChipType"></param>
-        /// <param name="clock"></param>
+        /// <param name="chipType"></param>
         /// <returns></returns>
         public static int GetModuleIndex(ChipType chipType)
         {
@@ -103,6 +102,38 @@ namespace zanac.MAmidiMEmo.Gimic
                         {
                             writtenDataCache.Add(i, new Dictionary<uint, uint>());
                             return i;
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="deviceName"></param>
+        /// <returns></returns>
+        public static int GetModuleIndex(String[] chipNames)
+        {
+            TryInitializeGimmic();
+
+            lock (lockObject)
+            {
+                if (initialized)
+                {
+                    for (int i = 0; i < GetNumberOfChip(); i++)
+                    {
+                        if (writtenDataCache.ContainsKey(i))
+                            continue;
+                        for (int j = 0; j < chipNames.Length; j++)
+                        {
+                            if (wrapperClient.TryGetModuleIndex((uint)i, chipNames[j]) ==
+                                NativeC86CtlWrapper.C86CTL_ERR_NONE)
+                            {
+                                writtenDataCache.Add(i, new Dictionary<uint, uint>());
+                                return i;
+                            }
                         }
                     }
                 }
@@ -255,7 +286,33 @@ namespace zanac.MAmidiMEmo.Gimic
             CHIP_OPM,
             CHIP_OPN3L,
             CHIP_OPL3,
-            CHIP_SPC
+            CHIP_SPC,
+            CHIP_STIC_OPLL,
+            CHIP_STIC_SSG,
+            CHIP_STIC_AYPSG,
+            CHIP_STIC_OPN2,
+            CHIP_STIC_OPN2C,
+            CHIP_STIC_OPN2L,
+            CHIP_STIC_SPSG,
+            CHIP_STIC_OPN3L,
+        };
+
+        public readonly static string[] ChipName = new string[]
+        {
+            "", //CHIP_UNKNOWN = 0,
+            "", //CHIP_OPNA,
+            "", //CHIP_OPM,
+            "", //CHIP_OPN3L,
+            "", //CHIP_OPL3,
+            "", //CHIP_SPC
+            "GMC-S2413",    //STIC OPLL(GMC-S2413)
+            "GMC-S2149",    //STIC SSG(GMC-S2149)
+            "GMC-S8910",    //STIC AYPSG(GMC-S8910)
+            "GMC-S2612",    //STIC OPN2(GMC-S2612)
+            "GMC-S3438",    //STIC OPN2C(GMC-S3438)
+            "GMC-S276",     //STIC OPN2L(GMC-S276)
+            "GMC-S5377",    //STIC SPSG(GMC-S5377)
+            "GMC-S288",     //STIC OPN3L(GMC-S288)
         };
     }
 

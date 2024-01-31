@@ -110,7 +110,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Description("Select a sound engine type.\r\n" +
             "Supports Software and SPFM.")]
         [DefaultValue(SoundEngineType.Software)]
-        [TypeConverter(typeof(EnumConverterSoundEngineTypeSPFM))]
+        [TypeConverter(typeof(EnumConverterSoundEngineTypeYM2151))]
         public SoundEngineType SoundEngine
         {
             get
@@ -119,18 +119,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                if (f_SoundEngineType != value &&
-                    (value == SoundEngineType.Software ||
-                    value == SoundEngineType.SPFM ||
-                    value == SoundEngineType.VSIF_MSX_FTDI ||
-                    value == SoundEngineType.GIMIC))
-                {
+                if (f_SoundEngineType != value)
                     setSoundEngine(value);
-                }
             }
         }
 
-        private class EnumConverterSoundEngineTypeSPFM : EnumConverter<SoundEngineType>
+        private class EnumConverterSoundEngineTypeYM2151 : EnumConverter<SoundEngineType>
         {
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
