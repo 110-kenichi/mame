@@ -529,10 +529,30 @@ int GimicWinUSB::getMBInfo( struct Devinfo *info )
 
 	MSG d = { 3, { 0xfd, 0x91, 0xff } };
 	if( C86CTL_ERR_NONE == (ret = transaction( &d, (uint8_t*)info, 32 )) ){
+		boolean clear = FALSE;
+		for (int i = 0; i < sizeof(info->Devname) / sizeof(info->Devname[0]); i++)
+		{
+			char ch = info->Devname[i];
+			if (ch == 0)
+				clear = TRUE;
+			if(clear)
+				info->Devname[i] = 0;
+		}
+		clear = FALSE;
+		for (int i = 0; i < sizeof(info->Serial) / sizeof(info->Serial[0]); i++)
+		{
+			char ch = info->Serial[i];
+			if (ch == 0)
+				clear = TRUE;
+			if (clear)
+				info->Serial[i] = 0;
+		}
+		/* mamidimemo
 		char *p = &info->Devname[15];
 		while( *p==0 || *p==-1 ) *p--=0;
 		p = &info->Serial[14];
 		while(*p==0||*p==-1) *p--=0;
+		*/
 	}
 	return ret;
 }
@@ -546,10 +566,30 @@ int GimicWinUSB::getModuleInfo( struct Devinfo *info )
 
 	MSG d = { 3, { 0xfd, 0x91, 0 } };
 	if( C86CTL_ERR_NONE == (ret = transaction( &d, (uint8_t*)info, 32 )) ){
+		boolean clear = FALSE;
+		for (int i = 0; i < sizeof(info->Devname) / sizeof(info->Devname[0]); i++)
+		{
+			char ch = info->Devname[i];
+			if (ch == 0)
+				clear = TRUE;
+			if (clear)
+				info->Devname[i] = 0;
+		}
+		clear = FALSE;
+		for (int i = 0; i < sizeof(info->Serial) / sizeof(info->Serial[0]); i++)
+		{
+			char ch = info->Serial[i];
+			if (ch == 0)
+				clear = TRUE;
+			if (clear)
+				info->Serial[i] = 0;
+		}
+		/* mamidimemo
 		char *p = &info->Devname[15];
 		while(*p==0||*p==-1) *p--=0;
 		p = &info->Serial[14];
 		while(*p==0||*p==-1) *p--=0;
+		*/
 	}
 	return ret;
 }

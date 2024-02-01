@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
@@ -101,6 +102,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private IntPtr spfmPtr;
 
+        private int gimicPtr = -1;
+
         private SoundEngineType f_SoundEngineType;
 
         private SoundEngineType f_CurrentSoundEngineType;
@@ -119,14 +122,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                if (f_SoundEngineType != value &&
-                    (value == SoundEngineType.Software ||
-                    value == SoundEngineType.SPFM ||
-                    value == SoundEngineType.VSIF_MSX_FTDI ||
-                    value == SoundEngineType.VSIF_P6_FTDI))
-                {
+                if (f_SoundEngineType != value)
                     setSoundEngine(value);
-                }
             }
         }
 
@@ -139,6 +136,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.SPFM,
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
+                    SoundEngineType.GIMIC,
                 });
 
                 return sc;
@@ -151,6 +149,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
                 if (spfmPtr != IntPtr.Zero)
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);

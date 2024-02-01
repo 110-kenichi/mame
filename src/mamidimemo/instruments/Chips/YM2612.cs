@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using System.Windows.Markup;
 using System.Xml.Linq;
 using FastColoredTextBoxNS;
 using FM_SoundConvertor;
@@ -32,6 +33,7 @@ using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Gimic;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Gui.FMEditor;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
@@ -115,6 +117,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private IntPtr spfmPtr;
 
+        private int gimicPtr = -1;
+
         private VsifClient vsifClient;
 
         private SoundEngineType f_SoundEngineType;
@@ -158,6 +162,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             lock (sndEnginePtrLock)
             {
+                if (gimicPtr != -1)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
+                }
                 if (vsifClient != null)
                 {
                     vsifClient.Dispose();
@@ -283,6 +292,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.GIMIC:
+                        gimicPtr = GimicManager.GetModuleIndex(
+                            new String[]{
+                            GimicManager.ChipName[(int)GimicManager.ChipType.CHIP_STIC_OPN2],
+                            GimicManager.ChipName[(int)GimicManager.ChipType.CHIP_STIC_OPN2C],
+                            GimicManager.ChipName[(int)GimicManager.ChipType.CHIP_STIC_OPN2L]
+                            });
+                        if (gimicPtr >= 0)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            f_MasterClock = GimicManager.SetClock(gimicPtr, f_MasterClock);
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -374,6 +402,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 if (f_MasterClock != value)
                 {
+                    if (CurrentSoundEngine == SoundEngineType.GIMIC)
+                        value = GimicManager.SetClock(gimicPtr, value);
                     f_MasterClock = value;
                     if (CurrentSoundEngine == SoundEngineType.SPFM)
                         setSoundEngine(f_SoundEngineType);
@@ -691,6 +721,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.VSIF_P6_FTDI:
                             vsifClient.WriteData((byte)(0x10 + (port1 - 1)), (byte)address, (byte)data, f_ftdiClkWidth);
                             break;
+                        case SoundEngineType.GIMIC:
+                            GimicManager.SetRegister2(gimicPtr, address, (byte)data);
+                            break;
                     }
                 }
                 DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 0, (byte)address);
@@ -756,6 +789,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.SPFM:
                             ScciManager.SetRegister(spfmPtr, adrs, data, false);
                             break;
+                        case SoundEngineType.GIMIC:
+                            GimicManager.SetRegister2(gimicPtr, adrs, (byte)data);
+                            break;
                     }
                 }
                 var a = address + (op * 4) + (slot % 3);
@@ -803,6 +839,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.SPFM:
                         ScciManager.SetRegister(spfmPtr, 0x2a, dacData, false);
+                        break;
+                    case SoundEngineType.GIMIC:
+                        GimicManager.SetRegister2(gimicPtr, 0x2a, dacData);
                         break;
                 }
             }
@@ -879,6 +918,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     ScciManager.ReleaseSoundChip(spfmPtr);
                     spfmPtr = IntPtr.Zero;
+                }
+                if (gimicPtr >= 0)
+                {
+                    GimicManager.ReleaseModule(gimicPtr);
+                    gimicPtr = -1;
                 }
                 if (vsifClient != null)
                     vsifClient.Dispose();
@@ -1472,6 +1516,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 QueryPerformanceFrequency(out freq);
                 QueryPerformanceCounter(out before);
                 dbefore = before;
+                int lastDacData = 0;
                 while (!stopEngineFlag)
                 {
                     if (disposedValue)
@@ -1503,8 +1548,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             }
                         }
 
-                        if (playDac || overflowed != 0)
+                        if (playDac || overflowed != 0 || lastDacData != 0)
                         {
+                            if (!playDac)
+                                dacData = 0;
                             //dacData += overflowed;
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
@@ -1525,12 +1572,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 Program.SoundUpdating();
                                 Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
                                 Ym2612_write(unitNumber, (uint)1, (byte)(dacData + 0x80));
+                                //Ym2612_write(unitNumber, (uint)1, ddd++);
                             }
                             finally
                             {
                                 Program.SoundUpdated();
                             }
                             //*/
+
+                            lastDacData = dacData;
                         }
                     }
 
@@ -3564,6 +3614,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.VSIF_P6_FTDI,
                     SoundEngineType.SPFM,
+                    SoundEngineType.GIMIC,
                 });
 
                 return sc;
@@ -3708,7 +3759,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (rate > TargetSampleRate)
                             {
                                 DialogResult r;
-                                if ((Control.ModifierKeys & Keys.Shift) == Keys.Alt)
+                                if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
                                     previousSampleRateAns = null;
 
                                 if (previousSampleRateAns.HasValue)

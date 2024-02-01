@@ -68,7 +68,7 @@ namespace zanac.MAmidiMEmo.Gimic
         }
 
         [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicGetModule", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int GetModuleIndexInternal(uint moduleIndex, uint chipType);
+        private static extern int GetModuleIndexInternal(uint moduleIndex, uint chipType, String chipName, int chipNameNum);
 
 
         /// <summary>
@@ -80,7 +80,19 @@ namespace zanac.MAmidiMEmo.Gimic
         /// <returns></returns>
         public int TryGetModuleIndex(uint moduleIndex, uint chipType)
         {
-            return GetModuleIndexInternal(moduleIndex, chipType);
+            return GetModuleIndexInternal(moduleIndex, chipType, null, 0);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moduleId"></param>
+        /// <param name="chipType"></param>
+        /// <param name="clock"></param>
+        /// <returns></returns>
+        public int TryGetModuleIndex(uint moduleIndex, String chipName)
+        {
+            return GetModuleIndexInternal(moduleIndex, 0, chipName, chipName.Length);
         }
 
         [DllImport(C86CTL_WRAPPER_DLL_NAME, SetLastError = true, EntryPoint = "GimicReset", CallingConvention = CallingConvention.Cdecl)]

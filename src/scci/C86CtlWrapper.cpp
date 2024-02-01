@@ -52,17 +52,30 @@ extern "C"
 		return pChipBase->getNumberOfChip();
 	}
 
-	__declspec(dllexport) DWORD __cdecl  GimicGetModule(DWORD moduleIndex, DWORD chipType)
+	__declspec(dllexport) DWORD __cdecl  GimicGetModule(DWORD moduleIndex, DWORD chipType, char* deviceName, int deviceNameNum)
 	{
 		c86ctl::IGimic2* pGimicModule;
 		if (S_OK == pChipBase->getChipInterface(moduleIndex, c86ctl::IID_IGimic2, (void**)&pGimicModule)) {
 			c86ctl::ChipType ct;
+			c86ctl::Devinfo info;
 
 			pGimicModule->getModuleType(&ct);
 
-			pGimicModule->Release();
 			if (ct == chipType)
-				return C86CTL_ERR_NONE;
+			{
+				if (chipType == 0 && deviceNameNum != 0)
+				{
+					pGimicModule->getModuleInfo(&info);
+					pGimicModule->Release();
+					if(strncmp(info.Devname, deviceName, deviceNameNum) == 0)
+						return C86CTL_ERR_NONE;
+				}
+				else
+				{
+					pGimicModule->Release();
+					return C86CTL_ERR_NONE;
+				}
+			}
 		}
 		return C86CTL_ERR_INVALID_PARAM;
 	}
