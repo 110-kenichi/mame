@@ -524,7 +524,11 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2612 != 0 && curHead.lngVersion >= 0x00000110)
             {
-                SongChipInformation += $"OPN2@{curHead.lngHzYM2612 / 1000000f}MHz ";
+                String chipName = "OPN2";
+                if ((curHead.lngHzYM2612 & 0x80000000) != 0)
+                    chipName = "YM3438";
+                curHead.lngHzYM2612 = (uint)(curHead.lngHzYM2612 & ~0x80000000);
+                SongChipInformation += $"{chipName}@{curHead.lngHzYM2612 / 1000000f}MHz ";
 
                 if (Settings.Default.OPN2_Enable)
                 {
@@ -819,6 +823,16 @@ namespace zanac.VGMPlayer
                 if (Settings.Default.MCD_Enable)
                 {
                     connectToMCD();
+                }
+            }
+            if (curHead.lngHzRF5C68 != 0 && curHead.lngVersion >= 0x00000151)
+            {
+                curHead.lngHzRF5C68 = (uint)(curHead.lngHzRF5C68 & ~0x80000000);
+                SongChipInformation += $"RF5C68@{curHead.lngHzRF5C68 / 1000000f}MHz ";
+
+                if (Settings.Default.MCD_Enable && connectToMCD())
+                {
+                    comPortMCD.Tag["ProxyRF5C68"] = true;
                 }
             }
             return curHead;
@@ -2815,6 +2829,7 @@ namespace zanac.VGMPlayer
                                                                 dacData.AddRange(vgmReader.ReadBytes((int)size));
                                                         }
                                                         break;
+                                                    case 1: //RF5C68  PCM data for use with associated commands
                                                     case 2: //RF5C164 PCM data for use with associated commands
                                                         {
                                                             uint saddr = 0;
@@ -3017,6 +3032,7 @@ namespace zanac.VGMPlayer
 
                                                             break;
                                                         }
+                                                    case 0xc0:  //RF5C68
                                                     case 0xc1:  //RF5C164
                                                         {
                                                             uint saddr = vgmReader.ReadUInt16();
@@ -3062,6 +3078,7 @@ namespace zanac.VGMPlayer
                                                                         comPortMCD?.FlushDeferredWriteDataAndWait();
                                                                         break;
                                                                 }
+                                                                FormMain.TopForm.SetStatusText("RF5C164: Transferred PCM.");
                                                             }
 
                                                             break;
@@ -3358,17 +3375,7 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case 0xB0:
-                                        {
-                                            var adrs = readByte();
-                                            if (adrs < 0)
-                                                break;
-                                            var dt = readByte();
-                                            if (dt < 0)
-                                                break;
-                                        }
-                                        break;
-
+                                    case 0xB0:  //RF5C68 MCD reg
                                     case 0xB1:  //RF5C164 MCD reg
                                         {
                                             var adrs = readByte();
@@ -3378,9 +3385,62 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
+                                            uint dclk = vgmHead.lngHzRF5C164;
+                                            if(command == 0xB0)
+                                                dclk = vgmHead.lngHzRF5C68;
+
                                             if (comPortMCD != null)
                                             {
-                                                DeferredWriteMCDReg(adrs, (byte)dt);
+                                                int ch = comPortMCD.RegTable[7] << 8;
+
+                                                switch (adrs)
+                                                {
+                                                    case 2:
+                                                        //LO
+                                                        comPortMCD.RegTable[adrs + ch] = dt;
+
+                                                        if (!ConvertChipClock || (double)comPortMCD.ChipClockHz["RF5C164"] == (double)dclk)
+                                                            goto default;
+                                                        {
+                                                            var hi = 0;
+                                                            if(comPortMCD.RegTable.ContainsKey(ch + 3))
+                                                                hi = comPortMCD.RegTable[ch + 3];
+                                                            var ret = converRF5C164Frequency(hi, dt, comPortMCD.ChipClockHz["RF5C164"], dclk);
+                                                            if (ret.noConverted)
+                                                                goto default;
+                                                            DeferredWriteMCDReg(0x2, (byte)ret.Lo);
+                                                            DeferredWriteMCDReg(0x3, (byte)ret.Hi);
+                                                        }
+                                                        break;
+                                                    case 3:
+                                                        //HI
+                                                        comPortMCD.RegTable[adrs + ch] = dt;
+
+                                                        if (!ConvertChipClock || (double)comPortMCD.ChipClockHz["RF5C164"] == (double)dclk)
+                                                            goto default;
+                                                        {
+                                                            var lo = 0;
+                                                            if (comPortMCD.RegTable.ContainsKey(ch + 2))
+                                                                lo = comPortMCD.RegTable[ch + 2];
+
+                                                            var ret = converRF5C164Frequency(dt, lo, comPortMCD.ChipClockHz["RF5C164"], dclk);
+                                                            if (ret.noConverted)
+                                                                goto default;
+                                                            DeferredWriteMCDReg(0x2, (byte)ret.Lo);
+                                                            DeferredWriteMCDReg(0x3, (byte)ret.Hi);
+                                                        }
+                                                        break;
+                                                    case 7:
+                                                        if((dt & 0x40) != 0)
+                                                            comPortMCD.RegTable[7] = dt & 0x7;
+                                                        else
+                                                            comPortMCD.RegTable[0x100+7] = dt & 0xf;
+                                                        DeferredWriteMCDReg(adrs, (byte)dt);
+                                                        break;
+                                                    default:
+                                                        DeferredWriteMCDReg(adrs, (byte)dt);
+                                                        break;
+                                                }
                                             }
                                             break;
                                         }
@@ -3580,20 +3640,7 @@ namespace zanac.VGMPlayer
                                             break;
                                         }
 
-                                    case 0xC1:
-                                        {
-                                            var pp = readByte();
-                                            if (pp < 0)
-                                                break;
-                                            var aa = readByte();
-                                            if (aa < 0)
-                                                break;
-                                            var dd = readByte();
-                                            if (dd < 0)
-                                                break;
-                                        }
-                                        break;
-
+                                    case 0xC1:  //RF5C68 MCD Mem
                                     case 0xC2:  //RF5C164 MCD Mem
                                         {
                                             var bb = readByte();
@@ -3609,7 +3656,22 @@ namespace zanac.VGMPlayer
                                             if (comPortMCD != null)
                                             {
                                                 DeferredWriteMCDMem((aa << 8) | bb, (byte)dd);
+
+                                                var bank = 0;
+                                                if (comPortMCD.RegTable.ContainsKey(0x100 + 7))
+                                                    bank = (comPortMCD.RegTable[0x100 + 7]) << 12;
+                                                FormMain.TopForm.SetStatusText("RF5C164: Transferring PCM Mem(0x" + (bank + (aa << 8) + bb).ToString("X") + ")");
+
+                                                switch (comPortMCD.SoundModuleType)
+                                                {
+                                                    case VsifSoundModuleType.Genesis_FTDI:
+                                                        comPortMCD?.FlushDeferredWriteDataAndWait();
+                                                        break;
+                                                }
                                             }
+                                            //HACK:
+                                            QueryPerformanceCounter(out before);
+                                            dbefore = before;
                                             break;
                                         }
 

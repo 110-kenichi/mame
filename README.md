@@ -275,6 +275,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 5.5.0.0 Supported G.I.M.I.C STIC OPLL, OPN2*, SPSG, SSG, AYPSG.
+        Supported playing RF5C68 vgm data on MEGA-CD via VGMPlayer.
 5.4.4.0 Supported WAV sample rate auto conversion.
 5.4.3.2 Fixed crashing while launching the x86 MAmi.
         (Experimentaly) Supported MSX turbo R mode for VSIF. Pressing "Z" key while booting the VGM_msx.rom/VGM_msx_Vkey.rom

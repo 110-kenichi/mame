@@ -443,6 +443,19 @@ namespace zanac.VGMPlayer
             return nn;
         }
 
+        protected (byte Hi, byte Lo, bool noConverted) converRF5C164Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
+        {
+            var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * dataClock / chipClock);
+
+            if (freq > 0xffff)
+                freq = 0xffff;
+
+            var ret = ((byte)(freq >> 8), (byte)(freq & 0xff), false);
+            if (ret.Item1 == freqValueHi && ret.Item2 == freqValueLo)
+                ret.Item3 = true;
+            return ret;
+        }
+
         protected (byte Hi, byte Lo, bool noConverted) convertAy8910Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
             var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * chipClock / dataClock);
