@@ -258,10 +258,9 @@ namespace zanac.VGMPlayer
                             continue;
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
-
-                        if (dd.Length != 0)
-                            DataWriter?.Write(dd);
                     }
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
@@ -290,10 +289,9 @@ namespace zanac.VGMPlayer
                             continue;
                         dd = deferredWriteAdrAndDataPrior.ToArray();
                         deferredWriteAdrAndDataPrior.Clear();
-
-                        if (dd.Length != 0)
-                            DataWriter?.Write(dd);
                     }
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
@@ -367,9 +365,8 @@ namespace zanac.VGMPlayer
                     deferredWriteAdrAndData.AddRange(data);
                     dd = deferredWriteAdrAndData.ToArray();
                     deferredWriteAdrAndData.Clear();
-
-                    DataWriter?.Write(dd);
                 }
+                DataWriter?.Write(dd);
             }
             catch (Exception ex)
             {
@@ -398,9 +395,8 @@ namespace zanac.VGMPlayer
                     deferredWriteAdrAndData.Add(new PortWriteData() { Type = type, Address = address, Data = data, Wait = wait });
                     dd = deferredWriteAdrAndData.ToArray();
                     deferredWriteAdrAndData.Clear();
-
-                    DataWriter?.Write(dd);
                 }
+                DataWriter?.Write(dd);
             }
             catch (Exception ex)
             {

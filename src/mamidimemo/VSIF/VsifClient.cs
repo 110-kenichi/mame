@@ -158,10 +158,9 @@ namespace zanac.MAmidiMEmo.VSIF
                             continue;
                         dd = deferredWriteAdrAndData.ToArray();
                         deferredWriteAdrAndData.Clear();
-
-                        if (dd.Length != 0)
-                            DataWriter?.Write(dd);
                     }
+                    if (dd.Length != 0)
+                        DataWriter?.Write(dd);
                 }
             }
             catch (Exception ex)
