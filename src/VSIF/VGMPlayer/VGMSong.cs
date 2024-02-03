@@ -4101,11 +4101,13 @@ namespace zanac.VGMPlayer
             comPortMCD.DeferredWriteData(1, 0, data, f_ftdiClkWidth);
             if (wait)
             {
+                /* Does not need ???
                 comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
                 comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
                 comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
                 comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
                 comPortMCD.DeferredWriteData(0xff, 0, 0, f_ftdiClkWidth);
+                */
             }
         }
 
