@@ -3676,12 +3676,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            public bool ShouldSerializeDutyEnvelopes()
+            public bool ShouldSerializeSoundTypeEnvelopes()
             {
                 return !string.IsNullOrEmpty(SoundTypeEnvelopes);
             }
 
-            public void ResetDutyEnvelopes()
+            public void ResetSoundTypeEnvelopes()
             {
                 SoundTypeEnvelopes = null;
             }
@@ -3759,15 +3759,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.SoundTypeEnvelopesReleasePoint < 0)
-                        //    f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
-
-                        if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
+                        //if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
                         {
                             if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType <= (uint)settings.SoundTypeEnvelopesReleasePoint)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
-                            else if (settings.SoundTypeEnvelopesReleasePoint < 0)
-                                f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
+                            //else if (settings.SoundTypeEnvelopesReleasePoint < 0)
+                                //f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }
                     if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)

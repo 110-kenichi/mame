@@ -44,5 +44,6 @@ namespace zanac.MAmidiMEmo.Instruments
         YM3806,     //30
         MultiPCM,     //31
         RF5C164,    //32
+        SAA1099,    //33
     }
 }

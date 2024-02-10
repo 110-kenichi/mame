@@ -272,6 +272,7 @@ namespace zanac.MAmidiMEmo.Gui
             imageList1.Images.Add("MIDITHRU", Resources.MIDITHRU);
             imageList1.Images.Add("MultiPCM", Resources.MultiPCM);
             imageList1.Images.Add("RF5C164", Resources.RF5C164);
+            imageList1.Images.Add("SAA1099", Resources.SAA1099);
 
             if (Program.IsVSTiMode())
             {
@@ -328,6 +329,8 @@ namespace zanac.MAmidiMEmo.Gui
 
             XGMWriter.RecodingStarted += XGMWriter_RecodingStarted;
             XGMWriter.RecodingStopped += XGMWriter_RecodingStopped;
+            XGM2Writer.RecodingStarted += XGM2Writer_RecodingStarted;
+            XGM2Writer.RecodingStopped += XGM2Writer_RecodingStopped;
 
             ImageUtility.AdjustControlImagesDpiScale(this);
         }
@@ -863,6 +866,11 @@ namespace zanac.MAmidiMEmo.Gui
             InstrumentManager.AddInstrument(InstrumentType.RF5C164);
         }
 
+        private void sA1099ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InstrumentManager.AddInstrument(InstrumentType.SAA1099);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1355,7 +1363,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton20_Click(object sender, EventArgs e)
         {
-            toolStripButton20.Checked = !toolStripButton20.Checked;
+            toolStripButtonWAV.Checked = !toolStripButtonWAV.Checked;
         }
 
         private void toolStripButton20_CheckedChanged(object sender, EventArgs e)
@@ -1369,7 +1377,7 @@ namespace zanac.MAmidiMEmo.Gui
             try
             {
                 Program.SoundUpdating();
-                if (toolStripButton20.Checked)
+                if (toolStripButtonWAV.Checked)
                 {
                     if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
                         Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1393,7 +1401,7 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void toolStripButton21_Click(object sender, EventArgs e)
         {
-            toolStripButton21.Checked = !toolStripButton21.Checked;
+            toolStripButtonVGM.Checked = !toolStripButtonVGM.Checked;
         }
 
         private void toolStripButton21_CheckedChanged(object sender, EventArgs e)
@@ -1405,7 +1413,7 @@ namespace zanac.MAmidiMEmo.Gui
             try
             {
                 Program.SoundUpdating();
-                if (toolStripButton21.Checked)
+                if (toolStripButtonVGM.Checked)
                 {
                     if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
                         Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1535,13 +1543,13 @@ namespace zanac.MAmidiMEmo.Gui
 
             if (toolStripButtonAutoWav.Checked)
             {
-                toolStripButton20.Checked = false;
-                toolStripButton20.Checked = true;
+                toolStripButtonWAV.Checked = false;
+                toolStripButtonWAV.Checked = true;
             }
             if (toolStripButtonAutoVGM.Checked)
             {
-                toolStripButton21.Checked = false;
-                toolStripButton21.Checked = true;
+                toolStripButtonVGM.Checked = false;
+                toolStripButtonVGM.Checked = true;
             }
 
             InstrumentManager.Panic();
@@ -1575,9 +1583,9 @@ namespace zanac.MAmidiMEmo.Gui
                 return;
 
             if (toolStripButtonAutoWav.Checked)
-                toolStripButton20.Checked = false;
+                toolStripButtonWAV.Checked = false;
             if (toolStripButtonAutoVGM.Checked)
-                toolStripButton21.Checked = false;
+                toolStripButtonVGM.Checked = false;
 
             midiPlayback.Stop();
             InstrumentManager.Stop();
@@ -1587,9 +1595,9 @@ namespace zanac.MAmidiMEmo.Gui
             this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
 
             if (toolStripButtonAutoWav.Checked)
-                toolStripButton20.Checked = false;
+                toolStripButtonWAV.Checked = false;
             if (toolStripButtonAutoVGM.Checked)
-                toolStripButton21.Checked = false;
+                toolStripButtonVGM.Checked = false;
         }
 
         private void toolStripButtonOpen_Click(object sender, EventArgs e)
@@ -2525,25 +2533,22 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 Program.SoundUpdating();
 
-                if (!toolStripButton22.Checked)
+                if (!toolStripButtonXGM.Checked)
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < Math.Max(opn2s.Length, dcsgs.Length); i++)
                     {
-                        if (i < opn2s.Length || i < dcsgs.Length)
-                        {
-                            var xgmw = new XGMWriter();
-                            xgmw.RecordStart(Settings.Default.OutputDir, (uint)i);   //XGM
-                        }
+                        var xgmw = new XGMWriter();
+                        xgmw.RecordStart(Settings.Default.OutputDir, (uint)i);
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < Math.Max(opn2s.Length, dcsgs.Length); i++)
                     {
-                        if (i < opn2s.Length && ((YM2612)opn2s[i]).XgmWriter != null)
-                            ((YM2612)opn2s[i]).XgmWriter.RecordStop(true);   //XGM
-                        else if (i < dcsgs.Length && ((SN76496)dcsgs[i]).XgmWriter != null)
-                            ((SN76496)dcsgs[i]).XgmWriter.RecordStop(true);   //XGM
+                        if (i < opn2s.Length)
+                            ((YM2612)opn2s[i]).XgmWriter?.RecordStop(true);
+                        else if (i < dcsgs.Length)
+                            ((SN76496)dcsgs[i]).XgmWriter?.RecordStop(true);
                     }
                 }
             }
@@ -2553,20 +2558,74 @@ namespace zanac.MAmidiMEmo.Gui
             }
         }
 
-        private int recordingCount;
+        private int xgmRecordingCount;
 
         private void XGMWriter_RecodingStarted(object sender, EventArgs e)
         {
-            recordingCount++;
-            if (recordingCount > 0)
-                toolStripButton22.Checked = true;
+            xgmRecordingCount++;
+            if (xgmRecordingCount > 0)
+                toolStripButtonXGM.Checked = true;
         }
 
         private void XGMWriter_RecodingStopped(object sender, EventArgs e)
         {
-            recordingCount--;
-            if (recordingCount == 0)
-                toolStripButton22.Checked = false;
+            xgmRecordingCount--;
+            if (xgmRecordingCount == 0)
+                toolStripButtonXGM.Checked = false;
+        }
+
+
+        private void toolStripButtonXGM2_Click_1(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Settings.Default.OutputDir))
+                Settings.Default.OutputDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            Directory.CreateDirectory(Settings.Default.OutputDir);
+
+            var opn2s = InstrumentManager.GetInstruments((int)(InstrumentType.YM2612 + 1)).ToArray();
+            var dcsgs = InstrumentManager.GetInstruments((int)(InstrumentType.SN76496 + 1)).ToArray();
+            try
+            {
+                Program.SoundUpdating();
+
+                if (!toolStripButtonXGM2.Checked)
+                {
+                    for (int i = 0; i < Math.Max(opn2s.Length, dcsgs.Length); i++)
+                    {
+                        var xgmw = new XGM2Writer();
+                        xgmw.RecordStart(Settings.Default.OutputDir, (uint)i);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < Math.Max(opn2s.Length, dcsgs.Length); i++)
+                    {
+                        if (i < opn2s.Length)
+                            ((YM2612)opn2s[i]).Xgm2Writer?.RecordStop(true);
+                        else if (i < dcsgs.Length)
+                            ((SN76496)dcsgs[i]).Xgm2Writer?.RecordStop(true);
+                    }
+                }
+            }
+            finally
+            {
+                Program.SoundUpdated();
+            }
+        }
+
+        private int xgm2RecordingCount;
+
+        private void XGM2Writer_RecodingStarted(object sender, EventArgs e)
+        {
+            xgm2RecordingCount++;
+            if (xgm2RecordingCount > 0)
+                toolStripButtonXGM2.Checked = true;
+        }
+
+        private void XGM2Writer_RecodingStopped(object sender, EventArgs e)
+        {
+            xgm2RecordingCount--;
+            if (xgm2RecordingCount == 0)
+                toolStripButtonXGM2.Checked = false;
         }
 
         private string copiedValue;
@@ -2769,10 +2828,11 @@ namespace zanac.MAmidiMEmo.Gui
 
         private void timer1_Tick_1(object sender, EventArgs e)
         {
-            if(!propertyGrid.IsDisposed)
+            if (!propertyGrid.IsDisposed)
                 propertyGrid.Refresh();
             timer1.Stop();
         }
+
 
     }
 }

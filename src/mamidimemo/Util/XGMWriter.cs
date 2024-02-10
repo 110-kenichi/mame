@@ -37,7 +37,7 @@ namespace zanac.MAmidiMEmo.Util
 
         private string f_OutputFileName;
 
-        private int recordDataCommandType;
+        //private int recordDataCommandType;
 
         private long lastWriteTicks;
 
@@ -97,12 +97,14 @@ namespace zanac.MAmidiMEmo.Util
                 if (unitNumber < opn2s.Length)
                 {
                     targetYM2612 = (YM2612)opn2s[unitNumber];
+                    targetYM2612.XgmWriter?.RecordAbort();
                     targetYM2612.XgmWriter = this;
                     f_RecordingEnabled = true;
                 }
                 if (unitNumber < dcsgs.Length)
                 {
                     targetSN76496 = (SN76496)dcsgs[unitNumber];
+                    targetSN76496.XgmWriter?.RecordAbort();
                     targetSN76496.XgmWriter = this;
                     f_RecordingEnabled = true;
                 }
@@ -122,11 +124,12 @@ namespace zanac.MAmidiMEmo.Util
                 startXGM = false;
                 sb = new StringBuilder();
 #endif
+                /*
                 recordDataCommandType = -1;
                 targetYM2612?.AllSoundOff();
                 targetSN76496?.AllSoundOff();
                 recordDataCommandType = 0;
-
+                */
                 RecodingStarted?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -151,7 +154,8 @@ namespace zanac.MAmidiMEmo.Util
                 if (!f_RecordingEnabled)
                     return;
 
-                writeData.Command = recordDataCommandType;
+                //if (recordDataCommandType < 0)
+                //    writeData.Command = recordDataCommandType;
 
 #if DEBUG_PRINT
                 if (writeData.Command == 0)
@@ -245,8 +249,10 @@ namespace zanac.MAmidiMEmo.Util
 
                 if (endMark)
                 {
-                    RecordData(new PortWriteData()
-                    { Type = (byte)0x7f, Address = 0, Data = 0, Command = recordDataCommandType });
+                    var pwd = new PortWriteData() { Type = (byte)0x7f, Address = 0, Data = 0 };
+                    //if (recordDataCommandType < 0)
+                    //    pwd.Command = recordDataCommandType;
+                    RecordData(pwd);
                 }
 
                 string fileName = System.IO.Path.Combine(f_OutputDir, f_OutputFileName);
@@ -255,18 +261,23 @@ namespace zanac.MAmidiMEmo.Util
                 this.f_RecordingEnabled = false;
                 f_RecordingData = null;
 
+                if (targetYM2612 != null)
+                    targetYM2612.XgmWriter = null;
+                if (targetSN76496 != null)
+                    targetSN76496.XgmWriter = null;
+
                 targetYM2612 = null;
                 targetSN76496 = null;
 
                 Thread t = new Thread(new ThreadStart(() =>
                 {
-                    List<byte> wd = new List<byte>();
+                    List<byte> fileData = new List<byte>();
 
                     //https://github.com/Stephane-D/SGDK/blob/master/bin/xgm.txt
                     //File format (multi bytes value are in little endian format)
                     //Address            Size    Description
                     //$0000                 4    XGM file ident, should be "XGM "
-                    wd.AddRange(Encoding.ASCII.GetBytes("XGM "));
+                    fileData.AddRange(Encoding.ASCII.GetBytes("XGM "));
                     //$0004               252    Sample id table.
                     //                           This table contain the address and the size for all sample (maximum = 63 samples)
                     //                           Each entry of the table consist of 4 bytes (2 bytes for address and 2 bytes for size):
@@ -303,7 +314,13 @@ namespace zanac.MAmidiMEmo.Util
                                 }
                                 else
                                 {
-                                    pcmDataTable.Add(pcmId, writeData.Tag["PcmData"]);
+                                    byte[] dacData = (byte[])((byte[])writeData.Tag["PcmData"]).Clone();
+                                    for (int pi = 0; pi < dacData.Length; pi++)
+                                    {
+                                        int val = dacData[pi] - 0x80;
+                                        dacData[pi] = (byte)val;
+                                    }
+                                    pcmDataTable.Add(pcmId, dacData);
                                 }
                                 pcmIndexTable.Add(writeData.Tag["PcmData"], pcmId++);
                             }
@@ -320,10 +337,10 @@ namespace zanac.MAmidiMEmo.Util
                         {
                             byte[] pcmdata = (byte[])pcmDataTable[pid];
 
-                            ushort size = (ushort)((pcmdata.Length / 256) + 1);
+                            ushort size = (ushort)(((pcmdata.Length + 255) / 256));
                             ushort adr = pcmAddress;
-                            wd.AddRange(BitConverter.GetBytes(adr));
-                            wd.AddRange(BitConverter.GetBytes(size));
+                            fileData.AddRange(BitConverter.GetBytes(adr));
+                            fileData.AddRange(BitConverter.GetBytes(size));
                             pcmAddress += size;
 
                             for (int pi = 0; pi < size * 256; pi++)
@@ -338,25 +355,23 @@ namespace zanac.MAmidiMEmo.Util
                         {
                             ushort adr = 0xffff;
                             ushort size = 0x1;
-                            wd.AddRange(BitConverter.GetBytes(adr));
-                            wd.AddRange(BitConverter.GetBytes(size));
+                            fileData.AddRange(BitConverter.GetBytes(adr));
+                            fileData.AddRange(BitConverter.GetBytes(size));
                         }
                     }
                     //$0100                 2    Sample data bloc size / 256, ex: $0010 means 256*16 = 4096 bytes
                     //                           We will reference the value of this field as SLEN.
                     ushort sampleDataBlockSize = pcmAddress;
-                    wd.AddRange(BitConverter.GetBytes(sampleDataBlockSize));
+                    fileData.AddRange(BitConverter.GetBytes(sampleDataBlockSize));
                     //$0102                 1    Version information (0x01 currently)                 
-                    wd.Add(0x01);
+                    fileData.Add(0x01);
                     //$0103                 1    bit #0: NTSC / PAL information: 0=NTSC  1=PAL
-                    wd.Add(0x00);
+                    fileData.Add(0x00);
                     //$0104              SLEN    Sample data bloc, contains all sample data (8 bits signed format)
                     //                           The size of this bloc is variable and is determined by the field $100.
                     //                           If field $100 contains $0000 the bloc is empty and the field is ignored.
                     //                           As explained in the 'Sample id table' field, sample size is aligned on 256 bytes
-                    wd.AddRange(pcmDataBlock.ToArray());
-
-                    int moffset = wd.Count;
+                    fileData.AddRange(pcmDataBlock.ToArray());
 
                     List<byte> mdata = new List<byte>();
 
@@ -379,6 +394,7 @@ namespace zanac.MAmidiMEmo.Util
                             PortWriteData writeData = rd[i];
                             switch (writeData.Command)
                             {
+                                case -2:
                                 case -1:
                                     //initial commands
                                     break;
@@ -528,14 +544,14 @@ namespace zanac.MAmidiMEmo.Util
                                 {
                                     if (pcmIndexTable.ContainsKey(writeData.Tag["PcmData"]))
                                     {
-                                        mdata.Add((byte)(0x50 + writeData.Address));
+                                        mdata.Add((byte)(0x50 + (writeData.Address & 0x3)));
                                         mdata.Add((byte)(pcmIndexTable[writeData.Tag["PcmData"]] + 1));
                                     }
-                                    else
-                                    {
-                                        mdata.Add((byte)(0x50 + writeData.Address));
-                                        mdata.Add((byte)0);
-                                    }
+                                }
+                                else
+                                {
+                                    mdata.Add((byte)(0x50 + (writeData.Address & 0x3)));
+                                    mdata.Add((byte)0);
                                 }
                                 break;
                             case 0x7d: //LOOP START
@@ -567,26 +583,36 @@ namespace zanac.MAmidiMEmo.Util
                     //                           We will reference the value of this field as MLEN.
                     //                           This fields may be used later to quickly browse multi track XGM file.
                     uint mlen = (uint)(mdata.Count);
-                    wd.AddRange(BitConverter.GetBytes(mlen));
+                    fileData.AddRange(BitConverter.GetBytes(mlen));
 
                     //$0108 + SLEN               MLEN Music data bloc. It contains the XGM music data(see the XGM command description below).
-                    wd.AddRange(mdata.ToArray());
+                    fileData.AddRange(mdata.ToArray());
 
                     //Output
-                    FileStream xgm = new FileStream(fileName, FileMode.CreateNew);
-                    xgm.Write(wd.ToArray(), 0, wd.Count);
+                    using (FileStream xgm = new FileStream(fileName, FileMode.CreateNew))
+                        xgm.Write(fileData.ToArray(), 0, fileData.Count);
 
                 }));
                 t.Start();
-
-                if (targetYM2612 != null)
-                    targetYM2612.XgmWriter = null;
-                if (targetSN76496 != null)
-                    targetSN76496.XgmWriter = null;
 
                 RecodingStopped?.Invoke(this, EventArgs.Empty);
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void RecordAbort()
+        {
+            if (targetYM2612 != null)
+                targetYM2612.XgmWriter = null;
+            if (targetSN76496 != null)
+                targetSN76496.XgmWriter = null;
+
+            targetYM2612 = null;
+            targetSN76496 = null;
+
+            RecodingStopped?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

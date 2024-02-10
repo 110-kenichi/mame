@@ -44,6 +44,7 @@
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
 #include "..\devices\sound\ymfm\src\ymfm_opq.h"
+#include "..\devices\sound\saa1099.h"
 
 #define DllExport extern "C" __declspec (dllexport)
 
@@ -2182,5 +2183,28 @@ extern "C"
 			rf5c68_device_devices[unitNumber] = multipcm;
 		}
 		rf5c68_device_devices[unitNumber]->rf5c68_w(address, data);
+	}
+
+	saa1099_device* saa1099_device_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+	DllExport void saa1099_device_write(unsigned int unitNumber, unsigned int address, unsigned char data)
+	{
+		if (saa1099_device_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			saa1099_device* multipcm = dynamic_cast<saa1099_device*>(rm->device((std::string("saa1099_") + num).c_str()));
+			if (multipcm == nullptr)
+				return;
+
+			saa1099_device_devices[unitNumber] = multipcm;
+		}
+		saa1099_device_devices[unitNumber]->write(address, data);
 	}
 }

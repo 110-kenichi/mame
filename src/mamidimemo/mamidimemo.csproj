@@ -649,6 +649,7 @@
     </Compile>
     <Compile Include="Gui\VstUITypeEditor.cs" />
     <Compile Include="Gui\LpcUITypeEditor.cs" />
+    <Compile Include="Instruments\Chips\SAA1099.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
     <Compile Include="Instruments\Chips\MIDITHRU.cs" />
     <Compile Include="Instruments\Chips\RF5C164.cs" />
@@ -691,6 +692,7 @@
     <Compile Include="Util\FM-SoundConvertor\FF.cs" />
     <Compile Include="Util\PropertyGridUtility.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
+    <Compile Include="Util\XGM2Writer.cs" />
     <Compile Include="Util\XGMWriter.cs" />
     <Compile Include="VSIF\PortWriteData.cs" />
     <Compile Include="VSIF\PortWriterC64.cs" />
@@ -1461,6 +1463,7 @@
     <Content Include="Resources\MIDITHRU.png" />
     <None Include="Resources\MultiPCM.png" />
     <None Include="Resources\RF5C164.png" />
+    <None Include="Resources\SAA1099.png" />
     <Content Include="Resources\SP0256.png" />
     <None Include="Resources\TMS5220.png" />
     <None Include="Resources\YM2608.png" />

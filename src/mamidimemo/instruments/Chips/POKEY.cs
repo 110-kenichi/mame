@@ -1231,12 +1231,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            public bool ShouldSerializeDutyEnvelopes()
+            public bool ShouldSerializeToneEnvelopes()
             {
                 return !string.IsNullOrEmpty(ToneEnvelopes);
             }
 
-            public void ResetDutyEnvelopes()
+            public void ResetToneEnvelopes()
             {
                 ToneEnvelopes = null;
             }
@@ -1314,15 +1314,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.ToneEnvelopesReleasePoint < 0)
-                        //    f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
-
-                        if (f_toneCounter < settings.ToneEnvelopesNums.Length)
+                        //if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                         {
                             if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter <= (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
-                            else if (settings.ToneEnvelopesReleasePoint < 0)
-                                f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+                            //else if (settings.ToneEnvelopesReleasePoint < 0)
+                                //f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
                         }
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)

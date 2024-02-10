@@ -3573,15 +3573,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.ToneEnvelopesReleasePoint < 0)
-                        //    f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
-
-                        if (f_toneCounter < settings.ToneEnvelopesNums.Length)
+                        //if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                         {
                             if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter <= (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
-                            else if (settings.ToneEnvelopesReleasePoint < 0)
-                                f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+                            //else if (settings.ToneEnvelopesReleasePoint < 0)
+                                //f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
                         }
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)
@@ -3610,9 +3607,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.DrumCh7FNumEnvelopesReleasePoint < 0)
-                        //    f_drumCh7FNumCounter = (ushort)settings.DrumCh7FNumEnvelopesNums.Length;
-
                         if (f_drumCh7FNumCounter < settings.DrumCh7FNumEnvelopesNums.Length)
                         {
                             if (settings.DrumCh7FNumEnvelopesReleasePoint >= 0 && f_drumCh7FNumCounter <= (ushort)settings.DrumCh7FNumEnvelopesReleasePoint)
@@ -3646,9 +3640,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.DrumCh8FNumEnvelopesReleasePoint < 0)
-                        //    f_drumCh8FNumCounter = (ushort)settings.DrumCh8FNumEnvelopesNums.Length;
-
                         if (f_drumCh8FNumCounter < settings.DrumCh8FNumEnvelopesNums.Length)
                         {
                             if (settings.DrumCh8FNumEnvelopesReleasePoint >= 0 && f_drumCh8FNumCounter <= (ushort)settings.DrumCh8FNumEnvelopesReleasePoint)
@@ -3682,9 +3673,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (settings.DrumCh9FNumEnvelopesReleasePoint < 0)
-                        //    f_drumCh9FNumCounter = (ushort)settings.DrumCh9FNumEnvelopesNums.Length;
-
                         if (f_drumCh9FNumCounter < settings.DrumCh9FNumEnvelopesNums.Length)
                         {
                             if (settings.DrumCh9FNumEnvelopesReleasePoint >= 0 && f_drumCh9FNumCounter <= (ushort)settings.DrumCh9FNumEnvelopesReleasePoint)

@@ -178,6 +178,7 @@
             this.extendMOS6581ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendNESAPUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendGBAPUToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sA1099ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendPOKEYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addSN76496ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extendAY38910ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -193,9 +194,10 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton20 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton21 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton22 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonWAV = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonVGM = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonXGM = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonXGM2 = new System.Windows.Forms.ToolStripButton();
             this.openFileDialogMidi = new System.Windows.Forms.OpenFileDialog();
             this.fileSystemWatcherMidi = new System.IO.FileSystemWatcher();
             this.timerReload = new System.Windows.Forms.Timer(this.components);
@@ -256,6 +258,7 @@
             // 
             this.splitContainer2.Panel1.Controls.Add(this.metroLabelDrop);
             this.splitContainer2.Panel1.Controls.Add(this.listViewIntruments);
+            resources.ApplyResources(this.splitContainer2.Panel1, "splitContainer2.Panel1");
             // 
             // splitContainer2.Panel2
             // 
@@ -264,12 +267,12 @@
             // 
             // metroLabelDrop
             // 
+            this.metroLabelDrop.AllowDrop = true;
+            this.metroLabelDrop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             resources.ApplyResources(this.metroLabelDrop, "metroLabelDrop");
             this.metroLabelDrop.Name = "metroLabelDrop";
-            this.metroLabelDrop.AllowDrop = true;
             this.metroLabelDrop.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragDrop);
             this.metroLabelDrop.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewIntruments_DragEnter);
-            this.metroLabelDrop.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             // 
             // listViewIntruments
             // 
@@ -428,7 +431,7 @@
             this.tabControlBottom.DataBindings.Add(new System.Windows.Forms.Binding("TabIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "MWinTab", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.tabControlBottom, "tabControlBottom");
             this.tabControlBottom.Name = "tabControlBottom";
-            this.tabControlBottom.SelectedIndex = 2;
+            this.tabControlBottom.SelectedIndex = 0;
             this.tabControlBottom.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControlBottom.TabIndex = global::zanac.MAmidiMEmo.Properties.Settings.Default.MWinTab;
             // 
@@ -1458,9 +1461,10 @@
             this.toolStripButton1,
             this.toolStripButton2,
             this.toolStripSeparator1,
-            this.toolStripButton20,
-            this.toolStripButton21,
-            this.toolStripButton22});
+            this.toolStripButtonWAV,
+            this.toolStripButtonVGM,
+            this.toolStripButtonXGM,
+            this.toolStripButtonXGM2});
             resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
@@ -1667,6 +1671,7 @@
             this.extendMOS6581ToolStripMenuItem,
             this.extendNESAPUToolStripMenuItem,
             this.extendGBAPUToolStripMenuItem,
+            this.sA1099ToolStripMenuItem,
             this.extendPOKEYToolStripMenuItem,
             this.addSN76496ToolStripMenuItem,
             this.extendAY38910ToolStripMenuItem,
@@ -1699,6 +1704,12 @@
             this.extendGBAPUToolStripMenuItem.Name = "extendGBAPUToolStripMenuItem";
             resources.ApplyResources(this.extendGBAPUToolStripMenuItem, "extendGBAPUToolStripMenuItem");
             this.extendGBAPUToolStripMenuItem.Click += new System.EventHandler(this.extendGBAPUToolStripMenuItem_Click);
+            // 
+            // sA1099ToolStripMenuItem
+            // 
+            this.sA1099ToolStripMenuItem.Name = "sA1099ToolStripMenuItem";
+            resources.ApplyResources(this.sA1099ToolStripMenuItem, "sA1099ToolStripMenuItem");
+            this.sA1099ToolStripMenuItem.Click += new System.EventHandler(this.sA1099ToolStripMenuItem_Click);
             // 
             // extendPOKEYToolStripMenuItem
             // 
@@ -1797,25 +1808,31 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
-            // toolStripButton20
+            // toolStripButtonWAV
             // 
-            resources.ApplyResources(this.toolStripButton20, "toolStripButton20");
-            this.toolStripButton20.Name = "toolStripButton20";
-            this.toolStripButton20.CheckedChanged += new System.EventHandler(this.toolStripButton20_CheckedChanged);
-            this.toolStripButton20.Click += new System.EventHandler(this.toolStripButton20_Click);
+            resources.ApplyResources(this.toolStripButtonWAV, "toolStripButtonWAV");
+            this.toolStripButtonWAV.Name = "toolStripButtonWAV";
+            this.toolStripButtonWAV.CheckedChanged += new System.EventHandler(this.toolStripButton20_CheckedChanged);
+            this.toolStripButtonWAV.Click += new System.EventHandler(this.toolStripButton20_Click);
             // 
-            // toolStripButton21
+            // toolStripButtonVGM
             // 
-            resources.ApplyResources(this.toolStripButton21, "toolStripButton21");
-            this.toolStripButton21.Name = "toolStripButton21";
-            this.toolStripButton21.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
-            this.toolStripButton21.Click += new System.EventHandler(this.toolStripButton21_Click);
+            resources.ApplyResources(this.toolStripButtonVGM, "toolStripButtonVGM");
+            this.toolStripButtonVGM.Name = "toolStripButtonVGM";
+            this.toolStripButtonVGM.CheckedChanged += new System.EventHandler(this.toolStripButton21_CheckedChanged);
+            this.toolStripButtonVGM.Click += new System.EventHandler(this.toolStripButton21_Click);
             // 
-            // toolStripButton22
+            // toolStripButtonXGM
             // 
-            resources.ApplyResources(this.toolStripButton22, "toolStripButton22");
-            this.toolStripButton22.Name = "toolStripButton22";
-            this.toolStripButton22.Click += new System.EventHandler(this.toolStripButton22_Click_1);
+            resources.ApplyResources(this.toolStripButtonXGM, "toolStripButtonXGM");
+            this.toolStripButtonXGM.Name = "toolStripButtonXGM";
+            this.toolStripButtonXGM.Click += new System.EventHandler(this.toolStripButton22_Click_1);
+            // 
+            // toolStripButtonXGM2
+            // 
+            resources.ApplyResources(this.toolStripButtonXGM2, "toolStripButtonXGM2");
+            this.toolStripButtonXGM2.Name = "toolStripButtonXGM2";
+            this.toolStripButtonXGM2.Click += new System.EventHandler(this.toolStripButtonXGM2_Click_1);
             // 
             // openFileDialogMidi
             // 
@@ -1986,8 +2003,8 @@
         private System.Windows.Forms.ToolStripMenuItem mT32ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extendCM32PToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolStripButton20;
-        private System.Windows.Forms.ToolStripButton toolStripButton21;
+        private System.Windows.Forms.ToolStripButton toolStripButtonWAV;
+        private System.Windows.Forms.ToolStripButton toolStripButtonVGM;
         private System.Windows.Forms.ToolStripMenuItem cloneSelectedChipToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItemSep;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
@@ -2057,13 +2074,15 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonNext;
         private System.Windows.Forms.ToolStripMenuItem yM3806OPQToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mIDIDelayCheckerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripButton22;
+        private System.Windows.Forms.ToolStripButton toolStripButtonXGM;
         private System.Windows.Forms.ToolStripMenuItem copySerializeDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteSerializeDataToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem mIDITHRUToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multiPCMToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rF5C164ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripButtonXGM2;
+        private System.Windows.Forms.ToolStripMenuItem sA1099ToolStripMenuItem;
     }
 }
 

@@ -573,6 +573,20 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         });
                     }
                 }
+                //For XGM2 Vol/Env
+                if (Xgm2Writer != null)
+                {
+                    if ((data & 0x90) == 0x90)
+                    {
+                        Xgm2Writer.RecordData(new PortWriteData()
+                        {
+                            Command = 1,
+                            Type = 5,
+                            Address = (byte)((data >> 5) & 0x3),
+                            Data = (byte)(data & 0xf)
+                        });
+                    }
+                }
             }));
 
             /*
@@ -696,11 +710,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 XgmWriter?.SetCurrentProcessingMidiEvent(midiEvent);
+                Xgm2Writer?.SetCurrentProcessingMidiEvent(midiEvent);
                 base.OnMidiEvent(midiEvent);
             }
             finally
             {
                 XgmWriter?.SetCurrentProcessingMidiEvent(null);
+                Xgm2Writer?.SetCurrentProcessingMidiEvent(null);
             }
         }
 
@@ -1046,6 +1062,18 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var n = (ushort)freq;
                 parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | Slot << 5 | n & 0xf));
                 parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)((n >> 4) & 0x3f));
+
+                //For XGM2
+                if (parentModule.Xgm2Writer != null)
+                {
+                    parentModule.Xgm2Writer.RecordData(new PortWriteData()
+                    {
+                        Command = 1,
+                        Type = 4,
+                        Address = (byte)((Slot << 2) | (n >> 8) & 0x3),
+                        Data = (byte)(n & 0xff)
+                    });
+                }
             }
 
 
@@ -1064,7 +1092,30 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     var n = (ushort)freq;
                     parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | 2 << 5 | n & 0xf));
                     parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)((n >> 4) & 0x3f));
+
+                    if (parentModule.Xgm2Writer != null)
+                    {
+                        parentModule.Xgm2Writer.RecordData(new PortWriteData()
+                        {
+                            Command = 1,
+                            Type = 4,
+                            Address = (byte)((2 << 2) | (n >> 8) & 0x3),
+                            Data = (byte)(n & 0xff)
+                        });
+                    }
+
                     parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | 3));
+
+                    if (parentModule.Xgm2Writer != null)
+                    {
+                        parentModule.Xgm2Writer.RecordData(new PortWriteData()
+                        {
+                            Command = 1,
+                            Type = 4,
+                            Address = (byte)((3 << 2)),
+                            Data = (byte)((timbre.FB << 2) | 3)
+                        });
+                    }
                 }
                 else
                 {
@@ -1092,6 +1143,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     int v = noteNum % 4;
 
                     parentModule.Sn76496WriteData(parentModule.UnitNumber, (byte)(0x80 | (Slot + 3) << 5 | timbre.FB << 2 | v));
+
+                    if (parentModule.Xgm2Writer != null)
+                    {
+                        parentModule.Xgm2Writer.RecordData(new PortWriteData()
+                        {
+                            Command = 1,
+                            Type = 4,
+                            Address = (byte)((3 << 2)),
+                            Data = (byte)((timbre.FB << 2) | v)
+                        });
+                    }
                 }
             }
 
@@ -1162,7 +1224,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             [DataMember]
             [Category("Sound")]
-            [Description("USe ch3 frequency as NOISE frequency")]
+            [Description("Use ch3 frequency as NOISE frequency")]
             [DefaultValue(false)]
             public bool Use3chNoiseFreq
             {
@@ -1262,8 +1324,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                f_XgmWriter?.RecordStop(true);
+                //f_XgmWriter?.RecordAbort();
                 f_XgmWriter = value;
+            }
+        }
+
+        private XGM2Writer f_Xgm2Writer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public XGM2Writer Xgm2Writer
+        {
+            get
+            {
+                return f_Xgm2Writer;
+            }
+            set
+            {
+                //f_Xgm2Writer?.RecordAbort();
+                f_Xgm2Writer = value;
             }
         }
 

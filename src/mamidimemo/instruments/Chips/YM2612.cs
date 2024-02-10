@@ -798,8 +798,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 0, (byte)a);
                 DeferredWriteData(Ym2612_write, unitNumber, yreg + 1, data);
 
-                XgmWriter?.RecordData(new PortWriteData()
-                { Type = (byte)yreg, Address = (byte)a, Data = data });
+                var pwdata = new PortWriteData() { Type = (byte)yreg, Address = (byte)a, Data = data };
+                XgmWriter?.RecordData(pwdata);
+                Xgm2Writer?.RecordData(pwdata);
             }));
             //try
             //{
@@ -1144,11 +1145,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 XgmWriter?.SetCurrentProcessingMidiEvent(midiEvent);
+                Xgm2Writer?.SetCurrentProcessingMidiEvent(midiEvent);
                 base.OnMidiEvent(midiEvent);
             }
             finally
             {
                 XgmWriter?.SetCurrentProcessingMidiEvent(null);
+                Xgm2Writer?.SetCurrentProcessingMidiEvent(null);
             }
         }
 
@@ -1213,7 +1216,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                 }
             }
-
+            if (NrpnMsb[dataMsb.Channel] == 2 && NrpnLsb[dataMsb.Channel] == 6)
+            {
+                switch (dataMsb.ControlValue)
+                {
+                    case 0: //Start Song Record
+                        var xgm2 = new XGM2Writer();
+                        xgm2.RecordStart(Settings.Default.OutputDir, this.UnitNumber);   //XGM2
+                        break;
+                    case 1: //Set Loop Start Point
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7d, Address = 0, Data = 0 });
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7d, Address = 0, Data = 0, Command = 1 });
+                        break;
+                    case 2: //Set Loop End Point & Song End
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7e, Address = 0, Data = 0 });
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7e, Address = 0, Data = 0, Command = 1 });
+                        break;
+                    case 3: //End Song Record
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7f, Address = 0, Data = 0 });
+                        Xgm2Writer?.RecordData(new PortWriteData() { Type = (byte)0x7f, Address = 0, Data = 0, Command = 1 });
+                        Xgm2Writer?.RecordStop(false);
+                        break;
+                }
+            }
             soundManager.ProcessNrpnData(dataMsb, dataLsb);
         }
 
@@ -1466,6 +1491,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     data.Tag["PcmData"] = pcmTimbre.PcmData;
                     data.Tag["PcmGain"] = pcmTimbre.PcmGain;
                     parentModule.XgmWriter?.RecordData(data);
+                    parentModule.Xgm2Writer?.RecordData(data);
                 }
             }
 
@@ -1479,8 +1505,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     currentSampleData[slot] = null;
 
-                    parentModule.XgmWriter?.RecordData(new PortWriteData()
-                    { Type = (byte)6, Address = (byte)slot, Data = 0 });
+                    var data = new PortWriteData() { Type = (byte)6, Address = (byte)slot, Data = 0 };
+                    parentModule.XgmWriter?.RecordData(data);
+                    parentModule.Xgm2Writer?.RecordData(data);
                 }
             }
 
@@ -3637,8 +3664,29 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                f_XgmWriter?.RecordStop(true);
+                //f_XgmWriter?.RecordAbort();
                 f_XgmWriter = value;
+            }
+        }
+
+        private XGM2Writer f_Xgm2Writer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public XGM2Writer Xgm2Writer
+        {
+            get
+            {
+                return f_Xgm2Writer;
+            }
+            set
+            {
+                //f_Xgm2Writer?.RecordAbort();
+                f_Xgm2Writer = value;
             }
         }
 
