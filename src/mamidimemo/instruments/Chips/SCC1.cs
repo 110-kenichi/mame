@@ -1829,12 +1829,12 @@ typeof(UITypeEditor)), Localizable(false)]
                     }
                     else
                     {
-                        //if (f_morphCounter < settings.MorphEnvelopesNums.Length)
+                        if (f_morphCounter < settings.MorphEnvelopesNums.Length)
                         {
                             if (settings.MorphEnvelopesReleasePoint >= 0 && f_morphCounter <= (uint)settings.MorphEnvelopesReleasePoint)
                                 f_morphCounter = (uint)settings.MorphEnvelopesReleasePoint;
-                            //else if (settings.MorphEnvelopesReleasePoint < 0)
-                                //f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
+                            else if (settings.MorphEnvelopesReleasePoint < 0 && settings.KeyOffStop)
+                                f_morphCounter = (uint)settings.MorphEnvelopesNums.Length;
                         }
                     }
                     if (f_morphCounter < settings.MorphEnvelopesNums.Length)

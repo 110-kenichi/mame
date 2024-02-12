@@ -41,6 +41,26 @@ namespace zanac.MAmidiMEmo.Instruments.Envelopes
             }
         }
 
+        private bool f_KeyOffStop = true;
+
+        [DataMember]
+        [Description("Immediate stop Fx if Release Point is not set when Key off like FamiTracker. True is may useful for FM synth chip.")]
+        [DefaultValue(true)]
+        public virtual bool KeyOffStop
+        {
+            get
+            {
+                return f_KeyOffStop;
+            }
+            set
+            {
+                if (f_KeyOffStop != value)
+                {
+                    f_KeyOffStop = value;
+                }
+            }
+        }
+
         private double f_Interval = 50;
 
         [DataMember]

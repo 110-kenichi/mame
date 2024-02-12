@@ -3759,12 +3759,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
+                        if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)
                         {
                             if (settings.SoundTypeEnvelopesReleasePoint >= 0 && f_SoundType <= (uint)settings.SoundTypeEnvelopesReleasePoint)
                                 f_SoundType = (uint)settings.SoundTypeEnvelopesReleasePoint;
-                            //else if (settings.SoundTypeEnvelopesReleasePoint < 0)
-                                //f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
+                            else if (settings.SoundTypeEnvelopesReleasePoint < 0 && settings.KeyOffStop)
+                                f_SoundType = (uint)settings.SoundTypeEnvelopesNums.Length;
                         }
                     }
                     if (f_SoundType < settings.SoundTypeEnvelopesNums.Length)

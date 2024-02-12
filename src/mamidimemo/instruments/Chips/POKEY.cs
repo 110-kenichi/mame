@@ -1314,12 +1314,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (f_toneCounter < settings.ToneEnvelopesNums.Length)
+                        if (f_toneCounter < settings.ToneEnvelopesNums.Length)
                         {
                             if (settings.ToneEnvelopesReleasePoint >= 0 && f_toneCounter <= (uint)settings.ToneEnvelopesReleasePoint)
                                 f_toneCounter = (uint)settings.ToneEnvelopesReleasePoint;
-                            //else if (settings.ToneEnvelopesReleasePoint < 0)
-                                //f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
+                            else if (settings.ToneEnvelopesReleasePoint < 0 && settings.KeyOffStop)
+                                f_toneCounter = (uint)settings.ToneEnvelopesNums.Length;
                         }
                     }
                     if (f_toneCounter < settings.ToneEnvelopesNums.Length)

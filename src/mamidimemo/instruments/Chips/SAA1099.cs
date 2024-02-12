@@ -1715,12 +1715,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (f_EnvelopeClocks >= settings.EnvelopeClocksNums.Length)
+                        if (f_EnvelopeClocks >= settings.EnvelopeClocksNums.Length)
                         {
                             if (settings.EnvelopeClocksReleasePoint >= 0 && f_EnvelopeClocks <= (uint)settings.EnvelopeClocksReleasePoint)
                                 f_EnvelopeClocks = (uint)settings.EnvelopeClocksReleasePoint;
-                            //else if (settings.EnvelopeClocksReleasePoint < 0)
-                            //    f_EnvelopeClocks = (uint)settings.EnvelopeClocksNums.Length;
+                            else if (settings.EnvelopeClocksReleasePoint < 0 && settings.KeyOffStop)
+                                f_EnvelopeClocks = (uint)settings.EnvelopeClocksNums.Length;
                         }
                     }
                     if (f_EnvelopeClocks < settings.EnvelopeClocksNums.Length)
@@ -1750,12 +1750,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     }
                     else
                     {
-                        //if (f_NoiseRates >= settings.NoiseRatesNums.Length)
+                        if (f_NoiseRates >= settings.NoiseRatesNums.Length)
                         {
                             if (settings.NoiseRatesReleasePoint >= 0 && f_NoiseRates <= (uint)settings.NoiseRatesReleasePoint)
                                 f_NoiseRates = (uint)settings.NoiseRatesReleasePoint;
-                            //else if (settings.NoiseRatesReleasePoint < 0)
-                                //f_NoiseRates = (uint)settings.NoiseRatesNums.Length;
+                            else if (settings.NoiseRatesReleasePoint < 0 && settings.KeyOffStop)
+                                f_NoiseRates = (uint)settings.NoiseRatesNums.Length;
                         }
                     }
                     if (f_NoiseRates < settings.NoiseRatesNums.Length)
@@ -1775,12 +1775,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         var vm = settings.EnvelopeTypesNums.Length;
                         if (settings.EnvelopeTypesReleasePoint >= 0)
                             vm = settings.EnvelopeTypesReleasePoint;
-                        //if (f_EnvelopeTypes >= vm)
+                        if (f_EnvelopeTypes >= vm)
                         {
-                            if (settings.EnvelopeTypesRepeatPoint >= 0)
+                            if (settings.EnvelopeTypesRepeatPoint >= 0 && settings.KeyOffStop)
                                 f_EnvelopeTypes = (uint)settings.EnvelopeTypesRepeatPoint;
-                            //else
-                                //f_EnvelopeTypes = (uint)vm;
+                            else
+                                f_EnvelopeTypes = (uint)vm;
                         }
                     }
                     else
@@ -1789,7 +1789,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.EnvelopeTypesReleasePoint >= 0 && f_EnvelopeTypes <= (uint)settings.EnvelopeTypesReleasePoint)
                                 f_EnvelopeTypes = (uint)settings.EnvelopeTypesReleasePoint;
-                            else if (settings.EnvelopeTypesReleasePoint < 0)
+                            else if (settings.EnvelopeTypesReleasePoint < 0 && settings.KeyOffStop)
                                 f_EnvelopeTypes = (uint)settings.EnvelopeTypesNums.Length;
                         }
                     }
