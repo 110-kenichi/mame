@@ -47,6 +47,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPN;
         private VsifClient comPortNES;
         private VsifClient comPortMCD;
+        private VsifClient comPortSAA;
 
         private BinaryReader vgmReader;
 
@@ -328,6 +329,14 @@ namespace zanac.VGMPlayer
             if (comPortMCD != null)
             {
                 DeferredWriteMCDReg(8, (byte)0xff);
+            }
+            //SAA1099
+            if (comPortSAA != null)
+            {
+                for (byte ch = 0; ch < 6; ch++)
+                {
+                    deferredWriteSAAReg(ch, 0, 0);
+                }
             }
 
             flushDeferredWriteDataAndWait();
@@ -835,9 +844,50 @@ namespace zanac.VGMPlayer
                     comPortMCD.Tag["ProxyRF5C68"] = true;
                 }
             }
+            if (curHead.lngHzSAA1099 != 0 && curHead.lngVersion >= 0x00000171)
+            {
+                curHead.lngHzSAA1099 = (uint)(curHead.lngHzSAA1099 & ~0x80000000);
+                SongChipInformation += $"SAA1099@{curHead.lngHzSAA1099 / 1000000f}MHz ";
+
+                if (Settings.Default.SAA_Enable)
+                {
+                    connectToSAA();
+                }
+            }
             return curHead;
         }
 
+
+        private bool connectToSAA()
+        {
+            if (comPortSAA == null)
+            {
+                switch (Settings.Default.SAA_IF)
+                {
+                    case 0:
+                        if (comPortSAA == null)
+                        {
+                            comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                                (PortId)Settings.Default.SAA_Port);
+
+                            if (comPortSAA != null)
+                            {
+                                comPortSAA.ChipClockHz["SAA1099"] = 8000000;
+                                comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
+                                UseChipInformation += "SAA1099@8MHz ";
+                            }
+                        }
+                        break;
+                }
+                if (comPortSAA != null)
+                {
+                    Accepted = true;
+
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private bool connectToMCD()
         {
@@ -1712,6 +1762,7 @@ namespace zanac.VGMPlayer
             vgmDataLen = fileSize;
             vgmHead = readVGMHeader(vgmReader);
 
+
             //Figure out header offset
             offset = (int)vgmHead.lngDataOffset + 0x34;
             if (offset == 0 || offset == 0x0000000C || vgmHead.lngVersion < 0x150)
@@ -1732,7 +1783,18 @@ namespace zanac.VGMPlayer
                 vgmReader = new BinaryReader(vgmFile);
                 vgmReader.BaseStream.Seek(0, SeekOrigin.Begin);
             }
+
+#if DEBUG
+            vgmLogFile = File.Create(Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "vgmplog.vgm"));
+            List<byte> logData = new List<byte>();
+            logData.AddRange(vgmReader.ReadBytes(offset));
+            logData[0xc8] = 0x00;
+            logData[0xc9] = 0x12;
+            logData[0xca] = 0x7a;
+            vgmLogFile?.Write(logData.ToArray(), 0, logData.Count);
+#else
             vgmReader.ReadBytes(offset);
+#endif
             vgmData = vgmReader.ReadBytes((int)(fileSize - offset));
 
             ym2608_adpcmbit8 = searchOpnaRamType(vgmData);
@@ -1740,6 +1802,37 @@ namespace zanac.VGMPlayer
             y8950_adpcmbit64k = searchY8950RamType(vgmData);
 
             vgmReader = new BinaryReader(new MemoryStream(vgmData));
+        }
+
+#if DEBUG
+        private FileStream vgmLogFile;
+#endif
+
+        [Conditional("DEBUG")]
+        private void writeVgmLogFile(params byte[] data)
+        {
+#if DEBUG
+            foreach (byte dt in data)
+            {
+                vgmLogFile?.WriteByte(dt);
+            }
+#endif
+        }
+
+        [Conditional("DEBUG")]
+        private void writeVgmLogFile(bool close, params byte[] data)
+        {
+#if DEBUG
+            foreach (byte dt in data)
+            {
+                vgmLogFile?.WriteByte(dt);
+            }
+            if (close)
+            {
+                vgmLogFile?.Close();
+                vgmLogFile = null;
+            }
+#endif
         }
 
         //https://github.com/kuma4649/MDPlayer/blob/stable/LICENSE.txt
@@ -2779,19 +2872,25 @@ namespace zanac.VGMPlayer
                                         {
                                             ushort time = vgmReader.ReadUInt16();
                                             vgmWaitDelta += time;
+
+                                            writeVgmLogFile(0x61);
+                                            writeVgmLogFile(BitConverter.GetBytes(time));
                                         }
                                         break;
 
                                     case 0x62: //Wait 735 samples
                                         vgmWaitDelta += 735;
+                                        writeVgmLogFile(0x62);
                                         break;
 
                                     case 0x63: //Wait 882 samples
                                         vgmWaitDelta += 882;
+                                        writeVgmLogFile(0x63);
                                         break;
 
                                     case 0x66:
                                         //End of song
+                                        writeVgmLogFile(true, 0x66);
                                         flushDeferredWriteData();
                                         if (!LoopByCount && !LoopByElapsed)
                                         {
@@ -3124,6 +3223,8 @@ namespace zanac.VGMPlayer
 
                                     case int cmd when 0x70 <= cmd && cmd <= 0x7F:
                                         {
+                                            writeVgmLogFile((byte)cmd);
+
                                             var time = (cmd & 15) + 1;
                                             vgmWaitDelta += time;
                                         }
@@ -3386,7 +3487,7 @@ namespace zanac.VGMPlayer
                                                 break;
 
                                             uint dclk = vgmHead.lngHzRF5C164;
-                                            if(command == 0xB0)
+                                            if (command == 0xB0)
                                                 dclk = vgmHead.lngHzRF5C68;
 
                                             if (comPortMCD != null)
@@ -3403,7 +3504,7 @@ namespace zanac.VGMPlayer
                                                             goto default;
                                                         {
                                                             var hi = 0;
-                                                            if(comPortMCD.RegTable.ContainsKey(ch + 3))
+                                                            if (comPortMCD.RegTable.ContainsKey(ch + 3))
                                                                 hi = comPortMCD.RegTable[ch + 3];
                                                             var ret = converRF5C164Frequency(hi, dt, comPortMCD.ChipClockHz["RF5C164"], dclk);
                                                             if (ret.noConverted)
@@ -3431,10 +3532,10 @@ namespace zanac.VGMPlayer
                                                         }
                                                         break;
                                                     case 7:
-                                                        if((dt & 0x40) != 0)
+                                                        if ((dt & 0x40) != 0)
                                                             comPortMCD.RegTable[7] = dt & 0x7;
                                                         else
-                                                            comPortMCD.RegTable[0x100+7] = dt & 0xf;
+                                                            comPortMCD.RegTable[0x100 + 7] = dt & 0xf;
                                                         DeferredWriteMCDReg(adrs, (byte)dt);
                                                         break;
                                                     default:
@@ -3612,7 +3713,35 @@ namespace zanac.VGMPlayer
                                         }
                                         break;
 
-                                    case int cmd when 0xBB <= cmd && cmd <= 0xBF:
+                                    case int cmd when 0xBB <= cmd && cmd <= 0xBC:
+                                        {
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+                                        }
+                                        break;
+
+                                    case 0xBD:  //SAA1099
+                                        {
+                                            uint dclk = vgmHead.lngHzSAA1099;
+
+                                            var adrs = readByte();
+                                            if (adrs < 0)
+                                                break;
+                                            var dt = readByte();
+                                            if (dt < 0)
+                                                break;
+
+                                            if ((adrs & 0x80) == 0)
+                                                deferredWriteSAAReg(adrs, (byte)dt, dclk);
+
+                                            break;
+                                        }
+
+                                    case int cmd when 0xBE <= cmd && cmd <= 0xBF:
                                         {
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -4061,6 +4190,147 @@ namespace zanac.VGMPlayer
             }
         }
 
+        public void deferredWriteSAAReg(int adrs, byte dt, uint dclk)
+        {
+            if (comPortSAA == null)
+                return;
+
+            comPortSAA.RegTable[adrs] = dt;
+
+            switch (adrs)
+            {
+                case 0x8:
+                case 0x9:
+                case 0xa:
+                case 0xb:
+                case 0xc:
+                case 0xd:
+                    //Freq
+                    if (!ConvertChipClock || (double)comPortSAA.ChipClockHz["SAA1099"] == (double)dclk)
+                        goto default;
+                    {
+                        var hadr = 0x10 + ((adrs - 8) >> 1);
+                        var hi = 0;
+                        int oct = 0;
+                        if (comPortSAA.RegTable.ContainsKey(hadr))
+                        {
+                            hi = comPortSAA.RegTable[hadr];
+                            if ((adrs & 1) == 0)
+                            {
+                                oct = hi & 0x7;
+                                hi = comPortSAA.RegTable[hadr + 0x100] & 0x70;
+                            }
+                            else
+                            {
+                                oct = (hi >> 4) & 0x7;
+                                hi = comPortSAA.RegTable[hadr + 0x100] & 0x7;
+                            }
+                        }
+
+                        var ret = converSAA1099Frequency(oct, dt, comPortSAA.ChipClockHz["SAA1099"], dclk);
+                        if (ret.noConverted)
+                            goto default;
+
+                        //if (adrs == 0x8 && oct != 0)
+                        //    Debug.WriteLine($"0L: {oct} {dt} -> {ret.Hi} {ret.Lo}");
+
+                        if ((adrs & 1) == 0)
+                            hi = hi | ret.Hi;
+                        else
+                            hi = hi | (ret.Hi << 4);
+
+                        switch (comPortSAA.SoundModuleType)
+                        {
+                            case VsifSoundModuleType.MSX_FTDI:
+                                comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)adrs, (int)Settings.Default.BitBangWaitSAA);
+                                comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)ret.Lo, (int)Settings.Default.BitBangWaitSAA);
+
+                                comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)hadr, (int)Settings.Default.BitBangWaitSAA);
+                                comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)hi, (int)Settings.Default.BitBangWaitSAA);
+
+                                comPortSAA.RegTable[adrs + 0x100] = (byte)ret.Lo;
+                                comPortSAA.RegTable[hadr + 0x100] = (byte)hi;
+                                break;
+                        }
+                        writeVgmLogFile(
+                            0xbd, (byte)adrs, ret.Lo,
+                            0xbd, (byte)hadr, (byte)hi);
+                    }
+                    break;
+                case 0x10:
+                case 0x11:
+                case 0x12:
+                    //Oct
+                    if (!ConvertChipClock || (double)comPortSAA.ChipClockHz["SAA1099"] == (double)dclk)
+                        goto default;
+                    {
+                        var ladr0 = 0x8 + ((adrs & 0xf) << 1);
+                        var lo0 = 0;
+                        if (comPortSAA.RegTable.ContainsKey(ladr0))
+                            lo0 = comPortSAA.RegTable[ladr0];
+                        var oct0 = dt & 0x7;
+                        var ret0 = converSAA1099Frequency(oct0, lo0, comPortSAA.ChipClockHz["SAA1099"], dclk);
+                        //if (adrs == 0x10)
+                        //    Debug.WriteLine($"0H: {oct0} {lo0} -> {ret0.Hi} {ret0.Lo}");
+
+                        var ladr1 = ladr0 + 1;
+                        var lo1 = 0;
+                        if (comPortSAA.RegTable.ContainsKey(ladr1))
+                            lo1 = comPortSAA.RegTable[ladr1];
+                        var oct1 = (dt >> 4) & 0x7;
+                        var ret1 = converSAA1099Frequency(oct1, lo1, comPortSAA.ChipClockHz["SAA1099"], dclk);
+                        //if (adrs == 0x10)
+                        //    Debug.WriteLine($"1H: {oct1} {lo1} -> {ret1.Hi} {ret1.Lo}");
+
+                        if (ret0.noConverted && ret1.noConverted)
+                            goto default;
+
+                        switch (comPortSAA.SoundModuleType)
+                        {
+                            case VsifSoundModuleType.MSX_FTDI:
+                                comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)ladr0, (int)Settings.Default.BitBangWaitSAA);
+                                comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)ret0.Lo, (int)Settings.Default.BitBangWaitSAA);
+                                Debug.WriteLine($"Data: \t{ladr0} {ret0.Lo}");
+
+                                comPortSAA.RegTable[ladr0 + 0x100] = (byte)ret0.Lo;
+
+                                comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)ladr1, (int)Settings.Default.BitBangWaitSAA);
+                                comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)ret1.Lo, (int)Settings.Default.BitBangWaitSAA);
+                                Debug.WriteLine($"Data: \t{ladr1} {ret1.Lo}");
+
+                                comPortSAA.RegTable[ladr1 + 0x100] = (byte)ret1.Lo;
+
+                                comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)adrs, (int)Settings.Default.BitBangWaitSAA);
+                                comPortSAA.DeferredWriteData(0x1e, 0x4, (byte)((ret1.Hi << 4) | ret0.Hi), (int)Settings.Default.BitBangWaitSAA);
+                                Debug.WriteLine($"Data: \t{adrs} {((ret1.Hi << 4) | ret0.Hi)}");
+
+                                comPortSAA.RegTable[adrs + 0x100] = (byte)((ret1.Hi << 4) | ret0.Hi);
+                                break;
+                        }
+
+                        writeVgmLogFile(
+                            0xbd, (byte)ladr0, (byte)ret0.Lo,
+                            0xbd, (byte)ladr1, (byte)ret1.Lo,
+                            0xbd, (byte)adrs, (byte)((ret1.Hi << 4) | ret0.Hi));
+
+                    }
+                    break;
+                default:
+                    switch (comPortSAA.SoundModuleType)
+                    {
+                        case VsifSoundModuleType.MSX_FTDI:
+                            comPortSAA.DeferredWriteData(0x1e, 0x5, (byte)adrs, (int)Settings.Default.BitBangWaitSAA);
+                            comPortSAA.DeferredWriteData(0x1e, 0x4, dt, (int)Settings.Default.BitBangWaitSAA);
+                            break;
+                    }
+
+                    writeVgmLogFile(0xbd, (byte)adrs, dt);
+
+                    break;
+            }
+
+
+        }
 
         public void DeferredWriteMCDReg(int adrs, byte dt)
         {
@@ -4135,8 +4405,8 @@ namespace zanac.VGMPlayer
                         var ret = convertNesFrequency(comPortNES.RegTable[adrs + 1] & 0x7, dt, comPortNES.ChipClockHz["NES"], dclk);
                         if (ret.noConverted)
                             goto default;
-                        deferredWriteNES(adrs, ret.Lo);
-                        deferredWriteNES(adrs + 1, (comPortNES.RegTable[adrs + 1] & 0xf8) | ret.Hi);
+                        DeferredWriteNES(adrs, ret.Lo);
+                        DeferredWriteNES(adrs + 1, (comPortNES.RegTable[adrs + 1] & 0xf8) | ret.Hi);
                     }
                     break;
                 //HI
@@ -4149,8 +4419,8 @@ namespace zanac.VGMPlayer
                         var ret = convertNesFrequency(dt & 0x7, comPortNES.RegTable[adrs - 1], comPortNES.ChipClockHz["NES"], dclk);
                         if (ret.noConverted)
                             goto default;
-                        deferredWriteNES(adrs - 1, ret.Lo);
-                        deferredWriteNES(adrs, (dt & 0xf8) | ret.Hi);
+                        DeferredWriteNES(adrs - 1, ret.Lo);
+                        DeferredWriteNES(adrs, (dt & 0xf8) | ret.Hi);
                     }
                     break;
                 case 0x10:
@@ -4192,7 +4462,7 @@ namespace zanac.VGMPlayer
                     }
                     goto default;
                 default:
-                    deferredWriteNES(adrs, dt);
+                    DeferredWriteNES(adrs, dt);
                     break;
             }
         }
@@ -4368,7 +4638,7 @@ namespace zanac.VGMPlayer
             comPortNES.DeferredWriteData(1, (byte)0x11, (byte)dt, (int)Settings.Default.BitBangWaitNES);
         }
 
-        protected void deferredWriteNES(int adrs, int dt)
+        public void DeferredWriteNES(int adrs, int dt)
         {
             switch (comPortNES.SoundModuleType)
             {
@@ -4921,6 +5191,8 @@ namespace zanac.VGMPlayer
             comPortOPN?.FlushDeferredWriteData();
             comPortNES?.FlushDeferredWriteData();
             comPortMCD?.FlushDeferredWriteData();
+            comPortSAA?.FlushDeferredWriteData();
+
         }
 
         /// <summary>
@@ -4940,6 +5212,7 @@ namespace zanac.VGMPlayer
             comPortOPN?.FlushDeferredWriteDataAndWait();
             comPortNES?.FlushDeferredWriteDataAndWait();
             comPortMCD?.FlushDeferredWriteDataAndWait();
+            comPortSAA?.FlushDeferredWriteDataAndWait();
         }
 
 
@@ -4961,6 +5234,7 @@ namespace zanac.VGMPlayer
             comPortNES?.Abort();
             nesDpcm?.Stop();
             comPortMCD?.Abort();
+            comPortSAA?.Abort();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -5030,7 +5304,14 @@ namespace zanac.VGMPlayer
                 nesDpcm = null;
                 comPortMCD?.Dispose();
                 comPortMCD = null;
-
+                comPortSAA?.Dispose();
+                comPortSAA = null;
+#if DEBUG
+                if (vgmLogFile != null)
+                    writeVgmLogFile(true, 0x66);
+                vgmLogFile?.Flush();
+                vgmLogFile?.Dispose();
+#endif
                 // 大きなフィールドを null に設定します
                 disposedValue = true;
             }

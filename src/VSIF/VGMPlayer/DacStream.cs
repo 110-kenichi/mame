@@ -139,7 +139,7 @@ namespace zanac.VGMPlayer
                     case 20:
                         if (comPortNES != null)
                         {
-                            ((VGMSong)parentSong).DeferredWriteNES(0x11, data, (uint)Settings.Default.BitBangWaitNES);
+                            ((VGMSong)parentSong).DeferredWriteNES(0x11, data);
                         }
                         sampleRate = pd.CurrentStreamData.Frequency;
                         break;

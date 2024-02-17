@@ -443,6 +443,44 @@ namespace zanac.VGMPlayer
             return nn;
         }
 
+        protected (byte Hi, byte Lo, bool noConverted) converSAA1099Frequency(int freqValueOct, int freqValueNote, double chipClock, double dataClock)
+        {
+            // freq = ((clock / 512) * (2 ^ octave)) / (511 - note)
+            var dfreq = (dataClock / 512d) * Math.Pow(2, freqValueOct) / (511d - freqValueNote);
+
+            var octave = (int)Math.Floor(calcNoteNumberFromFrequency(dfreq * dataClock / chipClock) / 12d) - 2;
+            if (octave < 0)
+                octave = 0;
+
+            int note;
+            do
+            {
+                // freq = ((clock / 512) * (2 ^ octave)) / (511 - note)
+                // -> note = 511 - ((clock / 512) * (2 ^ octave))) / freq
+                note = 511 - (int)Math.Round(((chipClock / 512d) * Math.Pow(2, octave)) / dfreq);
+                if (note < 0)
+                    octave--;
+                else if (note > 255)
+                    octave++;
+            } while ((note > 255) || note < 0);
+
+            if (octave < 0)
+            {
+                octave = 0;
+                note = 0;
+            }
+            else if (octave > 7)
+            {
+                octave = 7;
+                note = 0xff;
+            }
+
+            var ret = ((byte)octave, (byte)note, false);
+            if (ret.Item1 == freqValueOct && ret.Item2 == freqValueNote)
+                ret.Item3 = true;
+            return ret;
+        }
+
         protected (byte Hi, byte Lo, bool noConverted) converRF5C164Frequency(int freqValueHi, int freqValueLo, double chipClock, double dataClock)
         {
             var freq = (int)Math.Round((freqValueHi << 8 | freqValueLo) * dataClock / chipClock);

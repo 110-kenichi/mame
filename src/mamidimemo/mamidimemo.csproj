@@ -1511,7 +1511,7 @@
       <Version>1.2.1</Version>
     </PackageReference>
     <PackageReference Include="Melanchall.DryWetMidi">
-      <Version>7.0.0</Version>
+      <Version>7.0.2</Version>
     </PackageReference>
     <PackageReference Include="MetroFramework">
       <Version>1.2.0.3</Version>

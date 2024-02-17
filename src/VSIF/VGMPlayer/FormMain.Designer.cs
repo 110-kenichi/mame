@@ -176,6 +176,12 @@ namespace zanac.VGMPlayer
             this.numericUpDownMCD = new System.Windows.Forms.NumericUpDown();
             this.comboBoxPortMCD = new System.Windows.Forms.ComboBox();
             this.numericUpDownMCDDiv = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxConnSAA = new System.Windows.Forms.CheckBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.comboBoxSAA = new System.Windows.Forms.ComboBox();
+            this.numericUpDownSAA = new System.Windows.Forms.NumericUpDown();
+            this.comboBoxPortSAA = new System.Windows.Forms.ComboBox();
+            this.numericUpDownSAADiv = new System.Windows.Forms.NumericUpDown();
             this.listViewList = new ListViewInsertionDrag.DraggableListView();
             this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
@@ -217,6 +223,8 @@ namespace zanac.VGMPlayer
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNESDiv)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCD)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCDDiv)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSAA)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSAADiv)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -1086,12 +1094,19 @@ namespace zanac.VGMPlayer
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownMCD, 3, 13);
             this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortMCD, 4, 13);
             this.tableLayoutPanelPort.Controls.Add(this.numericUpDownMCDDiv, 5, 13);
+            this.tableLayoutPanelPort.Controls.Add(this.checkBoxConnSAA, 0, 14);
+            this.tableLayoutPanelPort.Controls.Add(this.label22, 1, 14);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxSAA, 2, 14);
+            this.tableLayoutPanelPort.Controls.Add(this.numericUpDownSAA, 3, 14);
+            this.tableLayoutPanelPort.Controls.Add(this.comboBoxPortSAA, 4, 14);
+            this.tableLayoutPanelPort.Controls.Add(this.numericUpDownSAADiv, 5, 14);
             this.tableLayoutPanelPort.DataBindings.Add(new System.Windows.Forms.Binding("Size", global::zanac.VGMPlayer.Properties.Settings.Default, "PaneHeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.tableLayoutPanelPort.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPort.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanelPort.Name = "tableLayoutPanelPort";
             this.tableLayoutPanelPort.Padding = new System.Windows.Forms.Padding(3);
-            this.tableLayoutPanelPort.RowCount = 15;
+            this.tableLayoutPanelPort.RowCount = 16;
+            this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPort.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -5411,6 +5426,350 @@ namespace zanac.VGMPlayer
             this.numericUpDownMCDDiv.TabIndex = 65;
             this.numericUpDownMCDDiv.Value = global::zanac.VGMPlayer.Properties.Settings.Default.MCD_Div;
             // 
+            // checkBoxConnSAA
+            // 
+            this.checkBoxConnSAA.AutoSize = true;
+            this.checkBoxConnSAA.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.SAA_Enable;
+            this.checkBoxConnSAA.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "SAA_Enable", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxConnSAA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxConnSAA.Location = new System.Drawing.Point(6, 336);
+            this.checkBoxConnSAA.Name = "checkBoxConnSAA";
+            this.checkBoxConnSAA.Size = new System.Drawing.Size(31, 20);
+            this.checkBoxConnSAA.TabIndex = 66;
+            this.checkBoxConnSAA.UseVisualStyleBackColor = true;
+            this.checkBoxConnSAA.CheckedChanged += new System.EventHandler(this.checkBoxCnnSAA_CheckedChanged);
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label22.Location = new System.Drawing.Point(43, 336);
+            this.label22.Margin = new System.Windows.Forms.Padding(3);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(114, 20);
+            this.label22.TabIndex = 67;
+            this.label22.Text = "&SAA1099";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label22.Click += new System.EventHandler(this.label3_Click);
+            this.label22.DoubleClick += new System.EventHandler(this.label3_DoubleClick);
+            // 
+            // comboBoxSAA
+            // 
+            this.comboBoxSAA.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "SAA_IF", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxSAA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxSAA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSAA.FormattingEnabled = true;
+            this.comboBoxSAA.Items.AddRange(new object[] {
+            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)"});
+            this.comboBoxSAA.Location = new System.Drawing.Point(163, 336);
+            this.comboBoxSAA.Name = "comboBoxSAA";
+            this.comboBoxSAA.Size = new System.Drawing.Size(251, 20);
+            this.comboBoxSAA.TabIndex = 62;
+            // 
+            // numericUpDownSAA
+            // 
+            this.numericUpDownSAA.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "BitBangWaitSAA", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownSAA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDownSAA.Location = new System.Drawing.Point(420, 336);
+            this.numericUpDownSAA.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownSAA.Name = "numericUpDownSAA";
+            this.numericUpDownSAA.Size = new System.Drawing.Size(65, 19);
+            this.numericUpDownSAA.TabIndex = 63;
+            this.numericUpDownSAA.Value = global::zanac.VGMPlayer.Properties.Settings.Default.BitBangWaitSAA;
+            // 
+            // comboBoxPortSAA
+            // 
+            this.comboBoxPortSAA.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "SAA_Port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBoxPortSAA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxPortSAA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxPortSAA.FormattingEnabled = true;
+            this.comboBoxPortSAA.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105",
+            "106",
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123",
+            "124",
+            "125",
+            "126",
+            "127",
+            "128",
+            "129",
+            "130",
+            "131",
+            "132",
+            "133",
+            "134",
+            "135",
+            "136",
+            "137",
+            "138",
+            "139",
+            "140",
+            "141",
+            "142",
+            "143",
+            "144",
+            "145",
+            "146",
+            "147",
+            "148",
+            "149",
+            "150",
+            "151",
+            "152",
+            "153",
+            "154",
+            "155",
+            "156",
+            "157",
+            "158",
+            "159",
+            "160",
+            "161",
+            "162",
+            "163",
+            "164",
+            "165",
+            "166",
+            "167",
+            "168",
+            "169",
+            "170",
+            "171",
+            "172",
+            "173",
+            "174",
+            "175",
+            "176",
+            "177",
+            "178",
+            "179",
+            "180",
+            "181",
+            "182",
+            "183",
+            "184",
+            "185",
+            "186",
+            "187",
+            "188",
+            "189",
+            "190",
+            "191",
+            "192",
+            "193",
+            "194",
+            "195",
+            "196",
+            "197",
+            "198",
+            "199",
+            "200",
+            "201",
+            "202",
+            "203",
+            "204",
+            "205",
+            "206",
+            "207",
+            "208",
+            "209",
+            "210",
+            "211",
+            "212",
+            "213",
+            "214",
+            "215",
+            "216",
+            "217",
+            "218",
+            "219",
+            "220",
+            "221",
+            "222",
+            "223",
+            "224",
+            "225",
+            "226",
+            "227",
+            "228",
+            "229",
+            "230",
+            "231",
+            "232",
+            "233",
+            "234",
+            "235",
+            "236",
+            "237",
+            "238",
+            "239",
+            "240",
+            "241",
+            "242",
+            "243",
+            "244",
+            "245",
+            "246",
+            "247",
+            "248",
+            "249",
+            "250",
+            "251",
+            "252",
+            "253",
+            "254",
+            "255",
+            "256"});
+            this.comboBoxPortSAA.Location = new System.Drawing.Point(491, 336);
+            this.comboBoxPortSAA.Name = "comboBoxPortSAA";
+            this.comboBoxPortSAA.Size = new System.Drawing.Size(79, 20);
+            this.comboBoxPortSAA.TabIndex = 64;
+            // 
+            // numericUpDownSAADiv
+            // 
+            this.numericUpDownSAADiv.DataBindings.Add(new System.Windows.Forms.Binding("Value", global::zanac.VGMPlayer.Properties.Settings.Default, "SAA_Div", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.numericUpDownSAADiv.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.numericUpDownSAADiv.Location = new System.Drawing.Point(575, 335);
+            this.numericUpDownSAADiv.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownSAADiv.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.numericUpDownSAADiv.Minimum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownSAADiv.Name = "numericUpDownSAADiv";
+            this.numericUpDownSAADiv.Size = new System.Drawing.Size(77, 19);
+            this.numericUpDownSAADiv.TabIndex = 65;
+            this.numericUpDownSAADiv.Value = global::zanac.VGMPlayer.Properties.Settings.Default.SAA_Div;
+            // 
             // listViewList
             // 
             this.listViewList.AllowDrop = true;
@@ -5461,7 +5820,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.68 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.69 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -5510,6 +5869,8 @@ namespace zanac.VGMPlayer
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNESDiv)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCD)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMCDDiv)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSAA)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSAADiv)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -5660,5 +6021,11 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.NumericUpDown numericUpDownMCD;
         private System.Windows.Forms.ComboBox comboBoxPortMCD;
         private System.Windows.Forms.NumericUpDown numericUpDownMCDDiv;
+        private System.Windows.Forms.CheckBox checkBoxConnSAA;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.ComboBox comboBoxSAA;
+        private System.Windows.Forms.NumericUpDown numericUpDownSAA;
+        private System.Windows.Forms.ComboBox comboBoxPortSAA;
+        private System.Windows.Forms.NumericUpDown numericUpDownSAADiv;
     }
 }

@@ -48,6 +48,7 @@ namespace zanac.VGMPlayer
             comboBoxOPN.SelectedIndex = 0;
             comboBoxNES.SelectedIndex = 0;
             comboBoxMCD.SelectedIndex = 0;
+            comboBoxSAA.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -74,6 +75,7 @@ namespace zanac.VGMPlayer
             checkBoxConnOPN.Checked = false;
             checkBoxConnNES.Checked = false;
             checkBoxConnMCD.Checked = false;
+            checkBoxConnSAA.Checked = false;
 
             //HACK: To avoid layout glith
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
@@ -173,6 +175,7 @@ namespace zanac.VGMPlayer
             comPortOPN?.Dispose();
             comPortNES?.Dispose();
             comPortMCD?.Dispose();
+            comPortSAA?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -745,6 +748,35 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private VsifClient comPortSAA;
+
+        private void checkBoxCnnSAA_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnSAA.Checked)
+            {
+                switch (Settings.Default.SAA_IF)
+                {
+                    case 0:
+                        comPortSAA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.MSX_FTDI,
+                            (PortId)Settings.Default.SAA_Port, (int)Settings.Default.SAA_Div, false);
+                        break;
+                }
+
+                checkBoxConnSAA.Checked = comPortSAA != null;
+                comboBoxSAA.Enabled = comPortSAA == null;
+                comboBoxPortSAA.Enabled = comPortSAA == null;
+                numericUpDownSAADiv.Enabled = comPortSAA == null;
+            }
+            else
+            {
+                comboBoxSAA.Enabled = true;
+                comboBoxPortSAA.Enabled = true;
+                numericUpDownSAADiv.Enabled = true;
+
+                comPortSAA?.Dispose();
+            }
+        }
+
         private VsifClient comPortMCD;
 
         private void checkBoxConnMCD_CheckedChanged(object sender, EventArgs e)
@@ -766,7 +798,7 @@ namespace zanac.VGMPlayer
             }
             else
             {
-                checkBoxConnMCD.Enabled = true;
+                comboBoxMCD.Enabled = true;
                 comboBoxPortMCD.Enabled = true;
                 numericUpDownMCDDiv.Enabled = true;
 
@@ -1526,7 +1558,6 @@ namespace zanac.VGMPlayer
                 f.ShowDialog(this);
             }
         }
-
 
     }
 

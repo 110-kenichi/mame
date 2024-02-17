@@ -116,6 +116,35 @@
     .endm
 ;=======================================================
 
+	.macro __WRITE_ANY_IO
+__WRITE_ANY_IO:
+    READ_ADRS           ; 61
+;=======================
+0$:
+    READ_DATA           ; 55
+
+    LD  C,B             ; 4
+    OUT (C), D          ; 12
+
+    ; Continuous Write
+    LD  E,#0x1F         ; 7
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+    .endm
+;=======================================================
+
 	.macro __WRITE_PSG_IO
 __WRITE_PSG_IO:
     READ_ADRS           ; 61

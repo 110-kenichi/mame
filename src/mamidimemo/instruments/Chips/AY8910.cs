@@ -534,21 +534,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.WriteData(0, (byte)offset, (byte)data, f_ftdiClkWidth);
                             break;
                     }
-
-                    DeferredWriteData(ay8910_address_data_w, unitNumber, (uint)0, (byte)offset);
-                    DeferredWriteData(ay8910_address_data_w, unitNumber, (uint)1, data);
-
-                    //try
-                    //{
-                    //    Program.SoundUpdating();
-                    //    YM2608_write(unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
-                    //    YM2608_write(unitNumber, yreg + 1, data);
-                    //}
-                    //finally
-                    //{
-                    //    Program.SoundUpdated();
-                    //}
                 }
+                DeferredWriteData(ay8910_address_data_w, unitNumber, (uint)0, (byte)offset);
+                DeferredWriteData(ay8910_address_data_w, unitNumber, (uint)1, data);
+
+                //try
+                //{
+                //    Program.SoundUpdating();
+                //    YM2608_write(unitNumber, yreg + 0, (byte)(address + (op * 4) + (slot % 3)));
+                //    YM2608_write(unitNumber, yreg + 1, data);
+                //}
+                //finally
+                //{
+                //    Program.SoundUpdated();
+                //}
+
             }));
 
             /*

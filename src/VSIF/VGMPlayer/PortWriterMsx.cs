@@ -212,6 +212,16 @@ namespace zanac.VGMPlayer
                                 };
                                 ds.AddRange(sd);
                             }
+                            else if ((dt.Type == 0x1e  //SAA1099, ...
+                                )
+                                && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
                             else
                             {
                                 byte[] sd = new byte[5] {

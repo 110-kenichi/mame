@@ -1065,5 +1065,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["PlaybackSpeed"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SAA_Enable {
+            get {
+                return ((bool)(this["SAA_Enable"]));
+            }
+            set {
+                this["SAA_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SAA_IF {
+            get {
+                return ((int)(this["SAA_IF"]));
+            }
+            set {
+                this["SAA_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SAA_Port {
+            get {
+                return ((int)(this["SAA_Port"]));
+            }
+            set {
+                this["SAA_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal SAA_Div {
+            get {
+                return ((decimal)(this["SAA_Div"]));
+            }
+            set {
+                this["SAA_Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public decimal BitBangWaitSAA {
+            get {
+                return ((decimal)(this["BitBangWaitSAA"]));
+            }
+            set {
+                this["BitBangWaitSAA"] = value;
+            }
+        }
     }
 }
