@@ -708,6 +708,14 @@ namespace zanac.VGMPlayer
                 {
                     connectToPSG();
                 }
+                else if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzAY8910 * 4))
+                {
+                    comPortOPNA.Tag["ProxyY8910"] = true;
+                }
+                else if (Settings.Default.OPN_Enable && connectToOPN())
+                {
+                    comPortOPN.Tag["ProxyY8910"] = true;
+                }
             }
             if (curHead.lngHzOKIM6258 != 0 && curHead.lngVersion >= 0x00000161)
             {
@@ -1784,7 +1792,7 @@ namespace zanac.VGMPlayer
                 vgmReader.BaseStream.Seek(0, SeekOrigin.Begin);
             }
 
-#if DEBUG
+#if DEBUG && OUT_VGM
             vgmLogFile = File.Create(Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "vgmplog.vgm"));
             List<byte> logData = new List<byte>();
             logData.AddRange(vgmReader.ReadBytes(offset));
@@ -3422,8 +3430,15 @@ namespace zanac.VGMPlayer
                                             if (dd < 0)
                                                 break;
 
-                                            if (aa <= 0xd && comPortY8910 != null)
-                                                deferredWriteY8910(aa, dd, dclk);
+                                            if (aa <= 0xd)
+                                            {
+                                                if (comPortY8910 != null)
+                                                    deferredWriteY8910(aa, dd, dclk);
+                                                else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyY8910"))
+                                                    deferredWriteOPNA_P0(comPortOPNA, aa, dd, dclk * 4);
+                                                else if (comPortOPN != null && comPortOPN.Tag.ContainsKey("ProxyY8910"))
+                                                    deferredWriteOPN_P0(aa, dd, dclk * 2);
+                                            }
                                         }
                                         break;
                                     case 0xA5:  //2nd YM2203
