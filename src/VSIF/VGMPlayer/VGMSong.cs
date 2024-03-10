@@ -685,7 +685,7 @@ namespace zanac.VGMPlayer
                     {
                         comPortOPL3.Tag["ProxyY8950"] = true;
                     }
-                    else if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzY8950))
+                    if (Settings.Default.OPNA_Enable && connectToOPNA(curHead.lngHzY8950))
                     {
                         comPortOPNA.Tag["ProxyY8950"] = true;
                     }
