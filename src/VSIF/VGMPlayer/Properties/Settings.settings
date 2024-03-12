@@ -210,7 +210,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="PaneHeight" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">674, 200</Value>
+      <Value Profile="(Default)">759, 200</Value>
     </Setting>
     <Setting Name="DisableDAC" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -277,6 +277,9 @@
     </Setting>
     <Setting Name="BitBangWaitSAA" Type="System.Decimal" Scope="User">
       <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="WaitAlg" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

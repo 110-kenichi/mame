@@ -3986,6 +3986,16 @@ namespace zanac.VGMPlayer
                     if (after > nextTime)
                     {
                         NotifyProcessLoadOccurred();
+                        switch (Settings.Default.WaitAlg)
+                        {
+                            case 0: //Accurate
+                                break;
+                            case 1: //Wait
+                                flushDeferredWriteDataAndWait();
+                                QueryPerformanceCounter(out after);
+                                nextTime = after;
+                                break;
+                        }
                     }
                     else
                     {
@@ -4646,11 +4656,17 @@ namespace zanac.VGMPlayer
             }
         }
 
+        int lastDacValue;
 
         public void DeferredWriteNESDAC(int dt)
         {
+            if (lastDacValue == dt)
+                return;
+
             //DAC
             comPortNES.DeferredWriteData(1, (byte)0x11, (byte)dt, (int)Settings.Default.BitBangWaitNES);
+
+            lastDacValue = dt;
         }
 
         public void DeferredWriteNES(int adrs, int dt)

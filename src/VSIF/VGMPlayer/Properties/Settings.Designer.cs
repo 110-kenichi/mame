@@ -852,7 +852,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("674, 200")]
+        [global::System.Configuration.DefaultSettingValueAttribute("759, 200")]
         public global::System.Drawing.Size PaneHeight {
             get {
                 return ((global::System.Drawing.Size)(this["PaneHeight"]));
@@ -1123,6 +1123,18 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["BitBangWaitSAA"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int WaitAlg {
+            get {
+                return ((int)(this["WaitAlg"]));
+            }
+            set {
+                this["WaitAlg"] = value;
             }
         }
     }

@@ -970,6 +970,16 @@ namespace zanac.VGMPlayer
                     if (after > nextTime)
                     {
                         NotifyProcessLoadOccurred();
+                        switch (Settings.Default.WaitAlg)
+                        {
+                            case 0: //Accurate
+                                break;
+                            case 1: //Smooth
+                                flushDeferredWriteDataAndWait();
+                                QueryPerformanceCounter(out after);
+                                nextTime = after;
+                                break;
+                        }
                     }
                     else
                     {

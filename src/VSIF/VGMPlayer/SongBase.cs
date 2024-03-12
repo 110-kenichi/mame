@@ -1132,29 +1132,34 @@ namespace zanac.VGMPlayer
         /// </summary>
         byte outputValue = 0;
 
+        int lastOpn2DacValue;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="adrs"></param>
         /// <param name="dt"></param>
-        public void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int inputValue)
+        public void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int dacValue)
         {
             if (Settings.Default.DisableDAC)
                 return;
 
+            if (lastOpn2DacValue == dacValue)
+                return;
+
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
             {
-                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)inputValue, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Settings.Default.BitBangWaitOPN2);
             }
             else //Genesis
             {
                 comPortOPN2.DeferredWriteDataPrior(
                     new byte[] { 0, 0 },
                     new byte[] { 0x04, 0x8 },
-                    new byte[] { (byte)0x2a, (byte)inputValue },
+                    new byte[] { (byte)0x2a, (byte)dacValue },
                     (int)Settings.Default.BitBangWaitOPN2);
             }
+            lastOpn2DacValue = dacValue;
         }
 
         /// <summary>
@@ -1191,36 +1196,42 @@ namespace zanac.VGMPlayer
             }
         }
 
+        int lastOpnaDacValue;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="adrs"></param>
-        /// <param name="inputValue"></param>
-        public void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int inputValue)
+        /// <param name="dacValue"></param>
+        public void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int dacValue)
         {
             if (Settings.Default.DisableDAC)
+                return;
+
+            if (lastOpnaDacValue == dacValue)
                 return;
 
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                    deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)inputValue);
+                    deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)dacValue);
                     //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
-                    comPortOPNA.DeferredWriteData(0x01, 0x0e, (byte)inputValue, 0);
+                    comPortOPNA.DeferredWriteData(0x01, 0x0e, (byte)dacValue, 0);
                     break;
                 case VsifSoundModuleType.Gimic:
                     if (!comPortOPNA.Tag.ContainsKey("OPN3L"))
-                        comPortOPNA.DeferredWriteData(1, 0x0e, (byte)inputValue, 0);
+                        comPortOPNA.DeferredWriteData(1, 0x0e, (byte)dacValue, 0);
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
-                    deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)inputValue);
+                    deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)dacValue);
                     //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
             }
+
+            lastOpnaDacValue = dacValue;
         }
 
         protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt, uint dclk)
