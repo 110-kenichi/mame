@@ -1,4 +1,4 @@
-MAmidiMEmo 5.6.2.1 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.6.2.2 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,8 +274,9 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.6.2.2 Changed the copy function of Timbre when drag & drop in TimbreManager and DrumEditor from the Shift key to the Ctrl key.
 5.6.2.1 Supported YM2149 with YM2608/YM2203 for VGMPlayer
-		Swap Shift key effect for Drag & Drop on TimbreManager and DrumEditor.
+		Swap Shift key effect for Drag & Drop in TimbreManager and DrumEditor.
 5.6.2.0 Supported SAA1099 for VSIF MSX(FTDI) both MAmidiMEmo and VGMPlayer. You need to update VGM_msx*.rom too.
 5.6.1.0 Added KeyOffStop property to FxS settings. To select envelope release timing of FxEngine when key off.
 5.6.0.0 Supported SAA1099.

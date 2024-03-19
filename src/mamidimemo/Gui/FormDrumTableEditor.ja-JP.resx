@@ -134,7 +134,7 @@
     <value>314, 19</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>ドラム音色登録(&amp;A):  ((Shift+)ドラッグで入れ替え(コピー))</value>
+    <value>ドラム音色登録(&amp;A):  ((Ctrl+)ドラッグで入れ替え(コピー))</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>96, 19</value>
