@@ -403,7 +403,7 @@
     <value>toolStripSeparator1</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Dum &amp;assignment:  (Drag(+shift) to copy(exchg) order)</value>
+    <value>Dum &amp;assignment:  (Drag(+shift) to exchg(copy) order)</value>
   </data>
   <data name="&gt;&gt;openFileDialogImport.Type" xml:space="preserve">
     <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

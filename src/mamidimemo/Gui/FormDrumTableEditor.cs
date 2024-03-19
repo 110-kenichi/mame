@@ -420,9 +420,9 @@ namespace zanac.MAmidiMEmo.Gui
                 ListViewItem dragToItem = listViewPcmSounds.GetItemAt(cp.X, cp.Y);
                 if (dragToItem != null)
                 {
-                    bool exchange = false;
+                    bool exchange = true;
                     if (listViewPcmSounds == items[0].ListView && (e.KeyState & 4) == 4)
-                        exchange = true;
+                        exchange = false;
 
                     for (int i = dragToItem.Index; i < Math.Min(dragToItem.Index + items.Length, listViewPcmSounds.Items.Count); i++)
                     {
@@ -476,9 +476,9 @@ namespace zanac.MAmidiMEmo.Gui
                     return;
 
                 if ((e.KeyState & 4) == 4)
-                    e.Effect = DragDropEffects.Move;
-                else
                     e.Effect = DragDropEffects.Copy;
+                else
+                    e.Effect = DragDropEffects.Move;
 
                 try
                 {

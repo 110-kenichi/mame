@@ -199,7 +199,7 @@
     <value>313, 31</value>
   </data>
   <data name="metroLabel2.Text" xml:space="preserve">
-    <value>現在の音色(&amp;U): ((Shift+)ドラッグでコピー(入れ替え))</value>
+    <value>現在の音色(&amp;U): ((Shift+)ドラッグで入れ替え(コピー))</value>
   </data>
   <data name="listViewFilesTimbres.Groups" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>

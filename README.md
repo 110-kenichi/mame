@@ -275,6 +275,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes ***
 5.6.2.1 Supported YM2149 with YM2608/YM2203 for VGMPlayer
+		Swap Shift key effect for Drag & Drop on TimbreManager and DrumEditor.
 5.6.2.0 Supported SAA1099 for VSIF MSX(FTDI) both MAmidiMEmo and VGMPlayer. You need to update VGM_msx*.rom too.
 5.6.1.0 Added KeyOffStop property to FxS settings. To select envelope release timing of FxEngine when key off.
 5.6.0.0 Supported SAA1099.

@@ -1010,7 +1010,7 @@
     <value>7</value>
   </data>
   <data name="metroLabel2.Text" xml:space="preserve">
-    <value>C&amp;urrent Timbres: (Drag(+shift) to copy(exchg) order)</value>
+    <value>C&amp;urrent Timbres: (Drag(+shift) to exchg(copy) order)</value>
   </data>
   <data name="metroLabel2.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
