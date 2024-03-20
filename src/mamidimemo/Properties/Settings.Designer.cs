@@ -801,5 +801,29 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["GuiScale"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RegisterDrumTimbre {
+            get {
+                return ((bool)(this["RegisterDrumTimbre"]));
+            }
+            set {
+                this["RegisterDrumTimbre"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SetDrumTimbreName {
+            get {
+                return ((bool)(this["SetDrumTimbreName"]));
+            }
+            set {
+                this["SetDrumTimbreName"] = value;
+            }
+        }
     }
 }

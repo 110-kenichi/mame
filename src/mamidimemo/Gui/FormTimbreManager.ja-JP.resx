@@ -138,7 +138,7 @@
     <value>813, 34</value>
   </data>
   <data name="listViewCurrentTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>315, 512</value>
+    <value>315, 492</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>1136, 43</value>
@@ -148,34 +148,6 @@
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
     <value>1054, 14</value>
-  </data>
-  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1131, 577</value>
-  </data>
-  <data name="fileFolderList1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>436, 512</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="resource.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left</value>
-  </data>
-  <data name="resource.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowOnly</value>
-  </data>
-  <data name="resource.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Standard</value>
-  </data>
-  <data name="resource.Location" type="System.Drawing.Point, System.Drawing">
-    <value>290, 1</value>
-  </data>
-  <data name="resource.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
-    <value>Inherit</value>
-  </data>
-  <data name="metroTextBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 3</value>
-  </data>
-  <data name="metroTextBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 25</value>
   </data>
   <data name="metroLabelDir.Size" type="System.Drawing.Size, System.Drawing">
     <value>87, 31</value>
@@ -201,6 +173,12 @@
   <data name="metroLabel2.Text" xml:space="preserve">
     <value>現在の音色(&amp;U): ((Ctrl+)ドラッグで入れ替え(コピー))</value>
   </data>
+  <data name="metroTextBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 3</value>
+  </data>
+  <data name="metroTextBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>314, 25</value>
+  </data>
   <data name="listViewFilesTimbres.Groups" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
@@ -215,18 +193,66 @@
     <value>445, 34</value>
   </data>
   <data name="listViewFilesTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>314, 512</value>
+    <value>314, 492</value>
   </data>
   <data name="metroLabel3.Location" type="System.Drawing.Point, System.Drawing">
     <value>765, 31</value>
   </data>
+  <data name="metroLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 498</value>
+  </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>442, 28</value>
+    <value>442, 48</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="metroButtonNewDir.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>418, 3</value>
   </data>
+  <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>21, 25</value>
+  </data>
+  <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>810, 529</value>
+  </data>
+  <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>321, 48</value>
+  </data>
+  <data name="checkBoxSetDrumKeyNo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>223, 16</value>
+  </data>
+  <data name="checkBoxSetDrumKeyNo.Text" xml:space="preserve">
+    <value>DrumTimbreとしても指定キーから登録(&amp;R)</value>
+  </data>
+  <data name="comboBoxDrumKeyNo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>232, 3</value>
+  </data>
+  <data name="comboBoxDrumKeyNo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 20</value>
+  </data>
+  <data name="checkBoxSetDrumTimbreName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>60, 29</value>
+  </data>
+  <data name="checkBoxSetDrumTimbreName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>166, 16</value>
+  </data>
+  <data name="checkBoxSetDrumTimbreName.Text" xml:space="preserve">
+    <value>DrumTimbre名も設定する(&amp;N)</value>
+  </data>
+  <data name="tableLayoutPanel5.Location" type="System.Drawing.Point, System.Drawing">
+    <value>442, 529</value>
+  </data>
+  <data name="tableLayoutPanel5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>320, 48</value>
+  </data>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1131, 577</value>
+  </data>
+  <data name="fileFolderList1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 34</value>
+  </data>
+  <data name="fileFolderList1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>436, 492</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="metroButtonNewDir.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -236,14 +262,11 @@
   <data name="metroButtonNewDir.Text" xml:space="preserve">
     <value>フォルダ作成(&amp;F)...</value>
   </data>
-  <data name="metroButtonDelete.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="metroButtonDelete.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="metroButtonDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>125, 3</value>
+    <value>125, 23</value>
   </data>
   <data name="metroButtonDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>73, 22</value>
@@ -252,37 +275,22 @@
     <value>削除(&amp;E)...</value>
   </data>
   <data name="metroButtonRefresh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>384, 3</value>
+    <value>384, 23</value>
   </data>
   <data name="metroButtonRefresh.Text" xml:space="preserve">
     <value>更新(&amp;R)</value>
-  </data>
-  <data name="metroButtonExplorer.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="metroButtonExplorer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="metroButtonExplorer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>254, 3</value>
+    <value>254, 23</value>
   </data>
   <data name="metroButtonExplorer.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 22</value>
   </data>
   <data name="metroButtonExplorer.Text" xml:space="preserve">
     <value>エクスプローラー(&amp;X)</value>
-  </data>
-  <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>418, 3</value>
-  </data>
-  <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>810, 549</value>
-  </data>
-  <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>321, 28</value>
-  </data>
-  <data name="metroButtonExport.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="metroButtonExport.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
@@ -293,14 +301,11 @@
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>音色保存(&amp;P)...</value>
   </data>
-  <data name="metroButton2.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="metroButton2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="metroButton2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>111, 3</value>
+    <value>111, 23</value>
   </data>
   <data name="metroButton2.Size" type="System.Drawing.Size, System.Drawing">
     <value>108, 22</value>
@@ -308,14 +313,11 @@
   <data name="metroButton2.Text" xml:space="preserve">
     <value>全音色保存(&amp;A)...</value>
   </data>
-  <data name="metroButton3.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="metroButton3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>250, 3</value>
+    <value>250, 23</value>
   </data>
   <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 22</value>

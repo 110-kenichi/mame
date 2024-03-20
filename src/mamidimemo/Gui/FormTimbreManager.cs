@@ -72,7 +72,9 @@ namespace zanac.MAmidiMEmo.Gui
             {
                 toolStripComboBoxNote.Items.Add(MidiManager.GetNoteName((SevenBitNumber)nn) + "(" + nn + ")");
                 toolStripComboBoxVelo.Items.Add(nn);
+                comboBoxDrumKeyNo.Items.Add(MidiManager.GetNoteName((SevenBitNumber)nn) + "(" + nn + ")");
             }
+            comboBoxDrumKeyNo.SelectedIndex = 0;
 
             Settings.Default.SettingsLoaded += Default_SettingsLoaded;
             toolStripButtonPlay.Checked = Settings.Default.FmPlayOnEdit;
@@ -902,6 +904,9 @@ namespace zanac.MAmidiMEmo.Gui
                     if (listViewCurrentTimbres != items[0].ListView || (e.KeyState & 8) == 8)
                         exchange = false;
 
+                    bool setDrumTimbre = checkBoxSetDrumKeyNo.Checked;
+                    bool setDrumTimbreName = checkBoxSetDrumTimbreName.Checked;
+                    int drumStartIdx = dragToItem.Index;
                     for (int i = dragToItem.Index; i < Math.Min(dragToItem.Index + items.Length, listViewCurrentTimbres.Items.Count); i++)
                     {
                         TimbreItem tim = items[i - dragToItem.Index].Tag as TimbreItem;
@@ -923,6 +928,22 @@ namespace zanac.MAmidiMEmo.Gui
                             {
                                 ttim.Timbre.SerializeData = ss;
 
+                                if (listViewCurrentTimbres != items[0].ListView)
+                                {
+                                    if (setDrumTimbre)
+                                    {
+                                        int idx = comboBoxDrumKeyNo.SelectedIndex + drumStartIdx;
+                                        if (idx <= 127)
+                                        {
+                                            this.Instrument.DrumTimbres[idx].TimbreNumber = (ProgramAssignmentNumber)ttim.Number;
+                                            if (setDrumTimbreName)
+                                            {
+                                                this.Instrument.DrumTimbres[idx].TimbreName = ttim.Timbre.TimbreName;
+                                            }
+                                            drumStartIdx++;
+                                        }
+                                    }
+                                }
                             }
                             listViewCurrentTimbres.Items[i].SubItems[1].Text = ttim.Timbre.TimbreName;
                             listViewCurrentTimbres.Items[i].SubItems[2].Text = ttim.Timbre.Memo;
