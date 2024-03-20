@@ -346,7 +346,8 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
-        ///   Do you want to convert sample rate to {0}Hz? に類似しているローカライズされた文字列を検索します。
+        ///   Do you want to convert sample rate to {0}Hz?
+        ///(Selection is memorized. Reboot or hold down the Alt key while selecting a file to reconfirm) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ConfirmConvertSampleRate {
             get {

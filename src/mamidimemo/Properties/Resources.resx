@@ -473,7 +473,8 @@ Or, install the loopMIDI application to the PC.</value>
     <value>..\Resources\RF5C164.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ConfirmConvertSampleRate" xml:space="preserve">
-    <value>Do you want to convert sample rate to {0}Hz?</value>
+    <value>Do you want to convert sample rate to {0}Hz?
+(Selection is memorized. Reboot or hold down the Alt key while selecting a file to reconfirm)</value>
   </data>
   <data name="ContinuousSet" xml:space="preserve">
     <value>Please specify the number to be sequentially numbered.</value>
