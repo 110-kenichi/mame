@@ -1138,7 +1138,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>273, 35</value>
+    <value>90, 35</value>
   </data>
   <data name="metroLabel5.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1180,7 +1180,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 35</value>
+    <value>29, 35</value>
   </data>
   <data name="metroLabel6.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1210,10 +1210,10 @@
     <value>Fill</value>
   </data>
   <data name="numericUpDownScale.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 3</value>
+    <value>38, 3</value>
   </data>
   <data name="numericUpDownScale.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 29</value>
+    <value>29, 29</value>
   </data>
   <data name="numericUpDownScale.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1237,7 +1237,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>257, 0</value>
+    <value>73, 0</value>
   </data>
   <data name="metroLabel7.Size" type="System.Drawing.Size, System.Drawing">
     <value>20, 35</value>
@@ -1267,7 +1267,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>279, 0</value>
+    <value>96, 0</value>
   </data>
   <data name="tableLayoutPanel7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1276,7 +1276,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>280, 35</value>
+    <value>96, 35</value>
   </data>
   <data name="tableLayoutPanel7.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1306,7 +1306,7 @@
     <value>3, 35</value>
   </data>
   <data name="metroLabel8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>553, 38</value>
+    <value>186, 38</value>
   </data>
   <data name="metroLabel8.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1340,7 +1340,7 @@ A restart is required.</value>
     <value>3</value>
   </data>
   <data name="tableLayoutPanel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>192, 58</value>
   </data>
   <data name="tableLayoutPanel6.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1364,7 +1364,7 @@ A restart is required.</value>
     <value>4, 38</value>
   </data>
   <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>192, 58</value>
   </data>
   <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>

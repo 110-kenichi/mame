@@ -825,5 +825,16 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["SetDrumTimbreName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection ToneLibMRU {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ToneLibMRU"]));
+            }
+            set {
+                this["ToneLibMRU"] = value;
+            }
+        }
     }
 }

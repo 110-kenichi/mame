@@ -2,6 +2,7 @@
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
+using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
@@ -171,7 +174,12 @@ namespace zanac.MAmidiMEmo.Gui
             });
             fileFolderList1.ItemSelectionChanged += fileFolderList1_SelectedIndexChanged;
 
-            TimbreManagers.Add(inst, this); 
+            if (Settings.Default.ToneLibMRU == null)
+                Settings.Default.ToneLibMRU = new System.Collections.Specialized.StringCollection();
+            foreach (String item in Settings.Default.ToneLibMRU)
+                comboBoxDir.Items.Add(item);
+
+            TimbreManagers.Add(inst, this);
         }
 
         /// <summary>
@@ -190,7 +198,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             try
             {
-                metroTextBox1.Text = fileFolderList1.CurrentDirectory;
+                comboBoxDir.Text = fileFolderList1.CurrentDirectory;
                 fileFolderList1.Browse(fileFolderList1.CurrentDirectory);
             }
             catch (Exception ex)
@@ -781,6 +789,8 @@ namespace zanac.MAmidiMEmo.Gui
             return no;
         }
 
+        //internal static string NormalizePath(string path, bool fullCheck)
+
         private bool ignore_metroTextBox1_TextChanged;
 
         private void metroTextBox1_TextChanged(object sender, EventArgs e)
@@ -790,10 +800,34 @@ namespace zanac.MAmidiMEmo.Gui
 
             try
             {
-                if (System.IO.Directory.Exists(metroTextBox1.Text))
-                    fileFolderList1.Browse(metroTextBox1.Text);
+                string dir = comboBoxDir.Text;
+                if (System.IO.Directory.Exists(dir))
+                {
+                    fileFolderList1.Browse(dir);
+
+                    dir = updateDirMRU(dir);
+                }
             }
             catch { }
+        }
+
+        private string updateDirMRU(string dir)
+        {
+            MethodInfo mi = typeof(Path).GetMethod("NormalizePath", BindingFlags.Static | BindingFlags.NonPublic, null, new Type[] { typeof(String), typeof(Boolean) }, null);
+            dir = (String)mi.Invoke(null, new object[] { dir, true });
+            if (!dir.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                dir += Path.DirectorySeparatorChar.ToString();
+
+            if (Settings.Default.ToneLibMRU.Contains(dir))
+                Settings.Default.ToneLibMRU.Remove(dir);
+            Settings.Default.ToneLibMRU.Insert(0, dir);
+            for (; Settings.Default.ToneLibMRU.Count > 10;)
+                Settings.Default.ToneLibMRU.RemoveAt(10);
+
+            comboBoxDir.Items.Clear();
+            foreach (String item in Settings.Default.ToneLibMRU)
+                comboBoxDir.Items.Add(item);
+            return dir;
         }
 
 
@@ -1331,7 +1365,9 @@ namespace zanac.MAmidiMEmo.Gui
             try
             {
                 ignore_metroTextBox1_TextChanged = true;
-                metroTextBox1.Text = fileFolderList1.CurrentDirectory;
+                comboBoxDir.Text = fileFolderList1.CurrentDirectory;
+
+                updateDirMRU(fileFolderList1.CurrentDirectory);
             }
             finally
             {
@@ -1346,7 +1382,7 @@ namespace zanac.MAmidiMEmo.Gui
             var dr = betterFolderBrowser1.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                metroTextBox1.Text = betterFolderBrowser1.SelectedFolder;
+                comboBoxDir.Text = betterFolderBrowser1.SelectedFolder;
                 Settings.Default.ToneLibLastDir = betterFolderBrowser1.SelectedFolder;
             }
         }

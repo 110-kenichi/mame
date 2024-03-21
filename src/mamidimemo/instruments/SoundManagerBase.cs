@@ -904,6 +904,7 @@ namespace zanac.MAmidiMEmo.Instruments
 
             if (delay != 0)
             {
+                sound.FakeKeyOn();
                 HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processDelayKeyOnCore), delay, sound, true);
             }
             else

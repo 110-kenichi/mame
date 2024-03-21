@@ -154,6 +154,16 @@ namespace zanac.MAmidiMEmo.Instruments
         /// <summary>
         /// サウンドオン
         /// </summary>
+        public virtual void FakeKeyOn()
+        {
+            IsSoundingStarted = true;
+            IsKeyOff = false;
+            IsSoundOff = false;
+        }
+
+        /// <summary>
+        /// サウンドオン
+        /// </summary>
         public virtual void KeyOn()
         {
             IsSoundingStarted = true;

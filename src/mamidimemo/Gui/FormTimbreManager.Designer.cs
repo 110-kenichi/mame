@@ -61,10 +61,10 @@
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.fileFolderList1 = new zanac.MAmidiMEmo.ComponentModel.FileFolderList();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.metroTextBox1 = new MetroFramework.Controls.MetroTextBox();
             this.metroLabelDir = new MetroFramework.Controls.MetroLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboBoxDir = new System.Windows.Forms.ComboBox();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.listViewFilesTimbres = new System.Windows.Forms.ListView();
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -125,7 +125,6 @@
             // 
             // toolStripComboBoxCh
             // 
-            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
@@ -147,68 +146,68 @@
             resources.GetString("toolStripComboBoxCh.Items14"),
             resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             // 
             // toolStripButtonPlay
             // 
-            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
             // 
             // toolStripButtonHook
             // 
-            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.CheckOnClick = true;
+            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.Name = "toolStripButtonHook";
             // 
             // toolStripButton1
             // 
-            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Name = "toolStripButton1";
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             // 
             // toolStripComboBoxNote
             // 
-            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             // 
             // toolStripLabel4
             // 
-            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             // 
             // toolStripComboBoxVelo
             // 
-            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             // 
             // toolStripLabel3
             // 
-            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             // 
             // toolStripComboBoxGate
             // 
-            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
@@ -217,20 +216,20 @@
             resources.GetString("toolStripComboBoxGate.Items2"),
             resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // toolStripLabel5
             // 
-            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             this.toolStripLabel5.Name = "toolStripLabel5";
+            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             // 
             // toolStripComboBoxCC
             // 
-            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
@@ -363,16 +362,17 @@
             resources.GetString("toolStripComboBoxCC.Items126"),
             resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
             // listViewCurrentTimbres
             // 
-            resources.ApplyResources(this.listViewCurrentTimbres, "listViewCurrentTimbres");
             this.listViewCurrentTimbres.AllowDrop = true;
             this.listViewCurrentTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
             this.listViewCurrentTimbres.ContextMenuStrip = this.contextMenuStrip1;
+            resources.ApplyResources(this.listViewCurrentTimbres, "listViewCurrentTimbres");
             this.listViewCurrentTimbres.FullRowSelect = true;
             this.listViewCurrentTimbres.GridLines = true;
             this.listViewCurrentTimbres.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
@@ -403,7 +403,6 @@
             // 
             // contextMenuStrip1
             // 
-            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.editToolStripMenuItem,
@@ -411,6 +410,7 @@
             this.renameToolStripMenuItem,
             this.clearToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // editToolStripMenuItem
@@ -421,20 +421,20 @@
             // 
             // propertyToolStripMenuItem
             // 
-            resources.ApplyResources(this.propertyToolStripMenuItem, "propertyToolStripMenuItem");
             this.propertyToolStripMenuItem.Name = "propertyToolStripMenuItem";
+            resources.ApplyResources(this.propertyToolStripMenuItem, "propertyToolStripMenuItem");
             this.propertyToolStripMenuItem.Click += new System.EventHandler(this.propertyToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
-            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // clearToolStripMenuItem
             // 
-            resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            resources.ApplyResources(this.clearToolStripMenuItem, "clearToolStripMenuItem");
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // tableLayoutPanel1
@@ -460,12 +460,12 @@
             // 
             // fileFolderList1
             // 
-            resources.ApplyResources(this.fileFolderList1, "fileFolderList1");
             this.fileFolderList1.Activation = System.Windows.Forms.ItemActivation.TwoClick;
             this.fileFolderList1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4});
             this.tableLayoutPanel2.SetColumnSpan(this.fileFolderList1, 3);
             this.fileFolderList1.CurrentDirectory = "C:\\";
+            resources.ApplyResources(this.fileFolderList1, "fileFolderList1");
             this.fileFolderList1.FileValidator = null;
             this.fileFolderList1.FilterExts = null;
             this.fileFolderList1.FullRowSelect = true;
@@ -481,12 +481,6 @@
             // 
             resources.ApplyResources(this.columnHeader4, "columnHeader4");
             // 
-            // metroTextBox1
-            // 
-            resources.ApplyResources(this.metroTextBox1, "metroTextBox1");
-            this.metroTextBox1.Name = "metroTextBox1";
-            this.metroTextBox1.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
-            // 
             // metroLabelDir
             // 
             resources.ApplyResources(this.metroLabelDir, "metroLabelDir");
@@ -500,11 +494,11 @@
             // tableLayoutPanel2
             // 
             resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxDir, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroLabelDir, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel1, 3, 0);
             this.tableLayoutPanel2.Controls.Add(this.fileFolderList1, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel2, 5, 0);
-            this.tableLayoutPanel2.Controls.Add(this.metroTextBox1, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.listViewFilesTimbres, 3, 1);
             this.tableLayoutPanel2.Controls.Add(this.metroLabel3, 4, 1);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 3);
@@ -514,6 +508,16 @@
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel5, 3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             // 
+            // comboBoxDir
+            // 
+            this.comboBoxDir.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.comboBoxDir.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
+            this.comboBoxDir.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "ToneLibLastDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.comboBoxDir, "comboBoxDir");
+            this.comboBoxDir.Name = "comboBoxDir";
+            this.comboBoxDir.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.ToneLibLastDir;
+            this.comboBoxDir.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
+            // 
             // metroLabel2
             // 
             resources.ApplyResources(this.metroLabel2, "metroLabel2");
@@ -521,8 +525,8 @@
             // 
             // listViewFilesTimbres
             // 
-            resources.ApplyResources(this.listViewFilesTimbres, "listViewFilesTimbres");
             this.listViewFilesTimbres.AllowDrop = true;
+            resources.ApplyResources(this.listViewFilesTimbres, "listViewFilesTimbres");
             this.listViewFilesTimbres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader5,
             this.columnHeader6,
@@ -713,7 +717,6 @@
         private MetroFramework.Controls.MetroButton buttonOK;
         private MetroFramework.Controls.MetroButton buttonCancel;
         private ComponentModel.FileFolderList fileFolderList1;
-        private MetroFramework.Controls.MetroTextBox metroTextBox1;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private MetroFramework.Controls.MetroLabel metroLabelDir;
         private MetroFramework.Controls.MetroLabel metroLabel1;
@@ -744,5 +747,6 @@
         private System.Windows.Forms.CheckBox checkBoxSetDrumKeyNo;
         private System.Windows.Forms.CheckBox checkBoxSetDrumTimbreName;
         private System.Windows.Forms.ComboBox comboBoxDrumKeyNo;
+        private System.Windows.Forms.ComboBox comboBoxDir;
     }
 }

@@ -140,14 +140,14 @@
   <data name="listViewCurrentTimbres.Size" type="System.Drawing.Size, System.Drawing">
     <value>315, 492</value>
   </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1136, 43</value>
-  </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
     <value>971, 14</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
     <value>1054, 14</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1136, 43</value>
   </data>
   <data name="metroLabelDir.Size" type="System.Drawing.Size, System.Drawing">
     <value>87, 31</value>
@@ -201,6 +201,46 @@
   <data name="metroLabel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>42, 498</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="metroButtonNewDir.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonNewDir.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 22</value>
+  </data>
+  <data name="metroButtonNewDir.Text" xml:space="preserve">
+    <value>フォルダ作成(&amp;F)...</value>
+  </data>
+  <data name="metroButtonDelete.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonDelete.Location" type="System.Drawing.Point, System.Drawing">
+    <value>125, 23</value>
+  </data>
+  <data name="metroButtonDelete.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 22</value>
+  </data>
+  <data name="metroButtonDelete.Text" xml:space="preserve">
+    <value>削除(&amp;E)...</value>
+  </data>
+  <data name="metroButtonRefresh.Location" type="System.Drawing.Point, System.Drawing">
+    <value>384, 23</value>
+  </data>
+  <data name="metroButtonRefresh.Text" xml:space="preserve">
+    <value>更新(&amp;R)</value>
+  </data>
+  <data name="metroButtonExplorer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonExplorer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>254, 23</value>
+  </data>
+  <data name="metroButtonExplorer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 22</value>
+  </data>
+  <data name="metroButtonExplorer.Text" xml:space="preserve">
+    <value>エクスプローラー(&amp;X)</value>
+  </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>442, 48</value>
   </data>
@@ -209,6 +249,39 @@
   </data>
   <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
     <value>21, 25</value>
+  </data>
+  <data name="metroButtonExport.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonExport.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 22</value>
+  </data>
+  <data name="metroButtonExport.Text" xml:space="preserve">
+    <value>音色保存(&amp;P)...</value>
+  </data>
+  <data name="metroButton2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButton2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>111, 23</value>
+  </data>
+  <data name="metroButton2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 22</value>
+  </data>
+  <data name="metroButton2.Text" xml:space="preserve">
+    <value>全音色保存(&amp;A)...</value>
+  </data>
+  <data name="metroButton3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>250, 23</value>
+  </data>
+  <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>68, 22</value>
+  </data>
+  <data name="metroButton3.Text" xml:space="preserve">
+    <value>クリア(&amp;C)...</value>
   </data>
   <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
     <value>810, 529</value>
@@ -251,79 +324,6 @@
   </data>
   <data name="fileFolderList1.Size" type="System.Drawing.Size, System.Drawing">
     <value>436, 492</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="metroButtonNewDir.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonNewDir.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
-  </data>
-  <data name="metroButtonNewDir.Text" xml:space="preserve">
-    <value>フォルダ作成(&amp;F)...</value>
-  </data>
-  <data name="metroButtonDelete.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>125, 23</value>
-  </data>
-  <data name="metroButtonDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>73, 22</value>
-  </data>
-  <data name="metroButtonDelete.Text" xml:space="preserve">
-    <value>削除(&amp;E)...</value>
-  </data>
-  <data name="metroButtonRefresh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>384, 23</value>
-  </data>
-  <data name="metroButtonRefresh.Text" xml:space="preserve">
-    <value>更新(&amp;R)</value>
-  </data>
-  <data name="metroButtonExplorer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonExplorer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>254, 23</value>
-  </data>
-  <data name="metroButtonExplorer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 22</value>
-  </data>
-  <data name="metroButtonExplorer.Text" xml:space="preserve">
-    <value>エクスプローラー(&amp;X)</value>
-  </data>
-  <data name="metroButtonExport.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>102, 22</value>
-  </data>
-  <data name="metroButtonExport.Text" xml:space="preserve">
-    <value>音色保存(&amp;P)...</value>
-  </data>
-  <data name="metroButton2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButton2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>111, 23</value>
-  </data>
-  <data name="metroButton2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 22</value>
-  </data>
-  <data name="metroButton2.Text" xml:space="preserve">
-    <value>全音色保存(&amp;A)...</value>
-  </data>
-  <data name="metroButton3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>250, 23</value>
-  </data>
-  <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 22</value>
-  </data>
-  <data name="metroButton3.Text" xml:space="preserve">
-    <value>クリア(&amp;C)...</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>1146, 817</value>

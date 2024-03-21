@@ -148,6 +148,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
         {
             this.Invoke(new MethodInvoker(delegate
             {
+                if (this.IsDisposed)
+                    return;
                 AutoColResize();
             }));
         }
