@@ -911,14 +911,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.PSG:
                         {
                             var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                            if (slot > 2)
-                                slot = -1;
                             if (slot == -1)
                             {
                                 if (timbre.PartialReserve3ch)
+                                {
+                                    if (slot > 2)
+                                        slot = -1;
+                                    else if (slot < -1)
+                                        slot = -1;
                                     emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2, slot, 0);
+                                }
                                 else
+                                {
+                                    if (slot > 3)
+                                        slot = -1;
+                                    else if (slot < -1)
+                                        slot = -1;
                                     emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);
+                                }
                             }
                             else
                                 emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);

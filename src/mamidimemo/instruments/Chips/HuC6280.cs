@@ -1122,6 +1122,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
             private bool f_LfoEnable = true;
 
             [DataMember]

@@ -836,5 +836,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["ToneLibMRU"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800, 600")]
+        public global::System.Drawing.Size TimbreListWinSize {
+            get {
+                return ((global::System.Drawing.Size)(this["TimbreListWinSize"]));
+            }
+            set {
+                this["TimbreListWinSize"] = value;
+            }
+        }
     }
 }

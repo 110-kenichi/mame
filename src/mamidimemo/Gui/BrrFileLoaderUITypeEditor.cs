@@ -82,6 +82,7 @@ namespace zanac.MAmidiMEmo.Gui
                             var fi = new FileInfo(fn);
                             SPC700Timbre tim = context.Instance as SPC700Timbre;
                             tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                            tim.PcmDataInfo = fn;
                             switch (fi.Length % 9)
                             {
                                 case 2:

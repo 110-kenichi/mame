@@ -936,6 +936,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData12 = new short[0];
             }
 
+            [DataMember]
+            [Category("Sound")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1106,10 +1116,13 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     int ch = 1;
 
                                     WaveFormat format = new WaveFormat(rate, bits, ch);
-                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
                                     {
-                                        data = new byte[stream.Length];
-                                        stream.Read(data, 0, data.Length);
+                                        using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
+                                        {
+                                            data = new byte[converter.Length];
+                                            stream.Read(data, 0, data.Length);
+                                        }
                                     }
                                 }
                                 else
@@ -1175,7 +1188,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <returns></returns>
         internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
         {
-            return new ToolStripMenuItem[] { readSoundFontForTimbre, readSoundFontForDrumTimbre };
+            List<ToolStripMenuItem> menus = new System.Collections.Generic.List<ToolStripMenuItem>(base.GetInstrumentMenus());
+
+            menus.AddRange(new ToolStripMenuItem[] {
+                readSoundFontForTimbre,
+                readSoundFontForDrumTimbre
+            });
+
+            return menus.ToArray();
         }
 
         private System.Windows.Forms.OpenFileDialog openFileDialog;

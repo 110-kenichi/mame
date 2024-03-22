@@ -2263,6 +2263,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 f_PcmData = new byte[0];
             }
 
+            [DataMember]
+            [Category("Sound(ADPCM-B)")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
             /// <summary>
             /// 
             /// </summary>

@@ -5,6 +5,8 @@ using Jacobi.Vst.Core;
 using Jacobi.Vst.Interop.Host;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using NAudio.Wave.SampleProviders;
+using NAudio.Wave;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -33,6 +35,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
+using Microsoft.Win32;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -2397,6 +2400,9 @@ namespace zanac.MAmidiMEmo.Instruments
                 DataEntryType.None,
                 DataEntryType.None
             };
+
+            timbreListMenuItem = new ToolStripMenuItem(Resources.TimbreList);
+            timbreListMenuItem.Click += timbreListMenuItem_Click;
         }
 
         private void initVstPlugins()
@@ -2421,6 +2427,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 {
                     //マネージ状態を破棄します (マネージ オブジェクト)。
 
+                    timbreListMenuItem?.Dispose();
+                    timbreListMenuItem = null;
                 }
                 if (vgmRecording)
                     StopVgmRecordingInternal(UnitNumber, SoundInterfaceTagNamePrefix);
@@ -3137,13 +3145,26 @@ namespace zanac.MAmidiMEmo.Instruments
 
         #region MENU
 
+        private ToolStripMenuItem timbreListMenuItem;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timbreListMenuItem_Click(object sender, EventArgs e)
+        {
+            FormTimbreList edl = new FormTimbreList(this);
+            edl.Show();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         internal virtual IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
         {
-            return null;
+            return new ToolStripMenuItem[] { timbreListMenuItem };
         }
 
         #endregion
@@ -3206,6 +3227,46 @@ namespace zanac.MAmidiMEmo.Instruments
         public virtual void ImportBinFile(TimbreBase timbre, FileInfo binFile)
         {
 
+        }
+        /// <summary>
+        /// Helper function to go from IWaveProvider to a SampleProvider
+        /// Must already be PCM or IEEE float
+        /// </summary>
+        /// <param name="waveProvider">The WaveProvider to convert</param>
+        /// <returns>A sample provider</returns>
+        public static ISampleProvider ConvertWaveProviderIntoSampleProvider(IWaveProvider waveProvider)
+        {
+            ISampleProvider sampleProvider;
+
+            if (waveProvider.WaveFormat.Encoding == WaveFormatEncoding.Pcm)
+            {
+                // go to float
+                if (waveProvider.WaveFormat.BitsPerSample == 8)
+                {
+                    sampleProvider = new Pcm8BitToSampleProvider(waveProvider);
+                }
+                else if (waveProvider.WaveFormat.BitsPerSample == 16)
+                {
+                    sampleProvider = new Pcm16BitToSampleProvider(waveProvider);
+                }
+                else if (waveProvider.WaveFormat.BitsPerSample == 24)
+                {
+                    sampleProvider = new Pcm24BitToSampleProvider(waveProvider);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unsupported operation");
+                }
+            }
+            else if (waveProvider.WaveFormat.Encoding == WaveFormatEncoding.IeeeFloat)
+            {
+                sampleProvider = new WaveToSampleProvider(waveProvider);
+            }
+            else
+            {
+                throw new ArgumentException("Unsupported source encoding");
+            }
+            return (sampleProvider);
         }
     }
 

@@ -17,6 +17,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Properties;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 namespace zanac.MAmidiMEmo.Gui
 {
@@ -93,9 +94,12 @@ namespace zanac.MAmidiMEmo.Gui
                             object rvalue = convertRawToRetValue(context, buf.ToArray());
                             if (rvalue != null)
                             {
-                                TimbreBase tim = context.Instance as TimbreBase;
+                                YM2612Timbre tim = context.Instance as YM2612Timbre;
                                 if (tim != null)
+                                {
                                     tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                    tim.PcmDataInfo = fn;
+                                }
                                 return rvalue;
                             }
                             return value;
@@ -157,10 +161,13 @@ namespace zanac.MAmidiMEmo.Gui
                                     }
 
                                     wf = new WaveFormat(rate, bits, ch);
-                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(wf, reader))
+                                    using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
                                     {
-                                        data = new byte[stream.Length];
-                                        stream.Read(data, 0, data.Length);
+                                        using (var stream = new WaveFormatConversionProvider(wf, converter.ToSampleProvider().ToWaveProvider16()))
+                                        {
+                                            data = new byte[converter.Length];
+                                            stream.Read(data, 0, data.Length);
+                                        }
                                     }
                                 }
                                 else
@@ -173,15 +180,13 @@ namespace zanac.MAmidiMEmo.Gui
                                     object rvalue = convertToRetValue(context, data);
                                     if (rvalue != null)
                                     {
-                                        TimbreBase tim = context.Instance as TimbreBase;
+                                        YM2612Timbre tim = context.Instance as YM2612Timbre;
                                         if (tim != null)
-                                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
-                                        try
                                         {
-                                            dynamic dyn = tim;
-                                            dyn.SampleRate = (uint)wf.SampleRate;
+                                            tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                            tim.SampleRate = (uint)wf.SampleRate;
+                                            tim.PcmDataInfo = fn;
                                         }
-                                        catch { }
                                         return rvalue;
                                     }
                                 }

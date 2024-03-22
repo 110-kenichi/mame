@@ -1033,6 +1033,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             [DataMember]
+            [Category("Sound")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
             [Browsable(false)]
             public uint PcmAddressStart
             {
@@ -1314,10 +1324,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <returns></returns>
         internal override IEnumerable<ToolStripMenuItem> GetInstrumentMenus()
         {
-            return new ToolStripMenuItem[] {
+            List<ToolStripMenuItem> menus = new System.Collections.Generic.List<ToolStripMenuItem>(base.GetInstrumentMenus());
+
+            menus.AddRange(new ToolStripMenuItem[] {
                 readSoundFontForTimbre,
                 readSoundFontForDrumTimbre
-            };
+            });
+
+            return menus.ToArray();
         }
 
         private System.Windows.Forms.OpenFileDialog openFileDialog;

@@ -963,6 +963,15 @@ namespace zanac.MAmidiMEmo.Properties {
         }
         
         /// <summary>
+        ///   Timbre &amp;List に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string TimbreList {
+            get {
+                return ResourceManager.GetString("TimbreList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   {0} timbres loaded. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string TimbreLoaded {

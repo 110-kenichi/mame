@@ -29,6 +29,7 @@ using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.MusicTheory;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
 using Omu.ValueInjecter.Injections;
@@ -1375,6 +1376,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
                                     if (slot > 3)
                                         slot = -1;
+                                    else if (slot < -1)
+                                        slot = -1;
                                     return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, 4, slot, 0);
                                 }
                                 return (parentModule, -1);
@@ -1384,6 +1387,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
                                 if (slot > (parentModule.Mode5ch ? 5 : 6))
                                     slot = -1;
+                                else if (slot < -1)
+                                    slot = -1;
                                 return SearchEmptySlotAndOffForLeader(parentModule, fmOnSounds, note, parentModule.Mode5ch ? 5 : 6, slot, 0);
                             }
                         }
@@ -1391,7 +1396,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (!parentModule.Mode5ch)
                                 break;
-                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, parentModule.MaxDacPcmVoices);
+                            var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                            if (slot > parentModule.MaxDacPcmVoices)
+                                slot = -1;
+                            else if (slot < -1)
+                                slot = -1;
+                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, parentModule.MaxDacPcmVoices, slot, 0);
                         }
                 }
 
@@ -2874,6 +2884,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
+            [DataMember]
+            [Category("Sound(PCM)")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
             /*
             [DataMember]
             [Category("Sound(PCM)")]
@@ -3781,71 +3801,86 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 case ".WAV":
                     YM2612Timbre tim = (YM2612Timbre)timbre;
-
-                    using (var reader = new NAudio.Wave.WaveFileReader(binFile.FullName))
+                    try
                     {
-                        var wf = reader.WaveFormat;
-
-                        byte[] data = null;
-
-                        if (8 != wf.BitsPerSample || 1 != wf.Channels || wf.SampleRate > TargetSampleRate)
+                        using (var reader = new NAudio.Wave.WaveFileReader(binFile.FullName))
                         {
-                            /*
-                            var r = MessageBox.Show(null,
-                                $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
-                                "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
-                            if (r == DialogResult.Cancel)
+                            var wf = reader.WaveFormat;
+
+                            byte[] data = null;
+
+                            if (8 != wf.BitsPerSample || 1 != wf.Channels || wf.SampleRate > TargetSampleRate)
                             {
-                                throw new FileLoadException(
-                                string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
-                            }*/
-
-                            int bits = 8;
-                            int rate = wf.SampleRate;
-                            int ch = 1;
-
-                            if (rate > TargetSampleRate)
-                            {
-                                DialogResult r;
-                                if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
-                                    previousSampleRateAns = null;
-
-                                if (previousSampleRateAns.HasValue)
+                                /*
+                                var r = MessageBox.Show(null,
+                                    $"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate})\r\n" +
+                                    "Do you want to convert?", "Qeuestion", MessageBoxButtons.OKCancel);
+                                if (r == DialogResult.Cancel)
                                 {
-                                    r = previousSampleRateAns.Value;
+                                    throw new FileLoadException(
+                                    string.Format($"Incorrect wave format(Expected Ch={att.Channels} Bit={att.Bits}, Rate={att.Rate}"));
+                                }*/
+
+                                int bits = 8;
+                                int rate = wf.SampleRate;
+                                int ch = 1;
+
+                                if (rate > TargetSampleRate)
+                                {
+                                    DialogResult r;
+                                    if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
+                                        previousSampleRateAns = null;
+
+                                    if (previousSampleRateAns.HasValue)
+                                    {
+                                        r = previousSampleRateAns.Value;
+                                    }
+                                    else
+                                    {
+                                        r = MessageBox.Show(null,
+                                            String.Format(Resources.SampleRateOver + "\r\n", TargetSampleRate) +
+                                            String.Format(Resources.ConfirmConvertSampleRate, TargetSampleRate), "Qeuestion", MessageBoxButtons.YesNo);
+                                        previousSampleRateAns = r;
+                                    }
+                                    if (r == DialogResult.Yes)
+                                    {
+                                        rate = (int)TargetSampleRate;
+                                    }
                                 }
-                                else
+
+                                wf = new WaveFormat(rate, bits, ch);
+                                using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
                                 {
-                                    r = MessageBox.Show(null,
-                                        String.Format(Resources.SampleRateOver + "\r\n", TargetSampleRate) +
-                                        String.Format(Resources.ConfirmConvertSampleRate, TargetSampleRate), "Qeuestion", MessageBoxButtons.YesNo);
-                                    previousSampleRateAns = r;
-                                }
-                                if (r == DialogResult.Yes)
-                                {
-                                    rate = (int)TargetSampleRate;
+                                    using (var stream = new WaveFormatConversionProvider(wf, converter.ToSampleProvider().ToWaveProvider16()))
+                                    {
+                                        data = new byte[converter.Length];
+                                        stream.Read(data, 0, data.Length);
+                                    }
                                 }
                             }
-
-                            wf = new WaveFormat(rate, bits, ch);
-                            using (WaveFormatConversionStream stream = new WaveFormatConversionStream(wf, reader))
+                            else
                             {
-                                data = new byte[stream.Length];
-                                stream.Read(data, 0, data.Length);
+                                data = new byte[reader.Length];
+                                reader.Read(data, 0, data.Length);
                             }
-                        }
-                        else
-                        {
-                            data = new byte[reader.Length];
-                            reader.Read(data, 0, data.Length);
-                        }
 
-                        tim.PcmData = data;
-                        tim.SampleRate = (uint)wf.SampleRate;
-                        tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
-                        tim.ToneType = ToneType.PCM;
+                            tim.PcmData = data;
+                            tim.PcmDataInfo = binFile.FullName;
+                            tim.SampleRate = (uint)wf.SampleRate;
+                            tim.TimbreName = System.IO.Path.GetFileNameWithoutExtension(binFile.Name);
+                            tim.ToneType = ToneType.PCM;
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
 
+
+                        System.Windows.Forms.MessageBox.Show(ex.Message);
+                    }
                     break;
             }
         }

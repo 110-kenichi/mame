@@ -92,6 +92,12 @@ namespace zanac.MAmidiMEmo.Gui
                                 TimbreBase tim = context.Instance as TimbreBase;
                                 if(tim != null)
                                     tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                try
+                                {
+                                    dynamic dyn = context.Instance;
+                                    dyn.PcmDataInfo = fn;
+                                }
+                                catch { }
                                 return rvalue;
                             }
                             return value;
@@ -129,10 +135,13 @@ namespace zanac.MAmidiMEmo.Gui
                                         ch = wf.Channels;
 
                                     WaveFormat format = new WaveFormat(rate, bits, ch);
-                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
                                     {
-                                        data = new byte[stream.Length];
-                                        stream.Read(data, 0, data.Length);
+                                        using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
+                                        {
+                                            data = new byte[converter.Length];
+                                            stream.Read(data, 0, data.Length);
+                                        }
                                     }
                                 }
                                 else
@@ -150,8 +159,14 @@ namespace zanac.MAmidiMEmo.Gui
                                             tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
                                         try
                                         {
-                                            dynamic dyn = tim;
+                                            dynamic dyn = context.Instance;
                                             dyn.SampleRate = (uint)wf.SampleRate;
+                                        }
+                                        catch { }
+                                        try
+                                        {
+                                            dynamic dyn = context.Instance;
+                                            dyn.PcmDataInfo = fn;
                                         }
                                         catch { }
                                         return rvalue;

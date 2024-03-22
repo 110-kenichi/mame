@@ -193,10 +193,13 @@ namespace zanac.MAmidiMEmo.Gui
                                         ch = wf.Channels;
 
                                     WaveFormat format = new WaveFormat(rate, bits, ch);
-                                    using (WaveFormatConversionStream stream = new WaveFormatConversionStream(format, reader))
+                                    using (var converter = WaveFormatConversionStream.CreatePcmStream(reader))
                                     {
-                                        data = new byte[stream.Length];
-                                        stream.Read(data, 0, data.Length);
+                                        using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
+                                        {
+                                            data = new byte[converter.Length];
+                                            stream.Read(data, 0, data.Length);
+                                        }
                                     }
                                 }
                                 else
@@ -222,10 +225,12 @@ namespace zanac.MAmidiMEmo.Gui
                                         case YM2608Timbre tim:
                                             tim.BaseFreqency = 440d * (4000000d / 72d) / (double)wf.SampleRate;
                                             tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                            tim.PcmDataInfo = fn;
                                             break;
                                         case YM2610BTimbre tim:
                                             tim.BaseFreqency = 440d * (4000000d / 72d) / (double)wf.SampleRate;
                                             tim.TimbreName = Path.GetFileNameWithoutExtension(fn);
+                                            tim.PcmDataInfo = fn;
                                             break;
                                     }
 

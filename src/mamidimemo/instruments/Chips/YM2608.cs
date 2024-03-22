@@ -3477,6 +3477,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
 
             [DataMember]
+            [Category("Sound(ADPCM-B)")]
+            [Description("PcmData information")]
+            [ReadOnly(true)]
+            public String PcmDataInfo
+            {
+                get;
+                set;
+            }
+
+            [DataMember]
             [Browsable(false)]
             public uint PcmAddressStart
             {

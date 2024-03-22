@@ -423,4 +423,7 @@ MAmidiMEmo の機能をすべて利用する場合、 MIDI IN デバイスまた
   <data name="SampleRateOver" xml:space="preserve">
     <value>サンプリング周波数が {0}Hz を超えています.</value>
   </data>
+  <data name="TimbreList" xml:space="preserve">
+    <value>音色リスト(&amp;L)</value>
+  </data>
 </root>

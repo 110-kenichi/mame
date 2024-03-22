@@ -60,6 +60,15 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        [DataMember]
+        [Description("PcmData information")]
+        [ReadOnly(true)]
+        public String PcmDataInfo
+        {
+            get;
+            set;
+        }
+
         private int f_PanShift;
 
         [DataMember]
