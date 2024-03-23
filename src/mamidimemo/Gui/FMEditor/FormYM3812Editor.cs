@@ -282,7 +282,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     native = true;
                 }
 
-            ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
+                ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
                 ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
                 ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = null;
                 ((RegisterValue)this["General"]["GlobalSettings.VIB"]).NullableValue = null;

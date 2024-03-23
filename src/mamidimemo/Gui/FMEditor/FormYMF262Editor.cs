@@ -557,7 +557,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     alg = tone.CNT;
                     native = true;
                 }
-            ((RegisterValue)this["General"]["ALG"]).Value = alg;
+                ((RegisterValue)this["General"]["ALG"]).Value = alg;
                 ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
                 ((RegisterValue)this["General"]["FB2"]).Value = tone.FB;
                 ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;

@@ -126,7 +126,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 (RegisterValue)GetControl("AR"),
                 (RegisterValue)GetControl("TL"),
                 (RegisterValue)GetControl("DR"), true,
-                (RegisterValue)GetControl("SL"),
+                (RegisterValue)GetControl("SL"), false,
                 (RegisterValue)GetControl("SR"),
                 (RegisterValue)GetControl("RR")
                 ));
@@ -158,8 +158,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             AddControl(new RegisterEnvForm(
                 (RegisterValue)GetControl("AR"),
                 null,
-                (RegisterValue)GetControl("DR"), true,
-                (RegisterValue)GetControl("SL"),
+                (RegisterValue)GetControl("DR"), false,
+                (RegisterValue)GetControl("SL"), true,
                 (RegisterValue)GetControl("SR"),
                 (RegisterValue)GetControl("RR")
                 ));

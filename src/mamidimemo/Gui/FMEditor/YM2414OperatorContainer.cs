@@ -113,7 +113,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 (RegisterValue)GetControl("AR"),
                 (RegisterValue)GetControl("TL"),
                 (RegisterValue)GetControl("D1R"), false,
-                (RegisterValue)GetControl("SL"),
+                (RegisterValue)GetControl("SL"), false,
                 (RegisterValue)GetControl("D2R"),
                 (RegisterValue)GetControl("RR")
                 ));

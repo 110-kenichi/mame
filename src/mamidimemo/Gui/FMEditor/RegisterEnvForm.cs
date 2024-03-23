@@ -24,6 +24,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private RegisterValue sl;
 
+        private bool invertSl;
+
         private RegisterValue sr;
 
         private RegisterValue rr;
@@ -31,7 +33,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
-        public RegisterEnvForm(RegisterValue ar, RegisterValue tl, RegisterValue dr, bool invertDr, RegisterValue sl, RegisterValue sr, RegisterValue rr) : base("AlgEnvForm")
+        public RegisterEnvForm(RegisterValue ar, RegisterValue tl, RegisterValue dr, bool invertDr, RegisterValue sl, bool invertSl, RegisterValue sr, RegisterValue rr) : base("AlgEnvForm")
         {
             DoubleBuffered = true;
 
@@ -51,6 +53,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.dr = dr;
             dr.ValueChanged += Ar_ValueChanged;
 
+            this.invertSl = invertSl;
             this.sl = sl;
             sl.ValueChanged += Ar_ValueChanged;
 
@@ -98,7 +101,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         (!invertDr ?
                         ((rect.Width / 4) * (dr.Maximum - dr.Value) / dr.Maximum) :
                         ((rect.Width / 4) * dr.Value / dr.Maximum)),
-                        p2.Y + (rect.Height - p2.Y) * sl.Value / sl.Maximum);
+                        p2.Y + (rect.Height - p2.Y) * (invertSl ? sl.Maximum - sl.Value : sl.Value) / sl.Maximum);
                     g.DrawLine(gp, p2, p3);
 
                     //SR

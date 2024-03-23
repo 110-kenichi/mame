@@ -276,6 +276,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 *** Changes ***
 5.6.5.0 Supported 24bit WAVE file importing.
 		Added Timbre List Window. You can open it from context menu of the Instrument icon.
+		Fixed FM Editor DR, SL lines drawing for OPL series.
 5.6.4.0 Added MRU and autocomplete function to directory textbox in TimbreManager.
 		Fixed MonoMode may not work properly when CombinedTimbre is sounded.
 5.6.3.0 Fixed problem with Timbre being replaced when dragging and dropping WAV files.
