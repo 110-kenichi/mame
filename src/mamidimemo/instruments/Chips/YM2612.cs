@@ -1374,7 +1374,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 if (parentModule.Ch3Mode == 1)
                                 {
                                     var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                                    if (slot > 3)
+                                    if (slot >= 4)
                                         slot = -1;
                                     else if (slot < -1)
                                         slot = -1;
@@ -1385,7 +1385,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             else
                             {
                                 var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                                if (slot > (parentModule.Mode5ch ? 5 : 6))
+                                if (slot >= (parentModule.Mode5ch ? 5 : 6))
                                     slot = -1;
                                 else if (slot < -1)
                                     slot = -1;
@@ -1397,7 +1397,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             if (!parentModule.Mode5ch)
                                 break;
                             var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
-                            if (slot > parentModule.MaxDacPcmVoices)
+                            if (slot >= parentModule.MaxDacPcmVoices)
                                 slot = -1;
                             else if (slot < -1)
                                 slot = -1;

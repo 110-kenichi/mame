@@ -915,7 +915,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             {
                                 if (timbre.PartialReserve3ch)
                                 {
-                                    if (slot > 2)
+                                    if (slot >= 2)
                                         slot = -1;
                                     else if (slot < -1)
                                         slot = -1;
@@ -923,7 +923,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 }
                                 else
                                 {
-                                    if (slot > 3)
+                                    if (slot >= 3)
                                         slot = -1;
                                     else if (slot < -1)
                                         slot = -1;
