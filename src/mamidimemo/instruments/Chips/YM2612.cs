@@ -27,6 +27,7 @@ using FastColoredTextBoxNS;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
+using Melanchall.DryWetMidi.Multimedia;
 using Melanchall.DryWetMidi.MusicTheory;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -47,6 +48,7 @@ using zanac.MAmidiMEmo.VSIF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 using static zanac.MAmidiMEmo.Instruments.Chips.SAM;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2612.YM2612Timbre;
 
 //https://www.plutiedev.com/ym2612-registers
 //http://www.smspower.org/maxim/Documents/YM2612#regb4
@@ -363,17 +365,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             f_ftdiClkWidth = VsifManager.FTDI_BAUDRATE_GEN_CLK_WIDTH;
         }
 
+        private uint targetSampleRate = 14000;
+
         [DataMember]
         [Category("Chip(Dedicated)")]
-        [Description("Set DAC converting default target PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
+        [Description("Set DAC converting default target PCM sample rate [Hz].\r\n" +
+                "NOTE1: If you use XGM1, please set 14000 Hz only.\r\n" +
+                "NOTE1: If you use XGM2, please set 13300/7700 Hz only.\r\n")]
         [DefaultValue(typeof(uint), "14000")]
-        [SlideParametersAttribute(4000, 14000)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [TypeConverter(typeof(EnumConverter<SampleRateType>))]
         public uint TargetSampleRate
         {
-            get;
-            set;
-        } = 14000;
+            get
+            {
+                return targetSampleRate;
+            }
+            set
+            {
+                if(value != 0)
+                    targetSampleRate = value;
+            }
+        }
 
 
         /// <summary>
@@ -428,7 +440,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [DataMember]
         [Category("Chip(Global)")]
         [Description("Use 5ch mode. Also 6ch uses for DAC PCM.\r\n" +
-            "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
+            "Particularly recommend FTDI.")]
         [DefaultValue(false)]
         public bool Mode5ch
         {
@@ -690,6 +702,55 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate byte delg_callback();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_ym2612_set_callback(uint unitNumber, delg_callback callback);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_ym2612_set_callback set_callback
+        {
+            get;
+            set;
+        }
+
+        private delg_callback f_pcm_callback;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private byte pcm_callback()
+        {
+            return pcmEngine.ProcessOneSample();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void delegate_ym2612_set_pcm_frequency(uint unitNumber, double frequency);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static delegate_ym2612_set_pcm_frequency Ym2612_set_pcm_frequency
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
         internal override void DirectAccessToChip(uint address, uint data)
@@ -881,6 +942,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 Ym2612_write = (delegate_ym2612_write)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_ym2612_write));
             }
+            funcPtr = MameIF.GetProcAddress("ym2612_set_pcm_callback");
+            if (funcPtr != IntPtr.Zero)
+                set_callback = (delegate_ym2612_set_callback)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_ym2612_set_callback));
+            funcPtr = MameIF.GetProcAddress("ym2612_set_pcm_frequency");
+            if (funcPtr != IntPtr.Zero)
+                Ym2612_set_pcm_frequency = (delegate_ym2612_set_pcm_frequency)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(delegate_ym2612_set_pcm_frequency));
         }
 
         private YM2612SoundManager soundManager;
@@ -904,6 +971,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             setPresetInstruments();
 
             this.soundManager = new YM2612SoundManager(this);
+
+            f_pcm_callback = new delg_callback(pcm_callback);
+            set_callback(unitNumber, f_pcm_callback);
+            Ym2612_set_pcm_frequency(unitNumber, TargetSampleRate);
         }
 
         /// <summary>
@@ -929,6 +1000,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (vsifClient != null)
                     vsifClient.Dispose();
             }
+
+            set_callback(UnitNumber, null);
 
             base.Dispose();
         }
@@ -1469,6 +1542,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             public void StartEngine()
             {
+                if (parentModule.SoundEngine == SoundEngineType.Software)
+                {
+                    stopEngineFlag = true;
+                    return;
+                }
+
                 if (stopEngineFlag)
                 {
                     stopEngineFlag = false;
@@ -1540,20 +1619,64 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool QueryPerformanceFrequency(out long frequency);
 
+            uint lastSampleRate;
+
+            public byte ProcessOneSample()
+            {
+                if (parentModule.SoundEngine != SoundEngineType.Software)
+                    return 0x80;
+
+                uint sampleRate = parentModule.TargetSampleRate;
+
+                int dacData = 0;
+                bool playDac = false;
+                {
+                    processSampleData(ref sampleRate, ref dacData, ref playDac);
+
+                    if (playDac || lastDacData != 0)
+                    {
+                        if (!playDac)
+                            dacData = 0;
+
+                        if (playDac)
+                        {
+                            try
+                            {
+                                Program.SoundUpdating();
+                                Ym2612_write(unitNumber, 0, 0x2a);
+                                Ym2612_write(unitNumber, 1, (byte)(lastDacData + 0x80));
+
+                                if (lastSampleRate != sampleRate)
+                                    Ym2612_set_pcm_frequency(unitNumber, sampleRate);
+                                lastSampleRate = sampleRate;
+                            }
+                            finally
+                            {
+                                Program.SoundUpdated();
+                            }
+                        }
+
+                        lastDacData = dacData;
+                    }
+                }
+
+                return (byte)(lastDacData + 0x80);
+            }
+
+            private int lastDacData = 0;
+
             /// <summary>
             /// 
             /// </summary>
             private void processDac()
             {
-                int overflowed = 0;
-                uint sampleRate = 14000;
+                uint sampleRate = parentModule.TargetSampleRate;
 
                 long freq, before, after;
                 double dbefore;
                 QueryPerformanceFrequency(out freq);
                 QueryPerformanceCounter(out before);
                 dbefore = before;
-                int lastDacData = 0;
                 while (!stopEngineFlag)
                 {
                     if (disposedValue)
@@ -1561,61 +1684,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     int dacData = 0;
                     bool playDac = false;
-
                     {
-                        lock (engineLockObject)
-                        {
-                            foreach (var sd in currentSampleData)
-                            {
-                                if (sd == null)
-                                    continue;
+                        processSampleData(ref sampleRate, ref dacData, ref playDac);
 
-                                var d = sd.GetDacData();
-                                if (d == null)
-                                    continue;
-                                int val = ((int)d.Value - 0x80);
-                                if (sd.Gain != 1.0f)
-                                    val = (int)Math.Round(val * sd.Gain);
-                                if (!sd.DisableVelocity)
-                                    val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
-                                dacData += val;
-
-                                sampleRate = sd.SampleRate;
-                                playDac = true;
-                            }
-                        }
-
-                        if (playDac || overflowed != 0 || lastDacData != 0)
+                        if (playDac || lastDacData != 0)
                         {
                             if (!playDac)
                                 dacData = 0;
-                            //dacData += overflowed;
-                            overflowed = 0;
-                            if (dacData > sbyte.MaxValue)
-                            {
-                                //overflowed = dacData - sbyte.MaxValue;
-                                dacData = sbyte.MaxValue;
-                            }
-                            else if (dacData < sbyte.MinValue)
-                            {
-                                //overflowed = dacData - sbyte.MinValue;
-                                dacData = sbyte.MinValue;
-                            }
-                            parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
 
-                            /*
-                            try
-                            {
-                                Program.SoundUpdating();
-                                Ym2612_write(unitNumber, (uint)0, (byte)0x2a);
-                                Ym2612_write(unitNumber, (uint)1, (byte)(dacData + 0x80));
-                                //Ym2612_write(unitNumber, (uint)1, ddd++);
-                            }
-                            finally
-                            {
-                                Program.SoundUpdated();
-                            }
-                            //*/
+                            parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
 
                             lastDacData = dacData;
                         }
@@ -1626,6 +1703,45 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     while (after < nextTime)
                         QueryPerformanceCounter(out after);
                     dbefore = nextTime;
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="sampleRate"></param>
+            /// <param name="dacData"></param>
+            /// <param name="playDac"></param>
+            private void processSampleData(ref uint sampleRate, ref int dacData, ref bool playDac)
+            {
+                lock (engineLockObject)
+                {
+                    foreach (var sd in currentSampleData)
+                    {
+                        if (sd == null)
+                            continue;
+
+                        var d = sd.GetDacData();
+                        if (d == null)
+                            continue;
+                        int val = ((int)d.Value - 0x80);
+                        if (sd.Gain != 1.0f)
+                            val = (int)Math.Round(val * sd.Gain);
+                        if (!sd.DisableVelocity)
+                            val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
+                        dacData += val;
+
+                        sampleRate = sd.SampleRate;
+                        playDac = true;
+                    }
+                    if (dacData > sbyte.MaxValue)
+                    {
+                        dacData = sbyte.MaxValue;
+                    }
+                    else if (dacData < sbyte.MinValue)
+                    {
+                        dacData = sbyte.MinValue;
+                    }
                 }
             }
 
@@ -2908,17 +3024,37 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             } = 440;
             */
 
+            /// <summary>
+            /// 
+            /// </summary>
+            public enum SampleRateType : uint
+            {
+                XGM1 = 14000,
+                XGM2H = 13300,
+                XGM2L = 7700,
+            }
+
+            private uint sampleRate = 14000;
+
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("Set DAC PCM sample rate [Hz].\r\nNOTE: If you use XGMDRV, please set 14000 Hz only.")]
+            [Description("Set DAC PCM sample rate [Hz].\r\n" +
+                "NOTE1: If you use XGM1, please set 14000 Hz only.\r\n" +
+                "NOTE1: If you use XGM2, please set 13300/7700 Hz only.\r\n")]
             [DefaultValue(typeof(uint), "14000")]
-            [SlideParametersAttribute(4000, 14000)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [TypeConverter(typeof(EnumConverter<SampleRateType>))]
             public uint SampleRate
             {
-                get;
-                set;
-            } = 14000;
+                get
+                {
+                    return sampleRate;
+                }
+                set
+                {
+                    if(value != 0)
+                        sampleRate = value;
+                }
+            }
 
             private float f_PcmGain = 1.0f;
 

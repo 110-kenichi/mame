@@ -398,6 +398,52 @@ extern "C"
 		ym2612_devices[unitNumber]->write(address, data);
 	}
 
+	DllExport void ym2612_set_pcm_callback(unsigned int unitNumber, OPN2_PCM_CALLBACK callback)
+	{
+		if (ym2612_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymfm_opn2_device* ym2612 = dynamic_cast<ymfm_opn2_device*>(rm->device((std::string("ym2612_") + num).c_str()));
+			//ym2612_device *ym2612 = dynamic_cast<ym2612_device *>(rm->root_device().subdevice((std::string("ym2612_") + num).c_str()));
+			if (ym2612 == nullptr)
+				return;
+
+			ym2612_devices[unitNumber] = ym2612;
+		}
+
+		ym2612_devices[unitNumber]->set_pcm_callback(callback);
+	}
+
+	DllExport void ym2612_set_pcm_frequency(unsigned int unitNumber, double frequency)
+	{
+		if (ym2612_devices[unitNumber] == NULL)
+		{
+			mame_machine_manager* mmm = mame_machine_manager::instance();
+			if (mmm == nullptr)
+				return;
+			running_machine* rm = mmm->machine();
+			if (rm == nullptr || rm->phase() == machine_phase::EXIT)
+				return;
+
+			std::string num = std::to_string(unitNumber);
+			ymfm_opn2_device* ym2612 = dynamic_cast<ymfm_opn2_device*>(rm->device((std::string("ym2612_") + num).c_str()));
+			//ym2612_device *ym2612 = dynamic_cast<ym2612_device *>(rm->root_device().subdevice((std::string("ym2612_") + num).c_str()));
+			if (ym2612 == nullptr)
+				return;
+
+			ym2612_devices[unitNumber] = ym2612;
+		}
+
+		ym2612_devices[unitNumber]->set_pcm_frequency(frequency);
+	}
+
 	ym3812_device *ym3812_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym3812_write(unsigned int unitNumber, unsigned int address, unsigned char data)
