@@ -1337,7 +1337,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Delete same drum sound from same ch
-                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
+                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum ||
+                    inst.ChannelTypes[newNote.Channel] == ChannelType.DrumGt)
                 {
                     for (int i = 0; i < sameChSnds.Count; i++)
                     {
@@ -1347,7 +1348,6 @@ namespace zanac.MAmidiMEmo.Instruments
                             onSnd.SoundOff();
                             if (!offSnds.Contains(onSnd))
                                 offSnds.Add(onSnd);
-                            //onSounds.Remove(onSnd);
                             onSnds.Remove(onSnd);
                         }
                     }
@@ -1589,7 +1589,8 @@ namespace zanac.MAmidiMEmo.Instruments
                 }
 
                 //Delete same drum sound from same ch
-                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum)
+                if (inst.ChannelTypes[newNote.Channel] == ChannelType.Drum ||
+                    inst.ChannelTypes[newNote.Channel] == ChannelType.DrumGt)
                 {
                     for (int i = 0; i < sameChSnds.Count; i++)
                     {

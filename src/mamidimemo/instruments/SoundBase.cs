@@ -129,7 +129,8 @@ namespace zanac.MAmidiMEmo.Instruments
             ParentManager = manager;
             Timbre = timbre;
             BaseTimbreIndex = baseTimbreIndex;
-            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                 DrumTimbre = ParentModule.DrumTimbres[NoteOnEvent.NoteNumber];
         }
 
@@ -206,7 +207,8 @@ namespace zanac.MAmidiMEmo.Instruments
 
             SoundKeyOn?.Invoke(this, new SoundUpdatedEventArgs(NoteOnEvent.NoteNumber, NoteOnEvent.Velocity, lastPitch));
 
-            if (DrumTimbre != null && DrumTimbre.GateTime != 0)
+            if (DrumTimbre != null && DrumTimbre.GateTime != 0 &&
+                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
             {
                 HighPrecisionTimer.SetPeriodicCallback
                     (new Func<object, double>(processGateTime), DrumTimbre.GateTime, this, true);
@@ -339,7 +341,8 @@ namespace zanac.MAmidiMEmo.Instruments
             double d = CalcCurrentPitchDeltaNoteNumber();
 
             int nn = NoteOnEvent.NoteNumber;
-            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                 nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
 
             double noteNum = Math.Pow(2.0, ((double)nn + d - 69.0) / 12.0);
@@ -445,7 +448,8 @@ namespace zanac.MAmidiMEmo.Instruments
             if (FxEngine != null)
                 pan += FxEngine.PanShift;
 
-            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                 pan += (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].PanShift;
             else
                 pan += Timbre.MDS.PanShift;

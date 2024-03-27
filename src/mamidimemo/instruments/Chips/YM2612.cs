@@ -462,6 +462,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum MaxDacType : uint
+        {
+            XGM1 = 4,
+            XGM2 = 3,
+        }
+
         private const int DEFAULT_MAX_VOICES = 4;
 
         private int f_MaxDacPcmVoices = DEFAULT_MAX_VOICES;
@@ -470,8 +479,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [Category("Chip(Global)")]
         [Description("Max voices of the DAC PCM for Mode5ch.")]
         [DefaultValue(DEFAULT_MAX_VOICES)]
-        [SlideParametersAttribute(1, DEFAULT_MAX_VOICES)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [TypeConverter(typeof(EnumConverter<MaxDacType>))]
         public int MaxDacPcmVoices
         {
             get
@@ -480,7 +488,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                if (f_MaxDacPcmVoices != value && 1 <= value && value <= DEFAULT_MAX_VOICES)
+                if (f_MaxDacPcmVoices != value && 1 <= value)
                 {
                     f_MaxDacPcmVoices = value;
                 }
@@ -2229,7 +2237,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             double d = CalcCurrentPitchDeltaNoteNumber();
 
                             int nn = NoteOnEvent.NoteNumber;
-                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                                 nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                             int noteNum = nn + (int)d;
                             if (noteNum > 127)

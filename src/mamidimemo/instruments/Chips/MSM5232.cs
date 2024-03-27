@@ -649,7 +649,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (!timbre.NoiseTone)
                     {
                         int nn = NoteOnEvent.NoteNumber;
-                        if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                        if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                            ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                             nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                         nn -= 36;
                         if (nn < 0)

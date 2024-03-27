@@ -641,6 +641,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         return BaseTimbres[btidx];
                     }
                 case ChannelType.Drum:
+                case ChannelType.DrumGt:
                     {
                         var dt = DrumTimbres[ev.NoteNumber];
                         if (dt != null && dt.TimbreNumber != null)
@@ -691,6 +692,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         return BaseTimbres[btidx];
                     }
                 case ChannelType.Drum:
+                case ChannelType.DrumGt:
                     {
                         var dt = DrumTimbres[ev.NoteNumber];
                         if (dt != null && dt.TimbreNumber != null)
@@ -795,6 +797,7 @@ namespace zanac.MAmidiMEmo.Instruments
                         break;
                     }
                 case ChannelType.Drum:
+                case ChannelType.DrumGt:
                     {
                         var dt = DrumTimbres[ev.NoteNumber];
                         if (dt != null && dt.TimbreNumber != null)

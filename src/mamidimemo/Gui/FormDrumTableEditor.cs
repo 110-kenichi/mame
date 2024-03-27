@@ -625,7 +625,8 @@ namespace zanac.MAmidiMEmo.Gui
         {
             try
             {
-                if (Instrument.ChannelTypes[toolStripComboBoxCh.SelectedIndex] == ChannelType.Drum)
+                if (Instrument.ChannelTypes[toolStripComboBoxCh.SelectedIndex] == ChannelType.Drum ||
+                    Instrument.ChannelTypes[toolStripComboBoxCh.SelectedIndex] == ChannelType.DrumGt)
                 {
                     e.Channel = (FourBitNumber)(toolStripComboBoxCh.SelectedIndex & 0xf);
                     Instrument.NotifyMidiEvent(e);

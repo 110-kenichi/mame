@@ -1454,7 +1454,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case ToneType.FM:
                         {
                             int nn = NoteOnEvent.NoteNumber;
-                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                            if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                                ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                                 nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                             int noteNum = nn + (int)d;
                             if (noteNum > 127)
@@ -1563,7 +1564,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             private void updateNoisePitch()
             {
                 int nn = NoteOnEvent.NoteNumber;
-                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                    ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                     nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
 
                 int v = nn % 15;

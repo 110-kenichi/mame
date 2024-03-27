@@ -512,7 +512,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 double d = CalcCurrentPitchDeltaNoteNumber();
                 int nn = NoteOnEvent.NoteNumber;
-                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum)
+                if (ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.Drum ||
+                    ParentModule.ChannelTypes[NoteOnEvent.Channel] == ChannelType.DrumGt)
                     nn = (int)ParentModule.DrumTimbres[NoteOnEvent.NoteNumber].BaseNote;
                 double noteNum = Math.Pow(2.0, ((double)nn + d - 69.0) / 12.0);
                 double freq = 440.0 * noteNum;
