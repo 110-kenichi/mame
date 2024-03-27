@@ -1366,11 +1366,13 @@ namespace zanac.MAmidiMEmo.Instruments
                         else
                             return 0;
                     }));
-                    if (offSnds.Count != 0)
+                    foreach (var offSnd in offSnds)
                     {
-                        var offSnd = offSnds[0];
-                        offSnd.Dispose();
-                        return offSnd.Slot;
+                        if (offSnd.Slot < maxSlot)
+                        {
+                            offSnd.Dispose();
+                            return offSnd.Slot;
+                        }
                     }
                 }
 
@@ -1615,11 +1617,13 @@ namespace zanac.MAmidiMEmo.Instruments
                         else
                             return 0;
                     }));
-                    if (offSnds.Count != 0)
+                    foreach (var offSnd in offSnds)
                     {
-                        var offSnd = offSnds[0];
-                        offSnd.Dispose();
-                        return ((I)offSnd.ParentModule, offSnd.Slot);
+                        if (offset <= offSnd.Slot && offSnd.Slot < maxSlot)
+                        {
+                            offSnd.Dispose();
+                            return ((I)offSnd.ParentModule, offSnd.Slot);
+                        }
                     }
                 }
 

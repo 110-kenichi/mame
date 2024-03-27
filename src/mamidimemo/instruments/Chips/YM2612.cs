@@ -1001,6 +1001,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     vsifClient.Dispose();
             }
 
+            Ym2612_set_pcm_frequency(UnitNumber, 1);
             set_callback(UnitNumber, null);
 
             base.Dispose();
@@ -1640,19 +1641,22 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         if (playDac)
                         {
-                            try
+                            lock (MidiManager.SoundExclusiveLockObject)
                             {
-                                Program.SoundUpdating();
-                                Ym2612_write(unitNumber, 0, 0x2a);
-                                Ym2612_write(unitNumber, 1, (byte)(lastDacData + 0x80));
+                                try
+                                {
+                                    Program.SoundUpdating();
+                                    Ym2612_write(unitNumber, 0, 0x2a);
+                                    Ym2612_write(unitNumber, 1, (byte)(lastDacData + 0x80));
 
-                                if (lastSampleRate != sampleRate)
-                                    Ym2612_set_pcm_frequency(unitNumber, sampleRate);
-                                lastSampleRate = sampleRate;
-                            }
-                            finally
-                            {
-                                Program.SoundUpdated();
+                                    if (lastSampleRate != sampleRate)
+                                        Ym2612_set_pcm_frequency(unitNumber, sampleRate);
+                                    lastSampleRate = sampleRate;
+                                }
+                                finally
+                                {
+                                    Program.SoundUpdated();
+                                }
                             }
                         }
 
