@@ -20,6 +20,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 using File = System.IO.File;
@@ -369,7 +370,7 @@ namespace zanac.MAmidiMEmo.Gui
 
             fname = Path.ChangeExtension(fname, ".msds");
 
-            saveFileDialogExport.FileName = fname;
+            saveFileDialogExport.FileName = Utility.MakeUniqueFileName(saveFileDialogExport.InitialDirectory, fname);
             saveFileDialogExport.SupportMultiDottedExtensions = true;
 
             DialogResult res = saveFileDialogExport.ShowDialog(this);

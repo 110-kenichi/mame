@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -59,5 +60,35 @@ namespace zanac.MAmidiMEmo.Util
             control.Invalidate();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string MakeUniqueFilePath(string path)
+        {
+            string dir = Path.GetDirectoryName(path);
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string fileExt = Path.GetExtension(path);
+
+            for (int i = 1; ; ++i)
+            {
+                if (!File.Exists(path))
+                    return path;
+
+                path = Path.Combine(dir, fileName + "(" + i + ")" + fileExt);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static string MakeUniqueFileName(string dir, string fileName)
+        {
+            return Path.GetFileName(MakeUniqueFilePath(Path.Combine(dir, fileName)));
+        }
     }
 }

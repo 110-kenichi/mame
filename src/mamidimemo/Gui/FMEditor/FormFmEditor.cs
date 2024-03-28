@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.Util.FITOM;
 using zanac.MAmidiMEmo.Util.Syx;
 using static System.Net.WebRequestMethods;
@@ -1552,14 +1553,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     dir = System.IO.Path.Combine(dir, "MAmi");
                 }
                 saveFileDialog.InitialDirectory = dir;
-                if (string.IsNullOrWhiteSpace(Timbre.TimbreName))
-                    saveFileDialog.DefaultFileName = $"Timbre[{TimbreNo}]";
-                else
-                    saveFileDialog.DefaultFileName = Timbre.TimbreName;
 
                 var exts = ExtensionsFilterExt.Split(new char[] { ';' });
                 saveFileDialog.DefaultExtension = exts[0].Replace("*", "");
                 saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, exts[0]));
+
+                if (string.IsNullOrWhiteSpace(Timbre.TimbreName))
+                    saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(dir, $"Timbre[{TimbreNo}]" + saveFileDialog.DefaultExtension);
+                else
+                    saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(dir, Timbre.TimbreName + saveFileDialog.DefaultExtension);
 
                 var dr = saveFileDialog.ShowDialog(this.Handle);
                 if (dr == CommonFileDialogResult.Ok)
@@ -1587,10 +1589,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             using (CommonSaveFileDialog saveFileDialog = new CommonSaveFileDialog())
             {
                 saveFileDialog.InitialDirectory = Program.GetToneLibLastDir();
-                saveFileDialog.DefaultFileName = $"Instrument_{Instrument.Name}";
 
                 saveFileDialog.DefaultExtension = ExtensionsFilterExt.Replace("*", "");
                 saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, ExtensionsFilterExt));
+
+                saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(saveFileDialog.InitialDirectory, $"Instrument_{Instrument.Name}" + saveFileDialog.DefaultExtension);
 
                 var dr = saveFileDialog.ShowDialog(this.Handle);
                 if (dr == CommonFileDialogResult.Ok)

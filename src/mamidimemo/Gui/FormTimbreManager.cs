@@ -24,6 +24,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.Util.FITOM;
 using zanac.MAmidiMEmo.Util.Syx;
 using static System.Net.Mime.MediaTypeNames;
@@ -1155,7 +1156,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                     fname = Path.ChangeExtension(fname, ".msd");
 
-                    saveFileDialog.FileName = fname;
+                    saveFileDialog.FileName = Utility.MakeUniqueFileName(dir, fname);
                     saveFileDialog.SupportMultiDottedExtensions = true;
 
                     DialogResult res = saveFileDialog.ShowDialog(this);
@@ -1244,7 +1245,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                     fname = Path.ChangeExtension(fname, ".msds");
 
-                    saveFileDialog.FileName = fname;
+                    saveFileDialog.FileName = Utility.MakeUniqueFileName(dir, fname);
                     saveFileDialog.SupportMultiDottedExtensions = true;
 
                     DialogResult res = saveFileDialog.ShowDialog(this);
@@ -1445,7 +1446,7 @@ namespace zanac.MAmidiMEmo.Gui
 
                 fname = Path.ChangeExtension(fname, ".msds");
 
-                saveFileDialog.FileName = fname;
+                saveFileDialog.FileName = Utility.MakeUniqueFileName(dir, fname);
                 saveFileDialog.SupportMultiDottedExtensions = true;
 
                 DialogResult res = saveFileDialog.ShowDialog(this);

@@ -16,6 +16,7 @@ using System.IO;
 using Microsoft.Win32;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util;
 
 namespace zanac.MAmidiMEmo.ComponentModel
 {
@@ -115,7 +116,7 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                         fname = Path.ChangeExtension(fname, ".msd");
 
-                        saveFileDialog.FileName = fname;
+                        saveFileDialog.FileName = Utility.MakeUniqueFileName(saveFileDialog.InitialDirectory, fname);
                         saveFileDialog.SupportMultiDottedExtensions = true;
 
                         DialogResult res = saveFileDialog.ShowDialog();
