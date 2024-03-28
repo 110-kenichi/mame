@@ -778,7 +778,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
 
             var minmaxnames = metroTextBoxTargetMinMax.Text.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            Dictionary<string,(int min ,int max)> targetNameMinMax = new Dictionary<string, (int, int)>();
+            Dictionary<string, (int min, int max)> targetNameMinMax = new Dictionary<string, (int, int)>();
             for (int i = 0; i < minmaxnames.Length; i++)
             {
                 string[] nmm = minmaxnames[i].Trim().Split(new char[] { '=', '-' }, StringSplitOptions.RemoveEmptyEntries);
@@ -917,6 +917,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <summary>
         /// 
         /// </summary>
+        private void updateTimbreNames()
+        {
+            for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
+            {
+                metroComboBoxTimbres.Items[i] = new TimbreItem(Instrument.BaseTimbres[i], i);
+                //if (i == TimbreNo)
+                //    Timbre = Instrument.BaseTimbres[i];
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
         public virtual IEnumerable<Tone> ImportToneFile(string file)
@@ -933,8 +946,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     string txt = System.IO.File.ReadAllText(file);
                     StringReader rs = new StringReader(txt);
 
-                    string ftname = rs.ReadLine();
-                    if (ExtensionsFilterExt == ftname)
+                    string ftname = rs.ReadLine().ToUpper(CultureInfo.InvariantCulture);
+                    if (exts[0].ToUpper(CultureInfo.InvariantCulture).Equals(ftname))
                     {
                         string ver = rs.ReadLine();
                         if (ver != "1.0")
@@ -1107,6 +1120,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     throw;
 
                 MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+            }
+            finally
+            {
+                updateTimbreNames();
             }
         }
 

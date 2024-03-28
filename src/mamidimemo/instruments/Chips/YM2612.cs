@@ -3016,7 +3016,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [DataMember]
             [Category("Sound(PCM)")]
             [Description("PcmData information")]
-            [ReadOnly(true)]
             public String PcmDataInfo
             {
                 get;
