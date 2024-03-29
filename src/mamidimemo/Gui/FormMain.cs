@@ -1687,6 +1687,11 @@ namespace zanac.MAmidiMEmo.Gui
         {
             this.BeginInvoke(new MethodInvoker(() =>
             {
+                if(labelStat.IsDisposed)
+                    return;
+
+                this.labelStat.Image = global::zanac.MAmidiMEmo.Properties.Resources.Stop;
+
                 int idx = 0;
                 if (currentSongItem != null)
                     idx = currentSongItem.Index;

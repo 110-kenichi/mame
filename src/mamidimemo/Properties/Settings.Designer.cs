@@ -848,5 +848,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["TimbreListWinSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DoNotUsePrivacySettings {
+            get {
+                return ((bool)(this["DoNotUsePrivacySettings"]));
+            }
+            set {
+                this["DoNotUsePrivacySettings"] = value;
+            }
+        }
     }
 }

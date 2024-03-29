@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using zanac.MAmidiMEmo.Instruments;
+using zanac.MAmidiMEmo.Instruments.Chips;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Util;
@@ -145,6 +146,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 metroButtonCopy.Enabled = false;
                 metroButtonPaste.Enabled = false;
                 metroButtonExportAll.Enabled = false;
+                metroTextBoxPatchFile.Text = ((IFmTimbre)Timbre).PatchInfo;
             }
 
             setTitle();
@@ -328,6 +330,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 ignorePlayingFlag++;
                 ApplyTimbre(ti.Timbre);
+                metroTextBoxPatchFile.Text = ((IFmTimbre)Timbre).PatchInfo;
             }
             finally
             {
@@ -1070,6 +1073,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             ignorePlayingFlag--;
                         }
+                        ((IFmTimbre)Timbre).PatchInfo = file;
+                        metroTextBoxPatchFile.Text = file;
                         Control_ValueChanged(this, null);
                     }
                     else
@@ -1558,7 +1563,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 saveFileDialog.DefaultExtension = exts[0].Replace("*", "");
                 saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, exts[0]));
 
-                if (string.IsNullOrWhiteSpace(Timbre.TimbreName))
+                if (!string.IsNullOrWhiteSpace(((IFmTimbre)Timbre).PatchInfo))
+                    saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(dir,
+                        System.IO.Path.ChangeExtension(((IFmTimbre)Timbre).PatchInfo, saveFileDialog.DefaultExtension));
+                else if (string.IsNullOrWhiteSpace(Timbre.TimbreName))
                     saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(dir, $"Timbre[{TimbreNo}]" + saveFileDialog.DefaultExtension);
                 else
                     saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(dir, Timbre.TimbreName + saveFileDialog.DefaultExtension);
@@ -1578,6 +1586,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         sb.AppendLine(val);
 
                     System.IO.File.WriteAllText(saveFileDialog.FileName, sb.ToString());
+
+                    ((IFmTimbre)Timbre).PatchInfo = saveFileDialog.FileName;
+                    metroTextBoxPatchFile.Text = saveFileDialog.FileName;
 
                     Settings.Default.ToneLibLastDir = System.IO.Path.GetDirectoryName(saveFileDialog.FileName);
                 }

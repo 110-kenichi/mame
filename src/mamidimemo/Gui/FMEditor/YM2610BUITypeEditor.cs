@@ -117,6 +117,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             nameof(op.SSG)
                             ));
                     }
+                    string lastPatchInfo = ((IFmTimbre)tim).PatchInfo;
+
                     FormYM2610BEditor ed = new FormYM2610BEditor(inst, tim, singleSel);
                     {
                         ed.MmlValueGeneral = mmlValueGeneral;
@@ -129,6 +131,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
                             else if (ed.DialogResult == DialogResult.Cancel)
                             {
+                                ((IFmTimbre)tim).PatchInfo = lastPatchInfo;
                                 tim.ToneType = lastTone;
                                 tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                             }

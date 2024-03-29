@@ -1909,7 +1909,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2413Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2413Timbre : TimbreBase
+        public class YM2413Timbre : TimbreBase, IFmTimbre
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -2041,6 +2041,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
+                }
+            }
 
             private ToneType f_ToneType;
 

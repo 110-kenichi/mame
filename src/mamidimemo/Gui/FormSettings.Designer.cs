@@ -70,6 +70,7 @@
             this.numericUpDownScale = new System.Windows.Forms.NumericUpDown();
             this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel8 = new MetroFramework.Controls.MetroLabel();
+            this.metroCheckBoxPrivacy = new MetroFramework.Controls.MetroCheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
@@ -159,8 +160,8 @@
             // 
             // comboBoxAudioLatency
             // 
-            this.comboBoxAudioLatency.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "AudioLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxAudioLatency, "comboBoxAudioLatency");
+            this.comboBoxAudioLatency.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "AudioLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.comboBoxAudioLatency.FormattingEnabled = true;
             this.comboBoxAudioLatency.Items.AddRange(new object[] {
             resources.GetString("comboBoxAudioLatency.Items"),
@@ -176,8 +177,8 @@
             // 
             // comboBoxSoundType
             // 
-            this.comboBoxSoundType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SoundType", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxSoundType, "comboBoxSoundType");
+            this.comboBoxSoundType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SoundType", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.comboBoxSoundType.FormattingEnabled = true;
             this.comboBoxSoundType.Items.AddRange(new object[] {
             resources.GetString("comboBoxSoundType.Items"),
@@ -188,8 +189,8 @@
             // 
             // comboBoxSampleRate
             // 
-            this.comboBoxSampleRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SampleRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxSampleRate, "comboBoxSampleRate");
+            this.comboBoxSampleRate.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "SampleRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.comboBoxSampleRate.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBoxSampleRate.FormattingEnabled = true;
             this.comboBoxSampleRate.Items.AddRange(new object[] {
@@ -224,9 +225,9 @@
             // 
             // textBoxPaLatency
             // 
+            resources.ApplyResources(this.textBoxPaLatency, "textBoxPaLatency");
             this.textBoxPaLatency.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaLatency", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaLatency.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            resources.ApplyResources(this.textBoxPaLatency, "textBoxPaLatency");
             this.textBoxPaLatency.Name = "textBoxPaLatency";
             this.textBoxPaLatency.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaLatency;
             this.textBoxPaLatency.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
@@ -238,9 +239,9 @@
             // 
             // textBoxPaDevice
             // 
+            resources.ApplyResources(this.textBoxPaDevice, "textBoxPaDevice");
             this.textBoxPaDevice.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaDevice", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaDevice.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            resources.ApplyResources(this.textBoxPaDevice, "textBoxPaDevice");
             this.textBoxPaDevice.Name = "textBoxPaDevice";
             this.textBoxPaDevice.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaDevice;
             this.textBoxPaDevice.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
@@ -257,9 +258,9 @@
             // 
             // textBoxPaApi
             // 
+            resources.ApplyResources(this.textBoxPaApi, "textBoxPaApi");
             this.textBoxPaApi.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "PaApi", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBoxPaApi.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            resources.ApplyResources(this.textBoxPaApi, "textBoxPaApi");
             this.textBoxPaApi.Name = "textBoxPaApi";
             this.textBoxPaApi.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.PaApi;
             this.textBoxPaApi.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
@@ -284,8 +285,8 @@
             // 
             // textBox1
             // 
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OutputDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.textBox1, "textBox1");
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OutputDir", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.textBox1.FontSize = MetroFramework.MetroTextBoxSize.Medium;
             this.textBox1.Name = "textBox1";
             this.textBox1.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.OutputDir;
@@ -297,8 +298,8 @@
             // 
             // metroComboBox1
             // 
-            this.metroComboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OctaveDisplay", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.metroComboBox1, "metroComboBox1");
+            this.metroComboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "OctaveDisplay", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.Items.AddRange(new object[] {
             resources.GetString("metroComboBox1.Items"),
@@ -317,8 +318,8 @@
             // 
             // comboBoxTV
             // 
-            this.comboBoxTV.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "XgmTVSystem", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             resources.ApplyResources(this.comboBoxTV, "comboBoxTV");
+            this.comboBoxTV.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.MAmidiMEmo.Properties.Settings.Default, "XgmTVSystem", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.comboBoxTV.FormattingEnabled = true;
             this.comboBoxTV.Items.AddRange(new object[] {
             resources.GetString("comboBoxTV.Items"),
@@ -338,31 +339,32 @@
             // 
             // metroTabControl1
             // 
+            resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Controls.Add(this.tabPage3);
             this.metroTabControl1.Controls.Add(this.tabPage4);
-            resources.ApplyResources(this.metroTabControl1, "metroTabControl1");
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 1;
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.tableLayoutPanel1);
             resources.ApplyResources(this.tabPage3, "tabPage3");
+            this.tabPage3.Controls.Add(this.tableLayoutPanel1);
             this.tabPage3.Name = "tabPage3";
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.tableLayoutPanel6);
             resources.ApplyResources(this.tabPage4, "tabPage4");
+            this.tabPage4.Controls.Add(this.tableLayoutPanel6);
             this.tabPage4.Name = "tabPage4";
             // 
             // tableLayoutPanel6
             // 
-            this.tableLayoutPanel6.BackColor = System.Drawing.SystemColors.Window;
             resources.ApplyResources(this.tableLayoutPanel6, "tableLayoutPanel6");
+            this.tableLayoutPanel6.BackColor = System.Drawing.SystemColors.Window;
             this.tableLayoutPanel6.Controls.Add(this.metroLabel5, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.tableLayoutPanel7, 1, 0);
             this.tableLayoutPanel6.Controls.Add(this.metroLabel8, 0, 1);
+            this.tableLayoutPanel6.Controls.Add(this.metroCheckBoxPrivacy, 0, 2);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             // 
             // metroLabel5
@@ -405,6 +407,14 @@
             resources.ApplyResources(this.metroLabel8, "metroLabel8");
             this.tableLayoutPanel6.SetColumnSpan(this.metroLabel8, 2);
             this.metroLabel8.Name = "metroLabel8";
+            // 
+            // metroCheckBoxPrivacy
+            // 
+            resources.ApplyResources(this.metroCheckBoxPrivacy, "metroCheckBoxPrivacy");
+            this.metroCheckBoxPrivacy.Checked = global::zanac.MAmidiMEmo.Properties.Settings.Default.DoNotUsePrivacySettings;
+            this.metroCheckBoxPrivacy.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.MAmidiMEmo.Properties.Settings.Default, "DoNotUsePrivacySettings", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.metroCheckBoxPrivacy.Name = "metroCheckBoxPrivacy";
+            this.metroCheckBoxPrivacy.UseVisualStyleBackColor = true;
             // 
             // FormSettings
             // 
@@ -486,5 +496,6 @@
         private MetroFramework.Controls.MetroLabel metroLabel6;
         private MetroFramework.Controls.MetroLabel metroLabel7;
         private MetroFramework.Controls.MetroLabel metroLabel8;
+        private MetroFramework.Controls.MetroCheckBox metroCheckBoxPrivacy;
     }
 }

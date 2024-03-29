@@ -655,6 +655,7 @@
     </Compile>
     <Compile Include="Gui\VstUITypeEditor.cs" />
     <Compile Include="Gui\LpcUITypeEditor.cs" />
+    <Compile Include="Instruments\Chips\IFmTimbre.cs" />
     <Compile Include="Instruments\Chips\SAA1099.cs" />
     <Compile Include="Instruments\Chips\AY8910.cs" />
     <Compile Include="Instruments\Chips\MIDITHRU.cs" />

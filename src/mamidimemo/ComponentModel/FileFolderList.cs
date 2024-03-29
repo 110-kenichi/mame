@@ -274,6 +274,8 @@ namespace zanac.MAmidiMEmo.ComponentModel
 
                 this.Invoke(new MethodInvoker(delegate
                 {
+                    if (this.IsDisposed)
+                        return;
                     lvItem = FindItemWithText(name, false, 0, true);
                 }));
 
@@ -281,6 +283,9 @@ namespace zanac.MAmidiMEmo.ComponentModel
                 {
                     this.Invoke(new MethodInvoker(delegate
                     {
+                        if (this.IsDisposed)
+                            return;
+
                         lvItem.ImageKey = fullname;
 
                         //if (View == System.Windows.Forms.View.Details)

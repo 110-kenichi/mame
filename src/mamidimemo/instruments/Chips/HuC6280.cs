@@ -20,6 +20,7 @@ using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using static zanac.MAmidiMEmo.Instruments.Chips.CM32P;
 
 //http://www.magicengine.com/mkit/doc_hard_psg.html
@@ -1122,14 +1123,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
+            private String pcmDataInfo;
+
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("PcmData information")]
+            [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
             [ReadOnly(true)]
             public String PcmDataInfo
             {
-                get;
-                set;
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return pcmDataInfo;
+                }
+                set
+                {
+                    pcmDataInfo = value;
+                }
             }
 
             private bool f_LfoEnable = true;

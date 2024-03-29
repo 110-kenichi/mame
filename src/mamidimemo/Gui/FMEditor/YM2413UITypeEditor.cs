@@ -125,6 +125,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         nameof(ca.EG),
                         nameof(ca.DIST)
                         ));
+                    string lastPatchInfo = ((IFmTimbre)tim).PatchInfo;
 
                     FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel);
                     {
@@ -138,6 +139,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
                             else if (ed.DialogResult == DialogResult.Cancel)
                             {
+                                ((IFmTimbre)tim).PatchInfo = lastPatchInfo;
                                 tim.ToneType = tt;
                                 tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1];
                             }

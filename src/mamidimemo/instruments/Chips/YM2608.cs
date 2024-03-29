@@ -2951,7 +2951,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2608Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2608Timbre : TimbreBase
+        public class YM2608Timbre : TimbreBase, IFmTimbre
         {
 
             [DataMember]
@@ -3155,6 +3155,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].DT1",
                         "Ops[3].AM",
                         "Ops[3].SSG_EG");
+                }
+            }
+
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
                 }
             }
 
@@ -3478,14 +3499,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
+            private String pcmDataInfo;
+
             [DataMember]
             [Category("Sound(ADPCM-B)")]
-            [Description("PcmData information")]
+            [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
             [ReadOnly(true)]
             public String PcmDataInfo
             {
-                get;
-                set;
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return pcmDataInfo;
+                }
+                set
+                {
+                    pcmDataInfo = value;
+                }
             }
 
             [DataMember]

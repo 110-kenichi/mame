@@ -121,6 +121,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             nameof(op.KVS)
                             ));
                     }
+                    string lastPatchInfo = ((IFmTimbre)tim).PatchInfo;
+
                     FormYM2151Editor ed = new FormYM2151Editor(inst, tim, singleSel);
                     {
                         ed.MmlValueGeneral = mmlValueGeneral;
@@ -152,6 +154,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             if (lastCopiedMmlValueGeneral != null)
                             {
+                                ((IFmTimbre)tim).PatchInfo = lastPatchInfo;
                                 ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
                                 ed.MmlValueOps = lastCopiedMmlValueOps;
                             }

@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Instruments.Chips.YM;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.TMS5220;
@@ -597,7 +598,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM2151>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -1463,7 +1464,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2151Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2151Timbre : TimbreBase
+        public class YM2151Timbre : TimbreBase , IFmTimbre
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -1680,6 +1681,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].LS",
                         "Ops[3].KVS"
                         );
+                }
+            }
+
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
                 }
             }
 
@@ -2039,7 +2061,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2151Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -2482,7 +2504,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2151Operator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {

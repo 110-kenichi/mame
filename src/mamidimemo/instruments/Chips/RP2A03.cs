@@ -3050,14 +3050,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
+            private String pcmDataInfo;
+
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("PcmData information")]
+            [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
             [ReadOnly(true)]
             public String PcmDataInfo
             {
-                get;
-                set;
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return pcmDataInfo;
+                }
+                set
+                {
+                    pcmDataInfo = value;
+                }
             }
 
             public bool ShouldSerializePcmData()

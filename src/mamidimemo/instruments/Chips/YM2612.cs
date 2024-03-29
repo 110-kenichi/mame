@@ -2498,7 +2498,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2612Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2612Timbre : TimbreBase
+        public class YM2612Timbre : TimbreBase, IFmTimbre
         {
             [DataMember]
             [Category("Sound")]
@@ -2687,6 +2687,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].DT1",
                         "Ops[3].AM",
                         "Ops[3].SSG_EG");
+                }
+            }
+
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
                 }
             }
 
@@ -3013,13 +3034,24 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 PcmData = new byte[0];
             }
 
+            private String pcmDataInfo;
+
             [DataMember]
             [Category("Sound(PCM)")]
-            [Description("PcmData information")]
+            [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
             public String PcmDataInfo
             {
-                get;
-                set;
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+                    return pcmDataInfo;
+                }
+                set
+                {
+                    pcmDataInfo = value;
+                }
             }
 
             /*

@@ -62,7 +62,7 @@ chk_ZKey:
 	NOP
 	IN	    A,(#0xA9)	    ;Read KB Matrix
 	AND     #0b10000000     ;Check "Z" key (bit0)
-	JP      NZ,chk_CKey     ;If does not press "Z" key, skip.
+	JP      Z,chk_CKey     ;If "Z" key pressed, skip.
 
 tR_mode:
     LD      A, #0x82    ;Change CPU
@@ -83,7 +83,7 @@ chk_CKey:
 	NOP
 	IN	    A,(#0xA9)	    ;Read KB Matrix
 	AND     #0b00000001     ;Check "C" key (bit0)
-	JP      NZ,endCheckCPU  ;If does not press "C" key, skip.
+	JP      NZ,endCheckCPU  ;If "C" key does not pressed, skip.
 
 chk_WX:
 	LD	    A,#8 

@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using zanac.MAmidiMEmo.ComponentModel;
+using zanac.MAmidiMEmo.Properties;
 
 namespace zanac.MAmidiMEmo.Instruments
 {
@@ -60,13 +61,23 @@ namespace zanac.MAmidiMEmo.Instruments
             set;
         }
 
+        private String pcmDataInfo;
+
         [DataMember]
-        [Description("PcmData information")]
+        [Description("PcmData information.\r\n*Warning* May contain privacy information. Check the options dialog.")]
         [ReadOnly(true)]
         public String PcmDataInfo
         {
-            get;
-            set;
+            get
+            {
+                if (Settings.Default.DoNotUsePrivacySettings)
+                    return null;
+                return pcmDataInfo;
+            }
+            set
+            {
+                pcmDataInfo = value;
+            }
         }
 
         private int f_PanShift;

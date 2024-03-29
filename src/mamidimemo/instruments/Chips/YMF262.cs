@@ -29,6 +29,7 @@ using System.Threading;
 using zanac.MAmidiMEmo.Scci;
 using FM_SoundConvertor;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM3806;
+using zanac.MAmidiMEmo.Properties;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
@@ -1388,7 +1389,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// </summary>
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YMF262Timbre>))]
         [DataContract]
-        public class YMF262Timbre : TimbreBase
+        public class YMF262Timbre : TimbreBase, IFmTimbre
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -1586,6 +1587,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].VIB",
                         "Ops[3].EG",
                         "Ops[3].WS");
+                }
+            }
+
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
                 }
             }
 

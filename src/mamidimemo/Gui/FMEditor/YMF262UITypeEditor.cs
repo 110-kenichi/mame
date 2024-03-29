@@ -118,6 +118,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             nameof(op.WS)
                             ));
                     }
+                    string lastPatchInfo = ((IFmTimbre)tim).PatchInfo;
+
                     bool conselWarned = false;
                     FormYMF262Editor ed = new FormYMF262Editor(inst, tim, singleSel);
                     {
@@ -135,6 +137,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
                             else if (ed.DialogResult == DialogResult.Cancel)
                             {
+                                ((IFmTimbre)tim).PatchInfo = lastPatchInfo;
                                 tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
                             }
                         };

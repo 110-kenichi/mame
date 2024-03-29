@@ -23,6 +23,7 @@ using zanac.MAmidiMEmo.Instruments.Chips.YM;
 using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
+using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util.Syx;
 using zanac.MAmidiMEmo.VSIF;
@@ -2001,7 +2002,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2414Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2414Timbre : TimbreBase
+        public class YM2414Timbre : TimbreBase, IFmTimbre
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -2294,6 +2295,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         "Ops[3].LS",
                         "Ops[3].KVS"
                         );
+                }
+            }
+
+            private String patchFile;
+
+            [DataMember]
+            [Category("Sound")]
+            [Description("FM Patch file info.\r\n*Warning* May contain privacy information. Check the options dialog.")]
+            [ReadOnly(true)]
+            public String PatchInfo
+            {
+                get
+                {
+                    if (Settings.Default.DoNotUsePrivacySettings)
+                        return null;
+
+                    return patchFile;
+                }
+                set
+                {
+                    patchFile = value;
                 }
             }
 
