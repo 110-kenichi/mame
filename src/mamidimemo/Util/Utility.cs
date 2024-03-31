@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -69,6 +70,9 @@ namespace zanac.MAmidiMEmo.Util
         {
             string dir = Path.GetDirectoryName(path);
             string fileName = Path.GetFileNameWithoutExtension(path);
+
+            fileName = Regex.Replace(fileName, "(.*)\\((\\d+)\\)$","$1");
+
             string fileExt = Path.GetExtension(path);
 
             for (int i = 1; ; ++i)

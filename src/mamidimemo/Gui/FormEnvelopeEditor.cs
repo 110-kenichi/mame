@@ -673,16 +673,20 @@ namespace zanac.MAmidiMEmo.Gui
             for (int i = 0; i < s.Points.Count; i++)
                 vals.Add(s.Points[i].YValues[0]);
 
-            var fvals = applyFIR(vals.ToArray(), metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+            var weights = metroTextBoxFirWeight.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (weights.Length != 0)
+            {
+                var fvals = applyFIR(vals.ToArray(), weights);
 
-            for (int i = 0; i < s.Points.Count; i++)
-                s.Points[i].YValues[0] = fvals[i];
+                for (int i = 0; i < s.Points.Count; i++)
+                    s.Points[i].YValues[0] = fvals[i];
 
-            chart1.Refresh();
+                chart1.Refresh();
 
-            updateText();
+                updateText();
 
-            ValueChanged?.Invoke(this, EventArgs.Empty);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
 

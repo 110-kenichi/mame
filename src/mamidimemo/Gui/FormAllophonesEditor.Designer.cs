@@ -147,7 +147,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 2;
-            this.buttonOk.Text = "OK";
+            this.buttonOk.Text = "&OK";
             // 
             // metroButtonPlay
             // 
@@ -163,16 +163,9 @@
             // metroTextBoxAllophones
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxAllophones, 5);
-            // 
-            // 
-            // 
             this.metroTextBoxAllophones.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxAllophones.Location = new System.Drawing.Point(3, 3);
-            this.metroTextBoxAllophones.MaxLength = 32767;
             this.metroTextBoxAllophones.Name = "metroTextBoxAllophones";
-            this.metroTextBoxAllophones.PasswordChar = '\0';
-            this.metroTextBoxAllophones.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxAllophones.SelectedText = "";
             this.metroTextBoxAllophones.Size = new System.Drawing.Size(831, 23);
             this.metroTextBoxAllophones.TabIndex = 0;
             // 
@@ -1047,7 +1040,6 @@
             // 
             // FormAllophonesEditor
             // 
-            this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;

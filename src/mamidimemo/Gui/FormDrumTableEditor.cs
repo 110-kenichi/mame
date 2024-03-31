@@ -610,6 +610,9 @@ namespace zanac.MAmidiMEmo.Gui
 
             if (playing == _playing)
             {
+                if (IsDisposed)
+                    return;
+
                 PianoControl1_NoteOff(null, new NoteOffEvent(ni, vi));
                 playing = null;
             }

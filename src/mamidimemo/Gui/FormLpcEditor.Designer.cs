@@ -76,7 +76,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 7;
-            this.buttonOk.Text = "OK";
+            this.buttonOk.Text = "&OK";
             // 
             // listBox1
             // 
@@ -96,23 +96,15 @@
             // metroTextBoxSearch
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxSearch, 3);
-            // 
-            // 
-            // 
             this.metroTextBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxSearch.Location = new System.Drawing.Point(3, 3);
-            this.metroTextBoxSearch.MaxLength = 32767;
             this.metroTextBoxSearch.Name = "metroTextBoxSearch";
-            this.metroTextBoxSearch.PasswordChar = '\0';
-            this.metroTextBoxSearch.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxSearch.SelectedText = "";
             this.metroTextBoxSearch.Size = new System.Drawing.Size(572, 23);
             this.metroTextBoxSearch.TabIndex = 10;
             this.metroTextBoxSearch.TextChanged += new System.EventHandler(this.metroTextBox1_TextChanged);
             // 
             // FormLpcEditor
             // 
-            this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;

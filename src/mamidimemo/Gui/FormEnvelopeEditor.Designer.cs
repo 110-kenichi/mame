@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.buttonCancel = new MetroFramework.Controls.MetroButton();
             this.buttonOk = new MetroFramework.Controls.MetroButton();
             this.textBoxEnvText = new MetroFramework.Controls.MetroTextBox();
@@ -95,23 +95,16 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 9;
-            this.buttonOk.Text = "OK";
+            this.buttonOk.Text = "&OK";
             // 
             // textBoxEnvText
             // 
             this.textBoxEnvText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this.textBoxEnvText, 9);
-            // 
-            // 
-            // 
             this.textBoxEnvText.Location = new System.Drawing.Point(7, 6);
             this.textBoxEnvText.Margin = new System.Windows.Forms.Padding(4);
-            this.textBoxEnvText.MaxLength = 32767;
             this.textBoxEnvText.Name = "textBoxEnvText";
-            this.textBoxEnvText.PasswordChar = '\0';
-            this.textBoxEnvText.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.textBoxEnvText.SelectedText = "";
             this.textBoxEnvText.Size = new System.Drawing.Size(915, 25);
             this.textBoxEnvText.TabIndex = 7;
             this.textBoxEnvText.TextChanged += new System.EventHandler(this.textBoxText_TextChanged);
@@ -121,62 +114,62 @@
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea3.AxisX.Crossing = 0D;
-            chartArea3.AxisX.LineColor = System.Drawing.Color.Gray;
-            chartArea3.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-            chartArea3.AxisX.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
-            chartArea3.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea3.AxisX2.LineColor = System.Drawing.Color.Gray;
-            chartArea3.AxisY.Crossing = 0D;
-            chartArea3.AxisY.LineColor = System.Drawing.Color.Gray;
-            chartArea3.AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-            chartArea3.AxisY.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
-            chartArea3.AxisY.Maximum = 8192D;
-            chartArea3.AxisY.Minimum = -8193D;
-            chartArea3.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea3.AxisY2.LineColor = System.Drawing.Color.Gray;
-            chartArea3.BackColor = System.Drawing.Color.White;
-            chartArea3.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chart1.Legends.Add(legend3);
+            chartArea1.AxisX.Crossing = 0D;
+            chartArea1.AxisX.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            chartArea1.AxisX.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX2.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisY.Crossing = 0D;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            chartArea1.AxisY.MajorTickMark.LineColor = System.Drawing.Color.LightGray;
+            chartArea1.AxisY.Maximum = 8192D;
+            chartArea1.AxisY.Minimum = -8193D;
+            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisY2.LineColor = System.Drawing.Color.Gray;
+            chartArea1.BackColor = System.Drawing.Color.White;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(5, 4);
             this.chart1.Margin = new System.Windows.Forms.Padding(4);
             this.chart1.Name = "chart1";
-            series7.ChartArea = "ChartArea1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series7.Color = System.Drawing.Color.CornflowerBlue;
-            series7.Legend = "Legend1";
-            series7.LegendText = "Repeat Start\\n(Set w/ Shift key)";
-            series7.MarkerSize = 10;
-            series7.Name = "SeriesLoop";
-            series7.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series7.YValuesPerPoint = 4;
-            series7.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series8.ChartArea = "ChartArea1";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
-            series8.Color = System.Drawing.Color.DarkOrange;
-            series8.Legend = "Legend1";
-            series8.LegendText = "Release Start\\n(Set w/ Ctrl key)";
-            series8.MarkerSize = 10;
-            series8.Name = "SeriesRelease";
-            series8.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series8.YValuesPerPoint = 2;
-            series8.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series9.ChartArea = "ChartArea1";
-            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series9.Color = System.Drawing.Color.Red;
-            series9.IsValueShownAsLabel = true;
-            series9.Legend = "Legend1";
-            series9.LegendText = "Values";
-            series9.MarkerSize = 10;
-            series9.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
-            series9.Name = "SeriesValues";
-            series9.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series9.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series7);
-            this.chart1.Series.Add(series8);
-            this.chart1.Series.Add(series9);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series1.Color = System.Drawing.Color.CornflowerBlue;
+            series1.Legend = "Legend1";
+            series1.LegendText = "Repeat Start\\n(Set w/ Shift key)";
+            series1.MarkerSize = 10;
+            series1.Name = "SeriesLoop";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series1.YValuesPerPoint = 4;
+            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.RangeColumn;
+            series2.Color = System.Drawing.Color.DarkOrange;
+            series2.Legend = "Legend1";
+            series2.LegendText = "Release Start\\n(Set w/ Ctrl key)";
+            series2.MarkerSize = 10;
+            series2.Name = "SeriesRelease";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.YValuesPerPoint = 2;
+            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Color = System.Drawing.Color.Red;
+            series3.IsValueShownAsLabel = true;
+            series3.Legend = "Legend1";
+            series3.LegendText = "Values";
+            series3.MarkerSize = 10;
+            series3.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
+            series3.Name = "SeriesValues";
+            series3.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series3.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Series.Add(series3);
             this.chart1.Size = new System.Drawing.Size(918, 273);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
@@ -330,22 +323,15 @@
             // metroTextBoxFirWeight
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxFirWeight, 8);
-            // 
-            // 
-            // 
             this.metroTextBoxFirWeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "EnvFirWeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTextBoxFirWeight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxFirWeight.Location = new System.Drawing.Point(115, 101);
             this.metroTextBoxFirWeight.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxFirWeight.MaxLength = 32767;
             this.metroTextBoxFirWeight.Name = "metroTextBoxFirWeight";
-            this.metroTextBoxFirWeight.PasswordChar = '\0';
-            this.metroTextBoxFirWeight.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxFirWeight.SelectedText = "";
+            this.metroTextBoxFirWeight.PromptText = "Set FIR weights like \"1,1,1,1,1\"";
             this.metroTextBoxFirWeight.Size = new System.Drawing.Size(807, 23);
             this.metroTextBoxFirWeight.TabIndex = 6;
             this.metroTextBoxFirWeight.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.EnvFirWeight;
-            this.metroTextBoxFirWeight.PromptText = "Set FIR weights like \"1,1,1,1,1\"";
             // 
             // metroButtonMax
             // 
@@ -452,17 +438,10 @@
             // 
             // metroTextBoxInterval
             // 
-            // 
-            // 
-            // 
             this.metroTextBoxInterval.Dock = System.Windows.Forms.DockStyle.Fill;
             this.metroTextBoxInterval.Location = new System.Drawing.Point(115, 148);
             this.metroTextBoxInterval.Margin = new System.Windows.Forms.Padding(4);
-            this.metroTextBoxInterval.MaxLength = 32767;
             this.metroTextBoxInterval.Name = "metroTextBoxInterval";
-            this.metroTextBoxInterval.PasswordChar = '\0';
-            this.metroTextBoxInterval.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.metroTextBoxInterval.SelectedText = "";
             this.metroTextBoxInterval.Size = new System.Drawing.Size(100, 26);
             this.metroTextBoxInterval.TabIndex = 6;
             this.metroTextBoxInterval.TextChanged += new System.EventHandler(this.metroTextBoxInterval_TextChanged);
@@ -583,7 +562,6 @@
             // 
             // FormEnvelopeEditor
             // 
-            this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;

@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes ***
+5.6.8.1 Fixed an issue where pressing the Enter key would unintentionally close the editor window.
+		Fixed sequential numbering of saved file names
 5.6.8.0 Fixed play status icon in LCD area does not change after playing stopped.
 		Remembered FM register patch file path information for FM Timbre.
 		Added "Privacy" settings to the settings dialog.

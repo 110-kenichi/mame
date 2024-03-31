@@ -91,24 +91,19 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // panelPiano
             // 
-            resources.ApplyResources(this.panelPiano, "panelPiano");
             this.panelPiano.Controls.Add(this.pianoControl1);
             this.panelPiano.Controls.Add(this.toolStrip2);
+            resources.ApplyResources(this.panelPiano, "panelPiano");
             this.panelPiano.Name = "panelPiano";
-            this.metroToolTip1.SetToolTip(this.panelPiano, resources.GetString("panelPiano.ToolTip"));
-            this.toolTip1.SetToolTip(this.panelPiano, resources.GetString("panelPiano.ToolTip1"));
             // 
             // pianoControl1
             // 
             resources.ApplyResources(this.pianoControl1, "pianoControl1");
             this.pianoControl1.Name = "pianoControl1";
             this.pianoControl1.TargetTimbres = null;
-            this.metroToolTip1.SetToolTip(this.pianoControl1, resources.GetString("pianoControl1.ToolTip"));
-            this.toolTip1.SetToolTip(this.pianoControl1, resources.GetString("pianoControl1.ToolTip1"));
             // 
             // toolStrip2
             // 
-            resources.ApplyResources(this.toolStrip2, "toolStrip2");
             this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBoxCh,
@@ -126,13 +121,11 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.toolStripSeparator2,
             this.toolStripLabel5,
             this.toolStripComboBoxCC});
+            resources.ApplyResources(this.toolStrip2, "toolStrip2");
             this.toolStrip2.Name = "toolStrip2";
-            this.toolTip1.SetToolTip(this.toolStrip2, resources.GetString("toolStrip2.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.toolStrip2, resources.GetString("toolStrip2.ToolTip1"));
             // 
             // toolStripComboBoxCh
             // 
-            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripComboBoxCh.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCh.DropDownWidth = 32;
@@ -154,69 +147,69 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             resources.GetString("toolStripComboBoxCh.Items14"),
             resources.GetString("toolStripComboBoxCh.Items15")});
             this.toolStripComboBoxCh.Name = "toolStripComboBoxCh";
+            resources.ApplyResources(this.toolStripComboBoxCh, "toolStripComboBoxCh");
             this.toolStripComboBoxCh.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripLabel2
             // 
-            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel2.Name = "toolStripLabel2";
+            resources.ApplyResources(this.toolStripLabel2, "toolStripLabel2");
             // 
             // toolStripButtonPlay
             // 
-            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.CheckOnClick = true;
             this.toolStripButtonPlay.Image = global::zanac.MAmidiMEmo.Properties.Resources.Inst;
+            resources.ApplyResources(this.toolStripButtonPlay, "toolStripButtonPlay");
             this.toolStripButtonPlay.Name = "toolStripButtonPlay";
             // 
             // toolStripButtonHook
             // 
-            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.CheckOnClick = true;
+            resources.ApplyResources(this.toolStripButtonHook, "toolStripButtonHook");
             this.toolStripButtonHook.Name = "toolStripButtonHook";
             // 
             // toolStripButton1
             // 
-            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Image = global::zanac.MAmidiMEmo.Properties.Resources.Panic;
+            resources.ApplyResources(this.toolStripButton1, "toolStripButton1");
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripSeparator1
             // 
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
             // 
             // toolStripComboBoxNote
             // 
-            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             this.toolStripComboBoxNote.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxNote.Name = "toolStripComboBoxNote";
+            resources.ApplyResources(this.toolStripComboBoxNote, "toolStripComboBoxNote");
             // 
             // toolStripLabel4
             // 
-            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             this.toolStripLabel4.Name = "toolStripLabel4";
+            resources.ApplyResources(this.toolStripLabel4, "toolStripLabel4");
             // 
             // toolStripComboBoxVelo
             // 
-            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             this.toolStripComboBoxVelo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxVelo.Name = "toolStripComboBoxVelo";
+            resources.ApplyResources(this.toolStripComboBoxVelo, "toolStripComboBoxVelo");
             // 
             // toolStripLabel3
             // 
-            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             this.toolStripLabel3.Name = "toolStripLabel3";
+            resources.ApplyResources(this.toolStripLabel3, "toolStripLabel3");
             // 
             // toolStripComboBoxGate
             // 
-            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             this.toolStripComboBoxGate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxGate.DropDownWidth = 100;
             this.toolStripComboBoxGate.Items.AddRange(new object[] {
@@ -225,20 +218,20 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             resources.GetString("toolStripComboBoxGate.Items2"),
             resources.GetString("toolStripComboBoxGate.Items3")});
             this.toolStripComboBoxGate.Name = "toolStripComboBoxGate";
+            resources.ApplyResources(this.toolStripComboBoxGate, "toolStripComboBoxGate");
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // toolStripLabel5
             // 
-            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             this.toolStripLabel5.Name = "toolStripLabel5";
+            resources.ApplyResources(this.toolStripLabel5, "toolStripLabel5");
             // 
             // toolStripComboBoxCC
             // 
-            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             this.toolStripComboBoxCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripComboBoxCC.DropDownWidth = 32;
             this.toolStripComboBoxCC.Items.AddRange(new object[] {
@@ -371,6 +364,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             resources.GetString("toolStripComboBoxCC.Items126"),
             resources.GetString("toolStripComboBoxCC.Items127")});
             this.toolStripComboBoxCC.Name = "toolStripComboBoxCC";
+            resources.ApplyResources(this.toolStripComboBoxCC, "toolStripComboBoxCC");
             // 
             // tableLayoutPanel1
             // 
@@ -390,30 +384,24 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTargetMinMax, 5, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxPatchFile, 4, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.toolTip1.SetToolTip(this.tableLayoutPanel1, resources.GetString("tableLayoutPanel1.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.tableLayoutPanel1, resources.GetString("tableLayoutPanel1.ToolTip1"));
             // 
             // metroButtonRand1
             // 
             resources.ApplyResources(this.metroButtonRand1, "metroButtonRand1");
             this.metroButtonRand1.Name = "metroButtonRand1";
-            this.metroToolTip1.SetToolTip(this.metroButtonRand1, resources.GetString("metroButtonRand1.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonRand1, resources.GetString("metroButtonRand1.ToolTip1"));
             this.metroButtonRand1.Click += new System.EventHandler(this.metroButtonRandAll_Click);
             // 
             // metroButtonParams
             // 
             resources.ApplyResources(this.metroButtonParams, "metroButtonParams");
             this.metroButtonParams.Name = "metroButtonParams";
-            this.metroToolTip1.SetToolTip(this.metroButtonParams, resources.GetString("metroButtonParams.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonParams, resources.GetString("metroButtonParams.ToolTip1"));
             this.metroButtonParams.Click += new System.EventHandler(this.metroButtonRandParams_Click);
             // 
             // metroTextBoxTarget
             // 
-            resources.ApplyResources(this.metroTextBoxTarget, "metroTextBoxTarget");
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTarget, 3);
             this.metroTextBoxTarget.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTarget", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.metroTextBoxTarget, "metroTextBoxTarget");
             this.metroTextBoxTarget.Name = "metroTextBoxTarget";
             this.metroTextBoxTarget.PromptText = "(Write randomize target register and untarget( prefix \"!\" ) names here. Separated" +
     " with comma. )";
@@ -441,11 +429,9 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // metroButtonImport
             // 
-            resources.ApplyResources(this.metroButtonImport, "metroButtonImport");
             this.metroButtonImport.AllowDrop = true;
+            resources.ApplyResources(this.metroButtonImport, "metroButtonImport");
             this.metroButtonImport.Name = "metroButtonImport";
-            this.metroToolTip1.SetToolTip(this.metroButtonImport, resources.GetString("metroButtonImport.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonImport, resources.GetString("metroButtonImport.ToolTip1"));
             this.metroButtonImport.Click += new System.EventHandler(this.metroButtonImport_Click);
             this.metroButtonImport.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragDrop);
             this.metroButtonImport.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImport_DragEnter);
@@ -454,8 +440,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             resources.ApplyResources(this.metroButtonImportGit, "metroButtonImportGit");
             this.metroButtonImportGit.Name = "metroButtonImportGit";
-            this.metroToolTip1.SetToolTip(this.metroButtonImportGit, resources.GetString("metroButtonImportGit.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonImportGit, resources.GetString("metroButtonImportGit.ToolTip1"));
             this.metroButtonImportGit.Click += new System.EventHandler(this.metroButtonImportGit_Click);
             // 
             // metroButtonAbort
@@ -471,75 +455,57 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             resources.ApplyResources(this.metroButtonPaste, "metroButtonPaste");
             this.metroButtonPaste.Name = "metroButtonPaste";
-            this.metroToolTip1.SetToolTip(this.metroButtonPaste, resources.GetString("metroButtonPaste.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonPaste, resources.GetString("metroButtonPaste.ToolTip1"));
             this.metroButtonPaste.Click += new System.EventHandler(this.metroButtonPaste_Click);
             // 
             // metroButtonCopy
             // 
             resources.ApplyResources(this.metroButtonCopy, "metroButtonCopy");
             this.metroButtonCopy.Name = "metroButtonCopy";
-            this.metroToolTip1.SetToolTip(this.metroButtonCopy, resources.GetString("metroButtonCopy.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonCopy, resources.GetString("metroButtonCopy.ToolTip1"));
             this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
             // 
             // metroButtonExport
             // 
             resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
             this.metroButtonExport.Name = "metroButtonExport";
-            this.metroToolTip1.SetToolTip(this.metroButtonExport, resources.GetString("metroButtonExport.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonExport, resources.GetString("metroButtonExport.ToolTip1"));
             this.metroButtonExport.Click += new System.EventHandler(this.metroButtonExport_Click);
             // 
             // metroLabel1
             // 
             resources.ApplyResources(this.metroLabel1, "metroLabel1");
             this.metroLabel1.Name = "metroLabel1";
-            this.toolTip1.SetToolTip(this.metroLabel1, resources.GetString("metroLabel1.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.metroLabel1, resources.GetString("metroLabel1.ToolTip1"));
             // 
             // metroTextBoxTargetMinMax
             // 
-            resources.ApplyResources(this.metroTextBoxTargetMinMax, "metroTextBoxTargetMinMax");
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxTargetMinMax, 3);
             this.metroTextBoxTargetMinMax.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "FmTargetMinMax", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            resources.ApplyResources(this.metroTextBoxTargetMinMax, "metroTextBoxTargetMinMax");
             this.metroTextBoxTargetMinMax.Name = "metroTextBoxTargetMinMax";
             this.metroTextBoxTargetMinMax.PromptText = "(Write randomize target register min max value here. Separated with comma. )";
             this.metroTextBoxTargetMinMax.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.FmTargetMinMax;
-            this.toolTip1.SetToolTip(this.metroTextBoxTargetMinMax, resources.GetString("metroTextBoxTargetMinMax.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.metroTextBoxTargetMinMax, resources.GetString("metroTextBoxTargetMinMax.ToolTip1"));
             // 
             // metroTextBoxPatchFile
             // 
-            resources.ApplyResources(this.metroTextBoxPatchFile, "metroTextBoxPatchFile");
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxPatchFile, 2);
+            resources.ApplyResources(this.metroTextBoxPatchFile, "metroTextBoxPatchFile");
             this.metroTextBoxPatchFile.Name = "metroTextBoxPatchFile";
             this.metroTextBoxPatchFile.ReadOnly = true;
-            this.toolTip1.SetToolTip(this.metroTextBoxPatchFile, resources.GetString("metroTextBoxPatchFile.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.metroTextBoxPatchFile, resources.GetString("metroTextBoxPatchFile.ToolTip1"));
             // 
             // panel1
             // 
             resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Controls.Add(this.flowLayoutPanel1);
             this.panel1.Name = "panel1";
-            this.metroToolTip1.SetToolTip(this.panel1, resources.GetString("panel1.ToolTip"));
-            this.toolTip1.SetToolTip(this.panel1, resources.GetString("panel1.ToolTip1"));
             // 
             // flowLayoutPanel1
             // 
             resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.toolTip1.SetToolTip(this.flowLayoutPanel1, resources.GetString("flowLayoutPanel1.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.flowLayoutPanel1, resources.GetString("flowLayoutPanel1.ToolTip1"));
             // 
             // metroComboBoxTimbres
             // 
             resources.ApplyResources(this.metroComboBoxTimbres, "metroComboBoxTimbres");
             this.metroComboBoxTimbres.FormattingEnabled = true;
             this.metroComboBoxTimbres.Name = "metroComboBoxTimbres";
-            this.toolTip1.SetToolTip(this.metroComboBoxTimbres, resources.GetString("metroComboBoxTimbres.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.metroComboBoxTimbres, resources.GetString("metroComboBoxTimbres.ToolTip1"));
             this.metroComboBoxTimbres.SelectedIndexChanged += new System.EventHandler(this.metroComboBoxTimbres_SelectedIndexChanged);
             // 
             // tableLayoutPanel2
@@ -551,16 +517,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel2.Controls.Add(this.metroButtonExportAll, 4, 0);
             this.tableLayoutPanel2.Controls.Add(this.metroButtonTimbre, 0, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.toolTip1.SetToolTip(this.tableLayoutPanel2, resources.GetString("tableLayoutPanel2.ToolTip"));
-            this.metroToolTip1.SetToolTip(this.tableLayoutPanel2, resources.GetString("tableLayoutPanel2.ToolTip1"));
             // 
             // metroButtonImportAll
             // 
-            resources.ApplyResources(this.metroButtonImportAll, "metroButtonImportAll");
             this.metroButtonImportAll.AllowDrop = true;
+            resources.ApplyResources(this.metroButtonImportAll, "metroButtonImportAll");
             this.metroButtonImportAll.Name = "metroButtonImportAll";
-            this.metroToolTip1.SetToolTip(this.metroButtonImportAll, resources.GetString("metroButtonImportAll.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonImportAll, resources.GetString("metroButtonImportAll.ToolTip1"));
             this.metroButtonImportAll.Click += new System.EventHandler(this.metroButtonImportAll_Click);
             this.metroButtonImportAll.DragDrop += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragDrop);
             this.metroButtonImportAll.DragEnter += new System.Windows.Forms.DragEventHandler(this.metroButtonImportAll_DragEnter);
@@ -569,24 +531,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             resources.ApplyResources(this.metroButtonImportAllGit, "metroButtonImportAllGit");
             this.metroButtonImportAllGit.Name = "metroButtonImportAllGit";
-            this.metroToolTip1.SetToolTip(this.metroButtonImportAllGit, resources.GetString("metroButtonImportAllGit.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonImportAllGit, resources.GetString("metroButtonImportAllGit.ToolTip1"));
             this.metroButtonImportAllGit.Click += new System.EventHandler(this.metroButtonImportAllGit_Click);
             // 
             // metroButtonExportAll
             // 
             resources.ApplyResources(this.metroButtonExportAll, "metroButtonExportAll");
             this.metroButtonExportAll.Name = "metroButtonExportAll";
-            this.metroToolTip1.SetToolTip(this.metroButtonExportAll, resources.GetString("metroButtonExportAll.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonExportAll, resources.GetString("metroButtonExportAll.ToolTip1"));
             this.metroButtonExportAll.Click += new System.EventHandler(this.metroButtonExportAll_Click);
             // 
             // metroButtonTimbre
             // 
             resources.ApplyResources(this.metroButtonTimbre, "metroButtonTimbre");
             this.metroButtonTimbre.Name = "metroButtonTimbre";
-            this.metroToolTip1.SetToolTip(this.metroButtonTimbre, resources.GetString("metroButtonTimbre.ToolTip"));
-            this.toolTip1.SetToolTip(this.metroButtonTimbre, resources.GetString("metroButtonTimbre.ToolTip1"));
             this.metroButtonTimbre.Click += new System.EventHandler(this.metroButtonTimbre_Click);
             // 
             // metroToolTip1
@@ -596,7 +552,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // FormFmEditor
             // 
-            this.AcceptButton = this.buttonOK;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
@@ -608,8 +563,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.MinimizeBox = false;
             this.Name = "FormFmEditor";
             this.ShowIcon = false;
-            this.metroToolTip1.SetToolTip(this, resources.GetString("$this.ToolTip"));
-            this.toolTip1.SetToolTip(this, resources.GetString("$this.ToolTip1"));
             this.panelPiano.ResumeLayout(false);
             this.panelPiano.PerformLayout();
             this.toolStrip2.ResumeLayout(false);

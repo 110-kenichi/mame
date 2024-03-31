@@ -126,7 +126,7 @@
       <Value Profile="(Default)">800, 600</Value>
     </Setting>
     <Setting Name="EnvFirWeight" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)"> 1, 1, 1, 1, 1 </Value>
     </Setting>
     <Setting Name="EnvEdSize" Type="System.Drawing.Size" Scope="User">
       <Value Profile="(Default)">800, 600</Value>

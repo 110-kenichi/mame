@@ -142,7 +142,7 @@
     <value>buttonCancel</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -169,13 +169,13 @@
     <value>5</value>
   </data>
   <data name="buttonOk.Text" xml:space="preserve">
-    <value>OK</value>
+    <value>&amp;OK</value>
   </data>
   <data name="&gt;&gt;buttonOk.Name" xml:space="preserve">
     <value>buttonOk</value>
   </data>
   <data name="&gt;&gt;buttonOk.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;buttonOk.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -202,7 +202,7 @@
     <value>metroButtonAdd</value>
   </data>
   <data name="&gt;&gt;metroButtonAdd.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonAdd.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -313,7 +313,7 @@
     <value>metroButtonDelete</value>
   </data>
   <data name="&gt;&gt;metroButtonDelete.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonDelete.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -340,7 +340,7 @@
     <value>metroButtonInsert</value>
   </data>
   <data name="&gt;&gt;metroButtonInsert.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonInsert.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -367,7 +367,7 @@
     <value>metroButtonDuplicate</value>
   </data>
   <data name="&gt;&gt;metroButtonDuplicate.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonDuplicate.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -401,7 +401,7 @@ Select the first waveform and press the button.</value>
     <value>metroButtonInterpolate</value>
   </data>
   <data name="&gt;&gt;metroButtonInterpolate.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonInterpolate.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -428,7 +428,7 @@ Select the first waveform and press the button.</value>
     <value>metroButtonCopy</value>
   </data>
   <data name="&gt;&gt;metroButtonCopy.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonCopy.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>

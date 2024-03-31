@@ -82,7 +82,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
             this.buttonOk.TabIndex = 12;
-            this.buttonOk.Text = "OK";
+            this.buttonOk.Text = "&OK";
             // 
             // textBoxWsgDataText
             // 
@@ -265,7 +265,6 @@
             // 
             // FormWsgEditor
             // 
-            this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.buttonCancel;
