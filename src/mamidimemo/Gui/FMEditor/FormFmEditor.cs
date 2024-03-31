@@ -5,6 +5,7 @@ using Melanchall.DryWetMidi.Core;
 using MetroFramework.Forms;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using NAudio.SoundFont;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,16 +38,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
         private bool singleSelect;
 
+        private static PropertySort propAlphabetical;
+
         public InstrumentBase Instrument
         {
             get;
             private set;
         }
 
+        private TimbreBase timbre;
+
         public TimbreBase Timbre
         {
-            get;
-            private set;
+            get
+            {
+                return timbre;
+            }
+            private set
+            {
+                timbre = value;
+                propertyGrid.SelectedObject = value;
+                propertyGrid.RefreshTabs(PropertyTabScope.Component);
+            }
         }
 
         public int TimbreNo
@@ -95,6 +108,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             InitializeComponent();
 
+            propertyGrid.PropertySort = propAlphabetical;
+
             this.singleSelect = singleSelect;
 
             for (int nn = 0; nn < 128; nn++)
@@ -121,6 +136,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         break;
                     }
                 }
+            }
+            try
+            {
+                splitContainer1.SplitterDistance = Settings.Default.FmSp1Pos;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
             }
 
             if (singleSelect)
@@ -209,6 +235,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Settings.Default.FmCC = toolStripComboBoxCC.SelectedIndex;
             Settings.Default.FmCh = toolStripComboBoxCh.SelectedIndex;
 
+            Settings.Default.MWinSp1Pos = splitContainer1.SplitterDistance;
+
+            propAlphabetical = propertyGrid.PropertySort;
+
             base.OnClosing(e);
         }
 
@@ -221,6 +251,18 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             toolStripComboBoxNote.SelectedIndex = Settings.Default.FmNote;
             toolStripComboBoxCC.SelectedIndex = Settings.Default.FmCC;
             toolStripComboBoxCh.SelectedIndex = Settings.Default.FmCh;
+
+            try
+            {
+                splitContainer1.SplitterDistance = Settings.Default.FmSp1Pos;
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+            }
         }
 
         private void setTitle()
@@ -593,7 +635,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }));
         }
 
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -926,6 +968,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// </summary>
         private void updateTimbreNames()
         {
+            metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
+
             for (int i = 0; i < Instrument.BaseTimbres.Length; i++)
             {
                 metroComboBoxTimbres.Items[i] = new TimbreItem(Instrument.BaseTimbres[i], i);
@@ -1702,26 +1746,74 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 {
                     Timbre.TimbreName = f.InputText;
 
-                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
                     metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
-                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
                 }
             }
         }
 
-        private void metroButton1_Click(object sender, EventArgs e)
+        private void propertyGrid_PropertyTabChanged(object sender, PropertyTabChangedEventArgs e)
         {
-            using (FormTimbreManager f = new FormTimbreManager(Instrument))
+            selectTopItem(sender);
+        }
+
+
+        private void propertyGrid_SelectedObjectsChanged(object sender, EventArgs e)
+        {
+            selectTopItem(sender);
+        }
+
+        private static void selectTopItem(object s)
+        {
+            PropertyGrid propertyGrid = (PropertyGrid)s;
+            if (!propertyGrid.IsHandleCreated)
+                return;
+            propertyGrid.BeginInvoke(new MethodInvoker(() =>
             {
-                DialogResult dr = f.ShowDialog(this);
-                if (dr == DialogResult.OK)
+                if (propertyGrid.IsDisposed)
+                    return;
+
+                // get selected item
+                GridItem gi = propertyGrid.SelectedGridItem;
+                if (gi != null)
                 {
-                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
-                    metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
-                    ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
-                    Control_ValueChanged(this, null);
+                    // get category for selected item
+                    GridItem pgi = gi.Parent;
+                    if (pgi != null && gi.Parent.Parent != null)
+                        pgi = gi.Parent.Parent;
+                    if (pgi != null)
+                    {
+                        //sort categories
+                        List<GridItem> sortedCats = new List<GridItem>(pgi.GridItems.Cast<GridItem>());
+                        sortedCats.Sort(delegate (GridItem gi1, GridItem gi2) { return gi1.Label.CompareTo(gi2.Label); });
+
+                        // loop to first category
+                        for (int i = 0; i < pgi.GridItems.Count; i++)
+                        {
+                            if (pgi.GridItems[i] == gi)
+                                break; // in case full circle done
+                                       // select if first category
+                            if (pgi.GridItems[i].Label == sortedCats[0].Label)
+                            {
+                                pgi.GridItems[i].Select();
+                                break;
+                            }
+                        }
+                    }
                 }
-            }
+            }));
+        }
+
+        private void contextMenuStripProp_Click(object sender, EventArgs e)
+        {
+            propertyGrid.ResetSelectedProperty();
+            propertyGrid.Refresh();
+        }
+
+        private void FormFmEditor_Activated(object sender, EventArgs e)
+        {
+            ignoreMetroComboBoxTimbres_SelectedIndexChanged = true;
+            metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
+            ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
         }
     }
 }

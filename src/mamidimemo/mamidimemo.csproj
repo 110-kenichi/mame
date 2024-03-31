@@ -1046,6 +1046,9 @@
     <EmbeddedResource Include="Gui\FormInputNumber.resx">
       <DependentUpon>FormInputNumber.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\FormProp.ja-JP.resx">
+      <DependentUpon>FormProp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\FormSccMorphEditor.ja-JP.resx">
       <DependentUpon>FormSccMorphEditor.cs</DependentUpon>
     </EmbeddedResource>

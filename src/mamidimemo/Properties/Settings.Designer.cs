@@ -860,5 +860,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["DoNotUsePrivacySettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("860")]
+        public int FmSp1Pos {
+            get {
+                return ((int)(this["FmSp1Pos"]));
+            }
+            set {
+                this["FmSp1Pos"] = value;
+            }
+        }
     }
 }
