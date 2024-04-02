@@ -315,7 +315,13 @@ namespace zanac.MAmidiMEmo.Util
                                 }
                                 else
                                 {
-                                    pcmDataTable.Add(pcmId, writeData.Tag["PcmData"]);
+                                    byte[] dacData = (byte[])((byte[])writeData.Tag["PcmData"]).Clone();
+                                    for (int pi = 0; pi < dacData.Length; pi++)
+                                    {
+                                        int val = dacData[pi] - 0x80;
+                                        dacData[pi] = (byte)val;
+                                    }
+                                    pcmDataTable.Add(pcmId, dacData);
                                 }
                                 pcmIndexTable.Add(writeData.Tag["PcmData"], pcmId++);
                             }
