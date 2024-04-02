@@ -120,6 +120,9 @@ namespace zanac.MAmidiMEmo.Util
                 previousMidiEventTicks = -1;
                 currentMidiEventTicks = -1;
                 lastWriteTicks = 0;
+
+                targetYM2612.ResetAll();
+                targetSN76496.ResetAll();
 #if DEBUG_PRINT
                 startXGM = false;
                 sb = new StringBuilder();
@@ -314,13 +317,7 @@ namespace zanac.MAmidiMEmo.Util
                                 }
                                 else
                                 {
-                                    byte[] dacData = (byte[])((byte[])writeData.Tag["PcmData"]).Clone();
-                                    for (int pi = 0; pi < dacData.Length; pi++)
-                                    {
-                                        int val = dacData[pi] - 0x80;
-                                        dacData[pi] = (byte)val;
-                                    }
-                                    pcmDataTable.Add(pcmId, dacData);
+                                    pcmDataTable.Add(pcmId, writeData.Tag["PcmData"]);
                                 }
                                 pcmIndexTable.Add(writeData.Tag["PcmData"], pcmId++);
                             }
