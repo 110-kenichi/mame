@@ -87,44 +87,14 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             {
                 if (singleSel)
                 {
-                    var mmlValueGeneral = SimpleSerializer.SerializeProps(tim,
-                    nameof(tim.ALG),
-                    nameof(tim.FB),
-                    nameof(tim.FB2),
-                    "GlobalSettings.EN",
-                    "GlobalSettings.DAM",
-                    "GlobalSettings.DVB"
-                    );
+                    string org = tim.SerializeData;
+
                     var consel = inst.CONSEL;
                     inst.CONSEL = 6;
-
-                    List<string> mmlValueOps = new List<string>();
-                    for (int i = 0; i < tim.Ops.Length; i++)
-                    {
-                        var op = tim.Ops[i];
-                        mmlValueOps.Add(SimpleSerializer.SerializeProps(op,
-                            nameof(op.AR),
-                            nameof(op.DR),
-                            nameof(op.RR),
-                            nameof(op.SL),
-                            nameof(op.SR),
-                            nameof(op.TL),
-                            nameof(op.KSL),
-                            nameof(op.KSR),
-                            nameof(op.MFM),
-                            nameof(op.AM),
-                            nameof(op.VIB),
-                            nameof(op.EG),
-                            nameof(op.WS)
-                            ));
-                    }
-                    string lastPatchInfo = ((IFmTimbre)tim).PatchInfo;
 
                     bool conselWarned = false;
                     FormYMF262Editor ed = new FormYMF262Editor(inst, tim, singleSel);
                     {
-                        ed.MmlValueGeneral = mmlValueGeneral;
-
                         ed.FormClosed += (s, e) =>
                         {
                             inst.CONSEL = consel;
@@ -137,8 +107,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             }
                             else if (ed.DialogResult == DialogResult.Cancel)
                             {
-                                ((IFmTimbre)tim).PatchInfo = lastPatchInfo;
-                                tim.Detailed = mmlValueGeneral + "," + mmlValueOps[0] + "," + mmlValueOps[1] + "," + mmlValueOps[2] + "," + mmlValueOps[3];
+                                tim.SerializeData = org;
                             }
                         };
                         ed.Show();
@@ -157,10 +126,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         };
                         string lastCopiedMmlValueGeneral = null;
                         string[] lastCopiedMmlValueOps = null;
+                        string lastPatchInfo = null;
                         ed.CopyRequested += (s, e) =>
                         {
                             lastCopiedMmlValueGeneral = ed.MmlValueGeneral;
                             lastCopiedMmlValueOps = new string[] { ed.MmlValueOps[0], ed.MmlValueOps[1], ed.MmlValueOps[2], ed.MmlValueOps[3] };
+                            lastPatchInfo = tim.PatchInfo;
                         };
                         ed.PasteRequested += (s, e) =>
                         {
@@ -168,6 +139,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             {
                                 ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
                                 ed.MmlValueOps = lastCopiedMmlValueOps;
+                                tim.PatchInfo = lastPatchInfo;
                             }
                         };
                     }

@@ -215,5 +215,8 @@
     <Setting Name="FmSp1Pos" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">860</Value>
     </Setting>
+    <Setting Name="FmHideProp" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

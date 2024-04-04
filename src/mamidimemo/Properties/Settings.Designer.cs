@@ -872,5 +872,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmSp1Pos"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FmHideProp {
+            get {
+                return ((bool)(this["FmHideProp"]));
+            }
+            set {
+                this["FmHideProp"] = value;
+            }
+        }
     }
 }

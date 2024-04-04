@@ -1815,5 +1815,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             metroComboBoxTimbres.Items[TimbreNo] = ((TimbreItem)metroComboBoxTimbres.Items[TimbreNo]);
             ignoreMetroComboBoxTimbres_SelectedIndexChanged = false;
         }
+
+        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            ApplyTimbre(timbre);
+        }
     }
 }
