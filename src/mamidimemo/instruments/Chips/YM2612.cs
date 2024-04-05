@@ -471,16 +471,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             XGM2 = 3,
         }
 
-        private const int DEFAULT_MAX_VOICES = 4;
+        private const uint DEFAULT_MAX_VOICES = 4;
 
-        private int f_MaxDacPcmVoices = DEFAULT_MAX_VOICES;
+        private uint f_MaxDacPcmVoices = DEFAULT_MAX_VOICES;
 
         [DataMember]
         [Category("Chip(Global)")]
         [Description("Max voices of the DAC PCM for Mode5ch.")]
-        [DefaultValue(DEFAULT_MAX_VOICES)]
+        [DefaultValue(typeof(uint), "4")]
         [TypeConverter(typeof(EnumConverter<MaxDacType>))]
-        public int MaxDacPcmVoices
+        public uint MaxDacPcmVoices
         {
             get
             {
@@ -1483,7 +1483,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 slot = -1;
                             else if (slot < -1)
                                 slot = -1;
-                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, parentModule.MaxDacPcmVoices, slot, 0);
+                            return SearchEmptySlotAndOffForLeader(parentModule, pcmOnSounds, note, (int)parentModule.MaxDacPcmVoices, slot, 0);
                         }
                 }
 

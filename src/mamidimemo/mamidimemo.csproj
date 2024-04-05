@@ -760,6 +760,18 @@
       <Link>VSIF\VGM_88.d88</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="..\..\docs\MAmidiMEmo\Manual.pdf">
+      <Link>Manuals\Manual.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\docs\MAmidiMEmo\OpManual_ja.pdf">
+      <Link>Manuals\OpManual_ja.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\docs\MAmidiMEmo\OpManual_VSIF_MD_ja.pdf">
+      <Link>Manuals\OpManual_VSIF_MD_ja.pdf</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\VSIF\VGMPlay_C64\VSIF_C64.prg">
       <Link>VSIF\VSIF_C64.prg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
