@@ -382,7 +382,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             set
             {
-                if(value != 0)
+                if (value != 0)
                     targetSampleRate = value;
             }
         }
@@ -1645,9 +1645,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (playDac || lastDacData != 0)
                     {
                         if (!playDac)
-                            dacData = 0;
+                            dacData = lastDacData;
 
-                        if (playDac)
+                        if (lastDacData != dacData)
                         {
                             lock (MidiManager.SoundExclusiveLockObject)
                             {
@@ -1655,7 +1655,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 {
                                     Program.SoundUpdating();
                                     Ym2612_write(unitNumber, 0, 0x2a);
-                                    Ym2612_write(unitNumber, 1, (byte)(lastDacData + 0x80));
+                                    Ym2612_write(unitNumber, 1, (byte)(dacData + 0x80));
 
                                     if (lastSampleRate != sampleRate)
                                         Ym2612_set_pcm_frequency(unitNumber, sampleRate);
@@ -1702,9 +1702,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (playDac || lastDacData != 0)
                         {
                             if (!playDac)
-                                dacData = 0;
+                                dacData = lastDacData;
 
-                            parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
+                            if (dacData != lastDacData)
+                                parentModule.DeferredWriteOPN2_DAC(unitNumber, (byte)(dacData + 0x80));
 
                             lastDacData = dacData;
                         }
@@ -3095,7 +3096,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
                 set
                 {
-                    if(value != 0)
+                    if (value != 0)
                         sampleRate = value;
                 }
             }
@@ -4033,8 +4034,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 {
                                     using (var stream = new WaveFormatConversionProvider(wf, converter.ToSampleProvider().ToWaveProvider16()))
                                     {
-                                        data = new byte[converter.Length];
-                                        stream.Read(data, 0, data.Length);
+                                        var tmpdata = new byte[converter.Length];
+                                        int rd = stream.Read(tmpdata, 0, tmpdata.Length);
+                                        data = new byte[rd];
+                                        Array.Copy(tmpdata, data, rd);
                                     }
                                 }
                             }

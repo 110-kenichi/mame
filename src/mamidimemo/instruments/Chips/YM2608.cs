@@ -4878,7 +4878,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (playDac || overflowed != 0 || lastDacData != 0)
                         {
                             if (!playDac)
-                                dacData = 0;
+                                dacData = lastDacData;
                             //dacData += overflowed;
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
@@ -4891,7 +4891,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
-                            parentModule.YM2608WriteData(unitNumber, 0x0b, 0, 3, (byte)(dacData + 0x80), false, false);
+                            if (dacData != lastDacData)
+                                parentModule.YM2608WriteData(unitNumber, 0x0b, 0, 3, (byte)(dacData + 0x80), false, false);
                             lastDacData = dacData;
                         }
                     }

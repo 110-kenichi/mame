@@ -1131,8 +1131,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     {
                                         using (var stream = new WaveFormatConversionProvider(format, converter.ToSampleProvider().ToWaveProvider16()))
                                         {
-                                            data = new byte[converter.Length];
-                                            stream.Read(data, 0, data.Length);
+                                            var tmpdata = new byte[converter.Length];
+                                            int rd = stream.Read(tmpdata, 0, tmpdata.Length);
+                                            data = new byte[rd];
+                                            Array.Copy(tmpdata, data, rd);
                                         }
                                     }
                                 }

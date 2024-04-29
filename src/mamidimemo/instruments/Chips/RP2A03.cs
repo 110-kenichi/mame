@@ -254,7 +254,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_FdsMasterVolume != (byte)(value & 3))
                 {
                     f_FdsMasterVolume = (byte)(value & 3);
-                    if(SoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
+                    if (SoundEngine == SoundEngineType.VSIF_NES_FTDI_FDS)
                         RP2A03WriteData(UnitNumber, 0x89, f_FdsMasterVolume);
                 }
             }
@@ -1341,7 +1341,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 lock (engineLockObject)
                 {
-                    if(currentSampleData[slot] != null)
+                    if (currentSampleData[slot] != null)
                         currentSampleData[slot].Pitch = freq / currentSampleData[slot].BaseFreq;
                 }
             }
@@ -1455,7 +1455,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         if (playDac || overflowed != 0 || lastDacData != 0)
                         {
                             if (!playDac)
-                                dacData = 0;
+                                dacData = lastDacData;
                             //dacData += overflowed;
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
@@ -1468,7 +1468,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
-                            parentModule.RP2A03WriteData(unitNumber, 0x11, (byte)((dacData + 0x80) >> 1), false, false);
+                            if (dacData != lastDacData)
+                                parentModule.RP2A03WriteData(unitNumber, 0x11, (byte)((dacData + 0x80) >> 1), false, false);
                             lastDacData = dacData;
                         }
                     }
@@ -2272,7 +2273,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private void updateVrc6SQPitch()
             {
-                if(IsSoundOff)
+                if (IsSoundOff)
                     return;
                 double freq = CalcCurrentFrequency();
                 freq = Math.Round(parentModule.MasterClock / (16 * freq)) - 1;
@@ -4038,7 +4039,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         {
                             if (settings.LfoGainEnvelopesReleasePoint >= 0 && f_lfoGainCounter <= (uint)settings.LfoGainEnvelopesReleasePoint)
                                 f_lfoGainCounter = (uint)settings.LfoGainEnvelopesReleasePoint;
-                           else if (settings.LfoGainEnvelopesReleasePoint < 0 && settings.KeyOffStop)
+                            else if (settings.LfoGainEnvelopesReleasePoint < 0 && settings.KeyOffStop)
                                 f_lfoGainCounter = (uint)settings.LfoGainEnvelopesNums.Length;
 
                         }
