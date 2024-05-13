@@ -510,10 +510,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         }
                     case SoundType.PSG:
                         {
-                            if (timbre.PartialReserveSPSG)
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1);
+                            var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                            if (slot == -1)
+                            {
+                                if (timbre.PartialReserveSPSG)
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 1, slot, 0);
+                                else
+                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2, slot, 0);
+                            }
                             else
-                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2);
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 2, slot, 0);
                             break;
                         }
                     case SoundType.WAV:
@@ -919,19 +925,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class GBAPUTimbre : TimbreBase
         {
-            [Browsable(false)]
-            public override bool AssignMIDIChtoSlotNum
-            {
-                get;
-                set;
-            }
-
-            [Browsable(false)]
-            public override int AssignMIDIChtoSlotNumOffset
-            {
-                get;
-                set;
-            }
 
             [DataMember]
             [Category("Sound")]

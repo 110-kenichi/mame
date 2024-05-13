@@ -824,7 +824,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 {
                     case PhysicalChannel.Indeterminatene:
                         {
-                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3);
+                            var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                            emptySlot = SearchEmptySlotAndOffForLeader(parentModule, psgOnSounds, note, 3, slot, 0);
                             break;
                         }
                     case PhysicalChannel.Ch1:

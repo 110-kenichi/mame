@@ -583,20 +583,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     case SoundType.PCM:
                     case SoundType.WSG:
                         {
-                            if (timbre.PartialReserveWSGLFO)
+                            var slot = timbre.AssignMIDIChtoSlotNum ? note.Channel + timbre.AssignMIDIChtoSlotNumOffset : -1;
+                            if (slot == -1)
                             {
-                                if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2, -1, 2);
+                                if (timbre.PartialReserveWSGLFO)
+                                {
+                                    if (timbre.PartialReserveNOISE)
+                                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 2, -1, 2);
+                                    else
+                                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4, -1, 2);
+                                }
                                 else
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4, -1, 2);
+                                {
+                                    if (timbre.PartialReserveNOISE)
+                                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
+                                    else
+                                        emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6);
+                                }
                             }
                             else
-                            {
-                                if (timbre.PartialReserveNOISE)
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 4);
-                                else
-                                    emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6);
-                            }
+                                emptySlot = SearchEmptySlotAndOffForLeader(parentModule, wsgOnSounds, note, 6, slot, 0);
                             break;
                         }
                     case SoundType.NOISE:
@@ -960,19 +966,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [InstLock]
         public class HuC6280Timbre : TimbreBase
         {
-            [Browsable(false)]
-            public override bool AssignMIDIChtoSlotNum
-            {
-                get;
-                set;
-            }
-
-            [Browsable(false)]
-            public override int AssignMIDIChtoSlotNumOffset
-            {
-                get;
-                set;
-            }
 
             [DataMember]
             [Category("Sound")]

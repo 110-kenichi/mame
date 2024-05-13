@@ -169,8 +169,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 metroComboBoxTimbres.Enabled = false;
                 metroButtonImportAll.Enabled = false;
                 metroButtonImportAllGit.Enabled = false;
-                metroButtonCopy.Enabled = false;
-                metroButtonPaste.Enabled = false;
                 metroButtonExportAll.Enabled = false;
                 metroTextBoxPatchFile.Text = ((IFmTimbre)Timbre).PatchInfo;
             }
@@ -635,7 +633,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }));
         }
 
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -995,39 +993,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 try
                 {
                     string txt = System.IO.File.ReadAllText(file);
-                    StringReader rs = new StringReader(txt);
-
-                    string ftname = rs.ReadLine().ToUpper(CultureInfo.InvariantCulture);
-                    if (exts[0].ToUpper(CultureInfo.InvariantCulture).Equals(ftname))
-                    {
-                        string ver = rs.ReadLine();
-                        if (ver != "1.0")
-                            throw new InvalidDataException();
-                        int num = int.Parse(rs.ReadLine());
-                        List<string> lines = new List<string>();
-                        List<Tone> ts = new List<Tone>();
-                        int progNo = 0;
-                        while (true)
-                        {
-                            string line = rs.ReadLine();
-                            if (line == null || line == "-")
-                            {
-                                if (lines.Count == 0)
-                                    break;
-                                Tone t = new Tone();
-                                t.MML = lines.ToArray();
-                                t.Name = t.MML[0];
-                                t.Number = progNo++;
-                                ts.Add(t);
-                                lines.Clear();
-                                if (line == null)
-                                    break;
-                                continue;
-                            }
-                            lines.Add(line);
-                        }
-                        tones = ts;
-                    }
+                    tones = ImportTone(txt);
                 }
                 catch (Exception ex)
                 {
@@ -1575,18 +1541,44 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             Close();
         }
 
-        public event EventHandler CopyRequested;
-
         private void metroButtonCopy_Click(object sender, EventArgs e)
         {
-            CopyRequested?.Invoke(sender, e);
-        }
+            StringBuilder sb = new StringBuilder();
 
-        public event EventHandler PasteRequested;
+            sb.Append(CreateToneFileHeader());
+
+            string[] vals = GetMMlValues();
+            foreach (string val in vals)
+                sb.AppendLine(val);
+
+            Clipboard.SetText(sb.ToString());
+        }
 
         private void metroButtonPaste_Click(object sender, EventArgs e)
         {
-            PasteRequested?.Invoke(sender, e);
+            if (Clipboard.ContainsText(TextDataFormat.Text))
+            {
+                var text = Clipboard.GetText(TextDataFormat.Text);
+                IEnumerable<Tone> tones = ImportTone(text);
+                if (tones != null && tones.Count() > 0)
+                {
+                    if (tones.Count() == 1)
+                    {
+                        try
+                        {
+                            ignorePlayingFlag++;
+                            ApplyTone(tones.ToArray()[0]);
+                            ((IFmTimbre)Timbre).PatchInfo = null;
+                            metroTextBoxPatchFile.Text = String.Empty;
+                        }
+                        finally
+                        {
+                            ignorePlayingFlag--;
+                        }
+                        Control_ValueChanged(this, null);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1622,11 +1614,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 if (dr == CommonFileDialogResult.Ok)
                 {
                     StringBuilder sb = new StringBuilder();
-                    string fullTypeName = exts[0];
-
-                    sb.AppendLine(fullTypeName);
-                    sb.AppendLine("1.0");
-                    sb.AppendLine("1");
+                    sb.Append(CreateToneFileHeader());
 
                     string[] vals = GetMMlValues();
                     foreach (string val in vals)
@@ -1642,14 +1630,88 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="exts"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidDataException"></exception>
+        protected virtual IEnumerable<Tone> ImportTone(string txt)
+        {
+            IEnumerable<Tone> tones = null;
+            StringReader rs = new StringReader(txt);
+
+            string ftname = rs.ReadLine().ToUpper(CultureInfo.InvariantCulture);
+            var exts = ExtensionsFilterExt.Split(new char[] { ';' });
+            string fullTypeName = exts[0];
+
+            if (fullTypeName.ToUpper(CultureInfo.InvariantCulture).Equals(ftname))
+            {
+                string ver = rs.ReadLine();
+                if (ver != "1.0")
+                    throw new InvalidDataException();
+                int num = int.Parse(rs.ReadLine());
+                List<string> lines = new List<string>();
+                List<Tone> ts = new List<Tone>();
+                int progNo = 0;
+                while (true)
+                {
+                    string line = rs.ReadLine();
+                    if (line == null || line == "-")
+                    {
+                        if (lines.Count == 0)
+                            break;
+                        Tone t = new Tone();
+                        t.MML = lines.ToArray();
+                        t.Name = t.MML[0];
+                        t.Number = progNo++;
+                        ts.Add(t);
+                        lines.Clear();
+                        if (line == null)
+                            break;
+                        continue;
+                    }
+                    lines.Add(line);
+                }
+                tones = ts;
+            }
+
+            return tones;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected String CreateToneFileHeader()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var exts = ExtensionsFilterExt.Split(new char[] { ';' });
+            string fullTypeName = exts[0];
+
+            sb.AppendLine(fullTypeName);
+            sb.AppendLine("1.0");
+            sb.AppendLine("1");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void metroButtonExportAll_Click(object sender, EventArgs e)
         {
             using (CommonSaveFileDialog saveFileDialog = new CommonSaveFileDialog())
             {
                 saveFileDialog.InitialDirectory = Program.GetToneLibLastDir();
 
-                saveFileDialog.DefaultExtension = ExtensionsFilterExt.Replace("*", "");
-                saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, ExtensionsFilterExt));
+                var exts = ExtensionsFilterExt.Split(new char[] { ';' });
+                saveFileDialog.DefaultExtension = exts[0].Replace("*", "");
+                saveFileDialog.Filters.Add(new CommonFileDialogFilter(ExtensionsFilterLabel, exts[0]));
 
                 saveFileDialog.DefaultFileName = Utility.MakeUniqueFileName(saveFileDialog.InitialDirectory, $"Instrument_{Instrument.Name}" + saveFileDialog.DefaultExtension);
 
@@ -1657,11 +1719,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 if (dr == CommonFileDialogResult.Ok)
                 {
                     StringBuilder sb = new StringBuilder();
-                    string fullTypeName = ExtensionsFilterExt;
-
-                    sb.AppendLine(fullTypeName);
-                    sb.AppendLine("1.0");
-                    sb.AppendLine(metroComboBoxTimbres.Items.Count.ToString());
+                    sb.Append(CreateToneFileHeader());
 
                     try
                     {

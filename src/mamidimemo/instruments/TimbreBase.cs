@@ -196,7 +196,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("Chip(Dedicated)")]
         [Description("Assign MIDI channel to hardware channel.\r\n" +
-            "*Currently supported OPN2, DCSG only.")]
+            "*Currently supported OPN2, DCSG, GBAPU, HuC6280, SID only.")]
         [DefaultValue(false)]
         public virtual  bool AssignMIDIChtoSlotNum
         {
@@ -208,7 +208,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [Category("Chip(Dedicated)")]
         [Description("Assign MIDI channel offset to hardware channel.\r\n" +
             "eg) If you want to assign DCSG 1ch to MIDI 7ch, set the value -6.\r\n" +
-            "*Currently supported OPN2, DCSG only.")]
+            "*Currently supported OPN2, DCSG, GBAPU, HuC6280, SID only.")]
         [DefaultValue(0)]
         public virtual int AssignMIDIChtoSlotNumOffset
         {

@@ -105,46 +105,12 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         {
                             tim.Detailed = ed.MmlValueGeneral + "," + ed.MmlValueOps[0] + "," + ed.MmlValueOps[1];
                         };
-                        string lastCopiedMmlValueGeneral = null;
-                        string[] lastCopiedMmlValueOps = null;
-                        string lastPatchInfo = null;
-                        ed.CopyRequested += (s, e) =>
-                        {
-                            lastCopiedMmlValueGeneral = ed.MmlValueGeneral;
-                            lastCopiedMmlValueOps = new string[] { ed.MmlValueOps[0], ed.MmlValueOps[1] };
-                            lastPatchInfo = tim.PatchInfo;
-                        };
-                        ed.PasteRequested += (s, e) =>
-                        {
-                            if (lastCopiedMmlValueGeneral != null)
-                            {
-                                ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
-                                ed.MmlValueOps = lastCopiedMmlValueOps;
-                                tim.PatchInfo = lastPatchInfo;
-                            }
-                        };
                     }
                 }
                 else
                 {
                     using (FormYM2413Editor ed = new FormYM2413Editor(inst, tim, singleSel))
                     {
-                        string lastCopiedMmlValueGeneral = null;
-                        string[] lastCopiedMmlValueOps = null;
-                        ed.CopyRequested += (s, e) =>
-                        {
-                            lastCopiedMmlValueGeneral = ed.MmlValueGeneral;
-                            lastCopiedMmlValueOps = new string[] { ed.MmlValueOps[0], ed.MmlValueOps[1] };
-                        };
-                        ed.PasteRequested += (s, e) =>
-                        {
-                            if (lastCopiedMmlValueGeneral != null)
-                            {
-                                ed.MmlValueGeneral = lastCopiedMmlValueGeneral;
-                                ed.MmlValueOps = lastCopiedMmlValueOps;
-                            }
-                        };
-                        
                         string org = JsonConvert.SerializeObject(tims, Formatting.Indented);
                         DialogResult dr = editorService.ShowDialog(ed);
                         if (dr == DialogResult.OK || dr == DialogResult.Abort)
