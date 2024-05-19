@@ -1007,29 +1007,28 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
             else
             {
-                var Option = new Option();
                 try
                 {
                     string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
                     switch (ext.ToUpper(CultureInfo.InvariantCulture))
                     {
                         case ".MUC":
-                            tones = Muc.Reader(importFile, Option);
+                            tones = Muc.Reader(file);
                             break;
                         case ".DAT":
-                            tones = Dat.Reader(importFile, Option);
+                            tones = Dat.Reader(file);
                             break;
                         case ".MWI":
-                            tones = Fmp.Reader(importFile, Option);
+                            tones = Fmp.Reader(file);
                             break;
                         case ".MML":
-                            tones = Pmd.Reader(importFile, Option);
+                            tones = Pmd.Reader(file);
                             break;
                         case ".FXB":
-                            tones = Vopm.Reader(importFile, Option);
+                            tones = Vopm.Reader(file);
                             break;
                         case ".GWI":
-                            tones = Gwi.Reader(importFile, Option);
+                            tones = Gwi.Reader(file);
                             break;
                         case ".BNK":
                             tones = BankReader.Read(file);
@@ -1038,10 +1037,13 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                             tones = SyxReaderTX81Z.Read(file);
                             break;
                         case ".FF":
-                            tones = FF.Reader(file, Option);
+                            tones = FF.Reader(file);
                             break;
                         case ".FFOPM":
-                            tones = FF.Reader(file, Option);
+                            tones = FF.Reader(file);
+                            break;
+                        case ".VGI":
+                            tones = Vgi.Reader(file);
                             break;
                         default:
 

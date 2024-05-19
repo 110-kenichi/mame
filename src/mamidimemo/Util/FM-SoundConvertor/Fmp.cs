@@ -58,46 +58,12 @@ namespace FM_SoundConvertor
 			}
 		}
 
-
-
-		static string Put(int Value)
-		{
-			return String.Format("{0,3},", Value);
-		}
-
-		static string Put(Op @Op)
-		{
-			return Put(Op.AR) + Put(Op.DR) + Put(Op.SR) + Put(Op.RR) + Put(Op.SL) + Put(Op.TL) + Put(Op.KS) + Put(Op.ML) + Put(Op.DT) + Put(Op.AM).TrimEnd(',');
-		}
-
-		public static void Put(Tone @Tone, ref string Buffer)
-		{
-			if (Tone.IsValid())
-			{
-				var Name = String.Format("({0})", Tone.Name) + "\n";
-				var Header = "'@ " + String.Format("FA {0}", Tone.Number) + "\n";
-				var Op0 = "'@ " + Put(Tone.aOp[0]) + "\n";
-				var Op1 = "'@ " + Put(Tone.aOp[1]) + "\n";
-				var Op2 = "'@ " + Put(Tone.aOp[2]) + "\n";
-				var Op3 = "'@ " + Put(Tone.aOp[3]) + "\n";
-				var Footer = "'@ " + Put(Tone.AL) + Put(Tone.FB).TrimEnd(',') + "\n";
-				Buffer += Name + Header + Op0 + Op1 + Op2 + Op3 + Footer + "\n";
-			}
-		}
-
-
-
-		public static IEnumerable<Tone> Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path)
 		{
             List<Tone> tones = new List<Tone>();
 
             var vTone = new Tone();
 			int nTok = 0;
-
-			var BufferMuc = "";
-			var BufferDat = Dat.New();
-			var BufferPmd = "";
-			var BufferVopm = Vopm.New();
 
 			var State = eState.Entry;
 			var aLine = ReadLine(Path);
@@ -225,11 +191,6 @@ namespace FM_SoundConvertor
 									int.TryParse(aTok[1], out vTone.FB);
 									vTone.Name = "";
 
-									if (Option.bMuc) Muc.Put(vTone, ref BufferMuc);
-									if (Option.bDat) Dat.Put(vTone, ref BufferDat);
-									if (Option.bPmd) Pmd.Put(vTone, ref BufferPmd);
-									if (Option.bVopm) Vopm.Put(vTone, ref BufferVopm);
-
                                     if (vTone.IsValid())
                                         tones.Add(new Tone(vTone));
 								}
@@ -240,32 +201,7 @@ namespace FM_SoundConvertor
 				}
 			}
 
-			if (Option.bMuc) Muc.Writer(Path, BufferMuc);
-			if (Option.bDat) Dat.Writer(Path, BufferDat);
-			if (Option.bPmd) Pmd.Writer(Path, BufferPmd);
-			if (Option.bVopm) Vopm.Writer(Path, BufferVopm);
-
             return tones;
-		}
-
-
-
-		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
-		{
-			foreach (var Path in aPath)
-			{
-				if (!String.IsNullOrWhiteSpace(Path) && Extension(Path) == ".mwi")
-                    return Reader(Path, Option);
-			}
-
-            return null;
-		}
-
-
-
-		public static void Writer(string Path, string Buffer)
-		{
-			WriteText(ChangeExtension(Path, ".mwi"), Buffer);
 		}
 	}
 }

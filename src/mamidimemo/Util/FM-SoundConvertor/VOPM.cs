@@ -129,87 +129,7 @@ namespace FM_SoundConvertor
 			Tone.Number = i;
 		}
 
-
-
-		public static void Put(Tone @Tone, ref byte[] Buffer)
-		{
-			if (Tone.IsValid() && Tone.Number < ToneLength())
-			{
-				int o = HeadLength() + (Tone.Number * PutLength());
-				Buffer[o + (int)ePut.AR0] = (byte)Tone.aOp[0].AR;
-				Buffer[o + (int)ePut.AR1] = (byte)Tone.aOp[1].AR;
-				Buffer[o + (int)ePut.AR2] = (byte)Tone.aOp[2].AR;
-				Buffer[o + (int)ePut.AR3] = (byte)Tone.aOp[3].AR;
-				Buffer[o + (int)ePut.DR0] = (byte)Tone.aOp[0].DR;
-				Buffer[o + (int)ePut.DR1] = (byte)Tone.aOp[1].DR;
-				Buffer[o + (int)ePut.DR2] = (byte)Tone.aOp[2].DR;
-				Buffer[o + (int)ePut.DR3] = (byte)Tone.aOp[3].DR;
-				Buffer[o + (int)ePut.SR0] = (byte)Tone.aOp[0].SR;
-				Buffer[o + (int)ePut.SR1] = (byte)Tone.aOp[1].SR;
-				Buffer[o + (int)ePut.SR2] = (byte)Tone.aOp[2].SR;
-				Buffer[o + (int)ePut.SR3] = (byte)Tone.aOp[3].SR;
-				Buffer[o + (int)ePut.RR0] = (byte)Tone.aOp[0].RR;
-				Buffer[o + (int)ePut.RR1] = (byte)Tone.aOp[1].RR;
-				Buffer[o + (int)ePut.RR2] = (byte)Tone.aOp[2].RR;
-				Buffer[o + (int)ePut.RR3] = (byte)Tone.aOp[3].RR;
-				Buffer[o + (int)ePut.SL0] = (byte)Tone.aOp[0].SL;
-				Buffer[o + (int)ePut.SL1] = (byte)Tone.aOp[1].SL;
-				Buffer[o + (int)ePut.SL2] = (byte)Tone.aOp[2].SL;
-				Buffer[o + (int)ePut.SL3] = (byte)Tone.aOp[3].SL;
-				Buffer[o + (int)ePut.TL0] = (byte)Tone.aOp[0].TL;
-				Buffer[o + (int)ePut.TL1] = (byte)Tone.aOp[1].TL;
-				Buffer[o + (int)ePut.TL2] = (byte)Tone.aOp[2].TL;
-				Buffer[o + (int)ePut.TL3] = (byte)Tone.aOp[3].TL;
-				Buffer[o + (int)ePut.KS0] = (byte)Tone.aOp[0].KS;
-				Buffer[o + (int)ePut.KS1] = (byte)Tone.aOp[1].KS;
-				Buffer[o + (int)ePut.KS2] = (byte)Tone.aOp[2].KS;
-				Buffer[o + (int)ePut.KS3] = (byte)Tone.aOp[3].KS;
-				Buffer[o + (int)ePut.ML0] = (byte)Tone.aOp[0].ML;
-				Buffer[o + (int)ePut.ML1] = (byte)Tone.aOp[1].ML;
-				Buffer[o + (int)ePut.ML2] = (byte)Tone.aOp[2].ML;
-				Buffer[o + (int)ePut.ML3] = (byte)Tone.aOp[3].ML;
-				Buffer[o + (int)ePut.DT1_0] = (byte)Tone.aOp[0].DT;
-				Buffer[o + (int)ePut.DT1_1] = (byte)Tone.aOp[1].DT;
-				Buffer[o + (int)ePut.DT1_2] = (byte)Tone.aOp[2].DT;
-				Buffer[o + (int)ePut.DT1_3] = (byte)Tone.aOp[3].DT;
-				Buffer[o + (int)ePut.DT2_0] = (byte)Tone.aOp[0].DT2;
-				Buffer[o + (int)ePut.DT2_1] = (byte)Tone.aOp[1].DT2;
-				Buffer[o + (int)ePut.DT2_2] = (byte)Tone.aOp[2].DT2;
-				Buffer[o + (int)ePut.DT2_3] = (byte)Tone.aOp[3].DT2;
-				Buffer[o + (int)ePut.AM0] = (byte)Tone.aOp[0].AM;
-				Buffer[o + (int)ePut.AM1] = (byte)Tone.aOp[1].AM;
-				Buffer[o + (int)ePut.AM2] = (byte)Tone.aOp[2].AM;
-				Buffer[o + (int)ePut.AM3] = (byte)Tone.aOp[3].AM;
-				Buffer[o + (int)ePut.AL] = (byte)Tone.AL;
-				Buffer[o + (int)ePut.FB] = (byte)Tone.FB;
-				Buffer[o + (int)ePut.Mask] = 0xf << 3;
-
-				if (String.IsNullOrWhiteSpace(Tone.Name))
-				{
-					Tone.Name = Tone.Number.ToString();
-				}
-				Buffer[o + (int)ePut.Name0] = (byte)((Tone.Name.Length > 0) ? Tone.Name[0] : 0);
-				Buffer[o + (int)ePut.Name1] = (byte)((Tone.Name.Length > 1) ? Tone.Name[1] : 0);
-				Buffer[o + (int)ePut.Name2] = (byte)((Tone.Name.Length > 2) ? Tone.Name[2] : 0);
-				Buffer[o + (int)ePut.Name3] = (byte)((Tone.Name.Length > 3) ? Tone.Name[3] : 0);
-				Buffer[o + (int)ePut.Name4] = (byte)((Tone.Name.Length > 4) ? Tone.Name[4] : 0);
-				Buffer[o + (int)ePut.Name5] = (byte)((Tone.Name.Length > 5) ? Tone.Name[5] : 0);
-				Buffer[o + (int)ePut.Name6] = (byte)((Tone.Name.Length > 6) ? Tone.Name[6] : 0);
-				Buffer[o + (int)ePut.Name7] = (byte)((Tone.Name.Length > 7) ? Tone.Name[7] : 0);
-				Buffer[o + (int)ePut.Name8] = (byte)((Tone.Name.Length > 8) ? Tone.Name[8] : 0);
-				Buffer[o + (int)ePut.Name9] = (byte)((Tone.Name.Length > 9) ? Tone.Name[9] : 0);
-				Buffer[o + (int)ePut.Name10] = (byte)((Tone.Name.Length > 10) ? Tone.Name[10] : 0);
-				Buffer[o + (int)ePut.Name11] = (byte)((Tone.Name.Length > 11) ? Tone.Name[11] : 0);
-				Buffer[o + (int)ePut.Name12] = (byte)((Tone.Name.Length > 12) ? Tone.Name[12] : 0);
-				Buffer[o + (int)ePut.Name13] = (byte)((Tone.Name.Length > 13) ? Tone.Name[13] : 0);
-				Buffer[o + (int)ePut.Name14] = (byte)((Tone.Name.Length > 14) ? Tone.Name[14] : 0);
-				Buffer[o + (int)ePut.Name15] = (byte)((Tone.Name.Length > 15) ? Tone.Name[15] : 0);
-			}
-		}
-
-
-
-		public static IEnumerable<Tone> Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path)
 		{
             List<Tone> tones = new List<Tone>();
 
@@ -218,68 +138,17 @@ namespace FM_SoundConvertor
 			{
                 Tone vTone = new Tone();
 
-				var BufferMuc = "";
-				var BufferDat = Dat.New();
-				var BufferFmp = "";
-				var BufferPmd = "";
-
 				for (int i = 0; i < ToneLength(); ++i)
 				{
 					Get(ref vTone, Buffer, i);
 
-					if (Option.bMuc) Muc.Put(vTone, ref BufferMuc);
-					if (Option.bDat) Dat.Put(vTone, ref BufferDat);
-					if (Option.bFmp) Fmp.Put(vTone, ref BufferFmp);
-					if (Option.bPmd) Pmd.Put(vTone, ref BufferPmd);
-
                     if (vTone.IsValid())
                         tones.Add(new Tone(vTone));
 				}
-
-				if (Option.bMuc) Muc.Writer(Path, BufferMuc);
-				if (Option.bDat) Dat.Writer(Path, BufferDat);
-				if (Option.bFmp) Fmp.Writer(Path, BufferFmp);
-				if (Option.bPmd) Pmd.Writer(Path, BufferPmd);
 			}
 
             return tones;
         }
 
-
-
-        public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
-		{
-			foreach (var Path in aPath)
-			{
-				if (!String.IsNullOrWhiteSpace(Path) && Extension(Path) == ".fxb")
-                    return Reader(Path, Option);
-			}
-            return null;
-		}
-
-
-
-		public static void Writer(string Path, byte[] Buffer)
-		{
-			Buffer[0x00] = (byte)'C';
-			Buffer[0x01] = (byte)'c';
-			Buffer[0x02] = (byte)'n';
-			Buffer[0x03] = (byte)'K';
-			Buffer[0x08] = (byte)'F';
-			Buffer[0x09] = (byte)'B';
-			Buffer[0x0a] = (byte)'C';
-			Buffer[0x0b] = (byte)'h';
-			Buffer[0x0f] = 1;
-			Buffer[0x10] = (byte)'V';
-			Buffer[0x11] = (byte)'O';
-			Buffer[0x12] = (byte)'P';
-			Buffer[0x13] = (byte)'M';
-			Buffer[0x17] = 1;
-			Buffer[0x1b] = 0x80;
-			Buffer[0x9e] = 0x23;
-			Buffer[0x9f] = 0x80;
-
-			WriteByte(ChangeExtension(Path, ".fxb"), Buffer);
-		}
 	}
 }

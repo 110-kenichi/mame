@@ -60,13 +60,24 @@ namespace FM_SoundConvertor
             ML = op.ML;
             DT = op.DT;
             DT2 = op.DT2;
+            OSCW = op.OSCW;
+            FINE = op.FINE;
             AM = op.AM;
+            EGSF = op.EGSF;
+            REV = op.REV;
+            FIX = op.FIX;
+            FIXR = op.FIXR;
+            FIXF = op.FIXF;
 
             KSR = op.KSR;
             VIB = op.VIB;
             EG = op.EG;
             WS = op.WS;
             SSG = op.SSG;
+
+            LS = op.LS;
+            EBS = op.EBS;
+            KVS = op.KVS;
         }
     }
 
@@ -131,8 +142,40 @@ namespace FM_SoundConvertor
             Name = tone.Name;
             Number = tone.Number;
             FB = tone.FB;
+            FB2 = tone.FB2;
             AL = tone.AL;
             CNT = tone.CNT;
+
+            REV = tone.REV;
+
+            PMS = tone.PMS;
+            AMS = tone.AMS;
+            PMS2 = tone.PMS2;
+            AMS2 = tone.AMS2;
+
+            NE = tone.NE;
+            NF = tone.NF;
+            SY = tone.SY;
+            SY2 = tone.SY2;
+            LFOE = tone.LFOE;
+            LFOF = tone.LFOF;
+            LFOF2 = tone.LFOF2;
+            LFRQ = tone.LFRQ;
+            LFOD = tone.LFOD;
+            LFRQ2 = tone.LFRQ2;
+            LFOD2 = tone.LFOD2;
+            LFOW = tone.LFOW;
+            LFOW2 = tone.LFOW2;
+
+            LFD = tone.LFD;
+            LFD2 = tone.LFD2;
+
+            KeyShift = tone.KeyShift;
+            PitchShift = tone.PitchShift;
+            PitchShift2 = tone.PitchShift2;
+            KeyOnDelay = tone.KeyOnDelay;
+            KeyOffDelay = tone.KeyOffDelay;
+
             aOp = new Op[4];
             aOp[0] = new Op(tone.aOp[0]);
             aOp[1] = new Op(tone.aOp[1]);
@@ -162,7 +205,7 @@ namespace FM_SoundConvertor
         {
             get
             {
-                return "*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm";
+                return "*.muc;*.dat;*.mwi;*.mml;*.fxb;*.gwi;*.bnk;*.syx;*.ff;*.ffopm;*.vgi";
             }
         }
 
@@ -174,30 +217,28 @@ namespace FM_SoundConvertor
         public static IEnumerable<Tone> ImportToneFile(string file)
         {
             string ext = System.IO.Path.GetExtension(file);
-            var Option = new Option();
             IEnumerable<Tone> tones = null;
             try
             {
-                string[] importFile = { file.ToLower(CultureInfo.InvariantCulture) };
                 switch (ext.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case ".MUC":
-                        tones = Muc.Reader(importFile, Option);
+                        tones = Muc.Reader(file);
                         break;
                     case ".DAT":
-                        tones = Dat.Reader(importFile, Option);
+                        tones = Dat.Reader(file);
                         break;
                     case ".MWI":
-                        tones = Fmp.Reader(importFile, Option);
+                        tones = Fmp.Reader(file);
                         break;
                     case ".MML":
-                        tones = Pmd.Reader(importFile, Option);
+                        tones = Pmd.Reader(file);
                         break;
                     case ".FXB":
-                        tones = Vopm.Reader(importFile, Option);
+                        tones = Vopm.Reader(file);
                         break;
                     case ".GWI":
-                        tones = Gwi.Reader(importFile, Option);
+                        tones = Gwi.Reader(file);
                         break;
                     case ".BNK":
                         tones = BankReader.Read(file);
@@ -206,10 +247,13 @@ namespace FM_SoundConvertor
                         tones = SyxReaderTX81Z.Read(file);
                         break;
                     case ".FF":
-                        tones = FF.Reader(file, Option);
+                        tones = FF.Reader(file);
                         break;
                     case ".FFOPM":
-                        tones = FF.Reader(file, Option);
+                        tones = FF.Reader(file);
+                        break;
+                    case ".VGI":
+                        tones = Vgi.Reader(file);
                         break;
                 }
             }

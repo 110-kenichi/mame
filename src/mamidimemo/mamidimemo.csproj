@@ -695,6 +695,7 @@
     <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
     <Compile Include="Scci\NativeScciWrapper.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
+    <Compile Include="Util\FM-SoundConvertor\Vgi.cs" />
     <Compile Include="Util\FM-SoundConvertor\FFOPM.cs" />
     <Compile Include="Util\FM-SoundConvertor\FF.cs" />
     <Compile Include="Util\PropertyGridUtility.cs" />
@@ -911,7 +912,6 @@
     <Compile Include="Util\FM-SoundConvertor\Directory.cs" />
     <Compile Include="Util\FM-SoundConvertor\File.cs" />
     <Compile Include="Util\FM-SoundConvertor\Fmp.cs" />
-    <Compile Include="Util\FM-SoundConvertor\Main.cs" />
     <Compile Include="Util\FM-SoundConvertor\Gwi.cs" />
     <Compile Include="Util\FM-SoundConvertor\Muc.cs" />
     <Compile Include="Util\FM-SoundConvertor\Option.cs" />

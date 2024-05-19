@@ -42,14 +42,10 @@ namespace FM_SoundConvertor
 			return ToneLength() * PutLength();
 		}
 
-
-
 		public static byte[] New()
 		{
 			return new byte[DatLength()];
 		}
-
-
 
 		static void Get(ref Tone @Tone, byte[] Buffer, int i)
 		{
@@ -116,51 +112,7 @@ namespace FM_SoundConvertor
 			Tone.Number = i;
 		}
 
-
-
-		public static void Put(Tone @Tone, ref byte[] Buffer)
-		{
-			if (Tone.IsValid())
-			{
-				int o = Tone.Number * PutLength();
-				Buffer[o + (int)ePut.Void] = 0;
-				Buffer[o + (int)ePut.DTML0] = (byte)((Tone.aOp[0].DT << 4) | Tone.aOp[0].ML);
-				Buffer[o + (int)ePut.DTML1] = (byte)((Tone.aOp[1].DT << 4) | Tone.aOp[1].ML);
-				Buffer[o + (int)ePut.DTML2] = (byte)((Tone.aOp[2].DT << 4) | Tone.aOp[2].ML);
-				Buffer[o + (int)ePut.DTML3] = (byte)((Tone.aOp[3].DT << 4) | Tone.aOp[3].ML);
-				Buffer[o + (int)ePut.TL0] = (byte)Tone.aOp[0].TL;
-				Buffer[o + (int)ePut.TL1] = (byte)Tone.aOp[1].TL;
-				Buffer[o + (int)ePut.TL2] = (byte)Tone.aOp[2].TL;
-				Buffer[o + (int)ePut.TL3] = (byte)Tone.aOp[3].TL;
-				Buffer[o + (int)ePut.KSAR0] = (byte)((Tone.aOp[0].KS << 6) | Tone.aOp[0].AR);
-				Buffer[o + (int)ePut.KSAR1] = (byte)((Tone.aOp[1].KS << 6) | Tone.aOp[1].AR);
-				Buffer[o + (int)ePut.KSAR2] = (byte)((Tone.aOp[2].KS << 6) | Tone.aOp[2].AR);
-				Buffer[o + (int)ePut.KSAR3] = (byte)((Tone.aOp[3].KS << 6) | Tone.aOp[3].AR);
-				Buffer[o + (int)ePut.DR0] = (byte)Tone.aOp[0].DR;
-				Buffer[o + (int)ePut.DR1] = (byte)Tone.aOp[1].DR;
-				Buffer[o + (int)ePut.DR2] = (byte)Tone.aOp[2].DR;
-				Buffer[o + (int)ePut.DR3] = (byte)Tone.aOp[3].DR;
-				Buffer[o + (int)ePut.SR0] = (byte)Tone.aOp[0].SR;
-				Buffer[o + (int)ePut.SR1] = (byte)Tone.aOp[1].SR;
-				Buffer[o + (int)ePut.SR2] = (byte)Tone.aOp[2].SR;
-				Buffer[o + (int)ePut.SR3] = (byte)Tone.aOp[3].SR;
-				Buffer[o + (int)ePut.SLRR0] = (byte)((Tone.aOp[0].SL << 4) | Tone.aOp[0].RR);
-				Buffer[o + (int)ePut.SLRR1] = (byte)((Tone.aOp[1].SL << 4) | Tone.aOp[1].RR);
-				Buffer[o + (int)ePut.SLRR2] = (byte)((Tone.aOp[2].SL << 4) | Tone.aOp[2].RR);
-				Buffer[o + (int)ePut.SLRR3] = (byte)((Tone.aOp[3].SL << 4) | Tone.aOp[3].RR);
-				Buffer[o + (int)ePut.FBAL] = (byte)((Tone.FB << 3) | Tone.AL);
-				Buffer[o + (int)ePut.Name0] = (byte)((Tone.Name.Length > 0) ? Tone.Name[0] : 0);
-				Buffer[o + (int)ePut.Name1] = (byte)((Tone.Name.Length > 1) ? Tone.Name[1] : 0);
-				Buffer[o + (int)ePut.Name2] = (byte)((Tone.Name.Length > 2) ? Tone.Name[2] : 0);
-				Buffer[o + (int)ePut.Name3] = (byte)((Tone.Name.Length > 3) ? Tone.Name[3] : 0);
-				Buffer[o + (int)ePut.Name4] = (byte)((Tone.Name.Length > 4) ? Tone.Name[4] : 0);
-				Buffer[o + (int)ePut.Name5] = (byte)((Tone.Name.Length > 5) ? Tone.Name[5] : 0);
-			}
-		}
-
-
-
-		public static IEnumerable<Tone> Reader(string Path, Option @Option)
+		public static IEnumerable<Tone> Reader(string Path)
 		{
             List<Tone> tones = new List<Tone>();
 
@@ -169,53 +121,18 @@ namespace FM_SoundConvertor
 			{
 				Tone vTone = new Tone();
 
-				var BufferMuc = "";
-				var BufferFmp = "";
-				var BufferPmd = "";
-				var BufferVopm = Vopm.New();
-
 				for (int i = 0; i < ToneLength(); ++i)
 				{
 					Get(ref vTone, Buffer, i);
-
-					if (Option.bMuc) Muc.Put(vTone, ref BufferMuc);
-					if (Option.bFmp) Fmp.Put(vTone, ref BufferFmp);
-					if (Option.bPmd) Pmd.Put(vTone, ref BufferPmd);
-					if (Option.bVopm) Vopm.Put(vTone, ref BufferVopm);
 
                     //if (vTone.IsValid() &&
                     //    i != 0) //skip index 0 tone is dummy
                     if (vTone.IsValid())
 						tones.Add(new Tone(vTone));
                 }
-
-                if (Option.bMuc) Muc.Writer(Path, BufferMuc);
-				if (Option.bFmp) Fmp.Writer(Path, BufferFmp);
-				if (Option.bPmd) Pmd.Writer(Path, BufferPmd);
-				if (Option.bVopm) Vopm.Writer(Path, BufferVopm);
 			}
 
             return tones;
-		}
-
-
-
-		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
-		{
-			foreach (var Path in aPath)
-			{
-				if (!String.IsNullOrWhiteSpace(Path) && Extension(Path) == ".dat")
-                    return Reader(Path, Option);
-			}
-
-            return null;
-		}
-
-
-
-		public static void Writer(string Path, byte[] Buffer)
-		{
-			WriteByte(ChangeExtension(Path, ".dat"), Buffer);
 		}
 	}
 }

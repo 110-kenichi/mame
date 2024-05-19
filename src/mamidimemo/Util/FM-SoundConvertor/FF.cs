@@ -85,7 +85,7 @@ namespace FM_SoundConvertor
         }
 
 
-        public static IEnumerable<Tone> Reader(string Path, Option @Option)
+        public static IEnumerable<Tone> Reader(string Path)
 		{
             List<Tone> tones = new List<Tone>();
 
@@ -101,18 +101,6 @@ namespace FM_SoundConvertor
             return tones;
 		}
 
-
-
-		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
-		{
-            return null;
-		}
-
-
-
-		public static void Writer(string Path, string Buffer)
-		{
-		}
 	}
 }
 

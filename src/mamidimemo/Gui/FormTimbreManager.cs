@@ -664,55 +664,48 @@ namespace zanac.MAmidiMEmo.Gui
                         case ".MUC":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Muc.Reader(file, Option);
+                                var tones = Muc.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".DAT":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Dat.Reader(file, Option);
+                                var tones = Dat.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".MWI":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Fmp.Reader(file, Option);
+                                var tones = Fmp.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".MML":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Pmd.Reader(file, Option);
+                                var tones = Pmd.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".FXB":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Vopm.Reader(file, Option);
+                                var tones = Vopm.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".GWI":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = Gwi.Reader(file, Option);
+                                var tones = Gwi.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".BNK":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
                                 var tones = BankReader.Read(file);
                                 no = loadTones(no, tones);
                             }
@@ -720,7 +713,6 @@ namespace zanac.MAmidiMEmo.Gui
                         case ".SYX":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
                                 var tones = SyxReaderTX81Z.Read(file);
                                 no = loadTones(no, tones);
                             }
@@ -728,16 +720,21 @@ namespace zanac.MAmidiMEmo.Gui
                         case ".FF":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = FF.Reader(file, Option);
+                                var tones = FF.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;
                         case ".FFOPM":
                             if (Instrument.CanImportToneFile)
                             {
-                                var Option = new Option();
-                                var tones = FF.Reader(file, Option);
+                                var tones = FF.Reader(file);
+                                no = loadTones(no, tones);
+                            }
+                            break;
+                        case ".VGI":
+                            if (Instrument.CanImportToneFile)
+                            {
+                                var tones = Vgi.Reader(file);
                                 no = loadTones(no, tones);
                             }
                             break;

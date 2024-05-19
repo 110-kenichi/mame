@@ -100,18 +100,6 @@ namespace FM_SoundConvertor
             return tones;
 		}
 
-
-
-		public static IEnumerable<Tone> Reader(string[] aPath, Option @Option)
-		{
-            return null;
-		}
-
-
-
-		public static void Writer(string Path, string Buffer)
-		{
-		}
 	}
 }
 
