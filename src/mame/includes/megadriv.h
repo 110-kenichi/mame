@@ -9,7 +9,6 @@
 #include "cpu/m68000/m68000.h"
 #include "cpu/z80/z80.h"
 #include "sound/2612intf.h"
-#include "sound/ym2151.h"
 #include "sound/ym2413.h"
 #include "sound/emu2413.h"
 #include "sound/gb.h"
@@ -39,6 +38,7 @@
 #include "sound/upd1771.h"
 #include "sound/multipcm.h"
 #include "sound/rf5c68.h"
+#include "sound/ymfm/src/ymfm_opm.h"
 #include "sound/ymfm/src/ymfm_opz.h"
 #include "sound/ymfm/src/ymfm_opn.h"
 #include "sound/ymfm/src/ymfm_opl.h"
@@ -100,7 +100,7 @@ public:
 
 			//YM2151
 			strcpy(device_names[didx][i], (std::string("ym2151_") + num).c_str());
-			m_ym2151[i] = new optional_device<ym2151_device>(*this, device_names[didx][i]);
+			m_ym2151[i] = new optional_device<ymfm_opm_device>(*this, device_names[didx][i]);
 			didx++;
 			//YM2612
 			strcpy(device_names[didx][i], (std::string("ym2612_") + num).c_str());
@@ -234,7 +234,7 @@ public:
 	}
 
 	char device_names[ 33 ][8][100];
-	optional_device<ym2151_device> *m_ym2151[8];	//1
+	optional_device<ymfm_opm_device> *m_ym2151[8];	//1
 	optional_device<ymfm_opn2_device> *m_ym2612[8];	//2
 	optional_device<sn76496_device> *m_sn76496[8];	//3
 	optional_device<namco_cus30_device> *m_namco_cus30[8];	//4

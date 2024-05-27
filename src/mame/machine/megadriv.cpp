@@ -972,7 +972,7 @@ void md_base_state::md_ntsc(machine_config &config)
 	//mamidimemo
 
 	for (int i = 0; i < 8; i++) {
-		YM2151(config, *m_ym2151[i], XTAL(3'579'545));
+		YMFM_OPM(config, *m_ym2151[i], XTAL(3'579'545));
 		(*m_ym2151[i])->add_route(0, "lspeaker", 2.00);
 		(*m_ym2151[i])->add_route(1, "rspeaker", 2.00);
 

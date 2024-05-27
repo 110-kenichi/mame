@@ -119,10 +119,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                 ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tone.LFRQ;
                 ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = tone.LFRQ2;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tone.LFOF;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tone.LFOD;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOF2"]).NullableValue = tone.LFOF2;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOD2"]).NullableValue = tone.LFOD2;
+                ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = tone.AMD;
+                ((RegisterValue)this["General"]["GlobalSettings.PMD"]).NullableValue = tone.PMD;
+                ((RegisterValue)this["General"]["GlobalSettings.AMD2"]).NullableValue = tone.AMD2;
+                ((RegisterValue)this["General"]["GlobalSettings.PMD2"]).NullableValue = tone.PMD2;
                 ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tone.LFOW;
                 ((RegisterValue)this["General"]["GlobalSettings.LFOW2"]).NullableValue = tone.LFOW2;
 
@@ -140,8 +140,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                    tone.LFRQ2 > 0 ||
                    tone.LFOW > 0 ||
                    tone.LFOW2 > 0 ||
-                   tone.LFOD > 0 ||
-                   tone.LFOD2 > 0
+                   tone.AMD > 0 ||
+                   tone.PMD > 0 ||
+                   tone.AMD2 > 0 ||
+                   tone.PMD2 > 0
                    )
                     ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = true;
 
@@ -210,10 +212,10 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tim.GlobalSettings.LFRQ;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ2"]).NullableValue = tim.GlobalSettings.LFRQ2;
 
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tim.GlobalSettings.LFOF;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tim.GlobalSettings.LFOD;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF2"]).NullableValue = tim.GlobalSettings.LFOF2;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD2"]).NullableValue = tim.GlobalSettings.LFOD2;
+            ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = tim.GlobalSettings.AMD;
+            ((RegisterValue)this["General"]["GlobalSettings.PMD"]).NullableValue = tim.GlobalSettings.PMD;
+            ((RegisterValue)this["General"]["GlobalSettings.AMD2"]).NullableValue = tim.GlobalSettings.AMD2;
+            ((RegisterValue)this["General"]["GlobalSettings.PMD2"]).NullableValue = tim.GlobalSettings.PMD2;
 
             ((RegisterValue)this["General"]["GlobalSettings.LFD"]).NullableValue = tim.GlobalSettings.LFD;
             ((RegisterValue)this["General"]["GlobalSettings.LFD2"]).NullableValue = tim.GlobalSettings.LFD2;

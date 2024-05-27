@@ -115,8 +115,8 @@ namespace zanac.MAmidiMEmo.Util.Syx
                 }
                 tone.LFRQ = LfoSpeeds[dat[fileidx++]]; tone.LFRQ2 = tone.LFRQ;
                 tone.LFD = dat[fileidx++]; tone.LFD2 = tone.LFD;
-                tone.LFOD = PMDepth[dat[fileidx++]]; tone.LFOF = 1;
-                tone.LFOD2 = AMDepth[dat[fileidx++]]; tone.LFOF2 = 0;
+                tone.PMD = PMDepth[dat[fileidx++]];
+                tone.AMD2 = AMDepth[dat[fileidx++]];
                 {
                     tone.PMS = (dat[fileidx] >> 4) & 7; tone.PMS2 = tone.PMS;
                     tone.AMS = (dat[fileidx] >> 2) & 3; tone.AMS2 = tone.AMS;

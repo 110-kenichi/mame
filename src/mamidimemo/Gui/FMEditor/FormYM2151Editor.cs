@@ -117,14 +117,22 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ((RegisterValue)this["General"]["FB"]).Value = tone.FB;
                 ((RegisterValue)this["General"]["AMS"]).Value = tone.AMS;
                 ((RegisterValue)this["General"]["PMS"]).Value = tone.PMS;
-                ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = false;
                 ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tone.LFRQ;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tone.LFOF;
-                ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tone.LFOD;
+                ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = tone.AMD;
+                ((RegisterValue)this["General"]["GlobalSettings.PMD"]).NullableValue = tone.PMS;
                 ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tone.LFOW;
 
                 ((RegisterValue)this["General"]["GlobalSettings.NE"]).NullableValue = tone.NE;
                 ((RegisterValue)this["General"]["GlobalSettings.NFRQ"]).NullableValue = tone.NF;
+
+                if (tone.NE > 0 ||
+                   tone.LFRQ > 0 ||
+                   tone.NF > 0 ||
+                   tone.LFOW > 0 ||
+                   tone.AMD > 0 ||
+                   tone.PMD > 0
+                   )
+                    ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = true;
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -180,8 +188,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["General"]["PMS"]).Value = tim.PMS;
             ((RegisterFlag)this["General"]["GlobalSettings.EN"]).Value = tim.GlobalSettings.Enable;
             ((RegisterValue)this["General"]["GlobalSettings.LFRQ"]).NullableValue = tim.GlobalSettings.LFRQ;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOF"]).NullableValue = tim.GlobalSettings.LFOF;
-            ((RegisterValue)this["General"]["GlobalSettings.LFOD"]).NullableValue = tim.GlobalSettings.LFOD;
+            ((RegisterValue)this["General"]["GlobalSettings.AMD"]).NullableValue = tim.GlobalSettings.AMD;
+            ((RegisterValue)this["General"]["GlobalSettings.PMD"]).NullableValue = tim.GlobalSettings.PMD;
             ((RegisterValue)this["General"]["GlobalSettings.LFOW"]).NullableValue = tim.GlobalSettings.LFOW;
             for (int i = 0; i < 4; i++)
             {

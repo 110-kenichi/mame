@@ -7,7 +7,6 @@
 #include "..\frontend\mame\mame.h"
 #include "..\frontend\mame\cheat.h"
 #include "..\devices\sound\fm.h"
-#include "..\devices\sound\ym2151.h"
 #include "..\devices\sound\ym2413.h"
 #include "..\devices\sound\emu2413.h"
 #include "..\devices\sound\2612intf.h"
@@ -40,6 +39,7 @@
 #include "..\devices\sound\upd1771.h"
 #include "..\devices\sound\multipcm.h"
 #include "..\devices\sound\rf5c68.h"
+#include "..\devices\sound\ymfm\src\ymfm_opm.h"
 #include "..\devices\sound\ymfm\src\ymfm_opz.h"
 #include "..\devices\sound\ymfm\src\ymfm_opn.h"
 #include "..\devices\sound\ymfm\src\ymfm_opl.h"
@@ -350,7 +350,7 @@ extern "C"
 		return rm->parameter_automated();
 	}
 
-	ym2151_device *ym2151_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	ymfm_opm_device *ym2151_devices[8] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	DllExport void ym2151_write(unsigned int unitNumber, unsigned int address, unsigned char data)
 	{
@@ -364,7 +364,7 @@ extern "C"
 				return;
 
 			std::string num = std::to_string(unitNumber);
-			ym2151_device *ym2151 = dynamic_cast<ym2151_device *>(rm->device((std::string("ym2151_") + num).c_str()));
+			ymfm_opm_device*ym2151 = dynamic_cast<ymfm_opm_device*>(rm->device((std::string("ym2151_") + num).c_str()));
 			//ym2151_device *ym2151 = dynamic_cast<ym2151_device *>(rm->root_device().subdevice((std::string("ym2151_") + num).c_str()));
 			if (ym2151 == nullptr)
 				return;

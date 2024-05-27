@@ -392,23 +392,21 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
-
         private byte f_LFOF;
 
         /// <summary>
         /// Select AMD or PMD(0:AMD 1:PMD)
         /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("Select AMD or PMD (0:AMD 1:PMD)")]
-        [SlideParametersAttribute(0, 1)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOF
         {
             get
             {
-                return f_LFOF;
+                if (f_LFOF == 0)
+                    return AMD;
+                else
+                    return PMD;
             }
             set
             {
@@ -416,24 +414,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOF != v)
                 {
                     f_LFOF = v;
-                    Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
                 }
             }
         }
 
         private byte f_LFOD;
 
-
         /// <summary>
         /// LFO Depth(0-127)
         /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO Depth (0-127)")]
-        [SlideParametersAttribute(0, 127)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
-        [DisplayName("AMD/PMD(LFOD)")]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOD
         {
             get
@@ -446,11 +437,74 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOD != v)
                 {
                     f_LFOD = v;
-                    Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
+
+                    if (f_LFOF == 0)
+                        AMD = v;
+                    else
+                        PMD = v;
                 }
             }
         }
 
+        private byte f_AMD;
+
+
+        /// <summary>
+        /// AMD Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("AMD(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("AMD")]
+        public byte AMD
+        {
+            get
+            {
+                return f_AMD;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_AMD != v)
+                {
+                    f_AMD = v;
+                    Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | f_AMD));
+                }
+            }
+        }
+
+        private byte f_PMD;
+
+
+        /// <summary>
+        /// PMD Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("PMD(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("PMD")]
+        public byte PMD
+        {
+            get
+            {
+                return f_PMD;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_PMD != v)
+                {
+                    f_PMD = v;
+                    Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(1 << 7 | f_PMD));
+                }
+            }
+        }
 
         private byte f_LFOW;
 
@@ -846,7 +900,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private void initGlobalRegisters()
         {
             Ym2151WriteData(UnitNumber, 0x18, 0, 0, LFRQ);
-            Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
+            Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | AMD));
+            Ym2151WriteData(UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | PMD));
             Ym2151WriteData(UnitNumber, 0x1B, 0, 0, (byte)LFOW);
             Ym2151WriteData(UnitNumber, 0x0f, 0, 0, (byte)(NE << 7 | NFRQ));
         }
@@ -1075,10 +1130,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.LFOD.HasValue)
-                        parentModule.LFOD = gs.LFOD.Value;
-                    if (gs.LFOF.HasValue)
-                        parentModule.LFOF = gs.LFOF.Value;
+                    if (gs.AMD.HasValue)
+                        parentModule.AMD = gs.AMD.Value;
+                    if (gs.PMD.HasValue)
+                        parentModule.PMD = gs.PMD.Value;
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
                     if (gs.LFRQ.HasValue)
@@ -1109,10 +1164,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.LFOD.HasValue)
-                        parentModule.LFOD = gs.LFOD.Value;
-                    if (gs.LFOF.HasValue)
-                        parentModule.LFOF = gs.LFOF.Value;
+                    if (gs.AMD.HasValue)
+                        parentModule.AMD = gs.AMD.Value;
+                    if (gs.PMD.HasValue)
+                        parentModule.PMD = gs.PMD.Value;
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
                     if (gs.LFRQ.HasValue)
@@ -1464,7 +1519,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         [JsonConverter(typeof(NoTypeConverterJsonConverter<YM2151Timbre>))]
         [DataContract]
         [InstLock]
-        public class YM2151Timbre : TimbreBase , IFmTimbre
+        public class YM2151Timbre : TimbreBase, IFmTimbre
         {
             [Browsable(false)]
             public override bool AssignMIDIChtoSlotNum
@@ -1538,8 +1593,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
-                        "GlobalSettings.LFOF",
-                        "GlobalSettings.LFOD",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.PMD",
                         "GlobalSettings.LFOW",
                         "GlobalSettings.NE",
                         "GlobalSettings.NFRQ",
@@ -1615,8 +1670,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                         "GlobalSettings.EN",
                         "GlobalSettings.LFRQ",
-                        "GlobalSettings.LFOF",
-                        "GlobalSettings.LFOD",
+                        "GlobalSettings.AMD",
+                        "GlobalSettings.PMD",
                         "GlobalSettings.LFOW",
                         "GlobalSettings.NE",
                         "GlobalSettings.NFRQ",
@@ -2582,16 +2637,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// Select AMD or PMD(0:AMD 1:PMD)
             /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("Select AMD or PMD (0:AMD 1:PMD)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Browsable(false)]
+            [Obsolete]
             public byte? LFOF
             {
                 get
                 {
+                    if (!f_LFOF.HasValue)
+                        return null;
+
                     return f_LFOF;
                 }
                 set
@@ -2609,12 +2663,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// LFO Depth(0-127)
             /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("LFO Depth (0-127)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 127)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Obsolete]
+            [Browsable(false)]
             public byte? LFOD
             {
                 get
@@ -2627,9 +2677,69 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (value.HasValue)
                         v = (byte)(value & 127);
                     f_LFOD = v;
+                    if (f_LFOF.HasValue)
+                    {
+                        if (f_LFOF == 0)
+                            f_AMD = f_LFOD;
+                        else
+                            f_PMD = f_LFOD;
+                    }
                 }
             }
 
+            private byte? f_AMD;
+
+            /// <summary>
+            /// AMD Depth(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("AMD(0-127)")]
+            [SlideParametersAttribute(0, 127)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            [DisplayName("AMD")]
+            public byte? AMD
+            {
+                get
+                {
+                    return f_AMD;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_AMD = v;
+                }
+            }
+
+            private byte? f_PMD;
+
+            /// <summary>
+            /// PMD Depth(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("PMD(0-127)")]
+            [SlideParametersAttribute(0, 127)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            [DisplayName("PMD")]
+            public byte? PMD
+            {
+                get
+                {
+                    return f_PMD;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_PMD = v;
+                }
+            }
 
             private byte? f_LFOW;
 
@@ -2753,15 +2863,16 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             tim.PMS = (byte)tone.PMS;
             tim.GlobalSettings.Enable = false;
             tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
-            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
+            tim.GlobalSettings.AMD = (byte?)tone.AMD;
+            tim.GlobalSettings.PMD = (byte?)tone.PMD;
             tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
             tim.GlobalSettings.NE = (byte?)tone.NE;
             tim.GlobalSettings.NFRQ = (byte?)tone.NF;
             if (tim.GlobalSettings.NE > 0 ||
                 tim.GlobalSettings.LFRQ > 0 ||
                 tim.GlobalSettings.LFOW > 0 ||
-                tim.GlobalSettings.LFOD > 0
+                tim.GlobalSettings.AMD > 0 ||
+                tim.GlobalSettings.PMD > 0
                 )
                 tim.GlobalSettings.Enable = true;
 

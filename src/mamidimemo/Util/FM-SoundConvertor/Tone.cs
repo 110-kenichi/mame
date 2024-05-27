@@ -101,17 +101,18 @@ namespace FM_SoundConvertor
         public int PMS2;
         public int AMS2;
 
+        public int AMD;
+        public int PMD;
+        public int AMD2;
+        public int PMD2;
+
         public int? NE;
         public int? NF;
         public int? SY;
         public int? SY2;
         public int? LFOE;
-        public int? LFOF;
-        public int? LFOF2;
         public int? LFRQ;
-        public int? LFOD;
         public int? LFRQ2;
-        public int? LFOD2;
         public int? LFOW;
         public int? LFOW2;
 
@@ -148,6 +149,11 @@ namespace FM_SoundConvertor
 
             REV = tone.REV;
 
+            AMD = tone.AMD;
+            PMD = tone.PMD;
+            AMD2 = tone.AMD2;
+            PMD2 = tone.PMD2;
+
             PMS = tone.PMS;
             AMS = tone.AMS;
             PMS2 = tone.PMS2;
@@ -158,12 +164,8 @@ namespace FM_SoundConvertor
             SY = tone.SY;
             SY2 = tone.SY2;
             LFOE = tone.LFOE;
-            LFOF = tone.LFOF;
-            LFOF2 = tone.LFOF2;
             LFRQ = tone.LFRQ;
-            LFOD = tone.LFOD;
             LFRQ2 = tone.LFRQ2;
-            LFOD2 = tone.LFOD2;
             LFOW = tone.LFOW;
             LFOW2 = tone.LFOW2;
 

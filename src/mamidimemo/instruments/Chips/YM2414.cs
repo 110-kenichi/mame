@@ -273,15 +273,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private byte f_LFOF;
 
-        /// <summary>
-        /// Select AMD or PMD(0:AMD 1:PMD)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("Select AMD or PMD (0:AMD 1:PMD)")]
-        [SlideParametersAttribute(0, 1)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOF
         {
             get
@@ -294,22 +287,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOF != v)
                 {
                     f_LFOF = v;
-                    YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
                 }
             }
         }
 
         private byte f_LFOD;
 
-        /// <summary>
-        /// LFO Depth(0-127)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO Depth (0-127)")]
-        [SlideParametersAttribute(0, 127)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOD
         {
             get
@@ -322,7 +307,70 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOD != v)
                 {
                     f_LFOD = v;
-                    YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
+
+                    if (f_LFOF == 0)
+                        AMD = v;
+                    else
+                        PMD = v;
+                }
+            }
+        }
+
+        private byte f_AMD;
+
+        /// <summary>
+        /// AMD Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("AMD(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("AMD")]
+        public byte AMD
+        {
+            get
+            {
+                return f_AMD;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_AMD != v)
+                {
+                    f_AMD = v;
+                    YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | f_AMD));
+                }
+            }
+        }
+
+        private byte f_PMD;
+
+
+        /// <summary>
+        /// PMD Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("PMD(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("PMD")]
+        public byte PMD
+        {
+            get
+            {
+                return f_PMD;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_PMD != v)
+                {
+                    f_PMD = v;
+                    YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(1 << 7 | f_PMD));
                 }
             }
         }
@@ -414,15 +462,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
         private byte f_LFOF2;
 
-        /// <summary>
-        /// Select AMD2 or PMD2(0:AMD2 1:PMD2)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("Select AMD2 or PMD2 (0:AMD2 1:PMD2)")]
-        [SlideParametersAttribute(0, 1)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOF2
         {
             get
@@ -435,7 +476,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOF2 != v)
                 {
                     f_LFOF2 = v;
-                    YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(LFOF2 << 7 | LFOD2));
                 }
             }
         }
@@ -443,15 +483,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private byte f_LFOD2;
 
 
-        /// <summary>
-        /// LFO2 Depth(0-127)
-        /// </summary>
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("LFO2 Depth (0-127)")]
-        [SlideParametersAttribute(0, 127)]
-        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-        [DefaultValue((byte)0)]
+        [Browsable(false)]
+        [Obsolete]
         public byte LFOD2
         {
             get
@@ -464,10 +497,74 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_LFOD2 != v)
                 {
                     f_LFOD2 = v;
-                    YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(LFOF2 << 7 | LFOD2));
+
+                    if (f_LFOF2 == 0)
+                        AMD2 = v;
+                    else
+                        PMD2 = v;
                 }
             }
         }
+
+        private byte f_AMD2;
+
+        /// <summary>
+        /// AMD2 Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("AMD2(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("AMD2")]
+        public byte AMD2
+        {
+            get
+            {
+                return f_AMD2;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_AMD2 != v)
+                {
+                    f_AMD2 = v;
+                    YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(0 << 7 | f_AMD2));
+                }
+            }
+        }
+
+        private byte f_PMD2;
+
+
+        /// <summary>
+        /// PMD2 Depth(0-127)
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("PMD2(0-127)")]
+        [SlideParametersAttribute(0, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [DefaultValue((byte)0)]
+        [DisplayName("PMD2")]
+        public byte PMD2
+        {
+            get
+            {
+                return f_PMD2;
+            }
+            set
+            {
+                byte v = (byte)(value & 127);
+                if (f_PMD2 != v)
+                {
+                    f_PMD2 = v;
+                    YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(1 << 7 | f_PMD2));
+                }
+            }
+        }
+
 
         private byte f_LFOW2;
 
@@ -699,7 +796,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             try
             {
                 using (var obj = JsonConvert.DeserializeObject<YM2414>(serializeData))
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
             }
             catch (Exception ex)
             {
@@ -966,9 +1063,11 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             YM2414WriteData(UnitNumber, 0x15, 0, 0, 0x01);
 
             YM2414WriteData(UnitNumber, 0x16, 0, 0, LFRQ2);
-            YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(LFOF2 << 7 | LFOD2));
+            YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(0 << 7 | AMD2));
+            YM2414WriteData(UnitNumber, 0x17, 0, 0, (byte)(1 << 7 | PMD2));
             YM2414WriteData(UnitNumber, 0x18, 0, 0, LFRQ);
-            YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(LFOF << 7 | LFOD));
+            YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | AMD));
+            YM2414WriteData(UnitNumber, 0x19, 0, 0, (byte)(1 << 7 | AMD2));
             YM2414WriteData(UnitNumber, 0x1B, 0, 0, (byte)(SYNC2 << 5 | SYNC << 4 | LFOW2 << 2 | LFOW));
             YM2414WriteData(UnitNumber, 0x0f, 0, 0, (byte)(NE << 7 | NFRQ));
         }
@@ -1006,10 +1105,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                     tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
                     tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
-                    tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-                    tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
-                    tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
-                    tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+                    tim.GlobalSettings.AMD = (byte?)tone.AMD;
+                    tim.GlobalSettings.PMD = (byte?)tone.PMD;
+                    tim.GlobalSettings.AMD2 = (byte?)tone.AMD2;
+                    tim.GlobalSettings.PMD2 = (byte?)tone.PMD2;
                     tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
                     tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
 
@@ -1024,8 +1123,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         tim.GlobalSettings.LFRQ2 > 0 ||
                         tim.GlobalSettings.LFOW > 0 ||
                         tim.GlobalSettings.LFOW2 > 0 ||
-                        tim.GlobalSettings.LFOD > 0 ||
-                        tim.GlobalSettings.LFOD2 > 0
+                        tim.GlobalSettings.AMD > 0 ||
+                        tim.GlobalSettings.PMD > 0 ||
+                        tim.GlobalSettings.AMD2 > 0 ||
+                        tim.GlobalSettings.PMD2 > 0
                         )
                         tim.GlobalSettings.Enable = true;
 
@@ -1400,14 +1501,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var gs = timbre.GlobalSettings;
                 if (gs.Enable)
                 {
-                    if (gs.LFOD.HasValue && gs.LFD.HasValue)
-                        parentModule.LFOD = gs.LFOD.Value;
-                    if (gs.LFOF.HasValue)
-                        parentModule.LFOF = gs.LFOF.Value;
-                    if (gs.LFOD2.HasValue)
-                        parentModule.LFOD2 = gs.LFOD2.Value;
-                    if (gs.LFOF2.HasValue)
-                        parentModule.LFOF2 = gs.LFOF2.Value;
+                    if (gs.AMD.HasValue)
+                        parentModule.AMD = gs.AMD.Value;
+                    if (gs.PMD.HasValue)
+                        parentModule.PMD = gs.PMD.Value;
+                    if (gs.AMD2.HasValue)
+                        parentModule.AMD2 = gs.AMD2.Value;
+                    if (gs.PMD2.HasValue)
+                        parentModule.PMD2 = gs.PMD2.Value;
 
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
@@ -1445,36 +1546,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 byte op = (byte)(timbre.Ops[0].Enable << 3 | timbre.Ops[2].Enable << 4 | timbre.Ops[1].Enable << 5 | timbre.Ops[3].Enable << 6);
                 parentModule.YM2414WriteData(unitNumber, 0x08, 0, 0, (byte)(op | Slot));
 
-                if ((parentModule.LFD != 0 && parentModule.LFOD != 0) ||
-                    (parentModule.LFD2 != 0 && parentModule.LFOD2 != 0))
+                if ((parentModule.AMD != 0 && parentModule.PMD != 0) ||
+                    (parentModule.AMD2 != 0 && parentModule.PMD2 != 0))
                 {
                     LfdProcessingParam param = new LfdProcessingParam();
                     lock (parentModule.lfdLock)
                     {
                         //https://nornand.hatenablog.com/entry/2020/11/30/185005
-                        if (parentModule.LFD != 0 && parentModule.LFOD != 0)
+                        if (parentModule.LFD != 0)
                         {
                             param.DelayTime1 = lfoDelayTime[parentModule.LFD] / 2;
-                            param.LFOF1 = parentModule.LFOF;
-                            if (param.LFOF1 == 0)
-                                param.AmdBase1 = (param.DelayTime1 * param.DelayTime1) / parentModule.LFOD; //exponential function
-                            else
-                                param.PmdStep1 = parentModule.LFOD / param.DelayTime1;    //liner step
-                            param.TargetDepth1 = parentModule.LFOD;
+                            param.AmdBase1 = (param.DelayTime1 * param.DelayTime1) / parentModule.AMD; //exponential function
+                            param.AmdStep1 = 0;
+                            param.PmdStep1 = parentModule.PMD / param.DelayTime1;    //liner step
+                            param.TargetAmdDepth1 = parentModule.AMD;
+                            param.TargetPmdDepth1 = parentModule.PMD;
                             parentModule.lfdProcessingSound = this;
-                            parentModule.LFOD = 0;
+                            parentModule.YM2414WriteData(parentModule.UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | 0));
+                            parentModule.YM2414WriteData(parentModule.UnitNumber, 0x19, 0, 0, (byte)(1 << 7 | 0));
                         }
-                        if (parentModule.LFD2 != 0 && parentModule.LFOD2 != 0)
+                        if (parentModule.LFD2 != 0)
                         {
                             param.DelayTime2 = lfoDelayTime[parentModule.LFD2] / 2;
-                            param.LFOF2 = parentModule.LFOF2;
-                            if (param.LFOF2 == 0)
-                                param.AmdBase2 = (param.DelayTime2 * param.DelayTime2) / parentModule.LFOD2; //exponential function
-                            else
-                                param.PmdStep2 = parentModule.LFOD2 / param.DelayTime2;    //liner step
-                            param.TargetDepth2 = parentModule.LFOD2;
+                            param.AmdBase2 = (param.DelayTime2 * param.DelayTime2) / parentModule.AMD2; //exponential function
+                            param.AmdStep2 = 0;
+                            param.PmdStep2 = parentModule.PMD2 / param.DelayTime2;    //liner step
+                            param.TargetAmdDepth2 = parentModule.AMD2;
+                            param.TargetPmdDepth2 = parentModule.PMD2;
                             parentModule.lfd2ProcessingSound = this;
-                            parentModule.LFOD2 = 0;
+                            parentModule.YM2414WriteData(parentModule.UnitNumber, 0x17, 0, 0, (byte)(0 << 7 | 0));
+                            parentModule.YM2414WriteData(parentModule.UnitNumber, 0x17, 0, 0, (byte)(1 << 7 | 0));
                         }
                     }
                     HighPrecisionTimer.SetPeriodicCallback(new Func<object, double>(processLfoDelay), 20, param, true);
@@ -1486,23 +1587,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private class LfdProcessingParam
             {
-                public byte LFOF1;
-                public byte LFOF2;
-
                 public int CurrentTime1;
                 public int CurrentTime2;
                 public double DelayTime1;
                 public double DelayTime2;
 
-                public double PmdStep1;
+                public double AmdStep1;
                 public double AmdBase1;
-                public double PmdStep2;
+                public double PmdStep1;
+                public double AmdStep2;
                 public double AmdBase2;
+                public double PmdStep2;
 
-                public double CurrentDepth1;
-                public double CurrentDepth2;
-                public double TargetDepth1;
-                public double TargetDepth2;
+                public double CurrentAmdDepth1;
+                public double CurrentAmdDepth2;
+                public double TargetAmdDepth1;
+                public double TargetAmdDepth2;
+                public double CurrentPmdDepth1;
+                public double CurrentPmdDepth2;
+                public double TargetPmdDepth1;
+                public double TargetPmdDepth2;
             }
 
             /// <summary>
@@ -1532,19 +1636,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         param.CurrentTime1++;
                         if (param.CurrentTime1 >= param.DelayTime1)
                         {
-                            if (param.LFOF1 == 0)
+                            if (param.TargetAmdDepth1 >= 0)
                             {
-                                param.PmdStep1 += 1;
-                                param.CurrentDepth1 = (param.PmdStep1 * param.PmdStep1) / param.AmdBase1;
+                                param.AmdStep1 += 1;
+                                param.CurrentAmdDepth1 = (param.AmdStep1 * param.AmdStep1) / param.AmdBase1;
+
+                                if (param.CurrentAmdDepth1 > 127)
+                                    param.CurrentAmdDepth1 = 127;
+
+                                parentModule.YM2414WriteData(parentModule.UnitNumber, 0x19, 0, 0, (byte)(0 << 7 | (byte)param.CurrentAmdDepth1));
                             }
-                            else
+                            if (param.TargetPmdDepth1 >= 0)
                             {
-                                param.CurrentDepth1 += param.PmdStep1;
+                                param.CurrentPmdDepth1 += param.PmdStep1;
+
+                                if (param.CurrentPmdDepth1 > 127)
+                                    param.CurrentPmdDepth1 = 127;
+                                parentModule.YM2414WriteData(parentModule.UnitNumber, 0x19, 0, 0, (byte)(1 << 7 | (byte)param.CurrentPmdDepth1));
                             }
-                            if (param.CurrentDepth1 > 127)
-                                param.CurrentDepth1 = 127;
-                            parentModule.LFOD = (byte)param.CurrentDepth1;
-                            if (param.CurrentDepth1 >= param.TargetDepth1)
+                            if (param.CurrentAmdDepth1 >= param.TargetAmdDepth1 &&
+                                param.CurrentPmdDepth1 >= param.TargetPmdDepth1)
                                 parentModule.lfdProcessingSound = null;
                         }
                     }
@@ -1554,19 +1665,25 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         param.CurrentTime2++;
                         if (param.CurrentTime2 >= param.DelayTime2)
                         {
-                            if (param.LFOF2 == 0)
+                            if (param.TargetAmdDepth2 >= 0)
                             {
-                                param.PmdStep2 += 1;
-                                param.CurrentDepth2 = (param.PmdStep2 * param.PmdStep2) / param.AmdBase2;
+                                param.AmdStep2 += 1;
+                                param.CurrentAmdDepth2 = (param.AmdStep2 * param.AmdStep2) / param.AmdBase2;
+
+                                if (param.CurrentAmdDepth2 > 127)
+                                    param.CurrentAmdDepth2 = 127;
+                                parentModule.YM2414WriteData(parentModule.UnitNumber, 0x17, 0, 0, (byte)(0 << 7 | (byte)param.CurrentAmdDepth2));
                             }
-                            else
+                            if (param.TargetPmdDepth2 >= 0)
                             {
-                                param.CurrentDepth2 += param.PmdStep2;
+                                param.CurrentPmdDepth2 += param.PmdStep2;
+
+                                if (param.CurrentPmdDepth2 > 127)
+                                    param.CurrentPmdDepth2 = 127;
+                                parentModule.YM2414WriteData(parentModule.UnitNumber, 0x17, 0, 0, (byte)(1 << 7 | (byte)param.CurrentPmdDepth2));
                             }
-                            if (param.CurrentDepth2 > 127)
-                                param.CurrentDepth2 = 127;
-                            parentModule.LFOD2 = (byte)param.CurrentDepth2;
-                            if (param.CurrentDepth2 >= param.TargetDepth2)
+                            if (param.CurrentAmdDepth2 >= param.TargetAmdDepth2 &&
+                                param.CurrentPmdDepth2 >= param.TargetPmdDepth2)
                                 parentModule.lfdProcessingSound = null;
                         }
                     }
@@ -1601,14 +1718,14 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (gs.LFRQ2.HasValue)
                         parentModule.LFRQ2 = gs.LFRQ2.Value;
 
-                    if (gs.LFOD.HasValue && parentModule.lfdProcessingSound == null)
-                        parentModule.LFOD = gs.LFOD.Value;
-                    if (gs.LFOF.HasValue)
-                        parentModule.LFOF = gs.LFOF.Value;
-                    if (gs.LFOD2.HasValue && parentModule.lfd2ProcessingSound == null)
-                        parentModule.LFOD2 = gs.LFOD2.Value;
-                    if (gs.LFOF2.HasValue)
-                        parentModule.LFOF2 = gs.LFOF2.Value;
+                    if (gs.AMD.HasValue && parentModule.lfdProcessingSound == null)
+                        parentModule.AMD = gs.AMD.Value;
+                    if (gs.PMD.HasValue && parentModule.lfdProcessingSound == null)
+                        parentModule.PMD = gs.PMD.Value;
+                    if (gs.AMD2.HasValue && parentModule.lfd2ProcessingSound == null)
+                        parentModule.AMD2 = gs.AMD2.Value;
+                    if (gs.PMD2.HasValue && parentModule.lfd2ProcessingSound == null)
+                        parentModule.PMD2 = gs.PMD2.Value;
 
                     if (gs.LFOW.HasValue)
                         parentModule.LFOW = gs.LFOW.Value;
@@ -2754,7 +2871,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2414Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -3391,7 +3508,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<YM2414Operator>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                 }
                 catch (Exception ex)
                 {
@@ -3465,19 +3582,15 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             private byte? f_LFOF;
 
-            /// <summary>
-            /// Select AMD or PMD(0:AMD 1:PMD)
-            /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("Select AMD or PMD (0:AMD 1:PMD)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Browsable(false)]
+            [Obsolete]
             public byte? LFOF
             {
                 get
                 {
+                    if (!f_LFOF.HasValue)
+                        return null;
+
                     return f_LFOF;
                 }
                 set
@@ -3494,13 +3607,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// LFO Depth(0-127)
             /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("AM/PM Depth (0-127)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 127)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DisplayName("AMD/PMD(LFOD)")]
+            [Obsolete]
+            [Browsable(false)]
             public byte? LFOD
             {
                 get
@@ -3513,34 +3621,68 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     if (value.HasValue)
                         v = (byte)(value & 127);
                     f_LFOD = v;
+                    if (f_LFOF.HasValue)
+                    {
+                        if (f_LFOF == 0)
+                            f_AMD = f_LFOD;
+                        else
+                            f_PMD = f_LFOD;
+                    }
                 }
             }
 
-            private byte? f_LFOD2;
 
+            private byte? f_AMD;
 
             /// <summary>
-            /// LFO2 Depth(0-127)
+            /// AMD Depth(0-127)
             /// </summary>
             [DataMember]
             [Category("Chip(Global)")]
-            [Description("LFO2 Depth (0-127)")]
-            [DefaultValue(null)]
+            [Description("AMD(0-127)")]
             [SlideParametersAttribute(0, 127)]
             [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
-            [DisplayName("AMD/PMD(LFOD2)")]
-            public byte? LFOD2
+            [DefaultValue((byte)0)]
+            [DisplayName("AMD")]
+            public byte? AMD
             {
                 get
                 {
-                    return f_LFOD2;
+                    return f_AMD;
                 }
                 set
                 {
                     byte? v = value;
                     if (value.HasValue)
                         v = (byte)(value & 127);
-                    f_LFOD2 = v;
+                    f_AMD = v;
+                }
+            }
+
+            private byte? f_PMD;
+
+            /// <summary>
+            /// PMD Depth(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("PMD(0-127)")]
+            [SlideParametersAttribute(0, 127)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            [DisplayName("PMD")]
+            public byte? PMD
+            {
+                get
+                {
+                    return f_PMD;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_PMD = v;
                 }
             }
 
@@ -3624,12 +3766,8 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// <summary>
             /// Select AMD2 or PMD2(0:AMD2 1:PMD2)
             /// </summary>
-            [DataMember]
-            [Category("Chip(Global)")]
-            [Description("Select AMD2 or PMD2 (0:AMD2 1:PMD2)")]
-            [DefaultValue(null)]
-            [SlideParametersAttribute(0, 1)]
-            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [Obsolete]
+            [Browsable(false)]
             public byte? LFOF2
             {
                 get
@@ -3645,8 +3783,91 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 }
             }
 
-            private byte? f_LFOW2;
+            private byte? f_LFOD2;
 
+            /// <summary>
+            /// LFO2 Depth(0-127)
+            /// </summary>
+            [Obsolete]
+            [Browsable(false)]
+            public byte? LFOD2
+            {
+                get
+                {
+                    return f_LFOD2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_LFOD2 = v;
+                    if (f_LFOF2.HasValue)
+                    {
+                        if (f_LFOF2 == 0)
+                            f_AMD2 = f_LFOD2;
+                        else
+                            f_PMD2 = f_LFOD2;
+                    }
+                }
+            }
+
+
+            private byte? f_AMD2;
+
+            /// <summary>
+            /// AMD2 Depth(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("AMD2(0-127)")]
+            [SlideParametersAttribute(0, 127)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            [DisplayName("AMD2")]
+            public byte? AMD2
+            {
+                get
+                {
+                    return f_AMD2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_AMD2 = v;
+                }
+            }
+
+            private byte? f_PMD2;
+
+            /// <summary>
+            /// PMD2 Depth(0-127)
+            /// </summary>
+            [DataMember]
+            [Category("Chip(Global)")]
+            [Description("PMD2(0-127)")]
+            [SlideParametersAttribute(0, 127)]
+            [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+            [DefaultValue((byte)0)]
+            [DisplayName("PMD2")]
+            public byte? PMD2
+            {
+                get
+                {
+                    return f_PMD2;
+                }
+                set
+                {
+                    byte? v = value;
+                    if (value.HasValue)
+                        v = (byte)(value & 127);
+                    f_PMD2 = v;
+                }
+            }
+
+            private byte? f_LFOW2;
 
             /// <summary>
             /// LFO2 Wave Type (0:Saw 1:SQ 2:Tri 3:Rnd)
@@ -3845,10 +4066,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             tim.GlobalSettings.LFRQ = (byte?)tone.LFRQ;
             tim.GlobalSettings.LFRQ2 = (byte?)tone.LFRQ2;
-            tim.GlobalSettings.LFOF = (byte?)tone.LFOF;
-            tim.GlobalSettings.LFOD = (byte?)tone.LFOD;
-            tim.GlobalSettings.LFOF2 = (byte?)tone.LFOF2;
-            tim.GlobalSettings.LFOD2 = (byte?)tone.LFOD2;
+            tim.GlobalSettings.AMD = (byte?)tone.AMD;
+            tim.GlobalSettings.PMD = (byte?)tone.PMD;
+            tim.GlobalSettings.AMD2 = (byte?)tone.AMD2;
+            tim.GlobalSettings.PMD2 = (byte?)tone.PMD2;
             tim.GlobalSettings.LFOW = (byte?)tone.LFOW;
             tim.GlobalSettings.LFOW2 = (byte?)tone.LFOW2;
 
@@ -3863,8 +4084,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 tim.GlobalSettings.LFRQ2 > 0 ||
                 tim.GlobalSettings.LFOW > 0 ||
                 tim.GlobalSettings.LFOW2 > 0 ||
-                tim.GlobalSettings.LFOD > 0 ||
-                tim.GlobalSettings.LFOD2 > 0
+                tim.GlobalSettings.AMD > 0 ||
+                tim.GlobalSettings.PMD > 0 ||
+                tim.GlobalSettings.AMD2 > 0 ||
+                tim.GlobalSettings.PMD2 > 0
                 )
                 tim.GlobalSettings.Enable = true;
 
