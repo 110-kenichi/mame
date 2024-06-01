@@ -3979,8 +3979,8 @@ namespace zanac.VGMPlayer
                     flushDeferredWriteData();
 
                     double pwait = wait / PlaybackSpeed;
-                    if (vgmHead.lngRate > 0)
-                        pwait *= (double)vgmHead.lngRate / 60d;
+                    //if (vgmHead.lngRate > 0)
+                    //    pwait *= (double)vgmHead.lngRate / 60d;
                     double nextTime = dbefore + (pwait * ((double)freq / (double)(44.1 * 1000)));
                     QueryPerformanceCounter(out after);
                     if (after > nextTime)

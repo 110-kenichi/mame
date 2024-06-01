@@ -1,4 +1,4 @@
-MAmidiMEmo 5.6.12.0 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.6.12.1 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes 
+5.6.12.1 Fixed some VGM file's tempo is too slow. (Rate values in VGM files are now ignored.)
 5.6.12.0 Fixed AMD,PMD for OPM and OPZ. AMD and PMD can be handled simultaneously rather than exclusively.
 		 OPM engine changed to the ymfm.
 5.6.11.0 Supported VGI file importing.
