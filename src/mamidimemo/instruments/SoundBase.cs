@@ -171,8 +171,8 @@ namespace zanac.MAmidiMEmo.Instruments
             IsKeyOff = false;
             IsSoundOff = false;
 
-            if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64 ||
-                ParentModule.Modulations[NoteOnEvent.Channel] > 0)
+            if (validateMidiControlValue(ParentModule.ModulationDepthes[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthShift) > 64 ||
+                validateMidiControlValue(ParentModule.Modulations[NoteOnEvent.Channel] + Timbre.MDS.ModulationShift) > 0)
                 ModulationEnabled = true;
 
             int ln = ParentManager.GetLastNoteNumber(NoteOnEvent.Channel);
@@ -614,6 +614,15 @@ namespace zanac.MAmidiMEmo.Instruments
             return -1;
         }
 
+        private int validateMidiControlValue(int value)
+        {
+            if (value < 0)
+                value = 0;
+            else if (value > 127)
+                value = 127;
+            return value;
+        }
+
         private double processModulation(object state)
         {
             if (!IsDisposed && ModulationEnabled)
@@ -621,25 +630,28 @@ namespace zanac.MAmidiMEmo.Instruments
                 double radian = 2 * Math.PI * (modulationStep / (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval));
 
                 double mdepth = 0;
-                if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64)
+
+                int mcmd = validateMidiControlValue(ParentModule.ModulationDepthes[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthShift);
+
+                if (mcmd > 64)
                 {
                     if (modulationStartCounter < 10d * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval))
                         modulationStartCounter += 1.0;
 
-                    var md = ParentModule.GetModulationDelaySec(NoteOnEvent.Channel);
+                    var md = ParentModule.GetModulationDelaySec(NoteOnEvent.Channel, Timbre.MDS.ModulationDelayShift);
                     md = md * (HighPrecisionTimer.TIMER_BASIC_1KHZ / ModulationInterval);
                     if (modulationStartCounter > md)
-                        mdepth = ((double)ParentModule.ModulationDepthes[NoteOnEvent.Channel] - 64d) / 64d;
+                        mdepth = ((double)mcmd - 64d) / 64d;
                 }
                 //急激な変化を抑制
-                var mv = ((double)ParentModule.Modulations[NoteOnEvent.Channel] / 127d) + mdepth;
+                var mv = ((double)validateMidiControlValue(ParentModule.Modulations[NoteOnEvent.Channel] + Timbre.MDS.ModulationShift) / 127d) + mdepth;
                 if (mv != modulationLevel)
                     modulationLevel += (mv - modulationLevel) / 1.25;
 
                 double modHz = radian * ParentModule.GetModulationRateHz(NoteOnEvent.Channel);
                 ModultionDeltaNoteNumber = modulationLevel * Math.Sin(modHz);
-                ModultionDeltaNoteNumber *= ((double)ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] +
-                    ((double)ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] / 127d));
+                ModultionDeltaNoteNumber *= ((double)validateMidiControlValue(ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthRangeNoteShift) +
+                    ((double)validateMidiControlValue(ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthRangeCentShift) / 127d));
 
                 OnPitchUpdated();
 
@@ -731,7 +743,7 @@ namespace zanac.MAmidiMEmo.Instruments
                     }
                     else
                     {
-                        if (ParentModule.ModulationDepthes[NoteOnEvent.Channel] > 64)
+                        if (validateMidiControlValue(ParentModule.ModulationDepthes[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthShift) > 64)
                             return;
 
                         f_modulationEnabled = value;

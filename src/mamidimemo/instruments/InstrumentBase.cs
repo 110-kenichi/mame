@@ -1577,9 +1577,13 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="channel"></param>
         /// <returns></returns>
-        public virtual double GetModulationDelaySec(int channel)
+        public virtual double GetModulationDelaySec(int channel, int offset)
         {
-            byte val = ModulationDelays[channel];
+            int val = ModulationDelays[channel] + offset;
+            if (val < 0)
+                val = 0;
+            else if(val > 127)
+                val = 127;
 
             double rate = Math.Pow(((double)val / 64d), 3.25) - 1;
             if (rate < 0)

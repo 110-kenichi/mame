@@ -37,7 +37,7 @@ namespace zanac.MAmidiMEmo.Instruments
         }
 
         [DataMember]
-        [Description("Base key offset [Semitone]")]
+        [Description("Base Key offset [Semitone]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -51,7 +51,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private int f_PitchShift;
 
         [DataMember]
-        [Description("Base frequency offset [Cent]")]
+        [Description("Base Pitch offset [Cent]")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-1200, 1200)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -72,7 +72,7 @@ namespace zanac.MAmidiMEmo.Instruments
         private int f_PanShift;
 
         [DataMember]
-        [Description("Base pan pot offset (-127 - 0 - 127)")]
+        [Description("Base Panpot offset (-127 - 0 - 127)")]
         [DefaultValue(0)]
         [SlideParametersAttribute(-127, 127)]
         [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
@@ -183,6 +183,132 @@ namespace zanac.MAmidiMEmo.Instruments
         {
             get;
             set;
+        }
+
+        private int f_ModulationShift;
+
+        [DataMember]
+        [Description("Base Modulation offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationShift
+        {
+            get => f_ModulationShift;
+            set
+            {
+                f_ModulationShift = value;
+                if (f_ModulationShift < -127)
+                    f_ModulationShift = -127;
+                else if (f_ModulationShift > 127)
+                    f_ModulationShift = 127;
+            }
+        }
+
+        private int f_ModulationRateShift;
+
+        [DataMember]
+        [Description("Base Modulation Rate offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationRateShift
+        {
+            get => f_ModulationRateShift;
+            set
+            {
+                f_ModulationRateShift = value;
+                if (f_ModulationRateShift < -127)
+                    f_ModulationRateShift = -127;
+                else if (f_ModulationRateShift > 127)
+                    f_ModulationRateShift = 127;
+            }
+        }
+
+        private int f_ModulationDepthShift;
+
+        [DataMember]
+        [Description("Base Modulation Depth offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationDepthShift
+        {
+            get => f_ModulationDepthShift;
+            set
+            {
+                f_ModulationDepthShift = value;
+                if (f_ModulationDepthShift < -127)
+                    f_ModulationDepthShift = -127;
+                else if (f_ModulationDepthShift > 127)
+                    f_ModulationDepthShift = 127;
+            }
+        }
+
+        private int f_ModulationDelayShift;
+
+        [DataMember]
+        [Description("Base Modulation Delay offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationDelayShift
+        {
+            get => f_ModulationDelayShift;
+            set
+            {
+                f_ModulationDelayShift = value;
+                if (f_ModulationDelayShift < -127)
+                    f_ModulationDelayShift = -127;
+                else if (f_ModulationDelayShift > 127)
+                    f_ModulationDelayShift = 127;
+            }
+        }
+
+        private int f_ModulationDepthRangeNoteShift;
+
+        [DataMember]
+        [Description("Base Modulation Depth Range[Note] offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationDepthRangeNoteShift
+        {
+            get => f_ModulationDepthRangeNoteShift;
+            set
+            {
+                f_ModulationDepthRangeNoteShift = value;
+                if (f_ModulationDepthRangeNoteShift < -127)
+                    f_ModulationDepthRangeNoteShift = -127;
+                else if (f_ModulationDepthRangeNoteShift > 127)
+                    f_ModulationDepthRangeNoteShift = 127;
+            }
+        }
+
+        private int f_ModulationDepthRangeCentShift;
+
+        [DataMember]
+        [Description("Base Modulation Depth Range[Cent] offset (-127 - 0 - 127)")]
+        [DefaultValue(0)]
+        [SlideParametersAttribute(-127, 127)]
+        [EditorAttribute(typeof(SlideEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        [Category("MIDI")]
+        public int ModulationDepthRangeCentShift
+        {
+            get => f_ModulationDepthRangeCentShift;
+            set
+            {
+                f_ModulationDepthRangeCentShift = value;
+                if (f_ModulationDepthRangeCentShift < -127)
+                    f_ModulationDepthRangeCentShift = -127;
+                else if (f_ModulationDepthRangeCentShift > 127)
+                    f_ModulationDepthRangeCentShift = 127;
+            }
         }
 
         [DataMember]
