@@ -156,6 +156,9 @@
     <value>プライバシーデータを保存/復元しない。
 例）ファイル名</value>
   </data>
+  <data name="metroLabel9.Text" xml:space="preserve">
+    <value>外部ツール1パス(&amp;1):</value>
+  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>設定</value>
   </data>

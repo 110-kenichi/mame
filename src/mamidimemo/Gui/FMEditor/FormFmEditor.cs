@@ -1880,5 +1880,27 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             ApplyTimbre(timbre);
         }
+
+        private void metroButton1_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(Settings.Default.ExtTool1Path))
+                return;
+
+            try
+            {
+                Task.Run(new Action(() =>
+                    Process.Start(Settings.Default.ExtTool1Path)
+                ));
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(Exception))
+                    throw;
+                else if (ex.GetType() == typeof(SystemException))
+                    throw;
+
+                MessageBox.Show(Resources.FailedLaunch + "\r\n" + ex.Message);
+            }
+        }
     }
 }

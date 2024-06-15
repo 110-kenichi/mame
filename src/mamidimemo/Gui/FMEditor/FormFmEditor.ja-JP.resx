@@ -208,4 +208,10 @@
   <data name="checkBoxHidePropAre.Text" xml:space="preserve">
     <value>プロパティを隠す(&amp;T)</value>
   </data>
+  <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>124, 10</value>
+  </data>
+  <data name="metroButton1.Text" xml:space="preserve">
+    <value>外部ツール1(&amp;1)...</value>
+  </data>
 </root>

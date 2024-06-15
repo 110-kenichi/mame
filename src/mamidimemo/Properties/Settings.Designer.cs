@@ -884,5 +884,17 @@ namespace zanac.MAmidiMEmo.Properties {
                 this["FmHideProp"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExtTool1Path {
+            get {
+                return ((string)(this["ExtTool1Path"]));
+            }
+            set {
+                this["ExtTool1Path"] = value;
+            }
+        }
     }
 }
