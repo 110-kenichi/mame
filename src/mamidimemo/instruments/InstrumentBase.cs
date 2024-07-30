@@ -1326,7 +1326,7 @@ namespace zanac.MAmidiMEmo.Instruments
         [DataMember]
         [Category("MIDI")]
         [Description("Program number (0-127) <MIDI 16ch>")]
-        [TypeConverter(typeof(MaskableExpandableMidiChCollectionConverter))]
+        [TypeConverter(typeof(MaskableExpandableMidiChProgramNumbersCollectionConverter))]
         [EditorAttribute(typeof(DummyEditor), typeof(UITypeEditor))]
         [Mask(127)]
         [CollectionDefaultValue((byte)0)]

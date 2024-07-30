@@ -1,4 +1,4 @@
-MAmidiMEmo 5.6.14.0 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.6.15.0 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes 
+5.6.15.0 Showed the program number name on ProgramNumbers property.
 5.6.14.0 Added external tool path settings on the Option dialog. Youcan launch the tool from the FM Tone Editor.
 5.6.13.0 Added properties regarding modulation offset to the Midi Driver Settings on a Timbre.
 5.6.12.1 Fixed some VGM file's tempo is too slow. (Rate values in VGM files are now ignored.)
