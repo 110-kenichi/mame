@@ -648,7 +648,7 @@ namespace zanac.MAmidiMEmo.Instruments
                 if (mv != modulationLevel)
                     modulationLevel += (mv - modulationLevel) / 1.25;
 
-                double modHz = radian * ParentModule.GetModulationRateHz(NoteOnEvent.Channel);
+                double modHz = radian * ParentModule.GetModulationRateHz(NoteOnEvent.Channel, Timbre.MDS.ModulationRateShift);
                 ModultionDeltaNoteNumber = modulationLevel * Math.Sin(modHz);
                 ModultionDeltaNoteNumber *= ((double)validateMidiControlValue(ParentModule.ModulationDepthRangesNote[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthRangeNoteShift) +
                     ((double)validateMidiControlValue(ParentModule.ModulationDepthRangesCent[NoteOnEvent.Channel] + Timbre.MDS.ModulationDepthRangeCentShift) / 127d));

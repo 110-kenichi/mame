@@ -1505,9 +1505,13 @@ namespace zanac.MAmidiMEmo.Instruments
         /// </summary>
         /// <param name="channel"></param>
         /// <returns></returns>
-        public virtual double GetModulationRateHz(int channel)
+        public virtual double GetModulationRateHz(int channel, int offset)
         {
-            byte val = ModulationRates[channel];
+            int val = ModulationRates[channel] + offset;
+            if (val < 0)
+                val = 0;
+            else if (val > 127)
+                val = 127;
 
             double rate = Math.Pow(((double)val / 64d), 2) * 6;
 

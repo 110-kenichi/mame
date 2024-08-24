@@ -275,6 +275,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes 
 5.6.15.0 Showed the program number name on ProgramNumbers property.
+         Fixed ModulationRateShift prop is not working property.
 5.6.14.0 Added external tool path settings on the Option dialog. Youcan launch the tool from the FM Tone Editor.
 5.6.13.0 Added properties regarding modulation offset to the Midi Driver Settings on a Timbre.
 5.6.12.1 Fixed some VGM file's tempo is too slow. (Rate values in VGM files are now ignored.)
