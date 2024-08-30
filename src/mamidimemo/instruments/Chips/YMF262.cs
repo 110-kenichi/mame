@@ -580,7 +580,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 //FormMain.OutputLog(this, (adrH + 1).ToString("x") + "," + data);
                                 break;
                             case SoundEngineType.SPFM:
-                                ScciManager.SetRegister(spfmPtr, address, data, false);
+                                ScciManager.SetRegister(spfmPtr, (adrH << 7) | adr, data, false);
                                 break;
                         }
                     }
