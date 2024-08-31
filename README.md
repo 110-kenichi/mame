@@ -1,4 +1,4 @@
-MAmidiMEmo 5.6.16.0 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.6.17.0 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes 
+5.6.17.0 Fixed Hold Off MIDI message handling.
 5.6.16.0 Fixed ch9-18 address calculation for OPL3 for SCCI.
 5.6.15.0 Showed the program number name on ProgramNumbers property.
          Fixed ModulationRateShift prop is not working property.
