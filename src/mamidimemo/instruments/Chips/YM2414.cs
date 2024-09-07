@@ -4117,6 +4117,64 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
             timbre.TimbreName = tone.Name;
         }
+
+        private YM2414CustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new YM2414CustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class YM2414CustomToneImporter : FmToneImporter
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get
+                {
+                    return "*.mopz";
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
+                if (tones != null)
+                {
+                    List<TimbreBase> rv = new List<TimbreBase>();
+                    foreach (var t in tones)
+                    {
+                        YM2151Timbre tim = new YM2151Timbre();
+                        tim.TimbreName = t.MML[0];
+                        tim.Detailed = t.MML[1] + "," + t.MML[2] + "," + t.MML[3] + "," + t.MML[4] + "," + t.MML[5];
+                        rv.Add(tim);
+                    }
+                    return rv;
+                }
+                return null;
+            }
+        }
     }
 
 }

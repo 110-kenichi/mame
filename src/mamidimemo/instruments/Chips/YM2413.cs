@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -30,6 +32,7 @@ using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.SCC1;
 using static zanac.MAmidiMEmo.Instruments.Chips.SPC700;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM2151;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
 
 //http://d4.princess.ne.jp/msx/datas/OPLL/YM2413AP.html#31
@@ -3801,6 +3804,66 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             timbre.TimbreName = tone.Name;
         }
+
+
+        private YM2413CustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new YM2413CustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class YM2413CustomToneImporter : FmToneImporter
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get
+                {
+                    return "*.moll";
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
+                if (tones != null)
+                {
+                    List<TimbreBase> rv = new List<TimbreBase>();
+                    foreach (var t in tones)
+                    {
+                        YM2413Timbre tim = new YM2413Timbre();
+                        tim.TimbreName = t.MML[0];
+                        tim.Detailed = t.MML[1] + "," + t.MML[2] + "," + t.MML[3];
+                        rv.Add(tim);
+                    }
+                    return rv;
+                }
+                return null;
+            }
+        }
+
     }
 
 

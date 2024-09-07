@@ -27,6 +27,7 @@ using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.VSIF;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3806;
 
 //http://www.oplx.com/opl2/docs/adlib_sb.txt
 //ftp://ftp.oldskool.org/pub/drivers/Yamaha/yamaha_ym3812.pdf
@@ -1863,6 +1864,64 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 tim.Ops[i].WS = 0;
             }
             timbre.TimbreName = tone.Name;
+        }
+
+        private YM3812CustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new YM3812CustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class YM3812CustomToneImporter : FmToneImporter
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get
+                {
+                    return "*.mopl";
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
+                if (tones != null)
+                {
+                    List<TimbreBase> rv = new List<TimbreBase>();
+                    foreach (var t in tones)
+                    {
+                        YM3812Timbre tim = new YM3812Timbre();
+                        tim.TimbreName = t.MML[0];
+                        tim.Detailed = t.MML[1] + "," + t.MML[2] + "," + t.MML[3];
+                        rv.Add(tim);
+                    }
+                    return rv;
+                }
+                return null;
+            }
         }
     }
 }

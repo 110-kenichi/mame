@@ -45,6 +45,7 @@ using zanac.MAmidiMEmo.Properties;
 using zanac.MAmidiMEmo.Scci;
 using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 using static zanac.MAmidiMEmo.Instruments.Chips.SAM;
@@ -3968,6 +3969,138 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 return "*.raw;*.wav";
             }
         }
+
+        private YM2612CustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new YM2612CustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class YM2612CustomToneImporter : FmToneImporter
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get => "*.mopn;*.mopm";
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="file"></param>
+            /// <returns></returns>
+            public override IEnumerable<Tone> ImportToneFile(string file)
+            {
+                IEnumerable<Tone> tones = base.ImportToneFile(file);
+                if (tones != null)
+                    return tones;
+
+                string ext = System.IO.Path.GetExtension(file);
+
+                if (ext.ToUpper(CultureInfo.InvariantCulture).Equals(".MOPM"))
+                {
+                    try
+                    {
+                        string txt = System.IO.File.ReadAllText(file);
+                        StringReader rs = new StringReader(txt);
+
+                        string ftname = rs.ReadLine();
+                        if ("*.mopm" == ftname)
+                        {
+                            string ver = rs.ReadLine();
+                            if (ver != "1.0")
+                                throw new InvalidDataException();
+                            int num = int.Parse(rs.ReadLine());
+                            List<string> lines = new List<string>();
+                            List<Tone> ts = new List<Tone>();
+                            int progNo = 0;
+                            while (true)
+                            {
+                                string line = rs.ReadLine();
+                                if (line == null || line == "-")
+                                {
+                                    if (lines.Count == 0)
+                                        break;
+                                    Tone t = new Tone();
+                                    var mml = lines.ToArray();
+
+                                    var general = mml[1].Split(',');
+                                    mml[1] = String.Format("{0},{1},{2},0,0,,", general[0], general[1], general[2]);
+                                    for (int i = 2; i < mml.Length; i++)
+                                    {
+                                        var op = mml[i].Split(',');
+                                        mml[i] = String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},0",
+                                            op[0], op[1], op[2], op[3], op[4], op[5], op[6], op[7], op[8], op[9], op[10]);
+                                    }
+                                    t.MML = mml;
+
+                                    t.Name = t.MML[0];
+                                    t.Number = progNo++;
+                                    ts.Add(t);
+                                    lines.Clear();
+                                    if (line == null)
+                                        break;
+                                    continue;
+                                }
+                                lines.Add(line);
+                            }
+                            tones = ts;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType() == typeof(Exception))
+                            throw;
+                        else if (ex.GetType() == typeof(SystemException))
+                            throw;
+
+                        MessageBox.Show(Resources.FailedLoadFile + "\r\n" + ex.Message);
+                    }
+                }
+                return tones;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
+                if (tones != null)
+                {
+                    List<TimbreBase> rv = new List<TimbreBase>();
+                    foreach (var t in tones)
+                    {
+                        YM2612Timbre tim = new YM2612Timbre();
+                        tim.TimbreName = t.MML[0];
+                        tim.Detailed = t.MML[1] + "," + t.MML[2] + "," + t.MML[3] + "," + t.MML[4] + "," + t.MML[5];
+                        rv.Add(tim);
+                    }
+                    return rv;
+                }
+                return null;
+            }
+
+        }
+
 
         private static DialogResult? previousSampleRateAns;
 

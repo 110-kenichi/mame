@@ -1586,7 +1586,7 @@ namespace zanac.MAmidiMEmo.Instruments
             int val = ModulationDelays[channel] + offset;
             if (val < 0)
                 val = 0;
-            else if(val > 127)
+            else if (val > 127)
                 val = 127;
 
             double rate = Math.Pow(((double)val / 64d), 3.25) - 1;
@@ -3204,7 +3204,6 @@ namespace zanac.MAmidiMEmo.Instruments
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -3239,6 +3238,21 @@ namespace zanac.MAmidiMEmo.Instruments
         {
 
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Browsable(false)]
+        [IgnoreDataMember]
+        [JsonIgnore]
+        public virtual CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Helper function to go from IWaveProvider to a SampleProvider
         /// Must already be PCM or IEEE float

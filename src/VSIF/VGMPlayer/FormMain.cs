@@ -108,12 +108,17 @@ namespace zanac.VGMPlayer
                 listViewList.TopItem = lvi;
         }
 
+        private static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
+        {
+            return (int)(lParam.ToInt64() >> 16) & 0xFFF;
+        }
+
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
             {
                 case NativeConstants.WM_APPCOMMAND:
-                    int cmd = (int)((uint)m.LParam >> 16 & ~0xf000);
+                    int cmd = GET_APPCOMMAND_LPARAM(m.LParam);
                     switch ((ApplicationCommand)cmd)
                     {
                         case ApplicationCommand.MediaFastForward:

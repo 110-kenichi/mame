@@ -3,6 +3,7 @@ using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using NAudio.SoundFont;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
+using System.Xml.Linq;
 using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Midi;
@@ -140,6 +142,13 @@ namespace zanac.MAmidiMEmo.Gui
             if (inst.CanImportBinFile)
             {
                 var texts = inst.SupportedBinExts.Split(';');
+                for (int i = 0; i < texts.Length; i++)
+                    texts[i] = texts[i].Replace("*", "");
+                extList.AddRange(texts);
+            }
+            if (inst.CustomToneImporter != null)
+            {
+                var texts = inst.CustomToneImporter.ExtensionsFilterExt.Split(';');
                 for (int i = 0; i < texts.Length; i++)
                     texts[i] = texts[i].Replace("*", "");
                 extList.AddRange(texts);
@@ -756,6 +765,32 @@ namespace zanac.MAmidiMEmo.Gui
                                         no++;
                                         lvi.Tag = tim;
                                         listViewFilesTimbres.Items.Add(lvi);
+                                    }
+                                }
+                            }
+                            if (Instrument.CustomToneImporter != null)
+                            {
+                                var texts = Instrument.CustomToneImporter.ExtensionsFilterExt.Split(';');
+                                for (int ei = 0; ei < texts.Length; ei++)
+                                {
+                                    String ext = texts[ei].Replace("*", "");
+                                    if (Path.GetExtension(file).ToUpper().Equals(ext.ToUpper(CultureInfo.InvariantCulture)))
+                                    {
+                                        var tims = Instrument.CustomToneImporter.ImportToneFileAsTimbre(file);
+                                        if (tims != null)
+                                        {
+                                            foreach (var t in tims)
+                                            {
+                                                var tim = new TimbreItem(t, no);
+
+                                                var lvi = new ListViewItem(new string[] { no.ToString(), t.TimbreName, t.Memo });
+                                                no++;
+                                                lvi.Tag = tim;
+                                                listViewFilesTimbres.Items.Add(lvi);
+                                            }
+                                        }
+
+                                        break;
                                     }
                                 }
                             }

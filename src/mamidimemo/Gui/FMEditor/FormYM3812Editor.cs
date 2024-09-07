@@ -369,17 +369,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override string ExtensionsFilterExt
-        {
-            get
-            {
-                return "*.mopl";
-            }
-        }
-
         protected override string[] GetMMlValues()
         {
             return new string[] { Timbre.TimbreName, MmlValueGeneral, MmlValueOps[0], MmlValueOps[1] };

@@ -212,6 +212,8 @@
     <Compile Include="ComponentModel\JsonHelper.cs" />
     <Compile Include="ComponentModel\MaskableExpandableMidiChCollectionConverter.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
+    <Compile Include="Instruments\FmToneImporter.cs" />
+    <Compile Include="Instruments\CustomToneImporter.cs" />
     <Compile Include="Gui\FormInputNumberScc.cs">
       <SubType>Form</SubType>
     </Compile>

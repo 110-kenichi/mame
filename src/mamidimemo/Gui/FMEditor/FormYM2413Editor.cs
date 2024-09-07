@@ -209,17 +209,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             ((RegisterValue)this["Career"]["DIST"]).Value = tim.Career.DIST;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override string ExtensionsFilterExt
-        {
-            get
-            {
-                return "*.moll";
-            }
-        }
-
         protected override string[] GetMMlValues()
         {
             return new string[] { Timbre.TimbreName, MmlValueGeneral, MmlValueOps[0], MmlValueOps[1] };

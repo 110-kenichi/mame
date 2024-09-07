@@ -30,6 +30,7 @@ using zanac.MAmidiMEmo.Scci;
 using FM_SoundConvertor;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM3806;
 using zanac.MAmidiMEmo.Properties;
+using static zanac.MAmidiMEmo.Instruments.Chips.YM3812;
 
 //http://map.grauw.nl/resources/sound/yamaha_ymf262.pdf
 //http://guu.fmp.jp/archives/93#gallery-6
@@ -2622,6 +2623,64 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             tim.MDS.KeyShift = tone.KeyShift;
             tim.MDS.PitchShift = tone.PitchShift;
             timbre.TimbreName = tone.Name;
+        }
+
+        private YMF262CustomToneImporter importer;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override CustomToneImporter CustomToneImporter
+        {
+            get
+            {
+                if (importer == null)
+                {
+                    importer = new YMF262CustomToneImporter();
+                }
+                return importer;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private class YMF262CustomToneImporter : FmToneImporter
+        {
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public override string ExtensionsFilterExt
+            {
+                get
+                {
+                    return "*.mopl3";
+                }
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tones"></param>
+            /// <returns></returns>
+            public override IEnumerable<TimbreBase> ImportToneFileAsTimbre(string file)
+            {
+                IEnumerable<Tone> tones = ImportToneFile(file);
+                if (tones != null)
+                {
+                    List<TimbreBase> rv = new List<TimbreBase>();
+                    foreach (var t in tones)
+                    {
+                        YM3812Timbre tim = new YM3812Timbre();
+                        tim.TimbreName = t.MML[0];
+                        tim.Detailed = t.MML[1] + "," + t.MML[2] + "," + t.MML[3];
+                        rv.Add(tim);
+                    }
+                    return rv;
+                }
+                return null;
+            }
         }
     }
 

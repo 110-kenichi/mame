@@ -2461,6 +2461,11 @@ namespace zanac.MAmidiMEmo.Gui
             MediaRewind = 50
         }
 
+        private static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
+        {
+            return (int)(lParam.ToInt64() >> 16) & 0xFFF;
+        }
+
         protected override void WndProc(ref Message m)
         {
             new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
@@ -2468,7 +2473,7 @@ namespace zanac.MAmidiMEmo.Gui
             switch (m.Msg)
             {
                 case NativeConstants.WM_APPCOMMAND:
-                    switch ((ApplicationCommand)(m.LParam.ToInt32() >> 16))
+                    switch ((ApplicationCommand)(GET_APPCOMMAND_LPARAM(m.LParam)))
                     {
                         case ApplicationCommand.MediaFastForward:
                             goto default;
