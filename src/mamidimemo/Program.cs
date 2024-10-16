@@ -41,7 +41,7 @@ namespace zanac.MAmidiMEmo
         /// <summary>
         /// 
         /// </summary>
-        public const string FILE_VERSION = "5.7.0.0";
+        public const string FILE_VERSION = "5.7.1.0";
 
         public const string FILE_COPYRIGHT = @"Virtual chiptune sound MIDI module ""MAmidiMEmo"" Version {0}
 Copyright(C) 2019, 2024 Itoken.All rights reserved.";
@@ -171,6 +171,8 @@ Copyright(C) 2019, 2024 Itoken.All rights reserved.";
             }
         }
 
+        static readonly float DpiScale = ((new System.Windows.Forms.Form()).CreateGraphics().DpiX) / 96;
+
         static object ResolveFont(MethodInfo info, IMethodCallMessage msg)
         {
             float sz = (float)msg.Args[1];
@@ -210,8 +212,8 @@ Copyright(C) 2019, 2024 Itoken.All rights reserved.";
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                guiScale = (float)Settings.Default.GuiScale / 100f;
-                if (guiScale != 0)
+                guiScale = ((((DpiScale * 100f) - 100f) + (float)Settings.Default.GuiScale) / 100f);
+                //if (guiScale != 0)
                 {
                     var internalType = typeof(MetroFonts).Assembly.GetType("MetroFramework.MetroFonts+IMetroFontResolver");
                     var result = new InterfaceImplementer(internalType, ResolveFont).GetTransparentProxy();

@@ -13,7 +13,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 
 namespace zanac.MAmidiMEmo.Gui
 {
-    public partial class FormSplash : Form
+    public partial class FormSplash : FormBase
     {
         public FormSplash()
         {

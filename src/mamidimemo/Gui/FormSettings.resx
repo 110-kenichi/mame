@@ -246,6 +246,12 @@
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
+  <data name="tableLayoutPanel4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="tableLayoutPanel4.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
   <data name="tableLayoutPanel4.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
@@ -286,7 +292,7 @@
     <value>358, 0</value>
   </data>
   <data name="metroLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 37</value>
+    <value>52, 35</value>
   </data>
   <data name="metroLabel3.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -322,7 +328,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>413, 37</value>
+    <value>413, 35</value>
   </data>
   <data name="tableLayoutPanel4.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -340,7 +346,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel4.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="numericUpDown1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel3" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,50,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="numericUpDown1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel3" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="comboBoxAudioLatency.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -937,7 +943,7 @@
     <value>3, 333</value>
   </data>
   <data name="metroLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 41</value>
+    <value>138, 39</value>
   </data>
   <data name="metroLabel2.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -967,7 +973,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 374</value>
+    <value>3, 372</value>
   </data>
   <data name="metroLabel4.Size" type="System.Drawing.Size, System.Drawing">
     <value>138, 35</value>
@@ -1009,7 +1015,7 @@
     <value>PAL(50Hz)</value>
   </data>
   <data name="comboBoxTV.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 377</value>
+    <value>147, 375</value>
   </data>
   <data name="comboBoxTV.Size" type="System.Drawing.Size, System.Drawing">
     <value>409, 29</value>
@@ -1073,6 +1079,9 @@
   </data>
   <data name="tableLayoutPanel5.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
+  </data>
+  <data name="tableLayoutPanel5.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Yu Gothic UI, 12pt</value>
   </data>
   <data name="tableLayoutPanel5.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 568</value>
@@ -1138,7 +1147,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>273, 35</value>
+    <value>90, 35</value>
   </data>
   <data name="metroLabel5.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1180,7 +1189,7 @@
     <value>3, 0</value>
   </data>
   <data name="metroLabel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 35</value>
+    <value>29, 35</value>
   </data>
   <data name="metroLabel6.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1210,10 +1219,10 @@
     <value>Fill</value>
   </data>
   <data name="numericUpDownScale.Location" type="System.Drawing.Point, System.Drawing">
-    <value>130, 3</value>
+    <value>38, 3</value>
   </data>
   <data name="numericUpDownScale.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 29</value>
+    <value>29, 29</value>
   </data>
   <data name="numericUpDownScale.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1237,7 +1246,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>257, 0</value>
+    <value>73, 0</value>
   </data>
   <data name="metroLabel7.Size" type="System.Drawing.Size, System.Drawing">
     <value>20, 35</value>
@@ -1267,7 +1276,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>279, 0</value>
+    <value>96, 0</value>
   </data>
   <data name="tableLayoutPanel7.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1276,7 +1285,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>280, 35</value>
+    <value>96, 35</value>
   </data>
   <data name="tableLayoutPanel7.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1306,7 +1315,7 @@
     <value>3, 35</value>
   </data>
   <data name="metroLabel8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>553, 38</value>
+    <value>186, 38</value>
   </data>
   <data name="metroLabel8.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1340,7 +1349,7 @@ A restart is required.</value>
     <value>3, 76</value>
   </data>
   <data name="metroCheckBoxPrivacy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>210, 30</value>
+    <value>90, 30</value>
   </data>
   <data name="metroCheckBoxPrivacy.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -1371,7 +1380,7 @@ e.g.) File path</value>
     <value>3, 109</value>
   </data>
   <data name="metroLabel9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>273, 35</value>
+    <value>90, 35</value>
   </data>
   <data name="metroLabel9.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -1398,10 +1407,10 @@ e.g.) File path</value>
     <value>Fill</value>
   </data>
   <data name="metroTextBoxExtTool1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>282, 112</value>
+    <value>99, 112</value>
   </data>
   <data name="metroTextBoxExtTool1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>274, 29</value>
+    <value>90, 29</value>
   </data>
   <data name="metroTextBoxExtTool1.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
@@ -1428,7 +1437,7 @@ e.g.) File path</value>
     <value>5</value>
   </data>
   <data name="tableLayoutPanel6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>192, 58</value>
   </data>
   <data name="tableLayoutPanel6.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1452,7 +1461,7 @@ e.g.) File path</value>
     <value>4, 38</value>
   </data>
   <data name="tabPage4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>192, 58</value>
   </data>
   <data name="tabPage4.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>

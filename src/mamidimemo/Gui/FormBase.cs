@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -112,12 +113,71 @@ namespace zanac.MAmidiMEmo.Gui
 
         private static MethodInfo scaleFont = typeof(Control).GetMethod("ScaleFont", BindingFlags.Instance | BindingFlags.NonPublic);
 
+        private static MethodInfo scaleControl = typeof(ComboBox).GetMethod("ScaleControl", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[] { typeof(SizeF), typeof(BoundsSpecified)}, null);
+
+        private bool canSetFontSize(Control c)
+        {
+            if (c is ToolStrip)
+                return false;
+            else if (c is NumericUpDown)
+                return false;
+            else if (c is ComboBox)
+                return false;
+
+            return true;
+        }
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, Int32 wParam, Int32 lParam);
+        private const Int32 CB_SETITEMHEIGHT = 0x153;
+
+        private void SetComboBoxHeight(IntPtr comboBoxHandle, Int32 comboBoxDesiredHeight)
+        {
+            //https://stackoverflow.com/questions/3158004/how-do-i-set-the-height-of-a-combobox
+            SendMessage(comboBoxHandle, CB_SETITEMHEIGHT, -1, comboBoxDesiredHeight);
+            SendMessage(comboBoxHandle, CB_SETITEMHEIGHT, 0, comboBoxDesiredHeight);
+        }
+
+        private void setDefaultFontSize(Control c)
+        {
+            if (c is NumericUpDown)
+            {
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                c.Controls[1].Font = c.Font;
+                c.Margin = new Padding(1);
+            }
+            else if (c is ComboBox)
+            {
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                SetComboBoxHeight(c.Handle,c.Font.Height);
+            }
+        }
+
         protected override void OnControlAdded(ControlEventArgs e)
         {
             if (Program.GuiScale != 0)
             {
                 SetAllControlsFontSize(e.Control, Program.GuiScale);
-                scaleFont.Invoke(e.Control, new object[] { 1f + Program.GuiScale });
+                if (canSetFontSize(e.Control))
+                    scaleFont.Invoke(e.Control, new object[] { 1f + Program.GuiScale });
+                else
+                    setDefaultFontSize(e.Control);
+            }
+            if (e.Control.GetType().Name.Equals("MetroFormButton"))
+            {
+                switch (e.Control.Text)
+                {
+                    case "r":   //Close;
+                    case "0":   //Minimize;
+                    case "1":   //Maximize Normal;
+                    case "2":   //Maximize Maximized;
+                        var sf = 1f + Program.GuiScale;
+                        e.Control.Size = new System.Drawing.Size
+                            ((int)Math.Round(e.Control.Size.Width * sf),
+                            (int)Math.Round(e.Control.Size.Height * sf));
+                        e.Control.Location = new Point(0, 0);
+                        break;
+                }
             }
 
             base.OnControlAdded(e);
@@ -130,9 +190,11 @@ namespace zanac.MAmidiMEmo.Gui
                 // recursive
                 if (child.Controls != null)
                     SetAllControlsFontSize(child, amount);
-                scaleFont.Invoke(child, new object[] { 1f + amount });
+                if (canSetFontSize(child))
+                    scaleFont.Invoke(child, new object[] { 1f + amount });
+                else
+                    setDefaultFontSize(child);
             };
-            //scaleFont.Invoke(target, new object[] { 1f + amount });
         }
 
         private bool ignoreFontChanged;
@@ -162,7 +224,10 @@ namespace zanac.MAmidiMEmo.Gui
                 {
                     ignoreFontChanged = true;
                     SetAllControlsFontSize(this, Program.GuiScale);
-                    scaleFont.Invoke(this, new object[] { 1f + Program.GuiScale });
+                    if (canSetFontSize(this))
+                        scaleFont.Invoke(this, new object[] { 1f + Program.GuiScale });
+                    else
+                        setDefaultFontSize(this);
                 }
                 finally
                 {
