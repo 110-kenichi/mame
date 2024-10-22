@@ -1047,7 +1047,6 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(847, 647);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormPhonemesEditor";
             this.ShowIcon = false;

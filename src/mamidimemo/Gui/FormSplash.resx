@@ -217,9 +217,6 @@ Copyright(C) 2019, 2020 Itoken. All rights reserved.</value>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>586, 188</value>
   </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
   </data>

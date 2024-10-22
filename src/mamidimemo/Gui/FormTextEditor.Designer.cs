@@ -109,7 +109,6 @@ namespace zanac.MAmidiMEmo.Gui
             this.Controls.Add(this.textBoxWsgDataText);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
-            this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormTextEditor";
             this.ShowIcon = false;

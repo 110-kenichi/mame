@@ -36,7 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(585, 503);
             this.Name = "FormBase";
-            this.Padding = new System.Windows.Forms.Padding(5, 60, 5, 10);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.ShadowType = MetroFormShadowType.SystemShadow;
             this.Text = "FormBase";
             this.Theme = MetroFramework.MetroThemeStyle.Default;

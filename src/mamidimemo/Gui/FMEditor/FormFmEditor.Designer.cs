@@ -86,7 +86,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonExportAll = new MetroFramework.Controls.MetroButton();
             this.metroButtonTimbre = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBoxHidePropAre = new System.Windows.Forms.CheckBox();
+            this.checkBoxHidePropAre = new MetroFramework.Controls.MetroCheckBox();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.metroToolTip1 = new MetroFramework.Components.MetroToolTip();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -705,7 +705,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripProp;
         private System.Windows.Forms.ToolStripMenuItem resetToDefaultThisPropertyToolStripMenuItem;
-        private System.Windows.Forms.CheckBox checkBoxHidePropAre;
+        private MetroFramework.Controls.MetroCheckBox checkBoxHidePropAre;
         private MetroFramework.Controls.MetroButton metroButton1;
     }
 }

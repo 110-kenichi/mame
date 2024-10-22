@@ -764,10 +764,10 @@
 </value>
   </data>
   <data name="listViewCurrentTimbres.Location" type="System.Drawing.Point, System.Drawing">
-    <value>799, 38</value>
+    <value>803, 38</value>
   </data>
   <data name="listViewCurrentTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 488</value>
+    <value>327, 517</value>
   </data>
   <data name="listViewCurrentTimbres.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -889,9 +889,6 @@
   <data name="columnHeader4.Text" xml:space="preserve">
     <value>File name</value>
   </data>
-  <data name="tableLayoutPanel2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
@@ -902,13 +899,13 @@
     <value>Segoe UI, 12pt</value>
   </data>
   <data name="comboBoxDir.ItemHeight" type="System.Int32, mscorlib">
-    <value>23</value>
+    <value>21</value>
   </data>
   <data name="comboBoxDir.Location" type="System.Drawing.Point, System.Drawing">
     <value>69, 3</value>
   </data>
   <data name="comboBoxDir.Size" type="System.Drawing.Size, System.Drawing">
-    <value>331, 29</value>
+    <value>333, 29</value>
   </data>
   <data name="comboBoxDir.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -968,13 +965,13 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>434, 0</value>
+    <value>436, 0</value>
   </data>
   <data name="metroLabel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 0, 4, 0</value>
   </data>
   <data name="metroLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 35</value>
+    <value>312, 35</value>
   </data>
   <data name="metroLabel1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1004,13 +1001,13 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>800, 0</value>
+    <value>804, 0</value>
   </data>
   <data name="metroLabel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 0, 4, 0</value>
   </data>
   <data name="metroLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>322, 35</value>
+    <value>325, 35</value>
   </data>
   <data name="metroLabel2.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -1056,10 +1053,10 @@
 </value>
   </data>
   <data name="listViewFilesTimbres.Location" type="System.Drawing.Point, System.Drawing">
-    <value>433, 38</value>
+    <value>435, 38</value>
   </data>
   <data name="listViewFilesTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>312, 488</value>
+    <value>314, 517</value>
   </data>
   <data name="listViewFilesTimbres.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -1083,10 +1080,10 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>751, 35</value>
+    <value>755, 35</value>
   </data>
   <data name="metroLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 494</value>
+    <value>42, 523</value>
   </data>
   <data name="metroLabel3.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -1122,7 +1119,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonNewDir.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 23</value>
+    <value>3, 22</value>
   </data>
   <data name="metroButtonNewDir.Size" type="System.Drawing.Size, System.Drawing">
     <value>88, 22</value>
@@ -1149,7 +1146,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>97, 23</value>
+    <value>97, 22</value>
   </data>
   <data name="metroButtonDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>54, 22</value>
@@ -1176,7 +1173,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonRefresh.Location" type="System.Drawing.Point, System.Drawing">
-    <value>372, 23</value>
+    <value>374, 22</value>
   </data>
   <data name="metroButtonRefresh.Size" type="System.Drawing.Size, System.Drawing">
     <value>55, 22</value>
@@ -1203,7 +1200,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonExplorer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>309, 23</value>
+    <value>311, 22</value>
   </data>
   <data name="metroButtonExplorer.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 22</value>
@@ -1230,7 +1227,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 529</value>
+    <value>0, 558</value>
   </data>
   <data name="tableLayoutPanel3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1239,7 +1236,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>430, 48</value>
+    <value>432, 47</value>
   </data>
   <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -1269,7 +1266,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>406, 3</value>
+    <value>408, 3</value>
   </data>
   <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
     <value>21, 29</value>
@@ -1305,7 +1302,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 23</value>
+    <value>3, 22</value>
   </data>
   <data name="metroButtonExport.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 22</value>
@@ -1332,7 +1329,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButton2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>104, 23</value>
+    <value>104, 22</value>
   </data>
   <data name="metroButton2.Size" type="System.Drawing.Size, System.Drawing">
     <value>70, 22</value>
@@ -1359,7 +1356,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButton3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>279, 23</value>
+    <value>282, 22</value>
   </data>
   <data name="metroButton3.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 22</value>
@@ -1386,7 +1383,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>796, 529</value>
+    <value>800, 558</value>
   </data>
   <data name="tableLayoutPanel4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1395,7 +1392,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>330, 48</value>
+    <value>333, 47</value>
   </data>
   <data name="tableLayoutPanel4.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -1431,7 +1428,7 @@
     <value>3, 3</value>
   </data>
   <data name="checkBoxSetDrumKeyNo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>216, 16</value>
+    <value>216, 15</value>
   </data>
   <data name="checkBoxSetDrumKeyNo.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1443,7 +1440,7 @@
     <value>checkBoxSetDrumKeyNo</value>
   </data>
   <data name="&gt;&gt;checkBoxSetDrumKeyNo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;checkBoxSetDrumKeyNo.Parent" xml:space="preserve">
     <value>tableLayoutPanel5</value>
@@ -1458,7 +1455,7 @@
     <value>225, 3</value>
   </data>
   <data name="comboBoxDrumKeyNo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 20</value>
+    <value>92, 20</value>
   </data>
   <data name="comboBoxDrumKeyNo.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1485,10 +1482,10 @@
     <value>NoControl</value>
   </data>
   <data name="checkBoxSetDrumTimbreName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>41, 29</value>
+    <value>39, 29</value>
   </data>
   <data name="checkBoxSetDrumTimbreName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>178, 16</value>
+    <value>180, 15</value>
   </data>
   <data name="checkBoxSetDrumTimbreName.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1500,7 +1497,7 @@
     <value>checkBoxSetDrumTimbreName</value>
   </data>
   <data name="&gt;&gt;checkBoxSetDrumTimbreName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;checkBoxSetDrumTimbreName.Parent" xml:space="preserve">
     <value>tableLayoutPanel5</value>
@@ -1512,7 +1509,7 @@
     <value>Fill</value>
   </data>
   <data name="tableLayoutPanel5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>430, 529</value>
+    <value>432, 558</value>
   </data>
   <data name="tableLayoutPanel5.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -1521,7 +1518,7 @@
     <value>2</value>
   </data>
   <data name="tableLayoutPanel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>318, 48</value>
+    <value>320, 47</value>
   </data>
   <data name="tableLayoutPanel5.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -1541,14 +1538,17 @@
   <data name="tableLayoutPanel5.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="checkBoxSetDrumKeyNo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="comboBoxDrumKeyNo" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="checkBoxSetDrumTimbreName" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,50,Percent,50" /&gt;&lt;Rows Styles="AutoSize,50,AutoSize,20" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
+  <data name="tableLayoutPanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
   <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 79</value>
+    <value>5, 60</value>
   </data>
   <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1126, 577</value>
+    <value>1133, 605</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1575,7 +1575,7 @@
     <value>3, 38</value>
   </data>
   <data name="fileFolderList1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>424, 488</value>
+    <value>426, 517</value>
   </data>
   <data name="fileFolderList1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>

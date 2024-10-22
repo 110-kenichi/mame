@@ -447,6 +447,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         /// <param name="control"></param>
         protected void AddControl(RegisterContainerBase control)
         {
+            SetControlFont(control);
+
             controls.Add(control.RegisterName, control);
 
             control.Dock = DockStyle.Top;

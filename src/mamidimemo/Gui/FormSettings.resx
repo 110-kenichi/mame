@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="buttonOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 22</value>
+    <value>362, 22</value>
   </data>
   <data name="buttonOk.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -151,7 +151,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>464, 22</value>
+    <value>468, 22</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -265,7 +265,7 @@
     <value>3, 3</value>
   </data>
   <data name="numericUpDown1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>349, 29</value>
+    <value>353, 29</value>
   </data>
   <data name="numericUpDown1.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -289,7 +289,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>358, 0</value>
+    <value>362, 0</value>
   </data>
   <data name="metroLabel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>52, 35</value>
@@ -328,7 +328,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>413, 35</value>
+    <value>417, 35</value>
   </data>
   <data name="tableLayoutPanel4.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -370,7 +370,7 @@
     <value>147, 73</value>
   </data>
   <data name="comboBoxAudioLatency.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 29</value>
+    <value>413, 29</value>
   </data>
   <data name="comboBoxAudioLatency.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -442,7 +442,7 @@
     <value>147, 3</value>
   </data>
   <data name="comboBoxSoundType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 29</value>
+    <value>413, 29</value>
   </data>
   <data name="comboBoxSoundType.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -484,7 +484,7 @@
     <value>147, 38</value>
   </data>
   <data name="comboBoxSampleRate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 29</value>
+    <value>413, 29</value>
   </data>
   <data name="comboBoxSampleRate.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -688,7 +688,7 @@
     <value>4</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>547, 125</value>
+    <value>551, 125</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -718,7 +718,7 @@
     <value>3, 108</value>
   </data>
   <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>553, 148</value>
+    <value>557, 148</value>
   </data>
   <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -784,7 +784,7 @@
     <value>Fill</value>
   </data>
   <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>365, 2</value>
+    <value>369, 2</value>
   </data>
   <data name="button1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -817,7 +817,7 @@
     <value>3, 3</value>
   </data>
   <data name="textBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>357, 29</value>
+    <value>361, 29</value>
   </data>
   <data name="textBox1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -847,7 +847,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>413, 35</value>
+    <value>417, 35</value>
   </data>
   <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -916,7 +916,7 @@
     <value>147, 301</value>
   </data>
   <data name="metroComboBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 29</value>
+    <value>413, 29</value>
   </data>
   <data name="metroComboBox1.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1018,7 +1018,7 @@
     <value>147, 375</value>
   </data>
   <data name="comboBoxTV.Size" type="System.Drawing.Size, System.Drawing">
-    <value>409, 29</value>
+    <value>413, 29</value>
   </data>
   <data name="comboBoxTV.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1045,7 +1045,7 @@
     <value>9</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>563, 468</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1084,13 +1084,13 @@
     <value>Yu Gothic UI, 12pt</value>
   </data>
   <data name="tableLayoutPanel5.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 568</value>
+    <value>5, 570</value>
   </data>
   <data name="tableLayoutPanel5.RowCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="tableLayoutPanel5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>567, 48</value>
+    <value>571, 48</value>
   </data>
   <data name="tableLayoutPanel5.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -1114,7 +1114,7 @@
     <value>4, 38</value>
   </data>
   <data name="tabPage3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>559, 451</value>
+    <value>563, 468</value>
   </data>
   <data name="tabPage3.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1485,10 +1485,10 @@ e.g.) File path</value>
     <value>Fill</value>
   </data>
   <data name="metroTabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 75</value>
+    <value>5, 60</value>
   </data>
   <data name="metroTabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>567, 493</value>
+    <value>571, 510</value>
   </data>
   <data name="metroTabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -1516,12 +1516,6 @@ e.g.) File path</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 12pt</value>
-  </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>7, 75, 7, 12</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>

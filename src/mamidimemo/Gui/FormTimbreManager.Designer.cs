@@ -82,9 +82,9 @@
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
             this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBoxSetDrumKeyNo = new System.Windows.Forms.CheckBox();
+            this.checkBoxSetDrumKeyNo = new MetroFramework.Controls.MetroCheckBox();
             this.comboBoxDrumKeyNo = new System.Windows.Forms.ComboBox();
-            this.checkBoxSetDrumTimbreName = new System.Windows.Forms.CheckBox();
+            this.checkBoxSetDrumTimbreName = new MetroFramework.Controls.MetroCheckBox();
             this.betterFolderBrowser1 = new WK.Libraries.BetterFolderBrowserNS.BetterFolderBrowser(this.components);
             this.toolStrip2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -744,8 +744,8 @@
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem propertyToolStripMenuItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
-        private System.Windows.Forms.CheckBox checkBoxSetDrumKeyNo;
-        private System.Windows.Forms.CheckBox checkBoxSetDrumTimbreName;
+        private MetroFramework.Controls.MetroCheckBox checkBoxSetDrumKeyNo;
+        private MetroFramework.Controls.MetroCheckBox checkBoxSetDrumTimbreName;
         private System.Windows.Forms.ComboBox comboBoxDrumKeyNo;
         private System.Windows.Forms.ComboBox comboBoxDir;
     }

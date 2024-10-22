@@ -1079,9 +1079,9 @@
             // 
             this.labelTitle.AllowDrop = true;
             this.labelTitle.AutoEllipsis = true;
+            resources.ApplyResources(this.labelTitle, "labelTitle");
             this.labelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(126)))), ((int)(((byte)(0)))));
             this.tableLayoutPanel1.SetColumnSpan(this.labelTitle, 4);
-            resources.ApplyResources(this.labelTitle, "labelTitle");
             this.labelTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(115)))), ((int)(((byte)(63)))), ((int)(((byte)(0)))));
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.UseMnemonic = false;
@@ -1451,7 +1451,8 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(609, 609);
+            resources.ApplyResources(this.toolStrip1, "toolStrip1");
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(913, 913);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this.toolStripComboBoxMidiIfA,
@@ -1465,7 +1466,6 @@
             this.toolStripButtonVGM,
             this.toolStripButtonXGM,
             this.toolStripButtonXGM2});
-            resources.ApplyResources(this.toolStrip1, "toolStrip1");
             this.toolStrip1.Name = "toolStrip1";
             // 
             // toolStripLabel1

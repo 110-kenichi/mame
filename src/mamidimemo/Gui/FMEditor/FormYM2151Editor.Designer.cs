@@ -95,9 +95,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(832, 551);
-            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "FormYM2151Editor";
-            this.Padding = new System.Windows.Forms.Padding(12, 118, 12, 19);
             this.Text = "YM2151 Editor";
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();

@@ -958,6 +958,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM2612Editor.resx">
       <DependentUpon>FormYM2612Editor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\FMEditor\FormYM2151Editor.resx">
       <DependentUpon>FormYM2151Editor.cs</DependentUpon>

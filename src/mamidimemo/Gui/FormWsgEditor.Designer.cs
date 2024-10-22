@@ -58,7 +58,7 @@
             this.graphControl.Margin = new System.Windows.Forms.Padding(4);
             this.graphControl.Name = "graphControl";
             this.graphControl.ResultOfWsgData = null;
-            this.graphControl.Size = new System.Drawing.Size(898, 525);
+            this.graphControl.Size = new System.Drawing.Size(906, 564);
             this.graphControl.TabIndex = 0;
             this.graphControl.WsgBitWide = 4;
             // 
@@ -66,7 +66,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(802, 630);
+            this.buttonCancel.Location = new System.Drawing.Point(810, 669);
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(100, 23);
@@ -77,7 +77,7 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(694, 630);
+            this.buttonOk.Location = new System.Drawing.Point(702, 669);
             this.buttonOk.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(100, 23);
@@ -89,17 +89,17 @@
             this.textBoxWsgDataText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this.textBoxWsgDataText, 8);
-            this.textBoxWsgDataText.Location = new System.Drawing.Point(112, 537);
+            this.textBoxWsgDataText.Location = new System.Drawing.Point(112, 576);
             this.textBoxWsgDataText.Margin = new System.Windows.Forms.Padding(4);
             this.textBoxWsgDataText.Name = "textBoxWsgDataText";
-            this.textBoxWsgDataText.Size = new System.Drawing.Size(790, 23);
+            this.textBoxWsgDataText.Size = new System.Drawing.Size(798, 23);
             this.textBoxWsgDataText.TabIndex = 2;
             this.textBoxWsgDataText.TextChanged += new System.EventHandler(this.textBoxWsgDataText_TextChanged);
             // 
             // metroButtonRand1
             // 
             this.metroButtonRand1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonRand1.Location = new System.Drawing.Point(4, 568);
+            this.metroButtonRand1.Location = new System.Drawing.Point(4, 607);
             this.metroButtonRand1.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonRand1.Name = "metroButtonRand1";
             this.metroButtonRand1.Size = new System.Drawing.Size(100, 23);
@@ -135,7 +135,7 @@
             this.tableLayoutPanel1.Controls.Add(this.checkBoxHex, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxTransparent, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 94);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 60);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
@@ -144,13 +144,13 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(906, 657);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(914, 696);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // metroButtonRandom2
             // 
             this.metroButtonRandom2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonRandom2.Location = new System.Drawing.Point(112, 568);
+            this.metroButtonRandom2.Location = new System.Drawing.Point(112, 607);
             this.metroButtonRandom2.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonRandom2.Name = "metroButtonRandom2";
             this.metroButtonRandom2.Size = new System.Drawing.Size(100, 23);
@@ -161,7 +161,7 @@
             // metroButtonFir1
             // 
             this.metroButtonFir1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonFir1.Location = new System.Drawing.Point(4, 599);
+            this.metroButtonFir1.Location = new System.Drawing.Point(4, 638);
             this.metroButtonFir1.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonFir1.Name = "metroButtonFir1";
             this.metroButtonFir1.Size = new System.Drawing.Size(100, 23);
@@ -174,18 +174,18 @@
             this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxFirWeight, 8);
             this.metroTextBoxFirWeight.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::zanac.MAmidiMEmo.Properties.Settings.Default, "WsgFirWeight", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.metroTextBoxFirWeight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(112, 599);
+            this.metroTextBoxFirWeight.Location = new System.Drawing.Point(112, 638);
             this.metroTextBoxFirWeight.Margin = new System.Windows.Forms.Padding(4);
             this.metroTextBoxFirWeight.Name = "metroTextBoxFirWeight";
             this.metroTextBoxFirWeight.PromptText = "Set FIR weights like \"1,1,1,1,1\"";
-            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(790, 23);
+            this.metroTextBoxFirWeight.Size = new System.Drawing.Size(798, 23);
             this.metroTextBoxFirWeight.TabIndex = 11;
             this.metroTextBoxFirWeight.Text = global::zanac.MAmidiMEmo.Properties.Settings.Default.WsgFirWeight;
             // 
             // metroButtonMax
             // 
             this.metroButtonMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonMax.Location = new System.Drawing.Point(802, 568);
+            this.metroButtonMax.Location = new System.Drawing.Point(810, 607);
             this.metroButtonMax.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonMax.Name = "metroButtonMax";
             this.metroButtonMax.Size = new System.Drawing.Size(100, 23);
@@ -196,7 +196,7 @@
             // metroButtonSin
             // 
             this.metroButtonSin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSin.Location = new System.Drawing.Point(220, 568);
+            this.metroButtonSin.Location = new System.Drawing.Point(220, 607);
             this.metroButtonSin.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSin.Name = "metroButtonSin";
             this.metroButtonSin.Size = new System.Drawing.Size(100, 23);
@@ -207,7 +207,7 @@
             // metroButtonSaw
             // 
             this.metroButtonSaw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSaw.Location = new System.Drawing.Point(328, 568);
+            this.metroButtonSaw.Location = new System.Drawing.Point(328, 607);
             this.metroButtonSaw.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSaw.Name = "metroButtonSaw";
             this.metroButtonSaw.Size = new System.Drawing.Size(100, 23);
@@ -218,7 +218,7 @@
             // metroButtonSq
             // 
             this.metroButtonSq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonSq.Location = new System.Drawing.Point(436, 568);
+            this.metroButtonSq.Location = new System.Drawing.Point(436, 607);
             this.metroButtonSq.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonSq.Name = "metroButtonSq";
             this.metroButtonSq.Size = new System.Drawing.Size(100, 23);
@@ -229,7 +229,7 @@
             // metroButtonTri
             // 
             this.metroButtonTri.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.metroButtonTri.Location = new System.Drawing.Point(544, 568);
+            this.metroButtonTri.Location = new System.Drawing.Point(544, 607);
             this.metroButtonTri.Margin = new System.Windows.Forms.Padding(4);
             this.metroButtonTri.Name = "metroButtonTri";
             this.metroButtonTri.Size = new System.Drawing.Size(100, 23);
@@ -243,7 +243,7 @@
             this.checkBoxHex.Checked = global::zanac.MAmidiMEmo.Properties.Settings.Default.WsgHex;
             this.checkBoxHex.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.MAmidiMEmo.Properties.Settings.Default, "WsgHex", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxHex.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxHex.Location = new System.Drawing.Point(3, 536);
+            this.checkBoxHex.Location = new System.Drawing.Point(3, 575);
             this.checkBoxHex.Name = "checkBoxHex";
             this.checkBoxHex.Size = new System.Drawing.Size(102, 25);
             this.checkBoxHex.TabIndex = 1;
@@ -256,7 +256,7 @@
             this.checkBoxTransparent.Checked = global::zanac.MAmidiMEmo.Properties.Settings.Default.WsgTransparent;
             this.checkBoxTransparent.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.MAmidiMEmo.Properties.Settings.Default, "WsgTransparent", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxTransparent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxTransparent.Location = new System.Drawing.Point(3, 629);
+            this.checkBoxTransparent.Location = new System.Drawing.Point(3, 668);
             this.checkBoxTransparent.Name = "checkBoxTransparent";
             this.checkBoxTransparent.Size = new System.Drawing.Size(102, 25);
             this.checkBoxTransparent.TabIndex = 14;
@@ -270,10 +270,8 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(924, 766);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormWsgEditor";
-            this.Padding = new System.Windows.Forms.Padding(9, 94, 9, 15);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;

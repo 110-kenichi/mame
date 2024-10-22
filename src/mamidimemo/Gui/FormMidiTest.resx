@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="button1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>481, 547</value>
+    <value>503, 559</value>
   </data>
   <data name="button1.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -139,7 +139,7 @@
     <value>button1</value>
   </data>
   <data name="&gt;&gt;button1.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;button1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -166,7 +166,7 @@
     <value>3, 3, 3, 3</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 26</value>
+    <value>160, 26</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -190,7 +190,7 @@
     <value>0</value>
   </data>
   <data name="comboBoxOutPort.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 3</value>
+    <value>169, 3</value>
   </data>
   <data name="comboBoxOutPort.Size" type="System.Drawing.Size, System.Drawing">
     <value>256, 20</value>
@@ -217,7 +217,7 @@
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 399</value>
+    <value>3, 426</value>
   </data>
   <data name="label3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -253,7 +253,7 @@
     <value>NoControl</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 417</value>
+    <value>3, 444</value>
   </data>
   <data name="label4.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -289,7 +289,7 @@
     <value>Fill</value>
   </data>
   <data name="labelSendTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 399</value>
+    <value>169, 426</value>
   </data>
   <data name="labelSendTime.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -328,7 +328,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelReceiveTime.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 417</value>
+    <value>169, 444</value>
   </data>
   <data name="labelReceiveTime.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
@@ -905,7 +905,7 @@
     <value>3, 29</value>
   </data>
   <data name="pictureBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>545, 367</value>
+    <value>589, 394</value>
   </data>
   <data name="pictureBox1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -932,7 +932,7 @@
     <value>Fill</value>
   </data>
   <data name="metroButtonGo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 438</value>
+    <value>169, 465</value>
   </data>
   <data name="metroButtonGo.Size" type="System.Drawing.Size, System.Drawing">
     <value>256, 22</value>
@@ -947,7 +947,7 @@
     <value>metroButtonGo</value>
   </data>
   <data name="&gt;&gt;metroButtonGo.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;metroButtonGo.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -965,13 +965,13 @@
     <value>NoControl</value>
   </data>
   <data name="labelSpan.Location" type="System.Drawing.Point, System.Drawing">
-    <value>409, 417</value>
+    <value>431, 444</value>
   </data>
   <data name="labelSpan.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="labelSpan.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 18</value>
+    <value>161, 18</value>
   </data>
   <data name="labelSpan.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -995,13 +995,13 @@
     <value>8</value>
   </data>
   <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>30, 78</value>
+    <value>8, 63</value>
   </data>
   <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>551, 463</value>
+    <value>595, 490</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1024,17 +1024,11 @@
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>96, 96</value>
+  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>611, 593</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>27, 75, 27, 22</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>

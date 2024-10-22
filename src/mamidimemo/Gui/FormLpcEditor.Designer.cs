@@ -110,7 +110,6 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(588, 613);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(0);
             this.MinimizeBox = false;
             this.Name = "FormLpcEditor";
             this.ShowIcon = false;

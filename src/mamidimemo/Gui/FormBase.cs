@@ -29,6 +29,8 @@ namespace zanac.MAmidiMEmo.Gui
         {
             InitializeComponent();
 
+            ((Form)this).Padding = new System.Windows.Forms.Padding(5, DisplayHeader ? 60 : 30, 5, 5);
+
             ApplyFontSize();
         }
 
@@ -123,6 +125,14 @@ namespace zanac.MAmidiMEmo.Gui
                 return false;
             else if (c is ComboBox)
                 return false;
+            else if (c is ListView)
+                return false;
+            else if (c is GroupBox)
+                return false;
+            else if (c is PropertyGrid)
+                return false;
+            else if (c is Label)
+                return false;
 
             return true;
         }
@@ -142,15 +152,38 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (c is NumericUpDown)
             {
-                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
                 c.Controls[1].Font = c.Font;
                 c.Margin = new Padding(1);
             }
             else if (c is ComboBox)
             {
-                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
                 SetComboBoxHeight(c.Handle,c.Font.Height);
             }
+            else if (c is ListView)
+            {
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
+            }
+            else if (c is Label)
+            {
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
+            }
+            else if (c is PropertyGrid)
+            {
+                SetAllControlsFont(c, new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size));
+            }
+        }
+
+        protected void SetAllControlsFont(Control target, Font font)
+        {
+            foreach (Control child in target.Controls)
+            {
+                // recursive
+                if (child.Controls != null)
+                    SetAllControlsFont(child, font);
+            };
+            target.Font = font;
         }
 
         protected override void OnControlAdded(ControlEventArgs e)
@@ -181,6 +214,34 @@ namespace zanac.MAmidiMEmo.Gui
             }
 
             base.OnControlAdded(e);
+        }
+
+        public void SetControlFont(Control control)
+        {
+            if (Program.GuiScale != 0)
+            {
+                SetAllControlsFontSize(control, Program.GuiScale);
+                if (canSetFontSize(control))
+                    scaleFont.Invoke(control, new object[] { 1f + Program.GuiScale });
+                else
+                    setDefaultFontSize(control);
+            }
+            if (control.GetType().Name.Equals("MetroFormButton"))
+            {
+                switch (control.Text)
+                {
+                    case "r":   //Close;
+                    case "0":   //Minimize;
+                    case "1":   //Maximize Normal;
+                    case "2":   //Maximize Maximized;
+                        var sf = 1f + Program.GuiScale;
+                        control.Size = new System.Drawing.Size
+                            ((int)Math.Round(control.Size.Width * sf),
+                            (int)Math.Round(control.Size.Height * sf));
+                        control.Location = new Point(0, 0);
+                        break;
+                }
+            }
         }
 
         protected void SetAllControlsFontSize(Control target, float amount)
@@ -234,6 +295,17 @@ namespace zanac.MAmidiMEmo.Gui
                     ignoreFontChanged = false;
                 }
             }
+        }
+
+        protected override void OnCreateControl()
+        {
+            var pm = 1f + Program.GuiScale;
+            int pm5 = (int)Math.Round(5 * pm);
+            int pm30 = (int)Math.Round((DisplayHeader ? 60 : 30) * pm);
+            var pad = new System.Windows.Forms.Padding(pm5, pm30, pm5, pm5);
+            ((Form)this).Padding = pad;
+
+            base.OnCreateControl();
         }
     }
 }
