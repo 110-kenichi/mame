@@ -70,6 +70,10 @@ tR_mode:
 	LD	    IY,(EXPTBL)
 	CALL	CALSLT  ;CALSLT
 
+    ;PCM MUTE=OFF,ADDABUFF=SINGLE
+	LD	    A,#3
+    OUT     (#0xA5),A
+
 	LD	    HL,#STR_TR
 	CALL	STRPUT
     JP      endCheckCPU
@@ -349,7 +353,7 @@ __ENA_SCC:
 
 ;=======================================================
     .ORG 0x7500
-    JP __VGM_LOOP       ; 
+    __WRITE_TR_DAC
 
 ;=======================================================
     .ORG 0x7600

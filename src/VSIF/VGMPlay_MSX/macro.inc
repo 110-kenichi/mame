@@ -172,6 +172,7 @@ __WRITE_PSG_IO:
     LD  L,#0            ;       ;Zero clear
     JP  (HL)            ; 94
     .endm
+
 ;=======================================================
 
 	.macro __WRITE_OPLL_IO
@@ -745,6 +746,43 @@ __WRITE_OPN2_DAC:
     LD  A,D             ;  5
     OUT (OPN2WR1),A     ; 12 17 
 
+    ; Continuous Write
+    LD  E,#0x1F         ; 30 85
+;=======================
+1$:
+    IN  A,(PSGRD)       ; 
+    AND #0x20           ; 
+    JP  Z, 1$           ; 
+    IN  A,(PSGRD)       ; 
+    AND	E               ; 
+    CP  E               ; 
+    JP  Z,0$            ;     ; Continuous Write
+
+    OR  #JPOFST         ; 
+    LD  H,A             ; 
+    LD  L,#0            ; 
+    JP  (HL)            ; 90  ; Jump to other ID
+    .endm
+;=======================================================
+
+    .macro __WRITE_TR_DAC
+__WRITE_TR_DAC:
+    LD  C,#14           ; 7 14
+    LD  B,#0            ; 7 14
+0$:
+;=======================
+    READ_DATA           ; 55
+
+    LD  A,B             ;  5 60
+    OUT (PSGAD),A       ; 12 72
+    
+    LD  A,D             ;  5 77
+    OUT (TRDAC),A       ; 12 89 
+
+    ; JOY2 Pin Read Mode
+    LD  A,C             ;  5 94
+    OUT (PSGAD),A       ; 12 106
+    
     ; Continuous Write
     LD  E,#0x1F         ; 30 85
 ;=======================

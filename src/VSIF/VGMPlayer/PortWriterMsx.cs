@@ -177,6 +177,27 @@ namespace zanac.VGMPlayer
                         lastDataType = dt.Type;
                         lastWriteAddress = dt.Address;
                         break;
+                    case 0x15:
+                        if (lastWriteAddress == 0x0 && //tR DAC write
+                            lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                        {
+                            byte[] sd = new byte[3] {
+                                    (byte)(0x1f              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                            ds.AddRange(sd);
+                        }
+                        else
+                        {
+                            byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                            };
+                            ds.AddRange(sd);
+                        }
+                        lastDataType = dt.Type;
+                        lastWriteAddress = dt.Address;
+                        break;
                     default:
                         {
                             if ((dt.Type == 0xa || dt.Type == 0xb) && lastWriteAddress == 0xf && //YM8950 ADPCM write

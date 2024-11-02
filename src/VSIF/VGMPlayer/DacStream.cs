@@ -162,6 +162,18 @@ namespace zanac.VGMPlayer
                                         byte bdata = (byte)((ddata >> 8));
                                         parentSong.DeferredWriteOPNA_DAC(comPortOPNA, bdata);
                                     }
+                                    else
+                                    {
+                                        foreach (var c in VsifManager.GetVsifClients())
+                                        {
+                                            if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && c.Tag.ContainsKey("ProxyOKIM6258"))
+                                            {
+                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                parentSong.DeferredWriteTurboR_DAC(c, bdata);
+                                                break;
+                                            }
+                                        }
+                                    }
                                     pd.StreamIdx -= pd.StreamIdxDir;
                                     pd.Oki6285Adpcm2ndNibble = true;
                                 }
@@ -181,6 +193,18 @@ namespace zanac.VGMPlayer
                                     {
                                         byte bdata = (byte)((ddata >> 8));
                                         parentSong.DeferredWriteOPNA_DAC(comPortOPNA, bdata);
+                                    }
+                                    else
+                                    {
+                                        foreach (var c in VsifManager.GetVsifClients())
+                                        {
+                                            if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                            {
+                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                parentSong.DeferredWriteTurboR_DAC(c, bdata);
+                                                break;
+                                            }
+                                        }
                                     }
                                     pd.Oki6285Adpcm2ndNibble = false;
                                 }

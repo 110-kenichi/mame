@@ -154,6 +154,16 @@ namespace zanac.VGMPlayer
 
                         parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
                     }
+                    else if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxyOKIM6295"))
+                    {
+                        int dt = ((dtL + dtR) / 2) >> 8;
+
+                        if (dt > sbyte.MaxValue)
+                            dt = sbyte.MaxValue;
+                        else if (dt < sbyte.MinValue)
+                            dt = sbyte.MinValue;
+                        parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                    }
                 }
 
                 QueryPerformanceCounter(out after);

@@ -235,6 +235,7 @@ namespace zanac.VGMPlayer
                             }
                             break;
                         case VsifSoundModuleType.MSX_FTDI:
+                        case VsifSoundModuleType.TurboR_FTDI:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
                                 var stat = ftdi.OpenByIndex((uint)comPort);
@@ -419,6 +420,7 @@ namespace zanac.VGMPlayer
         Gimic,
         PC88_FTDI,
         SMS_FTDI,
+        TurboR_FTDI,
     }
 
 

@@ -1170,7 +1170,8 @@ namespace zanac.VGMPlayer
             this.comboBoxSCC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSCC.FormattingEnabled = true;
             this.comboBoxSCC.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)"});
+            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxSCC.Location = new System.Drawing.Point(3, 3);
             this.comboBoxSCC.Name = "comboBoxSCC";
             this.comboBoxSCC.Size = new System.Drawing.Size(204, 20);
@@ -1581,7 +1582,8 @@ namespace zanac.VGMPlayer
             "VSIF - SMS(UART 115Kbps)",
             "VSIF - MD/Genesis(UART 115Kbps)",
             "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - SMS(FTDI2XX Clk: 232R=20~,H=25~)"});
+            "VSIF - SMS(FTDI2XX Clk: 232R=20~,H=25~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxDCSG.Location = new System.Drawing.Point(163, 50);
             this.comboBoxDCSG.Name = "comboBoxDCSG";
             this.comboBoxDCSG.Size = new System.Drawing.Size(336, 20);
@@ -2161,7 +2163,8 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.FormattingEnabled = true;
             this.comboBoxY8910.Items.AddRange(new object[] {
             "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - Generic(UART 115Kbps)"});
+            "VSIF - Generic(UART 115Kbps)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxY8910.Location = new System.Drawing.Point(163, 128);
             this.comboBoxY8910.Name = "comboBoxY8910";
             this.comboBoxY8910.Size = new System.Drawing.Size(336, 20);
@@ -2539,7 +2542,8 @@ namespace zanac.VGMPlayer
             "VSIF - MD/Genesis(UART 163Kbps)",
             "VSIF - MD/Genesis(FTDI2XX Clk: 232R=8~,H=9~)",
             "VSIF - MD/Genesis(UART 115Kbps)",
-            "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)"});
+            "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPN2.Location = new System.Drawing.Point(163, 24);
             this.comboBoxOPN2.Name = "comboBoxOPN2";
             this.comboBoxOPN2.Size = new System.Drawing.Size(336, 20);
@@ -3182,7 +3186,8 @@ namespace zanac.VGMPlayer
             "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player",
-            "G.I.M.I.C"});
+            "G.I.M.I.C",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPM.Location = new System.Drawing.Point(3, 3);
             this.comboBoxOPM.Name = "comboBoxOPM";
             this.comboBoxOPM.Size = new System.Drawing.Size(205, 20);
@@ -3228,7 +3233,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPLL.Items.AddRange(new object[] {
             "VSIF - SMS(UART 115Kbps)",
             "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - SMS(FTDI2XX Clk: 232R=20~,H=25~)"});
+            "VSIF - SMS(FTDI2XX Clk: 232R=20~,H=25~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPLL.Location = new System.Drawing.Point(3, 3);
             this.comboBoxOPLL.Name = "comboBoxOPLL";
             this.comboBoxOPLL.Size = new System.Drawing.Size(204, 20);
@@ -3269,7 +3275,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPL3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOPL3.FormattingEnabled = true;
             this.comboBoxOPL3.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)"});
+            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPL3.Location = new System.Drawing.Point(163, 180);
             this.comboBoxOPL3.Name = "comboBoxOPL3";
             this.comboBoxOPL3.Size = new System.Drawing.Size(336, 20);
@@ -3582,7 +3589,8 @@ namespace zanac.VGMPlayer
             "SPFM Light - 4759 Player",
             "SPFM - 4759 Player",
             "G.I.M.I.C",
-            "VSIF - PC-8801 V2(FTDI2XX Clk: 232R=10~,H=20~)"});
+            "VSIF - PC-8801 V2(FTDI2XX Clk: 232R=10~,H=20~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPNA.Location = new System.Drawing.Point(163, 206);
             this.comboBoxOPNA.Name = "comboBoxOPNA";
             this.comboBoxOPNA.Size = new System.Drawing.Size(336, 20);
@@ -4192,7 +4200,8 @@ namespace zanac.VGMPlayer
             this.comboBoxY8950.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxY8950.FormattingEnabled = true;
             this.comboBoxY8950.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)"});
+            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxY8950.Location = new System.Drawing.Point(3, 3);
             this.comboBoxY8950.Name = "comboBoxY8950";
             this.comboBoxY8950.Size = new System.Drawing.Size(205, 20);
@@ -4247,7 +4256,8 @@ namespace zanac.VGMPlayer
             this.comboBoxOPN.FormattingEnabled = true;
             this.comboBoxOPN.Items.AddRange(new object[] {
             "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - PC-8801 V2(FTDI2XX Clk: 232R=10~,H=20~)"});
+            "VSIF - PC-8801 V2(FTDI2XX Clk: 232R=10~,H=20~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxOPN.Location = new System.Drawing.Point(163, 258);
             this.comboBoxOPN.Name = "comboBoxOPN";
             this.comboBoxOPN.Size = new System.Drawing.Size(336, 20);
@@ -5480,7 +5490,8 @@ namespace zanac.VGMPlayer
             this.comboBoxSAA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSAA.FormattingEnabled = true;
             this.comboBoxSAA.Items.AddRange(new object[] {
-            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)"});
+            "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxSAA.Location = new System.Drawing.Point(163, 336);
             this.comboBoxSAA.Name = "comboBoxSAA";
             this.comboBoxSAA.Size = new System.Drawing.Size(336, 20);
@@ -5840,7 +5851,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.71 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.72 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

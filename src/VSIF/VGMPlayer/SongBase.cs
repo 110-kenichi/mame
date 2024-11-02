@@ -1003,6 +1003,7 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
                     comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
@@ -1090,6 +1091,7 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
                     comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
@@ -1147,7 +1149,8 @@ namespace zanac.VGMPlayer
             if (lastOpn2DacValue == dacValue)
                 return;
 
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
+                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
                 comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -1175,6 +1178,7 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
                     //Set volume for pseudo DAC
                     comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
                     //outputAdpcm(comPort, lastWriteDacValue);
@@ -1214,6 +1218,7 @@ namespace zanac.VGMPlayer
             switch (comPortOPNA.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
                     deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)dacValue);
                     //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
@@ -1295,7 +1300,8 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
+                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
                 comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -1370,7 +1376,8 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPN2_P1(VsifClient comPortOPN2, int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI)
+            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
+                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
                 comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
             }
@@ -1486,6 +1493,27 @@ namespace zanac.VGMPlayer
                 predictValue = 127;
             else if (predictValue > 24576)
                 predictValue = 24576;
+        }
+
+
+        int lastTurboRDacValue;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adrs"></param>
+        /// <param name="dacValue"></param>
+        public void DeferredWriteTurboR_DAC(VsifClient comPortTurboR, int dacValue)
+        {
+            if (Settings.Default.DisableDAC)
+                return;
+
+            if (lastTurboRDacValue == dacValue)
+                return;
+
+            comPortTurboR.DeferredWriteData(0x15, (byte)0x0, (byte)dacValue, (int)(decimal)comPortTurboR.Tag["ClockWidth"]);
+
+            lastOpnaDacValue = dacValue;
         }
     }
 

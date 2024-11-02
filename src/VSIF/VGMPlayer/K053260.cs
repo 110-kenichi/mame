@@ -121,13 +121,23 @@ namespace zanac.VGMPlayer
 
                         parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
                     }
+                    else if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxyK053260"))
+                    {
+                        int dt = ((dtL + dtR) / 2) >> 8;
+
+                        if (dt > sbyte.MaxValue)
+                            dt = sbyte.MaxValue;
+                        else if (dt < sbyte.MinValue)
+                            dt = sbyte.MinValue;
+                        parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                    }
                 }
 
                 QueryPerformanceCounter(out after);
                 double nextTime = dbefore + ((double)freq / (sampleRate / (double)multiply));
                 while (after < nextTime)
                     QueryPerformanceCounter(out after);
-                dbefore = nextTime ;
+                dbefore = nextTime;
             }
         }
 
