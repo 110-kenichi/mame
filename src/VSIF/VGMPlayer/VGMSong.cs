@@ -4141,12 +4141,12 @@ namespace zanac.VGMPlayer
                             if ((command == 0x66 || command == -1))
                             {
                                 flushDeferredWriteData();
-                                if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                                if ((!LoopByCount || (LoopByCount && LoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
                                     && !LoopByElapsed)
                                 {
                                     break;
                                 }
-                                if (CurrentLoopedCount >= 0)
+                                if (LoopedCount >= 0)
                                     CurrentLoopedCount++;
                             }
                         }
@@ -4173,12 +4173,12 @@ namespace zanac.VGMPlayer
                             throw;
 
                         flushDeferredWriteData();
-                        if ((!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                        if ((!LoopByCount || (LoopByCount && LoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
                             && !LoopByElapsed)
                         {
                             break;
                         }
-                        if (CurrentLoopedCount >= 0)
+                        if (LoopedCount >= 0)
                             CurrentLoopedCount++;
                         vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                     }

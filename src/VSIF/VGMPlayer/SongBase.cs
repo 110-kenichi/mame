@@ -224,7 +224,7 @@ namespace zanac.VGMPlayer
             FormMain.TopForm.SetElapsedTime(stopwatch.Elapsed);
             if (stopwatch.Elapsed > LoopTimes && LoopByElapsed)
             {
-                if (!LoopByCount || (LoopByCount && CurrentLoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
+                if (!LoopByCount || (LoopByCount && LoopedCount >= 0 && CurrentLoopedCount >= LoopedCount))
                 {
                     Stop();
                     NotifyFinished();

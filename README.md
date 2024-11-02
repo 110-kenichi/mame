@@ -1,4 +1,4 @@
-MAmidiMEmo 5.7.1.2 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.7.1.3 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+5.7.1.3 Updated VGMPlayer(only) to fix loop counter.
 5.7.1.2 Updated VGMPlayer(only) to support MSXturboR DAC to play SEGA PCM, K053260, OKIM6285.
 5.7.1.1 Re-improved Hi-DPI screen handling.
 5.7.1.0 Improved Hi-DPI screen handling.
