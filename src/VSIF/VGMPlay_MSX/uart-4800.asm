@@ -40,7 +40,7 @@ JPOFST = 0x60
 ;=======================================================
     .ORG 0x5000
 
-STR_TR:	            .ascii	"\r\n*turbo R mode$"
+STR_TR:	            .ascii	"\r\n*turboR mode$"
 STR_WX_Z80B:	    .ascii	"\r\n*WX Z80B mode$"
 
 _uart_processVgm::
@@ -71,7 +71,7 @@ tR_mode:
 	CALL	CALSLT  ;CALSLT
 
     ;PCM MUTE=OFF,ADDABUFF=SINGLE
-	LD	    A,#3
+	LD	    A,#2
     OUT     (#0xA5),A
 
 	LD	    HL,#STR_TR
