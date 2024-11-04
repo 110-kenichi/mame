@@ -74,6 +74,9 @@ tR_mode:
 	LD	    A,#2
     OUT     (#0xA5),A
 
+    LD      A,#127
+    OUT     (TRDAC),A
+
 	LD	    HL,#STR_TR
 	CALL	STRPUT
     JP      endCheckCPU
@@ -115,8 +118,7 @@ endCheckCPU:
     OUT (PSGWR),A    ;    Set Joy2 Pin Input Mode
 
     ; JOY2 Pin Read Mode
-    LD  C,#14           ; 7 14
-    LD  A,C             ; 
+    LD  A,#14           ; 7 14
     OUT (PSGAD),A       ; 
 
     ;JP  TEST_CHG_P2

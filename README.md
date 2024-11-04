@@ -1,4 +1,4 @@
-MAmidiMEmo 5.7.1.4 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.7.1.5 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,554 +274,558 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
-5.7.1.4 Updated VGMPlayer(only) to fix MSXturboR DAC ADDA mode.
-5.7.1.3 Updated VGMPlayer(only) to fix loop counter.
-5.7.1.2 Updated VGMPlayer(only) to support MSXturboR DAC to play SEGA PCM, K053260, OKIM6285.
-5.7.1.1 Re-improved Hi-DPI screen handling.
-5.7.1.0 Improved Hi-DPI screen handling.
-5.7.0.0 Supported \*.mop\* file importing on TimbreManager.
-5.6.18.0 Fixed Multi-Media Keys handling.
-5.6.17.0 Fixed Hold Off MIDI message handling.
-5.6.16.0 Fixed ch9-18 address calculation for OPL3 for SCCI.
-5.6.15.0 Showed the program number name on ProgramNumbers property.
-         Fixed ModulationRateShift prop is not working property.
-5.6.14.0 Added external tool path settings on the Option dialog. Youcan launch the tool from the FM Tone Editor.
-5.6.13.0 Added properties regarding modulation offset to the Midi Driver Settings on a Timbre.
-5.6.12.1 Fixed some VGM file's tempo is too slow. (Rate values in VGM files are now ignored.)
-5.6.12.0 Fixed AMD,PMD for OPM and OPZ. AMD and PMD can be handled simultaneously rather than exclusively.
-		 OPM engine changed to the ymfm.
-5.6.11.0 Supported VGI file importing.
-		 Fixed some missing register values when importing FM tone files.
-5.6.10.0 FM TimbreEditor allows copy/paste tone data from/to Clipboard.
-		 Fixed Pcm data loading size is too long.
-		 Improved DAC transfer rate.
-5.6.9.1 Fixed MaxDacPcmVoices causes exception.
-		Included manuals
-5.6.9.0 Improved FM Editor function.
-5.6.8.2 Fixed XGM2 PCM.
-5.6.8.1 Fixed XGM/XGM2 Recording.
-		Fixed an issue where pressing the Enter key would unintentionally close the editor window.
-		Fixed sequential numbering of saved file names
-5.6.8.0 Fixed play status icon in LCD area does not change after playing stopped.
-		Remembered FM register patch file path information for FM Timbre.
-		Added "Privacy" settings to the settings dialog.
-		Enabled turboR mode for VSIF for MSX (VGM_msx*.rom). ( Pressing Z key to disable tR mode while booting ) 
-5.6.7.0 Added MIDI ChanelTypes value "Drum(Ignore GateTime)".
-5.6.6.1 Fixed DAC in YM2612 Software SoundEngine.
-5.6.6.0 Supported DAC in YM2612 Software SoundEngine. (Other chips are available upon your request)
-5.6.5.1 Fixed Timbre.AssignMIDIChtoSlotNumOffset not working properly.
-5.6.5.0 Supported 24bit WAVE file importing.
-		Added Timbre List Window. You can open it from context menu of the Instrument icon.
-		Fixed FM Editor DR, SL lines drawing for OPL series.
-5.6.4.0 Added MRU and autocomplete function to directory textbox in TimbreManager.
-		Fixed MonoMode may not work properly when CombinedTimbre is sounded.
-5.6.3.0 Fixed problem with Timbre being replaced when dragging and dropping WAV files.
-		Added the function to set DrumTimbre as well in TimbreManager.
-5.6.2.2 Changed the copy function of Timbre when drag & drop in TimbreManager and DrumEditor from the Shift key to the Ctrl key.
-5.6.2.1 Supported YM2149 with YM2608/YM2203 for VGMPlayer
-		Swap Shift key effect for Drag & Drop in TimbreManager and DrumEditor.
-5.6.2.0 Supported SAA1099 for VSIF MSX(FTDI) both MAmidiMEmo and VGMPlayer. You need to update VGM_msx*.rom too.
-5.6.1.0 Added KeyOffStop property to FxS settings. To select envelope release timing of FxEngine when key off.
-5.6.0.0 Supported SAA1099.
-		Fixed envelope release timing of FxEngine when key off.
-        (Preliminary) Supported XGM2 recording and fixed XGM PCM data.
-5.5.0.2 Fixed supporting RF5C68.
-5.5.0.0 Supported G.I.M.I.C STIC OPLL, OPN2*, SPSG, SSG, AYPSG.
-        Supported playing RF5C68 vgm data on MEGA-CD via VGMPlayer.
-5.4.4.0 Supported WAV sample rate auto conversion.
-5.4.3.2 Fixed crashing while launching the x86 MAmi.
-        (Experimentaly) Supported MSX turbo R mode for VSIF. Pressing "Z" key while booting the VGM_msx.rom/VGM_msx_Vkey.rom
-5.4.3.1 Added SMS only special mode for FTDI dongle. OPLL and DSCG can sound simultenaously.
-5.4.3.0 Supported mopm/mopn file importing to OPN*/OPM
-        ★Breaking changes★ Fixed the effect of modulation effects of the ModulationDepthes property.
-5.4.2.0 Fixed incorrect soundding in mono mode.
-5.4.1.0 Supported SPFM for YM2413, YM3812, YMF262, YM3806
-5.4.0.1 Fixed SMS(FTDI) clk generator.
-5.4.0.0 Supported SMS(FTDI). FTDI dongle is compatible with for the Genesis.
-5.3.0.1 Fixed minor bugs related with Font. 
-5.3.0.0 Added Font scale option in the Settings dialog. But not perfect.
-5.2.2.0 Added KeyScaleLevel property on the FxS.
-5.2.1.0 Suported MEGA CD(VSIF Genesis(FTDI)) vgm by VGMPlayer.
-        Note1: No supported streaming vgm data.
-		Note2: There is noise at the start of playback.
-5.2.0.1 Fixed loop off processing for MEGA CD(VSIF Genesis(FTDI)).
-5.2.0.0 Supported RF5C164 and MEGA CD(VSIF Genesis(FTDI)).
-5.1.0.1 YM2608 Software Emulation can not be played via RPC.
-5.1.0.0 Supported YM2608 for RPC server feature. Other applications can control MAmidiMEmo chips via RPC.
-5.0.1.0 Added the ability to specify the number directly in the TimbreNumber setting.
-5.0.0.9 Fixed LoopPoint value when importing SF2 file as 12bit PCM for SEGA MultiPCM.
-5.0.0.8 Fixed noise sounding when D1R is too low for SEGA MultiPCM.
-5.0.0.7 Supported 12bit PCM for SEGA MultiPCM
-5.0.0.6 Fixed importing WAV file for SEGA MultiPCM. You NEED to re-create MultiPCM instrument.
-5.0.0.5 Fixed Panpot for SEGA MultiPCM.
-        Reduced internal gain level for SEGA MultiPCM.
-5.0.0.4 Fixed LoopPoint calculation for SEGA MultiPCM.
-        Fixed BaseFreq when import SF2.
-5.0.0.3 (Again)Fixed frequency calculation for SEGA MultiPCM.
-5.0.0.2 Supported MasterClock and 12bit RAW PCM for SEGA MultiPCM.
-5.0.0.1 Fixed frequency and master clock for SEGA MultiPCM.
-5.0.0.0 Supported SEGA MultiPCM.
-4.9.10.1 Updated VGMPlayer(only) to support PC-8801 OPNA/OPN
-4.9.10.0 Added DAC PCM mode for OPNA. Just a bonus feature :-)
-4.9.9.0 Supported PC-8801 OPNA
-4.9.8.1 Fixed an error on UseAltVRC6Cart prop value set by slider.
-4.9.8.0 FtdiClkWidth to be adjusted when the VSIF connection is to FT232R or not.
-4.9.7.1 Fixed SCC not sounding properly.
-4.9.7.0 Added PcmData12 property to support 12bit PCM data for C140 chip. *Warning* For 12-bit PCM data, the Gain value should be lower than for 8-bit PCM data.
-4.9.6.1 Fixed OPNA/B BaseFreq calculation algorithm when WAV file loading. ( 55000Hz -> 55555.55...Hz )
-4.9.6.0 Fixed RP2A03 VRC6 and FDS upper pitch is 4bit from 3bit.
-        Fixed RP2A03 FDS velocity calculation and added FdsMasterVolume property.
-		Fixed RP2A03 LFO values are not set properly and caclulated.
-		Added RP2A03 Lfo Bias properly.
-4.9.5.0 Fixed SP0256 freezing on high frequency sound.
-        Added the UseAltVRC7Cart property for YM2413 as experimental
-		Fixed unstable reconnection to the SPC700 on the G.I.M.I.C .
-4.9.4.0 Preliminary supported VRC7 (VSIF - Famicom VRC6/7) as YM2413 variant chip DS1001.
-4.9.3.1 Fixed SPC700 emulator keyon/keyoff
-4.9.3.0 Supported a real chip of the SPC700 on the G.I.M.I.C .
-4.9.2.0 Supported MAmi VRC6 CART for RP2A03.
-4.9.1.2 Fixed YM2610B ADPCM-A keyon/keyoff is not working properly.
-4.9.1.1 Fixed YM2610B ADPCM-B panpot is not working properly.
-4.9.1.0 Updated dependent libraries.
-		Fixed SCC/LFO morphing envelopes of SDS.Fx. 1st envelope was not applied properly.
-		Fixed WSG editor. Text editing values were not reflected to GUI properly.
-4.9.0.1 Fixed Receiving ch is not working properly.
-4.9.0.0 Added MIDI THRU instrument.
-        Supported variable pitch and volume for RP2A03 DPCM.
-4.8.2.1 Added VGM_P6M.bin for ROM Cartridge of PC-6001.
-4.8.2.0 Added Copy button on the SCC WSG Morph Editor.
-4.8.1.0 Improved VSIF stability and supported DAC PCM(Real only) for Famicom ★Please update VGMPlay_nes*.nes
-4.8.0.0 Added SCC WSG Morph Editor.
-		Displayed the ToolTip in the FM Timbe Editor only once.
-4.7.9.0 Improved VSTi close processing to avoid crashing on some DAWs.
-		Improved initialize routine for the Real Chip
-		Fixed VGM recording folder is not created.
-4.7.8.2 Remove dummy VSTi window to avoid crashing.
-4.7.8.1 Fixed GUI layout of the Dialog.
-4.7.8.0 Fixed GUI layout of the Dialog for Hi-DPI display. Thanks Akibasuki-san!
-        Fixed freezing while YM2608 ADPCM transferring.
-        Fixed MasterClock handling for SPFM
-        Fixed CombinedTimbre delay sounding
-		Accepted no SEGA, KONAMI, CAPCOM PCM chips to play VGM files
-4.7.7.0 Supported displaying Timbre/CombinedTimbre name for some props.
-4.7.6.2 Supported OKIM6259
-		Improved DAC stream performance for VGM file
-4.7.6.1 Improved DAC PCM souding.
-        Added option dialog for VGMPlayer.
-4.7.6.0 Improved DAC PCM souding timing & XGM/VGM player souding timing.
-4.7.5.1 Fixed DAC nosie for VSIF for Genesis/MD.
-4.7.5.0 Supported DrumTibre.GateTime = 0 for YM2612 DAC PCM to play end of PCM.
-4.7.4.1 Supported K053260 for VGMPlayer.
-4.7.4.0 Supported SEGAPCM for VGMPlayer.
-		Improved DAC performance.
-4.7.3.0 Added Min Max values for Randmizer on FM Timbre Editor.
-		Improved Reset menu behavior for Property
-		Fixed YM2151 Timbre Settings (Degraded at v4.6.9.0)
-4.7.2.0 Added UseExprForModulator, ExprTargetModulators property for the FM Synth Timbre. You can change FM Modulator(Operator) TL by MIDI Expression.
-		Improved DAC performance of VGMPlayer.
-		Added Timbre Manager. You can manage Timbres more easily.
-		Improved Drum Editor function.
-		Fixed VGMPlayer not sounding sound on Genesis/MD with some flashcart.
-4.7.1.0 Improved data transfer speed for FTDI.
-4.7.0.0 Supported XGM recording by NRPN. For more information, see the manual.
-		Fixed XGM DAC playing issue created by MAmi.
-4.6.10.0 Added SerializeData Save/Load feature
-         Supported Import/Export FM tone file as MAmi format.
-		 Re-fixed Save/Load error on DAW.
-		 Fixed VGMPlay DAC volume.
-4.6.9.0 Added ADSR.SR property.
-        Fixed ADSR.SL for SN76489 volume calculation.
-		Fixed Software Envelope ReleasePoint when point is zero.
-		Added AssignMIDIChtoSlotNumOffset property for AssignMIDIChtoSlotNum.
-		Fixed MONO mode. When key on on mono mode ch, completele OFF the last note sound.
-		Reduced crashing while closing DAW.
-		Improved FTDI speed for MAmidiMEmo.
-		Fixed Save/Load error on DAW.
-		(Preliminary) Added sin/sq/tri wave create button on the SW Envelope editor.
-		(Preliminary) Supported LegatoFootSwitch(CC#68). Enabled only MONO = 1 and RecentlyUsedSlot mode.
-		(Preliminary) Supported DAC PCM for YM2612 for REAL HARDWARE.
-4.6.8.1 (Experimentaly)Supported SE mode and 5 ch mode for YM2612.
-		(Experimentaly)Added MIDI ch equals FM ch mode for YM2612 and DCSG( AssignMIDIChtoSlotNum property ).
-4.6.8.0 Added VelocitySensitivity for FM Career TL on MidiDriverSettings.
-		  ★Default value is "2". "0" means Velocity equals TL. "3" is default value of previous version.
-		Improved latency of VSTi module for certain DAW.
-		Added FineTunes Property. FineTunes Property can change by RPN.
-4.6.7.1 Fixed importing *.FF/*.FFOPM file.
-        Fixed velocity is invalid.
-4.6.7.0 Supported importing *.FF/*.FFOPM file.
-4.6.6.2 Not sounding fixed for OPM of GIMIC
-4.6.6.1 Tentatively fixed SID emulator output frequency changes when sample rate is other than 48KHz.
-4.6.6.0 Suppressed F/W dialog at startup. And add the "-chip_server" option to enable RPC server feature to control MAmidiMEmo chips from other applications.
-4.6.5.8 Supported OKI MSM6258 for VGMPlayer. OKI MSM6258 can be sounded by OPNA/OPN2 DAC
-4.6.5.7 Improved performance of G.I.M.I.C .
-4.6.5.6 Supported OPN3-L for proxy of OPNA
-		Reset G.I.M.I.C before start playing a VGM or reset instrument.
-        Fixed freezing while ADPCM data transferring on YM2608 and RP2A03.
-4.6.5.5 Supported OPN3L for G.I.M.I.C as proxy of OPNA.
-4.6.5.3 Fixed OPM could not be selected on VGMPlayer
-4.6.5.2 Supported G.I.M.I.C by VGMPlayer for OPM & OPNA
-		User DirectAccess API for G.I.M.I.C to avoid cache miss
-4.6.5.1 Fixed ADPCM volume cache for YM2608 for GIMIC.
-4.6.5.0 Supported GIMIC for YM2608 & YM2151.
-　　　　  ★Remove c86ctl.dll if exists on the MAmidiMEmo dir if you want to use the GIMIC for YM2608 & YM2151.★
-4.6.4.2 Supported ADPCM light wait mode for SPFM/SPFM Light to play DAC.
-4.6.4.1 Added Chip information area for VGMPlayer.
-4.6.4.0 Fixed MGS file playing not started for VGMPlayer.
-		(Experimantal)Changed VelocityMap and NoteMap property behavior. Parameter changes are temporary, not permanent.
-4.6.3.0 Added the \"$\" keyword for the NoteMap property. The \"$\" keyword indicates its own value.
-4.6.2.0 Added the NoteMap property in the Midi Driver Settings[MDS] in the Timbre settings.
-4.6.1.1 Fixed RP2A03 FDS FreqMulitplyEnvelopes prop processing.
-4.6.1.0 Re-fixed envelopes & MONO mode processing.
-4.6.0.0 Added RP2A03 FDS LFO properties & envelopes.
-		Fixed envelopes processing for some chips.
-4.5.11.2 Improved DAC performance for OPN2 for MSX/P6. Please update rom, too.
-4.5.11.1 Fixed a negative result in some cases on FTDI div offset for VGMPlayer.
-4.5.11.0 Improved VSIF(FTDI) transfer speed. Please reset & re-adjust FTDI clk width.
-4.5.10.0 Supported SPFM(Light) for VGM Player.
-         Supported Pseudo DAC for OPNA for playing OPN2 DAC for VGM Player.
-4.5.9.0 Shown non-modal window in taskbar.
-4.5.8.2 Fixed typo F#9 for CombinedTimbre KeyRange. (Thanks D.M.88-san!)
-		Fixed no-sounding when playing a VGM file contains dual chip mode.
-4.5.8.1 Added FTDI baudrate change UI for VGMPlayer. 
-4.5.8.0 Renamed CM-32P user soundfont table sample file name. You need to remove "_memo" from tbl file name to use properly.
-        Changed MSX rom filename for for VSIF(FTDI) to VGM_msx*.rom from VGMPlay_msx*.rom.
-		Added tape(wav) files for VSIF(FTDI) for PC-6001.
-		Supported the m3u playlist file for VGMPlayer.
-4.5.7.2.1 Fixed VGMPlayer for YM2612 DAC.
-4.5.7.2 Improved VSIF(FTDI) transfer speed. Please re-adjust FTDI CLK.
-4.5.7.1 Fixed a minor bug.
-4.5.7.0 Improved VSIF(FTDI) transfer speed. Please adjust FTDI CLK.
-4.5.6.1 Fixed a SCC port error for VGMPlayer.
-4.5.6.0 Supported OPN chip for VGMPlayer.  Please update VGMPlay_msx.rom, too. (Thanks Niga-san!)
-		Supported PC-6001 for VSIF(FTDI). VSIF(FTDI) spec is same as MSX. (Thanks Niga-san!)
-4.5.5.4 Fixed an exception occuring on Serialize property for CM32P & MT32.
-4.5.5.3 Added chip clock converter for VGMPlayer.
-4.5.5.2 Fixed VGM/XGM playback routine for VGMPlayer.
-		Added VGMPlay_msx_Vkey.rom (See the manual for details)
-4.5.5.1 Fixed Graphic EQ error when sample rate is low.
-4.5.5.0 Supported Y8950 for VGMPlayer.
-		Improved VGM playback routine for VGMPlayer.
-4.5.4.4 Improved SCC, OPL3 checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)
-		Fixed sound off routine for YM2612, DCSG. (Thanks Niga-san!)
-4.5.4.3 Improved MMM(DCSG) checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)
-		Fixed OPL3 data transfer timing of VGMPlayer.exe. (Thanks Niga-san!)
-4.5.4.2 Improved MMM(DCSG) checking algorithm of VGMPlay_msx.rom. (Thanks Uniskie-san!)
-4.5.4.1 Improved slot checking algorithm of VGMPlay_msx.rom. (Thanks Uniskie-san!)
-		Fixed VSIF command receive routine of VGMPlay_msx.rom.  (Thanks Uniskie-san!)
-4.5.4.0 Improved SCC,OPLL and OPM slot change performance for VSIF - MSX.
-4.5.3.0 Supported Memory Mapped I/O for OPLL (Experimental)
-        *NOTE* You need to configure ROM launcher settings (Sofarun and so on) to use the "Memory Mapped I/O for OPLL".  At least you can't put ROM data on SCC cartridge.
-4.5.2.0 Fixed SCC and OPLL initialization for VSIF - MSX(FTDI) I/F  (Thanks Niga-san & Uniskie-san)
-		Fixed maximum frequency for OPLL.
-4.5.1.0 Re-fixed calculation of the Envelope Release point "/". You can place "/" at the end of line.
-		Fixed SCC wave form morphing envelope value. You can specify the value up to int max.
-        Experimentally supported OPM chips for VSIF - MSX(FTDI) I/F. Please use new VGMPlay_msx.rom.
-4.5.0.0 Changed SCC, OPLL and OPM slot number property value for for VSIF - MSX(FTDI) I/F. MSX searches sound chips and configure it automatically at startup. (Thanks Niga-san)
-        Experimentally supported OPM, DCSG and OPN2 chips for VSIF - MSX(FTDI) I/F.
-4.4.4.0 Changed VSIF - MSX I/F frame format by compression frame data. Please update VGMPlay_msx.rom, too.
-4.4.3.0 Improved stability of VSIF - MSX I/F for a faster machine. Please update VGMPlay_msx.rom, too.
-4.4.2.0 Improved stability of VSIF - MSX I/F. Please update VGMPlay_msx.rom, too.
-        Changed default value of FtdiClkWidth 17 to 18 for VSTI - MSX I/F.
-4.4.1.0 Fixed crashing a real MSX machine when transmitting the data via VSIF.
-4.4.0.0 Added RPC server feature to sound chips from your application. See the manual for details.
-4.3.10.1 Added "FILT.Auto" property value for SID chips.
-4.3.9.0 Added MIDI Delay Test tool. You can open the tool from [Tool] menu.
-4.3.8.2 Improved MONO mode for playing legato.
-4.3.8.0 Fixed importing mucom88 tone data to avoid skipping.
-        Added Copy & Paste button to FM tone editor window for all timbre mode.
-		Fixed MIDI I/F combobox doropdown width.
-		Improved boot sequence of VSIF Genesis(FTDI) to avoid outputing unwanted sound.
-4.3.7.0 Ignored Pitch change message for MSM5232.
-4.3.6.0 Fixed(Changed) calculation of the Envelope Release point "/".  The process after the Envelope Release point was completely broken.
-4.3.5.0 Fixed SID FxEngine after Key off sequence.
-4.3.4.0 Added Master Clock prop to SID chips and changed default clock from NTSC to PAL.
-4.3.3.0 Improved performance for VSIF for SID chip. Please upload VSIF_C64.prg to your C64.
-4.3.2.0 Improved performance for VSIF for SID chip. 
-4.3.1.0 Added SYNC, RING, TEST flags envelope FxS for SID chip.
-4.3.0.0 Supported SID chip for VSIF.
-4.2.0.0 Updated ymfm engine to latest. ymfm is used for OPZ, OPQ, OPN2, OPLL.
-		Supported YM3806(aka OPQ) chip. YM3806(YM3533) is used by PORTATONE PSR-70.
-		Fixed some minor bugs for OPM,OPZ.
-4.1.3.0 Supported Media Key for midi player.
-4.1.2.0 Auto move to next track when finished playing the current midi file.
-        Temporary pause auto VGM/WAV recording function when finished playing the current midi file to split WAV/VGM file.
-4.1.1.1 Suppressed annoying message dialog for OPL3 Tone Editor.
-4.1.1.0 Added "Auto Rec VGM","Auto Rec WAV" button to MIDI player.
-		Added Media List pane.
-4.1.0.7 Improved VGM recording. Re-initialize registers after turning on the VGM recording feature.
-4.1.0.6 Fixed VGM recording for YM2612(#18).
-4.1.0.5 Fixed an error on YM2151 tone editor.
-4.1.0.4 Re-supported VGM recording feature for YM2413 & YM2612.
-4.1.0.3 Fixed VGM recording feature. Send register initialize commands before recording.
-4.1.0.2 Fixed crashing while opening the window.
-4.1.0.1 Fixed crashing some chips when adding it.
-4.1.0.0 Fixed VSIF resource leak for some chips.
-		Added supporting CMI8738(OPL3) PCIe card for YMF262. *Experimental* *x64 Only*
-4.0.2.3 Re-fixed panpot of OPL family.
-4.0.2.2 Fixed panpot of OPL family.
-4.0.2.1 Fixed crashing on YM2151 Editor.
-4.0.2.0 Added several variations of the OPLL family. YM2423, YMF281, DS1001.
-		Added SIN/TRI/SQ/SAW wave creating buttons on a WSG editor.
-4.0.1.6 Fixed MasterClock calculation for YM2151 and YM2414. MasterClock setting was not working.
-		Fixed ScaleTuning calculation. ScaleTuning settings was not working for KeyShift settings.
-4.0.1.5 Re-fixed SCCI instance disposing sequence. Please see limitation.
-		Fixed VSIF for UART mode.
-4.0.1.4 Fixed SCCI instance disposing sequence.
-		Fixed Piano control painting status on the FM Editor.
-4.0.1.3 Updated SCCI modules.
-4.0.1.2 Fixed SCCI instance disposing sequence.
-4.0.1.1 Fixed VSIF for MSX. The upper 2 bits of Reg #7 must be set to 10xxxxx.
-4.0.1.0 Increased octave range for OPN and OPL family.
-        Improved FM Editor ability. Multiple FM Editors can be opened.
-4.0.0.4 Fixed YM2414 LR channel operation.
-4.0.0.3 Fixed YM2414 LR channel operation.
-        Fixed YM2414 initialization and deinitialization.
-4.0.0.2 Fixed YM2414 Editor. MML Serialize data does not show correct values.
-4.0.0.1 Fixed RP2A03 NOISE ch does not sound properly.
-4.0.0.0 Removed "Experimental" from YM2414.
-		Fixed LFOD and LFD calculation again for YM2414. Updated sample files for YM2414. 
-		Supported SPFM for YM2414.
-		Supported KVS, LS for YM2151 and fixed KVS of YM2414.
-3.9.7.3 Fixed LFOD and LFD calculation for YM2414.
-3.9.7.2 Improved syx importer for YM2414 and improved sample files for YM2414. Still *Experimental*
-        Fixed failing to load FxS settings
-3.9.7.1 Improved YM2414 and added sample files. Still *Experimental*
-		Added syx file loading feature for YM2414.
-3.9.7.0 Added some useful menus.
-        Added some features to FM Sound Editor.
-          You can Copy/Swap operator values by dragging Serialize Values Label. If you want to swap values, press the Shift key while dragging.
-          You can change same operator values by Shift/Ctrl key pressing.
-		Added Graphic Equalizer property as Filter.
-		Applied DC cutoff filter always.
-        Reduced MAmi file size
-        Moved properties related with MIDI to Midi Driver Settings sub property
-3.9.6.1 Fixed a possible crash on startup.
-		Supported loading Timbres from a spc file for SPC700.
-3.9.6.0 Supported BRR file with loop header for SPC700.
-3.9.5.0 Added Slot Assign Algorithm property to the "MIDI(Dedicated)" category.
-        Added filter buttons to the property pane.
-3.9.4.1 Fixed YM2414(OPZ)(as experimantal) LFO flags.
-3.9.4.0 Added user custom timbre files for CM-32P. You can use your custom sound font by modifying the cm32p_user_internal_tone.tbl and cm32p_user_card_tone.tbl. For more details, see the file.
-		Changed YM2612 sound engine to the "ymfm" engine. If you noticed an issue, please contact me.
-3.9.3.8	Fixed YM2612 sounding not properly.
-3.9.3.7	Fixed YM2612 sounding not properly after reinitialized.
-3.9.3.6	Fixed crashing CM-32P(again).
-3.9.3.5	Fixed MIDI instruments not accepting All Sound Off MIDI events.
-3.9.3.4	Fixed crashing when set the S/W keyboard MIDI ch "B".
-3.9.3.3	Fixed crashing CM-32P.
-		Added YM2414(OPZ) as experimantal. And, added FITOM bank file reader as experimantal.
-3.9.3.2	Fixed some minor bugs and refactored.
-		Fixed a WOPL and OPL file importer.
-3.9.3.1	Supported importing a OPL file to YMF262 Tone Editor.
-3.9.3.0	Added Key On/Off delay time property to a Timbre property.
-		Supported importing a WOPL file to YMF262 Tone Editor.
-		Supported importing a OPL file to YM3812 Tone Editor.
-		Improved YM2413 drum sounds. You can specify custom F-Num value and added enhanced drum set.
-		Supported Generic UART for AY-3-8910 for VGMPlayer.
-3.9.2.2 Fixed performance hit for VSIF
-		Improved "Piano" control graphics.
-3.9.2.1 Improved VGMPlayer & VSIF for MSX.
-3.9.2.0 Updated VGMPlayer to support MSX.
-		Fixed Mami path parsing for reading the VSTI ini file.
-3.9.1.0 Improved CombinedTimbre feature.
-3.9.0.0 Improved CombinedTimbre feature.
-		Fixed some minor bug.
-3.8.0.1 Fixed note name F# does not exist on the DrumTimbre.BaseNote property. ;-< ★You need to re-configure old save data if you use it.★
-3.8.0.0 Added Velocity Mapping feature.
-		Supported VSIF for MSX. You can drive PSG, OPLL, SCC, OPL3 sound chip on the real MSX.
-3.7.5.0 Supported Scale Tuning. You can set it on ScaleTuning property to the MIDI(Dedicated) category.
-		Supported Channel After Touch MIDI event. You can set the effect on the SCCS property on a Timbre property.
-3.7.4.0 Fixed Master Clock prop crashing when resetting the value to default.
-		Supported DPCM play for Real Famicom.
-		Added ArpMethod property for FxSettings.
-		Supported 64bit version of the SCCI.
-3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and later samples.
-3.7.3.1 Improved square wave low frequency range of VSIF - Famicom.
-		Added function that can be cleared write cache data when Panic button pressed.
-3.7.3.0 Supported VSIF for Famicom.
-3.7.2.0 Ignored invalid VGM data and improved performance for VGMPlayer.
-		Supported 115200bps for VSIF for Genesis UART mode.
-3.7.1.0 Fixed the Panic button that the FM synthesizer can be stopped completely.
-		Updated VSIF engine and added VSIF VGMPlayer.
-3.7.0.0 Fixed unexpected font error on startup ( Just ignoring... ).
-        Fixed unexpected sound stop (retry)
-		Added VSIF sound engine to play music through Real SMS, Genesis console.
-3.6.2.0 Added PanShift Envelope property to the FxS.
-3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
-3.6.0.1 Fixed unexpected sound stop (maybe)
-3.6.0.0 Added uPD1771.
-3.5.1.3 Fixed unexpected sounding in Huc6280.
-3.5.1.2 Improved performance (a little) in VST mode.
-3.5.1.1 Fixed unexpected error occurred while enabling SCCI in VST mode.
-3.5.1.0 Supported localization for ja-JP.
-3.5.0.1 Fixed crashing in POKEY.
-3.5.0.0 Supported VSTi plugin mode. Use the .\VST\MAmiVSTi.dll file and edit ini file. DO NOT USE old .\MAmiVSTi.dll file. Trash it.
-3.3.2.1 Fixed FxS not working in some chips.
-3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
-3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
-        Updated MAME Core.
-3.3.0.0 Added SN76477.
-        Fixed double value slider could not set float value properly.
-3.2.0.2 Fixed SAM icon.
-3.2.0.0 Added the SAM is a TTS software for consoles of the ATARI and AMIGA.
-3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
-3.1.0.0 Added SP0256 Chip.
-3.0.0.0 Added TMS5220 Chip and preset voices.
-2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
-        Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
-2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
-2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
-        Breaking changed OPNA SSG sound type property.
-2.9.0.1 Fixed unexpected exception while sounding.
-2.9.0.0 Added Master Clock property to YM2151, YM2608, YM2610B, YM2612.
-        Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature needs more CPU power.
-2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
-2.8.1.0 Updated sample sound and fixed some minor issue.
-2.8.0.1 Fixed unexpected error in FM Tone Selector.
-2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
-        Added Random button & FIR button to the WSG Editor.
-2.7.1.1 Fixed YMF262 FM Synthesis editor error.
-2.7.1.0 Fixed YMF262 FM Synthesis editor error.
-2.7.0.0 Fixed unexpected sounding when volume changing on CUS30.
-2.6.9.0 Improved new sound channel assignment algorithm.
-2.6.8.0 Fixed new sound channel assignment algorithm for the Drum ch.
-2.6.7.0 Fixed HOLD1 not working properly.
-2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
-2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).
-2.6.4.0 Supported dynamic wave form changing for the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
-        Removed force dump disabling hack in FM chips.
-2.6.3.0 Fixed RYTHM ch volume calculation in the YM2608 chip.
-        Fixed SCCS, GPCS values calculation.
-		Improved sound channel assignment algorithm to keep last sounding channel. If you does not like this, please contact me.
-2.6.2.0 Turned off write cache for frequency register in the real YM2608 and YM2515 chip.
-2.6.1.0 Fixed CH mode set 3 instead of 6 in YM2608. Affected only S/W emulation.
-2.6.0.0 Fixed crashing when FM operators was reset.
-		Fixed SSG tone frequency in real YM2608 chip.
-2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
-2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
-2.5.7.0 Added "Dumping sound" to RHYTHM sound in YM2608 when key off received.
-        Fixed ADPCM-B not sounding unexpectedly in YM2608.
-		Improved ADPCM-B in YM2608 transfer speed via SCCI.
-		Fixed SSG sounding unexpectedly when volume changing in YM2608 and YM2610B
-		Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
-2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
-2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
-2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.
-        Supported loading a WAV file (16bit mono) as ADPCM-B data for YM2608, YM2610B chips.
-2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
-		Supported MIDI IN B.
-        Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
-		Fixed CUS30 Volume calculation.
-		Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
-		Supported the SPFM to sound in real chip for YM2151 and YM2608 chips. *Only 32 bit version*
-2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
-        Added FM Synthesis register value randomizer to FM Synthesis Editor.
-		Added FM Synthesis global register to FM Synthesis Editor.
-2.5.1.0 Improved MIDI file Player UI.
-2.5.0.0 Added MIDI file Player tab.
-		Supported MAmidi file that is MAmi file and midi file are archived file. To create MAmidi file, load midi file and export MAmidi file.
-		Fixed portamento time (Almost the same as the GS module portamento time).
-2.4.0.1 Improved UI.
-		Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
-		Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
-		Fixed freezing in MT32.
-		Fixed key off behavior of Fx Engine.
-		Updated MSGS.SF for CM32-P.
-2.4.0.0 Added Envelope Editor.
-2.3.0.2 Fixed key off ignored issue while modulation is active in OPL.
-		Fixed to turn off modulation after key off.
-		Applied Metro Style GUI and improved UI.
-2.3.0.1 Fixed YMF262 sample file and some minor bugs.
-2.3.0.0 Added YMF262(OPL3) chip.
-		Fixed Combined Drum does not sounding properly.
-2.2.5.1 Improved FM Synthesis Editor UI.
-2.2.5.0 Added PCM playback feature to HuC6280.
-		Fixed an error when opening the floating point value slider in some props.
-		Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
-		Added a FM Synthesis GUI Editor.
-2.2.4.0 Fixed issue of modulation CC.
-		Fixed an error in MSM5232.
-		Improved NOISE ch freqeucncy in SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
-		Improved NOISE ch function in AY8910.
-2.2.3.0 Fixed issues related with SID property.
-		Improved sf loader for SPC700 and C140.
-		Added ZoneID remover script.
-2.2.2.0 Fixed not applying Relese Point for Envelope.
-        Fixed sound off timing while envelope processing.
-		Added sf2 loading feature to context menu of C140 instrument.
-		Removed DrumTimbreTable prop from C140 and SPC700 insts (Not suitable for PCM insts). Please use DrumTimbres prop to sound drum.
-		Improved assignment of YM2413 drum sounds.
-		Improved YM2413 custom sound sounding algorithm.
-		Fixed error when opening a YM2610B Timbre prop.
-2.2.1.0 Fixed HuC6820 WSG sound can't delete last noise sound.
-2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
-        Fixed HuC6820 volume calculation algorithm.
-        Fixed not saving WSG Type of NAMCO CUS30 Timbre.
-		Fixed error when opening a YM2413 Timbre property.
-		Added sf2 loading feature to context menu of SPC700 instrument.
-2.1.0.0 Changed YM2413 engine to emu2413 engine to get more sounds accuracy.
-        Added Tone Envelope property for YM2413 FxS settings. 
-		Added CM32-P Card #16.
-		Added MML like serialize property to the FM Synthesis chip.
-		Fixed FM Synthesis sounds.
-2.0.4.0 Extended POLY mode control change message. You can specify the number of reserved voices.
-        Fixed crashing on boot.
-2.0.3.0 Improved sounds output timing accuracy.
-        Supported HOLD1 control change message.
-2.0.2.0 Improved MT-32 sounds output timing & latency.
-2.0.1.0 Fixed crashing in some chip...
-2.0.0.0 Fixed some minor bugs.
-			Panic button sometimes does not work.
-			SerializeData does not work and cause crash.
-			FxS Arp does not work properly in Fixed mode.
-			Property Reset menu does not work properly.
-			Mono mode does not work properly.
-			RP2A03 Tri channel is stopped by Noise channel.
-			Specific property value does not save.
-		Added KeyShift, PitchShift, IgnoreKeyOff prop to Timbre prop.
-		Added Combined Timbre feature to Timbre prop. Treat patched Timbre as one Timbre.
-		Added Follower mode feature to Timbre prop. Share voice ch with another units.
-		Added Drum part to Timbre prop.
-		Added Global Arpeggio Settins to Instrument prop.
-		Added Instrument cloning menu in the instrument pane on the Main window.
-		Exposed RP2A03 Liner Counter Length.
-		Applied "Force Dump mode" always to FM Synthesis unit to prevent incomplete attack rate.
-		Added virtual SR parameter to YM2413.
-		Added sample of MAmi files.
-		Added drag & drop feature that MAmi file can be dropped into instrument list pnae.
-1.3.1.0 Added VGM supported chips.
-			GB APU, HuC6280
-1.3.0.0 Synced sound engine to MAME 0221 (May improved some sound accuracy).
-        Added wave file output feature. Please re-open option dialog and press [OK] to commit new settings.
-        Added VGM file separetedly output feature. Only supported the following chips.
-			YM2151, YM2612, YM3812, YM2413, POKEY, SN76496, NES APU, AY-3-8910
-1.2.1.0 Added CM-32P SN-U110-10 simulation .
-1.2.0.0 Added CM-32P (This is an incomplete simulator).
-            Using FluidLite https://github.com/divideconcept/FluidLite , 
-			Using GeneralUser GS http://schristiancollins.com/generaluser.php
-		Fixed RPN/NRPN MIDI massages can not be handled properly. OMG.
-1.1.0.0 Added MT-32 MIDI module ( imported from MUNT https://sourceforge.net/projects/munt/ )
-            Place legitimate MT32_CONTROL.ROM and MT32_PCM.ROM files in the Mami dir.
-1.0.0.0 Added YM2610B chip.
-0.9.4.2 Fixed Key ch of piano pane is not applied properly.
-0.9.4.1 Fixed YM2413 serialized data could not apply properly.
-0.9.4.0 Added FDS, VRC6 tone type to the NES APU.
-            FDS, VRC6 was imported from VirtuaNES https://github.com/ivysnow/virtuanes
-            Added HuC6280 and SPC700(RAM limit breaking) and POKEY.
-            Fixed and changed "Partial Reserve" feature for GBA ( and HuC6280 ).
-0.9.3.1 Fixed invalid portamento source note and followed portamento speed to GM2 spec.
-0.9.3.0 Added alternate property editor window. That can be popup from toolbar in the Property pane.
-            Added "Sound Control Settings" feature in Timbre settings. You can link the Sound control MIDI message value with the Timbre property value. (Also VST effects and other props, too)
-            Added modifying receving MIDI ch for the specific instrument via NRPN MIDI Message feature.
-            See the section No.8 of this README.
-            Fixed arpeggio algorithm. When last one key is up, the key is not held in hold mode. Otherwise, keep arpeggio.
-            Fixed 2nd AY8910 outputs noise, C140 panpot gain formula follows GM2 spec, some minor bugs.
-0.8.0.0 Supports piano clicks by mouse. Supports Mono mode(CC#126,CC#127) almost same with FITOM
-0.7.0.0 Added SID, C140(RAM limit breaking) chips, Displays Oscilloscope, Supports VST Effect plugin
-0.6.1.0 Changed to new sound timer engine for perfect sound timing
-0.6.0.0 Added sound driver effects and portamento feature
-0.5.0.0 Added several chips
-0.1.0.0 First release
+- 5.7.1.5 Updated VGMPlayer(only)
+  - turboR DAC off when start/stop song.
+  - turboR tR DAC off when start/stop song.
+  - If you select turboR, the turboR DAC takes precedence over the OPN DAC; if you select MSX, the turboR DAC is not used.
+- 5.7.1.4 Updated VGMPlayer(only) to fix MSXturboR DAC ADDA mode.
+- 5.7.1.3 Updated VGMPlayer(only) to fix loop counter.
+- 5.7.1.2 Updated VGMPlayer(only) to support MSXturboR DAC to play SEGA PCM, K053260, OKIM628- 5.
+- 5.7.1.1 Re-improved Hi-DPI screen handling.
+- 5.7.1.0 Improved Hi-DPI screen handling.
+- 5.7.0.0 Supported \*.mop\* file importing on TimbreManager.
+- 5.6.18.0 Fixed Multi-Media Keys handling.
+- 5.6.17.0 Fixed Hold Off MIDI message handling.
+- 5.6.16.0 Fixed ch9-18 address calculation for OPL3 for SCCI.
+- 5.6.15.0 Showed the program number name on ProgramNumbers property.
+  - Fixed ModulationRateShift prop is not working property.
+- 5.6.14.0 Added external tool path settings on the Option dialog. Youcan launch the tool from the FM Tone Editor.
+- 5.6.13.0 Added properties regarding modulation offset to the Midi Driver Settings on a Timbre.
+- 5.6.12.1 Fixed some VGM file's tempo is too slow. (Rate values in VGM files are now ignored.)
+- 5.6.12.0 Fixed AMD,PMD for OPM and OPZ. AMD and PMD can be handled simultaneously rather than exclusively.
+  - OPM engine changed to the ymfm.
+- 5.6.11.0 Supported VGI file importing.
+  - Fixed some missing register values when importing FM tone files.
+- 5.6.10.0 FM TimbreEditor allows copy/paste tone data from/to Clipboard.
+  - Fixed Pcm data loading size is too long.
+  - Improved DAC transfer rate.
+- 5.6.9.1 Fixed MaxDacPcmVoices causes exception.
+  - Included manuals
+- 5.6.9.0 Improved FM Editor function.
+- 5.6.8.2 Fixed XGM2 PCM.
+- 5.6.8.1 Fixed XGM/XGM2 Recording.
+  - Fixed an issue where pressing the Enter key would unintentionally close the editor window.
+  - Fixed sequential numbering of saved file names
+- 5.6.8.0 Fixed play status icon in LCD area does not change after playing stopped.
+  - Remembered FM register patch file path information for FM Timbre.
+  - Added "Privacy" settings to the settings dialog.
+  - Enabled turboR mode for VSIF for MSX (VGM_msx*.rom). ( Pressing Z key to disable tR mode while booting ) 
+- 5.6.7.0 Added MIDI ChanelTypes value "Drum(Ignore GateTime)".
+- 5.6.6.1 Fixed DAC in YM2612 Software SoundEngine.
+- 5.6.6.0 Supported DAC in YM2612 Software SoundEngine. (Other chips are available upon your request)
+- 5.6.5.1 Fixed Timbre.AssignMIDIChtoSlotNumOffset not working properly.
+- 5.6.5.0 Supported 24bit WAVE file importing.
+  - Added Timbre List Window. You can open it from context menu of the Instrument icon.
+  - Fixed FM Editor DR, SL lines drawing for OPL series.
+- 5.6.4.0 Added MRU and autocomplete function to directory textbox in TimbreManager.
+  - Fixed MonoMode may not work properly when CombinedTimbre is sounded.
+- 5.6.3.0 Fixed problem with Timbre being replaced when dragging and dropping WAV files.
+  - Added the function to set DrumTimbre as well in TimbreManager.
+- 5.6.2.2 Changed the copy function of Timbre when drag & drop in TimbreManager and DrumEditor from the Shift key to the Ctrl key.
+- 5.6.2.1 Supported YM2149 with YM2608/YM2203 for VGMPlayer
+  - Swap Shift key effect for Drag & Drop in TimbreManager and DrumEditor.
+- 5.6.2.0 Supported SAA1099 for VSIF MSX(FTDI) both MAmidiMEmo and VGMPlayer. You need to update VGM_msx*.rom too.
+- 5.6.1.0 Added KeyOffStop property to FxS settings. To select envelope release timing of FxEngine when key off.
+- 5.6.0.0 Supported SAA1099.
+  - Fixed envelope release timing of FxEngine when key off.
+  - (Preliminary) Supported XGM2 recording and fixed XGM PCM data.
+- 5.5.0.2 Fixed supporting RF5C68.
+- 5.5.0.0 Supported G.I.M.I.C STIC OPLL, OPN2*, SPSG, SSG, AYPSG.
+  - Supported playing RF5C68 vgm data on MEGA-CD via VGMPlayer.
+- 5.4.4.0 Supported WAV sample rate auto conversion.
+- 5.4.3.2 Fixed crashing while launching the x86 MAmi.
+  - (Experimentaly) Supported MSX turbo R mode for VSIF. Pressing "Z" key while booting the VGM_msx.rom/VGM_msx_Vkey.rom
+- 5.4.3.1 Added SMS only special mode for FTDI dongle. OPLL and DSCG can sound simultenaously.
+- 5.4.3.0 Supported mopm/mopn file importing to OPN*/OPM
+  - ★Breaking changes★ Fixed the effect of modulation effects of the ModulationDepthes property.
+- 5.4.2.0 Fixed incorrect soundding in mono mode.
+- 5.4.1.0 Supported SPFM for YM2413, YM3812, YMF262, YM3806
+- 5.4.0.1 Fixed SMS(FTDI) clk generator.
+- 5.4.0.0 Supported SMS(FTDI). FTDI dongle is compatible with for the Genesis.
+- 5.3.0.1 Fixed minor bugs related with Font. 
+- 5.3.0.0 Added Font scale option in the Settings dialog. But not perfect.
+- 5.2.2.0 Added KeyScaleLevel property on the FxS.
+- 5.2.1.0 Suported MEGA CD(VSIF Genesis(FTDI)) vgm by VGMPlayer.
+  - Note1: No supported streaming vgm data.
+  - Note2: There is noise at the start of playback.
+- 5.2.0.1 Fixed loop off processing for MEGA CD(VSIF Genesis(FTDI)).
+- 5.2.0.0 Supported RF5C164 and MEGA CD(VSIF Genesis(FTDI)).
+- 5.1.0.1 YM2608 Software Emulation can not be played via RPC.
+- 5.1.0.0 Supported YM2608 for RPC server feature. Other applications can control MAmidiMEmo chips via RPC.
+- 5.0.1.0 Added the ability to specify the number directly in the TimbreNumber setting.
+- 5.0.0.9 Fixed LoopPoint value when importing SF2 file as 12bit PCM for SEGA MultiPCM.
+- 5.0.0.8 Fixed noise sounding when D1R is too low for SEGA MultiPCM.
+- 5.0.0.7 Supported 12bit PCM for SEGA MultiPCM
+- 5.0.0.6 Fixed importing WAV file for SEGA MultiPCM. You NEED to re-create MultiPCM instrument.
+- 5.0.0.5 Fixed Panpot for SEGA MultiPCM.
+  - Reduced internal gain level for SEGA MultiPCM.
+- 5.0.0.4 Fixed LoopPoint calculation for SEGA MultiPCM.
+  - Fixed BaseFreq when import SF2.
+- 5.0.0.3 (Again)Fixed frequency calculation for SEGA MultiPCM.
+- 5.0.0.2 Supported MasterClock and 12bit RAW PCM for SEGA MultiPCM.
+- 5.0.0.1 Fixed frequency and master clock for SEGA MultiPCM.
+- 5.0.0.0 Supported SEGA MultiPCM.
+- 4.9.10.1 Updated VGMPlayer(only) to support PC-8801 OPNA/OPN
+- 4.9.10.0 Added DAC PCM mode for OPNA. Just a bonus feature :-)
+- 4.9.9.0 Supported PC-8801 OPNA
+- 4.9.8.1 Fixed an error on UseAltVRC6Cart prop value set by slider.
+- 4.9.8.0 FtdiClkWidth to be adjusted when the VSIF connection is to FT232R or not.
+- 4.9.7.1 Fixed SCC not sounding properly.
+- 4.9.7.0 Added PcmData12 property to support 12bit PCM data for C140 chip. *Warning* For 12-bit PCM data, the Gain value should be lower than for 8-bit PCM data.
+- 4.9.6.1 Fixed OPNA/B BaseFreq calculation algorithm when WAV file loading. ( 55000Hz -> 55555.55...Hz )
+- 4.9.6.0 Fixed RP2A03 VRC6 and FDS upper pitch is 4bit from 3bit.
+  - Fixed RP2A03 FDS velocity calculation and added FdsMasterVolume property.
+  - Fixed RP2A03 LFO values are not set properly and caclulated.
+  - Added RP2A03 Lfo Bias properly.
+- 4.9.5.0 Fixed SP0256 freezing on high frequency sound.
+  - Added the UseAltVRC7Cart property for YM2413 as experimental
+  - Fixed unstable reconnection to the SPC700 on the G.I.M.I.C .
+- 4.9.4.0 Preliminary supported VRC7 (VSIF - Famicom VRC6/7) as YM2413 variant chip DS1001.
+- 4.9.3.1 Fixed SPC700 emulator keyon/keyoff
+- 4.9.3.0 Supported a real chip of the SPC700 on the G.I.M.I.C .
+- 4.9.2.0 Supported MAmi VRC6 CART for RP2A03.
+- 4.9.1.2 Fixed YM2610B ADPCM-A keyon/keyoff is not working properly.
+- 4.9.1.1 Fixed YM2610B ADPCM-B panpot is not working properly.
+- 4.9.1.0 Updated dependent libraries.
+  - Fixed SCC/LFO morphing envelopes of SDS.Fx. 1st envelope was not applied properly.
+  - Fixed WSG editor. Text editing values were not reflected to GUI properly.
+- 4.9.0.1 Fixed Receiving ch is not working properly.
+- 4.9.0.0 Added MIDI THRU instrument.
+  - Supported variable pitch and volume for RP2A03 DPCM.
+- 4.8.2.1 Added VGM_P6M.bin for ROM Cartridge of PC-6001.
+- 4.8.2.0 Added Copy button on the SCC WSG Morph Editor.
+- 4.8.1.0 Improved VSIF stability and supported DAC PCM(Real only) for Famicom ★Please update VGMPlay_nes*.nes
+- 4.8.0.0 Added SCC WSG Morph Editor.
+  - Displayed the ToolTip in the FM Timbe Editor only once.
+- 4.7.9.0 Improved VSTi close processing to avoid crashing on some DAWs.
+  - Improved initialize routine for the Real Chip
+  - Fixed VGM recording folder is not created.
+- 4.7.8.2 Remove dummy VSTi window to avoid crashing.
+- 4.7.8.1 Fixed GUI layout of the Dialog.
+- 4.7.8.0 Fixed GUI layout of the Dialog for Hi-DPI display. Thanks Akibasuki-san!
+  - Fixed freezing while YM2608 ADPCM transferring.
+  - Fixed MasterClock handling for SPFM
+  - Fixed CombinedTimbre delay sounding
+  - Accepted no SEGA, KONAMI, CAPCOM PCM chips to play VGM files
+- 4.7.7.0 Supported displaying Timbre/CombinedTimbre name for some props.
+- 4.7.6.2 Supported OKIM6259
+  - Improved DAC stream performance for VGM file
+- 4.7.6.1 Improved DAC PCM souding.
+  - Added option dialog for VGMPlayer.
+- 4.7.6.0 Improved DAC PCM souding timing & XGM/VGM player souding timing.
+- 4.7.5.1 Fixed DAC nosie for VSIF for Genesis/MD.
+- 4.7.5.0 Supported DrumTibre.GateTime = 0 for YM2612 DAC PCM to play end of PCM.
+- 4.7.4.1 Supported K053260 for VGMPlayer.
+- 4.7.4.0 Supported SEGAPCM for VGMPlayer.
+  - Improved DAC performance.
+- 4.7.3.0 Added Min Max values for Randmizer on FM Timbre Editor.
+  - Improved Reset menu behavior for Property
+  - Fixed YM2151 Timbre Settings (Degraded at v4.6.9.0)
+- 4.7.2.0 Added UseExprForModulator, ExprTargetModulators property for the FM Synth Timbre. You can change FM Modulator(Operator) TL by MIDI Expression.
+  - Improved DAC performance of VGMPlayer.
+  - Added Timbre Manager. You can manage Timbres more easily.
+  - Improved Drum Editor function.
+  - Fixed VGMPlayer not sounding sound on Genesis/MD with some flashcart.
+- 4.7.1.0 Improved data transfer speed for FTDI.
+- 4.7.0.0 Supported XGM recording by NRPN. For more information, see the manual.
+  - Fixed XGM DAC playing issue created by MAmi.
+- 4.6.10.0 Added SerializeData Save/Load feature
+  - Supported Import/Export FM tone file as MAmi format.
+  - Re-fixed Save/Load error on DAW.
+  - Fixed VGMPlay DAC volume.
+- 4.6.9.0 Added ADSR.SR property.
+  - Fixed ADSR.SL for SN76489 volume calculation.
+  - Fixed Software Envelope ReleasePoint when point is zero.
+  - Added AssignMIDIChtoSlotNumOffset property for AssignMIDIChtoSlotNum.
+  - Fixed MONO mode. When key on on mono mode ch, completele OFF the last note sound.
+  - Reduced crashing while closing DAW.
+  - Improved FTDI speed for MAmidiMEmo.
+  - Fixed Save/Load error on DAW.
+  - (Preliminary) Added sin/sq/tri wave create button on the SW Envelope editor.
+  - (Preliminary) Supported LegatoFootSwitch(CC#68). Enabled only MONO = 1 and RecentlyUsedSlot mode.
+  - (Preliminary) Supported DAC PCM for YM2612 for REAL HARDWARE.
+- 4.6.8.1 (Experimentaly)Supported SE mode and 5 ch mode for YM2612.
+  - (Experimentaly)Added MIDI ch equals FM ch mode for YM2612 and DCSG( AssignMIDIChtoSlotNum property ).
+- 4.6.8.0 Added VelocitySensitivity for FM Career TL on MidiDriverSettings.
+  - ★Default value is "2". "0" means Velocity equals TL. "3" is default value of previous version.
+  - Improved latency of VSTi module for certain DAW.
+  - Added FineTunes Property. FineTunes Property can change by RPN.
+- 4.6.7.1 Fixed importing *.FF/*.FFOPM file.
+  - Fixed velocity is invalid.
+- 4.6.7.0 Supported importing *.FF/*.FFOPM file.
+- 4.6.6.2 Not sounding fixed for OPM of GIMIC
+- 4.6.6.1 Tentatively fixed SID emulator output frequency changes when sample rate is other than 48KHz.
+- 4.6.6.0 Suppressed F/W dialog at startup. And add the "-chip_server" option to enable RPC server feature to control MAmidiMEmo chips from other applications.
+- 4.6.5.8 Supported OKI MSM6258 for VGMPlayer. OKI MSM6258 can be sounded by OPNA/OPN2 DAC
+- 4.6.5.7 Improved performance of G.I.M.I.C .
+- 4.6.5.6 Supported OPN3-L for proxy of OPNA
+  - Reset G.I.M.I.C before start playing a VGM or reset instrument.
+  - Fixed freezing while ADPCM data transferring on YM2608 and RP2A03.
+- 4.6.5.5 Supported OPN3L for G.I.M.I.C as proxy of OPNA.
+- 4.6.5.3 Fixed OPM could not be selected on VGMPlayer
+- 4.6.5.2 Supported G.I.M.I.C by VGMPlayer for OPM & OPNA
+  - User DirectAccess API for G.I.M.I.C to avoid cache miss
+- 4.6.5.1 Fixed ADPCM volume cache for YM2608 for GIMIC.
+- 4.6.5.0 Supported GIMIC for YM2608 & YM2151.
+  - ★Remove c86ctl.dll if exists on the MAmidiMEmo dir if you want to use the GIMIC for YM2608 & YM2151.★
+- 4.6.4.2 Supported ADPCM light wait mode for SPFM/SPFM Light to play DAC.
+- 4.6.4.1 Added Chip information area for VGMPlayer.
+- 4.6.4.0 Fixed MGS file playing not started for VGMPlayer.
+  - (Experimantal)Changed VelocityMap and NoteMap property behavior. Parameter changes are temporary, not permanent.
+- 4.6.3.0 Added the \"$\" keyword for the NoteMap property. The \"$\" keyword indicates its own value.
+- 4.6.2.0 Added the NoteMap property in the Midi Driver Settings[MDS] in the Timbre settings.
+- 4.6.1.1 Fixed RP2A03 FDS FreqMulitplyEnvelopes prop processing.
+- 4.6.1.0 Re-fixed envelopes & MONO mode processing.
+- 4.6.0.0 Added RP2A03 FDS LFO properties & envelopes.
+  - Fixed envelopes processing for some chips.
+- 4.5.11.2 Improved DAC performance for OPN2 for MSX/P6. Please update rom, too.
+- 4.5.11.1 Fixed a negative result in some cases on FTDI div offset for VGMPlayer.
+- 4.5.11.0 Improved VSIF(FTDI) transfer speed. Please reset & re-adjust FTDI clk width.
+- 4.5.10.0 Supported SPFM(Light) for VGM Player.
+  -  Supported Pseudo DAC for OPNA for playing OPN2 DAC for VGM Player.
+- 4.5.9.0 Shown non-modal window in taskbar.
+- 4.5.8.2 Fixed typo F#9 for CombinedTimbre KeyRange. (Thanks D.M.88-san!)
+  - Fixed no-sounding when playing a VGM file contains dual chip mode.
+- 4.5.8.1 Added FTDI baudrate change UI for VGMPlayer. 
+- 4.5.8.0 Renamed CM-32P user soundfont table sample file name. You need to remove "_memo" from tbl file name to use properly.
+  - Changed MSX rom filename for for VSIF(FTDI) to VGM_msx*.rom from VGMPlay_msx*.rom.
+  - Added tape(wav) files for VSIF(FTDI) for PC-6001.
+  - Supported the m3u playlist file for VGMPlayer.
+- 4.5.7.2.1 Fixed VGMPlayer for YM2612 DAC.
+- 4.5.7.2 Improved VSIF(FTDI) transfer speed. Please re-adjust FTDI CLK.
+- 4.5.7.1 Fixed a minor bug.
+- 4.5.7.0 Improved VSIF(FTDI) transfer speed. Please adjust FTDI CLK.
+- 4.5.6.1 Fixed a SCC port error for VGMPlayer.
+- 4.5.6.0 Supported OPN chip for VGMPlayer.  Please update VGMPlay_msx.rom, too. (Thanks Niga-san!)
+  - Supported PC-6001 for VSIF(FTDI). VSIF(FTDI) spec is same as MSX. (Thanks Niga-san!)
+- 4.5.5.4 Fixed an exception occuring on Serialize property for CM32P & MT32.
+- 4.5.5.3 Added chip clock converter for VGMPlayer.
+- 4.5.5.2 Fixed VGM/XGM playback routine for VGMPlayer.
+  - Added VGMPlay_msx_Vkey.rom (See the manual for details)
+- 4.5.5.1 Fixed Graphic EQ error when sample rate is low.
+- 4.5.5.0 Supported Y8950 for VGMPlayer.
+  - Improved VGM playback routine for VGMPlayer.
+- 4.5.4.4 Improved SCC, OPL3 checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)
+  - Fixed sound off routine for YM2612, DCSG. (Thanks Niga-san!)
+- 4.5.4.3 Improved MMM(DCSG) checking algorithm of VGMPlay_msx.rom. (Thanks Niga-san, Uniskie-san!)
+  - Fixed OPL3 data transfer timing of VGMPlayer.exe. (Thanks Niga-san!)
+- 4.5.4.2 Improved MMM(DCSG) checking algorithm of VGMPlay_msx.rom. (Thanks Uniskie-san!)
+- 4.5.4.1 Improved slot checking algorithm of VGMPlay_msx.rom. (Thanks Uniskie-san!)
+  - Fixed VSIF command receive routine of VGMPlay_msx.rom.  (Thanks Uniskie-san!)
+- 4.5.4.0 Improved SCC,OPLL and OPM slot change performance for VSIF - MSX.
+- 4.5.3.0 Supported Memory Mapped I/O for OPLL (Experimental)
+  - *NOTE* You need to configure ROM launcher settings (Sofarun and so on) to use the "Memory Mapped I/O for OPLL".  At least you can't put ROM data on SCC cartridge.
+- 4.5.2.0 Fixed SCC and OPLL initialization for VSIF - MSX(FTDI) I/F  (Thanks Niga-san & Uniskie-san)
+  - Fixed maximum frequency for OPLL.
+- 4.5.1.0 Re-fixed calculation of the Envelope Release point "/". You can place "/" at the end of line.
+  - Fixed SCC wave form morphing envelope value. You can specify the value up to int max.
+  - Experimentally supported OPM chips for VSIF - MSX(FTDI) I/F. Please use new VGMPlay_msx.rom.
+- 4.5.0.0 Changed SCC, OPLL and OPM slot number property value for for VSIF - MSX(FTDI) I/F. MSX searches sound chips and configure it automatically at startup. (Thanks Niga-san)
+  - Experimentally supported OPM, DCSG and OPN2 chips for VSIF - MSX(FTDI) I/F.
+- 4.4.4.0 Changed VSIF - MSX I/F frame format by compression frame data. Please update VGMPlay_msx.rom, too.
+- 4.4.3.0 Improved stability of VSIF - MSX I/F for a faster machine. Please update VGMPlay_msx.rom, too.
+- 4.4.2.0 Improved stability of VSIF - MSX I/F. Please update VGMPlay_msx.rom, too.
+  - Changed default value of FtdiClkWidth 17 to 18 for VSTI - MSX I/F.
+- 4.4.1.0 Fixed crashing a real MSX machine when transmitting the data via VSIF.
+- 4.4.0.0 Added RPC server feature to sound chips from your application. See the manual for details.
+- 4.3.10.1 Added "FILT.Auto" property value for SID chips.
+- 4.3.9.0 Added MIDI Delay Test tool. You can open the tool from [Tool] menu.
+- 4.3.8.2 Improved MONO mode for playing legato.
+- 4.3.8.0 Fixed importing mucom88 tone data to avoid skipping.
+  - Added Copy & Paste button to FM tone editor window for all timbre mode.
+  - Fixed MIDI I/F combobox doropdown width.
+  - Improved boot sequence of VSIF Genesis(FTDI) to avoid outputing unwanted sound.
+- 4.3.7.0 Ignored Pitch change message for MSM5232.
+- 4.3.6.0 Fixed(Changed) calculation of the Envelope Release point "/".  The process after the Envelope Release point was completely broken.
+- 4.3.5.0 Fixed SID FxEngine after Key off sequence.
+- 4.3.4.0 Added Master Clock prop to SID chips and changed default clock from NTSC to PAL.
+- 4.3.3.0 Improved performance for VSIF for SID chip. Please upload VSIF_C64.prg to your C64.
+- 4.3.2.0 Improved performance for VSIF for SID chip. 
+- 4.3.1.0 Added SYNC, RING, TEST flags envelope FxS for SID chip.
+- 4.3.0.0 Supported SID chip for VSIF.
+- 4.2.0.0 Updated ymfm engine to latest. ymfm is used for OPZ, OPQ, OPN2, OPLL.
+  - Supported YM3806(aka OPQ) chip. YM3806(YM3533) is used by PORTATONE PSR-70.
+  - Fixed some minor bugs for OPM,OPZ.
+- 4.1.3.0 Supported Media Key for midi player.
+- 4.1.2.0 Auto move to next track when finished playing the current midi file.
+  - Temporary pause auto VGM/WAV recording function when finished playing the current midi file to split WAV/VGM file.
+- 4.1.1.1 Suppressed annoying message dialog for OPL3 Tone Editor.
+- 4.1.1.0 Added "Auto Rec VGM","Auto Rec WAV" button to MIDI player.
+  - Added Media List pane.
+- 4.1.0.7 Improved VGM recording. Re-initialize registers after turning on the VGM recording feature.
+- 4.1.0.6 Fixed VGM recording for YM2612(#18).
+- 4.1.0.5 Fixed an error on YM2151 tone editor.
+- 4.1.0.4 Re-supported VGM recording feature for YM2413 & YM2612.
+- 4.1.0.3 Fixed VGM recording feature. Send register initialize commands before recording.
+- 4.1.0.2 Fixed crashing while opening the window.
+- 4.1.0.1 Fixed crashing some chips when adding it.
+- 4.1.0.0 Fixed VSIF resource leak for some chips.
+  - Added supporting CMI8738(OPL3) PCIe card for YMF262. *Experimental* *x64 Only*
+- 4.0.2.3 Re-fixed panpot of OPL family.
+- 4.0.2.2 Fixed panpot of OPL family.
+- 4.0.2.1 Fixed crashing on YM2151 Editor.
+- 4.0.2.0 Added several variations of the OPLL family. YM2423, YMF281, DS1001.
+  - Added SIN/TRI/SQ/SAW wave creating buttons on a WSG editor.
+- 4.0.1.6 Fixed MasterClock calculation for YM2151 and YM2414. MasterClock setting was not working.
+  - Fixed ScaleTuning calculation. ScaleTuning settings was not working for KeyShift settings.
+- 4.0.1.5 Re-fixed SCCI instance disposing sequence. Please see limitation.
+  - Fixed VSIF for UART mode.
+- 4.0.1.4 Fixed SCCI instance disposing sequence.
+  - Fixed Piano control painting status on the FM Editor.
+- 4.0.1.3 Updated SCCI modules.
+- 4.0.1.2 Fixed SCCI instance disposing sequence.
+- 4.0.1.1 Fixed VSIF for MSX. The upper 2 bits of Reg #7 must be set to 10xxxxx.
+- 4.0.1.0 Increased octave range for OPN and OPL family.
+  - Improved FM Editor ability. Multiple FM Editors can be opened.
+- 4.0.0.4 Fixed YM2414 LR channel operation.
+- 4.0.0.3 Fixed YM2414 LR channel operation.
+  - Fixed YM2414 initialization and deinitialization.
+- 4.0.0.2 Fixed YM2414 Editor. MML Serialize data does not show correct values.
+- 4.0.0.1 Fixed RP2A03 NOISE ch does not sound properly.
+- 4.0.0.0 Removed "Experimental" from YM2414.
+  - Fixed LFOD and LFD calculation again for YM2414. Updated sample files for YM2414. 
+  - Supported SPFM for YM2414.
+  - Supported KVS, LS for YM2151 and fixed KVS of YM2414.
+- 3.9.7.3 Fixed LFOD and LFD calculation for YM2414.
+- 3.9.7.2 Improved syx importer for YM2414 and improved sample files for YM2414. Still *Experimental*
+  - Fixed failing to load FxS settings
+- 3.9.7.1 Improved YM2414 and added sample files. Still *Experimental*
+  - Added syx file loading feature for YM2414.
+- 3.9.7.0 Added some useful menus.
+  - Added some features to FM Sound Editor.
+  - You can Copy/Swap operator values by dragging Serialize Values Label. If you want to swap values, press the Shift key while dragging.
+  - You can change same operator values by Shift/Ctrl key pressing.
+  - Added Graphic Equalizer property as Filter.
+  - Applied DC cutoff filter always.
+  - Reduced MAmi file size
+  - Moved properties related with MIDI to Midi Driver Settings sub property
+- 3.9.6.1 Fixed a possible crash on startup.
+  - Supported loading Timbres from a spc file for SPC700.
+- 3.9.6.0 Supported BRR file with loop header for SPC700.
+- 3.9.5.0 Added Slot Assign Algorithm property to the "MIDI(Dedicated)" category.
+  - Added filter buttons to the property pane.
+- 3.9.4.1 Fixed YM2414(OPZ)(as experimantal) LFO flags.
+- 3.9.4.0 Added user custom timbre files for CM-32P. You can use your custom sound font by modifying the cm32p_user_internal_tone.tbl and cm32p_user_card_tone.tbl. For more details, see the file.
+  - Changed YM2612 sound engine to the "ymfm" engine. If you noticed an issue, please contact me.
+- 3.9.3.8 Fixed YM2612 sounding not properly.
+- 3.9.3.7 Fixed YM2612 sounding not properly after reinitialized.
+- 3.9.3.6 Fixed crashing CM-32P(again).
+- 3.9.3.5 Fixed MIDI instruments not accepting All Sound Off MIDI events.
+- 3.9.3.4 Fixed crashing when set the S/W keyboard MIDI ch "B".
+- 3.9.3.3 Fixed crashing CM-32P.
+  - Added YM2414(OPZ) as experimantal. And, added FITOM bank file reader as experimantal.
+- 3.9.3.2 Fixed some minor bugs and refactored.
+  - Fixed a WOPL and OPL file importer.
+- 3.9.3.1 Supported importing a OPL file to YMF262 Tone Editor.
+- 3.9.3.0 Added Key On/Off delay time property to a Timbre property.
+  - Supported importing a WOPL file to YMF262 Tone Editor.
+  - Supported importing a OPL file to YM3812 Tone Editor.
+  - Improved YM2413 drum sounds. You can specify custom F-Num value and added enhanced drum set.
+  - Supported Generic UART for AY-3-8910 for VGMPlayer.
+- 3.9.2.2 Fixed performance hit for VSIF
+  - Improved "Piano" control graphics.
+- 3.9.2.1 Improved VGMPlayer & VSIF for MSX.
+- 3.9.2.0 Updated VGMPlayer to support MSX.
+  - Fixed Mami path parsing for reading the VSTI ini file.
+- 3.9.1.0 Improved CombinedTimbre feature.
+- 3.9.0.0 Improved CombinedTimbre feature.
+  - Fixed some minor bug.
+- 3.8.0.1 Fixed note name F# does not exist on the DrumTimbre.BaseNote property. ;-< ★You need to re-configure old save data if you use it.★
+- 3.8.0.0 Added Velocity Mapping feature.
+  - Supported VSIF for MSX. You can drive PSG, OPLL, SCC, OPL3 sound chip on the real MSX.
+- 3.7.5.0 Supported Scale Tuning. You can set it on ScaleTuning property to the MIDI(Dedicated) category.
+  - Supported Channel After Touch MIDI event. You can set the effect on the SCCS property on a Timbre property.
+- 3.7.4.0 Fixed Master Clock prop crashing when resetting the value to default.
+  - Supported DPCM play for Real Famicom.
+  - Added ArpMethod property for FxSettings.
+  - Supported 64bit version of the SCCI.
+- 3.7.3.2 Fixed SoundFont loader for SPC700. Loader could not load 2nd and later samples.
+- 3.7.3.1 Improved square wave low frequency range of VSIF - Famicom.
+  - Added function that can be cleared write cache data when Panic button pressed.
+- 3.7.3.0 Supported VSIF for Famicom.
+- 3.7.2.0 Ignored invalid VGM data and improved performance for VGMPlayer.
+  - Supported 115200bps for VSIF for Genesis UART mode.
+- 3.7.1.0 Fixed the Panic button that the FM synthesizer can be stopped completely.
+  - Updated VSIF engine and added VSIF VGMPlayer.
+- 3.7.0.0 Fixed unexpected font error on startup ( Just ignoring... ).
+  - Fixed unexpected sound stop (retry)
+  - Added VSIF sound engine to play music through Real SMS, Genesis console.
+- 3.6.2.0 Added PanShift Envelope property to the FxS.
+- 3.6.1.0 Added Maximize/FIR/Rand Button to the Envelope Editor Dialog.
+- 3.6.0.1 Fixed unexpected sound stop (maybe)
+- 3.6.0.0 Added uPD1771.
+- 3.5.1.3 Fixed unexpected sounding in Huc6280.
+- 3.5.1.2 Improved performance (a little) in VST mode.
+- 3.5.1.1 Fixed unexpected error occurred while enabling SCCI in VST mode.
+- 3.5.1.0 Supported localization for ja-JP.
+- 3.5.0.1 Fixed crashing in POKEY.
+- 3.5.0.0 Supported VSTi plugin mode. Use the .\VST\MAmiVSTi.dll file and edit ini file. DO NOT USE old .\MAmiVSTi.dll file. Trash it.
+- 3.3.2.1 Fixed FxS not working in some chips.
+- 3.3.2.0 Breaking changed SCC & FDS LFO & PCE LFO morph data table format.
+- 3.3.1.0 Supported dynamic LFO wave form changing for the FDS and HuC6280 chip. You can change LFO wave form by "MorphEnvelops" property in the FxS settings.
+  - Updated MAME Core.
+- 3.3.0.0 Added SN76477.
+  - Fixed double value slider could not set float value properly.
+- 3.2.0.2 Fixed SAM icon.
+- 3.2.0.0 Added the SAM is a TTS software for consoles of the ATARI and AMIGA.
+- 3.1.1.0 Supported converting words to allophones for the SP0256 Chip.
+- 3.1.0.0 Added SP0256 Chip.
+- 3.0.0.0 Added TMS5220 Chip and preset voices.
+- 2.9.1.1 Fixed the issue that envelope settings are not applied of AY-3-8910 and YM2608.
+  - Added SyncWithNoteFrequencyDivider property to the YM2608 (Same with AY-3-8910).
+- 2.9.1.0 Supported the SPFM to sound on a real chip for the AY-3-8910.
+- 2.9.0.2 Temporary fixed OPNA SSG noisy* sound (*Emulation engine only)
+  - Breaking changed OPNA SSG sound type property.
+- 2.9.0.1 Fixed unexpected exception while sounding.
+- 2.9.0.0 Added Master Clock property to YM2151, YM2608, YM2610B, YM2612.
+  - Supported SCCI with 64 bit version of MAmidiMEmo. However, this feature needs more CPU power.
+- 2.8.1.1 Fixed incorrect NAMCO CUS30 waveform applying.
+- 2.8.1.0 Updated sample sound and fixed some minor issue.
+- 2.8.0.1 Fixed unexpected error in FM Tone Selector.
+- 2.8.0.0 Supported *.gwi tone file for FM Synthesis Editor.
+  - Added Random button & FIR button to the WSG Editor.
+- 2.7.1.1 Fixed YMF262 FM Synthesis editor error.
+- 2.7.1.0 Fixed YMF262 FM Synthesis editor error.
+- 2.7.0.0 Fixed unexpected sounding when volume changing on CUS30.
+- 2.6.9.0 Improved new sound channel assignment algorithm.
+- 2.6.8.0 Fixed new sound channel assignment algorithm for the Drum ch.
+- 2.6.7.0 Fixed HOLD1 not working properly.
+- 2.6.6.0 Fixed new sound channel assignment algorithm in the Follower mode.
+- 2.6.5.0 Fixed & improved sound channel assignment algorithm to keep last sounding channel for YM2413 (v2.6.3.0 changes did not applied to YM2413).
+- 2.6.4.0 Supported dynamic wave form changing for the SCC1 chip. You can change wave form by "MorphEnvelops" property in the FxS settings.
+  - Removed force dump disabling hack in FM chips.
+- 2.6.3.0 Fixed RYTHM ch volume calculation in the YM2608 chip.
+  - Fixed SCCS, GPCS values calculation.
+  - Improved sound channel assignment algorithm to keep last sounding channel. If you does not like this, please contact me.
+- 2.6.2.0 Turned off write cache for frequency register in the real YM2608 and YM2515 chip.
+- 2.6.1.0 Fixed CH mode set 3 instead of 6 in YM2608. Affected only S/W emulation.
+- 2.6.0.0 Fixed crashing when FM operators was reset.
+  - Fixed SSG tone frequency in real YM2608 chip.
+- 2.5.9.0 Supported downloading and opening a text file from the FM tone downloading dialog. The main reason is to make sure of the license and warning messages.
+- 2.5.8.0 Supported downloading a FM tone (In the near future, you can download other data maybe) from cloud. Thanks to DM-88-san.
+- 2.5.7.0 Added "Dumping sound" to RHYTHM sound in YM2608 when key off received.
+  - Fixed ADPCM-B not sounding unexpectedly in YM2608.
+  - Improved ADPCM-B in YM2608 transfer speed via SCCI.
+  - Fixed SSG sounding unexpectedly when volume changing in YM2608 and YM2610B
+  - Supported GM RESET ans GS RESET SysEx message. When received, reset all MIDI parameters and off all notes.
+- 2.5.6.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Timbres props.
+- 2.5.5.0 Added tone selector dialog that shows when imported a tone file that has multiple tones.
+- 2.5.4.0 Supported importing the MUCOM88, FMP, PMD, VOPM sound font file into the FM Synthesis Editor.
+  - Supported loading a WAV file (16bit mono) as ADPCM-B data for YM2608, YM2610B chips.
+- 2.5.3.0 Fixed PSG sounding unexpectedly when volume changing.
+  - Supported MIDI IN B.
+  - Supported Master Volume SysEx command. Try to send "F0 7F 7F 04 01 00 nn F7" to change master volume.
+  - Fixed CUS30 Volume calculation.
+  - Added YM2608(OPNA) chip. Place legitimate ym2608_adpcm_rom.bin file in the Mami dir to play rhythm sound.
+  - Supported the SPFM to sound in real chip for YM2151 and YM2608 chips. *Only 32 bit version*
+- 2.5.2.0 Supported dynamic change FM Synthesis Op.Enable value.
+  - Added FM Synthesis register value randomizer to FM Synthesis Editor.
+  - Added FM Synthesis global register to FM Synthesis Editor.
+- 2.5.1.0 Improved MIDI file Player UI.
+- 2.5.0.0 Added MIDI file Player tab.
+  - Supported MAmidi file that is MAmi file and midi file are archived file. To create MAmidi file, load midi file and export MAmidi file.
+  - Fixed portamento time (Almost the same as the GS module portamento time).
+- 2.4.0.1 Improved UI.
+  - Supported basic formula for SoundControlChangeSettings and GeneralPurposeControlSettings properties.
+  - Added Data Entry slider to Piano GUI. Use a mouse wheel to change the value.
+  - Fixed freezing in MT32.
+  - Fixed key off behavior of Fx Engine.
+  - Updated MSGS.SF for CM32-P.
+- 2.4.0.0 Added Envelope Editor.
+- 2.3.0.2 Fixed key off ignored issue while modulation is active in OPL.
+  - Fixed to turn off modulation after key off.
+  - Applied Metro Style GUI and improved UI.
+- 2.3.0.1 Fixed YMF262 sample file and some minor bugs.
+- 2.3.0.0 Added YMF262(OPL3) chip.
+  - Fixed Combined Drum does not sounding properly.
+- 2.2.5.1 Improved FM Synthesis Editor UI.
+- 2.2.5.0 Added PCM playback feature to HuC6280.
+  - Fixed an error when opening the floating point value slider in some props.
+  - Fixed SR(Sustain Rate) is extra parameter for OPL is not affected.
+  - Added a FM Synthesis GUI Editor.
+- 2.2.4.0 Fixed issue of modulation CC.
+  - Fixed an error in MSM5232.
+  - Improved NOISE ch freqeucncy in SN76496, GBAPU, AY8910. You can change freq by pitch change CC.
+  - Improved NOISE ch function in AY8910.
+- 2.2.3.0 Fixed issues related with SID property.
+  - Improved sf loader for SPC700 and C140.
+  - Added ZoneID remover script.
+- 2.2.2.0 Fixed not applying Relese Point for Envelope.
+  - Fixed sound off timing while envelope processing.
+  - Added sf2 loading feature to context menu of C140 instrument.
+  - Removed DrumTimbreTable prop from C140 and SPC700 insts (Not suitable for PCM insts). Please use DrumTimbres prop to sound drum.
+  - Improved assignment of YM2413 drum sounds.
+  - Improved YM2413 custom sound sounding algorithm.
+  - Fixed error when opening a YM2610B Timbre prop.
+- 2.2.1.0 Fixed HuC6820 WSG sound can't delete last noise sound.
+- 2.2.0.0 Fixed Piano GUI for CM32-P and MT-32.
+  - Fixed HuC6820 volume calculation algorithm.
+  - Fixed not saving WSG Type of NAMCO CUS30 Timbre.
+  - Fixed error when opening a YM2413 Timbre property.
+  - Added sf2 loading feature to context menu of SPC700 instrument.
+- 2.1.0.0 Changed YM2413 engine to emu2413 engine to get more sounds accuracy.
+  - Added Tone Envelope property for YM2413 FxS settings. 
+  - Added CM32-P Card #16.
+  - Added MML like serialize property to the FM Synthesis chip.
+  - Fixed FM Synthesis sounds.
+- 2.0.4.0 Extended POLY mode control change message. You can specify the number of reserved voices.
+  - Fixed crashing on boot.
+- 2.0.3.0 Improved sounds output timing accuracy.
+  - Supported HOLD1 control change message.
+- 2.0.2.0 Improved MT-32 sounds output timing & latency.
+- 2.0.1.0 Fixed crashing in some chip...
+- 2.0.0.0 Fixed some minor bugs.
+  - Panic button sometimes does not work.
+  - SerializeData does not work and cause crash.
+  - FxS Arp does not work properly in Fixed mode.
+  - Property Reset menu does not work properly.
+  - Mono mode does not work properly.
+  - RP2A03 Tri channel is stopped by Noise channel.
+  - Specific property value does not save.
+  - Added KeyShift, PitchShift, IgnoreKeyOff prop to Timbre prop.
+  - Added Combined Timbre feature to Timbre prop. Treat patched Timbre as one Timbre.
+  - Added Follower mode feature to Timbre prop. Share voice ch with another units.
+  - Added Drum part to Timbre prop.
+  - Added Global Arpeggio Settins to Instrument prop.
+  - Added Instrument cloning menu in the instrument pane on the Main window.
+  - Exposed RP2A03 Liner Counter Length.
+  - Applied "Force Dump mode" always to FM Synthesis unit to prevent incomplete attack rate.
+  - Added virtual SR parameter to YM2413.
+  - Added sample of MAmi files.
+  - Added drag & drop feature that MAmi file can be dropped into instrument list pnae.
+- 1.3.1.0 Added VGM supported chips.
+  - GB APU, HuC6280
+- 1.3.0.0 Synced sound engine to MAME 0221 (May improved some sound accuracy).
+  - Added wave file output feature. Please re-open option dialog and press [OK] to commit new settings.
+  - Added VGM file separetedly output feature. Only supported the following chips.
+  - YM2151, YM2612, YM3812, YM2413, POKEY, SN76496, NES APU, AY-3-8910
+- 1.2.1.0 Added CM-32P SN-U110-10 simulation .
+- 1.2.0.0 Added CM-32P (This is an incomplete simulator).
+  - Using FluidLite https://github.com/divideconcept/FluidLite , 
+  - Using GeneralUser GS http://schristiancollins.com/generaluser.php
+  - Fixed RPN/NRPN MIDI massages can not be handled properly. OMG.
+- 1.1.0.0 Added MT-32 MIDI module ( imported from MUNT https://sourceforge.net/projects/munt/ )
+  - Place legitimate MT32_CONTROL.ROM and MT32_PCM.ROM files in the Mami dir.
+- 1.0.0.0 Added YM2610B chip.
+- 0.9.4.2 Fixed Key ch of piano pane is not applied properly.
+- 0.9.4.1 Fixed YM2413 serialized data could not apply properly.
+- 0.9.4.0 Added FDS, VRC6 tone type to the NES APU.
+  - FDS, VRC6 was imported from VirtuaNES https://github.com/ivysnow/virtuanes
+  - Added HuC6280 and SPC700(RAM limit breaking) and POKEY.
+  - Fixed and changed "Partial Reserve" feature for GBA ( and HuC6280 ).
+- 0.9.3.1 Fixed invalid portamento source note and followed portamento speed to GM2 spec.
+- 0.9.3.0 Added alternate property editor window. That can be popup from toolbar in the Property pane.
+  - Added "Sound Control Settings" feature in Timbre settings. You can link the Sound control MIDI message value with the Timbre property value. (Also VST effects and other props, too)
+  - Added modifying receving MIDI ch for the specific instrument via NRPN MIDI Message feature.
+  - See the section No.8 of this README.
+  - Fixed arpeggio algorithm. When last one key is up, the key is not held in hold mode. Otherwise, keep arpeggio.
+  - Fixed 2nd AY8910 outputs noise, C140 panpot gain formula follows GM2 spec, some minor bugs.
+- 0.8.0.0 Supports piano clicks by mouse. Supports Mono mode(CC#126,CC#127) almost same with FITOM
+- 0.7.0.0 Added SID, C140(RAM limit breaking) chips, Displays Oscilloscope, Supports VST Effect plugin
+- 0.6.1.0 Changed to new sound timer engine for perfect sound timing
+- 0.6.0.0 Added sound driver effects and portamento feature
+- 0.5.0.0 Added several chips
+- 0.1.0.0 First release
 
 *** Licenses ***
 

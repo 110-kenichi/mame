@@ -24,6 +24,8 @@ namespace zanac.VGMPlayer
         private VsifClient comPortOPN2;
         private VsifClient comPortOPNA;
 
+        private VsifClient comPortTurboRProxy;
+
         private const uint FCC_VGM = 0x204D4758;    // 'XGM '
 
         private XGM_HEADER xgmMHead;
@@ -95,6 +97,11 @@ namespace zanac.VGMPlayer
         protected override void StopAllSounds(bool volumeOff)
         {
             abort();
+
+            if (comPortTurboRProxy != null)
+            {
+                comPortTurboRProxy.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)(decimal)comPortTurboRProxy.Tag["ClockWidth"]);
+            }
 
             if (comPortDCSG != null)
             {
@@ -485,14 +492,32 @@ namespace zanac.VGMPlayer
                     case 4:
                         if (comPortOPNA == null)
                         {
+                            comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.PC88_FTDI,
+                                (PortId)Settings.Default.OPNA_Port);
+                            if (comPortOPNA != null)
+                            {
+                                comPortOPNA.ChipClockHz["OPNA"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
+                                UseChipInformation += "OPNA@7.987200MHz ";
+                            }
+                        }
+                        break;
+                    case 5:
+                        if (comPortOPNA == null)
+                        {
                             comPortOPNA = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
                                 (PortId)Settings.Default.OPNA_Port);
                             if (comPortOPNA != null)
                             {
                                 comPortOPNA.Tag["ClockWidth"] = Settings.Default.BitBangWaitOPNA;
-                                comPortOPNA.ChipClockHz["OPNA"] = 8 * 1000 * 1000;
+                                comPortOPNA.ChipClockHz["OPNA"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
+                                comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
                                 UseChipInformation += "OPNA@8.000000MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPNA != null)
+                                comPortTurboRProxy = comPortOPNA;
                         }
                         break;
                 }
@@ -596,6 +621,8 @@ namespace zanac.VGMPlayer
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 UseChipInformation += "OPN2@7.670453MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPN2 != null)
+                                comPortTurboRProxy = comPortOPN2;
                         }
                         break;
                 }
@@ -711,6 +738,8 @@ namespace zanac.VGMPlayer
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
                                 UseChipInformation += "DCSG@3.579545MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortDCSG != null)
+                                comPortTurboRProxy = comPortDCSG;
                         }
                         break;
                 }
@@ -866,8 +895,16 @@ namespace zanac.VGMPlayer
                                                     {
                                                         case 0x2a:
                                                             //output DAC
-                                                            dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
-                                                            DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
+                                                            if (comPortTurboRProxy != null)
+                                                            {
+                                                                dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                                DeferredWriteTurboR_DAC(comPortTurboRProxy, dt);
+                                                            }
+                                                            else
+                                                            {
+                                                                dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                                DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
+                                                            }
                                                             break;
                                                         case 0x2b:
                                                             //Enable DAC
@@ -1458,7 +1495,10 @@ namespace zanac.VGMPlayer
                             {
                                 dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
                                 dacData += 0x80;
-                                xgmSong.DeferredWriteOPNA_PseudoDAC(xgmSong.comPortOPNA, dacData);
+                                if(xgmSong.comPortTurboRProxy != null)
+                                    xgmSong.DeferredWriteTurboR_DAC(xgmSong.comPortTurboRProxy, dacData);
+                                else
+                                    xgmSong.DeferredWriteOPNA_PseudoDAC(xgmSong.comPortOPNA, dacData);
                             }
                         }
                     }

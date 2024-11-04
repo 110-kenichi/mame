@@ -768,14 +768,10 @@ __WRITE_OPN2_DAC:
     .macro __WRITE_TR_DAC
 __WRITE_TR_DAC:
     LD  C,#14           ; 7 14
-    LD  B,#0            ; 7 14
 0$:
 ;=======================
     READ_DATA           ; 55
 
-    LD  A,B             ;  5 60
-    OUT (PSGAD),A       ; 12 72
-    
     LD  A,D             ;  5 77
     OUT (TRDAC),A       ; 12 89 
 

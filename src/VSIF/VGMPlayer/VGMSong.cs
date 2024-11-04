@@ -49,6 +49,8 @@ namespace zanac.VGMPlayer
         private VsifClient comPortMCD;
         private VsifClient comPortSAA;
 
+        private VsifClient comPortTurboRProxy;
+
         private BinaryReader vgmReader;
 
         private List<byte> dacData = new List<byte>();
@@ -84,6 +86,11 @@ namespace zanac.VGMPlayer
         protected override void StopAllSounds(bool volumeOff)
         {
             abort();
+
+            if (comPortTurboRProxy != null)
+            {
+                comPortTurboRProxy.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)(decimal)comPortTurboRProxy.Tag["ClockWidth"]);
+            }
 
             if (comPortDCSG != null)
             {
@@ -737,7 +744,11 @@ namespace zanac.VGMPlayer
                 oki6258_clock_buffer[0x02] = (oki6258_master_clock & 0x00FF0000) >> 16;
                 oki6258_clock_buffer[0x03] = (oki6258_master_clock & 0xFF000000) >> 24;
 
-                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                if (comPortTurboRProxy != null)
+                {
+                    comPortTurboRProxy.Tag["ProxyOKIM6258"] = true;
+                }
+                else if (Settings.Default.OPN2_Enable && connectToOPN2())
                 {
                     comPortOPN2.Tag["ProxyOKIM6258"] = true;
                     //Enable Dac
@@ -751,22 +762,18 @@ namespace zanac.VGMPlayer
                     //Enable Dac
                     EnableDacYM2608(comPortOPNA, true);
                 }
-                else
-                {
-                    foreach (var c in VsifManager.GetVsifClients())
-                    {
-                        if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                        {
-                            c.Tag["ProxyOKIM6258"] = true;
-                            break;
-                        }
-                    }
-                }
             }
             if (curHead.lngHzOKIM6295 != 0 && curHead.lngVersion >= 0x00000161)
             {
                 SongChipInformation += $"OKIM6295@{(curHead.lngHzOKIM6295 & 0x7FFFFFFFu) / 1000000f}MHz ";
-                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                if (comPortTurboRProxy != null)
+                {
+                    comPortTurboRProxy.Tag["ProxyOKIM6295"] = true;
+
+                    okim6295 = new OKIM6295(this);
+                    okim6295.device_start_okim6295(0, (int)curHead.lngHzOKIM6295, comPortTurboRProxy);
+                }
+                else if (Settings.Default.OPN2_Enable && connectToOPN2())
                 {
                     comPortOPN2.Tag["ProxyOKIM6295"] = true;
                     //Enable Dac
@@ -786,24 +793,18 @@ namespace zanac.VGMPlayer
                     okim6295 = new OKIM6295(this);
                     okim6295.device_start_okim6295(0, (int)curHead.lngHzOKIM6295, comPortOPNA);
                 }
-                else
-                {
-                    foreach (var c in VsifManager.GetVsifClients())
-                    {
-                        if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                        {
-                            c.Tag["ProxyOKIM6295"] = true;
-                            okim6295 = new OKIM6295(this);
-                            okim6295.device_start_okim6295(0, (int)curHead.lngHzOKIM6295, c);
-                            break;
-                        }
-                    }
-                }
             }
             if (curHead.lngHzSPCM != 0 && curHead.lngVersion >= 0x00000151)
             {
                 SongChipInformation += $"SEGA PCM@{curHead.lngHzSPCM / 1000000f}MHz ";
-                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                if (comPortTurboRProxy != null)
+                {
+                    comPortTurboRProxy.Tag["ProxySegaPcm"] = true;
+
+                    segaPcm = new SegaPcm(this);
+                    segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, comPortTurboRProxy);
+                }
+                else if (Settings.Default.OPN2_Enable && connectToOPN2())
                 {
                     comPortOPN2.Tag["ProxySegaPcm"] = true;
                     //Enable Dac
@@ -823,24 +824,18 @@ namespace zanac.VGMPlayer
                     segaPcm = new SegaPcm(this);
                     segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, comPortOPNA);
                 }
-                else
-                {
-                    foreach (var c in VsifManager.GetVsifClients())
-                    {
-                        if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                        {
-                            c.Tag["ProxySegaPcm"] = true;
-                            segaPcm = new SegaPcm(this);
-                            segaPcm.device_start_segapcm(0, (int)curHead.lngHzSPCM, (int)curHead.lngSPCMIntf, c);
-                            break;
-                        }
-                    }
-                }
             }
             if (curHead.lngHzK053260 != 0 && curHead.lngVersion >= 0x00000161)
             {
                 SongChipInformation += $"K053260@{curHead.lngHzK053260 / 1000000f}MHz ";
-                if (Settings.Default.OPN2_Enable && connectToOPN2())
+                if (comPortTurboRProxy != null)
+                {
+                    comPortTurboRProxy.Tag["ProxyK053260"] = true;
+
+                    k053260 = new K053260(this);
+                    k053260.device_start_k053260(0, (int)curHead.lngHzK053260, comPortTurboRProxy);
+                }
+                else if (Settings.Default.OPN2_Enable && connectToOPN2())
                 {
                     comPortOPN2.Tag["ProxyK053260"] = true;
                     //Enable Dac
@@ -859,19 +854,6 @@ namespace zanac.VGMPlayer
 
                     k053260 = new K053260(this);
                     k053260.device_start_k053260(0, (int)curHead.lngHzK053260, comPortOPNA);
-                }
-                else
-                {
-                    foreach (var c in VsifManager.GetVsifClients())
-                    {
-                        if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                        {
-                            c.Tag["ProxyK053260"] = true;
-                            k053260 = new K053260(this);
-                            k053260.device_start_k053260(0, (int)curHead.lngHzK053260, c);
-                            break;
-                        }
-                    }
                 }
             }
             if (curHead.lngHzNESAPU != 0 && curHead.lngVersion >= 0x00000161)
@@ -955,6 +937,8 @@ namespace zanac.VGMPlayer
                                 comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
                                 UseChipInformation += "SAA1099@8MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortSAA != null)
+                                comPortTurboRProxy = comPortSAA;
                         }
                         break;
                 }
@@ -1077,6 +1061,8 @@ namespace zanac.VGMPlayer
                                 comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
                                 UseChipInformation += "PSG@1.789773MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortY8910 != null)
+                                comPortTurboRProxy = comPortY8910;
                         }
                         break;
                 }
@@ -1148,6 +1134,8 @@ namespace zanac.VGMPlayer
                                 comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
                                 UseChipInformation += "OPLL@3.579545MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPLL != null)
+                                comPortTurboRProxy = comPortOPLL;
                         }
                         break;
                 }
@@ -1262,6 +1250,8 @@ namespace zanac.VGMPlayer
                                 comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
                                 UseChipInformation += "DCSG@3.579545MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortDCSG != null)
+                                comPortTurboRProxy = comPortDCSG;
                         }
                         break;
                 }
@@ -1294,6 +1284,9 @@ namespace zanac.VGMPlayer
                                     comPortSCC = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI, (PortId)Settings.Default.SCC_Port);
                                     break;
                             }
+                            if (comPortTurboRProxy == null && comPortSCC != null)
+                                comPortTurboRProxy = comPortSCC;
+
                             if (comPortSCC != null)
                             {
                                 Accepted = true;
@@ -1384,6 +1377,8 @@ namespace zanac.VGMPlayer
                                 comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
                                 UseChipInformation += "Y8950@3.579545MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortY8950 != null)
+                                comPortTurboRProxy = comPortY8950;
                         }
                         break;
                 }
@@ -1432,6 +1427,8 @@ namespace zanac.VGMPlayer
                             comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
                             UseChipInformation += "OPL3@14.318180MHz ";
                         }
+                        if (comPortTurboRProxy == null && comPortOPL3 != null)
+                            comPortTurboRProxy = comPortOPL3;
                         break;
                 }
                 if (comPortOPL3 != null)
@@ -1545,6 +1542,8 @@ namespace zanac.VGMPlayer
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
                                 UseChipInformation += "OPM@3.579545MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPM != null)
+                                comPortTurboRProxy = comPortOPM;
                         }
                         break;
                 }
@@ -1682,6 +1681,8 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
                                 UseChipInformation += "OPNA@8.000000MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPNA != null)
+                                comPortTurboRProxy = comPortOPNA;
                         }
                         break;
                 }
@@ -1767,6 +1768,8 @@ namespace zanac.VGMPlayer
                                 comPortOPN.ChipClockHz["OPN_org"] = 4000000;
                                 UseChipInformation += "OPN@4.000000MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPN != null)
+                                comPortTurboRProxy = comPortOPN;
                         }
                         break;
                 }
@@ -1862,6 +1865,8 @@ namespace zanac.VGMPlayer
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
                                 UseChipInformation += "OPN2@7.670453MHz ";
                             }
+                            if (comPortTurboRProxy == null && comPortOPN2 != null)
+                                comPortTurboRProxy = comPortOPN2;
                         }
                         break;
                 }
@@ -3496,27 +3501,34 @@ namespace zanac.VGMPlayer
                                                         if (comPortOPN2 != null)
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+
+                                                            dacStream = new DacStream(this, comPortOPN2, null, okim6258, null);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
                                                         }
                                                         else if (comPortOPNA != null)
                                                         {
-                                                            //nop
+                                                            dacStream = new DacStream(this, null, comPortOPNA, okim6258, null);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
                                                         }
-
+                                                        else if (comPortTurboRProxy != null)
                                                         {
-                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
+                                                            dacStream = new DacStream(this, null, comPortTurboRProxy, okim6258, null);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
                                                         }
                                                     }
 
-
                                                     break;
 
                                                 case 20:   //NES
                                                     if (port == 0x00 && cmd == 0x11)    //PCM ENABLE
                                                     {
-                                                        dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
+                                                        dacStream = new DacStream(this, null, null, okim6258, comPortNES);
                                                         Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                         t.Priority = ThreadPriority.Highest;
                                                         t.Start();
@@ -3527,18 +3539,27 @@ namespace zanac.VGMPlayer
                                                 case 23: //OKIM6258
                                                     if (port == 0x00 && cmd == 0x1)    //ADPCM ENABLE
                                                     {
-                                                        if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                        if (comPortTurboRProxy != null)
+                                                        {
+                                                            okim6258 = new OKIM6258();
+                                                            dacStream = new DacStream(this, null, comPortTurboRProxy, okim6258, null);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
+                                                        }
+                                                        else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
+                                                            okim6258 = new OKIM6258();
+                                                            dacStream = new DacStream(this, comPortOPN2, null, okim6258, null);
+                                                            Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                            t.Priority = ThreadPriority.Highest;
+                                                            t.Start();
                                                         }
                                                         else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
-                                                            //nop
-                                                        }
-
-                                                        {
                                                             okim6258 = new OKIM6258();
-                                                            dacStream = new DacStream(this, comPortOPN2, comPortOPNA, okim6258, comPortNES);
+                                                            dacStream = new DacStream(this, null, comPortOPNA, okim6258, null);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -3841,7 +3862,13 @@ namespace zanac.VGMPlayer
                                                             //var ddata = decodeOpnaAdpcm(dd & 0xf);
                                                             ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
-                                                            if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                                DeferredWriteTurboR_DAC(comPortTurboRProxy, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
                                                                 byte bdata = (byte)((ddata >> 8) + 128);
                                                                 DeferredWriteOPN2_DAC(comPortOPN2, bdata);
@@ -3852,18 +3879,6 @@ namespace zanac.VGMPlayer
                                                                 byte bdata = (byte)((ddata >> 8));
                                                                 DeferredWriteOPNA_DAC(comPortOPNA, bdata);
                                                                 streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
-                                                            }
-                                                            else
-                                                            {
-                                                                foreach (var c in VsifManager.GetVsifClients())
-                                                                {
-                                                                    if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && c.Tag.ContainsKey("ProxyOKIM6258"))
-                                                                    {
-                                                                        byte bdata = (byte)((ddata >> 8) + 128);
-                                                                        DeferredWriteTurboR_DAC(c, bdata);
-                                                                        break;
-                                                                    }
-                                                                }
                                                             }
                                                             oki6285Adpcm2ndNibble = true;
                                                             vgmDataCurrentOffset--;
@@ -3874,7 +3889,13 @@ namespace zanac.VGMPlayer
                                                             //var ddata = decodeOpnaAdpcm(dd >> 4);
                                                             ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
-                                                            if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
+                                                            {
+                                                                byte bdata = (byte)((ddata >> 8) + 128);
+                                                                DeferredWriteTurboR_DAC(comPortTurboRProxy, bdata);
+                                                                streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
+                                                            }
+                                                            else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
                                                                 byte bdata = (byte)((ddata >> 8) + 128);
                                                                 DeferredWriteOPN2_DAC(comPortOPN2, bdata);
@@ -3885,18 +3906,6 @@ namespace zanac.VGMPlayer
                                                                 byte bdata = (byte)((ddata >> 8));
                                                                 DeferredWriteOPNA_DAC(comPortOPNA, bdata);
                                                                 streamWaitDelta += 44.1 * 1000 / oki6258_sample_rate;
-                                                            }
-                                                            else
-                                                            {
-                                                                foreach (var c in VsifManager.GetVsifClients())
-                                                                {
-                                                                    if (c.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && c.Tag.ContainsKey("ProxyOKIM6258"))
-                                                                    {
-                                                                        byte bdata = (byte)((ddata >> 8) + 128);
-                                                                        DeferredWriteTurboR_DAC(c, bdata);
-                                                                        break;
-                                                                    }
-                                                                }
                                                             }
                                                             oki6285Adpcm2ndNibble = false;
                                                         }

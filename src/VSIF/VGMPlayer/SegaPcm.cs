@@ -106,7 +106,18 @@ namespace zanac.VGMPlayer
 
                 if (vsifClient != null)
                 {
-                    if (vsifClient.ChipClockHz.ContainsKey("OPN2") && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
+                    if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
+                    {
+                        int dt = ((dtL + dtR) / 2) >> 7;
+
+                        if (dt > sbyte.MaxValue)
+                            dt = sbyte.MaxValue;
+                        else if (dt < sbyte.MinValue)
+                            dt = sbyte.MinValue;
+
+                        parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                    }
+                    else if (vsifClient.ChipClockHz.ContainsKey("OPN2") && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
                     {
                         int dt = ((dtL + dtR) / 2) >> 7;
 
@@ -127,17 +138,6 @@ namespace zanac.VGMPlayer
                             dt = sbyte.MinValue;
 
                         parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
-                    }
-                    else if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxySegaPcm"))
-                    {
-                        int dt = ((dtL + dtR) / 2) >> 7;
-
-                        if (dt > sbyte.MaxValue)
-                            dt = sbyte.MaxValue;
-                        else if (dt < sbyte.MinValue)
-                            dt = sbyte.MinValue;
-
-                        parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
                     }
                 }
 
