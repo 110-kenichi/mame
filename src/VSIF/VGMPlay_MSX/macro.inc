@@ -112,7 +112,6 @@
     AND E               ;  5
     ; DATA 8bit
     OR  D               ;  5
-    LD  D,A             ;  5 55
     .endm
 ;=======================================================
 
@@ -124,7 +123,7 @@ __WRITE_ANY_IO:
     READ_DATA           ; 55
 
     LD  C,B             ; 4
-    OUT (C), D          ; 12
+    OUT (C), A          ; 12
 
     ; Continuous Write
     LD  E,#0x1F         ; 7
@@ -151,6 +150,7 @@ __WRITE_PSG_IO:
     LD  C,#14           ; 7 14
 ;=======================
     READ_DATA           ; 55
+    LD  D,A             ;  5 55
 
     LD  A,B             ; 
     OUT (PSGAD),A       ; 
@@ -184,7 +184,6 @@ __WRITE_OPLL_IO:
 ;=======================
 
     READ_DATA           ; 55 
-    LD  A,D             ; 
     OUT (OPLLWR),A      ; 
 
     ; Continuous Write
@@ -216,7 +215,7 @@ __WRITE_SCC1:
 
     LD  H,#0xB8         ; 
     LD  L,B             ; 
-    LD  (HL), D         ; 
+    LD  (HL), A         ; 
 
     ; Continuous Write
     INC B               ; 
@@ -243,15 +242,15 @@ __WRITE_SCC:
     READ_ADRS           ; 61
 ;=======================
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
     LD  H,#0x98         ; 
     LD  L,B             ; 
-    LD  (HL), D         ; 
+    LD  (HL), A         ; 
 
     ; Continuous Write
     INC B               ; 
-    LD  E,#0x1F         ; 34 89
+    LD  E,#0x1F         ; 34 84
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -273,7 +272,8 @@ __WRITE_SCC:
 __WRITE_SCC1_2BYTES:
     READ_ADRS           ; 61
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
+    LD  D,A             ;  5 60
 
     LD  H,#0xB8         ;  
     LD  L,B             ; 13
@@ -286,7 +286,8 @@ __WRITE_SCC1_2BYTES:
 __WRITE_SCC_2BYTES:
     READ_ADRS           ; 61
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
+    LD  D,A             ;  5 60
 
     LD  H,#0x98         ; 
     LD  L,B             ;  5 59
@@ -299,11 +300,11 @@ __WRITE_SCC_2BYTES:
 __WRITE_SCC1_32_BYTES:
     READ_ADRS           ; 61
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
     LD  H,#0xB8         ; 
     LD  L,B             ; 
-    LD  (HL), D         ; 21 76
+    LD  (HL), A         ; 21 71
 ;=======================
     WRITE_SCC_31_BYTES  ; 94
     .endm
@@ -313,11 +314,11 @@ __WRITE_SCC1_32_BYTES:
 __WRITE_SCC_32_BYTES:
     READ_ADRS           ; 61
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
     LD  H,#0x98         ; 
     LD  L,B             ; 
-    LD  (HL), D         ; 21 76
+    LD  (HL), A         ; 21 71
 ;=======================
     WRITE_SCC_31_BYTES  ; 94
     .endm
@@ -332,10 +333,9 @@ __WRITE_OPL3_IO1:
     CP  #0x0F           ;  8 86
     JP  Z, __WRITE_OPL3_IO1_ADPCM           ; 11 97
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPL3WR1),A     ; 17 72
+    OUT (OPL3WR1),A     ; 12 62
 
     ; Continuous Write
     INC B               ; 
@@ -358,13 +358,12 @@ __WRITE_OPL3_IO1:
 ;=======================  ADPCM burst write mode
 __WRITE_OPL3_IO1_ADPCM:
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPL3WR1),A     ; 17 72
+    OUT (OPL3WR1),A     ; 12 62
 
     ; Continuous Write
-    LD  E,#0x1F         ; 13 85
+    LD  E,#0x1F         ;  8 70
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -392,14 +391,13 @@ __WRITE_OPL3_IO2:
     CP  #0x0F           ;  8 86
     JP  Z, __WRITE_OPL3_IO2_ADPCM           ; 11 97
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPL3WR2),A      ; 
+    OUT (OPL3WR2),A     ; 62 
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 30 85
+    INC B               ;  5
+    LD  E,#0x1F         ;  8 75
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -418,13 +416,12 @@ __WRITE_OPL3_IO2:
 ;=======================
 __WRITE_OPL3_IO2_ADPCM:
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPL3WR2),A      ; 
+    OUT (OPL3WR2),A     ; 12 62
 
     ; Continuous Write
-    LD  E,#0x1F         ; 30 85
+    LD  E,#0x1F         ;  8 70
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -451,13 +448,12 @@ __WRITE_OPLL_MEM:
     LD  (#0x7FF4),A     ; 19 80 
 ;=======================
 
-    READ_DATA           ; 55
-    LD  A,D             ; 
-    LD  (#0x7FF5),A     ; 
+    READ_DATA           ; 50
+    LD  (#0x7FF5),A     ; 14 64
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 32 87
+    INC B               ;  5
+    LD  E,#0x1F         ;  8 77
 1$:
     IN  A,(PSGRD)       ; 
     AND #0x20           ; 
@@ -479,9 +475,9 @@ __WRITE_OPLL_MEM:
 __SELECT_OPM_SLOT:
     READ_ADRS           ;61
 ;=======================
-    READ_DATA           ;55
-    INC D               ;
-    DEC D               ;
+    READ_DATA           ;50
+    INC A               ;
+    DEC A               ;
     JP  NZ,OPM1_P0      ;21 76
 ;=======================
 
@@ -541,16 +537,15 @@ OPM1_P0:
 __WRITE_OPM_MEM:
     READ_ADRS           ; 61
 0$:
-    LD  A,B             ; 
-    LD  (#0x3ff0),A     ; 19 80
+    LD  A,B             ;  5
+    LD  (#0x3ff0),A     ; 14
 ;=======================
-    READ_DATA           ; 55
-    LD  A,D             ; 
-    LD  (#0x3ff1),A     ; 
+    READ_DATA           ; 50
+    LD  (#0x3ff1),A     ; 14
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 32 87
+    INC B               ;  5
+    LD  E,#0x1F         ;  8 72
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -572,12 +567,11 @@ __WRITE_OPM_MEM:
 __WRITE_DCSG:
     READ_ADRS           ; 61
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (DCSGAD),A      ; 
+    OUT (DCSGAD),A      ; 12
 
-    JP __VGM_LOOP       ; 28 93
+    JP __VGM_LOOP       ; 11 73
     .endm
 
     .macro __WRITE_OPN2_IO1
@@ -587,10 +581,9 @@ __WRITE_OPN2_IO1:
     LD  A,B             ; 
     OUT (OPN2AD1),A     ; 17 78
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPN2WR1),A     ; 
+    OUT (OPN2WR1),A     ; 12 62
 
     ; Continuous Write
     INC B               ; 
@@ -621,14 +614,13 @@ __WRITE_OPN2_IO2:
     CP  #0x08           ;  8 86
     JP  Z, __WRITE_OPN2_IO2_ADPCM           ; 11 97
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPN2WR2),A     ; 
+    OUT (OPN2WR2),A     ; 12 62
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 30 85
+    INC B               ;  5 67
+    LD  E,#0x1F         ;  8 75
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -647,13 +639,12 @@ __WRITE_OPN2_IO2:
 ;=======================  ADPCM burst write mode
 __WRITE_OPN2_IO2_ADPCM:
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPN2WR2),A     ; 17 72
+    OUT (OPN2WR2),A     ; 12 62
 
     ; Continuous Write
-    LD  E,#0x1F         ; 13 85
+    LD  E,#0x1F         ;  8 70
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -678,16 +669,15 @@ __WRITE_OPN_IO:
     READ_ADRS           ; 61
 0$:
     LD  A,B             ; 
-    OUT (OPNAD),A     ; 17 78
+    OUT (OPNAD),A       ; 17 78
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ; 
-    OUT (OPNWR),A     ; 
+    OUT (OPNWR),A       ; 12 62 
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 30 85
+    INC B               ;  5 67
+    LD  E,#0x1F         ;  8 75
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -711,13 +701,12 @@ __WRITE_OPNA_DAC:
     OUT (OPN2AD2),A     ; 12 20
 0$:
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ;  5
-    OUT (OPN2WR2),A     ; 12 17 
+    OUT (OPN2WR2),A     ; 12 62 
 
     ; Continuous Write
-    LD  E,#0x1F         ; 30 85
+    LD  E,#0x1F         ;  8 70
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -741,13 +730,12 @@ __WRITE_OPN2_DAC:
     OUT (OPN2AD1),A     ; 12 20
 0$:
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ;  5
-    OUT (OPN2WR1),A     ; 12 17 
+    OUT (OPN2WR1),A     ; 12 62
 
     ; Continuous Write
-    LD  E,#0x1F         ; 30 85
+    LD  E,#0x1F         ;  8 70
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -770,31 +758,30 @@ __WRITE_TR_DAC:
     LD  C,#14           ; 7 14
 0$:
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  A,D             ;  5 77
-    OUT (TRDAC),A       ; 12 89 
+    OUT (TRDAC),A       ; 12 62 
 
     ; JOY2 Pin Read Mode
-    LD  A,C             ;  5 94
-    OUT (PSGAD),A       ; 12 106
+    LD  A,C             ;  5 67
+    OUT (PSGAD),A       ; 12 79
     
     ; Continuous Write
-    LD  E,#0x1F         ; 30 85
+    LD  E,#0x1F         ;  8 87
 ;=======================
 1$:
-    IN  A,(PSGRD)       ; 
-    AND #0x20           ; 
-    JP  Z, 1$           ; 
-    IN  A,(PSGRD)       ; 
-    AND	E               ; 
-    CP  E               ; 
-    JP  Z,0$            ;     ; Continuous Write
+    IN  A,(PSGRD)       ; 12
+    AND #0x20           ;  8 20
+    JP  Z, 1$           ; 11 31
+    IN  A,(PSGRD)       ; 12 43
+    AND	E               ;  5 48
+    CP  E               ;  5 53
+    JP  Z,0$            ; 11 64   ; Continuous Write
 
-    OR  #JPOFST         ; 
-    LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    OR  #JPOFST         ;  8 72
+    LD  H,A             ;  5 77
+    LD  L,#0            ;  8 85
+    JP  (HL)            ;  5 90  ; Jump to other ID
     .endm
 ;=======================================================
 

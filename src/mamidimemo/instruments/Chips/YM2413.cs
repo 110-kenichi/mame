@@ -1170,35 +1170,60 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 var me = new ControlChangeEvent((SevenBitNumber)120, (SevenBitNumber)0);
                 ProcessControlChange(me);
 
-                if (parentModule.RHY == 0)
+                lock (parentModule.sndEnginePtrLock)
                 {
-                    if (parentModule.Variation != OpllType.DS1001)
+                    if (parentModule.RHY == 0)
                     {
-                        for (int i = 0; i < 9; i++)
-                            parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
-                        for (int i = 0; i < 9; i++)
-                            parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                        if (parentModule.Variation != OpllType.DS1001)
+                        {
+                            for (int i = 0; i < 9; i++)
+                            {
+                                parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                                parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                            }
+                            for (int i = 0; i < 9; i++)
+                            {
+                                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                                parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < 6; i++)
+                            {
+                                parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                                parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                            }
+                            for (int i = 0; i < 6; i++)
+                            {
+                                parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
+                                parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                            }
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < 6; i++)
+                        {
                             parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
+                            parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                        }
                         for (int i = 0; i < 6; i++)
+                        {
                             parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < 6; i++)
-                        parentModule.YM2413WriteData(parentModule.UnitNumber, (byte)(0x20 + i), 0, (byte)(0));
-                    for (int i = 0; i < 6; i++)
-                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x30, i, 0xf);
-                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, 0xf);
-                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, 0xff);
-                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, 0xff);
+                            parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                        }
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x36, 0, 0xf);
+                        parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x37, 0, 0xff);
+                        parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0x38, 0, 0xff);
+                        parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
 
-                    parentModule.lastDrumKeyOn = 0;
-                    parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
+                        parentModule.lastDrumKeyOn = 0;
+                        parentModule.YM2413WriteData(parentModule.UnitNumber, 0xe, 0, (byte)(0x20));
+                        parentModule.vsifClient?.FlushDeferredWriteDataAndWait();
+                    }
                 }
             }
 

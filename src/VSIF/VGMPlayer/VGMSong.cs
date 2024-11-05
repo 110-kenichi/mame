@@ -125,18 +125,27 @@ namespace zanac.VGMPlayer
             {
                 //KOFF
                 for (int i = 0x20; i < 0x28; i++)
-                    deferredWriteOPLL(i, 0);
+                {
+                    deferredWriteOPLL(i, 0x10);
+                    comPortOPLL.FlushDeferredWriteDataAndWait();
+                }
 
-                //comPortOPLL.DeferredWriteData(type, 0xe, (byte)(0x20), (int)Settings.Default.BitBangWaitOPLL);
+                //deferredWriteOPLL(0xe, 0x00);
 
                 if (volumeOff)
                 {
                     //TL
                     for (int i = 0x30; i <= 0x38; i++)
-                        deferredWriteOPLL(i, 0xFF);
+                    {
+                        deferredWriteOPLL(i, 0x0F);
+                        comPortOPLL.FlushDeferredWriteDataAndWait();
+                    }
                     //RR
                     for (int i = 0x6; i <= 0x7; i++)
+                    {
                         deferredWriteOPLL(i, 0xFF);
+                        comPortOPLL.FlushDeferredWriteDataAndWait();
+                    }
                 }
             }
 
