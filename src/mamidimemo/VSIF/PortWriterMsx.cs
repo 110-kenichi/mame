@@ -204,7 +204,7 @@ namespace zanac.MAmidiMEmo.VSIF
                             else if ((dt.Type == 1 || dt.Type == 0xc ||   //OPLL
                                 dt.Type == 4 || dt.Type == 5 || //SCC
                                 dt.Type == 0xa || dt.Type == 0xb || //OPL3
-                                dt.Type == 0xe || //OPM
+                                dt.Type == 0xe || //OPM   BUSY WAIT
                                 dt.Type == 0x10 || dt.Type == 0x11  //OPN2
                                 )
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
@@ -221,6 +221,15 @@ namespace zanac.MAmidiMEmo.VSIF
                             {
                                 byte[] sd = new byte[3] {
                                     (byte)(0x00              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type >= 0x20)
+                            {
+                                byte[] sd = new byte[5] {
+                                    (byte)(dt.Type - 0x20    | 0x20),
+                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
                                     (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                                 };
                                 ds.AddRange(sd);

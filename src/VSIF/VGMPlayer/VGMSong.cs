@@ -4939,8 +4939,10 @@ namespace zanac.VGMPlayer
             switch (comPortOPM.SoundModuleType)
             {
                 case VsifSoundModuleType.MSX_FTDI:
-                case VsifSoundModuleType.TurboR_FTDI:
                     comPortOPM.DeferredWriteData(0xe, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
+                    break;
+                case VsifSoundModuleType.TurboR_FTDI:
+                    comPortOPM.DeferredWriteData(0x2e, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPM);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:

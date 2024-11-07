@@ -275,6 +275,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
 
 *** Changes
 - 5.7.2.3 Fixed VGMPlayer(only) to fix MSM6258.
+  - Fixed OPM Busy Wait to fix VSIF turboR(FTDI).
 - 5.7.2.2 Fixed MEGA CD(VSIF Genesis(FTDI)) driver TYPO.
 - 5.7.2.1 Updated VGMPlayer(only) to fix SCC sounding.
 - 5.7.2.0 Improved MSX VSIF driver performance.
