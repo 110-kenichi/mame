@@ -74,7 +74,7 @@ int main() {
     VDP_clearText(0, 10, 40);
     VDP_clearText(0, 11, 40);
     VDP_clearText(0, 13, 40);
-    VDP_clearText(0, 14, 40);
+    VDP_clearText(0, 15, 40);
 
     //  u16 busTaken = Z80_getAndRequestBus(TRUE);
     SYS_disableInts();
