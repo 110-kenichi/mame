@@ -531,7 +531,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.VSIF_MSX_FTDI:
                         case SoundEngineType.VSIF_P6_FTDI:
-                            vsifClient.WriteData(0, (byte)offset, (byte)data, f_ftdiClkWidth);
+                            vsifClient.WriteData(0x17, (byte)offset, (byte)data, f_ftdiClkWidth);
                             break;
                     }
                 }

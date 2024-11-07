@@ -1219,8 +1219,7 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    deferredWriteOPNA_P1(comPortOPNA, 0x0e, (byte)dacValue);
-                    //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x16, (byte)0xe, (byte)dacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -1232,7 +1231,7 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
                     deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)dacValue);
-                    //TODO: comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)lastWriteDacValue, (int)Settings.Default.BitBangWaitOPNA);
+                    //comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)dacValue, (int)Settings.Default.BitBangWaitOPNA);
                     break;
             }
 

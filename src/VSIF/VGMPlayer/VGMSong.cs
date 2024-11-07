@@ -336,10 +336,10 @@ namespace zanac.VGMPlayer
                 if (comPortY8910.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
                     comPortY8910.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
                 {
-                    //comPortY8910?.DeferredWriteData(0, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
-                    comPortY8910.DeferredWriteData(0, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
-                    comPortY8910.DeferredWriteData(0, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
-                    comPortY8910.DeferredWriteData(0, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                    //comPortY8910?.DeferredWriteData(0x17, (byte)0x07, (byte)0xff, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0x17, (byte)0x08, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0x17, (byte)0x09, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0x17, (byte)0x0a, (byte)0x00, (int)Settings.Default.BitBangWaitAY8910);
                 }
             }
             //NES
@@ -1044,20 +1044,6 @@ namespace zanac.VGMPlayer
                         }
                         break;
                     case 1:
-                        if (comPortY8910 == null)
-                        {
-                            comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
-                                (PortId)Settings.Default.Y8910_Port);
-
-                            if (comPortY8910 != null)
-                            {
-                                comPortY8910.ChipClockHz["Y8910"] = 1789773;
-                                comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
-                                UseChipInformation += "PSG@1.789773MHz ";
-                            }
-                        }
-                        break;
-                    case 2:
                         if (comPortY8910 == null)
                         {
                             comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
@@ -3269,7 +3255,8 @@ namespace zanac.VGMPlayer
                                                                 " (" + size.ToString("x") + ")");
                                                             */
 #endif
-                                                            segaPcm?.sega_pcm_write_rom(0, (int)romSize, (int)saddr, (int)size, vgmReader.ReadBytes((int)size));
+                                                            var dat = vgmReader.ReadBytes((int)size);
+                                                            segaPcm?.sega_pcm_write_rom(0, (int)romSize, (int)saddr, (int)size, dat);
 
                                                             break;
                                                         }
@@ -4913,10 +4900,7 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
-                    break;
-                case VsifSoundModuleType.Generic_UART:
-                    comPortY8910.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
+                    comPortY8910.DeferredWriteData(0x17, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitAY8910);
                     break;
             }
         }

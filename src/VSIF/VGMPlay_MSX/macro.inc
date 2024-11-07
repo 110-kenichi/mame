@@ -1,63 +1,5 @@
 
 ;=======================================================
-    .macro WRITE_SCC_2BYTES
-1$:
-    ; 2ND DATA Hi 4bit
-    IN  A,(PSGRD)       ; 12 12
-    AND #0x10           ;  8 
-    JP  NZ, 1$          ; 11 
-    IN  A,(PSGRD)       ; 12 
-    LD  E,A             ;  5 
-    SLA E               ; 10 
-    SLA E               ; 10 
-    SLA E               ; 10 
-    SLA E               ; 10 88
-2$:
-    ; 2ND DATA Lo 4bit
-    IN  A,(PSGRD)       ; 12 12
-    AND #0x10           ;  8
-    JP  Z, 2$           ; 11
-    IN  A,(PSGRD)       ; 12
-    AND #0xf            ;  8
-    OR  E               ;  5 56
-
-    ;WRITE BOTH 1st BYTE AND 2nd BYTE
-    LD  (HL), D         ;  8 
-    INC L               ;  5 
-    LD  (HL), A         ;  8 
-    JP  __VGM_LOOP      ; 11 88
-    .endm
-
-;=======================================================
-    .macro WRITE_SCC_31_BYTES
-    LD  B,#31           ;  8  8
-1$:
-    ; DATA Hi 4bit
-    IN  A,(PSGRD)       ; 12
-    AND #0x10           ;  8
-    JP  NZ,1$           ; 11
-    IN  A,(PSGRD)       ; 12
-    LD  D,A             ;  5
-    SLA D               ; 10
-    SLA D               ; 10
-    SLA D               ; 10
-    SLA D               ; 10 96
-2$:
-    ; DATA Lo 4bit
-    IN  A,(PSGRD)       ; 12 12
-    AND #0x10           ;  8 
-    JP  Z,2$            ; 11 
-    IN  A,(PSGRD)       ; 12 
-    AND #0xf            ;  8 
-    OR  D               ;  5 
-
-    ;WRITE NEXT BYTE
-    INC L               ;  5 
-    LD  (HL), A         ;  8 
-    DJNZ 1$             ; 14 83  9 78
-    JP  __VGM_LOOP      ; 11 94 11 89
-    .endm
-;=======================================================
 
     .macro READ_ADRS
 ;__VGM_ADRS_HI:
@@ -87,7 +29,7 @@
 ;=======================================================
 
     .macro READ_DATA
-    LD      H,#0x10     ;  8
+    LD      H,#0x30     ;  8
 ;__VGM_DATA_HI:
 3$:
     IN  A,(PSGRD)       ; 12
@@ -120,13 +62,14 @@ __WRITE_ANY_IO:
     READ_ADRS           ; 61
 ;=======================
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  C,B             ; 4
-    OUT (C), A          ; 12
+    LD  C,B             ;  5 55
+    OUT (C), A          ; 12 67
 
     ; Continuous Write
-    LD  E,#0x1F         ; 7
+    LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -134,32 +77,30 @@ __WRITE_ANY_IO:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
 	.macro __WRITE_PSG_IO
 __WRITE_PSG_IO:
     READ_ADRS           ; 61
-    LD  C,#14           ; 7 14
+    LD  C,#14           ;  7 68
 ;=======================
-    READ_DATA           ; 55
+    READ_DATA           ; 50
     LD  D,A             ;  5 55
 
-    LD  A,B             ; 
-    OUT (PSGAD),A       ; 
-    LD  A,D             ; 
-    OUT (PSGWR),A       ; 89
+    LD  A,B             ;  5 60
+    OUT (PSGAD),A       ; 12 72
+    LD  A,D             ;  5 77
+    OUT (PSGWR),A       ; 12 89
 
     ; JOY2 Pin Read Mode
-    LD  A,C             ; 
-    OUT (PSGAD),A       ; 12 101
+    LD  A,C             ;  5 94
+    OUT (PSGAD),A       ; 12 106
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -170,7 +111,7 @@ __WRITE_PSG_IO:
     OR  #JPOFST         ; 
     LD  H,A             ; 
     LD  L,#0            ;       ;Zero clear
-    JP  (HL)            ; 94
+    JP  (HL)            ; 77
     .endm
 
 ;=======================================================
@@ -183,12 +124,13 @@ __WRITE_OPLL_IO:
     OUT (OPLLAD),A      ; 17 88
 ;=======================
 
-    READ_DATA           ; 55 
-    OUT (OPLLWR),A      ; 
+    READ_DATA           ; 50 
+    OUT (OPLLWR),A      ; 12 62
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 30 85
+    INC B               ;  5 67
+    LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -196,30 +138,58 @@ __WRITE_OPLL_IO:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
-;=======================================================
 
+;=======================================================
+    .macro WRITE_SCC_2BYTES
+1$:
+    ; 2ND DATA Hi 4bit
+    IN  A,(PSGRD)       ; 12 12
+    AND #0x10           ;  8 
+    JP  NZ, 1$          ; 11 
+    IN  A,(PSGRD)       ; 12 
+    LD  E,A             ;  5 
+    SLA E               ; 10 
+    SLA E               ; 10 
+    SLA E               ; 10 
+    SLA E               ; 10 88
+2$:
+    ; 2ND DATA Lo 4bit
+    IN  A,(PSGRD)       ; 12 12
+    AND #0x10           ;  8
+    JP  Z, 2$           ; 11
+    IN  A,(PSGRD)       ; 12
+    AND #0xf            ;  8
+    OR  E               ;  5 56
+
+    ;WRITE BOTH 1st BYTE AND 2nd BYTE
+    LD  (HL), D         ;  8 
+    INC L               ;  5 
+    LD  (HL), A         ;  8 
+    JP  __VGM_LOOP      ; 11 88
+    .endm
+
+;=======================================================
 	.macro __WRITE_SCC1
 __WRITE_SCC1:
     READ_ADRS           ; 61
 ;=======================
+    LD  E,#0x1F         ;  8 78
 0$:
-    READ_DATA           ; 55
+    READ_DATA           ; 50
 
-    LD  H,#0xB8         ; 
-    LD  L,B             ; 
-    LD  (HL), A         ; 
+    LD  H,#0xB8         ;  8 58
+    LD  L,B             ;  5 63
+    LD  (HL), A         ;  8 71
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 34 89
+    INC B               ;  5 76
+    LD  L,#0            ;  8 84
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -227,13 +197,11 @@ __WRITE_SCC1:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
@@ -241,16 +209,17 @@ __WRITE_SCC1:
 __WRITE_SCC:
     READ_ADRS           ; 61
 ;=======================
+    LD  E,#0x1F         ;  8 78
 0$:
     READ_DATA           ; 50
 
-    LD  H,#0x98         ; 
-    LD  L,B             ; 
-    LD  (HL), A         ; 
+    LD  H,#0x98         ;  8 58
+    LD  L,B             ;  5 63
+    LD  (HL), A         ;  8 71
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 34 84
+    INC B               ;  5 76
+    LD  L,#0            ;  8 84
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -258,13 +227,11 @@ __WRITE_SCC:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
@@ -294,6 +261,37 @@ __WRITE_SCC_2BYTES:
 ;=======================
     WRITE_SCC_2BYTES    ; 88
     .endm
+
+;=======================================================
+    .macro WRITE_SCC_31_BYTES
+    LD  B,#31           ;  8  8
+1$:
+    ; DATA Hi 4bit
+    IN  A,(PSGRD)       ; 12
+    AND #0x10           ;  8
+    JP  NZ,1$           ; 11
+    IN  A,(PSGRD)       ; 12
+    LD  D,A             ;  5
+    SLA D               ; 10
+    SLA D               ; 10
+    SLA D               ; 10
+    SLA D               ; 10 96
+2$:
+    ; DATA Lo 4bit
+    IN  A,(PSGRD)       ; 12 12
+    AND #0x10           ;  8 
+    JP  Z,2$            ; 11 
+    IN  A,(PSGRD)       ; 12 
+    AND #0xf            ;  8 
+    OR  D               ;  5 
+
+    ;WRITE NEXT BYTE
+    INC L               ;  5 
+    LD  (HL), A         ;  8 
+    DJNZ 1$             ; 14 83  9 78
+    JP  __VGM_LOOP      ; 11 94 11 89
+    .endm
+
 ;=======================================================
 
 	.macro __WRITE_SCC1_32_BYTES
@@ -338,8 +336,9 @@ __WRITE_OPL3_IO1:
     OUT (OPL3WR1),A     ; 12 62
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 13 85
+    INC B               ;  5 67
+    LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -347,13 +346,11 @@ __WRITE_OPL3_IO1:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
 ;=======================  ADPCM burst write mode
 __WRITE_OPL3_IO1_ADPCM:
@@ -364,6 +361,7 @@ __WRITE_OPL3_IO1_ADPCM:
 
     ; Continuous Write
     LD  E,#0x1F         ;  8 70
+    LD  L,#0            ;  8 78
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -371,13 +369,11 @@ __WRITE_OPL3_IO1_ADPCM:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
     .endm
 ;=======================================================
@@ -398,6 +394,7 @@ __WRITE_OPL3_IO2:
     ; Continuous Write
     INC B               ;  5
     LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -405,13 +402,11 @@ __WRITE_OPL3_IO2:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
 ;=======================
 __WRITE_OPL3_IO2_ADPCM:
@@ -422,6 +417,7 @@ __WRITE_OPL3_IO2_ADPCM:
 
     ; Continuous Write
     LD  E,#0x1F         ;  8 70
+    LD  L,#0            ;  8 78
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -429,13 +425,11 @@ __WRITE_OPL3_IO2_ADPCM:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
     .endm
 
@@ -452,21 +446,20 @@ __WRITE_OPLL_MEM:
     LD  (#0x7FF5),A     ; 14 64
 
     ; Continuous Write
-    INC B               ;  5
+    INC B               ;  5 69
     LD  E,#0x1F         ;  8 77
+    LD  L,#0            ;  8 85
 1$:
     IN  A,(PSGRD)       ; 
     AND #0x20           ; 
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 ;=======================================================
     .endm
 ;=======================================================
@@ -544,22 +537,21 @@ __WRITE_OPM_MEM:
     LD  (#0x3ff1),A     ; 14
 
     ; Continuous Write
-    INC B               ;  5
-    LD  E,#0x1F         ;  8 72
+    INC B               ;  5 69
+    LD  E,#0x1F         ;  8 77
+    LD  L,#0            ;  8 85
 ;=======================
 1$:
-    IN  A,(PSGRD)       ; 
-    AND #0x20           ; 
-    JP  Z, 1$           ; 
-    IN  A,(PSGRD)       ; 
-    AND	E               ; 
-    CP  E               ; 
-    JP  Z,0$            ;     ; Continuous Write
+    IN  A,(PSGRD)       ; 12
+    AND #0x20           ;  8
+    JP  Z, 1$           ; 11
+    IN  A,(PSGRD)       ; 12
+    AND	E               ;  5
+    JP  Z,0$            ; 11 64 ; Continuous Write
 
-    OR  #JPOFST         ; 
-    LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    OR  #JPOFST         ;  8
+    LD  H,A             ;  5
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
@@ -586,8 +578,9 @@ __WRITE_OPN2_IO1:
     OUT (OPN2WR1),A     ; 12 62
 
     ; Continuous Write
-    INC B               ; 
-    LD  E,#0x1F         ; 30 85
+    INC B               ;  5 67
+    LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -595,13 +588,11 @@ __WRITE_OPN2_IO1:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
@@ -621,6 +612,7 @@ __WRITE_OPN2_IO2:
     ; Continuous Write
     INC B               ;  5 67
     LD  E,#0x1F         ;  8 75
+    LD  L,#0            ; 
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -628,13 +620,11 @@ __WRITE_OPN2_IO2:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
 ;=======================  ADPCM burst write mode
 __WRITE_OPN2_IO2_ADPCM:
@@ -645,6 +635,7 @@ __WRITE_OPN2_IO2_ADPCM:
 
     ; Continuous Write
     LD  E,#0x1F         ;  8 70
+    LD  L,#0            ;  8 78
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -652,17 +643,14 @@ __WRITE_OPN2_IO2_ADPCM:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
 
     .endm
 ;=======================================================
-
 
     .macro __WRITE_OPN_IO
 __WRITE_OPN_IO:
@@ -678,6 +666,7 @@ __WRITE_OPN_IO:
     ; Continuous Write
     INC B               ;  5 67
     LD  E,#0x1F         ;  8 75
+    LD  L,#0            ;  8 83
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -685,18 +674,16 @@ __WRITE_OPN_IO:
     JP  Z, 1$           ; 
     IN  A,(PSGRD)       ; 
     AND	E               ; 
-    CP  E               ; 
     JP  Z,0$            ;     ; Continuous Write
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
 
-    .macro __WRITE_OPNA_DAC
-__WRITE_OPNA_DAC:
+    .macro __WRITE_OPNA_PSEUDO_DAC
+__WRITE_OPNA_PSEUDO_DAC:
     LD  A,#0xB          ;  8
     OUT (OPN2AD2),A     ; 12 20
 0$:
@@ -705,22 +692,43 @@ __WRITE_OPNA_DAC:
 
     OUT (OPN2WR2),A     ; 12 62 
 
-    ; Continuous Write
-    LD  E,#0x1F         ;  8 70
 ;=======================
+    LD  L,#0            ;  8 72
 1$:
-    IN  A,(PSGRD)       ; 
-    AND #0x20           ; 
-    JP  Z, 1$           ; 
-    IN  A,(PSGRD)       ; 
-    AND	E               ; 
-    CP  E               ; 
-    JP  Z,0$            ;     ; Continuous Write
+    IN  A,(PSGRD)       ; 12
+    AND #0x20           ;  8 20
+    JP  Z, 1$           ; 11 31
+    IN  A,(PSGRD)       ; 12 43
+    AND	#0x1F           ;  8 51
 
-    OR  #JPOFST         ; 
-    LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    OR  #JPOFST         ;  8 59
+    LD  H,A             ;  5 64
+    JP  (HL)            ;  5 69  ; Jump to ID
+    .endm
+;=======================================================
+
+    .macro __WRITE_OPNA_DAC
+__WRITE_OPNA_DAC:
+    LD  A,#0xE          ;  8
+    OUT (OPN2AD2),A     ; 12 20
+0$:
+;=======================
+    READ_DATA           ; 50
+
+    OUT (OPN2WR2),A     ; 12 62 
+
+;=======================
+    LD  L,#0            ;  8 72
+1$:
+    IN  A,(PSGRD)       ; 12
+    AND #0x20           ;  8 20
+    JP  Z, 1$           ; 11 31
+    IN  A,(PSGRD)       ; 12 43
+    AND	#0x1F           ;  8 51
+
+    OR  #JPOFST         ;  8 59
+    LD  H,A             ;  5 64
+    JP  (HL)            ;  5 69  ; Jump to ID
     .endm
 ;=======================================================
 
@@ -734,22 +742,18 @@ __WRITE_OPN2_DAC:
 
     OUT (OPN2WR1),A     ; 12 62
 
-    ; Continuous Write
-    LD  E,#0x1F         ;  8 70
 ;=======================
+    LD  L,#0            ;  8 72
 1$:
-    IN  A,(PSGRD)       ; 
-    AND #0x20           ; 
-    JP  Z, 1$           ; 
-    IN  A,(PSGRD)       ; 
-    AND	E               ; 
-    CP  E               ; 
-    JP  Z,0$            ;     ; Continuous Write
+    IN  A,(PSGRD)       ; 12
+    AND #0x20           ;  8 20
+    JP  Z, 1$           ; 11 31
+    IN  A,(PSGRD)       ; 12 43
+    AND	#0x1F           ;  8 51
 
-    OR  #JPOFST         ; 
-    LD  H,A             ; 
-    LD  L,#0            ; 
-    JP  (HL)            ; 90  ; Jump to other ID
+    OR  #JPOFST         ;  8 59
+    LD  H,A             ;  5 64
+    JP  (HL)            ;  5 69  ; Jump to ID
     .endm
 ;=======================================================
 
@@ -762,26 +766,18 @@ __WRITE_TR_DAC:
 
     OUT (TRDAC),A       ; 12 62 
 
-    ; JOY2 Pin Read Mode
-    LD  A,C             ;  5 67
-    OUT (PSGAD),A       ; 12 79
-    
-    ; Continuous Write
-    LD  E,#0x1F         ;  8 87
 ;=======================
+    LD  L,#0            ;  8 72
 1$:
     IN  A,(PSGRD)       ; 12
     AND #0x20           ;  8 20
     JP  Z, 1$           ; 11 31
     IN  A,(PSGRD)       ; 12 43
-    AND	E               ;  5 48
-    CP  E               ;  5 53
-    JP  Z,0$            ; 11 64   ; Continuous Write
+    AND	#0x1F           ;  8 51
 
-    OR  #JPOFST         ;  8 72
-    LD  H,A             ;  5 77
-    LD  L,#0            ;  8 85
-    JP  (HL)            ;  5 90  ; Jump to other ID
+    OR  #JPOFST         ;  8 59
+    LD  H,A             ;  5 64
+    JP  (HL)            ;  5 69  ; Jump to ID
     .endm
 ;=======================================================
 

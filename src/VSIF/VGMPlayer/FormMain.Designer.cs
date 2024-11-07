@@ -2163,7 +2163,6 @@ namespace zanac.VGMPlayer
             this.comboBoxY8910.FormattingEnabled = true;
             this.comboBoxY8910.Items.AddRange(new object[] {
             "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - Generic(UART 115Kbps)",
             "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
             this.comboBoxY8910.Location = new System.Drawing.Point(163, 128);
             this.comboBoxY8910.Name = "comboBoxY8910";
@@ -5851,7 +5850,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.76 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.77 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

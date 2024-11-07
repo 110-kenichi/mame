@@ -1110,10 +1110,6 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.Y8910_Port, (int)Settings.Default.PSGDiv, false);
                         break;
                     case 1:
-                        comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.Generic_UART,
-                            (PortId)Settings.Default.Y8910_Port, (int)Settings.Default.PSGDiv, false);
-                        break;
-                    case 2:
                         comPortY8910 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboR_FTDI,
                             (PortId)Settings.Default.Y8910_Port, (int)Settings.Default.PSGDiv, false);
                         if (comPortY8910 != null)

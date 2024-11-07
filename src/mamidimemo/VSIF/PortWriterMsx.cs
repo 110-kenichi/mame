@@ -151,11 +151,52 @@ namespace zanac.MAmidiMEmo.VSIF
                         break;
                     default:
                         {
+                            if ((dt.Type == 0xa || dt.Type == 0xb) && lastWriteAddress == 0xf && //YM8950 ADPCM write
+                                lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(0x00              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
                             if (dt.Type == 0x11 && lastWriteAddress == 0x8 && //OPNA ADPCM write
                                 lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
                             {
                                 byte[] sd = new byte[3] {
-                                    (byte)(0x1f              | 0x20),
+                                    (byte)(0x00              | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type == 0x13) //OPNA Pseudo DAC write
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type == 0x14) //OPN2 DAC write
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type == 0x15) //tR DAC write
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
+                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                };
+                                ds.AddRange(sd);
+                            }
+                            else if (dt.Type == 0x16)  //OPNA DAC write
+                            {
+                                byte[] sd = new byte[3] {
+                                    (byte)(dt.Type           | 0x20),
                                     (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                                 };
                                 ds.AddRange(sd);
@@ -169,7 +210,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress + 1))
                             {
                                 byte[] sd = new byte[3] {
-                                    (byte)(0x1f              | 0x20),
+                                    (byte)(0x00              | 0x20),
                                     (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                                 };
                                 ds.AddRange(sd);
@@ -179,7 +220,7 @@ namespace zanac.MAmidiMEmo.VSIF
                                 && lastDataType == dt.Type && (ushort)dt.Address == ((ushort)lastWriteAddress))
                             {
                                 byte[] sd = new byte[3] {
-                                    (byte)(0x1f              | 0x20),
+                                    (byte)(0x00              | 0x20),
                                     (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                                 };
                                 ds.AddRange(sd);
