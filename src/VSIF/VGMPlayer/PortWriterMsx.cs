@@ -52,7 +52,7 @@ namespace zanac.VGMPlayer
             List<byte> ds = new List<byte>();
             foreach (var dt in data)
             {
-                if (dt.Type == 0 && dt.Address == 0x07)
+                if (dt.Type == 0x17 && dt.Address == 0x07)
                     //https://hra1129.github.io/system/psg_reg7.html
                     dt.Data = (byte)((dt.Data & 0x3f) | 0x80);
 

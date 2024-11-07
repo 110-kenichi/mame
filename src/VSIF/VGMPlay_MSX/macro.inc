@@ -209,7 +209,6 @@ __WRITE_SCC1:
 __WRITE_SCC:
     READ_ADRS           ; 61
 ;=======================
-    LD  E,#0x1F         ;  8 78
 0$:
     READ_DATA           ; 50
 
@@ -219,7 +218,7 @@ __WRITE_SCC:
 
     ; Continuous Write
     INC B               ;  5 76
-    LD  L,#0            ;  8 84
+    LD  E,#0x1F         ;  8 84
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -231,7 +230,8 @@ __WRITE_SCC:
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
-    JP  (HL)            ; 82  ; Jump to other ID
+    LD  L,#0            ;  8
+    JP  (HL)            ;  5 85  ; Jump to other ID
     .endm
 ;=======================================================
 
@@ -240,10 +240,10 @@ __WRITE_SCC1_2BYTES:
     READ_ADRS           ; 61
 ;=======================
     READ_DATA           ; 50
-    LD  D,A             ;  5 60
+    LD  D,A             ;  5 55
 
-    LD  H,#0xB8         ;  
-    LD  L,B             ; 13
+    LD  H,#0xB8         ;  8
+    LD  L,B             ;  5 68
 ;=======================
     WRITE_SCC_2BYTES
     .endm
@@ -254,10 +254,10 @@ __WRITE_SCC_2BYTES:
     READ_ADRS           ; 61
 ;=======================
     READ_DATA           ; 50
-    LD  D,A             ;  5 60
+    LD  D,A             ;  5 55
 
-    LD  H,#0x98         ; 
-    LD  L,B             ;  5 59
+    LD  H,#0x98         ;  8
+    LD  L,B             ;  5 68
 ;=======================
     WRITE_SCC_2BYTES    ; 88
     .endm
