@@ -3855,7 +3855,6 @@ namespace zanac.VGMPlayer
                                                         if (!oki6285Adpcm2ndNibble)
                                                         {
                                                             var ddata = okim6258.decode(dd & 0xf);
-                                                            //var ddata = decodeOpnaAdpcm(dd & 0xf);
                                                             ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
                                                             if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
@@ -4161,12 +4160,12 @@ namespace zanac.VGMPlayer
                             currentStreamParam = streamParam;
                             if (currentStreamParam == null)
                             {
-                                dacStream.Stop();
+                                dacStream?.Stop();
                             }
                             else
                             {
                                 currentStreamData = streamTable[currentStreamParam.StreamID];
-                                dacStream.Play(currentStreamParam, currentStreamData, streamChipType, dacData);
+                                dacStream?.Play(currentStreamParam, currentStreamData, streamChipType, dacData);
                             }
                         }
                     }

@@ -23,16 +23,16 @@ namespace zanac.VGMPlayer
         private SongBase parentSong;
 
         private VsifClient comPortOPN2 = null;
-        private VsifClient comPortOPN2ProxyOrTurboRDac = null;
+        private VsifClient comPortOPNAProxyOrTurboRDac = null;
         private OKIM6258 okim6258 = null;
         private VsifClient comPortNES = null;
 
-        public DacStream(SongBase parentSong, VsifClient comPortOPN2, VsifClient comPortOPN2ProxyOrTurboRDac, OKIM6258 okim6258, VsifClient comPortNES)
+        public DacStream(SongBase parentSong, VsifClient comPortOPN2, VsifClient comPortOPNAProxyOrTurboRDac, OKIM6258 okim6258, VsifClient comPortNES)
         {
             this.parentSong = parentSong;
 
             this.comPortOPN2 = comPortOPN2;
-            this.comPortOPN2ProxyOrTurboRDac = comPortOPN2ProxyOrTurboRDac;
+            this.comPortOPNAProxyOrTurboRDac = comPortOPNAProxyOrTurboRDac;
             this.okim6258 = okim6258;
             this.comPortNES = comPortNES;
         }
@@ -129,16 +129,16 @@ namespace zanac.VGMPlayer
                         {
                             parentSong.DeferredWriteOPN2_DAC(comPortOPN2, data);
                         }
-                        else if (comPortOPN2ProxyOrTurboRDac != null)
+                        else if (comPortOPNAProxyOrTurboRDac != null)
                         {
-                            if (comPortOPN2ProxyOrTurboRDac.Tag.ContainsKey("ProxyOPN2"))
+                            if (comPortOPNAProxyOrTurboRDac.Tag.ContainsKey("ProxyOKIM6258"))
                             {
                                 data = (byte)Math.Round((double)data * (double)Settings.Default.DacVolume / 100d);
-                                parentSong.DeferredWriteOPNA_PseudoDAC(comPortOPN2ProxyOrTurboRDac, data);
+                                parentSong.DeferredWriteOPNA_PseudoDAC(comPortOPNAProxyOrTurboRDac, data);
                             }
-                            else if (comPortOPN2ProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                            else if (comPortOPNAProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
                             {
-                                parentSong.DeferredWriteTurboR_DAC(comPortOPN2ProxyOrTurboRDac, data);
+                                parentSong.DeferredWriteTurboR_DAC(comPortOPNAProxyOrTurboRDac, data);
                             }
                         }
                         sampleRate = pd.CurrentStreamData.Frequency;
@@ -158,23 +158,23 @@ namespace zanac.VGMPlayer
                                 {
                                     var ddata = okim6258.decode(data & 0xf);
                                     ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
-
-                                    if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                    if (comPortOPNAProxyOrTurboRDac != null)
+                                    {
+                                        if (comPortOPNAProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                        {
+                                            byte bdata = (byte)((ddata >> 8) + 128);
+                                            parentSong.DeferredWriteTurboR_DAC(comPortOPNAProxyOrTurboRDac, bdata);
+                                        }
+                                        else if (comPortOPNAProxyOrTurboRDac.Tag.ContainsKey("ProxyOKIM6258"))
+                                        {
+                                            byte bdata = (byte)((ddata >> 8));
+                                            parentSong.DeferredWriteOPNA_DAC(comPortOPNAProxyOrTurboRDac, bdata);
+                                        }
+                                    }
+                                    else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                     {
                                         byte bdata = (byte)((ddata >> 8) + 128);
                                         parentSong.DeferredWriteOPN2_DAC(comPortOPN2, bdata);
-                                    }
-                                    else if (comPortOPN2ProxyOrTurboRDac != null)
-                                    {
-                                        if (comPortOPN2ProxyOrTurboRDac.Tag.ContainsKey("ProxyOPN2"))
-                                        {
-                                            byte bdata = (byte)((ddata >> 8));
-                                            parentSong.DeferredWriteOPNA_DAC(comPortOPN2ProxyOrTurboRDac, bdata);
-                                        }
-                                        else if (comPortOPN2ProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                                        {
-                                            parentSong.DeferredWriteTurboR_DAC(comPortOPN2ProxyOrTurboRDac, data);
-                                        }
                                     }
                                     pd.StreamIdx -= pd.StreamIdxDir;
                                     pd.Oki6285Adpcm2ndNibble = true;
@@ -186,23 +186,23 @@ namespace zanac.VGMPlayer
 
                                     ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
 
-                                    if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
+                                    if (comPortOPNAProxyOrTurboRDac != null)
+                                    {
+                                        if (comPortOPNAProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                        {
+                                            byte bdata = (byte)((ddata >> 8) + 128);
+                                            parentSong.DeferredWriteTurboR_DAC(comPortOPNAProxyOrTurboRDac, bdata);
+                                        }
+                                        else if (comPortOPNAProxyOrTurboRDac.Tag.ContainsKey("ProxyOKIM6258"))
+                                        {
+                                            byte bdata = (byte)((ddata >> 8));
+                                            parentSong.DeferredWriteOPNA_DAC(comPortOPNAProxyOrTurboRDac, bdata);
+                                        }
+                                    }
+                                    else if (comPortOPN2 != null && comPortOPN2.Tag.ContainsKey("ProxyOKIM6258"))
                                     {
                                         byte bdata = (byte)((ddata >> 8) + 128);
                                         parentSong.DeferredWriteOPN2_DAC(comPortOPN2, bdata);
-                                    }
-                                    else if (comPortOPN2ProxyOrTurboRDac != null)
-                                    {
-                                        if (comPortOPN2ProxyOrTurboRDac.Tag.ContainsKey("ProxyOPN2"))
-                                        {
-                                            byte bdata = (byte)((ddata >> 8));
-                                            parentSong.DeferredWriteOPNA_DAC(comPortOPN2ProxyOrTurboRDac, bdata);
-                                        }
-                                        else if (comPortOPN2ProxyOrTurboRDac.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                                        {
-                                            byte bdata = (byte)((ddata >> 8) + 128);
-                                            parentSong.DeferredWriteTurboR_DAC(comPortOPN2ProxyOrTurboRDac, bdata);
-                                        }
                                     }
                                     pd.Oki6285Adpcm2ndNibble = false;
                                 }
