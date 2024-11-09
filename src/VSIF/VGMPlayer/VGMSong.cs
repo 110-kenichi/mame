@@ -70,8 +70,6 @@ namespace zanac.VGMPlayer
 
         private OKIM6295 okim6295;
 
-        private DacStream dacStream;
-
         private NesDpcm nesDpcm;
 
         /// <summary>
@@ -2235,9 +2233,6 @@ namespace zanac.VGMPlayer
             {
                 //bool firstKeyon = false;    //TODO: true
 
-                StreamData currentStreamData = null;
-                StreamParam streamParam = null;
-                StreamParam currentStreamParam = null;
                 bool oki6285Adpcm2ndNibble = false;
                 int streamChipType = 0;
                 OKIM6258 okim6258 = null;
@@ -2407,7 +2402,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case 0x2a:
                                                         //output DAC
-                                                        dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                        dt = (int)Math.Round((double)dt * (double)PcmMixer.DacVolume / 100d);
                                                         DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                         break;
                                                     case 0x2b:
@@ -2427,7 +2422,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     case 0x2a:
                                                         //output DAC
-                                                        dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                        dt = (int)Math.Round((double)dt * (double)PcmMixer.DacVolume / 100d);
                                                         DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                         break;
                                                     case 0x2b:
@@ -3464,11 +3459,15 @@ namespace zanac.VGMPlayer
                                             if (dacData != null && dacOffset < dacData.Count)
                                             {
                                                 byte dt = dacData[dacOffset];
-                                                dt = (byte)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                dt = (byte)Math.Round((double)dt * (double)PcmMixer.DacVolume / 100d);
 
                                                 if (comPortOPN2 != null)
                                                 {
                                                     DeferredWriteOPN2_DAC(comPortOPN2, dt);
+                                                }
+                                                else if (comPortTurboRProxy!= null)
+                                                {
+                                                    DeferredWriteTurboR_DAC(comPortTurboRProxy, dt);
                                                 }
                                                 else if (comPortOPNA != null)
                                                 {
@@ -3489,6 +3488,7 @@ namespace zanac.VGMPlayer
                                             var port = readByte();
                                             //command
                                             var cmd = readByte();
+                                            DacStream dacStream = null;
                                             switch (streamChipType)
                                             {
                                                 case 2:   //YM2612
@@ -3498,47 +3498,45 @@ namespace zanac.VGMPlayer
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
 
-                                                            dacStream = new DacStream(this, comPortOPN2, null, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.OPN2, comPortOPN2, null);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
                                                         }
-                                                        else if (comPortOPNA != null)
+                                                        else if (comPortTurboRProxy != null && comPortOPNA == comPortTurboRProxy)
                                                         {
-                                                            dacStream = new DacStream(this, null, comPortOPNA, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.TurboR, comPortTurboRProxy, null);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
                                                         }
-                                                        else if (comPortTurboRProxy != null)
+                                                        else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOPN2"))
                                                         {
-                                                            dacStream = new DacStream(this, null, comPortTurboRProxy, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.OPNA, comPortOPNA, null);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
                                                         }
                                                     }
-
                                                     break;
 
                                                 case 20:   //NES
                                                     if (port == 0x00 && cmd == 0x11)    //PCM ENABLE
                                                     {
-                                                        dacStream = new DacStream(this, null, null, okim6258, comPortNES);
+                                                        dacStream = new DacStream(this, DacStream.DacProxyType.NES, comPortNES, null);
                                                         Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                         t.Priority = ThreadPriority.Highest;
                                                         t.Start();
                                                     }
-
                                                     break;
 
                                                 case 23: //OKIM6258
                                                     if (port == 0x00 && cmd == 0x1)    //ADPCM ENABLE
                                                     {
-                                                        if (comPortTurboRProxy != null)
+                                                        if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             okim6258 = new OKIM6258();
-                                                            dacStream = new DacStream(this, null, comPortTurboRProxy, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.TurboR, comPortTurboRProxy, okim6258);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -3547,7 +3545,7 @@ namespace zanac.VGMPlayer
                                                         {
                                                             deferredWriteOPN2_P0(comPortOPN2, 0x2b, 0x80, 0);
                                                             okim6258 = new OKIM6258();
-                                                            dacStream = new DacStream(this, comPortOPN2, null, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.OPN2, comPortTurboRProxy, okim6258);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -3555,7 +3553,7 @@ namespace zanac.VGMPlayer
                                                         else if (comPortOPNA != null && comPortOPNA.Tag.ContainsKey("ProxyOKIM6258"))
                                                         {
                                                             okim6258 = new OKIM6258();
-                                                            dacStream = new DacStream(this, null, comPortOPNA, okim6258, null);
+                                                            dacStream = new DacStream(this, DacStream.DacProxyType.OPNA, comPortTurboRProxy, okim6258);
                                                             Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
                                                             t.Priority = ThreadPriority.Highest;
                                                             t.Start();
@@ -3564,7 +3562,7 @@ namespace zanac.VGMPlayer
                                                     break;
                                             }
                                             if (!streamTable.ContainsKey(sid))
-                                                streamTable.Add(sid, new StreamData(sid));
+                                                streamTable.Add(sid, new StreamData(sid, dacStream));
                                         }
                                         break;
 
@@ -3617,7 +3615,9 @@ namespace zanac.VGMPlayer
                                                     param.Mode |= StreamModes.Loop;
                                                 else if ((lenMode & 0x10) != 0)
                                                     param.Mode |= StreamModes.Reverse;
-                                                streamParam = param;
+
+                                                if (streamTable.ContainsKey(sid))
+                                                    streamTable[sid].DacStream?.Play(param, streamTable[param.StreamID], streamChipType, dacData);
                                             }
                                         }
                                         break;
@@ -3626,7 +3626,9 @@ namespace zanac.VGMPlayer
                                         {
                                             //stream id
                                             var sid = readByte();
-                                            streamParam = null;
+
+                                            if (streamTable.ContainsKey(sid))
+                                                streamTable[sid].DacStream?.Stop();
                                         }
                                         break;
 
@@ -3649,7 +3651,8 @@ namespace zanac.VGMPlayer
                                             else if ((flgs & 0x10) != 0)
                                                 param.Mode |= StreamModes.Reverse;
 
-                                            streamParam = param;
+                                            if (streamTable.ContainsKey(sid))
+                                                streamTable[sid].DacStream?.Play(param, streamTable[param.StreamID], streamChipType, dacData);
                                         }
                                         break;
 
@@ -3855,7 +3858,7 @@ namespace zanac.VGMPlayer
                                                         if (!oki6285Adpcm2ndNibble)
                                                         {
                                                             var ddata = okim6258.decode(dd & 0xf);
-                                                            ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
+                                                            ddata = (int)Math.Round((double)ddata * (double)PcmMixer.DacVolume / 100d);
 
                                                             if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
@@ -3882,7 +3885,7 @@ namespace zanac.VGMPlayer
                                                         {
                                                             var ddata = okim6258.decode(dd >> 4);
                                                             //var ddata = decodeOpnaAdpcm(dd >> 4);
-                                                            ddata = (int)Math.Round((double)ddata * (double)Settings.Default.DacVolume / 100d);
+                                                            ddata = (int)Math.Round((double)ddata * (double)PcmMixer.DacVolume / 100d);
 
                                                             if (comPortTurboRProxy != null && comPortTurboRProxy.Tag.ContainsKey("ProxyOKIM6258"))
                                                             {
@@ -4152,20 +4155,6 @@ namespace zanac.VGMPlayer
                                 }
                                 if (LoopedCount >= 0)
                                     CurrentLoopedCount++;
-                            }
-                        }
-
-                        if (currentStreamParam != streamParam)
-                        {
-                            currentStreamParam = streamParam;
-                            if (currentStreamParam == null)
-                            {
-                                dacStream?.Stop();
-                            }
-                            else
-                            {
-                                currentStreamData = streamTable[currentStreamParam.StreamID];
-                                dacStream?.Play(currentStreamParam, currentStreamData, streamChipType, dacData);
                             }
                         }
                     }
@@ -5584,8 +5573,10 @@ namespace zanac.VGMPlayer
                 k053260 = null;
                 okim6295?.Dispose();
                 okim6295 = null;
-                dacStream?.Dispose();
-                dacStream = null;
+                foreach(var dt in streamTable.Values)
+                    dt.DacStream?.Dispose();
+                //dacStream?.Dispose();
+                //dacStream = null;
                 comPortNES?.Dispose();
                 comPortNES = null;
                 nesDpcm?.Dispose();
@@ -5852,15 +5843,22 @@ namespace zanac.VGMPlayer
             set;
         }
 
+        public DacStream DacStream
+        {
+            get;
+            private set;
+        }
+
         public StreamDataBank[] StreamDataBanks;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="streamID"></param>
-        public StreamData(int streamID)
+        public StreamData(int streamID, DacStream dacStream)
         {
             StreamID = streamID;
+            DacStream = dacStream;
 
             StreamDataBanks = new StreamDataBank[0x40];
             for (int i = 0; i < StreamDataBanks.Length; i++)

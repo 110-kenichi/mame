@@ -897,12 +897,12 @@ namespace zanac.VGMPlayer
                                                             //output DAC
                                                             if (comPortTurboRProxy != null)
                                                             {
-                                                                dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                                dt = (int)Math.Round((double)dt * (double)PcmMixer.DacVolume / 100d);
                                                                 DeferredWriteTurboR_DAC(comPortTurboRProxy, dt);
                                                             }
                                                             else
                                                             {
-                                                                dt = (int)Math.Round((double)dt * (double)Settings.Default.DacVolume / 100d);
+                                                                dt = (int)Math.Round((double)dt * (double)PcmMixer.DacVolume / 100d);
                                                                 DeferredWriteOPNA_PseudoDAC(comPortOPNA, dt);
                                                             }
                                                             break;
@@ -1493,7 +1493,7 @@ namespace zanac.VGMPlayer
                             }
                             else if (xgmSong.comPortOPNA != null)
                             {
-                                dacData = (sbyte)Math.Round((double)dacData * (double)Settings.Default.DacVolume / 100d);
+                                dacData = (sbyte)Math.Round((double)dacData * (double)PcmMixer.DacVolume / 100d);
                                 dacData += 0x80;
                                 if(xgmSong.comPortTurboRProxy != null)
                                     xgmSong.DeferredWriteTurboR_DAC(xgmSong.comPortTurboRProxy, dacData);

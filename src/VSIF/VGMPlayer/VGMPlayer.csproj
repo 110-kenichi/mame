@@ -160,6 +160,7 @@
     <Compile Include="ListViewItemDragEventArgs.cs" />
     <Compile Include="NesDpcm.cs" />
     <Compile Include="OKIM6258.cs" />
+    <Compile Include="PcmMixer.cs" />
     <Compile Include="PortWriteData.cs" />
     <Compile Include="PortWriterGimic.cs" />
     <Compile Include="PortWriter.cs" />

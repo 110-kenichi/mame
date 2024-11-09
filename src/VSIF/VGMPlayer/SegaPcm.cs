@@ -90,7 +90,8 @@ namespace zanac.VGMPlayer
 
                 outputs[0] = new int[multiply];
                 outputs[1] = new int[multiply];
-                SEGAPCM_update(0, outputs, multiply);
+                lock(lockObject)
+                    SEGAPCM_update(0, outputs, multiply);
 
                 int dtL = 0;
                 int dtR = 0;
@@ -101,8 +102,8 @@ namespace zanac.VGMPlayer
                 }
                 dtL /= multiply;
                 dtR /= multiply;
-                dtL = (int)Math.Round((double)dtL * (double)Settings.Default.DacVolume / 100d);
-                dtR = (int)Math.Round((double)dtR * (double)Settings.Default.DacVolume / 100d);
+                //dtL = (int)Math.Round((double)dtL * (double)PcmMixer.DacVolume / 100d);
+                //dtR = (int)Math.Round((double)dtR * (double)PcmMixer.DacVolume / 100d);
 
                 if (vsifClient != null)
                 {
@@ -256,6 +257,8 @@ namespace zanac.VGMPlayer
         //          other bits: bank
         // 0x87     ?
 
+        private Object lockObject = new object();
+
         public void SEGAPCM_update(byte ChipID, int[][] outputs, int samples)
         {
             segapcm_state segapcm_state = SPCMData[ChipID];
@@ -264,6 +267,14 @@ namespace zanac.VGMPlayer
             {
                 outputs[0][i] = 0;
                 outputs[1][i] = 0;
+            }
+
+            List<short[]> data1 = new List<short[]>();
+            List<short[]> data2 = new List<short[]>();
+            for (int i = 0; i < 16; i++)
+            {
+                data1.Add(new short[samples]);
+                data2.Add(new short[samples]);
             }
 
             for (int j = 0; j < 16; j++)
@@ -297,10 +308,19 @@ namespace zanac.VGMPlayer
                         b2 = (sbyte)(segapcm_state.rom[num2 + ((num3 >> 8) & rgnmask)] - 128);
                     }
 
-                    outputs[0][k] += b2 * (segapcm_state.ram[num + 2] & 0x7F);
-                    outputs[1][k] += b2 * (segapcm_state.ram[num + 3] & 0x7F);
+                    data1[j][k] = (short)(b2 * (segapcm_state.ram[num + 2] & 0x7F));
+                    data2[j][k] = (short)(b2 * (segapcm_state.ram[num + 3] & 0x7F));
+                    //outputs[0][k] += b2 * (segapcm_state.ram[num + 2] & 0x7F);
+                    //outputs[1][k] += b2 * (segapcm_state.ram[num + 3] & 0x7F);
                     num3 = (num3 + segapcm_state.ram[num + 7]) & 0xFFFFFFu;
                     //Debug.WriteLine($"ch {j} dat {b2}");
+                }
+                var mix1 = PcmMixer.Mix(data1, PcmMixer.DacClipping);
+                var mix2 = PcmMixer.Mix(data2, PcmMixer.DacClipping);
+                for (int i = 0; i < samples; i++)
+                {
+                    outputs[0][i] = (int)Math.Round(mix1[i]);
+                    outputs[1][i] = (int)Math.Round(mix2[i]);
                 }
 
                 segapcm_state.ram[num + 0x84] = (byte)(num3 >> 8);
@@ -390,8 +410,13 @@ namespace zanac.VGMPlayer
         //          bit 1: loop disable
         //          other bits: bank
         // 0x87     ?
-
         public void sega_pcm_w(byte ChipID, int offset, byte data)
+        {
+            lock (lockObject)
+                sega_pcm_w_internal(ChipID, offset, data);
+        }
+
+        private void sega_pcm_w_internal(byte ChipID, int offset, byte data)
         {
             if (SPCMData != null && SPCMData.Length >= ChipID + 1)
             {

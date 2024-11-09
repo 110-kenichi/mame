@@ -1143,7 +1143,7 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         public void DeferredWriteOPN2_DAC(VsifClient comPortOPN2, int dacValue)
         {
-            if (Settings.Default.DisableDAC)
+            if (PcmMixer.DisableDac)
                 return;
 
             if (lastOpn2DacValue == dacValue)
@@ -1172,7 +1172,7 @@ namespace zanac.VGMPlayer
         /// <param name="inputValue"></param>
         public void DeferredWriteOPNA_PseudoDAC(VsifClient comPortOPNA, int inputValue)
         {
-            if (Settings.Default.DisableDAC)
+            if (PcmMixer.DisableDac)
                 return;
 
             switch (comPortOPNA.SoundModuleType)
@@ -1209,7 +1209,7 @@ namespace zanac.VGMPlayer
         /// <param name="dacValue"></param>
         public void DeferredWriteOPNA_DAC(VsifClient comPortOPNA, int dacValue)
         {
-            if (Settings.Default.DisableDAC)
+            if (PcmMixer.DisableDac)
                 return;
 
             if (lastOpnaDacValue == dacValue)
@@ -1504,7 +1504,7 @@ namespace zanac.VGMPlayer
         /// <param name="dacValue"></param>
         public void DeferredWriteTurboR_DAC(VsifClient comPortTurboR, int dacValue)
         {
-            if (Settings.Default.DisableDAC)
+            if (PcmMixer.DisableDac)
                 return;
 
             if (lastTurboRDacValue == dacValue)

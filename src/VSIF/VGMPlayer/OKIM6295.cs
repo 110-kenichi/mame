@@ -32,6 +32,7 @@
 ***************************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -116,7 +117,8 @@ namespace zanac.VGMPlayer
 
                 outputs[0] = new int[multiply];
                 outputs[1] = new int[multiply];
-                okim6295_update(0, outputs, multiply);
+                lock(lockObject)
+                    okim6295_update(0, outputs, multiply);
 
                 int dtL = 0;
                 int dtR = 0;
@@ -127,8 +129,8 @@ namespace zanac.VGMPlayer
                 }
                 dtL /= multiply;
                 dtR /= multiply;
-                dtL = (int)Math.Round((double)dtL * (double)Settings.Default.DacVolume / 100d);
-                dtR = (int)Math.Round((double)dtR * (double)Settings.Default.DacVolume / 100d);
+                //dtL = (int)Math.Round((double)dtL * (double)PcmMixer.DacVolume / 100d);
+                //dtR = (int)Math.Round((double)dtR * (double)PcmMixer.DacVolume / 100d);
 
                 if (vsifClient != null)
                 {
@@ -474,6 +476,8 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private Object lockObject = new object();
+
         private void okim6295_update(byte ChipID, int[][] outputs, int samples)
         {
             okim6295_state okim6295_state = OKIM6295Data[ChipID];
@@ -482,8 +486,11 @@ namespace zanac.VGMPlayer
                 outputs[0][i] = 0;
             }
 
+            List<short[]> data = new List<short[]>();
             for (int i = 0; i < 4; i++)
             {
+                data.Add(new short[samples]);
+
                 ADPCMVoice aDPCMVoice = okim6295_state.voice[i];
                 infos[ChipID].chInfo[i].mask = aDPCMVoice.Muted == 0;
                 if (aDPCMVoice.Muted != 0)
@@ -491,7 +498,7 @@ namespace zanac.VGMPlayer
                     continue;
                 }
 
-                int num = 0;
+                //int num = 0;
                 short[] array = new short[16];
                 for (int num2 = samples; num2 != 0; num2 -= samples)
                 {
@@ -499,15 +506,14 @@ namespace zanac.VGMPlayer
                     generate_adpcm(okim6295_state, aDPCMVoice, array, num3);
                     for (int j = 0; j < num3; j++)
                     {
-                        outputs[0][num++] += array[j];
+                        data[i][j] = array[j];
+                        //outputs[0][num++] += array[j];
                     }
                 }
             }
-
+            var mix = PcmMixer.Mix(data, PcmMixer.DacClipping);
             for (int i = 0; i < samples; i++)
-            {
-                outputs[1][i] = outputs[0][i];
-            }
+                outputs[1][i] = outputs[0][i] = (int)Math.Round(mix[i]);
         }
 
         private int device_start_okim6295(byte ChipID, int clock)
@@ -669,6 +675,12 @@ namespace zanac.VGMPlayer
         }
 
         public void okim6295_w(byte ChipID, int offset, byte data)
+        {
+            lock(lockObject)
+                okim6295_w_internal(ChipID, offset, data);
+        }
+
+        private void okim6295_w_internal(byte ChipID, int offset, byte data)
         {
             okim6295_state okim6295_state = OKIM6295Data[ChipID];
             switch (offset)

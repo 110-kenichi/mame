@@ -38,8 +38,10 @@ using System.Threading.Tasks;
 namespace zanac.VGMPlayer
 {
 
-
-    class OKIM6258
+    /// <summary>
+    /// 
+    /// </summary>
+    public class OKIM6258
     {
         /** */
         private int mc_amp;

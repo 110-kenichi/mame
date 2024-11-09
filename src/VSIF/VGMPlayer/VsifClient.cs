@@ -195,7 +195,7 @@ namespace zanac.VGMPlayer
         /// <param name="data"></param>
         public virtual void DeferredWriteData(byte type, byte address, byte data, int wait)
         {
-            if (type == 1 && Settings.Default.DisableDAC)
+            if (type == 1 && PcmMixer.DisableDac)
                 return;
 
             lock (lockObject)

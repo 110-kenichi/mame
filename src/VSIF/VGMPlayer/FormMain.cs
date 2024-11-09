@@ -106,6 +106,9 @@ namespace zanac.VGMPlayer
             }
             if(lvi != null)
                 listViewList.TopItem = lvi;
+
+            PcmMixer.DacVolume = (double)Settings.Default.DacVolume;
+            PcmMixer.DisableDac = Settings.Default.DisableDAC;
         }
 
         private static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
@@ -687,6 +690,10 @@ namespace zanac.VGMPlayer
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            PcmMixer.DacVolume = (double)Settings.Default.DacVolume;
+            PcmMixer.DisableDac = Settings.Default.DisableDAC;
+            PcmMixer.DacClipping = Settings.Default.DACClipping;
+
             if (currentSong?.HighLoad == true && currentSong?.State == SoundState.Playing)
             {
                 if (progressBarLoad.Value <= 90)

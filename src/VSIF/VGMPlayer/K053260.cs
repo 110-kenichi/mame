@@ -83,7 +83,8 @@ namespace zanac.VGMPlayer
 
                 outputs[0] = new int[multiply];
                 outputs[1] = new int[multiply];
-                k053260_update(0, outputs, multiply);
+                lock(lockObject)
+                    k053260_update(0, outputs, multiply);
 
                 int dtL = 0;
                 int dtR = 0;
@@ -94,8 +95,8 @@ namespace zanac.VGMPlayer
                 }
                 dtL /= multiply;
                 dtR /= multiply;
-                dtL = (int)Math.Round((double)dtL * (double)Settings.Default.DacVolume / 100d);
-                dtR = (int)Math.Round((double)dtR * (double)Settings.Default.DacVolume / 100d);
+                //dtL = (int)Math.Round((double)dtL * (double)PcmMixer.DacVolume / 100d);
+                //dtR = (int)Math.Round((double)dtR * (double)PcmMixer.DacVolume / 100d);
 
                 if (vsifClient != null)
                 {
@@ -328,6 +329,8 @@ namespace zanac.VGMPlayer
             return val;
         }
 
+        private Object lockObject = new object();
+
         public void k053260_update(byte ChipID, int[][] outputs, int samples)
         {
             k053260_state k053260_state = K053260Data[ChipID];
@@ -354,13 +357,23 @@ namespace zanac.VGMPlayer
                     delta[i] /= 2u;
                 }
             }
+            List<short[]> data1 = new List<short[]>();
+            List<short[]> data2 = new List<short[]>();
+            for (int i = 0; i < 4; i++)
+            {
+                data1.Add(new short[samples]);
+                data2.Add(new short[samples]);
+            }
 
             for (int j = 0; j < samples; j++)
             {
-                int num;
-                int num2 = (num = 0);
+                //int num;
+                //int num2 = (num = 0);
                 for (int i = 0; i < 4; i++)
                 {
+                    int num;
+                    int num2 = (num = 0);
+
                     if (play[i] == 0)
                     {
                         continue;
@@ -401,10 +414,19 @@ namespace zanac.VGMPlayer
                         num2 += b * lvol[i] >> 2;
                         num += b * rvol[i] >> 2;
                     }
+                    data1[i][j] = (short)limit(num, 32768, -32768);
+                    data2[i][j] = (short)limit(num2, 32768, -32768);
                 }
 
-                outputs[1][j] = limit(num2, 32768, -32768);
-                outputs[0][j] = limit(num, 32768, -32768);
+                //outputs[1][j] = limit(num2, 32768, -32768);
+                //outputs[0][j] = limit(num, 32768, -32768);
+            }
+            var mix1 = PcmMixer.Mix(data1, PcmMixer.DacClipping);
+            var mix2 = PcmMixer.Mix(data2, PcmMixer.DacClipping);
+            for (int i = 0; i < samples; i++)
+            {
+                outputs[0][i] = (int)Math.Round(mix1[i]);
+                outputs[1][i] = (int)Math.Round(mix2[i]);
             }
 
             for (int i = 0; i < 4; i++)
@@ -465,6 +487,12 @@ namespace zanac.VGMPlayer
         }
 
         public void k053260_w(byte ChipID, int offset, byte data)
+        {
+            lock(lockObject)
+                k053260_w_internal(ChipID, offset, data);
+        }
+
+        private void k053260_w_internal(byte ChipID, int offset, byte data)
         {
             k053260_state k053260_state = K053260Data[ChipID];
             if (offset > 47)
