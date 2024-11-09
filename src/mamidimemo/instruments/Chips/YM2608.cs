@@ -36,6 +36,8 @@ using System.Diagnostics;
 using static zanac.MAmidiMEmo.Instruments.Chips.RP2A03;
 using System.Globalization;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
+using System.Windows.Markup;
+using zanac.MAmidiMEmo.Util;
 
 //https://www.quarter-dev.info/archives/yamaha/YM2608_Applicatin_Manual.pdf
 
@@ -467,6 +469,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private bool f_EnableSmartDacClip;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Enabled Smart DAC Clip.")]
+        [DefaultValue(false)]
+        public bool EnableSmartDacClip
+        {
+            get
+            {
+                return f_EnableSmartDacClip;
+            }
+            set
+            {
+                if (f_EnableSmartDacClip != value)
+                {
+                    f_EnableSmartDacClip = value;
+                }
+            }
+        }
 
         private byte f_EnvelopeFrequencyCoarse = 2;
 
@@ -4955,8 +4977,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void processDac()
             {
-                int overflowed = 0;
-
                 long freq, before, after;
                 double dbefore;
                 QueryPerformanceFrequency(out freq);
@@ -4985,7 +5005,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
                                 sampleRate = Math.Max(sampleRate, sd.SampleRate);
                             }
-
+                            List<sbyte> data = new List<sbyte>();
                             foreach (var sd in currentSampleData)
                             {
                                 if (sd == null)
@@ -5002,27 +5022,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
                                 if (sd.Volume != 1.0f)
                                     val = (int)Math.Round(val * sd.Volume);
-                                dacData += val;
-
+                                if (val > sbyte.MaxValue)
+                                    val = sbyte.MaxValue;
+                                else if (val < sbyte.MinValue)
+                                    val = sbyte.MinValue;
+                                data.Add((sbyte)val);
                                 playDac = true;
                             }
+                            dacData = (int)Math.Round(PcmMixer.Mix(data, parentModule.EnableSmartDacClip));
                         }
 
                         int lastDacData = 0;
-                        if (playDac || overflowed != 0 || lastDacData != 0)
+                        if (playDac || lastDacData != 0)
                         {
                             if (!playDac)
                                 dacData = lastDacData;
-                            //dacData += overflowed;
-                            overflowed = 0;
                             if (dacData > sbyte.MaxValue)
                             {
-                                //overflowed = dacData - sbyte.MaxValue;
                                 dacData = sbyte.MaxValue;
                             }
                             else if (dacData < sbyte.MinValue)
                             {
-                                //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
                             if (dacData != lastDacData)

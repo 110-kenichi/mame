@@ -139,9 +139,15 @@ namespace zanac.VGMPlayer
                         int dt = ((dtL + dtR) / 2) >> 8;
 
                         if (dt > sbyte.MaxValue)
+                        {
                             dt = sbyte.MaxValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
                         else if (dt < sbyte.MinValue)
+                        {
                             dt = sbyte.MinValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
                         parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
                     }
                     else if (vsifClient.ChipClockHz.ContainsKey("OPN2") && vsifClient.Tag.ContainsKey("ProxyOKIM6295"))
@@ -149,9 +155,15 @@ namespace zanac.VGMPlayer
                         int dt = ((dtL + dtR) / 2) >> 7;
 
                         if (dt > sbyte.MaxValue)
+                        {
                             dt = sbyte.MaxValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
                         else if (dt < sbyte.MinValue)
+                        {
                             dt = sbyte.MinValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
 
                         parentSong.DeferredWriteOPN2_DAC(vsifClient, (byte)(dt + 128));
                     }
@@ -160,9 +172,15 @@ namespace zanac.VGMPlayer
                         int dt = ((dtL + dtR) / 2) >> 7;
 
                         if (dt > sbyte.MaxValue)
+                        {
                             dt = sbyte.MaxValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
                         else if (dt < sbyte.MinValue)
+                        {
                             dt = sbyte.MinValue;
+                            parentSong.NotifyDacClipOccurred();
+                        }
 
                         parentSong.DeferredWriteOPNA_DAC(vsifClient, dt);
                     }

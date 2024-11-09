@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using System.Windows.Markup;
 using FM_SoundConvertor;
 using Melanchall.DryWetMidi.Common;
 using Melanchall.DryWetMidi.Core;
@@ -28,6 +29,7 @@ using zanac.MAmidiMEmo.Instruments.Envelopes;
 using zanac.MAmidiMEmo.Mame;
 using zanac.MAmidiMEmo.Midi;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.Util;
 using zanac.MAmidiMEmo.VSIF;
 using static zanac.MAmidiMEmo.Instruments.Chips.NAMCO_CUS30;
 using static zanac.MAmidiMEmo.Instruments.Chips.YM2612;
@@ -336,6 +338,26 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             MasterClock = (uint)MasterClockType.NTSC;
         }
 
+        private bool f_EnableSmartDacClip;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Enabled Smart DAC Clip.")]
+        [DefaultValue(false)]
+        public bool EnableSmartDacClip
+        {
+            get
+            {
+                return f_EnableSmartDacClip;
+            }
+            set
+            {
+                if (f_EnableSmartDacClip != value)
+                {
+                    f_EnableSmartDacClip = value;
+                }
+            }
+        }
 
         private DPcmSoundTable deltaPcmSoundTable;
 
@@ -1398,8 +1420,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             /// </summary>
             private void processDac()
             {
-                int overflowed = 0;
-
                 long freq, before, after;
                 double dbefore;
                 QueryPerformanceFrequency(out freq);
@@ -1429,6 +1449,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                 sampleRate = Math.Max(sampleRate, sd.SampleRate);
                             }
 
+                            List<sbyte> data = new List<sbyte>();
                             foreach (var sd in currentSampleData)
                             {
                                 if (sd == null)
@@ -1445,27 +1466,27 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
                                 if (sd.Volume != 1.0f)
                                     val = (int)Math.Round(val * sd.Volume);
-                                dacData += val;
-
+                                if (val > sbyte.MaxValue)
+                                    val = sbyte.MaxValue;
+                                else if (val < sbyte.MinValue)
+                                    val = sbyte.MinValue;
+                                data.Add((sbyte)val);
                                 playDac = true;
                             }
+                            dacData = (int)Math.Round(PcmMixer.Mix(data, parentModule.EnableSmartDacClip));
                         }
 
                         int lastDacData = 0;
-                        if (playDac || overflowed != 0 || lastDacData != 0)
+                        if (playDac || lastDacData != 0)
                         {
                             if (!playDac)
                                 dacData = lastDacData;
-                            //dacData += overflowed;
-                            overflowed = 0;
                             if (dacData > sbyte.MaxValue)
                             {
-                                //overflowed = dacData - sbyte.MaxValue;
                                 dacData = sbyte.MaxValue;
                             }
                             else if (dacData < sbyte.MinValue)
                             {
-                                //overflowed = dacData - sbyte.MinValue;
                                 dacData = sbyte.MinValue;
                             }
                             if (dacData != lastDacData)

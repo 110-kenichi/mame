@@ -1460,8 +1460,8 @@ namespace zanac.VGMPlayer
 
                     int dacData = 0;
                     bool playDac = false;
-
                     {
+                        List<sbyte> data = new List<sbyte>();
                         lock (engineLockObject)
                         {
                             for (int i = 0; i < MAX_VOICE; i++)
@@ -1474,18 +1474,25 @@ namespace zanac.VGMPlayer
                                 if (d == null)
                                     continue;
 
-                                dacData += (int)d.Value;
+                                data.Add(d.Value);
                                 playDac = true;
                             }
                         }
+                        dacData = (int)Math.Round(PcmMixer.Mix(data, PcmMixer.DacClipping));
 
                         if (playDac || overflowed != 0)
                         {
                             overflowed = 0;
                             if (dacData > sbyte.MaxValue)
+                            {
                                 dacData = sbyte.MaxValue;
+                                xgmSong.NotifyDacClipOccurred();
+                            }
                             else if (dacData < sbyte.MinValue)
+                            {
                                 dacData = sbyte.MinValue;
+                                xgmSong.NotifyDacClipOccurred();
+                            }
                             if (xgmSong.comPortOPN2 != null)
                             {
                                 dacData += 0x80;

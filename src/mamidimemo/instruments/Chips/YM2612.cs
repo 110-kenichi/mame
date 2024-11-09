@@ -403,7 +403,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         /// <summary>
         /// </summary>
         [DataMember]
-        [Category("Chip(Global)")]
+        [Category("Chip(Dedicated)")]
         [Description("Set Master Clock of this chip.")]
         [TypeConverter(typeof(EnumConverter<MasterClockType>))]
         public uint MasterClock
@@ -436,32 +436,6 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             MasterClock = (uint)MasterClockType.NTSC;
         }
 
-        private bool f_Mode5ch;
-
-        [DataMember]
-        [Category("Chip(Global)")]
-        [Description("Use 5ch mode. Also 6ch uses for DAC PCM.\r\n" +
-            "Particularly recommend FTDI.")]
-        [DefaultValue(false)]
-        public bool Mode5ch
-        {
-            get
-            {
-                return f_Mode5ch;
-            }
-            set
-            {
-                if (f_Mode5ch != value)
-                {
-                    f_Mode5ch = value;
-                    Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(f_Mode5ch ? 0x80 : 0x00));
-                    if (f_Mode5ch && !f_DisableDacTransfer)
-                        pcmEngine.StartEngine();
-                    else
-                        pcmEngine.StopEngine();
-                }
-            }
-        }
 
         /// <summary>
         /// 
@@ -477,7 +451,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private uint f_MaxDacPcmVoices = DEFAULT_MAX_VOICES;
 
         [DataMember]
-        [Category("Chip(Global)")]
+        [Category("Chip(Dedicated)")]
         [Description("Max voices of the DAC PCM for Mode5ch.")]
         [DefaultValue(typeof(uint), "4")]
         [TypeConverter(typeof(EnumConverter<MaxDacType>))]
@@ -496,10 +470,31 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             }
         }
 
+        private bool f_EnableSmartDacClip;
+
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Enabled Smart DAC Clip.")]
+        [DefaultValue(false)]
+        public bool EnableSmartDacClip
+        {
+            get
+            {
+                return f_EnableSmartDacClip;
+            }
+            set
+            {
+                if (f_EnableSmartDacClip != value)
+                {
+                    f_EnableSmartDacClip = value;
+                }
+            }
+        }
+
         private bool f_DisablePcmVelocity;
 
         [DataMember]
-        [Category("Chip(Global)")]
+        [Category("Chip(Dedicated)")]
         [Description("Disabled DAC PCM velocity.\r\nNOTE: If you use XGMDRV, please set True only.")]
         [DefaultValue(false)]
         public bool DisableDacPcmVelocity
@@ -520,7 +515,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         private bool f_DisableDacTransfer;
 
         [DataMember]
-        [Category("Chip(Global)")]
+        [Category("Chip(Dedicated)")]
         [Description("Disable DAC data transfer to keep USB bandwidth.\r\n" +
             "The DAC can only sound with real hardware. Particularly recommend FTDI.")]
         [DefaultValue(false)]
@@ -536,6 +531,33 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 if (f_DisableDacTransfer != value)
                 {
                     f_DisableDacTransfer = value;
+                    if (f_Mode5ch && !f_DisableDacTransfer)
+                        pcmEngine.StartEngine();
+                    else
+                        pcmEngine.StopEngine();
+                }
+            }
+        }
+
+        private bool f_Mode5ch;
+
+        [DataMember]
+        [Category("Chip(Global)")]
+        [Description("Use 5ch mode. Also 6ch uses for DAC PCM.\r\n" +
+            "Particularly recommend FTDI.")]
+        [DefaultValue(false)]
+        public bool Mode5ch
+        {
+            get
+            {
+                return f_Mode5ch;
+            }
+            set
+            {
+                if (f_Mode5ch != value)
+                {
+                    f_Mode5ch = value;
+                    Ym2612WriteData(UnitNumber, 0x2B, 0, 0, (byte)(f_Mode5ch ? 0x80 : 0x00));
                     if (f_Mode5ch && !f_DisableDacTransfer)
                         pcmEngine.StartEngine();
                     else
@@ -1730,6 +1752,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             {
                 lock (engineLockObject)
                 {
+                    List<sbyte> data = new List<sbyte>();
                     foreach (var sd in currentSampleData)
                     {
                         if (sd == null)
@@ -1743,11 +1766,17 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             val = (int)Math.Round(val * sd.Gain);
                         if (!sd.DisableVelocity)
                             val = (int)Math.Round(((float)val * (float)sd.Note.Velocity) / 127f);
-                        dacData += val;
-
+                        if (val > sbyte.MaxValue)
+                            val = sbyte.MaxValue;
+                        else if (val < sbyte.MinValue)
+                            val = sbyte.MinValue;
+                        data.Add((sbyte)val);
                         sampleRate = sd.SampleRate;
                         playDac = true;
                     }
+
+                    dacData = (int)Math.Round(PcmMixer.Mix(data, parentModule.EnableSmartDacClip));
+
                     if (dacData > sbyte.MaxValue)
                     {
                         dacData = sbyte.MaxValue;

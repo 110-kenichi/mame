@@ -701,6 +701,18 @@ namespace zanac.VGMPlayer
             }
             else if (progressBarLoad.Value >= 10)
                 addProgressBarLoadValue(-10);
+
+            if (currentSong?.DacClip == true && currentSong?.State == SoundState.Playing)
+            {
+                checkBoxClip.BackColor = Color.Red;
+                if(currentSong != null)
+                    currentSong.DacClip = false;
+            }
+            else
+            {
+                checkBoxClip.BackColor = SystemColors.Control;
+            }
+
         }
 
         private void setProgressBarLoadValue(int value)

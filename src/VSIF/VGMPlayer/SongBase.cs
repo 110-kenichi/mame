@@ -20,6 +20,8 @@ namespace zanac.VGMPlayer
     {
         public event EventHandler ProcessLoadOccurred;
 
+        public event EventHandler DacClipOccurred;
+
         public event EventHandler SpeedChanged;
 
         public event EventHandler PlayStatusChanged;
@@ -30,6 +32,12 @@ namespace zanac.VGMPlayer
         {
             HighLoad = true;
             ProcessLoadOccurred?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void NotifyDacClipOccurred()
+        {
+            DacClip = true;
+            DacClipOccurred?.Invoke(this, EventArgs.Empty);
         }
 
 
@@ -320,6 +328,11 @@ namespace zanac.VGMPlayer
             set;
         }
 
+        public virtual bool DacClip
+        {
+            get;
+            set;
+        }
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool QueryPerformanceCounter(out long lpPerformanceCount);

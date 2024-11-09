@@ -701,6 +701,7 @@
     <Compile Include="Util\FM-SoundConvertor\Vgi.cs" />
     <Compile Include="Util\FM-SoundConvertor\FFOPM.cs" />
     <Compile Include="Util\FM-SoundConvertor\FF.cs" />
+    <Compile Include="Util\PcmMixer.cs" />
     <Compile Include="Util\PropertyGridUtility.cs" />
     <Compile Include="Util\Syx\SyxReaderTX81Z.cs" />
     <Compile Include="Util\XGM2Writer.cs" />
