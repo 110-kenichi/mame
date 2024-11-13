@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,11 @@ namespace zanac.VGMPlayer
         {
             get;
             set;
+        }
+
+        public PropertyInfo BitBangWait
+        {
+            get; set;
         }
 
         private object lockObject = new object();

@@ -78,7 +78,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public void StreamSong()
         {
-            int multiply = 1 + Settings.Default.OKIM6295Rate;
+            int multiply = 1 + Program.Default.OKIM6295Rate;
 
             int[][] outputs = new int[2][];
 

@@ -1149,5 +1149,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["DACClipping"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowCoverArt {
+            get {
+                return ((bool)(this["ShowCoverArt"]));
+            }
+            set {
+                this["ShowCoverArt"] = value;
+            }
+        }
     }
 }

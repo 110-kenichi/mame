@@ -49,7 +49,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         public void StreamSong()
         {
-            int multiply = 1 + Settings.Default.K053260Rate;
+            int multiply = 1 + Program.Default.K053260Rate;
             int[][] outputs = new int[2][];
 
             long freq, before, after;

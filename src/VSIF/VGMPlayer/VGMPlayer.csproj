@@ -189,6 +189,7 @@
     <Compile Include="DacStream.cs" />
     <Compile Include="OKIM6295.cs" />
     <Compile Include="SegaPcm.cs" />
+    <Compile Include="SettingsProxy.cs" />
     <Compile Include="SongBase.cs" />
     <Compile Include="VsifClient.cs" />
     <Compile Include="XGMSong.cs" />

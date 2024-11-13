@@ -120,7 +120,7 @@ namespace zanac.VGMPlayer
                                 sp.WriteTimeout = 100;
                                 sp.ReadTimeout = 100;
                                 sp.BaudRate = 115200;
-                                sp.BaudRate = 1200 * (int)Settings.Default.BitBangWaitAY8910;
+                                sp.BaudRate = 1200 * (int)Program.Default.BitBangWaitAY8910;
                                 sp.StopBits = StopBits.One;
                                 sp.DataBits = 8;
                                 sp.Handshake = Handshake.None;

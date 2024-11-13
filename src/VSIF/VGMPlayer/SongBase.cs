@@ -11,7 +11,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms;
 using zanac.VGMPlayer.Properties;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Timer = System.Timers.Timer;
 
 namespace zanac.VGMPlayer
@@ -27,6 +30,20 @@ namespace zanac.VGMPlayer
         public event EventHandler PlayStatusChanged;
 
         public event EventHandler Finished;
+
+        public bool LoadCoverArt
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static string LastLoadedCoverArtFileName
+        {
+            get;
+            private set;
+        }
 
         protected void NotifyProcessLoadOccurred()
         {
@@ -199,6 +216,27 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="maxWidth"></param>
+        /// <param name="maxHeight"></param>
+        /// <returns></returns>
+        private static void drawScaledImage(Graphics g, Bitmap bmp, int maxWidth, int maxHeight)
+        {
+            //https://efundies.com/scale-an-image-in-c-sharp-preserving-aspect-ratio/
+            var ratioX = (double)maxWidth / bmp.Width;
+            var ratioY = (double)maxHeight / bmp.Height;
+            var ratio = Math.Min(ratioX, ratioY);
+
+            var newWidth = (int)(bmp.Width * ratio);
+            var newHeight = (int)(bmp.Height * ratio);
+
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.DrawImage(bmp, (maxWidth - newWidth) / 2, (maxHeight - newHeight) / 2, newWidth, newHeight);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Play()
         {
             if (!Accepted)
@@ -210,6 +248,11 @@ namespace zanac.VGMPlayer
 
             if (State == SoundState.Playing)
                 return;
+
+            if (LoadCoverArt && Program.Default.ShowCoverArt)
+            {
+                loadCoverArt();
+            }
 
             playTicTimer = new Timer(250);
             playTicTimer.Elapsed += LoopTimer_Elapsed;
@@ -225,6 +268,154 @@ namespace zanac.VGMPlayer
 
             FormMain.TopForm.SetElapsedTime(new TimeSpan(0));
             FormMain.TopForm.SetStatusText("Playing");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void loadCoverArt()
+        {
+            string cfile = Path.ChangeExtension(FileName, ".png");
+            Bitmap img = null;
+            Bitmap canvas = null;
+            Graphics gp = null;
+            try
+            {
+                String fn = null;
+                if (File.Exists(cfile))
+                {
+                    img = new Bitmap(cfile);
+                    fn = cfile;
+                }
+                else
+                {
+                    cfile = Path.ChangeExtension(FileName, ".jpg");
+                    if (File.Exists(cfile))
+                    {
+                        img = new Bitmap(cfile);
+                        fn = cfile;
+                    }
+                }
+                if (img == null)
+                {
+                    var cfiles = Directory.GetFiles(Path.GetDirectoryName(FileName), "*.png");
+                    if (cfiles.Length != 0 && File.Exists(cfiles[0]))
+                    {
+                        img = new Bitmap(cfiles[0]);
+                        fn = cfiles[0];
+                    }
+                    else
+                    {
+                        cfiles = Directory.GetFiles(Path.GetDirectoryName(FileName), "*.jpg");
+                        if (cfiles.Length != 0 && File.Exists(cfiles[0]))
+                        {
+                            img = new Bitmap(cfiles[0]);
+                            fn = cfiles[0];
+                        }
+                    }
+                }
+
+                if (img != null && !String.Equals(LastLoadedCoverArtFileName, fn, StringComparison.OrdinalIgnoreCase))
+                {
+                    bool completed = false;
+                    foreach (var c in VsifManager.GetVsifClients())
+                    {
+                        switch (c.SoundModuleType)
+                        {
+                            //case VsifSoundModuleType.MSX_FTDI:
+                            case VsifSoundModuleType.TurboR_FTDI:
+                                {
+                                    bool cancelled = false;
+                                    FormProgress.RunDialog("Loading cover art...", (pd) =>
+                                    {
+                                        canvas = new Bitmap(256, 212);
+                                        gp = Graphics.FromImage(canvas);
+
+                                        drawScaledImage(gp, img, 256, 212);
+                                        const byte PORT0 = 0x98;
+                                        const byte PORT1 = 0x99;
+                                        const byte REGW = 0x80;
+                                        const byte CMD = 0x3e;
+
+                                        c.FlushDeferredWriteDataAndWait();
+
+                                        int bbw = (int)(decimal)c.BitBangWait.GetValue(Settings.Default);
+
+                                        //GRAPHIC7 mode
+                                        c.WriteData(CMD, PORT1, 0x0e, bbw);
+                                        c.WriteData(CMD, PORT1, REGW, bbw);
+                                        c.WriteData(CMD, PORT1, 0x40, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 1, bbw);
+
+                                        c.WriteData(CMD, PORT1, 0x80, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 9, bbw);
+                                        //Set Pattern Name Table 0
+                                        c.WriteData(CMD, PORT1, 0x1f, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 2, bbw);
+                                        //Sprite Off
+                                        c.WriteData(CMD, PORT1, 0x0a, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 8, bbw);
+                                        // BG Black
+                                        c.WriteData(CMD, PORT1, 0x00, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 7, bbw);
+                                        //Set VRAM 0
+                                        c.WriteData(CMD, PORT1, 0x00, bbw);
+                                        c.WriteData(CMD, PORT1, REGW | 14, bbw);
+                                        c.WriteData(CMD, PORT1, 0x00, bbw);
+                                        c.WriteData(CMD, PORT1, 0x40, bbw);
+
+                                        //c.FlushDeferredWriteDataAndWait();
+
+                                        for (int y = 0; y < 212; y++)
+                                        {
+                                            for (int x = 0; x < 256; x++)
+                                            {
+                                                var col = canvas.GetPixel(x, y);
+                                                // G(3),R(3),B(2)
+                                                byte r = col.R;
+                                                //if (y % 2 == 1 && r < 256 - 32)
+                                                //    r += 32;
+                                                byte g = col.G;
+                                                //if (y % 2 == 0 && g < 256 - 32)
+                                                //    g += 32;
+                                                byte b = col.B;
+                                                if (y % 2 == 1 && b < 256 - 64)
+                                                    b += 64;
+                                                byte data = (byte)(((g >> 5) << 5) | ((r >> 5) << 2) | ((b >> 6)));
+                                                c.WriteData(CMD, PORT0, data, bbw);
+                                            }
+                                            //c.FlushDeferredWriteDataAndWait();
+                                            FormMain.TopForm.BeginInvoke(new MethodInvoker(() =>
+                                            {
+                                                pd.Percentage = (100 * y / 212);
+                                            }));
+                                            if (cancelled)
+                                                break;
+                                        }
+
+                                        c.FlushDeferredWriteDataAndWait();
+                                        LastLoadedCoverArtFileName = fn;
+                                        completed = true;
+                                    },
+                                    () => { cancelled = true; });
+                        }
+                        break;
+                        }
+                        if (completed)
+                            break;
+                    }
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                gp?.Dispose();
+                canvas?.Dispose();
+                img?.Dispose();
+            }
         }
 
         private void LoopTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -1017,7 +1208,7 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -1032,11 +1223,11 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.PC88_FTDI:
                     if (0x10 <= adrs && adrs <= 0x1f)
                     {
-                        comPortOPNA.DeferredWriteData(0x02, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x02, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     }
                     else
                     {
-                        comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     }
                     break;
             }
@@ -1105,7 +1296,7 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -1119,13 +1310,13 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
                     if (adrs == 0x08)
-                        comPortOPNA.DeferredWriteData(0x04, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x04, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     else if (adrs == 0x0b)
-                        comPortOPNA.DeferredWriteData(0x03, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x03, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     else if (adrs == 0x0e)
-                        comPortOPNA.DeferredWriteData(0x05, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x05, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     else
-                        comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPNA);
+                        comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     break;
             }
         }
@@ -1165,7 +1356,7 @@ namespace zanac.VGMPlayer
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
                 comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
-                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Program.Default.BitBangWaitOPN2);
             }
             else //Genesis
             {
@@ -1173,7 +1364,7 @@ namespace zanac.VGMPlayer
                     new byte[] { 0, 0 },
                     new byte[] { 0x04, 0x8 },
                     new byte[] { (byte)0x2a, (byte)dacValue },
-                    (int)Settings.Default.BitBangWaitOPN2);
+                    (int)Program.Default.BitBangWaitOPN2);
             }
             lastOpn2DacValue = dacValue;
         }
@@ -1193,7 +1384,7 @@ namespace zanac.VGMPlayer
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
                     //Set volume for pseudo DAC
-                    comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)inputValue, (int)Program.Default.BitBangWaitOPNA);
                     //outputAdpcm(comPort, lastWriteDacValue);
                     break;
                 case VsifSoundModuleType.SpfmLight:
@@ -1208,7 +1399,7 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
                     //Set volume for pseudo DAC
-                    comPortOPNA.DeferredWriteData(0x03, (byte)0xb, (byte)inputValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x03, (byte)0xb, (byte)inputValue, (int)Program.Default.BitBangWaitOPNA);
                     break;
             }
         }
@@ -1232,7 +1423,7 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortOPNA.DeferredWriteData(0x16, (byte)0xe, (byte)dacValue, (int)Settings.Default.BitBangWaitOPNA);
+                    comPortOPNA.DeferredWriteData(0x16, (byte)0xe, (byte)dacValue, (int)Program.Default.BitBangWaitOPNA);
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -1244,7 +1435,7 @@ namespace zanac.VGMPlayer
                     break;
                 case VsifSoundModuleType.PC88_FTDI:
                     deferredWriteOPNA_P1(comPortOPNA, 0x05, (byte)dacValue);
-                    //comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)dacValue, (int)Settings.Default.BitBangWaitOPNA);
+                    //comPortOPNA.DeferredWriteData(0x13, (byte)0xb, (byte)dacValue, (int)Program.Default.BitBangWaitOPNA);
                     break;
             }
 
@@ -1315,7 +1506,7 @@ namespace zanac.VGMPlayer
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
                 comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
-                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
             }
             else //Genesis
             {
@@ -1323,7 +1514,7 @@ namespace zanac.VGMPlayer
                     new byte[] { 0, 0 },
                     new byte[] { 0x04, 0x8 },
                     new byte[] { (byte)adrs, (byte)dt },
-                    (int)Settings.Default.BitBangWaitOPN2);
+                    (int)Program.Default.BitBangWaitOPN2);
             }
         }
 
@@ -1391,7 +1582,7 @@ namespace zanac.VGMPlayer
             if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
                 comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
             {
-                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Settings.Default.BitBangWaitOPN2);
+                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
             }
             else
             {
@@ -1399,7 +1590,7 @@ namespace zanac.VGMPlayer
                     new byte[] { 0, 0 },
                     new byte[] { 0x0C, 0x10 },
                     new byte[] { (byte)adrs, (byte)dt },
-                    (int)Settings.Default.BitBangWaitOPN2);
+                    (int)Program.Default.BitBangWaitOPN2);
             }
         }
 
@@ -1453,7 +1644,7 @@ namespace zanac.VGMPlayer
             else
             {
                 outputValue |= (byte)adpcmData;
-                comPortOPNA.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Settings.Default.BitBangWaitOPNA);
+                comPortOPNA.DeferredWriteData(0x13, (byte)0x8, outputValue, (int)Program.Default.BitBangWaitOPNA);
                 outputValue = 0;
                 firstData = true;
             }
@@ -1523,7 +1714,7 @@ namespace zanac.VGMPlayer
             if (lastTurboRDacValue == dacValue)
                 return;
 
-            comPortTurboR.DeferredWriteData(0x15, (byte)0x0, (byte)dacValue, (int)(decimal)comPortTurboR.Tag["ClockWidth"]);
+            comPortTurboR.DeferredWriteData(0x15, (byte)0x0, (byte)dacValue, (int)(decimal)comPortTurboR.BitBangWait.GetValue(Settings.Default));
 
             lastOpnaDacValue = dacValue;
         }

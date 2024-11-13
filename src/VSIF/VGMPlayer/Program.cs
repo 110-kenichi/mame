@@ -22,6 +22,15 @@ namespace zanac.VGMPlayer
         public static int MinimumResolution;
         public static int CurrentResolution;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static dynamic Default
+        {
+            get;
+            private set;
+        }
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -29,6 +38,11 @@ namespace zanac.VGMPlayer
             Application.SetCompatibleTextRenderingDefault(false);
 
             Settings.Default.Reload();
+
+            Default = new SettingsProxy(Settings.Default);
+
+            var w = Default.BitBangWaitAY8910;
+            w = Default.BitBangWaitAY8910;
 
             NtQueryTimerResolution(out MaximumResolution, out MinimumResolution, out CurrentResolution);
             NtSetTimerResolution(MinimumResolution, true, out CurrentResolution);

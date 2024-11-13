@@ -80,12 +80,12 @@ namespace zanac.VGMPlayer
             Process p = new Process();
 
             string loopCount = "";
-            if (Settings.Default.Loop && Settings.Default.LoopCount > 0)
-                loopCount = $"-l{(int)Settings.Default.LoopCount}";
+            if (Program.Default.Loop && Program.Default.LoopCount > 0)
+                loopCount = $"-l{(int)Program.Default.LoopCount}";
             string loopTime = "";
-            if (Settings.Default.LoopTime)
+            if (Program.Default.LoopTime)
             {
-                var ts = new TimeSpan(Settings.Default.LoopTimes.Hour, Settings.Default.LoopTimes.Minute, Settings.Default.LoopTimes.Second);
+                var ts = new TimeSpan(Program.Default.LoopTimes.Hour, Program.Default.LoopTimes.Minute, Program.Default.LoopTimes.Second);
                 loopTime = String.Format($"-p{ts.TotalSeconds}");
             }
             p.StartInfo.FileName = "kss2vgm";

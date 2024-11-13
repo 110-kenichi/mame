@@ -215,12 +215,31 @@ namespace zanac.VGMPlayer
                             }
                             else if (dt.Type >= 0x20)
                             {
-                                byte[] sd = new byte[5] {
-                                    (byte)(dt.Type - 0x20    | 0x20),
-                                    (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
-                                    (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
-                                };
-                                ds.AddRange(sd);
+                                switch (dt.Address)
+                                {
+                                    case 0x98:
+                                    case 0x99:
+                                        {
+                                            byte[] sd = new byte[5] {
+                                                (byte)(dt.Type - 0x20    | 0x20),
+                                                (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                                (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                            };
+                                            ds.AddRange(new byte[] { 0, });
+                                            ds.AddRange(sd);
+                                        }
+                                        break;
+                                    default:
+                                        {
+                                            byte[] sd = new byte[5] {
+                                                (byte)(dt.Type - 0x20    | 0x20),
+                                                (byte)((dt.Address >> 4) | 0x00), (byte)((dt.Address & 0x0f) | 0x10),
+                                                (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
+                                            };
+                                            ds.AddRange(sd);
+                                        }
+                                        break;
+                                }
                             }
                             else
                             {

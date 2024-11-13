@@ -53,7 +53,7 @@ namespace zanac.VGMPlayer
         public void StreamSong()
         {
             double sampleRate = 31250;
-            int multiply = 1 + Settings.Default.SegaPcmRate;
+            int multiply = 1 + Program.Default.SegaPcmRate;
 
             int[][] outputs = new int[2][];
 

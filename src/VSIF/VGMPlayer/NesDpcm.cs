@@ -69,7 +69,7 @@ namespace zanac.VGMPlayer
         {
             lock (engineLockObject)
             {
-                multiply = 1 << Settings.Default.NesDpcmRate;
+                multiply = 1 << Program.Default.NesDpcmRate;
                 this.sampleRate = sampleRate / multiply;
             }
         }
@@ -133,7 +133,7 @@ namespace zanac.VGMPlayer
                 sd.LoopEnabled = loopEnable;
                 sd.LoopStart = index;
                 sd.LoopLength = length;
-                sd.Multiply = 1 << Settings.Default.NesDpcmRate;
+                sd.Multiply = 1 << Program.Default.NesDpcmRate;
                 sd.SampleRate = sampleRate / sd.Multiply;
                 currentSampleData = sd;
             }
