@@ -189,7 +189,7 @@ __WRITE_SCC1:
 
     ; Continuous Write
     INC B               ;  5 76
-    LD  L,#0            ;  8 84
+    LD  E,#0x1F         ;  8 84
 ;=======================
 1$:
     IN  A,(PSGRD)       ; 
@@ -201,6 +201,7 @@ __WRITE_SCC1:
 
     OR  #JPOFST         ; 
     LD  H,A             ; 
+    LD  L,#0            ;  8 84
     JP  (HL)            ; 82  ; Jump to other ID
     .endm
 ;=======================================================
