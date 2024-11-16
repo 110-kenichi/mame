@@ -538,8 +538,8 @@ namespace zanac.VGMPlayer
             if (preparingPlay)
                 return;
 
-            String vgmFileName = null;
-            String coverArtFileName = null;
+            String vgmFileName = fileNameOrUrl;
+            String coverArtFileName = coverArtFileNameUrUrl;
             bool cancelled = false;
             try
             {
