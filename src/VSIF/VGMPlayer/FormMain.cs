@@ -233,6 +233,8 @@ namespace zanac.VGMPlayer
                 currentSong?.Resume();
         }
 
+        public event EventHandler StopRequested;
+
         private void buttonStop_Click(object sender, EventArgs e)
         {
             stopCurrentSong();
@@ -823,6 +825,8 @@ namespace zanac.VGMPlayer
 
         private void stopCurrentSong()
         {
+            StopRequested?.Invoke(this, EventArgs.Empty);
+
             if (currentSongItem != null)
             {
                 currentSongItem.Selected = true;
@@ -1165,7 +1169,7 @@ namespace zanac.VGMPlayer
                         if (comPortOPLL != null)
                             comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
                         if (comPortOPLL != null)
-                            comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, 3 * (int)Settings.Default.BitBangWaitOPLL);
+                            comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPLL);
                         break;
                 }
 
@@ -1910,7 +1914,7 @@ namespace zanac.VGMPlayer
 
         private void vgmripsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var web = new FormWeb();
+            var web = new FormWeb(this);
             web.Location = new Point(Location.X + Width, Location.Y);
             web.Show(this);
         }

@@ -4993,7 +4993,7 @@ namespace zanac.VGMPlayer
                     {
                         int wait = (int)Program.Default.BitBangWaitOPLL;
                         if (comPortOPLL.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                            wait *= 3;
+                            wait *= 4;
                         var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
                         if (slot == 1 || slot == 2)
                             comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), wait);

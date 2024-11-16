@@ -17,11 +17,25 @@ namespace zanac.VGMPlayer
 {
     public partial class FormWeb : Form
     {
-        public FormWeb()
+        private FormMain formMain;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="formMain"></param>
+        public FormWeb(FormMain formMain)
         {
             InitializeComponent();
 
             webView.Source = new Uri("https://vgmrips.net/packs/");
+            this.formMain = formMain;
+            this.formMain.StopRequested += FormMain_StopRequested;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.formMain.StopRequested -= FormMain_StopRequested;
+            base.OnClosing(e);
         }
 
         private void toolStripButtonBack_Click(object sender, EventArgs e)
@@ -39,21 +53,6 @@ namespace zanac.VGMPlayer
             webView.Source = new Uri("https://vgmrips.net/packs/");
         }
 
-        //private String lastCoverArt;
-
-        private void webView_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
-        {
-            toolStripButtonForward.Enabled = webView.CanGoForward;
-            toolStripButtonBack.Enabled = webView.CanGoBack;
-            toolStripButtonStopRefresh.Text = "○";
-            toolStripButtonStopRefresh.Image = Resources.Reload;
-            toolStripStatusLabel.Text = "";
-
-            //https://vgmrips.net/packs/vgm/Arcade/Battle_Garegga_%28Toaplan_2%29/14%20Marginal%20Consciousness%20%5BStage%207%20Airport%5D.vgz
-            //https://vgmrips.net/packs/images/large/Arcade/Battle_Garegga_%28Toaplan_2%29.png
-            //lastCoverArt = await webView.ExecuteScriptAsync("document.querySelector('#imageContainer > div > a').getAttribute('href');");
-        }
-
         private void toolStripButtonStopRefresh_Click(object sender, EventArgs e)
         {
             if (String.Equals(toolStripButtonStopRefresh.Text, "○"))
@@ -62,16 +61,48 @@ namespace zanac.VGMPlayer
                 webView.Stop();
         }
 
+        //private String lastCoverArt;
+
+        private async void webView_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
+        {
+            toolStripButtonForward.Enabled = webView.CanGoForward;
+            toolStripButtonBack.Enabled = webView.CanGoBack;
+            toolStripButtonStopRefresh.Text = "○";
+            toolStripButtonStopRefresh.Image = Resources.Reload;
+            toolStripStatusLabel.Text = "";
+
+            var imgName = await webView.ExecuteScriptAsync("# playBtn > span");
+            await webView.ExecuteScriptAsync("document.querySelector('# playBtn').click();");
+        }
+
+        private async void FormMain_StopRequested(object sender, EventArgs e)
+        {
+            var imgName = await webView.ExecuteScriptAsync("document.querySelector('#playBtn > span').getAttribute('class')");
+            if (imgName == "\"icon icon-pause\"")
+            {
+                await webView.ExecuteScriptAsync("document.querySelector('#playBtn').click();");
+            }
+        }
+
+        private async void StartRequested(object sender, EventArgs e)
+        {
+            var imgName = await webView.ExecuteScriptAsync("document.querySelector('#playBtn > span').getAttribute('class')");
+            if (imgName == "\"icon icon-play\"")
+            {
+                await webView.ExecuteScriptAsync("document.querySelector('#playBtn').click();");
+            }
+        }
+
+        private void toolStripButtonAdd_Click(object sender, EventArgs e)
+        {
+            toolStripButtonAdd.Checked = !toolStripButtonAdd.Checked;
+        }
+
         private void webView_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
         {
             toolStripButtonStopRefresh.Text = "×";
             toolStripButtonStopRefresh.Image = Resources.Cancel;
             toolStripStatusLabel.Text = "Loading...";
-        }
-
-        private void webView_ContentLoading(object sender, Microsoft.Web.WebView2.Core.CoreWebView2ContentLoadingEventArgs e)
-        {
-
         }
 
         private CoreWebView2Environment environment;
@@ -99,14 +130,18 @@ namespace zanac.VGMPlayer
                 case ".VGM":
                     //e.Response = environment.CreateWebResourceResponse(null, 404, "Not found", "");
 
-                    FormMain.TopForm.BeginInvoke(new MethodInvoker(() =>
+                    formMain.BeginInvoke(new MethodInvoker(() =>
                         {
-                            if (FormMain.TopForm.IsDisposed)
+                            //FormMain_StopRequested(null, EventArgs.Empty);
+
+                            if (formMain.IsDisposed)
                                 return;
                             if (toolStripButtonAdd.Checked)
-                                FormMain.TopForm.AddFilesToList(new[] { file }, true);
+                                formMain.AddFilesToList(new[] { file }, true);
                             else
-                                FormMain.TopForm.PlayFileDirect(file);
+                                formMain.PlayFileDirect(file);
+
+                            //StartRequested(null, EventArgs.Empty);
                         }));
                     break;
                 case ".PNG":
@@ -121,7 +156,7 @@ namespace zanac.VGMPlayer
             //{
             //    case ".VGZ":
             //    case ".VGM":
-            //        FormMain.TopForm.AddFilesToList(new[] { file }, true);
+            //        formMain.AddFilesToList(new[] { file }, true);
             //        break;
             //}
             //e.Handled = true;
@@ -176,9 +211,5 @@ namespace zanac.VGMPlayer
             base.WndProc(ref m);
         }
 
-        private void toolStripButtonAdd_Click(object sender, EventArgs e)
-        {
-            toolStripButtonAdd.Checked = !toolStripButtonAdd.Checked;
-        }
     }
 }

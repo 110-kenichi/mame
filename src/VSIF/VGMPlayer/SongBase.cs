@@ -413,8 +413,8 @@ namespace zanac.VGMPlayer
                                                 //if (y % 2 == 0 && g < 256 - 32)
                                                 //    g += 32;
                                                 byte b = col.B;
-                                                if (y % 2 == 1 && b < 256 - 64)
-                                                    b += 64;
+                                                if (y % 2 == 1 && b < 256 - 32)
+                                                    b += 32;
                                                 byte data = (byte)(((g >> 5) << 5) | ((r >> 5) << 2) | ((b >> 6)));
                                                 c.WriteData(CMD, PORT0, data, bbw);
 
