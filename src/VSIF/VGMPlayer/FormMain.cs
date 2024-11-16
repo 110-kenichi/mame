@@ -5,9 +5,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -104,7 +107,7 @@ namespace zanac.VGMPlayer
             {
                 listViewList.EndUpdate();
             }
-            if(lvi != null)
+            if (lvi != null)
                 listViewList.TopItem = lvi;
 
             PcmMixer.DacVolume = (double)Settings.Default.DacVolume;
@@ -286,7 +289,7 @@ namespace zanac.VGMPlayer
         {
         }
 
-        private void addFilesToList(string[] files)
+        private ListViewItem addFilesToList(string[] files)
         {
             ListViewItem lvi = null;
             try
@@ -301,6 +304,7 @@ namespace zanac.VGMPlayer
                 listViewList.EndUpdate();
                 lvi?.EnsureVisible();
             }
+            return lvi;
         }
 
         private List<ListViewItem> readM3U(string m3uPath)
@@ -365,10 +369,46 @@ namespace zanac.VGMPlayer
         {
             foreach (var fileName in files)
             {
-                var fp = Path.GetFullPath(fileName);
-                if (File.Exists(fp))
+                var uri = new Uri(fileName);
+                if (uri.Scheme == Uri.UriSchemeFile)
                 {
-                    string ext = Path.GetExtension(fp);
+                    var fp = Path.GetFullPath(fileName);
+                    if (File.Exists(fp))
+                    {
+                        string ext = Path.GetExtension(fp);
+                        switch (ext.ToUpper())
+                        {
+                            case ".VGM":
+                            case ".VGZ":
+                            case ".XGM":
+                            case ".KSS":
+                            case ".MGS":
+                                lvi = new ListViewItem(fp);
+                                listViewList.Items.Add(lvi);
+                                lvi.Selected = true;
+                                break;
+                            case ".M3U":
+                                {
+                                    var m3u = readM3U(fp);
+                                    foreach (ListViewItem lvi2 in m3u)
+                                    {
+                                        lvi = lvi2;
+                                        listViewList.Items.Add(lvi);
+                                        lvi.Selected = true;
+                                    }
+                                    break;
+                                }
+                        }
+                    }
+                    if (Directory.Exists(fp))
+                    {
+                        string[] allfiles = Directory.GetFiles(fp, "*.*", SearchOption.AllDirectories);
+                        lvi = addAllFiles(allfiles, lvi);
+                    }
+                }
+                else
+                {
+                    string ext = Path.GetExtension(fileName);
                     switch (ext.ToUpper())
                     {
                         case ".VGM":
@@ -376,27 +416,11 @@ namespace zanac.VGMPlayer
                         case ".XGM":
                         case ".KSS":
                         case ".MGS":
-                            lvi = new ListViewItem(fp);
+                            lvi = new ListViewItem(fileName);
                             listViewList.Items.Add(lvi);
                             lvi.Selected = true;
                             break;
-                        case ".M3U":
-                            {
-                                var m3u = readM3U(fp);
-                                foreach (ListViewItem lvi2 in m3u)
-                                {
-                                    lvi = lvi2;
-                                    listViewList.Items.Add(lvi);
-                                    lvi.Selected = true;
-                                }
-                                break;
-                            }
                     }
-                }
-                if (Directory.Exists(fp))
-                {
-                    string[] allfiles = Directory.GetFiles(fp, "*.*", SearchOption.AllDirectories);
-                    lvi = addAllFiles(allfiles, lvi);
                 }
             }
 
@@ -473,44 +497,264 @@ namespace zanac.VGMPlayer
             playFile(currentSongItem.Text);
         }
 
-        private void playFile(string fileName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="play"></param>
+        public void AddFilesToList(String[] files, bool play)
         {
-            string ext = Path.GetExtension(fileName);
+            if (preparingPlay)
+                return;
+
+            ListViewItem lvi = addFilesToList(files);
+            if (play && lvi != null)
+            {
+                playItem(lvi.Index);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileNameOrUrl"></param>
+        public void PlayFileDirect(string fileNameOrUrl, string coverArtFileNameUrUrl = null)
+        {
+            if (preparingPlay)
+                return;
+
+            stopCurrentSong();
+            playFile(fileNameOrUrl, true, coverArtFileNameUrUrl);
+        }
+
+        private bool preparingPlay;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileNameOrUrl"></param>
+        private void playFile(string fileNameOrUrl, bool isTempFile = false, string coverArtFileNameUrUrl = null)
+        {
+            if (preparingPlay)
+                return;
+
+            String vgmFileName = null;
+            String coverArtFileName = null;
+            bool cancelled = false;
             try
             {
-                switch (ext.ToUpper())
+                preparingPlay = true;
+                String tempVgmFile = null;
+                String tempArtFile = null;
                 {
-                    case ".VGM":
-                    case ".VGZ":
-                        currentSong = new VGMSong(fileName);
-                        break;
-                    case ".XGM":
-                        currentSong = new XGMSong(fileName);
-                        break;
-                    case ".KSS":
-                    case ".MGS":
-                        currentSong = new MGSSong(fileName);
-                        break;
+                    var uri = new Uri(fileNameOrUrl);
+                    if (String.Equals(uri.Scheme, Uri.UriSchemeHttp) || String.Equals(uri.Scheme, Uri.UriSchemeHttps))
+                    {
+                        using (WebClient client = new WebClient())
+                        {
+                            FormProgress.RunDialog("Downloading track data...", (pd) =>
+                            {
+                                try
+                                {
+                                    tempVgmFile = Path.Combine(Path.GetTempPath(), Path.GetFileName(uri.AbsoluteUri));
+                                    vgmFileName = tempVgmFile;
+                                    client.DownloadProgressChanged += (sender, e) =>
+                                    {
+                                        if (cancelled)
+                                            client.CancelAsync();
+                                        try
+                                        {
+                                            pd.Percentage = e.ProgressPercentage;
+                                        }
+                                        catch { }
+                                    };
+                                    client.DownloadFileCompleted += (sender, e) =>
+                                    {
+                                        if (e.Cancelled)
+                                            File.Delete(tempVgmFile);
+                                    };
+                                    var task = client.DownloadFileTaskAsync(uri, tempVgmFile);
+                                    task.Wait();
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                    cancelled = true;
+                                }
+                            }, () =>
+                            {
+                                cancelled = true;
+                            });
+                        }
+                        if (cancelled)
+                            return;
+                        if (Program.Default.ShowCoverArt && coverArtFileNameUrUrl == null)
+                        {
+                            if (uri.AbsoluteUri.StartsWith("https://vgmrips.net/packs/vgm", StringComparison.OrdinalIgnoreCase))
+                            {
+                                //https://vgmrips.net/packs/vgm/Arcade/Battle_Garegga_%28Toaplan_2%29/14%20Marginal%20Consciousness%20%5BStage%207%20Airport%5D.vgz
+                                //https://vgmrips.net/packs/images/large/Arcade/Battle_Garegga_%28Toaplan_2%29.png
+
+                                //https://vgmrips.net/packs/vgm/Arcade/SegaSys/Out_Run_%28Arcade%29/01%20Magical%20Sound%20Shower.vgz
+                                //https://vgmrips.net/packs/images/large/Arcade/SegaSys/Out_Run_%28Arcade%29.png
+                                //https://vgmrips.net/packs/images/large/SegaSys/Out_Run_%28Arcade%29.png
+
+                                String urltext = "https://vgmrips.net/packs/images/large/";
+                                for (int i = 3; i < uri.Segments.Length - 1; i++)
+                                    urltext += uri.Segments[i];
+                                urltext = urltext.Substring(0, urltext.Length - 1);
+                                urltext += ".png";
+                                uri = new Uri(urltext);
+                                using (WebClient client = new WebClient())
+                                {
+                                    FormProgress.RunDialog("Downloading cover art data...", (pd) =>
+                                    {
+                                        try
+                                        {
+                                            tempArtFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), uri.Segments[uri.Segments.Length - 1]), Path.GetExtension(".png"));
+                                            coverArtFileName = tempArtFile;
+                                            client.DownloadProgressChanged += (sender, e) =>
+                                            {
+                                                if (cancelled)
+                                                    client.CancelAsync();
+                                                try
+                                                {
+                                                    pd.Percentage = e.ProgressPercentage;
+                                                }
+                                                catch { }
+                                            };
+                                            client.DownloadFileCompleted += (sender, e) =>
+                                            {
+                                                if (e.Cancelled)
+                                                    File.Delete(tempArtFile);
+                                            };
+                                            var task = client.DownloadFileTaskAsync(uri, tempArtFile);
+                                            task.Wait();
+                                        }
+                                        catch
+                                        {
+                                            tempArtFile = null;
+                                            coverArtFileName = null;
+                                        }
+                                    }, () =>
+                                    {
+                                        cancelled = true;
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    else if (String.Equals(uri.Scheme, Uri.UriSchemeFile))
+                    {
+                        fileNameOrUrl = uri.LocalPath;
+                    }
+                    if (cancelled)
+                        return;
+
+                    if (Settings.Default.ShowCoverArt)
+                    {
+                        if (coverArtFileNameUrUrl != null)
+                        {
+                            uri = new Uri(coverArtFileNameUrUrl);
+                            if (String.Equals(uri.Scheme, Uri.UriSchemeHttp) || String.Equals(uri.Scheme, Uri.UriSchemeHttps))
+                            {
+                                using (WebClient client = new WebClient())
+                                {
+                                    FormProgress.RunDialog("Downloading cover art data...", (pd) =>
+                                    {
+                                        try
+                                        {
+                                            tempArtFile = Path.ChangeExtension(Path.GetTempFileName(), Path.GetExtension(fileNameOrUrl));
+                                            coverArtFileName = tempArtFile;
+                                            client.DownloadProgressChanged += (sender, e) =>
+                                            {
+                                                if (cancelled)
+                                                    client.CancelAsync();
+                                                try
+                                                {
+                                                    pd.Percentage = e.ProgressPercentage;
+                                                }
+                                                catch { }
+                                            };
+                                            client.DownloadFileCompleted += (sender, e) =>
+                                            {
+                                                if (e.Cancelled)
+                                                    File.Delete(tempArtFile);
+                                            };
+                                            var task = client.DownloadFileTaskAsync(uri, tempArtFile);
+                                            task.Wait();
+                                        }
+                                        catch
+                                        {
+                                            tempArtFile = null;
+                                            coverArtFileName = null;
+                                        }
+                                    }, () =>
+                                    {
+                                        cancelled = true;
+                                    });
+                                }
+                            }
+                            else if (String.Equals(uri.Scheme, Uri.UriSchemeFile))
+                            {
+                                coverArtFileNameUrUrl = uri.LocalPath;
+                            }
+                        }
+                    }
+                    if (cancelled)
+                        return;
                 }
-                currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
-                currentSong.LoopByCount = checkBoxLoop.Checked;
-                currentSong.LoopedCount = (int)numericUpDownLooped.Value;
-                currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
-                currentSong.LoopTimes = new TimeSpan(dateTimePickerLoopTimes.Value.Hour, dateTimePickerLoopTimes.Value.Minute, dateTimePickerLoopTimes.Value.Second);
-                currentSong.ProcessLoadOccurred += CurrentSong_ProcessLoadOccurred;
-                currentSong.PlayStatusChanged += CurrentSong_PlayStatusChanged;
-                currentSong.SpeedChanged += CurrentSong_SpeedChanged;
-                currentSong.Finished += CurrentSong_Finished;
-                currentSong.PlaybackSpeed = Settings.Default.PlaybackSpeed;
-                //labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
-                textBoxTitle.Text = currentSong.FileName;
-                currentSong.Play();
-                textBoxSongSystem.Text = currentSong.SongChipInformation;
-                textBoxUseSystem.Text = currentSong.UseChipInformation;
+
+                string ext = Path.GetExtension(vgmFileName);
+                try
+                {
+                    switch (ext.ToUpper())
+                    {
+                        case ".VGM":
+                        case ".VGZ":
+                            currentSong = new VGMSong(vgmFileName);
+                            break;
+                        case ".XGM":
+                            currentSong = new XGMSong(vgmFileName);
+                            break;
+                        case ".KSS":
+                        case ".MGS":
+                            currentSong = new MGSSong(vgmFileName);
+                            break;
+                    }
+                    if (tempVgmFile != null)
+                    {
+                        currentSong.CanLoadCoverArt = coverArtFileName != null ? true : false;
+                        currentSong.DeleteFileAfterStop = true;
+                        currentSong.TemporarySongFile = isTempFile;
+                    }
+                    currentSong.CoverArtFile = coverArtFileName;
+                    currentSong.DeleteCoverArtFileAfterStop = tempArtFile != null ? true : false;
+
+                    currentSong.ConvertChipClock = checkBoxCnvClk.Checked;
+                    currentSong.LoopByCount = checkBoxLoop.Checked;
+                    currentSong.LoopedCount = (int)numericUpDownLooped.Value;
+                    currentSong.LoopByElapsed = checkBoxLoopTimes.Checked;
+                    currentSong.LoopTimes = new TimeSpan(dateTimePickerLoopTimes.Value.Hour, dateTimePickerLoopTimes.Value.Minute, dateTimePickerLoopTimes.Value.Second);
+                    currentSong.ProcessLoadOccurred += CurrentSong_ProcessLoadOccurred;
+                    currentSong.PlayStatusChanged += CurrentSong_PlayStatusChanged;
+                    currentSong.SpeedChanged += CurrentSong_SpeedChanged;
+                    currentSong.Finished += CurrentSong_Finished;
+                    currentSong.PlaybackSpeed = Settings.Default.PlaybackSpeed;
+                    //labelSpeed.Text = currentSong.PlaybackSpeed.ToString("0.00") + "x";
+                    textBoxTitle.Text = currentSong.FileName;
+                    currentSong.Play();
+                    textBoxSongSystem.Text = currentSong.SongChipInformation;
+                    textBoxUseSystem.Text = currentSong.UseChipInformation;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
-            catch (Exception ex)
+            finally
             {
-                MessageBox.Show(ex.Message);
+                preparingPlay = false;
             }
         }
 
@@ -531,6 +775,8 @@ namespace zanac.VGMPlayer
                 if (this.IsDisposed)
                     return;
                 if (cs != currentSong)
+                    return;
+                if (currentSong.TemporarySongFile)
                     return;
 
                 buttonNext_Click(null, null);
@@ -705,7 +951,7 @@ namespace zanac.VGMPlayer
             if (currentSong?.DacClip == true && currentSong?.State == SoundState.Playing)
             {
                 checkBoxClip.BackColor = Color.Red;
-                if(currentSong != null)
+                if (currentSong != null)
                     currentSong.DacClip = false;
             }
             else
@@ -919,7 +1165,7 @@ namespace zanac.VGMPlayer
                         if (comPortOPLL != null)
                             comPortOPLL.Tag["OPLL.Slot"] = comboBoxOpllSlot.SelectedIndex;
                         if (comPortOPLL != null)
-                            comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPLL);
+                            comPortOPLL.DeferredWriteData(0x15, (byte)0x0, (byte)127, 3 * (int)Settings.Default.BitBangWaitOPLL);
                         break;
                 }
 
@@ -1662,6 +1908,12 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private void vgmripsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var web = new FormWeb();
+            web.Location = new Point(Location.X + Width, Location.Y);
+            web.Show(this);
+        }
     }
 
     internal static class NativeConstants

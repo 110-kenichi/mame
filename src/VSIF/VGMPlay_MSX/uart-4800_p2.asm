@@ -73,7 +73,8 @@ _END_VGM:
     .globl __SELECT_OPLL_SLOT_P2
 __SELECT_OPLL_SLOT:
     READ_ADRS           ;61
-    READ_DATA           ;55
+    READ_DATA           ;50
+    LD  D,A             ; 5 55
 __SELECT_OPLL_SLOT_P2:
     INC D               ; 
     DEC D               ; 
@@ -134,8 +135,8 @@ OPLL1_P2:
     .ORG 0xA300
 __SELECT_SCC_SLOT:
     READ_ADRS           ;61
-    READ_DATA           ;55
-
+    READ_DATA           ;50
+    LD  D,A             ; 5 55
 	LD	HL,(ROM1_S+2)   ; 17
     P1_CHG2             ;143
 

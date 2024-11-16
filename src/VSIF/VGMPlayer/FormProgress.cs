@@ -53,6 +53,8 @@ namespace zanac.VGMPlayer
             }
         }
 
+        private int percentage;
+
         /// <summary>
         /// Thread Safe
         /// </summary>
@@ -60,26 +62,18 @@ namespace zanac.VGMPlayer
         {
             get
             {
-                int rv = 0;
-                if (metroProgressBar1.IsHandleCreated)
-                {
-                    metroProgressBar1.Invoke(new MethodInvoker(() =>
-                    {
-                        if (!labelMessage.IsDisposed)
-                            rv = metroProgressBar1.Value;
-                    }));
-                }
-                else
-                {
-                    rv = metroProgressBar1.Value;
-                }
-                return rv;
+                return percentage;
             }
             set
             {
-                if (metroProgressBar1.IsHandleCreated)
+                if (percentage != value)
                 {
-                    metroProgressBar1.Invoke(new MethodInvoker(() =>
+                    percentage = value;
+
+                    if (metroProgressBar1.IsDisposed)
+                        return;
+
+                    metroProgressBar1.BeginInvoke(new MethodInvoker(() =>
                     {
                         if (!metroProgressBar1.IsDisposed)
                         {
@@ -92,16 +86,6 @@ namespace zanac.VGMPlayer
                             }
                         }
                     }));
-                }
-                else
-                {
-                    if (value < 0)
-                        metroProgressBar1.Style = ProgressBarStyle.Marquee;
-                    else
-                    {
-                        metroProgressBar1.Style = ProgressBarStyle.Continuous;
-                        metroProgressBar1.Value = value;
-                    }
                 }
             }
         }
@@ -116,7 +100,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="initialMessage"></param>
         /// <param name="taskAction"></param>
-        public static void RunDialog(string initialMessage, Action<FormProgress> taskAction) 
+        public static void RunDialog(string initialMessage, Action<FormProgress> taskAction)
         {
             RunDialog(initialMessage, taskAction, null);
         }
@@ -128,17 +112,7 @@ namespace zanac.VGMPlayer
         /// <param name="taskAction"></param>
         public static void RunDialog(string initialMessage, Action<FormProgress> taskAction, Action cancelHandler)
         {
-            if (FormMain.TopForm !=  null)
-            {
-                FormMain.TopForm.Invoke(new MethodInvoker(() =>
-                {
-                    runDialogCore(FormMain.TopForm, initialMessage, taskAction, cancelHandler);
-                }));
-            }
-            else
-            {
-                runDialogCore(null, initialMessage, taskAction, cancelHandler);
-            }
+            runDialogCore(FormMain.TopForm, initialMessage, taskAction, cancelHandler);
         }
 
         /// <summary>
@@ -180,7 +154,7 @@ namespace zanac.VGMPlayer
                         if (span.TotalMilliseconds < 500)
                             Thread.Sleep((int)(500 - span.TotalMilliseconds));
 
-                        f.Invoke(new MethodInvoker(() => { f.Close(); }));
+                        f.BeginInvoke(new MethodInvoker(() => { f.Close(); }));
                     }));
                 };
                 f.ShowDialog(parent);

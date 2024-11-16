@@ -163,8 +163,8 @@ TEST_CHG_P2:
     .ORG 0x6200
 __SELECT_OPLL_SLOT:
     READ_ADRS           ;61
-    READ_DATA           ;55
-
+    READ_DATA           ;50
+    LD  D,A             ; 5 55
 ;================================= 1,2,3,4
 	LD	HL,(ROM2_S+2)   ; 17
     P2_CHG2             ;143
@@ -181,7 +181,8 @@ __SELECT_OPLL_SLOT:
     .globl __SELECT_SCC_SLOT_P2
 __SELECT_SCC_SLOT:
     READ_ADRS           ;61
-    READ_DATA           ;55
+    READ_DATA           ;50
+    LD  D,A             ; 5 55
 ;================================= 1
 __SELECT_SCC_SLOT_P2:
     LD  A,B

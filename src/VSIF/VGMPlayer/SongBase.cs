@@ -31,7 +31,27 @@ namespace zanac.VGMPlayer
 
         public event EventHandler Finished;
 
-        public bool LoadCoverArt
+        public bool CanLoadCoverArt
+        {
+            get; set;
+        }
+
+        public String CoverArtFile
+        {
+            get; set;
+        }
+
+        public bool DeleteCoverArtFileAfterStop
+        {
+            get; set;
+        }
+
+        public bool DeleteFileAfterStop
+        {
+            get; set;
+        }
+
+        public bool TemporarySongFile
         {
             get; set;
         }
@@ -249,9 +269,9 @@ namespace zanac.VGMPlayer
             if (State == SoundState.Playing)
                 return;
 
-            if (LoadCoverArt && Program.Default.ShowCoverArt)
+            if (CanLoadCoverArt && Program.Default.ShowCoverArt)
             {
-                loadCoverArt();
+                LoadCoverArt();
             }
 
             playTicTimer = new Timer(250);
@@ -274,27 +294,40 @@ namespace zanac.VGMPlayer
         /// <summary>
         /// 
         /// </summary>
-        private void loadCoverArt()
+        protected void LoadCoverArt()
         {
-            string cfile = Path.ChangeExtension(FileName, ".png");
             Bitmap img = null;
             Bitmap canvas = null;
             Graphics gp = null;
             try
             {
+                string cfile = null;
                 String fn = null;
-                if (File.Exists(cfile))
+                if (CoverArtFile != null)
                 {
-                    img = new Bitmap(cfile);
-                    fn = cfile;
-                }
-                else
-                {
-                    cfile = Path.ChangeExtension(FileName, ".jpg");
+                    cfile = CoverArtFile;
                     if (File.Exists(cfile))
                     {
                         img = new Bitmap(cfile);
                         fn = cfile;
+                    }
+                }
+                else
+                {
+                    cfile = Path.ChangeExtension(FileName, ".png");
+                    if (File.Exists(cfile))
+                    {
+                        img = new Bitmap(cfile);
+                        fn = cfile;
+                    }
+                    else
+                    {
+                        cfile = Path.ChangeExtension(FileName, ".jpg");
+                        if (File.Exists(cfile))
+                        {
+                            img = new Bitmap(cfile);
+                            fn = cfile;
+                        }
                     }
                 }
                 if (img == null)
@@ -384,12 +417,17 @@ namespace zanac.VGMPlayer
                                                     b += 64;
                                                 byte data = (byte)(((g >> 5) << 5) | ((r >> 5) << 2) | ((b >> 6)));
                                                 c.WriteData(CMD, PORT0, data, bbw);
+
+                                                if (RequestedStat == SoundState.Stopped)
+                                                    break;
                                             }
                                             //c.FlushDeferredWriteDataAndWait();
                                             FormMain.TopForm.BeginInvoke(new MethodInvoker(() =>
                                             {
                                                 pd.Percentage = (100 * y / 212);
                                             }));
+                                            if (RequestedStat == SoundState.Stopped)
+                                                break;
                                             if (cancelled)
                                                 break;
                                         }
@@ -506,6 +544,11 @@ namespace zanac.VGMPlayer
             {
                 playTicTimer?.Dispose();
                 playTicTimer = null;
+
+                if(DeleteFileAfterStop)
+                    File.Delete(FileName);
+                if(DeleteCoverArtFileAfterStop)
+                    File.Delete(CoverArtFile);
             }
         }
 
@@ -1296,7 +1339,12 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
+                    {
+                        int wait = (int)Program.Default.BitBangWaitOPNA;
+                        if (comPortOPNA.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && adrs <= 0x10)
+                            wait = (int)(wait * 1.2);
+                        comPortOPNA.DeferredWriteData(0x11, (byte)adrs, (byte)dt, wait);
+                    }
                     break;
                 case VsifSoundModuleType.SpfmLight:
                 case VsifSoundModuleType.Spfm:
@@ -1699,7 +1747,7 @@ namespace zanac.VGMPlayer
         }
 
 
-        int lastTurboRDacValue;
+        private int lastTurboRDacValue;
 
         /// <summary>
         /// 
@@ -1716,7 +1764,7 @@ namespace zanac.VGMPlayer
 
             comPortTurboR.DeferredWriteData(0x15, (byte)0x0, (byte)dacValue, (int)(decimal)comPortTurboR.BitBangWait.GetValue(Settings.Default));
 
-            lastOpnaDacValue = dacValue;
+            lastTurboRDacValue = dacValue;
         }
     }
 

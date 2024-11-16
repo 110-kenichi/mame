@@ -1161,5 +1161,17 @@ namespace zanac.VGMPlayer.Properties {
                 this["ShowCoverArt"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AddToPlaylist {
+            get {
+                return ((bool)(this["AddToPlaylist"]));
+            }
+            set {
+                this["AddToPlaylist"] = value;
+            }
+        }
     }
 }

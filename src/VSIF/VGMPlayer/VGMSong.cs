@@ -940,7 +940,7 @@ namespace zanac.VGMPlayer
                                 comPortSAA.ChipClockHz["SAA1099"] = 8000000;
                                 comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
                                 UseChipInformation += "SAA1099@8MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortSAA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitSAA");
                             }
                         }
@@ -956,7 +956,7 @@ namespace zanac.VGMPlayer
                                 comPortSAA.ChipClockHz["SAA1099"] = 8000000;
                                 comPortSAA.ChipClockHz["SAA1099_org"] = 8000000;
                                 UseChipInformation += "SAA1099@8MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortSAA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitSAA");
                             }
                             if (comPortTurboRProxy == null && comPortSAA != null)
@@ -1053,7 +1053,7 @@ namespace zanac.VGMPlayer
                                 comPortY8910.ChipClockHz["Y8910"] = 1789773;
                                 comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
                                 UseChipInformation += "PSG@1.789773MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortY8910.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
                             }
                         }
@@ -1069,7 +1069,7 @@ namespace zanac.VGMPlayer
                                 comPortY8910.ChipClockHz["Y8910"] = 1789773;
                                 comPortY8910.ChipClockHz["Y8910_org"] = 1789773;
                                 UseChipInformation += "PSG@1.789773MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortY8910.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
                             }
                             if (comPortTurboRProxy == null && comPortY8910 != null)
@@ -1117,7 +1117,7 @@ namespace zanac.VGMPlayer
                                 comPortOPLL.ChipClockHz["OPLL"] = 3579545;
                                 comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
                                 UseChipInformation += "OPLL@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPLL.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPLL");
                             }
                         }
@@ -1145,7 +1145,7 @@ namespace zanac.VGMPlayer
                                 comPortOPLL.ChipClockHz["OPLL"] = 3579545;
                                 comPortOPLL.ChipClockHz["OPLL_org"] = 3579545;
                                 UseChipInformation += "OPLL@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPLL.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPLL");
                             }
                             if (comPortTurboRProxy == null && comPortOPLL != null)
@@ -1236,7 +1236,7 @@ namespace zanac.VGMPlayer
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
                                 comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
                                 UseChipInformation += "DCSG@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortDCSG.BitBangWait = typeof(Settings).GetProperty("BitBangWaitDCSG");
                             }
                         }
@@ -1264,7 +1264,7 @@ namespace zanac.VGMPlayer
                                 comPortDCSG.ChipClockHz["DCSG"] = 3579545;
                                 comPortDCSG.ChipClockHz["DCSG_org"] = 3579545;
                                 UseChipInformation += "DCSG@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortDCSG.BitBangWait = typeof(Settings).GetProperty("BitBangWaitDCSG");
                             }
                             if (comPortTurboRProxy == null && comPortDCSG != null)
@@ -1307,7 +1307,7 @@ namespace zanac.VGMPlayer
                             if (comPortSCC != null)
                             {
                                 Accepted = true;
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
 
                                 comPortSCC.ChipClockHz["SCC"] = 3.579545 * 1000 * 1000;
                                 comPortSCC.ChipClockHz["SCC_org"] = 3.579545 * 1000 * 1000;
@@ -1380,7 +1380,7 @@ namespace zanac.VGMPlayer
                                 comPortY8950.ChipClockHz["Y8950"] = 3579545;
                                 comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
                                 UseChipInformation += "Y8950@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortY8950.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
                             }
                         }
@@ -1395,7 +1395,7 @@ namespace zanac.VGMPlayer
                                 comPortY8950.ChipClockHz["Y8950"] = 3579545;
                                 comPortY8950.ChipClockHz["Y8950_org"] = 3579545;
                                 UseChipInformation += "Y8950@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortY8950.BitBangWait = typeof(Settings).GetProperty("BitBangWaitY8950");
                             }
                             if (comPortTurboRProxy == null && comPortY8950 != null)
@@ -1435,7 +1435,7 @@ namespace zanac.VGMPlayer
                             comPortOPL3.ChipClockHz["OPL3"] = 14318180;
                             comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
                             UseChipInformation += "OPL3@14.318180MHz ";
-                            LoadCoverArt = true;
+                            CanLoadCoverArt = true;
                             comPortOPL3.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPL3");
                         }
                         break;
@@ -1448,7 +1448,7 @@ namespace zanac.VGMPlayer
                             comPortOPL3.ChipClockHz["OPL3"] = 14318180;
                             comPortOPL3.ChipClockHz["OPL3_org"] = 14318180;
                             UseChipInformation += "OPL3@14.318180MHz ";
-                            LoadCoverArt = true;
+                            CanLoadCoverArt = true;
                             comPortOPL3.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPL3");
                         }
                         if (comPortTurboRProxy == null && comPortOPL3 != null)
@@ -1502,7 +1502,7 @@ namespace zanac.VGMPlayer
                                 comPortOPM.ChipClockHz["OPM"] = 3579545;
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
                                 UseChipInformation += "OPM@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPM.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPM");
                             }
                         }
@@ -1566,7 +1566,7 @@ namespace zanac.VGMPlayer
                                 comPortOPM.ChipClockHz["OPM"] = 3579545;
                                 comPortOPM.ChipClockHz["OPM_org"] = 3579545;
                                 UseChipInformation += "OPM@3.579545MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPM.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPM");
                             }
                             if (comPortTurboRProxy == null && comPortOPM != null)
@@ -1612,7 +1612,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
                                 UseChipInformation += "OPNA@8.000000MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
                             }
                         }
@@ -1708,7 +1708,7 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 8000000;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 8000000;
                                 UseChipInformation += "OPNA@8.000000MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
                             }
                             if (comPortTurboRProxy == null && comPortOPNA != null)
@@ -1768,7 +1768,7 @@ namespace zanac.VGMPlayer
                                 comPortOPN.ChipClockHz["OPN_SSG"] = 4000000;
                                 comPortOPN.ChipClockHz["OPN_org"] = 4000000;
                                 UseChipInformation += "OPN@4.000000MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPN.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN");
                             }
                         }
@@ -1798,7 +1798,7 @@ namespace zanac.VGMPlayer
                                 comPortOPN.ChipClockHz["OPN_SSG"] = 4000000;
                                 comPortOPN.ChipClockHz["OPN_org"] = 4000000;
                                 UseChipInformation += "OPN@4.000000MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPN.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN");
                             }
                             if (comPortTurboRProxy == null && comPortOPN != null)
@@ -1896,7 +1896,7 @@ namespace zanac.VGMPlayer
                                 comPortOPN2.ChipClockHz["OPN2"] = 7670453;
                                 comPortOPN2.ChipClockHz["OPN2_org"] = 7670453;
                                 UseChipInformation += "OPN2@7.670453MHz ";
-                                LoadCoverArt = true;
+                                CanLoadCoverArt = true;
                                 comPortOPN2.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPN2");
                             }
                             if (comPortTurboRProxy == null && comPortOPN2 != null)
@@ -4990,13 +4990,18 @@ namespace zanac.VGMPlayer
             {
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
-                    if (slot == 1 || slot == 2)
-                        comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), (int)Program.Default.BitBangWaitOPLL);
-                    if ((int)comPortOPLL.Tag["OPLL.Slot"] == 0)
-                        comPortOPLL.DeferredWriteData(1, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPLL);
-                    else
-                        comPortOPLL.DeferredWriteData(0xC, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPLL);
+                    {
+                        int wait = (int)Program.Default.BitBangWaitOPLL;
+                        if (comPortOPLL.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                            wait *= 3;
+                        var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
+                        if (slot == 1 || slot == 2)
+                            comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), wait);
+                        if ((int)comPortOPLL.Tag["OPLL.Slot"] == 0)
+                            comPortOPLL.DeferredWriteData(1, (byte)adrs, (byte)dt, wait);
+                        else
+                            comPortOPLL.DeferredWriteData(0xC, (byte)adrs, (byte)dt, wait);
+                    }
                     break;
                 case VsifSoundModuleType.SMS:
                     comPortOPLL.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPLL);

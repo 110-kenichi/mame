@@ -42,6 +42,8 @@ namespace zanac.VGMPlayer
             this.saveAsThePlaylistToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.eXITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cLOUDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vgmripsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oPTIONSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aBOUTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanelButton = new System.Windows.Forms.TableLayoutPanel();
@@ -96,8 +98,6 @@ namespace zanac.VGMPlayer
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.saveFileDialogM3U = new System.Windows.Forms.SaveFileDialog();
-            this.listViewList = new ListViewInsertionDrag.DraggableListView();
-            this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanelPort = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBoxSCC = new System.Windows.Forms.ComboBox();
@@ -186,6 +186,8 @@ namespace zanac.VGMPlayer
             this.numericUpDownSAA = new System.Windows.Forms.NumericUpDown();
             this.comboBoxPortSAA = new System.Windows.Forms.ComboBox();
             this.numericUpDownSAADiv = new System.Windows.Forms.NumericUpDown();
+            this.listViewList = new ListViewInsertionDrag.DraggableListView();
+            this.columnHeaderFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanelButton.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLooped)).BeginInit();
@@ -234,6 +236,7 @@ namespace zanac.VGMPlayer
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fILEToolStripMenuItem,
+            this.cLOUDToolStripMenuItem,
             this.oPTIONSToolStripMenuItem,
             this.aBOUTToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -290,6 +293,21 @@ namespace zanac.VGMPlayer
             this.eXITToolStripMenuItem.Name = "eXITToolStripMenuItem";
             this.eXITToolStripMenuItem.Size = new System.Drawing.Size(285, 22);
             this.eXITToolStripMenuItem.Text = "&Exit";
+            // 
+            // cLOUDToolStripMenuItem
+            // 
+            this.cLOUDToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.vgmripsToolStripMenuItem});
+            this.cLOUDToolStripMenuItem.Name = "cLOUDToolStripMenuItem";
+            this.cLOUDToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.cLOUDToolStripMenuItem.Text = "&CLOUD";
+            // 
+            // vgmripsToolStripMenuItem
+            // 
+            this.vgmripsToolStripMenuItem.Name = "vgmripsToolStripMenuItem";
+            this.vgmripsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.vgmripsToolStripMenuItem.Text = "&vgmrips";
+            this.vgmripsToolStripMenuItem.Click += new System.EventHandler(this.vgmripsToolStripMenuItem_Click);
             // 
             // oPTIONSToolStripMenuItem
             // 
@@ -659,7 +677,7 @@ namespace zanac.VGMPlayer
             this.checkBox1.Location = new System.Drawing.Point(2, 22);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(92, 16);
+            this.checkBox1.Size = new System.Drawing.Size(90, 16);
             this.checkBox1.TabIndex = 67;
             this.checkBox1.Text = "DAC Disable";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -672,7 +690,7 @@ namespace zanac.VGMPlayer
             this.checkBoxCnvClk.Location = new System.Drawing.Point(2, 2);
             this.checkBoxCnvClk.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxCnvClk.Name = "checkBoxCnvClk";
-            this.checkBoxCnvClk.Size = new System.Drawing.Size(95, 16);
+            this.checkBoxCnvClk.Size = new System.Drawing.Size(97, 16);
             this.checkBoxCnvClk.TabIndex = 66;
             this.checkBoxCnvClk.Text = "Clock Convert";
             this.checkBoxCnvClk.UseVisualStyleBackColor = true;
@@ -736,7 +754,7 @@ namespace zanac.VGMPlayer
             this.checkBoxClip.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "DACClipping", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.checkBoxClip.Location = new System.Drawing.Point(3, 66);
             this.checkBoxClip.Name = "checkBoxClip";
-            this.checkBoxClip.Size = new System.Drawing.Size(93, 16);
+            this.checkBoxClip.Size = new System.Drawing.Size(106, 16);
             this.checkBoxClip.TabIndex = 69;
             this.checkBoxClip.Text = "Smart DAC Clip";
             this.checkBoxClip.UseVisualStyleBackColor = true;
@@ -1039,39 +1057,6 @@ namespace zanac.VGMPlayer
             this.saveFileDialogM3U.FileName = "playlist.m3u";
             this.saveFileDialogM3U.Filter = "M3U|*.m3u";
             this.saveFileDialogM3U.Title = "Save playlist";
-            // 
-            // listViewList
-            // 
-            this.listViewList.AllowDrop = true;
-            this.listViewList.AllowItemDrag = true;
-            this.listViewList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderFile});
-            this.listViewList.ContextMenuStrip = this.contextMenuStripList;
-            this.listViewList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewList.FullRowSelect = true;
-            this.listViewList.GridLines = true;
-            this.listViewList.HideSelection = false;
-            this.listViewList.LabelWrap = false;
-            this.listViewList.Location = new System.Drawing.Point(0, 230);
-            this.listViewList.Name = "listViewList";
-            this.listViewList.Size = new System.Drawing.Size(759, 231);
-            this.listViewList.TabIndex = 2;
-            this.listViewList.UseCompatibleStateImageBehavior = false;
-            this.listViewList.View = System.Windows.Forms.View.Details;
-            this.listViewList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewList_ColumnClick);
-            this.listViewList.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewList_ItemDrag);
-            this.listViewList.SizeChanged += new System.EventHandler(this.listViewList_SizeChanged);
-            this.listViewList.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewList_DragDrop);
-            this.listViewList.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
-            this.listViewList.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewList_DragOver);
-            this.listViewList.DragLeave += new System.EventHandler(this.listViewList_DragLeave);
-            this.listViewList.DoubleClick += new System.EventHandler(this.listViewList_DoubleClick);
-            this.listViewList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewList_KeyDown);
-            // 
-            // columnHeaderFile
-            // 
-            this.columnHeaderFile.Text = "File name";
-            this.columnHeaderFile.Width = 325;
             // 
             // tableLayoutPanelPort
             // 
@@ -5847,6 +5832,39 @@ namespace zanac.VGMPlayer
             this.numericUpDownSAADiv.TabIndex = 65;
             this.numericUpDownSAADiv.Value = global::zanac.VGMPlayer.Properties.Settings.Default.SAA_Div;
             // 
+            // listViewList
+            // 
+            this.listViewList.AllowDrop = true;
+            this.listViewList.AllowItemDrag = true;
+            this.listViewList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderFile});
+            this.listViewList.ContextMenuStrip = this.contextMenuStripList;
+            this.listViewList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewList.FullRowSelect = true;
+            this.listViewList.GridLines = true;
+            this.listViewList.HideSelection = false;
+            this.listViewList.LabelWrap = false;
+            this.listViewList.Location = new System.Drawing.Point(0, 230);
+            this.listViewList.Name = "listViewList";
+            this.listViewList.Size = new System.Drawing.Size(759, 231);
+            this.listViewList.TabIndex = 2;
+            this.listViewList.UseCompatibleStateImageBehavior = false;
+            this.listViewList.View = System.Windows.Forms.View.Details;
+            this.listViewList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewList_ColumnClick);
+            this.listViewList.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewList_ItemDrag);
+            this.listViewList.SizeChanged += new System.EventHandler(this.listViewList_SizeChanged);
+            this.listViewList.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewList_DragDrop);
+            this.listViewList.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
+            this.listViewList.DragOver += new System.Windows.Forms.DragEventHandler(this.listViewList_DragOver);
+            this.listViewList.DragLeave += new System.EventHandler(this.listViewList_DragLeave);
+            this.listViewList.DoubleClick += new System.EventHandler(this.listViewList_DoubleClick);
+            this.listViewList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listViewList_KeyDown);
+            // 
+            // columnHeaderFile
+            // 
+            this.columnHeaderFile.Text = "File name";
+            this.columnHeaderFile.Width = 325;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -5864,7 +5882,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.82 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.83 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -6073,5 +6091,7 @@ namespace zanac.VGMPlayer
         private System.Windows.Forms.NumericUpDown numericUpDownSAADiv;
         private System.Windows.Forms.ComboBox comboBoxWaitAlg;
         private System.Windows.Forms.CheckBox checkBoxClip;
+        private System.Windows.Forms.ToolStripMenuItem cLOUDToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem vgmripsToolStripMenuItem;
     }
 }

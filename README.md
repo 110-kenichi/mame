@@ -1,4 +1,4 @@
-MAmidiMEmo 5.7.3.1 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.7.4.0 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,8 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 5.7.4.0 Fixed MSX VSIF Driver for SCC.
+  - Added vgmrips browser to download & play tracks on the VGMPlayer.
 - 5.7.3.1 Updated VGMPlayer(only) to show Cover Art on the display(MSXturboR Only). Select Enable/Disable on the Settings dialog.
 - 5.7.3.0 Added "Smart DAC Clipping" feature to MAmidiMEmo(OPN2, OPNA, NES).
   - Added DAC Clipping indicator to VGMPlayer.
