@@ -72,6 +72,8 @@ namespace zanac.VGMPlayer
 
         private NesDpcm nesDpcm;
 
+        private OpnbPcm opnbPcm;
+
         /// <summary>
         /// 
         /// </summary>
@@ -673,11 +675,17 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2610 != 0 && curHead.lngVersion >= 0x00000151)
             {
-                SongChipInformation += $"OPNB@{curHead.lngHzYM2610 / 1000000f}MHz ";
+                String chipName = "OPNB";
+                if ((curHead.lngHzYM2610 & 0x80000000) != 0)
+                    chipName = "OPNB-B";
+                curHead.lngHzYM2610 = (uint)(curHead.lngHzYM2610 & ~0x80000000);
+                SongChipInformation += $"{chipName}@{curHead.lngHzYM2610 / 1000000f}MHz ";
 
                 if (Program.Default.OPNA_Enable)
                 {
-                    connectToOPNA(curHead.lngHzYM2610);
+                    connectToOPNA(curHead.lngHzYM2610, true);
+                    //Force OPNA mode
+                    deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
                 }
                 else
                 {
@@ -1595,7 +1603,7 @@ namespace zanac.VGMPlayer
             return false;
         }
 
-        private bool connectToOPNA(uint clock)
+        private bool connectToOPNA(uint clock, bool opnb = false)
         {
             if (comPortOPNA == null)
             {
@@ -1711,8 +1719,17 @@ namespace zanac.VGMPlayer
                                 CanLoadCoverArt = true;
                                 comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
                             }
-                            if (comPortTurboRProxy == null && comPortOPNA != null)
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this);
+                                opnbPcm.device_start_opnb(0, 8000000, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                                UseChipInformation += $"w/ tR DAC";
+                            }
+                            else if (comPortTurboRProxy == null && comPortOPNA != null)
+                            {
                                 comPortTurboRProxy = comPortOPNA;
+                            }
                         }
                         break;
                 }
@@ -2296,6 +2313,12 @@ namespace zanac.VGMPlayer
                     t.Priority = ThreadPriority.Highest;
                     t.Start();
                 }
+                if (opnbPcm != null)
+                {
+                    Thread t = new Thread(new ThreadStart(opnbPcm.StreamSong));
+                    t.Priority = ThreadPriority.Highest;
+                    t.Start();
+                }
 
                 long freq, before, after;
                 double dbefore;
@@ -2665,7 +2688,13 @@ namespace zanac.VGMPlayer
                                             if (comPortOPNA != null)
                                             {
                                                 if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
+                                                {
                                                     deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
+                                                }
+                                                else if (opnbPcm != null)
+                                                {
+                                                    opnbPcm.WritRegisterADPCM_B((byte)(adrs - 0x10), (byte)dt);
+                                                }
                                             }
                                             else if (comPortOPN2 != null)
                                             {
@@ -2792,6 +2821,10 @@ namespace zanac.VGMPlayer
                                                 {
                                                     deferredWriteOPN2_P1(comPortOPN2, adrs, dt, dclk);
                                                 }
+                                            }
+                                            else if (opnbPcm != null)
+                                            {
+                                                opnbPcm.WritRegisterADPCM_A((byte)(adrs), (byte)dt);
                                             }
                                         }
                                         break;
@@ -3322,6 +3355,44 @@ namespace zanac.VGMPlayer
                                                             flushDeferredWriteData();
                                                         }
                                                         break;
+                                                    case 0x82:  //YM2610 ADPCM A ROM data
+                                                        {
+                                                            if (opnbPcm != null)
+                                                            {
+                                                                uint romSize = vgmReader.ReadUInt32();
+                                                                uint saddr = vgmReader.ReadUInt32();
+                                                                size -= 8;
+
+                                                                if (0 <= size && size <= Int32.MaxValue)
+                                                                {
+                                                                    byte[] romData = vgmReader.ReadBytes((int)size);
+                                                                    for (uint i = 0; i < romData.Length; i++)
+                                                                        opnbPcm.adpcm_a_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_A, saddr + i, romData[i]);
+                                                                }
+                                                            }
+                                                        }
+                                                        break;
+
+                                                    case 0x83:  //YM2610 DELTA-T ROM data
+                                                        {
+                                                            if (opnbPcm != null)
+                                                            {
+                                                                uint romSize = vgmReader.ReadUInt32();
+                                                                uint saddr = vgmReader.ReadUInt32();
+                                                                size -= 8;
+
+                                                                if (0 <= size && size <= Int32.MaxValue)
+                                                                {
+                                                                    OpnbPcm op = new OpnbPcm(this);
+                                                                    byte[] romData = vgmReader.ReadBytes((int)size);
+                                                                    for (uint i = 0; i < romData.Length; i++)
+                                                                        opnbPcm.adpcm_b_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_B, saddr + i, romData[i]);
+                                                                }
+                                                            }
+                                                        }
+
+                                                        break;
+
                                                     case 0x88:  //YM8950
                                                         {
                                                             uint romSize = vgmReader.ReadUInt32();
@@ -3506,7 +3577,7 @@ namespace zanac.VGMPlayer
                                                 {
                                                     DeferredWriteOPN2_DAC(comPortOPN2, dt);
                                                 }
-                                                else if (comPortTurboRProxy!= null)
+                                                else if (comPortTurboRProxy != null)
                                                 {
                                                     DeferredWriteTurboR_DAC(comPortTurboRProxy, dt);
                                                 }
@@ -5619,7 +5690,9 @@ namespace zanac.VGMPlayer
                 k053260 = null;
                 okim6295?.Dispose();
                 okim6295 = null;
-                foreach(var dt in streamTable.Values)
+                opnbPcm?.Dispose();
+                opnbPcm = null;
+                foreach (var dt in streamTable.Values)
                     dt.DacStream?.Dispose();
                 //dacStream?.Dispose();
                 //dacStream = null;

@@ -888,7 +888,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int SegaPcmRate {
             get {
                 return ((int)(this["SegaPcmRate"]));
@@ -900,7 +900,7 @@ namespace zanac.VGMPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
         public int K053260Rate {
             get {
                 return ((int)(this["K053260Rate"]));
@@ -1171,6 +1171,18 @@ namespace zanac.VGMPlayer.Properties {
             }
             set {
                 this["AddToPlaylist"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int OPNBRate {
+            get {
+                return ((int)(this["OPNBRate"]));
+            }
+            set {
+                this["OPNBRate"] = value;
             }
         }
     }

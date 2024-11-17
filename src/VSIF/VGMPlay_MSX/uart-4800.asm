@@ -71,7 +71,7 @@ tR_mode:
 	CALL	CALSLT  ;CALSLT
 
     ;PCM MUTE=OFF,ADDABUFF=SINGLE
-	LD	    A,#2
+	LD	    A,#3
     OUT     (#0xA5),A
 
     LD      A,#127

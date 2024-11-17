@@ -30,15 +30,17 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.checkBoxCoverArt = new System.Windows.Forms.CheckBox();
+            this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.checkBoxCoverArt = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,6 +63,8 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.comboBox5, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.comboBox2, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -69,11 +73,12 @@
             this.tableLayoutPanel1.Controls.Add(this.comboBox3, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.comboBox4, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.checkBoxCoverArt, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.checkBoxCoverArt, 0, 6);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 10);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 7;
+            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -81,8 +86,20 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 16F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(320, 167);
-            this.tableLayoutPanel1.TabIndex = 1;
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(320, 187);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Location = new System.Drawing.Point(2, 96);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(156, 24);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "&OPNB ADPCM sample rate:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
             // 
@@ -116,7 +133,7 @@
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(156, 24);
-            this.label4.TabIndex = 5;
+            this.label4.TabIndex = 6;
             this.label4.Text = "&NES DPCM sample rate:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -124,27 +141,28 @@
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(272, 181);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Location = new System.Drawing.Point(272, 201);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(56, 18);
-            this.button2.TabIndex = 2;
+            this.button2.TabIndex = 1;
             this.button2.Text = "OK";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // checkBoxCoverArt
+            // comboBox5
             // 
-            this.checkBoxCoverArt.AutoSize = true;
-            this.checkBoxCoverArt.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.ShowCoverArt;
-            this.checkBoxCoverArt.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.tableLayoutPanel1.SetColumnSpan(this.checkBoxCoverArt, 2);
-            this.checkBoxCoverArt.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "ShowCoverArt", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.checkBoxCoverArt.Location = new System.Drawing.Point(3, 115);
-            this.checkBoxCoverArt.Name = "checkBoxCoverArt";
-            this.checkBoxCoverArt.Size = new System.Drawing.Size(177, 16);
-            this.checkBoxCoverArt.TabIndex = 6;
-            this.checkBoxCoverArt.Text = "Send Cover &Art(MSX tR Only)";
-            this.checkBoxCoverArt.UseVisualStyleBackColor = true;
+            this.comboBox5.DataBindings.Add(new System.Windows.Forms.Binding("SelectedIndex", global::zanac.VGMPlayer.Properties.Settings.Default, "OPNBRate", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.comboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox5.FormattingEnabled = true;
+            this.comboBox5.Items.AddRange(new object[] {
+            "55.56kHz(Original)",
+            "37.04KHz",
+            "18.52KHz(FTDI 232H)"});
+            this.comboBox5.Location = new System.Drawing.Point(162, 98);
+            this.comboBox5.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox5.Name = "comboBox5";
+            this.comboBox5.Size = new System.Drawing.Size(156, 20);
+            this.comboBox5.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.K053260Rate;
             // 
             // comboBox2
             // 
@@ -156,7 +174,7 @@
             "111.86KHz(Original)",
             "55.93KHz",
             "37.29KHz",
-            "27.97KHz(FTDI)",
+            "27.97KHz(FTDI 232H)",
             "22.37KHz(4759P)",
             "18.64KHz",
             "15.98KHz"});
@@ -173,7 +191,7 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "31.250KHz(Original)(FTDI)",
+            "31.250KHz(Original)(FTDI 232H)",
             "15.625KHz(4759P)",
             "10.417KHz"});
             this.comboBox1.Location = new System.Drawing.Point(162, 2);
@@ -213,18 +231,32 @@
             this.comboBox4.Size = new System.Drawing.Size(156, 20);
             this.comboBox4.TabIndex = global::zanac.VGMPlayer.Properties.Settings.Default.K053260Rate;
             // 
+            // checkBoxCoverArt
+            // 
+            this.checkBoxCoverArt.AutoSize = true;
+            this.checkBoxCoverArt.Checked = global::zanac.VGMPlayer.Properties.Settings.Default.ShowCoverArt;
+            this.checkBoxCoverArt.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tableLayoutPanel1.SetColumnSpan(this.checkBoxCoverArt, 2);
+            this.checkBoxCoverArt.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::zanac.VGMPlayer.Properties.Settings.Default, "ShowCoverArt", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.checkBoxCoverArt.Location = new System.Drawing.Point(3, 139);
+            this.checkBoxCoverArt.Name = "checkBoxCoverArt";
+            this.checkBoxCoverArt.Size = new System.Drawing.Size(177, 16);
+            this.checkBoxCoverArt.TabIndex = 10;
+            this.checkBoxCoverArt.Text = "Send Cover &Art(MSX tR Only)";
+            this.checkBoxCoverArt.UseVisualStyleBackColor = true;
+            // 
             // FormSettings
             // 
             this.AcceptButton = this.button2;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(338, 209);
+            this.ClientSize = new System.Drawing.Size(338, 229);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormSettings";
@@ -251,5 +283,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.CheckBox checkBoxCoverArt;
+        private System.Windows.Forms.ComboBox comboBox5;
+        private System.Windows.Forms.Label label5;
     }
 }

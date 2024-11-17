@@ -219,10 +219,10 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="SegaPcmRate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="K053260Rate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">9</Value>
     </Setting>
     <Setting Name="OKIM6295Rate" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -289,6 +289,9 @@
     </Setting>
     <Setting Name="AddToPlaylist" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OPNBRate" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>
