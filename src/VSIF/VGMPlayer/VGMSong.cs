@@ -2693,7 +2693,8 @@ namespace zanac.VGMPlayer
                                                 }
                                                 else if (opnbPcm != null)
                                                 {
-                                                    opnbPcm.WritRegisterADPCM_B((byte)(adrs - 0x10), (byte)dt);
+                                                    if (0x10 <= adrs && adrs <= 0x1b)
+                                                        opnbPcm.WritRegisterADPCM_B((byte)(adrs - 0x10), (byte)dt);
                                                 }
                                             }
                                             else if (comPortOPN2 != null)
@@ -3383,7 +3384,6 @@ namespace zanac.VGMPlayer
 
                                                                 if (0 <= size && size <= Int32.MaxValue)
                                                                 {
-                                                                    OpnbPcm op = new OpnbPcm(this);
                                                                     byte[] romData = vgmReader.ReadBytes((int)size);
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_b_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_B, saddr + i, romData[i]);
