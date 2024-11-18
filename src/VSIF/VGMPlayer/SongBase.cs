@@ -974,6 +974,7 @@ namespace zanac.VGMPlayer
 
                 //*/
             }
+            comPort.FlushDeferredWriteDataAndWait();
         }
 
         /// <summary>
@@ -1759,8 +1760,8 @@ namespace zanac.VGMPlayer
             if (PcmMixer.DisableDac)
                 return;
 
-            if (lastTurboRDacValue == dacValue)
-                return;
+            //if (lastTurboRDacValue == dacValue)
+                //return;
 
             comPortTurboR.DeferredWriteData(0x15, (byte)0x0, (byte)dacValue, (int)(decimal)comPortTurboR.BitBangWait.GetValue(Settings.Default));
 

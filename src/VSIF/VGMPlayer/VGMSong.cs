@@ -216,9 +216,9 @@ namespace zanac.VGMPlayer
                     deferredWriteOPNA_P0(comPortOPNA, 0x09, 0);
                     deferredWriteOPNA_P0(comPortOPNA, 0x0A, 0);
                     //ADPCM
-                    deferredWriteOPNA_P1(comPortOPNA, 0x0B, 0);    //VOLUME 0
+                    //deferredWriteOPNA_P1(comPortOPNA, 0x0B, 0);    //VOLUME 0
                     deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x01);  //RESET
-                    deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x00);  //STOP
+                    //deferredWriteOPNA_P1(comPortOPNA, 0x00, 0x00);  //STOP
                 }
 
                 EnableDacYM2608(comPortOPNA, false);
@@ -686,6 +686,8 @@ namespace zanac.VGMPlayer
                     connectToOPNA(curHead.lngHzYM2610, true);
                     //Force OPNA mode
                     deferredWriteOPNA_P0(comPortOPNA, 0x29, 0x80);
+                    //Enable Pseudo DAC
+                    EnablePseudoDacYM2608(comPortOPNA, true);
                 }
                 else
                 {
@@ -1623,6 +1625,12 @@ namespace zanac.VGMPlayer
                                 CanLoadCoverArt = true;
                                 comPortOPNA.BitBangWait = typeof(Settings).GetProperty("BitBangWaitOPNA");
                             }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this);
+                                opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                            }
                         }
                         break;
                     case 1:
@@ -1637,6 +1645,12 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
                                 UseChipInformation += "OPNA@7.987200MHz ";
                             }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this);
+                                opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                            }
                         }
                         break;
                     case 2:
@@ -1650,6 +1664,12 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
                                 UseChipInformation += "OPNA@7.987200MHz ";
+                            }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this);
+                                opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
                             }
                         }
                         break;
@@ -1689,6 +1709,12 @@ namespace zanac.VGMPlayer
                                     }
                                 }
                             }
+                            //if (opnb && comPortOPNA != null)
+                            //{
+                            //    opnbPcm = new OpnbPcm(this);
+                            //    opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
+                            //    comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
+                            //}
                         }
                         break;
                     case 4:
@@ -1702,6 +1728,12 @@ namespace zanac.VGMPlayer
                                 comPortOPNA.ChipClockHz["OPNA_SSG"] = 7987200;
                                 comPortOPNA.ChipClockHz["OPNA_org"] = 7987200;
                                 UseChipInformation += "OPNA@7.987200MHz ";
+                            }
+                            if (opnb && comPortOPNA != null)
+                            {
+                                opnbPcm = new OpnbPcm(this);
+                                opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
+                                comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
                             }
                         }
                         break;
@@ -1722,7 +1754,7 @@ namespace zanac.VGMPlayer
                             if (opnb && comPortOPNA != null)
                             {
                                 opnbPcm = new OpnbPcm(this);
-                                opnbPcm.device_start_opnb(0, 8000000, comPortOPNA);
+                                opnbPcm.device_start_opnb(0, (int)clock, comPortOPNA);
                                 comPortOPNA.Tag["ProxyOPNB_ADPCM"] = true;
                                 UseChipInformation += $"w/ tR DAC";
                             }
@@ -2689,7 +2721,8 @@ namespace zanac.VGMPlayer
                                             {
                                                 if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
                                                 {
-                                                    deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
+                                                    if (!(0x29 <= adrs && adrs <= 0x2f))    //ignore 
+                                                        deferredWriteOPNA_P0(comPortOPNA, adrs, dt, dclk);
                                                 }
                                                 else if (opnbPcm != null)
                                                 {
@@ -2707,7 +2740,8 @@ namespace zanac.VGMPlayer
                                                 }
 
                                                 if (!(0x10 <= adrs && adrs <= 0x1f))    //ignore ADPCM adrs
-                                                    deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
+                                                    if (!(0x29 <= adrs && adrs <= 0x2f))    //ignore 
+                                                        deferredWriteOPN2_P0(comPortOPN2, adrs, dt, dclk);
                                             }
                                         }
                                         break;

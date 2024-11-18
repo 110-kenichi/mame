@@ -163,7 +163,7 @@ namespace zanac.VGMPlayer
 
                     if (vsifClient != null)
                     {
-                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI && vsifClient.Tag.ContainsKey("ProxyOPNB_ADPCM"))
+                        if (vsifClient.Tag.ContainsKey("ProxyOPNB_ADPCM"))
                         {
                             int dt = ((dtL + dtR) / 2) >> 8;
                             if (dt > sbyte.MaxValue)
@@ -176,7 +176,15 @@ namespace zanac.VGMPlayer
                                 dt = sbyte.MinValue;
                                 parentSong.NotifyDacClipOccurred();
                             }
-                            parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+
+                            if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                            {
+                                parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                            }
+                            else
+                            {
+                                parentSong.DeferredWriteOPNA_PseudoDAC(vsifClient, (byte)(dt + 128));
+                            }
                         }
                     }
 
