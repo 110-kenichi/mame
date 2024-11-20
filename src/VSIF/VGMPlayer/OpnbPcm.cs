@@ -65,12 +65,20 @@ namespace zanac.VGMPlayer
             private set;
         }
 
-        public OpnbPcm(SongBase parentSong)
+        private ProxyOPNType opnType;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parentSong"></param>
+        /// <param name="opnType"></param>
+        public OpnbPcm(SongBase parentSong, ProxyOPNType opnType)
         {
             var inf = new ymfm_interface();
             adpcm_a_engine = new adpcm_a_engine(inf, 8);
             adpcm_b_engine = new adpcm_b_engine(inf, 8);
 
+            this.opnType = opnType;
             this.parentSong = parentSong;
         }
 
@@ -177,13 +185,24 @@ namespace zanac.VGMPlayer
                                 parentSong.NotifyDacClipOccurred();
                             }
 
-                            if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                            switch(opnType)
                             {
-                                parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
-                            }
-                            else
-                            {
-                                parentSong.DeferredWriteOPNA_PseudoDAC(vsifClient, (byte)(dt + 128));
+                                case ProxyOPNType.OPNA:
+                                    {
+                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                            parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                                        else
+                                            parentSong.DeferredWriteOPNA_PseudoDAC(vsifClient, (byte)(dt + 128));
+                                    }
+                                    break;
+                                case ProxyOPNType.OPN2:
+                                    {
+                                        if (vsifClient.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+                                            parentSong.DeferredWriteTurboR_DAC(vsifClient, (byte)(dt + 128));
+                                        else
+                                            parentSong.DeferredWriteOPN2_DAC(vsifClient, (byte)(dt + 128));
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -1228,4 +1247,10 @@ namespace zanac.VGMPlayer
         // internal state
         public int[] data = new int[NumOutputs];
     };
+
+    public enum ProxyOPNType
+    {
+        OPNA,
+        OPN2
+    }
 }

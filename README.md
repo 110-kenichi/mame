@@ -1,4 +1,4 @@
-MAmidiMEmo 5.7.5.2 Itoken (c)2019, 2024 / GPL-2.0
+MAmidiMEmo 5.7.5.3 Itoken (c)2019, 2024 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 5.7.5.3 Supported YM2610 VGM file by OPN2 w/ DAC or tR DAC.
 - 5.7.5.2 Supported YM2610 VGM file by OPNA w/ Pseudo DAC for non-turboR.
 - 5.7.5.1 Fixed VGMPlayer(only) for YM2610 ADPCM.
 - 5.7.5.0 Supported YM2610 VGM file by OPNA w/ turboR DAC on VGMPlayer(only). Please update MSX VSIF Driver ROM, too.
