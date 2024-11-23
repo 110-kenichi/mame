@@ -127,9 +127,9 @@ namespace zanac.VGMPlayer
                 //KOFF
                 for (int i = 0x20; i < 0x28; i++)
                 {
-                    deferredWriteOPLL(i, 0x10);
-                    comPortOPLL.FlushDeferredWriteDataAndWait();
+                    deferredWriteOPLL(i, 0x00);
                 }
+                comPortOPLL.FlushDeferredWriteDataAndWait();
 
                 //deferredWriteOPLL(0xe, 0x00);
 
@@ -3443,15 +3443,15 @@ namespace zanac.VGMPlayer
                                                         break;
                                                     case 0x82:  //YM2610 ADPCM A ROM data
                                                         {
-                                                            if (opnbPcm != null)
-                                                            {
-                                                                uint romSize = vgmReader.ReadUInt32();
-                                                                uint saddr = vgmReader.ReadUInt32();
-                                                                size -= 8;
+                                                            uint romSize = vgmReader.ReadUInt32();
+                                                            uint saddr = vgmReader.ReadUInt32();
+                                                            size -= 8;
 
-                                                                if (0 <= size && size <= Int32.MaxValue)
+                                                            if (0 <= size && size <= Int32.MaxValue)
+                                                            {
+                                                                byte[] romData = vgmReader.ReadBytes((int)size);
+                                                                if (opnbPcm != null)
                                                                 {
-                                                                    byte[] romData = vgmReader.ReadBytes((int)size);
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_a_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_A, saddr + i, romData[i]);
                                                                 }
@@ -3461,21 +3461,20 @@ namespace zanac.VGMPlayer
 
                                                     case 0x83:  //YM2610 DELTA-T ROM data
                                                         {
-                                                            if (opnbPcm != null)
-                                                            {
-                                                                uint romSize = vgmReader.ReadUInt32();
-                                                                uint saddr = vgmReader.ReadUInt32();
-                                                                size -= 8;
+                                                            uint romSize = vgmReader.ReadUInt32();
+                                                            uint saddr = vgmReader.ReadUInt32();
+                                                            size -= 8;
 
-                                                                if (0 <= size && size <= Int32.MaxValue)
+                                                            if (0 <= size && size <= Int32.MaxValue)
+                                                            {
+                                                                byte[] romData = vgmReader.ReadBytes((int)size);
+                                                                if (opnbPcm != null)
                                                                 {
-                                                                    byte[] romData = vgmReader.ReadBytes((int)size);
                                                                     for (uint i = 0; i < romData.Length; i++)
                                                                         opnbPcm.adpcm_b_engine.intf().ymfm_external_write(access_class.ACCESS_ADPCM_B, saddr + i, romData[i]);
                                                                 }
                                                             }
                                                         }
-
                                                         break;
 
                                                     case 0x88:  //YM8950

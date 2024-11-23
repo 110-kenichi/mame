@@ -110,6 +110,15 @@ namespace zanac.VGMPlayer
             dbefore = before;
             uint clock = 0;
 
+            /*
+             * https://aisumegane.com/converting-lpfs-to-discrete-systems/
+            double T = sample_rate / multiply;                           //マイコンのサンプリング周期[s]です。割り込み周期等と一致させてください。
+            double Ti = 0.5;                        //LPFの出力が入力値の63.2%に到達するまでの時間です。
+            double X = 0;                          //入力値を代入する変数
+            double Y = 0;                          //出力用の変数
+            double Y_prev = 0;
+            */
+
             List<ymfm_output> pcmouts = new List<ymfm_output>();
             var po_pcm = new ymfm_output();
             while (true)
@@ -173,6 +182,11 @@ namespace zanac.VGMPlayer
                     {
                         if (vsifClient.Tag.ContainsKey("ProxyOPNB_ADPCM"))
                         {
+                            /*
+                            X = (dtL + dtR) / 2;
+                            Y = Ti / (T + Ti) * Y_prev + T / (T + Ti) * X;           //離散系でのLPFの演算
+                            Y_prev = Y;
+                            */
                             int dt = ((dtL + dtR) / 2) >> 8;
                             if (dt > sbyte.MaxValue)
                             {

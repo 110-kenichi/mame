@@ -222,7 +222,7 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="K053260Rate" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">9</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="OKIM6295Rate" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
