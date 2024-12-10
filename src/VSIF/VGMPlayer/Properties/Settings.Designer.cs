@@ -1185,5 +1185,65 @@ namespace zanac.VGMPlayer.Properties {
                 this["OPNBRate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PCE_Enable {
+            get {
+                return ((bool)(this["PCE_Enable"]));
+            }
+            set {
+                this["PCE_Enable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PCE_IF {
+            get {
+                return ((int)(this["PCE_IF"]));
+            }
+            set {
+                this["PCE_IF"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PCE_Port {
+            get {
+                return ((int)(this["PCE_Port"]));
+            }
+            set {
+                this["PCE_Port"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public decimal PCE_Div {
+            get {
+                return ((decimal)(this["PCE_Div"]));
+            }
+            set {
+                this["PCE_Div"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public decimal BitBangWaitPCE {
+            get {
+                return ((decimal)(this["BitBangWaitPCE"]));
+            }
+            set {
+                this["BitBangWaitPCE"] = value;
+            }
+        }
     }
 }

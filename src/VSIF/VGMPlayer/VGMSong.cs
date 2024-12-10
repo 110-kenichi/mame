@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gimic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Net;
 using System.Windows.Media.Animation;
+using turbolink;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -49,7 +50,8 @@ namespace zanac.VGMPlayer
         private VsifClient comPortNES;
         private VsifClient comPortMCD;
         private VsifClient comPortSAA;
-
+        private VsifClient comPortPCE;
+        
         private VsifClient comPortTurboRProxy;
 
         private BinaryReader vgmReader;
@@ -359,6 +361,16 @@ namespace zanac.VGMPlayer
                 for (byte ch = 0; ch < 6; ch++)
                 {
                     deferredWriteSAAReg(ch, 0, 0);
+                }
+            }
+            //PCE
+            if (comPortPCE != null)
+            {
+                //https://nicotakuya.hatenablog.com/entry/2020/12/04/010457
+                for (byte ch = 0; ch < 6; ch++)
+                {
+                    DeferredWritePCE(0x00, ch);
+                    DeferredWritePCE(0x04, 0);
                 }
             }
 
@@ -944,9 +956,49 @@ namespace zanac.VGMPlayer
                     connectToSAA();
                 }
             }
+            if (curHead.lngHzHuC6280 != 0 && curHead.lngVersion >= 0x00000161)
+            {
+                curHead.lngHzHuC6280 = (uint)(curHead.lngHzHuC6280 & ~0x80000000);
+                SongChipInformation += $"HuC6280@{curHead.lngHzHuC6280 / 1000000f}MHz ";
+
+                if (Program.Default.PCE_Enable)
+                {
+                    connectToPCE();
+                }
+            }
             return curHead;
         }
 
+        private bool connectToPCE()
+        {
+            if (comPortPCE == null)
+            {
+                switch (Program.Default.PCE_IF)
+                {
+                    case 0:
+                        if (comPortPCE == null)
+                        {
+                            comPortPCE = VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboEverDrive,
+                                (PortId)Program.Default.PCE_Port);
+                            if (comPortPCE != null)
+                            {
+                                comPortPCE.ChipClockHz["PCE"] = 3579545;
+                                comPortPCE.ChipClockHz["PCE_org"] = 3579545;
+                                UseChipInformation += "PCE@3.579545MHz ";
+                                comPortPCE.BitBangWait = typeof(Settings).GetProperty("BitBangWaitPCE");
+                            }
+                        }
+                        break;
+                }
+                if (comPortPCE != null)
+                {
+                    Accepted = true;
+
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private bool connectToSAA()
         {
@@ -3387,6 +3439,16 @@ namespace zanac.VGMPlayer
                                                             //File.WriteAllText("d:\\aaa"+dacData.Count+".csv", sb.ToString());
                                                         }
                                                         break;
+                                                    case 5: //HuC6280 PCM data for use with associated commands
+                                                        {
+                                                            dacDataOffset.Add(dacData.Count);
+                                                            dacDataLength.Add((int)size);
+                                                            if (size == 0)
+                                                                dacData.AddRange(new byte[] { 0 });
+                                                            else
+                                                                dacData.AddRange(vgmReader.ReadBytes((int)size));
+                                                        }
+                                                        break;
                                                     case 7: //NES DPCM data for use with associated commands
                                                         {
                                                             dacDataOffset.Add(dacData.Count);
@@ -3755,6 +3817,16 @@ namespace zanac.VGMPlayer
                                                             t.Start();
                                                         }
                                                     }
+                                                    break;
+                                                case 27: //PCE
+                                                    {
+                                                        dacStream = new DacStream(this, DacStream.DacProxyType.PCE, comPortPCE, null, (byte)port, (byte)cmd);
+                                                        Thread t = new Thread(new ThreadStart(dacStream.StreamSong));
+                                                        t.Priority = ThreadPriority.Highest;
+                                                        t.Start();
+                                                    }
+                                                    break;
+                                                default:
                                                     break;
                                             }
                                             if (!streamTable.ContainsKey(sid))
@@ -4148,16 +4220,22 @@ namespace zanac.VGMPlayer
                                             okim6295?.okim6295_w(0, aa, (byte)dd);
                                         }
                                         break;
-                                    case int cmd when 0xB9 <= cmd && cmd <= 0xB9:
+
+                                    case 0xB9:  //HuC6280
                                         {
+                                            //uint dclk = vgmHead.lngHzHuC6280;
+
                                             var adrs = readByte();
                                             if (adrs < 0)
                                                 break;
                                             var dt = readByte();
                                             if (dt < 0)
                                                 break;
+
+                                            DeferredWritePCE(adrs, (byte)dt);
+
+                                            break;
                                         }
-                                        break;
 
                                     case 0xBA:  //K053260
                                         {
@@ -4643,6 +4721,16 @@ namespace zanac.VGMPlayer
                         }
                         break;
                 }
+            }
+        }
+
+        public void DeferredWritePCE(int adrs, int dt)
+        {
+            switch (comPortPCE.SoundModuleType)
+            {
+                case VsifSoundModuleType.TurboEverDrive:
+                    comPortPCE.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitPCE);
+                    break;
             }
         }
 
@@ -5670,6 +5758,7 @@ namespace zanac.VGMPlayer
             comPortNES?.FlushDeferredWriteData();
             comPortMCD?.FlushDeferredWriteData();
             comPortSAA?.FlushDeferredWriteData();
+            comPortPCE?.FlushDeferredWriteData();
 
         }
 
@@ -5691,6 +5780,7 @@ namespace zanac.VGMPlayer
             comPortNES?.FlushDeferredWriteDataAndWait();
             comPortMCD?.FlushDeferredWriteDataAndWait();
             comPortSAA?.FlushDeferredWriteDataAndWait();
+            comPortPCE?.FlushDeferredWriteDataAndWait();
         }
 
 
@@ -5713,6 +5803,7 @@ namespace zanac.VGMPlayer
             nesDpcm?.Stop();
             comPortMCD?.Abort();
             comPortSAA?.Abort();
+            comPortPCE?.Abort();
         }
 
         private const int WAIT_TIMEOUT = 120 * 1000;
@@ -5788,6 +5879,8 @@ namespace zanac.VGMPlayer
                 comPortMCD = null;
                 comPortSAA?.Dispose();
                 comPortSAA = null;
+                comPortPCE?.Dispose();
+                comPortPCE = null;
 #if DEBUG
                 if (vgmLogFile != null)
                     writeVgmLogFile(true, 0x66);

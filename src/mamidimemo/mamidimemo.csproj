@@ -793,6 +793,10 @@
       <Link>VSIF\VGMPlay_mdcd.bin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\VSIF\VGMPlay_PCE\VGMPlay_PCE.pce">
+      <Link>VSIF\VGMPlay_PCE.pce</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Data\cm32p_user_internal_tone_memo.tbl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

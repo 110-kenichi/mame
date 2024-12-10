@@ -52,6 +52,7 @@ namespace zanac.VGMPlayer
             comboBoxNES.SelectedIndex = 0;
             comboBoxMCD.SelectedIndex = 0;
             comboBoxSAA.SelectedIndex = 0;
+            comboBoxPCE.SelectedIndex = 0;
 
             listViewList.Columns[0].Width = -2;
             SetHeight(listViewList, SystemInformation.MenuHeight);
@@ -79,6 +80,7 @@ namespace zanac.VGMPlayer
             checkBoxConnNES.Checked = false;
             checkBoxConnMCD.Checked = false;
             checkBoxConnSAA.Checked = false;
+            checkBoxConnPCE.Checked = false;
 
             //HACK: To avoid layout glith
             tableLayoutPanelPort.Height = tableLayoutPanelPort.Height + 1;
@@ -187,6 +189,7 @@ namespace zanac.VGMPlayer
             comPortNES?.Dispose();
             comPortMCD?.Dispose();
             comPortSAA?.Dispose();
+            comPortPCE?.Dispose();
 
             StringCollection sc = new StringCollection();
             foreach (ListViewItem item in listViewList.Items)
@@ -1019,6 +1022,35 @@ namespace zanac.VGMPlayer
                         e.Handled = true;
                         break;
                 }
+            }
+        }
+
+        private VsifClient comPortPCE;
+
+        private void checkBoxConnPCE_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConnPCE.Checked)
+            {
+                switch (Settings.Default.PCE_IF)
+                {
+                    case 0:
+                        comPortPCE= VsifManager.TryToConnectVSIF(VsifSoundModuleType.TurboEverDrive,
+                            (PortId)Settings.Default.PCE_Port, (int)Settings.Default.PCE_Div, false);
+                        break;
+                }
+
+                checkBoxConnPCE.Checked = comPortPCE != null;
+                comboBoxPCE.Enabled = comPortPCE == null;
+                comboBoxPortPCE.Enabled = comPortPCE == null;
+                //numericUpDownPCEDiv.Enabled = comPortPCE == null;
+            }
+            else
+            {
+                comboBoxPCE.Enabled = true;
+                comboBoxPortPCE.Enabled = true;
+                //numericUpDownSAADiv.Enabled = true;
+
+                comPortPCE?.Dispose();
             }
         }
 
@@ -1918,6 +1950,7 @@ namespace zanac.VGMPlayer
             web.Location = new Point(Location.X + Width, Location.Y);
             web.Show(this);
         }
+
     }
 
     internal static class NativeConstants

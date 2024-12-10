@@ -176,6 +176,7 @@
     <Compile Include="FormWeb.Designer.cs">
       <DependentUpon>FormWeb.cs</DependentUpon>
     </Compile>
+    <Compile Include="TurboLink\TurboEvedriveManager.cs" />
     <Compile Include="Gimic\GimicManager.cs" />
     <Compile Include="Gimic\NativeC86CtlWrapper.cs" />
     <Compile Include="InsertionMode.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="OpnbPcm.cs" />
     <Compile Include="PcmMixer.cs" />
     <Compile Include="PortWriteData.cs" />
+    <Compile Include="PortWriterTurboEverDrive.cs" />
     <Compile Include="PortWriterGimic.cs" />
     <Compile Include="PortWriter.cs" />
     <Compile Include="PortWriterSms.cs" />
@@ -218,6 +220,7 @@
     <Compile Include="SegaPcm.cs" />
     <Compile Include="SettingsProxy.cs" />
     <Compile Include="SongBase.cs" />
+    <Compile Include="TurboLink\Edio.cs" />
     <Compile Include="VsifClient.cs" />
     <Compile Include="XGMSong.cs" />
     <Compile Include="VGMSong.cs" />

@@ -27,20 +27,48 @@ namespace zanac.VGMPlayer
             OPNA,
             OPN2,
             TurboR,
-            NES
+            NES,
+            PCE
         }
 
         private DacProxyType dacProxyType;
         private VsifClient vsifClient;
         private OKIM6258 okim6258 = null;
 
-        public DacStream(SongBase parentSong, DacProxyType dacProxyType, VsifClient vsifClient, OKIM6258 okim6258)
+        private byte pp;
+        private byte cc;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parentSong"></param>
+        /// <param name="dacProxyType"></param>
+        /// <param name="vsifClient"></param>
+        /// <param name="okim6258"></param>
+        public DacStream(SongBase parentSong, DacProxyType dacProxyType, VsifClient vsifClient, OKIM6258 okim6258) :
+            this(parentSong, dacProxyType, vsifClient, okim6258, 0, 0)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parentSong"></param>
+        /// <param name="dacProxyType"></param>
+        /// <param name="vsifClient"></param>
+        /// <param name="okim6258"></param>
+        /// <param name="pp"></param>
+        /// <param name="cc"></param>
+        public DacStream(SongBase parentSong, DacProxyType dacProxyType, VsifClient vsifClient, OKIM6258 okim6258, byte pp, byte cc)
         {
             this.parentSong = parentSong;
 
             this.dacProxyType = dacProxyType;
             this.vsifClient = vsifClient;
             this.okim6258 = okim6258;
+
+            this.pp = pp;
+            this.cc = cc;
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -130,7 +158,7 @@ namespace zanac.VGMPlayer
 
                 switch (pd.ChipType)
                 {
-                    case 0x2:
+                    case 0x2:   //OPN2
                         switch (dacProxyType)
                         {
                             case DacProxyType.OPN2:
@@ -147,11 +175,11 @@ namespace zanac.VGMPlayer
                         }
                         sampleRate = pd.CurrentStreamData.Frequency;
                         break;
-                    case 20:
+                    case 20:    //NES
                         ((VGMSong)parentSong).DeferredWriteNES(0x11, data);
                         sampleRate = pd.CurrentStreamData.Frequency;
                         break;
-                    case 23:
+                    case 23:    //okim6258
                         {
                             if (okim6258 != null)
                             {
@@ -217,6 +245,12 @@ namespace zanac.VGMPlayer
                             }
                         }
                         sampleRate = pd.CurrentStreamData.Frequency << 1;
+                        break;
+                    case 27:    //PCE
+                        if (pp != 0xff)
+                            ((VGMSong)parentSong).DeferredWritePCE(pp, cc);
+                        ((VGMSong)parentSong).DeferredWritePCE(0x06, data);
+                        sampleRate = pd.CurrentStreamData.Frequency;
                         break;
                 }
 

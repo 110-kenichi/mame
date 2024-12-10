@@ -369,6 +369,19 @@ namespace zanac.VGMPlayer
                                 }
                                 break;
                             }
+                        case VsifSoundModuleType.TurboEverDrive:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.ReadTimeout = 300;
+                                sp.WriteTimeout = 300;
+                                sp.WriteBufferSize = 2;
+                                sp.Open();
+                                TurboEvedriveManager.getStatus(sp);
+                                var client = new VsifClient(soundModule, new PortWriterTurboEverDrive(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -421,6 +434,7 @@ namespace zanac.VGMPlayer
         PC88_FTDI,
         SMS_FTDI,
         TurboR_FTDI,
+        TurboEverDrive,
     }
 
 
