@@ -102,6 +102,32 @@ _bi_fifo_rd_asm:
     bne @0
     rts
 
+	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
+
+.export _vgmplay
+_vgmplay:
+@0:
+    lda REG_FIFO_STAT
+    bmi @0
+    lda REG_FIFO_DATA
+    sta _zp_dst
+@1:
+    lda REG_FIFO_STAT
+    bmi @1
+    lda REG_FIFO_DATA
+    sta _zp_dst+2
+
+; Calc Register address 0x80x
+	lda _zp_dst
+  	lda #$08
+	sta _zp_dst+1
+
+; Write data to 0x80x
+	lda _zp_dst+2
+	sta (_zp_dst)
+
+    bra @0
+
 .export _bi_fifo_wr_asm
 _bi_fifo_wr_asm:
     ldy #0

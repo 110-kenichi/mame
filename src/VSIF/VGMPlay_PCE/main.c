@@ -227,24 +227,28 @@ void main() {
 
 u8 snd_data[3];
 u8 *snd_reg;
+void vgmplay();
 
 void usbRead() {
     // gConsPrint("waiting for input string from usb...");
     // gConsPrint("");
+    zp_len = 2;
+    zp_dst = snd_data;
 
     while (1) {
         //single byte communication is very slow. 
         //use larger blocks for real applications but not more than SIZE_FIFO
-        bi_fifo_rd(snd_data, 3);
-        switch(*snd_data)
+
+        vgmplay(); //can transfer 256 bytes max
+        /*
+        bi_fifo_rd(snd_data, 2);
+        if(*snd_data <= 9)
         {
-            case 0:
-            {
-                snd_reg = 0x800 | *(snd_data+1);
-                *snd_reg = *(snd_data+2);
-                break;
-            }
+             snd_reg = 0x800 | *snd_data;
+             *snd_reg = *(snd_data+1);
         }
+        */
+       
         // if (char_val == '\n') {
         //     gConsPrint("");
         // } else {

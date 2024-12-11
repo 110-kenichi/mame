@@ -33,6 +33,7 @@ OFILES	= $(OBJ:%.o=$(BDIR)/%.o)
 # --------------------------------------------------------------------------
 all: $(OBJ) 
 	$(LD) -C pce.cfg -o VGMPlay_PCE.pce $(OFILES) nes.lib -m $(BDIR)/mem.map
+	./turbolink.exe -cp VGMPlay_PCE.pce sd:/VGMPlay_PCE.pce
 	./turbolink.exe VGMPlay_PCE.pce
 
 %.o: %.s

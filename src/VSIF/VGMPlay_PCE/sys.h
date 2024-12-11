@@ -71,8 +71,8 @@ void sys_reg_to_mem_asm();
 void sys_mem_to_mem_asm();
 
 extern u8 zp_cmd;
-extern void *zp_src;
-extern void *zp_dst;
+extern u8 *zp_src;
+extern u8 *zp_dst;
 extern u16 zp_len;
 #pragma zpsym("zp_cmd")
 #pragma zpsym("zp_src")
