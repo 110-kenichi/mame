@@ -604,11 +604,10 @@ s8 nesapu_device::apu_fds(apu_t::fds_t *fds)
 	// Main unit
 	int	output = 0;
 	if (fds->main_enable && fds->main_frequency && !fds->wave_setup) {
-		int	freq;
+		u64	freq;
 		int	main_addr_old = fds->main_addr;
 
-		freq = (fds->main_frequency + sub_freq) * clock() / 65536.0; //mamidimemo 1789772.5 / 65536.0;
-
+		freq = ((u64)fds->main_frequency + (u64)sub_freq) * (u64)clock() / (u64)65536; //mamidimemo 1789772.5 / 65536.0;
 		fds->main_addr = (fds->main_addr + freq + 64 * sampling_rate) % (64 * sampling_rate);
 
 		// 1周期を超えたらボリューム更新
