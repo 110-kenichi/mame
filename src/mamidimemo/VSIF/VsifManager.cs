@@ -15,6 +15,7 @@ using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Gui;
 using zanac.MAmidiMEmo.Instruments;
 using zanac.MAmidiMEmo.Properties;
+using zanac.MAmidiMEmo.TurboLink;
 using zanac.MAmidiMEmo.VSIF;
 
 namespace zanac.MAmidiMEmo.VSIF
@@ -212,6 +213,7 @@ namespace zanac.MAmidiMEmo.VSIF
                             }
                             break;
                         case VsifSoundModuleType.MSX_FTDI:
+                        case VsifSoundModuleType.TurboR_FTDI:
                         case VsifSoundModuleType.P6_FTDI:
                             {
                                 var ftdi = new FTD2XX_NET.FTDI();
@@ -314,6 +316,19 @@ namespace zanac.MAmidiMEmo.VSIF
                                 }
                             }
                             break;
+                        case VsifSoundModuleType.TurboEverDrive:
+                            {
+                                SerialPort sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.ReadTimeout = 300;
+                                sp.WriteTimeout = 300;
+                                sp.WriteBufferSize = 2;
+                                sp.Open();
+                                TurboEvedriveManager.getStatus(sp);
+                                var client = new VsifClient(soundModule, new PortWriterTurboEverDrive(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -363,6 +378,8 @@ namespace zanac.MAmidiMEmo.VSIF
         P6_FTDI,
         PC88_FTDI,
         SMS_FTDI,
+        TurboR_FTDI,
+        TurboEverDrive,
     }
 
 

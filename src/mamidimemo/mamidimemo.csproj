@@ -697,6 +697,8 @@
     <Compile Include="Instruments\MidiDriverSettings.cs" />
     <Compile Include="Instruments\GraphicEqualizerSettings.cs" />
     <Compile Include="Scci\NativeScciWrapper.cs" />
+    <Compile Include="TurboLink\Edio.cs" />
+    <Compile Include="TurboLink\TurboEvedriveManager.cs" />
     <Compile Include="Util\FITOM\BankReader.cs" />
     <Compile Include="Util\FM-SoundConvertor\Vgi.cs" />
     <Compile Include="Util\FM-SoundConvertor\FFOPM.cs" />
@@ -715,6 +717,7 @@
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />
     <Compile Include="VSIF\PortWriterGenesis.cs" />
     <Compile Include="VSIF\PortWriter.cs" />
+    <Compile Include="VSIF\PortWriterTurboEverDrive.cs" />
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />
     <Content Include="..\VSIF\VGMPlay_Genesis\VGMPlay_md.bin">

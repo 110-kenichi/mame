@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using zanac.MAmidiMEmo.Gimic;
+using zanac.MAmidiMEmo.TurboLink;
 using zanac.MAmidiMEmo.VSIF;
 using zanac.VGMPlayer.Properties;
 

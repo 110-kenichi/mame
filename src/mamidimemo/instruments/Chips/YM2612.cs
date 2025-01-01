@@ -3138,6 +3138,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             [Description("Set DAC PCM gain(0.0-*).")]
             [EditorAttribute(typeof(DoubleSlideEditor), typeof(UITypeEditor))]
             [DoubleSlideParameters(0d, 10d, 0.1d)]
+            [DefaultValue(typeof(float), "1.0")]
             public float PcmGain
             {
                 get

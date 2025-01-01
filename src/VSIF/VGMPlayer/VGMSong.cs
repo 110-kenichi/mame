@@ -22,7 +22,6 @@ using zanac.MAmidiMEmo.Gimic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Net;
 using System.Windows.Media.Animation;
-using turbolink;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
