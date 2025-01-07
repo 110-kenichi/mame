@@ -348,6 +348,8 @@ namespace zanac.VGMPlayer
             if (comPortNES != null)
             {
                 comPortNES.DeferredWriteData(0, 0x15, 0, (int)Program.Default.BitBangWaitNES);
+                comPortNES.DeferredWriteData(0, 0x83, 0xc0, (int)Program.Default.BitBangWaitNES);
+
             }
             //MCD RF5C164
             if (comPortMCD != null)
