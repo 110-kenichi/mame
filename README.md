@@ -1,4 +1,4 @@
-MAmidiMEmo 5.8.1.1 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 5.8.1.2 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 5.8.1.2 Fixed NES APU initiali sounds register valur of VGMPlayer.
 - 5.8.1.1 Fixed FDS sounds stop routine of VGMPlayer.
 - 5.8.1.0 Supported VSIF - PC Engine w/ Turbo EverDrive by MAmidiMEmo.
 - 5.8.0.2 Fixed FDS hi frequency calculation.

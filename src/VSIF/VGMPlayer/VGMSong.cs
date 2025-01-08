@@ -50,7 +50,7 @@ namespace zanac.VGMPlayer
         private VsifClient comPortMCD;
         private VsifClient comPortSAA;
         private VsifClient comPortPCE;
-        
+
         private VsifClient comPortTurboRProxy;
 
         private BinaryReader vgmReader;
@@ -924,6 +924,8 @@ namespace zanac.VGMPlayer
                     {
                         nesDpcm = new NesDpcm(curHead.lngHzNESAPU, this);
                         nesDpcm.StartEngine();
+                        //HACK:
+                        DeferredWriteNES(0x15, 0x0f);
                     }
                 }
             }
@@ -4087,6 +4089,14 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
+                                            if (0x20 <= adrs && adrs <= 0x3e)
+                                            {
+                                                adrs += 0x60;
+                                            }
+                                            else if (adrs == 0x3f)
+                                            {
+                                                adrs = 0x23;
+                                            }
                                             if (comPortNES != null)
                                             {
                                                 uint dclk = vgmHead.lngHzNESAPU;
