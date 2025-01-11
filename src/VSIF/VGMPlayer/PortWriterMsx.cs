@@ -21,6 +21,9 @@ namespace zanac.VGMPlayer
         private int lastOpmType = -1;
         private int lastOpmSlot = -1;
 
+        private byte lastDataType = 0xff;
+        private byte lastWriteAddress;
+
         /// <summary>
         /// 
         /// </summary>
@@ -37,8 +40,25 @@ namespace zanac.VGMPlayer
         {
         }
 
-        private byte lastDataType = 0xff;
-        private byte lastWriteAddress;
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Abort()
+        {
+            lastOpllType = -1;
+            lastOpllSlot = -1;
+
+            lastSccType = -1;
+            lastSccSlot = -1;
+
+            lastOpmType = -1;
+            lastOpmSlot = -1;
+
+            lastDataType = 0xff;
+            lastWriteAddress = 0;
+
+            base.Abort();
+        }
 
         /// <summary>
         /// 

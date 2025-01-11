@@ -179,7 +179,6 @@ __WRITE_OPLL_IO:
 __WRITE_SCC1:
     READ_ADRS           ; 61
 ;=======================
-    LD  E,#0x1F         ;  8 78
 0$:
     READ_DATA           ; 50
 

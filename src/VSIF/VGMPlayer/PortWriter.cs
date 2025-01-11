@@ -112,7 +112,7 @@ namespace zanac.VGMPlayer
 
         private bool abortRequested;
 
-        public void Abort()
+        public virtual void Abort()
         {
             abortRequested = true;
         }
