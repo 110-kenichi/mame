@@ -50,8 +50,10 @@ namespace zanac.MAmidiMEmo.VSIF
         public override void Write(PortWriteData[] data)
         {
             List<byte> ds = new List<byte>();
+            List<int> dsw = new List<int>();
             foreach (var dt in data)
             {
+                int lsz = ds.Count;
                 switch (dt.Type)
                 {
                     default:
@@ -131,14 +133,17 @@ namespace zanac.MAmidiMEmo.VSIF
                             break;
                         }
                 }
+                for (int i = 0; i < ds.Count - lsz; i++)
+                    dsw.Add(dt.Wait);
             }
             byte[] dsa = ds.ToArray();
+            int[] dsaw = dsw.ToArray();
 
             lock (LockObject)
             {
                 if (FtdiPort != null)
                 {
-                    sendData(dsa, data[0].Wait);
+                    sendData(dsa, dsaw);
                 }
             }
         }
@@ -148,7 +153,7 @@ namespace zanac.MAmidiMEmo.VSIF
         /// </summary>
         /// <param name="data"></param>
         /// <param name="wait"></param>
-        public override void RawWrite(byte[] data, int wait)
+        public override void RawWrite(byte[] data, int[] wait)
         {
             lock (LockObject)
             {
@@ -159,7 +164,7 @@ namespace zanac.MAmidiMEmo.VSIF
             }
         }
 
-        private void sendData(byte[] sendData, int wait)
+        private void sendData(byte[] sendData, int[] wait)
         {
             SendDataByFtdi(sendData, wait);
         }

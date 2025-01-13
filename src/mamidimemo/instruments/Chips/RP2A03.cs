@@ -493,7 +493,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                     vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
                                     vsifClient.WriteData(0, pcmData[i + 2], pcmData[i + 3], f_ftdiClkWidth);
                                     vsifClient.FlushDeferredWriteDataAndWait();
-                                    vsifClient.RawWriteData(new byte[] { 0xff }, f_ftdiClkWidth);   //dummy wait
+                                    vsifClient.RawWriteData(new byte[] { 0xff }, new int[] { f_ftdiClkWidth });   //dummy wait
                                 }
                             }
                             else if (CurrentSoundEngine == SoundEngineType.VSIF_NES_FTDI_MMC5)
@@ -510,7 +510,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                         vsifClient.WriteData(0, pcmData[i + 0], pcmData[i + 1], f_ftdiClkWidth);
                                         vsifClient.WriteData(0, pcmData[i + 2], pcmData[i + 3], f_ftdiClkWidth);
                                         vsifClient.FlushDeferredWriteDataAndWait();
-                                        vsifClient.RawWriteData(new byte[] { 0xff }, f_ftdiClkWidth);   //dummy wait
+                                        vsifClient.RawWriteData(new byte[] { 0xff }, new int[] { f_ftdiClkWidth });   //dummy wait
                                     }
                                 }
                             }

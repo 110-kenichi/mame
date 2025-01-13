@@ -81,7 +81,7 @@ namespace zanac.VGMPlayer
 
         public abstract void Write(PortWriteData[] data);
 
-        public abstract void RawWrite(byte[] data, int wait);
+        public abstract void RawWrite(byte[] data, int[] wait);
 
         protected virtual void Dispose(bool disposing)
         {
@@ -120,25 +120,17 @@ namespace zanac.VGMPlayer
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         private static extern IntPtr MemSet(IntPtr dest, int c, int count);
 
-        protected void SendDataByFtdi(byte[] sendData, int wait)
+        protected void SendDataByFtdi(byte[] sendData, int[] wait)
         {
-            var rawSendData = new byte[sendData.Length * (int)wait];
-            unsafe
+            List<byte> rawSendData = new List<byte>();
+            for (int i = 0; i < sendData.Length; i++)
             {
-                fixed (byte* sdp = rawSendData)
-                {
-                    byte* tsdp = sdp;
-                    foreach (var data in sendData)
-                    {
-                        for (int j = 0; j < wait; j++)
-                            *tsdp++ = data;
-                        //MemSet((IntPtr)bp, dt, (int)wait);
-                        //tsdp += (int)wait;
-                    }
-                }
+                var dt = sendData[i];
+                for (int j = 0; j < wait[i]; j++)
+                    rawSendData.Add(dt);
             }
 
-            var sendBuffer = new Span<byte>(rawSendData);
+            var sendBuffer = new Span<byte>(rawSendData.ToArray());
             while (true)
             {
                 uint writtenBytes = 0;

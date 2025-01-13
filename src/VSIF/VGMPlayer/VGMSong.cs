@@ -130,11 +130,9 @@ namespace zanac.VGMPlayer
                 for (int i = 0x20; i <= 0x28; i++)
                 {
                     deferredWriteOPLL(i, 0x00);
-                    flushDeferredWriteDataAndWait();
                 }
 
                 deferredWriteOPLL(0xe, 0x00);
-                flushDeferredWriteDataAndWait();
 
                 if (volumeOff)
                 {
@@ -142,13 +140,11 @@ namespace zanac.VGMPlayer
                     for (int i = 0x30; i <= 0x38; i++)
                     {
                         deferredWriteOPLL(i, 0x0F);
-                        flushDeferredWriteDataAndWait();
                     }
                     //RR
                     for (int i = 0x6; i <= 0x7; i++)
                     {
                         deferredWriteOPLL(i, 0xFF);
-                        flushDeferredWriteDataAndWait();
                     }
                 }
             }
@@ -5251,7 +5247,7 @@ namespace zanac.VGMPlayer
                     {
                         int wait = (int)Program.Default.BitBangWaitOPLL;
                         if (comPortOPLL.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
-                            wait *= 5;
+                            wait *= 4;
                         var slot = (int)comPortOPLL.Tag["OPLL.Slot"];
                         if (slot == 1 || slot == 2)
                             comPortOPLL.DeferredWriteData(2, (byte)0, (byte)(slot - 1), wait);

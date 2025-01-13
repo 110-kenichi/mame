@@ -166,7 +166,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="wait"></param>
-        public override void RawWrite(byte[] data, int wait)
+        public override void RawWrite(byte[] data, int[] wait)
         {
 
         }

@@ -70,15 +70,15 @@ namespace zanac.VGMPlayer
         public override void Write(PortWriteData[] data)
         {
             List<byte> ds = new List<byte>();
+            List<int> dsw = new List<int>();
             foreach (var dt in data)
             {
+                int lsz = ds.Count;
                 if (dt.Type == 0x17 && dt.Address == 0x07)
                     //https://hra1129.github.io/system/psg_reg7.html
                     dt.Data = (byte)((dt.Data & 0x3f) | 0x80);
-
                 switch (dt.Type)
                 {
-
                     case 2:
                         if (lastOpllType != dt.Address || lastOpllSlot != dt.Data)
                         {
@@ -88,7 +88,6 @@ namespace zanac.VGMPlayer
                                     (byte)((dt.Data    >> 4) | 0x00), (byte)((dt.Data &    0x0f) | 0x10),
                             };
                             ds.AddRange(sd);
-
                             //バンク切り替えが必要な分のウエイト
                             ds.AddRange(new byte[2] { 0, 0 });
                             //バンク切り替えが必要な分のウエイト
@@ -275,14 +274,17 @@ namespace zanac.VGMPlayer
                             break;
                         }
                 }
+                for(int i = 0; i < ds.Count - lsz; i++)
+                    dsw.Add(dt.Wait);
             }
             byte[] dsa = ds.ToArray();
+            int[] dsaw = dsw.ToArray();
 
             lock (LockObject)
             {
                 if (FtdiPort != null)
                 {
-                    sendData(dsa, data[0].Wait);
+                    sendData(dsa, dsaw);
                 }
             }
         }
@@ -292,7 +294,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="wait"></param>
-        public override void RawWrite(byte[] data, int wait)
+        public override void RawWrite(byte[] data, int[] wait)
         {
             lock (LockObject)
             {
@@ -303,7 +305,7 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void sendData(byte[] sendData, int wait)
+        private void sendData(byte[] sendData, int[] wait)
         {
             SendDataByFtdi(sendData, wait);
         }

@@ -269,7 +269,7 @@ namespace zanac.MAmidiMEmo.VSIF
         /// </summary>
         /// <param name="address"></param>
         /// <param name="data"></param>
-        public virtual void RawWriteData(byte[] data, int wait)
+        public virtual void RawWriteData(byte[] data, int[] wait)
         {
             try
             {

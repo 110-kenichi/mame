@@ -250,10 +250,10 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         {
             lock (sndEnginePtrLock)
             {
-                if((int)slot < 0)
+                if ((int)slot < 0)
                     vsifClient?.WriteData(3, (byte)(type), (byte)(-((int)slot + 1)), f_ftdiClkWidth);    //自動選択方式
                 else
-                    vsifClient?.WriteData(3, (byte)(type+4), (byte)(slot), f_ftdiClkWidth);   //従来方式
+                    vsifClient?.WriteData(3, (byte)(type + 4), (byte)(slot), f_ftdiClkWidth);   //従来方式
                 if (clearCache)
                     vsifClient?.ClearDataCache();
             }
@@ -326,7 +326,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
         public override void RestoreFrom(string serializeData)
         {
             using (var obj = JsonConvert.DeserializeObject<SCC1>(serializeData))
-                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -533,7 +533,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             vsifClient.RawWriteData(new byte[] {
                                 (byte)((freq_h    >> 4) | 0x00),
                                 (byte)((freq_h &  0x0f) | 0x10),
-                            }, f_ftdiClkWidth);
+                            }, new int[] { f_ftdiClkWidth, f_ftdiClkWidth });
                         }
                     }
                 }
@@ -660,7 +660,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                                             vsifClient.RawWriteData(new byte[] {
                                                 (byte)((dt    >> 4) | 0x00),
                                                 (byte)((dt &  0x0f) | 0x10),
-                                        }, f_ftdiClkWidth);
+                                            }, new int[] { f_ftdiClkWidth, f_ftdiClkWidth });
                                         }
                                     }
                                 }));
@@ -1334,7 +1334,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                 try
                 {
                     var obj = JsonConvert.DeserializeObject<SCC1Timbre>(serializeData);
-                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad"}), obj);
+                    this.InjectFrom(new LoopInjection(new[] { "SerializeData", "SerializeDataSave", "SerializeDataLoad" }), obj);
                     calcWsgDataHashCode();
                 }
                 catch (Exception ex)
@@ -1587,7 +1587,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
 
             public void ResetWsgData()
             {
-                for(int i = 0; i < wsgData.Length; i++)
+                for (int i = 0; i < wsgData.Length; i++)
                     wsgData[i] = 0;
             }
 

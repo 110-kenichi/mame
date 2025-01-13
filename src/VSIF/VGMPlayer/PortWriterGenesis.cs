@@ -51,12 +51,16 @@ namespace zanac.VGMPlayer
             }
 
             List<byte> ds = new List<byte>();
+            List<int> dsw = new List<int>();
             foreach (var dt in pdata)
             {
                 ds.Add(dt.Address);
                 ds.Add(dt.Data);
+                dsw.Add(dt.Wait);
+                dsw.Add(dt.Wait);
             }
             byte[] dsa = ds.ToArray();
+            int[] dsaw = dsw.ToArray();
 
             lock (LockObject)
             {
@@ -68,7 +72,7 @@ namespace zanac.VGMPlayer
                 if (FtdiPort != null)
                 {
                     convertToDataPacket(dsa);
-                    sendData(dsa, data[0].Wait);
+                    sendData(dsa, dsaw);
                 }
             }
         }
@@ -78,7 +82,7 @@ namespace zanac.VGMPlayer
         /// </summary>
         /// <param name="data"></param>
         /// <param name="wait"></param>
-        public override void RawWrite(byte[] data, int wait)
+        public override void RawWrite(byte[] data, int[] wait)
         {
             lock (LockObject)
             {
@@ -94,7 +98,7 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void sendData(byte[] sendData, int wait)
+        private void sendData(byte[] sendData, int[] wait)
         {
             SendDataByFtdi(sendData, wait);
         }
