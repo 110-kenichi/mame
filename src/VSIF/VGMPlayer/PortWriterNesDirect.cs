@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace zanac.VGMPlayer
 {
@@ -39,16 +40,38 @@ namespace zanac.VGMPlayer
         public override void Write(PortWriteData[] data)
         {
             byte[] dsa = convertToDataPacket(data);
-            List<int> dsw = new List<int>();
-            for (int i = 0; i < dsa.Length; i++)
-                dsw.Add(data[i].Wait);
-            int[] dsaw = dsw.ToArray();
+            int[] dsaw = convertToWaitPacket(data);
 
             lock (LockObject)
             {
                 if (FtdiPort != null)
                     sendData(dsa, dsaw);
             }
+        }
+
+        private static int[] convertToWaitPacket(PortWriteData[] data)
+        {
+            List<int> dsw = new List<int>();
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i].Type == 1)
+                {
+                    dsw.Add(data[i].Wait);
+                    dsw.Add(data[i].Wait);
+                }
+                else
+                {
+                    dsw.Add(data[i].Wait);
+                    dsw.Add(data[i].Wait);
+                    dsw.Add(data[i].Wait);
+
+                    dsw.Add(data[i].Wait);
+                    dsw.Add(data[i].Wait);
+                    dsw.Add(data[i].Wait);
+                }
+            }
+            int[] dsaw = dsw.ToArray();
+            return dsaw;
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-MAmidiMEmo 5.8.1.4 Itoken (c)2019, 2025 / GPL-2.0
+MAmidiMEmo 5.8.1.5 Itoken (c)2019, 2025 / GPL-2.0
 
 *** What is the MAmidiMEmo? ***
 
@@ -274,6 +274,7 @@ e.g.) YM2151 has 8ch FM sounds, so you can play 8 chords on MIDI 1ch or sharing 
    [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SNQ9JE3JAQMNQ)
 
 *** Changes
+- 5.8.1.5 Re-fixed FTDI clk handling for NES.
 - 5.8.1.4 Fixed FTDI clk handling. This reduces the problem, especially if the clk value is changed for each chip on the MSX.
 - 5.8.1.3 Temporary Fixed FTDI MSX FTDI clk value to stop SCC/OPLL properly. Please update MSX VSIF Driver ROM, too.
 - 5.8.1.2 Fixed NES APU initial sounds register value of VGMPlayer.
