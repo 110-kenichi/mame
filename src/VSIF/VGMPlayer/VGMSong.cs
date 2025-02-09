@@ -22,6 +22,7 @@ using zanac.MAmidiMEmo.Gimic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Net;
 using System.Windows.Media.Animation;
+using System.Windows.Markup;
 
 //Sega Genesis VGM player. Player written and emulators ported by Landon Podbielski. 
 namespace zanac.VGMPlayer
@@ -345,6 +346,39 @@ namespace zanac.VGMPlayer
             {
                 comPortNES.DeferredWriteData(0, 0x15, 0, (int)Program.Default.BitBangWaitNES);
                 comPortNES.DeferredWriteData(0, 0x83, 0xc0, (int)Program.Default.BitBangWaitNES);
+
+                if (comPortNES.SoundModuleType == VsifSoundModuleType.NES_FTDI_INDIRECT)
+                {
+                    //KOFF
+                    for (int i = 0x20; i <= 0x28; i++)
+                    {
+                        //deferredWriteOPLL(i, 0x00);
+                        DeferredWriteNES(36 + 1, i);
+                        DeferredWriteNES(36 + 3, 0);
+                    }
+
+                    //deferredWriteOPLL(0xe, 0x00);
+                    DeferredWriteNES(36 + 1, 0xe);
+                    DeferredWriteNES(36 + 3, 0);
+
+                    if (volumeOff)
+                    {
+                        //TL
+                        for (int i = 0x30; i <= 0x38; i++)
+                        {
+                            //deferredWriteOPLL(i, 0x0F);
+                            DeferredWriteNES(36 + 1, i);
+                            DeferredWriteNES(36 + 3, 0xF);
+                        }
+                        //RR
+                        for (int i = 0x6; i <= 0x7; i++)
+                        {
+                            //deferredWriteOPLL(i, 0xFF);
+                            DeferredWriteNES(36 + 1, i);
+                            DeferredWriteNES(36 + 3, 0xFF);
+                        }
+                    }
+                }
             }
             //MCD RF5C164
             if (comPortMCD != null)
@@ -481,6 +515,8 @@ namespace zanac.VGMPlayer
             FieldInfo[] fields = typeof(VGM_HEADER).GetFields();
             int position = 4;
             long lngDataOffset = 0x40;
+            bool vrc7 = false;
+
             foreach (FieldInfo field in fields)
             {
                 if (field.FieldType == typeof(uint))
@@ -555,11 +591,22 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzYM2413 != 0)
             {
-                SongChipInformation += $"OPLL@{curHead.lngHzYM2413 / 1000000f}MHz ";
-
-                if (Program.Default.OPLL_Enable)
+                String chipName = "OPLL";
+                if ((curHead.lngHzYM2413 & 0x80000000) != 0)
                 {
-                    connectToOPLL();
+                    chipName = "VRC7";
+                    vrc7 = true;
+                }
+
+                uint clk = (uint)(curHead.lngHzYM2413 & ~0x80000000);
+                SongChipInformation += $"{chipName}@{clk / 1000000f}MHz ";
+
+                if (!vrc7)
+                {
+                    if (Program.Default.OPLL_Enable)
+                    {
+                        connectToOPLL();
+                    }
                 }
             }
             if (curHead.lngHzYM2612 != 0 && curHead.lngVersion >= 0x00000110)
@@ -755,6 +802,8 @@ namespace zanac.VGMPlayer
             }
             if (curHead.lngHzAY8910 != 0 && curHead.lngVersion >= 0x00000151)
             {
+                if ((curHead.bytAYFlag & 0x10) == 0x10)
+                    curHead.lngHzAY8910 = curHead.lngHzAY8910 / 2;
                 SongChipInformation += $"PSG@{curHead.lngHzAY8910 / 1000000f}MHz ";
 
                 if (Program.Default.Y8910_Enable)
@@ -915,7 +964,7 @@ namespace zanac.VGMPlayer
 
                 if (Program.Default.NES_Enable)
                 {
-                    if (connectToNES())
+                    if (connectToNES(vrc7))
                     {
                         nesDpcm = new NesDpcm(curHead.lngHzNESAPU, this);
                         nesDpcm.StartEngine();
@@ -1079,7 +1128,7 @@ namespace zanac.VGMPlayer
             return false;
         }
 
-        private bool connectToNES()
+        private bool connectToNES(bool vrc7)
         {
             if (comPortNES == null)
             {
@@ -1096,6 +1145,23 @@ namespace zanac.VGMPlayer
                                 comPortNES.ChipClockHz["NES"] = 1789772;
                                 comPortNES.ChipClockHz["NES_org"] = 1789772;
                                 UseChipInformation += "NES APU@1.789772MHz ";
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (comPortNES == null)
+                        {
+                            comPortNES = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_INDIRECT,
+                                (PortId)Program.Default.NES_Port);
+
+                            if (comPortNES != null)
+                            {
+                                comPortNES.ChipClockHz["NES"] = 1789772;
+                                comPortNES.ChipClockHz["NES_org"] = 1789772;
+                                if (vrc7)
+                                    UseChipInformation += "NES APU + VRC7@1.789772MHz ";
+                                else
+                                    UseChipInformation += "NES APU@1.789772MHz ";
                             }
                         }
                         break;
@@ -2548,7 +2614,10 @@ namespace zanac.VGMPlayer
 
                                     case 0x51: //YM2413
                                         {
-                                            uint dclk = vgmHead.lngHzYM2413;
+                                            bool vrc7 = false;
+                                            if ((vgmHead.lngHzYM2413 & 0x80000000) != 0)
+                                                vrc7 = true;
+                                            uint dclk = (vgmHead.lngHzYM2413 & ~0x80000000);
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2557,8 +2626,19 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            if (comPortOPLL != null)
-                                                deferredWriteOPLL(dclk, adrs, dt);
+                                            if (!vrc7)
+                                            {
+                                                if (comPortOPLL != null)
+                                                    deferredWriteOPLL(dclk, adrs, dt);
+                                            }
+                                            else
+                                            {
+                                                if (comPortNES != null)
+                                                {
+                                                    DeferredWriteNES(36 + 1, adrs);
+                                                    DeferredWriteNES(36 + 3, dt);
+                                                }
+                                            }
                                         }
                                         break;
 
@@ -5206,6 +5286,37 @@ namespace zanac.VGMPlayer
             switch (comPortNES.SoundModuleType)
             {
                 case VsifSoundModuleType.NES_FTDI_INDIRECT:
+                    {
+                        if (adrs == 0x11)
+                        {
+                            //DAC
+                            comPortNES.DeferredWriteData(1, (byte)0x11, (byte)dt, (int)Program.Default.BitBangWaitNES);
+                        }
+                        else
+                        {
+                            switch (adrs)
+                            {
+                                case int cmd when 0x0 <= adrs && adrs <= 0x15:
+                                    comPortNES.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitNES);
+                                    break;
+                                case 36 + 1:
+                                case 36 + 3:
+                                    comPortNES.DeferredWriteData(0, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitNES);
+                                    break;
+
+                                    //case int cmd when 0x9000 <= adrs && adrs <= 0x9003:
+                                    //    comPortNES.DeferredWriteData(0, (byte)(24 + (cmd & 0x03)), (byte)dt, (int)Program.Default.BitBangWaitNES);
+                                    //    break;
+                                    //case int cmd when 0xa000 <= adrs && adrs <= 0xa003:
+                                    //    comPortNES.DeferredWriteData(0, (byte)(28 + (cmd & 0x03)), (byte)dt, (int)Program.Default.BitBangWaitNES);
+                                    //    break;
+                                    //case int cmd when 0xb000 <= adrs && adrs <= 0xb003:
+                                    //    comPortNES.DeferredWriteData(0, (byte)(32 + (cmd & 0x03)), (byte)dt, (int)Program.Default.BitBangWaitNES);
+                                    //    break;
+                            }
+                        }
+                    }
+                    break;
                 case VsifSoundModuleType.NES_FTDI_DIRECT:
                     if (adrs == 0x11)
                     {

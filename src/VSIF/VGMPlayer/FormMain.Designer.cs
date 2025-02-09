@@ -4854,7 +4854,8 @@ namespace zanac.VGMPlayer
             this.comboBoxNES.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxNES.FormattingEnabled = true;
             this.comboBoxNES.Items.AddRange(new object[] {
-            "VSIF - Famicom(FTDI2XX Clk: 232R=11~,H=27~)"});
+            "VSIF - Famicom(FTDI2XX Clk: 232R=11~,H=27~)",
+            "VSIF - MAmi Cart w/ VRC7(FTDI2XX Clk: 232R=11~,H=27~)"});
             this.comboBoxNES.Location = new System.Drawing.Point(163, 284);
             this.comboBoxNES.Name = "comboBoxNES";
             this.comboBoxNES.Size = new System.Drawing.Size(336, 20);
@@ -6197,7 +6198,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.96 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.97 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

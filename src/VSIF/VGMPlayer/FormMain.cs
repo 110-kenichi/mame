@@ -1638,6 +1638,10 @@ namespace zanac.VGMPlayer
                         comPortNES = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_DIRECT,
                             (PortId)Settings.Default.NES_Port, (int)Settings.Default.NESDiv, false);
                         break;
+                    case 1:
+                        comPortNES = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NES_FTDI_INDIRECT,
+                            (PortId)Settings.Default.NES_Port, (int)Settings.Default.NESDiv, false);
+                        break;
                 }
 
                 checkBoxConnNES.Checked = comPortNES != null;
