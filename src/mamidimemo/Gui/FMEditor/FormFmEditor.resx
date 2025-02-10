@@ -151,7 +151,7 @@
     <value>67, 62</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>857, 518</value>
+    <value>882, 492</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -178,7 +178,7 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
-    <value>10</value>
+    <value>8</value>
   </data>
   <data name="metroButtonRand1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -250,7 +250,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroTextBoxTarget.Size" type="System.Drawing.Size, System.Drawing">
-    <value>243, 23</value>
+    <value>303, 23</value>
   </data>
   <data name="metroTextBoxTarget.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -283,7 +283,7 @@
     <value>None</value>
   </data>
   <data name="metroButtonImport.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 37</value>
+    <value>7, 68</value>
   </data>
   <data name="metroButtonImport.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -313,7 +313,7 @@
     <value>None</value>
   </data>
   <data name="metroButtonImportGit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 37</value>
+    <value>115, 68</value>
   </data>
   <data name="metroButtonImportGit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -339,71 +339,11 @@
   <data name="&gt;&gt;metroButtonImportGit.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="metroButtonPaste.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonPaste.Location" type="System.Drawing.Point, System.Drawing">
-    <value>749, 6</value>
-  </data>
-  <data name="metroButtonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="metroButtonPaste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="metroButtonPaste.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="metroButtonPaste.Text" xml:space="preserve">
-    <value>&amp;Paste data</value>
-  </data>
-  <data name="&gt;&gt;metroButtonPaste.Name" xml:space="preserve">
-    <value>metroButtonPaste</value>
-  </data>
-  <data name="&gt;&gt;metroButtonPaste.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="&gt;&gt;metroButtonPaste.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;metroButtonPaste.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="metroButtonCopy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="metroButtonCopy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>640, 6</value>
-  </data>
-  <data name="metroButtonCopy.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="metroButtonCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="metroButtonCopy.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="metroButtonCopy.Text" xml:space="preserve">
-    <value>Cop&amp;y data</value>
-  </data>
-  <data name="&gt;&gt;metroButtonCopy.Name" xml:space="preserve">
-    <value>metroButtonCopy</value>
-  </data>
-  <data name="&gt;&gt;metroButtonCopy.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="&gt;&gt;metroButtonCopy.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
-  <data name="&gt;&gt;metroButtonCopy.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
   <data name="metroButtonExport.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
-    <value>223, 37</value>
+    <value>223, 68</value>
   </data>
   <data name="metroButtonExport.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -427,7 +367,7 @@
     <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;metroButtonExport.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>5</value>
   </data>
   <data name="metroLabel1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -436,7 +376,7 @@
     <value>Fill</value>
   </data>
   <data name="metroLabel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>330, 33</value>
+    <value>330, 64</value>
   </data>
   <data name="metroLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 31</value>
@@ -460,19 +400,19 @@
     <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;metroLabel1.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>6</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Location" type="System.Drawing.Point, System.Drawing">
-    <value>474, 6</value>
+    <value>534, 6</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Size" type="System.Drawing.Size, System.Drawing">
-    <value>158, 23</value>
+    <value>341, 23</value>
   </data>
   <data name="metroTextBoxTargetMinMax.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -487,16 +427,16 @@
     <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;metroTextBoxTargetMinMax.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>7</value>
   </data>
   <data name="metroTextBoxPatchFile.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="metroTextBoxPatchFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>400, 36</value>
+    <value>400, 67</value>
   </data>
   <data name="metroTextBoxPatchFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>451, 25</value>
+    <value>476, 25</value>
   </data>
   <data name="metroTextBoxPatchFile.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -511,13 +451,163 @@
     <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;metroTextBoxPatchFile.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="metroButtonCopy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonCopy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>667, 37</value>
+  </data>
+  <data name="metroButtonCopy.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="metroButtonCopy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="metroButtonCopy.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroButtonCopy.Text" xml:space="preserve">
+    <value>Cop&amp;y data</value>
+  </data>
+  <data name="&gt;&gt;metroButtonCopy.Name" xml:space="preserve">
+    <value>metroButtonCopy</value>
+  </data>
+  <data name="&gt;&gt;metroButtonCopy.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButtonCopy.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;metroButtonCopy.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="metroButtonUndo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonUndo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 37</value>
+  </data>
+  <data name="metroButtonUndo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="metroButtonUndo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="metroButtonUndo.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroButtonUndo.Text" xml:space="preserve">
+    <value>Undo Tone</value>
+  </data>
+  <data name="&gt;&gt;metroButtonUndo.Name" xml:space="preserve">
+    <value>metroButtonUndo</value>
+  </data>
+  <data name="&gt;&gt;metroButtonUndo.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButtonUndo.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;metroButtonUndo.ZOrder" xml:space="preserve">
     <value>10</value>
+  </data>
+  <data name="metroButtonPaste.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonPaste.Location" type="System.Drawing.Point, System.Drawing">
+    <value>775, 37</value>
+  </data>
+  <data name="metroButtonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="metroButtonPaste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="metroButtonPaste.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="metroButtonPaste.Text" xml:space="preserve">
+    <value>&amp;Paste data</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPaste.Name" xml:space="preserve">
+    <value>metroButtonPaste</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPaste.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPaste.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPaste.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="metroButtonRedo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonRedo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 37</value>
+  </data>
+  <data name="metroButtonRedo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="metroButtonRedo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="metroButtonRedo.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroButtonRedo.Text" xml:space="preserve">
+    <value>Redo Tone</value>
+  </data>
+  <data name="&gt;&gt;metroButtonRedo.Name" xml:space="preserve">
+    <value>metroButtonRedo</value>
+  </data>
+  <data name="&gt;&gt;metroButtonRedo.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButtonRedo.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;metroButtonRedo.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="metroButtonPush.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="metroButtonPush.Location" type="System.Drawing.Point, System.Drawing">
+    <value>223, 37</value>
+  </data>
+  <data name="metroButtonPush.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="metroButtonPush.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="metroButtonPush.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroButtonPush.Text" xml:space="preserve">
+    <value>Manual Push</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPush.Name" xml:space="preserve">
+    <value>metroButtonPush</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPush.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPush.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;metroButtonPush.ZOrder" xml:space="preserve">
+    <value>13</value>
   </data>
   <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
   </data>
   <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 518</value>
+    <value>0, 492</value>
   </data>
   <data name="tableLayoutPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -526,10 +616,10 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>857, 66</value>
+    <value>882, 97</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -547,7 +637,7 @@
     <value>1</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroButtonRand1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonParams" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroTextBoxTarget" Row="0" RowSpan="1" Column="2" ColumnSpan="3" /&gt;&lt;Control Name="metroButtonImport" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonImportGit" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonPaste" Row="0" RowSpan="1" Column="9" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonCopy" Row="0" RowSpan="1" Column="8" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonExport" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel1" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="metroTextBoxTargetMinMax" Row="0" RowSpan="1" Column="5" ColumnSpan="3" /&gt;&lt;Control Name="metroTextBoxPatchFile" Row="1" RowSpan="1" Column="4" ColumnSpan="6" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,109,Percent,39.32927,Percent,35.36585,Percent,25.30488,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroButtonRand1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonParams" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroTextBoxTarget" Row="0" RowSpan="1" Column="2" ColumnSpan="3" /&gt;&lt;Control Name="metroButtonImport" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonImportGit" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonExport" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroLabel1" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="metroTextBoxTargetMinMax" Row="0" RowSpan="1" Column="5" ColumnSpan="3" /&gt;&lt;Control Name="metroTextBoxPatchFile" Row="2" RowSpan="1" Column="4" ColumnSpan="4" /&gt;&lt;Control Name="metroButtonCopy" Row="1" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonUndo" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonPaste" Row="1" RowSpan="1" Column="7" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonRedo" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonPush" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,109,Percent,50,Percent,50,AutoSize,0,AutoSize,20" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,20,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.Name" xml:space="preserve">
     <value>splitContainer1.Panel1</value>
@@ -592,7 +682,7 @@
     <value>0, 0</value>
   </data>
   <data name="propertyGrid.Size" type="System.Drawing.Size, System.Drawing">
-    <value>425, 584</value>
+    <value>400, 589</value>
   </data>
   <data name="propertyGrid.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -625,10 +715,10 @@
     <value>0</value>
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1290, 586</value>
+    <value>1290, 591</value>
   </data>
   <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>859</value>
+    <value>884</value>
   </data>
   <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -1228,7 +1318,7 @@
     <value>Bottom</value>
   </data>
   <data name="panelPiano.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 683</value>
+    <value>5, 688</value>
   </data>
   <data name="panelPiano.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -1369,7 +1459,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1290, 760</value>
+    <value>1290, 765</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1657,7 +1747,7 @@
     <value>Bottom</value>
   </data>
   <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 783</value>
+    <value>5, 788</value>
   </data>
   <data name="tableLayoutPanel3.RowCount" type="System.Int32, mscorlib">
     <value>2</value>

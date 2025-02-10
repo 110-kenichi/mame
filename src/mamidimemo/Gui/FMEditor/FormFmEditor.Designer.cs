@@ -47,12 +47,15 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroTextBoxTarget = new MetroFramework.Controls.MetroTextBox();
             this.metroButtonImport = new MetroFramework.Controls.MetroButton();
             this.metroButtonImportGit = new MetroFramework.Controls.MetroButton();
-            this.metroButtonPaste = new MetroFramework.Controls.MetroButton();
-            this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
             this.metroButtonExport = new MetroFramework.Controls.MetroButton();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroTextBoxTargetMinMax = new MetroFramework.Controls.MetroTextBox();
             this.metroTextBoxPatchFile = new MetroFramework.Controls.MetroTextBox();
+            this.metroButtonCopy = new MetroFramework.Controls.MetroButton();
+            this.metroButtonUndo = new MetroFramework.Controls.MetroButton();
+            this.metroButtonPaste = new MetroFramework.Controls.MetroButton();
+            this.metroButtonPush = new MetroFramework.Controls.MetroButton();
+            this.metroButtonRedo = new MetroFramework.Controls.MetroButton();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.contextMenuStripProp = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.resetToDefaultThisPropertyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,14 +132,17 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.tableLayoutPanel1.Controls.Add(this.metroButtonRand1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroButtonParams, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTarget, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 9, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 8, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroButtonExport, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.metroLabel1, 3, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonImport, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonImportGit, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonExport, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroLabel1, 3, 2);
             this.tableLayoutPanel1.Controls.Add(this.metroTextBoxTargetMinMax, 5, 0);
-            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxPatchFile, 4, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroTextBoxPatchFile, 4, 2);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonCopy, 6, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonUndo, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonPaste, 7, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonRedo, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.metroButtonPush, 2, 1);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // metroButtonRand1
@@ -178,18 +184,6 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             this.metroButtonImportGit.Name = "metroButtonImportGit";
             this.metroButtonImportGit.Click += new System.EventHandler(this.metroButtonImportGit_Click);
             // 
-            // metroButtonPaste
-            // 
-            resources.ApplyResources(this.metroButtonPaste, "metroButtonPaste");
-            this.metroButtonPaste.Name = "metroButtonPaste";
-            this.metroButtonPaste.Click += new System.EventHandler(this.metroButtonPaste_Click);
-            // 
-            // metroButtonCopy
-            // 
-            resources.ApplyResources(this.metroButtonCopy, "metroButtonCopy");
-            this.metroButtonCopy.Name = "metroButtonCopy";
-            this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
-            // 
             // metroButtonExport
             // 
             resources.ApplyResources(this.metroButtonExport, "metroButtonExport");
@@ -212,10 +206,40 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             // 
             // metroTextBoxPatchFile
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxPatchFile, 6);
+            this.tableLayoutPanel1.SetColumnSpan(this.metroTextBoxPatchFile, 4);
             resources.ApplyResources(this.metroTextBoxPatchFile, "metroTextBoxPatchFile");
             this.metroTextBoxPatchFile.Name = "metroTextBoxPatchFile";
             this.metroTextBoxPatchFile.ReadOnly = true;
+            // 
+            // metroButtonCopy
+            // 
+            resources.ApplyResources(this.metroButtonCopy, "metroButtonCopy");
+            this.metroButtonCopy.Name = "metroButtonCopy";
+            this.metroButtonCopy.Click += new System.EventHandler(this.metroButtonCopy_Click);
+            // 
+            // metroButtonUndo
+            // 
+            resources.ApplyResources(this.metroButtonUndo, "metroButtonUndo");
+            this.metroButtonUndo.Name = "metroButtonUndo";
+            this.metroButtonUndo.Click += new System.EventHandler(this.metroButtonUndo_Click);
+            // 
+            // metroButtonPaste
+            // 
+            resources.ApplyResources(this.metroButtonPaste, "metroButtonPaste");
+            this.metroButtonPaste.Name = "metroButtonPaste";
+            this.metroButtonPaste.Click += new System.EventHandler(this.metroButtonPaste_Click);
+            // 
+            // metroButtonPush
+            // 
+            resources.ApplyResources(this.metroButtonPush, "metroButtonPush");
+            this.metroButtonPush.Name = "metroButtonPush";
+            this.metroButtonPush.Click += new System.EventHandler(this.metroButtonPush_Click);
+            // 
+            // metroButtonRedo
+            // 
+            resources.ApplyResources(this.metroButtonRedo, "metroButtonRedo");
+            this.metroButtonRedo.Name = "metroButtonRedo";
+            this.metroButtonRedo.Click += new System.EventHandler(this.metroButtonRedo_Click);
             // 
             // propertyGrid
             // 
@@ -707,5 +731,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         private System.Windows.Forms.ToolStripMenuItem resetToDefaultThisPropertyToolStripMenuItem;
         private MetroFramework.Controls.MetroCheckBox checkBoxHidePropAre;
         private MetroFramework.Controls.MetroButton metroButton1;
+        private MetroFramework.Controls.MetroButton metroButtonUndo;
+        private MetroFramework.Controls.MetroButton metroButtonRedo;
+        private MetroFramework.Controls.MetroButton metroButtonPush;
     }
 }

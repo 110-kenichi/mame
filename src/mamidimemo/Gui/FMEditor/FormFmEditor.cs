@@ -184,11 +184,16 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             pianoControl1.EntryDataChanged += PianoControl1_EntryDataChanged;
 
             Midi.MidiManager.MidiEventHooked += MidiManager_MidiEventHooked;
+
+            metroButtonUndo.Enabled = false;
+            metroButtonRedo.Enabled = false;
         }
 
         protected override void OnShown(EventArgs e)
         {
             toolStripComboBoxCh.Focus();
+            pushCurrentTone();
+
             base.OnShown(e);
         }
 
@@ -378,6 +383,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 ignorePlayingFlag--;
             }
             Control_ValueChanged(this, null);
+            initUndoRedoBuffer();
         }
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -472,6 +478,40 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
         {
             get;
             set;
+        }
+
+        private Stack<String> toneUndoStack = new Stack<string>();
+        private Stack<String> toneRedoStack = new Stack<string>();
+        private bool ignorePushCurrentTone;
+
+        private void pushCurrentTone()
+        {
+            if (ignorePushCurrentTone)
+                return;
+
+            String sb = getCurrentTone();
+            if (toneUndoStack.Count != 0)
+            {
+                if (toneUndoStack.Peek().Equals(sb.ToString()))
+                    return;
+            }
+
+            toneUndoStack.Push(sb.ToString());
+            metroButtonUndo.Enabled = toneUndoStack.Count != 0;
+            toneRedoStack.Clear();
+            metroButtonRedo.Enabled = toneRedoStack.Count != 0;
+        }
+
+        private String getCurrentTone()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(CreateToneFileHeader());
+
+            string[] vals = GetMMlValues();
+            foreach (string val in vals)
+                sb.AppendLine(val);
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -724,6 +764,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             try
             {
                 ignorePlayingFlag++;
+                pushCurrentTone();
 
                 var rand = new Random(DateTime.Now.GetHashCode());
                 foreach (var rcb in controls.Values)
@@ -852,6 +893,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
             try
             {
                 ignorePlayingFlag++;
+                pushCurrentTone();
 
                 var rand = new Random(DateTime.Now.GetHashCode());
                 foreach (var rcb in controls.Values)
@@ -960,6 +1002,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 Settings.Default.ToneLibLastDir = System.IO.Path.GetDirectoryName(openFileDialogTone.FileName);
                 string importFileName = openFileDialogTone.FileName;
 
+                pushCurrentTone();
                 importAndApplyToneFile(importFileName, false);
             }
         }
@@ -1374,6 +1417,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                 Settings.Default.ToneLibLastDir = System.IO.Path.GetDirectoryName(openFileDialogTone.FileName);
 
                 importAndApplyToneFile(openFileDialogTone.FileName, true);
+                initUndoRedoBuffer();
             }
         }
 
@@ -1394,6 +1438,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     ignorePlayingFlag++;
                     if (dr == DialogResult.OK && f.SelectedTone != null)
                     {
+                        pushCurrentTone();
                         ApplyTone(f.SelectedTone);
                     }
                     else
@@ -1430,6 +1475,7 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                     {
                         var tones = f.SelectedTones;
                         tryApplyTones(tones);
+                        initUndoRedoBuffer();
                     }
                     else
                     {
@@ -1495,6 +1541,8 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
                         try
                         {
                             ignorePlayingFlag++;
+                            pushCurrentTone();
+
                             ApplyTone(tones.ToArray()[0]);
                             ((IFmTimbre)Timbre).PatchInfo = null;
                             metroTextBoxPatchFile.Text = String.Empty;
@@ -1789,6 +1837,110 @@ namespace zanac.MAmidiMEmo.Gui.FMEditor
 
                 MessageBox.Show(Resources.FailedLaunch + "\r\n" + ex.Message);
             }
+        }
+
+        private void metroButtonUndo_Click(object sender, EventArgs e)
+        {
+            if (toneUndoStack.Count == 0)
+                return;
+
+            String ctext = getCurrentTone();
+            bool applied = false;
+
+            var text = toneUndoStack.Pop();
+            IEnumerable<Tone> tones = ImportTone(text);
+            if (tones != null && tones.Count() > 0)
+            {
+                if (tones.Count() == 1)
+                {
+                    try
+                    {
+                        ignorePlayingFlag++;
+                        ApplyTone(tones.ToArray()[0]);
+                        ((IFmTimbre)Timbre).PatchInfo = null;
+                        metroTextBoxPatchFile.Text = String.Empty;
+                        applied = true;
+                    }
+                    finally
+                    {
+                        ignorePlayingFlag--;
+                    }
+                    try
+                    {
+                        ignorePushCurrentTone = true;
+                        Control_ValueChanged(this, null);
+                    }
+                    finally
+                    {
+                        ignorePushCurrentTone = false;
+                    }
+                }
+            }
+            
+            metroButtonUndo.Enabled = toneUndoStack.Count != 0;
+
+            if (applied)
+                toneRedoStack.Push(ctext);
+            metroButtonRedo.Enabled = toneRedoStack.Count != 0;
+        }
+
+        private void metroButtonRedo_Click(object sender, EventArgs e)
+        {
+            if (toneRedoStack.Count == 0)
+                return;
+
+            String ctext = getCurrentTone();
+            bool applied = false;
+
+            var text = toneRedoStack.Pop();
+            IEnumerable<Tone> tones = ImportTone(text);
+            if (tones != null && tones.Count() > 0)
+            {
+                if (tones.Count() == 1)
+                {
+                    try
+                    {
+                        ignorePlayingFlag++;
+                        ApplyTone(tones.ToArray()[0]);
+                        ((IFmTimbre)Timbre).PatchInfo = null;
+                        metroTextBoxPatchFile.Text = String.Empty;
+                        applied = true;
+                    }
+                    finally
+                    {
+                        ignorePlayingFlag--;
+                    }
+                    try
+                    {
+                        ignorePushCurrentTone = true;
+                        Control_ValueChanged(this, null);
+                    }
+                    finally
+                    {
+                        ignorePushCurrentTone = false;
+                    }
+                }
+            }
+            if(applied)
+                toneUndoStack.Push(ctext);
+            metroButtonUndo.Enabled = toneUndoStack.Count != 0;
+
+            metroButtonRedo.Enabled = toneRedoStack.Count != 0;
+        }
+
+        private void initUndoRedoBuffer()
+        {
+            toneUndoStack.Clear();
+            toneRedoStack.Clear();
+            metroButtonUndo.Enabled = false;
+            metroButtonRedo.Enabled = false;
+
+            pushCurrentTone();
+        }
+
+        private void metroButtonPush_Click(object sender, EventArgs e)
+        {
+            pushCurrentTone();
         }
     }
 }
