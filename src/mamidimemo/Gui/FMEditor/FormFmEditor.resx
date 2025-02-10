@@ -127,11 +127,18 @@
   <data name="panelPiano.Size" type="System.Drawing.Size, System.Drawing">
     <value>1290, 100</value>
   </data>
-  <data name="metroButton1.ToolTip" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;metroButtonTimbre.Name" xml:space="preserve">
+    <value>metroButtonTimbre</value>
   </data>
-  <data name="metroButtonUndo.ToolTip1" xml:space="preserve">
-    <value />
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items114" xml:space="preserve">
+    <value>114</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items75" xml:space="preserve">
+    <value>75</value>
   </data>
   <data name="metroTextBoxTarget.ToolTip1" xml:space="preserve">
     <value>(Write randomize target register and untarget( prefix "!" ) names here. Separated with comma. )</value>
@@ -140,21 +147,20 @@
   <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="&gt;&gt;buttonOK.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
   <data name="metroComboBoxTimbres.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
   <data name="toolStripComboBoxCC.Items69" xml:space="preserve">
     <value>69</value>
   </data>
-  <data name="toolStripComboBoxCC.Items68" xml:space="preserve">
-    <value>68</value>
+  <data name="metroButtonRand1.ToolTip" xml:space="preserve">
+    <value />
   </data>
-  <data name="&gt;&gt;toolStripComboBoxCh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="metroTextBoxTarget.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="pianoControl1.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="toolStripComboBoxCC.Items63" xml:space="preserve">
     <value>63</value>
@@ -189,8 +195,8 @@
   <data name="flowLayoutPanel1.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
-    <value>toolTip1</value>
+  <data name="&gt;&gt;pianoControl1.Parent" xml:space="preserve">
+    <value>panelPiano</value>
   </data>
   <data name="metroButtonRand1.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -219,11 +225,11 @@
   <data name="toolStripComboBoxCC.Items34" xml:space="preserve">
     <value>34</value>
   </data>
-  <data name="metroButtonImportAllGit.Text" xml:space="preserve">
-    <value>Import all Gi&amp;t...</value>
+  <data name="toolStrip2.ToolTip" xml:space="preserve">
+    <value />
   </data>
-  <data name="&gt;&gt;metroButtonCopy.ZOrder" xml:space="preserve">
-    <value>9</value>
+  <data name="metroButtonImportAllGit.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="splitContainer1.Size" type="System.Drawing.Size, System.Drawing">
     <value>1290, 591</value>
@@ -234,14 +240,20 @@
   <data name="metroButtonRedo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
+  <data name="&gt;&gt;metroButtonRand1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="metroComboBoxTimbres.Location" type="System.Drawing.Point, System.Drawing">
+    <value>110, 4</value>
+  </data>
   <data name="metroButtonExport.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="metroButtonAbort.Location" type="System.Drawing.Point, System.Drawing">
     <value>1186, 10</value>
   </data>
-  <data name="metroButtonRedo.ToolTip" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;metroButtonPush.Name" xml:space="preserve">
+    <value>metroButtonPush</value>
   </data>
   <data name="toolStripComboBoxCC.Items1" xml:space="preserve">
     <value>1</value>
@@ -261,8 +273,8 @@
   <data name="&gt;&gt;metroTextBoxTarget.Name" xml:space="preserve">
     <value>metroTextBoxTarget</value>
   </data>
-  <data name="metroButtonExportAll.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1186, 7</value>
+  <data name="metroButton1.Text" xml:space="preserve">
+    <value>Ext tool&amp;1...</value>
   </data>
   <data name="toolStripComboBoxCC.Items" xml:space="preserve">
     <value>0</value>
@@ -270,17 +282,17 @@
   <data name="metroTextBoxPatchFile.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="toolStripLabel1.Text" xml:space="preserve">
-    <value>Note</value>
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="toolStripButton1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 24</value>
+  <data name="metroButtonImportAllGit.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="metroTextBoxTargetMinMax.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="checkBoxHidePropAre.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="metroButtonTimbre.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
+  <data name="&gt;&gt;checkBoxHidePropAre.Name" xml:space="preserve">
+    <value>checkBoxHidePropAre</value>
   </data>
   <data name="&gt;&gt;panelPiano.Name" xml:space="preserve">
     <value>panelPiano</value>
@@ -288,14 +300,20 @@
   <data name="toolStripLabel2.Size" type="System.Drawing.Size, System.Drawing">
     <value>43, 24</value>
   </data>
-  <data name="buttonOK.ToolTip" xml:space="preserve">
-    <value>Close and apply editor data.</value>
+  <data name="toolStripComboBoxCC.Items42" xml:space="preserve">
+    <value>42</value>
   </data>
-  <data name="&gt;&gt;metroButtonImportGit.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;metroButtonPaste.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="tableLayoutPanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
+  </data>
+  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>882, 492</value>
+  </data>
+  <data name="&gt;&gt;metroLabel1.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="&gt;&gt;metroButtonTimbre.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
@@ -303,17 +321,14 @@
   <data name="metroButtonParams.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="metroButtonCopy.ToolTip" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;metroButtonExportAll.Name" xml:space="preserve">
-    <value>metroButtonExportAll</value>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;metroButtonRand1.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.Parent" xml:space="preserve">
-    <value>$this</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -333,32 +348,29 @@
   <data name="toolStripComboBoxCC.Items126" xml:space="preserve">
     <value>126</value>
   </data>
-  <data name="&gt;&gt;metroLabel1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
+  <data name="toolStripComboBoxCC.Items116" xml:space="preserve">
+    <value>116</value>
   </data>
   <data name="metroButtonImportGit.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
+  <data name="tableLayoutPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
   <data name="toolStrip2.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="pianoControl1.ToolTip" xml:space="preserve">
-    <value />
+  <data name="flowLayoutPanel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>67, 62</value>
   </data>
   <data name="&gt;&gt;contextMenuStripProp.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>FM Synthesis Editor</value>
+  <data name="metroButtonImportAll.Location" type="System.Drawing.Point, System.Drawing">
+    <value>970, 7</value>
   </data>
-  <data name="metroButtonExportAll.Text" xml:space="preserve">
-    <value>&amp;Export all...</value>
-  </data>
-  <data name="metroButtonImportAllGit.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items92" xml:space="preserve">
-    <value>92</value>
+  <data name="toolStripComboBoxCC.Items121" xml:space="preserve">
+    <value>121</value>
   </data>
   <data name="toolStripComboBoxCC.Items111" xml:space="preserve">
     <value>111</value>
@@ -375,14 +387,14 @@
   <data name="metroTextBoxTarget.Location" type="System.Drawing.Point, System.Drawing">
     <value>223, 6</value>
   </data>
+  <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
   <data name="metroButtonPush.Text" xml:space="preserve">
     <value>Manual Push</value>
   </data>
   <data name="pianoControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
-  </data>
-  <data name="&gt;&gt;buttonCancel.Name" xml:space="preserve">
-    <value>buttonCancel</value>
   </data>
   <data name="metroButtonImport.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 68</value>
@@ -396,6 +408,9 @@
   <data name="metroButtonPaste.Text" xml:space="preserve">
     <value>&amp;Paste data</value>
   </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 27</value>
+  </data>
   <data name="panelPiano.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
   </data>
@@ -405,8 +420,8 @@
   <data name="toolStripComboBoxCh.Items5" xml:space="preserve">
     <value>A5(6ch)</value>
   </data>
-  <data name="metroButtonImport.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
+  <data name="resetToDefaultThisPropertyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>226, 22</value>
   </data>
   <data name="&gt;&gt;panelPiano.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -450,8 +465,11 @@
   <data name="metroButtonExport.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxNote.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;metroLabel1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="tableLayoutPanel1.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="metroLabel1.Text" xml:space="preserve">
     <value>Patch fi&amp;le:</value>
@@ -459,8 +477,8 @@
   <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="metroButtonTimbre.ToolTip" xml:space="preserve">
-    <value />
+  <data name="metroTextBoxTargetMinMax.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel3.Type" xml:space="preserve">
     <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -471,8 +489,8 @@
   <data name="&gt;&gt;metroButtonUndo.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="metroButtonPaste.ToolTip" xml:space="preserve">
-    <value />
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;metroTextBoxPatchFile.ZOrder" xml:space="preserve">
     <value>8</value>
@@ -483,8 +501,8 @@
   <data name="flowLayoutPanel1.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;toolStripComboBoxCC.Name" xml:space="preserve">
-    <value>toolStripComboBoxCC</value>
+  <data name="metroComboBoxTimbres.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonCopy.Text" xml:space="preserve">
     <value>Cop&amp;y data</value>
@@ -498,17 +516,20 @@
   <data name="splitContainer1.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 97</value>
   </data>
-  <data name="metroButtonRand1.ToolTip" xml:space="preserve">
-    <value />
+  <data name="toolStripComboBoxCC.Items122" xml:space="preserve">
+    <value>122</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripComboBoxCC.Items23" xml:space="preserve">
+    <value>23</value>
   </data>
   <data name="toolStripComboBoxCC.Items41" xml:space="preserve">
     <value>41</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel2.Parent" xml:space="preserve">
     <value>splitContainer1</value>
+  </data>
+  <data name="metroButtonImportAllGit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="metroButtonRand1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -522,19 +543,7 @@
   <data name="&gt;&gt;metroButtonParams.Name" xml:space="preserve">
     <value>metroButtonParams</value>
   </data>
-  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 60</value>
-  </data>
-  <data name="&gt;&gt;toolStripLabel5.Name" xml:space="preserve">
-    <value>toolStripLabel5</value>
-  </data>
-  <data name="&gt;&gt;metroButtonImportAll.Name" xml:space="preserve">
-    <value>metroButtonImportAll</value>
-  </data>
-  <data name="splitContainer1.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="metroButtonPush.ToolTip" xml:space="preserve">
+  <data name="buttonCancel.ToolTip1" xml:space="preserve">
     <value />
   </data>
   <data name="&gt;&gt;metroButtonPush.Parent" xml:space="preserve">
@@ -549,8 +558,8 @@
   <data name="propertyGrid.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9.75pt</value>
   </data>
-  <data name="&gt;&gt;metroButtonRand1.Name" xml:space="preserve">
-    <value>metroButtonRand1</value>
+  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>1300, 830</value>
@@ -564,26 +573,26 @@
   <data name="&gt;&gt;splitContainer1.Panel1.Name" xml:space="preserve">
     <value>splitContainer1.Panel1</value>
   </data>
-  <data name="metroButtonImportAll.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
+  <data name="checkBoxHidePropAre.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="metroButtonImport.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="toolStripComboBoxCC.Items58" xml:space="preserve">
+    <value>58</value>
   </data>
-  <data name="metroButtonAbort.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="metroButtonUndo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 37</value>
   </data>
   <data name="metroLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 31</value>
   </data>
-  <data name="toolStripComboBoxCC.Items95" xml:space="preserve">
-    <value>95</value>
+  <data name="toolStripComboBoxCC.Items96" xml:space="preserve">
+    <value>96</value>
   </data>
-  <data name="metroTextBoxTarget.ToolTip" xml:space="preserve">
-    <value>(Write randomize target register and untarget( prefix "!" ) names here. Separated with comma. )</value>
+  <data name="&gt;&gt;metroLabel1.Name" xml:space="preserve">
+    <value>metroLabel1</value>
   </data>
-  <data name="panelPiano.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="metroButtonImport.ToolTip" xml:space="preserve">
     <value />
@@ -594,8 +603,8 @@
   <data name="toolStripButtonHook.ToolTipText" xml:space="preserve">
     <value>Hook all MIDI event for editor.</value>
   </data>
-  <data name="toolStripComboBoxCC.Items124" xml:space="preserve">
-    <value>124</value>
+  <data name="&gt;&gt;buttonOK.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel2.ZOrder" xml:space="preserve">
     <value>1</value>
@@ -603,11 +612,11 @@
   <data name="tableLayoutPanel3.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 788</value>
   </data>
-  <data name="splitContainer1.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="metroTextBoxPatchFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>400, 67</value>
   </data>
-  <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 27</value>
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 60</value>
   </data>
   <data name="metroButtonPush.Location" type="System.Drawing.Point, System.Drawing">
     <value>223, 37</value>
@@ -630,11 +639,8 @@
   <data name="&gt;&gt;metroComboBoxTimbres.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroComboBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="toolStrip2.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
   </data>
   <data name="toolStripLabel3.Text" xml:space="preserve">
     <value>Gate</value>
@@ -657,29 +663,23 @@
   <data name="metroButtonTimbre.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 22</value>
   </data>
-  <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
-    <value>223, 68</value>
+  <data name="tableLayoutPanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="toolStripComboBoxCh.Items3" xml:space="preserve">
+    <value>A3(4ch)</value>
   </data>
   <data name="toolStripComboBoxCh.Items9" xml:space="preserve">
     <value>A9(10ch)</value>
   </data>
-  <data name="splitContainer1.Panel2.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="toolStripComboBoxCC.Items87" xml:space="preserve">
-    <value>87</value>
-  </data>
   <data name="toolStripComboBoxGate.Items2" xml:space="preserve">
     <value>2000ms</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items116" xml:space="preserve">
-    <value>116</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="toolStripComboBoxCC.Items108" xml:space="preserve">
-    <value>108</value>
+  <data name="&gt;&gt;toolStripComboBoxCC.Name" xml:space="preserve">
+    <value>toolStripComboBoxCC</value>
   </data>
   <data name="panel1.ToolTip" xml:space="preserve">
     <value />
@@ -687,8 +687,8 @@
   <data name="toolStripComboBoxCh.Size" type="System.Drawing.Size, System.Drawing">
     <value>99, 27</value>
   </data>
-  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="metroButtonExport.Location" type="System.Drawing.Point, System.Drawing">
+    <value>223, 68</value>
   </data>
   <data name="toolStripComboBoxCC.Items49" xml:space="preserve">
     <value>49</value>
@@ -711,8 +711,8 @@
   <data name="toolStripComboBoxCC.Items43" xml:space="preserve">
     <value>43</value>
   </data>
-  <data name="toolStripComboBoxCC.Items42" xml:space="preserve">
-    <value>42</value>
+  <data name="toolStripLabel1.Text" xml:space="preserve">
+    <value>Note</value>
   </data>
   <data name="metroButtonPush.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -729,8 +729,8 @@
   <data name="toolStripComboBoxCC.Items45" xml:space="preserve">
     <value>45</value>
   </data>
-  <data name="splitContainer1.Panel1MinSize" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="toolStripComboBoxCC.Items44" xml:space="preserve">
+    <value>44</value>
   </data>
   <data name="toolStripComboBoxCC.Items9" xml:space="preserve">
     <value>9</value>
@@ -738,11 +738,8 @@
   <data name="toolStripComboBoxCC.Items19" xml:space="preserve">
     <value>19</value>
   </data>
-  <data name="metroButtonParams.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;toolStripComboBoxCC.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripComboBoxCC.Items87" xml:space="preserve">
+    <value>87</value>
   </data>
   <data name="&gt;&gt;metroToolTip1.Type" xml:space="preserve">
     <value>MetroFramework.Components.MetroToolTip, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
@@ -768,8 +765,8 @@
   <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="toolStripComboBoxCC.Items15" xml:space="preserve">
-    <value>15</value>
+  <data name="metroButtonImportAllGit.Text" xml:space="preserve">
+    <value>Import all Gi&amp;t...</value>
   </data>
   <data name="toolStripComboBoxCC.Items14" xml:space="preserve">
     <value>14</value>
@@ -780,8 +777,8 @@
   <data name="metroButtonImportAllGit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="tableLayoutPanel2.ToolTip" xml:space="preserve">
-    <value />
+  <data name="toolStripButton1.Text" xml:space="preserve">
+    <value>Panic!</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>882, 97</value>
@@ -789,8 +786,14 @@
   <data name="&gt;&gt;metroButtonAbort.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="metroButtonRedo.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items29" xml:space="preserve">
+    <value>29</value>
   </data>
   <data name="toolStripButtonPlay.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
@@ -804,20 +807,11 @@
   <data name="metroButtonRand1.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 6</value>
   </data>
-  <data name="metroButtonExport.ToolTip" xml:space="preserve">
+  <data name="splitContainer1.ToolTip" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;checkBoxHidePropAre.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items78" xml:space="preserve">
-    <value>78</value>
-  </data>
-  <data name="flowLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="splitContainer1.Panel2.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="buttonOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -825,11 +819,14 @@
   <data name="toolStripButtonPlay.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 24</value>
   </data>
-  <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+  <data name="metroButton1.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;metroButtonAbort.Name" xml:space="preserve">
     <value>metroButtonAbort</value>
+  </data>
+  <data name="metroButtonAbort.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="&gt;&gt;toolStripButtonPlay.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -843,12 +840,6 @@
   <data name="&gt;&gt;metroButtonExportAll.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="metroTextBoxTargetMinMax.Location" type="System.Drawing.Point, System.Drawing">
-    <value>534, 6</value>
-  </data>
-  <data name="metroButtonImportAllGit.ToolTip1" xml:space="preserve">
-    <value />
-  </data>
   <data name="toolStripComboBoxCC.Items52" xml:space="preserve">
     <value>52</value>
   </data>
@@ -860,6 +851,9 @@
   </data>
   <data name="propertyGrid.ToolTip1" xml:space="preserve">
     <value />
+  </data>
+  <data name="metroButtonParams.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="metroButtonRand1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
@@ -879,8 +873,8 @@
   <data name="toolStripComboBoxCC.Items109" xml:space="preserve">
     <value>109</value>
   </data>
-  <data name="toolStripComboBoxCC.Items88" xml:space="preserve">
-    <value>88</value>
+  <data name="&gt;&gt;metroButtonUndo.Name" xml:space="preserve">
+    <value>metroButtonUndo</value>
   </data>
   <data name="toolStripComboBoxCh.Items10" xml:space="preserve">
     <value>A10(11ch)</value>
@@ -897,26 +891,35 @@
   <data name="toolStripComboBoxCh.Items14" xml:space="preserve">
     <value>A14(15ch)</value>
   </data>
-  <data name="flowLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="&gt;&gt;toolStrip2.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.ComponentModel.ToolStripBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="metroButtonExportAll.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
+  <data name="metroButtonPaste.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
   <data name="&gt;&gt;toolStripLabel5.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="metroTextBoxTarget.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="&gt;&gt;tableLayoutPanel3.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="toolStripComboBoxCC.Items106" xml:space="preserve">
     <value>106</value>
   </data>
+  <data name="&gt;&gt;toolStrip2.Name" xml:space="preserve">
+    <value>toolStrip2</value>
+  </data>
   <data name="toolStripLabel4.Text" xml:space="preserve">
     <value>Velocity</value>
   </data>
-  <data name="&gt;&gt;metroButton1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel3</value>
+  <data name="&gt;&gt;metroButtonRand1.Name" xml:space="preserve">
+    <value>metroButtonRand1</value>
+  </data>
+  <data name="metroButtonRand1.Text" xml:space="preserve">
+    <value>&amp;Rand all</value>
   </data>
   <data name="&gt;&gt;toolStripComboBoxGate.Name" xml:space="preserve">
     <value>toolStripComboBoxGate</value>
@@ -936,23 +939,20 @@
   <data name="metroButtonParams.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="metroComboBoxTimbres.ToolTip1" xml:space="preserve">
-    <value />
-  </data>
-  <data name="metroButtonImport.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="toolStripComboBoxCC.Items22" xml:space="preserve">
+    <value>22</value>
   </data>
   <data name="toolStripComboBoxCC.Items89" xml:space="preserve">
     <value>89</value>
   </data>
-  <data name="toolStripComboBoxCh.Items6" xml:space="preserve">
-    <value>A6(7ch)</value>
+  <data name="toolStripComboBoxCC.Items88" xml:space="preserve">
+    <value>88</value>
   </data>
   <data name="metroButtonRedo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="metroTextBoxTargetMinMax.Size" type="System.Drawing.Size, System.Drawing">
-    <value>341, 23</value>
+  <data name="&gt;&gt;toolStripComboBoxCC.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="flowLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -963,8 +963,8 @@
   <data name="toolStripComboBoxCC.Items83" xml:space="preserve">
     <value>83</value>
   </data>
-  <data name="toolStripLabel4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 24</value>
+  <data name="&gt;&gt;metroButtonImportGit.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="toolStripComboBoxCC.Items81" xml:space="preserve">
     <value>81</value>
@@ -990,8 +990,8 @@
   <data name="toolStripComboBoxCC.Items59" xml:space="preserve">
     <value>59</value>
   </data>
-  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
-    <value>884</value>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
   </data>
   <data name="&gt;&gt;metroButtonImportAll.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
@@ -1008,11 +1008,11 @@
   <data name="metroButtonImport.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="toolStripComboBoxCC.Items51" xml:space="preserve">
-    <value>51</value>
+  <data name="&gt;&gt;toolStripLabel5.Name" xml:space="preserve">
+    <value>toolStripLabel5</value>
   </data>
-  <data name="&gt;&gt;contextMenuStripProp.Name" xml:space="preserve">
-    <value>contextMenuStripProp</value>
+  <data name="toolStripComboBoxCC.Items50" xml:space="preserve">
+    <value>50</value>
   </data>
   <data name="&gt;&gt;metroButtonRedo.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1029,20 +1029,17 @@
   <data name="toolStripComboBoxCC.Items6" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="metroButtonUndo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 37</value>
+  <data name="tableLayoutPanel2.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;metroComboBoxTimbres.Name" xml:space="preserve">
     <value>metroComboBoxTimbres</value>
   </data>
+  <data name="metroTextBoxTargetMinMax.Size" type="System.Drawing.Size, System.Drawing">
+    <value>341, 23</value>
+  </data>
   <data name="metroTextBoxTarget.Size" type="System.Drawing.Size, System.Drawing">
     <value>303, 23</value>
-  </data>
-  <data name="&gt;&gt;tableLayoutPanel3.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="buttonCancel.ToolTip1" xml:space="preserve">
-    <value />
   </data>
   <data name="splitContainer1.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -1062,50 +1059,44 @@
   <data name="toolStripComboBoxCC.Items3" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="toolStripComboBoxCC.Items7" xml:space="preserve">
-    <value>7</value>
+  <data name="metroButtonExportAll.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
   <data name="&gt;&gt;buttonOK.Name" xml:space="preserve">
     <value>buttonOK</value>
   </data>
-  <data name="metroButtonAbort.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
+  <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>227, 26</value>
   </data>
-  <data name="toolStripComboBoxCC.Items67" xml:space="preserve">
-    <value>67</value>
+  <data name="toolStripComboBoxCC.Items68" xml:space="preserve">
+    <value>68</value>
   </data>
   <data name="&gt;&gt;metroButtonRedo.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="metroButtonExportAll.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="buttonOK.ToolTip" xml:space="preserve">
+    <value>Close and apply editor data.</value>
   </data>
-  <data name="toolStripComboBoxCC.Items121" xml:space="preserve">
-    <value>121</value>
+  <data name="toolStripComboBoxCC.Items51" xml:space="preserve">
+    <value>51</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel4.Name" xml:space="preserve">
-    <value>toolStripLabel4</value>
-  </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 27</value>
-  </data>
-  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items107" xml:space="preserve">
-    <value>107</value>
+  <data name="metroButtonCopy.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;metroTextBoxTarget.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;metroButtonRedo.Name" xml:space="preserve">
-    <value>metroButtonRedo</value>
+  <data name="metroButtonImport.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="&gt;&gt;metroComboBoxTimbres.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroComboBoxTimbres" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonImportAll" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonImportAllGit" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonExportAll" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="metroButtonTimbre" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,Percent,100,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items21" xml:space="preserve">
+    <value>21</value>
   </data>
   <data name="toolStripComboBoxCC.Items28" xml:space="preserve">
     <value>28</value>
@@ -1116,14 +1107,11 @@
   <data name="metroButtonCopy.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
   </data>
-  <data name="metroTextBoxPatchFile.ToolTip1" xml:space="preserve">
-    <value />
-  </data>
   <data name="toolStrip2.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="metroButton1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="contextMenuStripProp.ToolTip" xml:space="preserve">
     <value />
@@ -1131,20 +1119,23 @@
   <data name="metroButtonParams.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
   </data>
-  <data name="&gt;&gt;metroButtonRand1.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
-  </data>
   <data name="toolStripButtonPlay.Text" xml:space="preserve">
     <value>PlayOnEdit</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="tableLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
   <data name="tableLayoutPanel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>1290, 37</value>
   </data>
-  <data name="metroButtonRedo.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 37</value>
+  <data name="toolStripComboBoxCC.Items127" xml:space="preserve">
+    <value>127</value>
+  </data>
+  <data name="metroButtonImportAll.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="metroButtonImportAll.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1152,59 +1143,53 @@
   <data name="splitContainer1.Panel2.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="metroButtonImportAllGit.ToolTip" xml:space="preserve">
-    <value />
+  <data name="metroButtonTimbre.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="tableLayoutPanel3.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="metroButtonExportAll.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;resetToDefaultThisPropertyToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;metroButtonUndo.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="metroComboBoxTimbres.Size" type="System.Drawing.Size, System.Drawing">
     <value>852, 29</value>
   </data>
-  <data name="metroButton1.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;metroTextBoxTargetMinMax.Name" xml:space="preserve">
+    <value>metroTextBoxTargetMinMax</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel2.Name" xml:space="preserve">
-    <value>toolStripLabel2</value>
+  <data name="metroButtonRedo.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="metroButtonImportAll.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.Parent" xml:space="preserve">
     <value>splitContainer1</value>
   </data>
-  <data name="&gt;&gt;toolStripButtonHook.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripLabel4.Name" xml:space="preserve">
+    <value>toolStripLabel4</value>
   </data>
-  <data name="toolStripComboBoxCC.Items123" xml:space="preserve">
-    <value>123</value>
-  </data>
-  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1290, 765</value>
-  </data>
-  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="metroButtonRedo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="metroButtonImportGit.ToolTip" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;toolStripLabel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripComboBoxNote.Name" xml:space="preserve">
     <value>toolStripComboBoxNote</value>
   </data>
+  <data name="metroButtonUndo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonImportGit.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>TopDown</value>
+  </data>
   <data name="&gt;&gt;metroTextBoxPatchFile.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroTextBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="metroComboBoxTimbres.ItemHeight" type="System.Int32, mscorlib">
-    <value>23</value>
+  <data name="&gt;&gt;metroButton1.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
-  <data name="toolStripComboBoxCC.Items5" xml:space="preserve">
-    <value>5</value>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1290, 765</value>
   </data>
   <data name="splitContainer1.Panel1.ToolTip" xml:space="preserve">
     <value />
@@ -1215,8 +1200,8 @@
   <data name="&gt;&gt;metroButtonImportAllGit.Name" xml:space="preserve">
     <value>metroButtonImportAllGit</value>
   </data>
-  <data name="metroButtonImport.Text" xml:space="preserve">
-    <value>&amp;Import...</value>
+  <data name="&gt;&gt;toolStripComboBoxGate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="metroButtonAbort.Text" xml:space="preserve">
     <value>&amp;Abort</value>
@@ -1236,17 +1221,14 @@
   <data name="contextMenuStripProp.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="metroButtonUndo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="toolStripComboBoxCh.Items6" xml:space="preserve">
+    <value>A6(7ch)</value>
   </data>
   <data name="metroLabel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="toolStripComboBoxCh.Items7" xml:space="preserve">
-    <value>A7(8ch)</value>
-  </data>
-  <data name="metroButtonImportAll.Text" xml:space="preserve">
-    <value>Import &amp;all...</value>
+  <data name="metroButton1.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="checkBoxHidePropAre.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1254,14 +1236,11 @@
   <data name="tableLayoutPanel3.ColumnCount" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="toolStripComboBoxCC.Items93" xml:space="preserve">
     <value>93</value>
   </data>
-  <data name="metroButtonUndo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+  <data name="toolStripComboBoxCC.Items92" xml:space="preserve">
+    <value>92</value>
   </data>
   <data name="toolStripComboBoxCC.Items91" xml:space="preserve">
     <value>91</value>
@@ -1269,14 +1248,14 @@
   <data name="toolStripComboBoxCC.Items90" xml:space="preserve">
     <value>90</value>
   </data>
-  <data name="toolStripComboBoxVelo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>99, 27</value>
+  <data name="metroButtonParams.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="toolStripComboBoxCC.Items96" xml:space="preserve">
-    <value>96</value>
+  <data name="metroComboBoxTimbres.ItemHeight" type="System.Int32, mscorlib">
+    <value>23</value>
   </data>
-  <data name="toolStripButton1.Text" xml:space="preserve">
-    <value>Panic!</value>
+  <data name="toolStripComboBoxCC.Items95" xml:space="preserve">
+    <value>95</value>
   </data>
   <data name="toolStripButton1.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
@@ -1290,11 +1269,14 @@
   <data name="metroLabel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>330, 64</value>
   </data>
-  <data name="&gt;&gt;toolStripLabel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1078, 10</value>
   </data>
   <data name="panelPiano.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="panelPiano.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 688</value>
   </data>
   <data name="toolStripComboBoxCC.Items99" xml:space="preserve">
     <value>99</value>
@@ -1311,26 +1293,23 @@
   <data name="metroButtonPush.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="toolStripComboBoxCC.Items50" xml:space="preserve">
-    <value>50</value>
+  <data name="toolStripComboBoxCC.Items7" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="panelPiano.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="&gt;&gt;metroButtonCopy.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="propertyGrid.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+  <data name="metroButtonExportAll.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="&gt;&gt;checkBoxHidePropAre.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="resetToDefaultThisPropertyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 22</value>
+  <data name="metroButtonTimbre.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="metroLabel1.ToolTip1" xml:space="preserve">
     <value />
@@ -1338,8 +1317,8 @@
   <data name="&gt;&gt;toolStripButtonPlay.Name" xml:space="preserve">
     <value>toolStripButtonPlay</value>
   </data>
-  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="panelPiano.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="propertyGrid.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -1356,14 +1335,11 @@
   <data name="&gt;&gt;metroButtonExportAll.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
   </data>
-  <data name="metroButtonImportAll.ToolTip" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;metroButtonRand1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
   </data>
-  <data name="&gt;&gt;metroButtonRand1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="metroButtonExport.Text" xml:space="preserve">
-    <value>Ex&amp;port...</value>
+  <data name="metroTextBoxTargetMinMax.Location" type="System.Drawing.Point, System.Drawing">
+    <value>534, 6</value>
   </data>
   <data name="toolStripComboBoxCC.Items117" xml:space="preserve">
     <value>117</value>
@@ -1374,23 +1350,29 @@
   <data name="metroButtonAbort.ToolTip1" xml:space="preserve">
     <value>Close and does not undo data to initial data.</value>
   </data>
-  <data name="pianoControl1.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="toolStripComboBoxGate.Items" xml:space="preserve">
+    <value>500ms</value>
   </data>
-  <data name="metroTextBoxTarget.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="pianoControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 27</value>
+  </data>
+  <data name="metroButtonPaste.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="panel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
-  </data>
-  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
   </data>
   <data name="buttonOK.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="toolStripLabel2.Text" xml:space="preserve">
-    <value>Key Ch</value>
+  <data name="&gt;&gt;contextMenuStripProp.Name" xml:space="preserve">
+    <value>contextMenuStripProp</value>
   </data>
-  <data name="panel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="metroButtonParams.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 6</value>
+  </data>
+  <data name="tableLayoutPanel3.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;metroButtonExport.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -1400,12 +1382,6 @@
   </data>
   <data name="tableLayoutPanel1.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
-  </data>
-  <data name="metroButtonTimbre.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items113" xml:space="preserve">
-    <value>113</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Panel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1419,14 +1395,11 @@
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FormFmEditor</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="metroLabel1.ToolTip" xml:space="preserve">
+  <data name="metroButtonImport.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;buttonOK.Parent" xml:space="preserve">
-    <value>tableLayoutPanel3</value>
+  <data name="metroButton1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tableLayoutPanel3.RowCount" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1437,8 +1410,11 @@
   <data name="toolStripComboBoxCh.Items13" xml:space="preserve">
     <value>A13(14ch)</value>
   </data>
-  <data name="tableLayoutPanel2.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
+  <data name="toolStripComboBoxCC.Items5" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="metroButtonExportAll.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="&gt;&gt;metroButton1.Name" xml:space="preserve">
     <value>metroButton1</value>
@@ -1452,20 +1428,11 @@
   <data name="toolStripComboBoxCC.Items39" xml:space="preserve">
     <value>39</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>zanac.MAmidiMEmo.Gui.FormBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
-    <value>toolStripSeparator1</value>
-  </data>
-  <data name="metroButtonUndo.ToolTip" xml:space="preserve">
-    <value />
+  <data name="metroTextBoxTarget.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonOK.ToolTip1" xml:space="preserve">
     <value>Close and apply editor data.</value>
-  </data>
-  <data name="&gt;&gt;metroButtonImportGit.Parent" xml:space="preserve">
-    <value>tableLayoutPanel1</value>
   </data>
   <data name="tableLayoutPanel3.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -1485,8 +1452,11 @@
   <data name="&gt;&gt;metroButtonRedo.ZOrder" xml:space="preserve">
     <value>12</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxCh.Name" xml:space="preserve">
-    <value>toolStripComboBoxCh</value>
+  <data name="metroButtonAbort.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
+  </data>
+  <data name="&gt;&gt;checkBoxHidePropAre.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="toolStripComboBoxCC.Items97" xml:space="preserve">
     <value>97</value>
@@ -1497,23 +1467,17 @@
   <data name="&gt;&gt;checkBoxHidePropAre.Parent" xml:space="preserve">
     <value>tableLayoutPanel3</value>
   </data>
-  <data name="metroButton1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripComboBoxNote.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="panelPiano.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="metroTextBoxTarget.ToolTip" xml:space="preserve">
+    <value>(Write randomize target register and untarget( prefix "!" ) names here. Separated with comma. )</value>
   </data>
-  <data name="checkBoxHidePropAre.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="metroButtonImportGit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+  <data name="&gt;&gt;toolStripComboBoxCh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="toolStripButtonHook.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 24</value>
@@ -1524,17 +1488,14 @@
   <data name="toolStripComboBoxCh.Items4" xml:space="preserve">
     <value>A4(5ch)</value>
   </data>
-  <data name="toolStripComboBoxCC.Items57" xml:space="preserve">
-    <value>57</value>
+  <data name="&gt;&gt;toolStrip2.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="metroButton1.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="metroButtonAbort.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;buttonCancel.Name" xml:space="preserve">
+    <value>buttonCancel</value>
   </data>
   <data name="metroLabel1.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -1542,20 +1503,20 @@
   <data name="splitContainer1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="toolStripComboBoxCC.Items82" xml:space="preserve">
-    <value>82</value>
+  <data name="toolStripComboBoxCC.Items124" xml:space="preserve">
+    <value>124</value>
   </data>
-  <data name="toolStripComboBoxCC.Items114" xml:space="preserve">
-    <value>114</value>
+  <data name="metroButtonRedo.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="toolStripComboBoxCC.Items104" xml:space="preserve">
     <value>104</value>
   </data>
-  <data name="metroLabel1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="toolStripLabel4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 24</value>
   </data>
-  <data name="&gt;&gt;metroButtonAbort.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="toolStripComboBoxCC.Items25" xml:space="preserve">
+    <value>25</value>
   </data>
   <data name="&gt;&gt;metroButtonTimbre.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -1566,8 +1527,11 @@
   <data name="&gt;&gt;panelPiano.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;metroButtonParams.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;propertyGrid.Parent" xml:space="preserve">
+    <value>splitContainer1.Panel2</value>
+  </data>
+  <data name="&gt;&gt;metroButtonImportGit.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="tableLayoutPanel3.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="metroButtonAbort" Row="1" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="buttonCancel" Row="1" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="buttonOK" Row="1" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="checkBoxHidePropAre" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="metroButton1" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,136,Percent,50,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="Percent,50,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
@@ -1578,8 +1542,8 @@
   <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="metroButtonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="checkBoxHidePropAre.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 9</value>
@@ -1596,19 +1560,19 @@
   <data name="toolStripComboBoxCC.Items4" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="&gt;&gt;metroTextBoxTargetMinMax.ZOrder" xml:space="preserve">
-    <value>7</value>
+  <data name="$this.ToolTip" xml:space="preserve">
+    <value />
   </data>
-  <data name="&gt;&gt;toolStrip2.Type" xml:space="preserve">
-    <value>zanac.MAmidiMEmo.ComponentModel.ToolStripBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;toolStripButtonHook.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripComboBoxCC.Items84" xml:space="preserve">
-    <value>84</value>
+  <data name="checkBoxHidePropAre.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="&gt;&gt;metroButtonAbort.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="panel1.ToolTip1" xml:space="preserve">
+  <data name="checkBoxHidePropAre.ToolTip1" xml:space="preserve">
     <value />
   </data>
   <data name="toolStripComboBoxGate.Items3" xml:space="preserve">
@@ -1619,6 +1583,9 @@
   </data>
   <data name="checkBoxHidePropAre.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 25</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1638,17 +1605,20 @@
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>5, 60</value>
   </data>
+  <data name="&gt;&gt;metroButton1.Parent" xml:space="preserve">
+    <value>tableLayoutPanel3</value>
+  </data>
   <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="tableLayoutPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="toolStripComboBoxCC.Items78" xml:space="preserve">
+    <value>78</value>
   </data>
   <data name="&gt;&gt;flowLayoutPanel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="toolStripComboBoxCC.Items44" xml:space="preserve">
-    <value>44</value>
+  <data name="metroButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
   <data name="metroButtonRand1.ToolTip1" xml:space="preserve">
     <value />
@@ -1656,23 +1626,20 @@
   <data name="panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
+  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 24</value>
+  </data>
   <data name="&gt;&gt;metroButtonExport.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="resetToDefaultThisPropertyToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Reset to default this property</value>
   </data>
-  <data name="&gt;&gt;toolStripButton1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripLabel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="$this.ToolTip" xml:space="preserve">
+  <data name="metroButtonImportAllGit.ToolTip" xml:space="preserve">
     <value />
-  </data>
-  <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>882, 492</value>
   </data>
   <data name="metroTextBoxTargetMinMax.ToolTip" xml:space="preserve">
     <value />
@@ -1683,17 +1650,17 @@
   <data name="tableLayoutPanel1.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;metroButtonTimbre.Name" xml:space="preserve">
-    <value>metroButtonTimbre</value>
+  <data name="metroButton1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
-  <data name="&gt;&gt;metroButtonImportAll.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
+    <value>toolTip1</value>
   </data>
-  <data name="metroButtonAbort.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+  <data name="metroButtonImportAll.Text" xml:space="preserve">
+    <value>Import &amp;all...</value>
   </data>
-  <data name="&gt;&gt;metroTextBoxTargetMinMax.Name" xml:space="preserve">
-    <value>metroTextBoxTargetMinMax</value>
+  <data name="metroButtonExport.Text" xml:space="preserve">
+    <value>Ex&amp;port...</value>
   </data>
   <data name="metroButtonImportGit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -1701,32 +1668,44 @@
   <data name="toolStripComboBoxCC.Items94" xml:space="preserve">
     <value>94</value>
   </data>
-  <data name="&gt;&gt;metroLabel1.Name" xml:space="preserve">
-    <value>metroLabel1</value>
+  <data name="metroTextBoxPatchFile.ToolTip1" xml:space="preserve">
+    <value />
   </data>
-  <data name="tableLayoutPanel1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
+  <data name="buttonCancel.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButton1.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
   </data>
   <data name="&gt;&gt;resetToDefaultThisPropertyToolStripMenuItem.Name" xml:space="preserve">
     <value>resetToDefaultThisPropertyToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;propertyGrid.Parent" xml:space="preserve">
-    <value>splitContainer1.Panel2</value>
+  <data name="&gt;&gt;metroTextBoxTargetMinMax.ZOrder" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="metroButtonImportAll.ToolTip1" xml:space="preserve">
     <value />
   </data>
+  <data name="metroTextBoxTarget.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
   <data name="metroButtonPush.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
   </data>
-  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>31, 24</value>
+  <data name="metroButtonRedo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>115, 37</value>
   </data>
   <data name="metroButtonRand1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="&gt;&gt;metroButtonUndo.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>FM Synthesis Editor</value>
+  </data>
+  <data name="metroButtonUndo.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;pianoControl1.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.Gui.PianoControl, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="toolStripComboBoxCC.Items64" xml:space="preserve">
     <value>64</value>
@@ -1734,11 +1713,11 @@
   <data name="&gt;&gt;metroButtonPaste.Name" xml:space="preserve">
     <value>metroButtonPaste</value>
   </data>
-  <data name="metroButtonRedo.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="&gt;&gt;metroButtonExportAll.Name" xml:space="preserve">
+    <value>metroButtonExportAll</value>
   </data>
-  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
-    <value>5</value>
+  <data name="metroButtonTimbre.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>None</value>
   </data>
   <data name="toolStripComboBoxCC.Items56" xml:space="preserve">
     <value>56</value>
@@ -1749,6 +1728,9 @@
   <data name="metroButtonPush.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
+  <data name="pianoControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
   <data name="buttonCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -1758,8 +1740,11 @@
   <data name="toolStripComboBoxCC.Items2" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="&gt;&gt;toolStrip2.Name" xml:space="preserve">
-    <value>toolStrip2</value>
+  <data name="&gt;&gt;metroButtonRedo.Name" xml:space="preserve">
+    <value>metroButtonRedo</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items24" xml:space="preserve">
+    <value>24</value>
   </data>
   <data name="toolStripComboBoxCh.Items8" xml:space="preserve">
     <value>A8(9ch)</value>
@@ -1782,26 +1767,26 @@
   <data name="toolStripComboBoxCC.Items16" xml:space="preserve">
     <value>16</value>
   </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items108" xml:space="preserve">
+    <value>108</value>
+  </data>
+  <data name="&gt;&gt;propertyGrid.Name" xml:space="preserve">
+    <value>propertyGrid</value>
+  </data>
+  <data name="metroLabel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="toolStripComboBoxCC.Items112" xml:space="preserve">
+    <value>112</value>
+  </data>
   <data name="toolStripComboBoxCC.Items118" xml:space="preserve">
     <value>118</value>
   </data>
-  <data name="metroTextBoxPatchFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>400, 67</value>
-  </data>
-  <data name="&gt;&gt;metroButtonTimbre.Parent" xml:space="preserve">
-    <value>tableLayoutPanel2</value>
-  </data>
-  <data name="&gt;&gt;buttonOK.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="metroButtonRand1.Text" xml:space="preserve">
-    <value>&amp;Rand all</value>
-  </data>
   <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items102" xml:space="preserve">
-    <value>102</value>
   </data>
   <data name="checkBoxHidePropAre.Text" xml:space="preserve">
     <value>Hide proper&amp;ty area</value>
@@ -1809,14 +1794,14 @@
   <data name="&gt;&gt;metroButtonExport.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="metroComboBoxTimbres.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="metroLabel1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="&gt;&gt;pianoControl1.Type" xml:space="preserve">
-    <value>zanac.MAmidiMEmo.Gui.PianoControl, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="toolStripComboBoxCC.Items123" xml:space="preserve">
+    <value>123</value>
   </data>
-  <data name="toolStripLabel5.Text" xml:space="preserve">
-    <value>CC</value>
+  <data name="toolStripComboBoxCC.Items113" xml:space="preserve">
+    <value>113</value>
   </data>
   <data name="toolStripComboBoxCC.Items103" xml:space="preserve">
     <value>103</value>
@@ -1824,11 +1809,8 @@
   <data name="metroButtonImportGit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="metroButtonParams.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="tableLayoutPanel3.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
+  <data name="&gt;&gt;checkBoxHidePropAre.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroCheckBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
   <data name="toolStripComboBoxCC.Items8" xml:space="preserve">
     <value>8</value>
@@ -1836,8 +1818,8 @@
   <data name="&gt;&gt;metroTextBoxPatchFile.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="toolStripComboBoxCh.Items3" xml:space="preserve">
-    <value>A3(4ch)</value>
+  <data name="metroButtonImportGit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
   <data name="&gt;&gt;splitContainer1.Type" xml:space="preserve">
     <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1845,11 +1827,11 @@
   <data name="&gt;&gt;metroButtonImport.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
-  <data name="metroButtonImportAllGit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
+  <data name="&gt;&gt;metroButtonImportAll.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;metroButton1.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="toolStripLabel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>31, 24</value>
   </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>96, 96</value>
@@ -1866,26 +1848,23 @@
   <data name="splitContainer1.Panel2MinSize" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
+  <data name="pianoControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
   <data name="toolStripComboBoxCh.Items15" xml:space="preserve">
     <value>A15(16ch)</value>
   </data>
-  <data name="buttonCancel.Text" xml:space="preserve">
-    <value>&amp;Cancel</value>
+  <data name="splitContainer1.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="tableLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="metroButtonExportAll.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;splitContainer1.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="buttonCancel.ToolTip" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;metroTextBoxTarget.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroTextBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
-  </data>
-  <data name="checkBoxHidePropAre.ToolTip1" xml:space="preserve">
-    <value />
+  <data name="metroButtonAbort.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -1896,29 +1875,32 @@
   <data name="&gt;&gt;metroComboBoxTimbres.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxGate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripComboBoxCC.Items29" xml:space="preserve">
-    <value>29</value>
-  </data>
-  <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>227, 26</value>
-  </data>
-  <data name="tableLayoutPanel1.ToolTip" xml:space="preserve">
+  <data name="metroButtonPush.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="toolStripComboBoxCh.Items7" xml:space="preserve">
+    <value>A7(8ch)</value>
+  </data>
+  <data name="metroButtonUndo.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>zanac.MAmidiMEmo.Gui.FormBase, MAmidiMEmoUI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="metroButtonCopy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="toolStripComboBoxCC.Items23" xml:space="preserve">
-    <value>23</value>
+  <data name="panelPiano.ToolTip1" xml:space="preserve">
+    <value />
   </data>
-  <data name="toolStripComboBoxCC.Items22" xml:space="preserve">
-    <value>22</value>
+  <data name="metroTextBoxTarget.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="toolStripComboBoxCC.Items21" xml:space="preserve">
-    <value>21</value>
+  <data name="metroButtonImport.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
   </data>
   <data name="toolStripComboBoxCC.Items20" xml:space="preserve">
     <value>20</value>
@@ -1929,32 +1911,38 @@
   <data name="toolStripComboBoxCC.Items26" xml:space="preserve">
     <value>26</value>
   </data>
-  <data name="toolStripComboBoxCC.Items25" xml:space="preserve">
-    <value>25</value>
+  <data name="&gt;&gt;metroButtonImportAll.Name" xml:space="preserve">
+    <value>metroButtonImportAll</value>
   </data>
-  <data name="toolStripComboBoxCC.Items24" xml:space="preserve">
-    <value>24</value>
+  <data name="&gt;&gt;metroTextBoxTarget.Type" xml:space="preserve">
+    <value>MetroFramework.Controls.MetroTextBox, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="metroButtonExportAll.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="checkBoxHidePropAre.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="metroButtonExportAll.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;toolStripLabel4.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="metroButtonImportAll.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="toolStripLabel2.Text" xml:space="preserve">
+    <value>Key Ch</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items82" xml:space="preserve">
+    <value>82</value>
+  </data>
+  <data name="metroButtonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="&gt;&gt;toolStrip2.Parent" xml:space="preserve">
     <value>panelPiano</value>
   </data>
-  <data name="metroComboBoxTimbres.Location" type="System.Drawing.Point, System.Drawing">
-    <value>110, 4</value>
+  <data name="toolStripComboBoxCC.Items67" xml:space="preserve">
+    <value>67</value>
   </data>
-  <data name="metroButtonExportAll.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+  <data name="&gt;&gt;metroButtonParams.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="toolStripLabel5.Text" xml:space="preserve">
+    <value>CC</value>
   </data>
   <data name="checkBoxHidePropAre.ToolTip" xml:space="preserve">
     <value />
@@ -1965,113 +1953,125 @@
   <data name="toolStripComboBoxCC.Items98" xml:space="preserve">
     <value>98</value>
   </data>
-  <data name="&gt;&gt;metroLabel1.ZOrder" xml:space="preserve">
-    <value>6</value>
+  <data name="metroButtonExportAll.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="metroButtonImportAll.Location" type="System.Drawing.Point, System.Drawing">
-    <value>970, 7</value>
+  <data name="&gt;&gt;metroButtonTimbre.Parent" xml:space="preserve">
+    <value>tableLayoutPanel2</value>
   </data>
-  <data name="&gt;&gt;checkBoxHidePropAre.Name" xml:space="preserve">
-    <value>checkBoxHidePropAre</value>
+  <data name="metroComboBoxTimbres.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="&gt;&gt;toolStripComboBoxCh.Name" xml:space="preserve">
+    <value>toolStripComboBoxCh</value>
   </data>
   <data name="toolStripComboBoxCC.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 27</value>
   </data>
-  <data name="metroButton1.Text" xml:space="preserve">
-    <value>Ext tool&amp;1...</value>
+  <data name="toolStripComboBoxVelo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 27</value>
   </data>
-  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
-    <value>8</value>
+  <data name="metroButtonExportAll.Text" xml:space="preserve">
+    <value>&amp;Export all...</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel3.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="metroButtonUndo.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items84" xml:space="preserve">
+    <value>84</value>
   </data>
   <data name="&gt;&gt;metroButton1.Type" xml:space="preserve">
     <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
   </data>
-  <data name="metroTextBoxTargetMinMax.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
-  <data name="metroButtonPaste.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;splitContainer1.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="toolStripComboBoxCC.Items15" xml:space="preserve">
+    <value>15</value>
   </data>
   <data name="&gt;&gt;panel1.Name" xml:space="preserve">
     <value>panel1</value>
   </data>
-  <data name="metroButtonUndo.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="metroButtonRedo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
-  <data name="&gt;&gt;propertyGrid.Name" xml:space="preserve">
-    <value>propertyGrid</value>
+  <data name="&gt;&gt;toolStripLabel2.Name" xml:space="preserve">
+    <value>toolStripLabel2</value>
   </data>
-  <data name="metroButtonTimbre.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
-    <value>GrowAndShrink</value>
+  <data name="metroButtonUndo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 23</value>
   </data>
   <data name="tableLayoutPanel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
-  <data name="pianoControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
+  <data name="&gt;&gt;toolStripButton1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;metroButtonUndo.Name" xml:space="preserve">
-    <value>metroButtonUndo</value>
+  <data name="splitContainer1.Panel1MinSize" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="toolStripComboBoxCC.Items57" xml:space="preserve">
+    <value>57</value>
   </data>
   <data name="toolStripComboBoxCC.Items110" xml:space="preserve">
     <value>110</value>
   </data>
-  <data name="flowLayoutPanel1.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>TopDown</value>
+  <data name="buttonCancel.Text" xml:space="preserve">
+    <value>&amp;Cancel</value>
   </data>
-  <data name="panelPiano.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 688</value>
-  </data>
-  <data name="metroButtonParams.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 6</value>
-  </data>
-  <data name="&gt;&gt;metroButtonPush.Name" xml:space="preserve">
-    <value>metroButtonPush</value>
-  </data>
-  <data name="metroButtonRedo.ToolTip1" xml:space="preserve">
+  <data name="metroTextBoxTargetMinMax.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;metroButtonPaste.Type" xml:space="preserve">
-    <value>MetroFramework.Controls.MetroButton, MetroFramework, Version=1.2.0.3, Culture=neutral, PublicKeyToken=5f91a84759bf584a</value>
+  <data name="splitContainer1.SplitterDistance" type="System.Int32, mscorlib">
+    <value>884</value>
   </data>
-  <data name="toolStripComboBoxCC.Items58" xml:space="preserve">
-    <value>58</value>
+  <data name="metroButtonImport.Text" xml:space="preserve">
+    <value>&amp;Import...</value>
   </data>
-  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 24</value>
+  <data name="toolStripButton1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 24</value>
   </data>
-  <data name="flowLayoutPanel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>67, 62</value>
+  <data name="metroButtonExport.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonExportAll.Location" type="System.Drawing.Point, System.Drawing">
+    <value>1186, 7</value>
+  </data>
+  <data name="panel1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonImportAll.ToolTip" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonImportAllGit.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="checkBoxHidePropAre.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="&gt;&gt;resetToDefaultThisPropertyToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripComboBoxCC.Items127" xml:space="preserve">
-    <value>127</value>
+  <data name="&gt;&gt;tableLayoutPanel2.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
-  <data name="toolStripComboBoxCC.Items75" xml:space="preserve">
-    <value>75</value>
+  <data name="metroButtonAbort.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
-  <data name="toolStripComboBoxGate.Items" xml:space="preserve">
-    <value>500ms</value>
+  <data name="toolStripComboBoxCC.Items107" xml:space="preserve">
+    <value>107</value>
   </data>
   <data name="&gt;&gt;toolStripLabel3.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="flowLayoutPanel1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="toolStripComboBoxCh.Items" xml:space="preserve">
     <value>A0(1ch)</value>
   </data>
-  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1078, 10</value>
+  <data name="tableLayoutPanel2.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
   </data>
   <data name="&gt;&gt;toolStripLabel1.Name" xml:space="preserve">
     <value>toolStripLabel1</value>
@@ -2082,14 +2082,14 @@
   <data name="metroButtonCopy.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <data name="toolStripComboBoxCC.Items122" xml:space="preserve">
-    <value>122</value>
+  <data name="metroButtonTimbre.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
   </data>
-  <data name="toolStripComboBoxCC.Items112" xml:space="preserve">
-    <value>112</value>
+  <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
-  <data name="&gt;&gt;pianoControl1.Parent" xml:space="preserve">
-    <value>panelPiano</value>
+  <data name="toolStripComboBoxCC.Items102" xml:space="preserve">
+    <value>102</value>
   </data>
   <data name="metroButtonPush.ToolTip1" xml:space="preserve">
     <value />
@@ -2097,9 +2097,6 @@
   <data name="metroButtonPaste.ToolTip1" xml:space="preserve">
     <value />
   </data>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>ja-JP</value>
-  </metadata>
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>330, 17</value>
   </metadata>
