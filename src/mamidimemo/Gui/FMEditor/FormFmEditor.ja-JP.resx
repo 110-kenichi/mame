@@ -117,33 +117,60 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>236, 26</value>
+  <data name="flowLayoutPanel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="flowLayoutPanel1.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonRand1.Text" xml:space="preserve">
     <value>ランダム大(&amp;R)</value>
   </data>
+  <data name="metroButtonRand1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonRand1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroButtonParams.Text" xml:space="preserve">
     <value>ランダム小(&amp;F)</value>
   </data>
+  <data name="metroButtonParams.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonParams.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="metroTextBoxTarget.Size" type="System.Drawing.Size, System.Drawing">
-    <value>263, 23</value>
+    <value>318, 23</value>
   </data>
   <data name="metroButtonImport.Text" xml:space="preserve">
     <value>読み込み(&amp;I)...</value>
   </data>
+  <data name="metroButtonImport.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonImport.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroButtonImportGit.Text" xml:space="preserve">
     <value>Gitから読込(&amp;G)...</value>
   </data>
-  <data name="metroButtonPaste.Text" xml:space="preserve">
-    <value>ペースト(&amp;P)</value>
+  <data name="metroButtonImportGit.ToolTip" xml:space="preserve">
+    <value />
   </data>
-  <data name="metroButtonCopy.Text" xml:space="preserve">
-    <value>コピー(&amp;Y)</value>
+  <data name="metroButtonImportGit.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonExport.Text" xml:space="preserve">
     <value>保存(&amp;P)...</value>
+  </data>
+  <data name="metroButtonExport.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonExport.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>95, 31</value>
@@ -151,17 +178,98 @@
   <data name="metroLabel1.Text" xml:space="preserve">
     <value>パッチファイル(&amp;L):</value>
   </data>
+  <data name="metroLabel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroLabel1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroTextBoxTargetMinMax.Location" type="System.Drawing.Point, System.Drawing">
-    <value>494, 6</value>
+    <value>549, 6</value>
   </data>
   <data name="metroTextBoxTargetMinMax.Size" type="System.Drawing.Size, System.Drawing">
-    <value>133, 23</value>
+    <value>326, 23</value>
+  </data>
+  <data name="metroTextBoxTargetMinMax.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroTextBoxTargetMinMax.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroTextBoxPatchFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>431, 36</value>
+    <value>431, 67</value>
   </data>
   <data name="metroTextBoxPatchFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>415, 25</value>
+    <value>445, 25</value>
+  </data>
+  <data name="metroTextBoxPatchFile.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroTextBoxPatchFile.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonCopy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>666, 37</value>
+  </data>
+  <data name="metroButtonCopy.Text" xml:space="preserve">
+    <value>コピー(&amp;Y)</value>
+  </data>
+  <data name="metroButtonCopy.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonCopy.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonUndo.Text" xml:space="preserve">
+    <value>アンドゥ</value>
+  </data>
+  <data name="metroButtonUndo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonUndo.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonPaste.Location" type="System.Drawing.Point, System.Drawing">
+    <value>774, 37</value>
+  </data>
+  <data name="metroButtonPaste.Text" xml:space="preserve">
+    <value>ペースト(&amp;P)</value>
+  </data>
+  <data name="metroButtonPaste.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonPaste.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonRedo.Text" xml:space="preserve">
+    <value>リドゥ</value>
+  </data>
+  <data name="metroButtonRedo.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonRedo.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonPush.Text" xml:space="preserve">
+    <value>手動プッシュ</value>
+  </data>
+  <data name="metroButtonPush.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonPush.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.Panel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.Panel1.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="resetToDefaultThisPropertyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>235, 22</value>
@@ -169,17 +277,80 @@
   <data name="resetToDefaultThisPropertyToolStripMenuItem.Text" xml:space="preserve">
     <value>このプロパティの値をリセットする(&amp;R)</value>
   </data>
+  <data name="contextMenuStripProp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>236, 26</value>
+  </data>
+  <data name="contextMenuStripProp.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="contextMenuStripProp.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="propertyGrid.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="propertyGrid.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.Panel2.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.Panel2.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="splitContainer1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="pianoControl1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="pianoControl1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="toolStrip2.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="toolStrip2.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="panelPiano.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="panelPiano.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="buttonCancel.Text" xml:space="preserve">
     <value>キャンセル(&amp;C)</value>
+  </data>
+  <data name="buttonCancel.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="buttonCancel.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonAbort.Text" xml:space="preserve">
     <value>中断(&amp;A)</value>
   </data>
+  <data name="panel1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="panel1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroComboBoxTimbres.Size" type="System.Drawing.Size, System.Drawing">
-    <value>804, 29</value>
+    <value>812, 29</value>
+  </data>
+  <data name="metroComboBoxTimbres.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroComboBoxTimbres.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonImportAll.Location" type="System.Drawing.Point, System.Drawing">
-    <value>922, 7</value>
+    <value>930, 7</value>
   </data>
   <data name="metroButtonImportAll.Size" type="System.Drawing.Size, System.Drawing">
     <value>104, 23</value>
@@ -187,8 +358,14 @@
   <data name="metroButtonImportAll.Text" xml:space="preserve">
     <value>全読み込み(&amp;A)...</value>
   </data>
+  <data name="metroButtonImportAll.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonImportAll.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroButtonImportAllGit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1034, 7</value>
+    <value>1042, 7</value>
   </data>
   <data name="metroButtonImportAllGit.Size" type="System.Drawing.Size, System.Drawing">
     <value>136, 23</value>
@@ -196,22 +373,70 @@
   <data name="metroButtonImportAllGit.Text" xml:space="preserve">
     <value>Gitから全読込(&amp;T)...</value>
   </data>
+  <data name="metroButtonImportAllGit.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonImportAllGit.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroButtonExportAll.Text" xml:space="preserve">
     <value>全て保存(&amp;E)...</value>
+  </data>
+  <data name="metroButtonExportAll.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonExportAll.ToolTip1" xml:space="preserve">
+    <value />
   </data>
   <data name="metroButtonTimbre.Text" xml:space="preserve">
     <value>名前変更(&amp;N)</value>
   </data>
+  <data name="metroButtonTimbre.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButtonTimbre.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel2.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel2.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="checkBoxHidePropAre.Size" type="System.Drawing.Size, System.Drawing">
-    <value>114, 25</value>
+    <value>118, 25</value>
   </data>
   <data name="checkBoxHidePropAre.Text" xml:space="preserve">
     <value>プロパティを隠す(&amp;T)</value>
   </data>
+  <data name="checkBoxHidePropAre.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="checkBoxHidePropAre.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
   <data name="metroButton1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>124, 10</value>
+    <value>128, 10</value>
   </data>
   <data name="metroButton1.Text" xml:space="preserve">
     <value>外部ツール1(&amp;1)...</value>
+  </data>
+  <data name="metroButton1.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="metroButton1.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel3.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="tableLayoutPanel3.ToolTip1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="$this.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="$this.ToolTip1" xml:space="preserve">
+    <value />
   </data>
 </root>
