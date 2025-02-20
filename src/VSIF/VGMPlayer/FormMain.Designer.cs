@@ -1636,7 +1636,8 @@ namespace zanac.VGMPlayer
             "VSIF - MD/Genesis(UART 115Kbps)",
             "VSIF - MSX(FTDI2XX Clk: 232R=25~,H=32~)",
             "VSIF - SMS(FTDI2XX Clk: 232R=20~,H=25~)",
-            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)",
+            "NANO DRIVE"});
             this.comboBoxDCSG.Location = new System.Drawing.Point(163, 50);
             this.comboBoxDCSG.Name = "comboBoxDCSG";
             this.comboBoxDCSG.Size = new System.Drawing.Size(336, 20);
@@ -2595,7 +2596,8 @@ namespace zanac.VGMPlayer
             "VSIF - MD/Genesis(FTDI2XX Clk: 232R=8~,H=9~)",
             "VSIF - MD/Genesis(UART 115Kbps)",
             "VSIF - MSX/PC-6001(FTDI2XX Clk: 232R=25~,H=32~)",
-            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)"});
+            "VSIF - turboR(FTDI2XX Clk: 232R=8~,H=9~)",
+            "NANO DRIVE"});
             this.comboBoxOPN2.Location = new System.Drawing.Point(163, 24);
             this.comboBoxOPN2.Name = "comboBoxOPN2";
             this.comboBoxOPN2.Size = new System.Drawing.Size(336, 20);
@@ -6198,7 +6200,7 @@ namespace zanac.VGMPlayer
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
-            this.Text = "Real chip VGM/XGM/MGS player V1.97 by Itoken";
+            this.Text = "Real chip VGM/XGM/MGS player V1.98 by Itoken";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormMain_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

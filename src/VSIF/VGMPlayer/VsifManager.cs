@@ -383,6 +383,23 @@ namespace zanac.VGMPlayer
                                 vsifClients.Add(client);
                                 return client;
                             }
+                        case VsifSoundModuleType.NanoDrive:
+                            {
+                                SerialPort sp = null;
+                                sp = new SerialPort("COM" + ((int)comPort + 1));
+                                sp.WriteTimeout = 100;
+                                sp.ReadTimeout = 100;
+                                sp.BaudRate = 921600;
+                                sp.StopBits = StopBits.Two;
+                                sp.Parity = Parity.None;
+                                sp.DataBits = 8;
+                                sp.Handshake = Handshake.None;
+                                sp.Open();
+                                var client = new VsifClient(soundModule, new PortWriterNanoDrive(sp));
+                                client.Disposed += Client_Disposed;
+                                vsifClients.Add(client);
+                                return client;
+                            }
                     }
 
                     //sp.Write(new byte[] { (byte)'M', (byte)'a', (byte)'M', (byte)'i' }, 0, 4);
@@ -436,6 +453,7 @@ namespace zanac.VGMPlayer
         SMS_FTDI,
         TurboR_FTDI,
         TurboEverDrive,
+        NanoDrive,
     }
 
 

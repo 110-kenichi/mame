@@ -1156,6 +1156,10 @@ namespace zanac.VGMPlayer
                         if (comPortDCSG != null)
                             comPortDCSG.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitDCSG);
                         break;
+                    case 7:
+                        comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
+                            (PortId)Settings.Default.DCSG_Port, (int)Settings.Default.DCSGDiv, false);
+                        break;
                 }
 
                 checkBoxConnDCSG.Checked = comPortDCSG != null;
@@ -1251,6 +1255,10 @@ namespace zanac.VGMPlayer
                             (PortId)Settings.Default.OPN2_Port, (int)Settings.Default.OPN2Div, false);
                         if (comPortOPN2 != null)
                             comPortOPN2.DeferredWriteData(0x15, (byte)0x0, (byte)127, (int)Settings.Default.BitBangWaitOPN2);
+                        break;
+                    case 5:
+                        comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
+                            (PortId)Settings.Default.OPN2_Port, (int)Settings.Default.OPN2Div, false);
                         break;
                 }
                 checkBoxConnOPN2.Checked = comPortOPN2 != null;

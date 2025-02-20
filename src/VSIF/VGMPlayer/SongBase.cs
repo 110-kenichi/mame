@@ -437,8 +437,8 @@ namespace zanac.VGMPlayer
                                         completed = true;
                                     },
                                     () => { cancelled = true; });
-                        }
-                        break;
+                                }
+                                break;
                         }
                         if (completed)
                             break;
@@ -545,9 +545,9 @@ namespace zanac.VGMPlayer
                 playTicTimer?.Dispose();
                 playTicTimer = null;
 
-                if(DeleteFileAfterStop)
+                if (DeleteFileAfterStop)
                     File.Delete(FileName);
-                if(DeleteCoverArtFileAfterStop)
+                if (DeleteCoverArtFileAfterStop)
                     File.Delete(CoverArtFile);
             }
         }
@@ -1274,6 +1274,9 @@ namespace zanac.VGMPlayer
                         comPortOPNA.DeferredWriteData(0x00, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     }
                     break;
+                case VsifSoundModuleType.NanoDrive:
+                    comPortOPNA.DeferredWriteData(0x52, (byte)adrs, (byte)dt, 0);
+                    break;
             }
         }
 
@@ -1367,6 +1370,9 @@ namespace zanac.VGMPlayer
                     else
                         comPortOPNA.DeferredWriteData(0x01, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPNA);
                     break;
+                case VsifSoundModuleType.NanoDrive:
+                    comPortOPNA.DeferredWriteData(0x53, (byte)adrs, (byte)dt, 0);
+                    break;
             }
         }
 
@@ -1402,18 +1408,23 @@ namespace zanac.VGMPlayer
             if (lastOpn2DacValue == dacValue)
                 return;
 
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPN2.SoundModuleType)
             {
-                comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Program.Default.BitBangWaitOPN2);
-            }
-            else //Genesis
-            {
-                comPortOPN2.DeferredWriteDataPrior(
-                    new byte[] { 0, 0 },
-                    new byte[] { 0x04, 0x8 },
-                    new byte[] { (byte)0x2a, (byte)dacValue },
-                    (int)Program.Default.BitBangWaitOPN2);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                    comPortOPN2.DeferredWriteData(0x14, (byte)0x2a, (byte)dacValue, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                case VsifSoundModuleType.NanoDrive:
+                    comPortOPN2.DeferredWriteData(0x52, (byte)0x2a, (byte)dacValue, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                default:
+                    //Genesis
+                    comPortOPN2.DeferredWriteDataPrior(
+                        new byte[] { 0, 0 },
+                        new byte[] { 0x04, 0x8 },
+                        new byte[] { (byte)0x2a, (byte)dacValue },
+                        (int)Program.Default.BitBangWaitOPN2);
+                    break;
             }
             lastOpn2DacValue = dacValue;
         }
@@ -1552,18 +1563,23 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPN2_P0(VsifClient comPortOPN2, int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPN2.SoundModuleType)
             {
-                comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
-            }
-            else //Genesis
-            {
-                comPortOPN2.DeferredWriteData(
-                    new byte[] { 0, 0 },
-                    new byte[] { 0x04, 0x8 },
-                    new byte[] { (byte)adrs, (byte)dt },
-                    (int)Program.Default.BitBangWaitOPN2);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                    comPortOPN2.DeferredWriteData(0x10, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                case VsifSoundModuleType.NanoDrive:
+                    comPortOPN2.DeferredWriteData(0x52, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                default:
+                    //Genesis
+                    comPortOPN2.DeferredWriteData(
+                        new byte[] { 0, 0 },
+                        new byte[] { 0x04, 0x8 },
+                        new byte[] { (byte)adrs, (byte)dt },
+                        (int)Program.Default.BitBangWaitOPN2);
+                    break;
             }
         }
 
@@ -1628,18 +1644,23 @@ namespace zanac.VGMPlayer
         /// <param name="dt"></param>
         protected void deferredWriteOPN2_P1(VsifClient comPortOPN2, int adrs, int dt)
         {
-            if (comPortOPN2.SoundModuleType == VsifSoundModuleType.MSX_FTDI ||
-                comPortOPN2.SoundModuleType == VsifSoundModuleType.TurboR_FTDI)
+            switch (comPortOPN2.SoundModuleType)
             {
-                comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
-            }
-            else
-            {
-                comPortOPN2.DeferredWriteData(
-                    new byte[] { 0, 0 },
-                    new byte[] { 0x0C, 0x10 },
-                    new byte[] { (byte)adrs, (byte)dt },
-                    (int)Program.Default.BitBangWaitOPN2);
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                    comPortOPN2.DeferredWriteData(0x11, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                case VsifSoundModuleType.NanoDrive:
+                    comPortOPN2.DeferredWriteData(0x53, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitOPN2);
+                    break;
+                default:
+                    //Genesis
+                    comPortOPN2.DeferredWriteData(
+                        new byte[] { 0, 0 },
+                        new byte[] { 0x0C, 0x10 },
+                        new byte[] { (byte)adrs, (byte)dt },
+                        (int)Program.Default.BitBangWaitOPN2);
+                    break;
             }
         }
 

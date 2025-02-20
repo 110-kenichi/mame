@@ -50,5 +50,7 @@ namespace zanac.MAmidiMEmo.Instruments
         VSIF_SMS_FTDI,
         [Description("Real(VSIF PCE(Turbo Everdrive)")]
         VSIF_PCE_TurboEverDrive,
+        [Description("Real(NanoDrive)")]
+        NanoDrive,
     }
 }

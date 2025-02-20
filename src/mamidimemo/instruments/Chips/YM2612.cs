@@ -315,6 +315,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.NanoDrive:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -817,6 +830,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.GIMIC:
                             GimicManager.SetRegister2(gimicPtr, address, (byte)data);
                             break;
+                        case SoundEngineType.NanoDrive:
+                            if (address < 0x100)
+                                vsifClient.WriteData(0x52, (byte)address, (byte)data, f_ftdiClkWidth);
+                            else
+                                vsifClient.WriteData(0x53, (byte)address, (byte)data, f_ftdiClkWidth);
+                            break;
                     }
                 }
                 DeferredWriteData(Ym2612_write, UnitNumber, (port1 - 1) * 2 + 0, (byte)address);
@@ -885,6 +904,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         case SoundEngineType.GIMIC:
                             GimicManager.SetRegister2(gimicPtr, adrs, (byte)data);
                             break;
+                        case SoundEngineType.NanoDrive:
+                            if (adrs < 0x100)
+                                vsifClient.WriteData(0x52, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                            else
+                                vsifClient.WriteData(0x53, (byte)adrs, (byte)data, f_ftdiClkWidth);
+                            break;
                     }
                 }
                 var a = address + (op * 4) + (slot % 3);
@@ -936,6 +961,9 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                         break;
                     case SoundEngineType.GIMIC:
                         GimicManager.SetRegister2(gimicPtr, 0x2a, dacData);
+                        break;
+                    case SoundEngineType.NanoDrive:
+                        vsifClient.WriteData(0x52, (byte)0x2a, (byte)dacData, f_ftdiClkWidth);
                         break;
                 }
             }
@@ -3874,6 +3902,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_P6_FTDI,
                     SoundEngineType.SPFM,
                     SoundEngineType.GIMIC,
+                    SoundEngineType.NanoDrive,
                 });
 
                 return sc;

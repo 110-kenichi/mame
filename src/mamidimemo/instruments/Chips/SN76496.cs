@@ -298,6 +298,19 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             SetDevicePassThru(false);
                         }
                         break;
+                    case SoundEngineType.NanoDrive:
+                        vsifClient = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive, PortId, false);
+                        if (vsifClient != null)
+                        {
+                            f_CurrentSoundEngineType = f_SoundEngineType;
+                            SetDevicePassThru(true);
+                        }
+                        else
+                        {
+                            f_CurrentSoundEngineType = SoundEngineType.Software;
+                            SetDevicePassThru(false);
+                        }
+                        break;
                 }
             }
 
@@ -384,6 +397,36 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
             DCSG_SN76489 = SoundChipType.SC_TYPE_SN76489,
             DCSG_SN76496 = SoundChipType.SC_TYPE_SN76496,
             DCSG_315_5124 = SoundChipType.SC_TYPE_315_5124,
+        }
+
+        private NanoSnTypes f_NanoDriveSnType = NanoSnTypes.DCSG_1st;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataMember]
+        [Category("Chip(Dedicated)")]
+        [Description("Select SN type for NANO DRIVE")]
+        [DefaultValue(NanoSnTypes.DCSG_1st)]
+        public NanoSnTypes NanoDriveSnType
+        {
+            get => f_NanoDriveSnType;
+            set
+            {
+                if (f_NanoDriveSnType != value)
+                {
+                    f_NanoDriveSnType = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public enum NanoSnTypes
+        {
+            DCSG_1st = 0,
+            DCSG_2nd = 1,
         }
 
         private uint f_MasterClock = 3579545;
@@ -544,6 +587,12 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                             break;
                         case SoundEngineType.GIMIC:
                             GimicManager.SetRegister2(gimicPtr, 0, data);
+                            break;
+                        case SoundEngineType.NanoDrive:
+                            if(f_NanoDriveSnType == 0)
+                                vsifClient.WriteData(0x50, 0xff, data, f_ftdiClkWidth);
+                            else
+                                vsifClient.WriteData(0x30, 0xff, data, f_ftdiClkWidth);
                             break;
                     }
                 }
@@ -1313,6 +1362,7 @@ namespace zanac.MAmidiMEmo.Instruments.Chips
                     SoundEngineType.VSIF_MSX_FTDI,
                     SoundEngineType.SPFM,
                     SoundEngineType.GIMIC,
+                    SoundEngineType.NanoDrive,
                });
 
                 return sc;

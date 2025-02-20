@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
+using zanac.MAmidiMEmo.ComponentModel;
 using zanac.MAmidiMEmo.Properties;
 using Point = System.Drawing.Point;
 
@@ -133,7 +135,7 @@ namespace zanac.MAmidiMEmo.Gui
                 return false;
             else if (c is Label)
                 return false;
-
+            
             return true;
         }
 
@@ -152,13 +154,13 @@ namespace zanac.MAmidiMEmo.Gui
         {
             if (c is NumericUpDown)
             {
-                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
-                c.Controls[1].Font = c.Font;
+                //c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
+                //c.Controls[1].Font = c.Font;
                 c.Margin = new Padding(1);
             }
             else if (c is ComboBox)
             {
-                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
+                //c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
                 SetComboBoxHeight(c.Handle,c.Font.Height);
             }
             else if (c is ListView)
@@ -167,23 +169,42 @@ namespace zanac.MAmidiMEmo.Gui
             }
             else if (c is Label)
             {
-                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size);
+                c.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
             }
             else if (c is PropertyGrid)
             {
                 SetAllControlsFont(c, new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size));
             }
+
+            if (!(c is Label))
+                scaleFont.Invoke(c, new object[] { 1f + Program.GuiScale });
         }
 
         protected void SetAllControlsFont(Control target, Font font)
         {
-            foreach (Control child in target.Controls)
+            if (target is ToolStrip)
             {
-                // recursive
-                if (child.Controls != null)
-                    SetAllControlsFont(child, font);
-            };
+                ToolStrip ts = (ToolStrip)target;
+                foreach (var item in ts.Items)
+                {
+                    if (item is ToolStripComboBox)
+                    {
+                        ToolStripComboBox tcb = (ToolStripComboBox)item;
+                        tcb.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                    }
+                }
+            }
+            else
+            {
+                foreach (Control child in target.Controls)
+                {
+                    // recursive
+                    if (child.Controls != null)
+                        SetAllControlsFont(child, font);
+                };
+            }
             target.Font = font;
+            scaleFont.Invoke(target, new object[] { 1f + Program.GuiScale });
         }
 
         protected override void OnControlAdded(ControlEventArgs e)
@@ -246,16 +267,31 @@ namespace zanac.MAmidiMEmo.Gui
 
         protected void SetAllControlsFontSize(Control target, float amount)
         {
-            foreach (Control child in target.Controls)
+            if (target is ToolStrip)
             {
-                // recursive
-                if (child.Controls != null)
-                    SetAllControlsFontSize(child, amount);
-                if (canSetFontSize(child))
-                    scaleFont.Invoke(child, new object[] { 1f + amount });
-                else
-                    setDefaultFontSize(child);
-            };
+                ToolStrip ts = (ToolStrip)target;
+                foreach (var item in ts.Items)
+                {
+                    if (item is ToolStripComboBox)
+                    {
+                        ToolStripComboBox tcb = (ToolStripComboBox)item;
+                        tcb.Font = new Font("Yu Gothic UI", System.Drawing.SystemFonts.DefaultFont.Size * (1f + Program.GuiScale));
+                    }
+                }
+            }
+            else
+            {
+                foreach (Control child in target.Controls)
+                {
+                    // recursive
+                    if (child.Controls != null)
+                        SetAllControlsFontSize(child, amount);
+                    if (canSetFontSize(child))
+                        scaleFont.Invoke(child, new object[] { 1f + amount });
+                    else
+                        setDefaultFontSize(child);
+                };
+            }
         }
 
         private bool ignoreFontChanged;

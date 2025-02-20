@@ -717,6 +717,7 @@
     <Compile Include="VSIF\PortWriterNesIndirect.cs" />
     <Compile Include="VSIF\PortWriterGenesis.cs" />
     <Compile Include="VSIF\PortWriter.cs" />
+    <Compile Include="VSIF\PortWriterNanoDrive.cs" />
     <Compile Include="VSIF\PortWriterTurboEverDrive.cs" />
     <Compile Include="VSIF\VsifClient.cs" />
     <Compile Include="VSIF\VsifManager.cs" />

@@ -122,6 +122,15 @@ namespace zanac.VGMPlayer
                             comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | i << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
                         comPortDCSG.DeferredWriteData(0xF, 0, (byte)(0x80 | 3 << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
                         break;
+                    case VsifSoundModuleType.NanoDrive:
+                        for (int i = 0; i < 3; i++)
+                        {
+                            comPortDCSG.DeferredWriteData(0x50, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
+                            comPortDCSG.DeferredWriteData(0x30, 0xFF, (byte)(0x80 | i << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
+                        }
+                        comPortDCSG.DeferredWriteData(0x50, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
+                        comPortDCSG.DeferredWriteData(0x30, 0xFF, (byte)(0x80 | 3 << 5 | 0x1f), (int)Program.Default.BitBangWaitDCSG);
+                        break;
                 }
             }
 
@@ -1413,6 +1422,18 @@ namespace zanac.VGMPlayer
                                 comPortTurboRProxy = comPortDCSG;
                         }
                         break;
+                    case 7:
+                        if (comPortDCSG == null)
+                        {
+                            comPortDCSG = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
+                                (PortId)Program.Default.DCSG_Port);
+                            if (comPortDCSG != null)
+                            {
+                                comPortDCSG.ChipClockHz["DCSG"] = 3579545;
+                                UseChipInformation += "DCSG@3.579545MHz ";
+                            }
+                        }
+                        break;
                 }
                 if (comPortDCSG != null)
                 {
@@ -2105,6 +2126,18 @@ namespace zanac.VGMPlayer
                             }
                         }
                         break;
+                    case 5:
+                        if (comPortOPN2 == null)
+                        {
+                            comPortOPN2 = VsifManager.TryToConnectVSIF(VsifSoundModuleType.NanoDrive,
+                                (PortId)Program.Default.OPN2_Port);
+                            if (comPortOPN2 != null)
+                            {
+                                comPortOPN2.ChipClockHz["OPN2"] = 7670453;
+                                UseChipInformation += "OPN2@7.670453MHz ";
+                            }
+                        }
+                        break;
                 }
                 if (comPortOPN2 != null)
                 {
@@ -2554,9 +2587,21 @@ namespace zanac.VGMPlayer
 
                                     case 0x30:
                                         {
-                                            var aa = readByte();
-                                            if (aa < 0)
+                                            uint dclk = vgmHead.lngHzDCSG;
+
+                                            var data = readByte();
+                                            if (data < 0)
                                                 break;
+
+                                            if (comPortDCSG != null)
+                                            {
+                                                switch (comPortDCSG.SoundModuleType)
+                                                {
+                                                    case VsifSoundModuleType.NanoDrive:
+                                                        deferredWriteDCSG(data, dclk, true);
+                                                        break;
+                                                }
+                                            }
                                         }
                                         break;
 
@@ -5185,7 +5230,7 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void deferredWriteDCSG(int data, uint dclk)
+        private void deferredWriteDCSG(int data, uint dclk, bool? second = false)
         {
             byte adrs = (byte)(data >> 4);
             if ((data & 0x80) != 0)
@@ -5208,8 +5253,8 @@ namespace zanac.VGMPlayer
                             var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8] & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
-                            deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo);
-                            deferredWriteDCSG(ret.Hi);
+                            deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo, second.Value);
+                            deferredWriteDCSG(ret.Hi, second.Value);
                         }
                         break;
                     case 0x8:
@@ -5223,36 +5268,46 @@ namespace zanac.VGMPlayer
                             var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8] & 0x3f, data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
-                            deferredWriteDCSG((adrs << 4) + ret.Lo);
-                            deferredWriteDCSG(ret.Hi);
+                            deferredWriteDCSG((adrs << 4) + ret.Lo, second.Value);
+                            deferredWriteDCSG(ret.Hi, second.Value);
                         }
                         break;
                     default:
                         comPortDCSG.RegTable[adrs] = data;
-                        deferredWriteDCSG(data);
+                        deferredWriteDCSG(data, second.Value);
                         break;
                 }
             }
         }
 
-        protected void deferredWriteDCSG(int data)
+        protected void deferredWriteDCSG(int data, bool second)
         {
             switch (comPortDCSG.SoundModuleType)
             {
                 case VsifSoundModuleType.Genesis_FTDI:
                 case VsifSoundModuleType.Genesis:
                 case VsifSoundModuleType.Genesis_Low:
-                    comPortDCSG.DeferredWriteData(0, 0x14, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    if(!second)
+                        comPortDCSG.DeferredWriteData(0, 0x14, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.SMS:
-                    comPortDCSG.DeferredWriteData(0, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    if (!second)
+                        comPortDCSG.DeferredWriteData(0, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.SMS_FTDI:
-                    comPortDCSG.DeferredWriteData(0, 0x00, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    if (!second)
+                        comPortDCSG.DeferredWriteData(0, 0x00, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    comPortDCSG.DeferredWriteData(0xF, 0, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    if (!second)
+                        comPortDCSG.DeferredWriteData(0xF, 0, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    break;
+                case VsifSoundModuleType.NanoDrive:
+                    if (!second)
+                        comPortDCSG.DeferredWriteData(0x50, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
+                    else
+                        comPortDCSG.DeferredWriteData(0x30, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
             }
         }
