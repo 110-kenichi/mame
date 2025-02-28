@@ -35,7 +35,7 @@ namespace zanac.VGMPlayer
         private int vgmDataOffset;
         private int vgmDataCurrentOffset;
         private uint vgmDataLen;
-        private VGM_HEADER vgmHead;
+        private (VGM_HEADER cur, VGM_HEADER raw) vgmHead;
 
         private VsifClient comPortDCSG;
         private VsifClient comPortOPLL;
@@ -346,9 +346,15 @@ namespace zanac.VGMPlayer
                 {
                 }
                 //comPortY8910?.DeferredWriteData(0x17, (byte)0x07, (byte)0xff, (int)Program.Default.BitBangWaitAY8910);
-                deferredWriteY8910(0x8, 0x00);
-                deferredWriteY8910(0x9, 0x00);
-                deferredWriteY8910(0xa, 0x00);
+                deferredWriteY8910(0x8, 0x00, false);
+                deferredWriteY8910(0x9, 0x00, false);
+                deferredWriteY8910(0xa, 0x00, false);
+                if ((vgmHead.raw.lngHzAY8910 & 0x40000000) == 0x40000000)
+                {
+                    deferredWriteY8910(0x8, 0x00, true);
+                    deferredWriteY8910(0x9, 0x00, true);
+                    deferredWriteY8910(0xa, 0x00, true);
+                }
             }
             //NES
             if (comPortNES != null)
@@ -517,8 +523,9 @@ namespace zanac.VGMPlayer
         }
 
 
-        private VGM_HEADER readVGMHeader(BinaryReader hFile)
+        private (VGM_HEADER, VGM_HEADER) readVGMHeader(BinaryReader hFile)
         {
+            VGM_HEADER rawHead = new VGM_HEADER();
             VGM_HEADER curHead = new VGM_HEADER();
             curHead.lngDataOffset = 0x100;
             FieldInfo[] fields = typeof(VGM_HEADER).GetFields();
@@ -534,6 +541,7 @@ namespace zanac.VGMPlayer
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
                     position += 4;
+                    field.SetValue(rawHead, val);
                     if (field.Name.StartsWith("lngHz"))
                         val = (uint)(val & ~0x40000000);
                     field.SetValue(curHead, val);
@@ -544,6 +552,7 @@ namespace zanac.VGMPlayer
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
                     position += 2;
+                    field.SetValue(rawHead, val);
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(sbyte))
@@ -552,6 +561,7 @@ namespace zanac.VGMPlayer
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
                     position += 1;
+                    field.SetValue(rawHead, val);
                     field.SetValue(curHead, val);
                 }
                 else if (field.FieldType == typeof(byte))
@@ -560,6 +570,7 @@ namespace zanac.VGMPlayer
                     //if (curHead.lngDataOffset < 0x100 && position >= curHead.lngDataOffset)
                     //    val = 0;
                     position += 1;
+                    field.SetValue(rawHead, val);
                     field.SetValue(curHead, val);
                 }
                 if (field.Name == "lngDataOffset")
@@ -1022,7 +1033,7 @@ namespace zanac.VGMPlayer
                     connectToPCE();
                 }
             }
-            return curHead;
+            return (curHead, rawHead);
         }
 
         private bool connectToPCE()
@@ -2254,8 +2265,8 @@ namespace zanac.VGMPlayer
 
 
             //Figure out header offset
-            offset = (int)vgmHead.lngDataOffset + 0x34;
-            if (offset == 0 || offset == 0x0000000C || vgmHead.lngVersion < 0x150)
+            offset = (int)vgmHead.cur.lngDataOffset + 0x34;
+            if (offset == 0 || offset == 0x0000000C || vgmHead.cur.lngVersion < 0x150)
                 offset = 0x40;
             vgmDataOffset = offset;
             vgmDataCurrentOffset = vgmDataOffset;
@@ -2587,7 +2598,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x30:
                                         {
-                                            uint dclk = vgmHead.lngHzDCSG;
+                                            uint dclk = vgmHead.cur.lngHzDCSG;
 
                                             var data = readByte();
                                             if (data < 0)
@@ -2627,7 +2638,7 @@ namespace zanac.VGMPlayer
                                             if (adrs < 0)
                                                 break;
 
-                                            if (vgmHead.lngVersion < 0x00000160)
+                                            if (vgmHead.cur.lngVersion < 0x00000160)
                                                 break;
 
                                             var dt = readByte();
@@ -2646,7 +2657,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x50:  //DCSG
                                         {
-                                            uint dclk = vgmHead.lngHzDCSG;
+                                            uint dclk = vgmHead.cur.lngHzDCSG;
 
                                             var data = readByte();
                                             if (data < 0)
@@ -2660,9 +2671,9 @@ namespace zanac.VGMPlayer
                                     case 0x51: //YM2413
                                         {
                                             bool vrc7 = false;
-                                            if ((vgmHead.lngHzYM2413 & 0x80000000) != 0)
+                                            if ((vgmHead.cur.lngHzYM2413 & 0x80000000) != 0)
                                                 vrc7 = true;
-                                            uint dclk = (vgmHead.lngHzYM2413 & ~0x80000000);
+                                            uint dclk = (vgmHead.cur.lngHzYM2413 & ~0x80000000);
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2689,7 +2700,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x52: //YM2612 Write Port 0
                                         {
-                                            uint dclk = vgmHead.lngHzYM2612;
+                                            uint dclk = vgmHead.cur.lngHzYM2612;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2746,7 +2757,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x53: //YM2612 Write Port 1
                                         {
-                                            uint dclk = vgmHead.lngHzYM2612;
+                                            uint dclk = vgmHead.cur.lngHzYM2612;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2776,7 +2787,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x54: //YM2151
                                         {
-                                            uint dclk = vgmHead.lngHzYM2151;
+                                            uint dclk = vgmHead.cur.lngHzYM2151;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2796,7 +2807,7 @@ namespace zanac.VGMPlayer
                                         {
                                             if (comPortOPN != null)
                                             {
-                                                uint dclk = vgmHead.lngHzYM2203;
+                                                uint dclk = vgmHead.cur.lngHzYM2203;
 
                                                 var adrs = readByte();
                                                 if (adrs < 0)
@@ -2840,9 +2851,9 @@ namespace zanac.VGMPlayer
                                         }
                                     case 0x56: //YM2608 Write Port 0
                                         {
-                                            uint dclk = vgmHead.lngHzYM2608;
+                                            uint dclk = vgmHead.cur.lngHzYM2608;
                                             if (command == 0x55)
-                                                dclk = vgmHead.lngHzYM2203 * 2;
+                                                dclk = vgmHead.cur.lngHzYM2203 * 2;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2901,7 +2912,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x58: //YM2610 Write Port 0
                                         {
-                                            uint dclk = vgmHead.lngHzYM2610;
+                                            uint dclk = vgmHead.cur.lngHzYM2610;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -2972,7 +2983,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x57: //YM2608 Write Port 1
                                         {
-                                            uint dclk = vgmHead.lngHzYM2608;
+                                            uint dclk = vgmHead.cur.lngHzYM2608;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3061,7 +3072,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x59: //YM2610 Write Port 1
                                         {
-                                            uint dclk = vgmHead.lngHzYM2610;
+                                            uint dclk = vgmHead.cur.lngHzYM2610;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3110,11 +3121,11 @@ namespace zanac.VGMPlayer
 
                                     case 0x5C: //Y8950
                                         {
-                                            uint dclk = vgmHead.lngHzY8950;
+                                            uint dclk = vgmHead.cur.lngHzY8950;
                                             if (command == 0x5A)
-                                                dclk = vgmHead.lngHzYM3812;
+                                                dclk = vgmHead.cur.lngHzYM3812;
                                             else if (command == 0x5B)
-                                                dclk = vgmHead.lngHzYM3526;
+                                                dclk = vgmHead.cur.lngHzYM3526;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3389,11 +3400,11 @@ namespace zanac.VGMPlayer
 
                                     case 0x5E: //YMF262
                                         {
-                                            uint dclk = vgmHead.lngHzYMF262;
+                                            uint dclk = vgmHead.cur.lngHzYMF262;
                                             if (command == 0x5A)
-                                                dclk = vgmHead.lngHzYM3812 * 4;
+                                                dclk = vgmHead.cur.lngHzYM3812 * 4;
                                             else if (command == 0x5B)
-                                                dclk = vgmHead.lngHzYM3526 * 4;
+                                                dclk = vgmHead.cur.lngHzYM3526 * 4;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3409,7 +3420,7 @@ namespace zanac.VGMPlayer
 
                                     case 0x5F: //YMF262
                                         {
-                                            uint dclk = vgmHead.lngHzYMF262;
+                                            uint dclk = vgmHead.cur.lngHzYMF262;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -3455,8 +3466,8 @@ namespace zanac.VGMPlayer
                                         }
                                         else
                                         {
-                                            if (vgmHead.lngLoopOffset != 0 && vgmDataOffset < vgmHead.lngLoopOffset)
-                                                vgmReader.BaseStream?.Seek((vgmHead.lngLoopOffset + 0x1c) - (vgmDataOffset), SeekOrigin.Begin);
+                                            if (vgmHead.cur.lngLoopOffset != 0 && vgmDataOffset < vgmHead.cur.lngLoopOffset)
+                                                vgmReader.BaseStream?.Seek((vgmHead.cur.lngLoopOffset + 0x1c) - (vgmDataOffset), SeekOrigin.Begin);
                                             else
                                                 vgmReader.BaseStream?.Seek(0, SeekOrigin.Begin);
                                         }
@@ -4050,7 +4061,7 @@ namespace zanac.VGMPlayer
 
                                     case 0xA0:  //Y8910
                                         {
-                                            uint dclk = vgmHead.lngHzAY8910;
+                                            uint dclk = vgmHead.cur.lngHzAY8910;
 
                                             var aa = readByte();
                                             if (aa < 0)
@@ -4068,6 +4079,12 @@ namespace zanac.VGMPlayer
                                                 else if (comPortOPN != null && comPortOPN.Tag.ContainsKey("ProxyY8910"))
                                                     deferredWriteOPN_P0(aa, dd, dclk * 2);
                                             }
+                                            else if ((aa & 0x80) == 0x80)
+                                            {
+                                                aa &= 0x7f;
+                                                if (comPortY8910 != null && aa < 0xd)
+                                                    deferredWriteY8910(aa, dd, dclk, true);
+                                            }
                                         }
                                         break;
                                     case 0xA5:  //2nd YM2203
@@ -4081,7 +4098,7 @@ namespace zanac.VGMPlayer
 
                                             if (comPortOPNA != null)
                                             {
-                                                uint dclk = vgmHead.lngHzYM2203 * 2;
+                                                uint dclk = vgmHead.cur.lngHzYM2203 * 2;
 
                                                 if (adrs == 0x28)
                                                     dt |= 0b100;
@@ -4095,7 +4112,7 @@ namespace zanac.VGMPlayer
                                             }
                                             else if (comPortOPN2 != null)
                                             {
-                                                uint dclk = vgmHead.lngHzYM2203 * 2;
+                                                uint dclk = vgmHead.cur.lngHzYM2203 * 2;
 
                                                 if (adrs == 0x28)
                                                     dt |= 0b100;
@@ -4130,9 +4147,9 @@ namespace zanac.VGMPlayer
                                             if (dt < 0)
                                                 break;
 
-                                            uint dclk = vgmHead.lngHzRF5C164;
+                                            uint dclk = vgmHead.cur.lngHzRF5C164;
                                             if (command == 0xB0)
-                                                dclk = vgmHead.lngHzRF5C68;
+                                                dclk = vgmHead.cur.lngHzRF5C68;
 
                                             if (comPortMCD != null)
                                             {
@@ -4220,7 +4237,7 @@ namespace zanac.VGMPlayer
                                             }
                                             if (comPortNES != null)
                                             {
-                                                uint dclk = vgmHead.lngHzNESAPU;
+                                                uint dclk = vgmHead.cur.lngHzNESAPU;
                                                 DeferredWriteNES(adrs, dt, dclk);
                                             }
                                             break;
@@ -4395,7 +4412,7 @@ namespace zanac.VGMPlayer
 
                                     case 0xBD:  //SAA1099
                                         {
-                                            uint dclk = vgmHead.lngHzSAA1099;
+                                            uint dclk = vgmHead.cur.lngHzSAA1099;
 
                                             var adrs = readByte();
                                             if (adrs < 0)
@@ -5150,11 +5167,15 @@ namespace zanac.VGMPlayer
             }
         }
 
-        private void deferredWriteY8910(int adrs, int dt, uint dclk)
+        private void deferredWriteY8910(int adrs, int dt, uint dclk, bool? secondChip = false)
         {
+            bool sc = secondChip.Value;
+            int adrsTable = adrs;
+            if (sc)
+                adrsTable += 0x100;
             if (adrs == 7)
                 dt &= 0x3f;
-            comPortY8910.RegTable[adrs] = dt;
+            comPortY8910.RegTable[adrsTable] = dt;
 
             switch (adrs)
             {
@@ -5165,12 +5186,12 @@ namespace zanac.VGMPlayer
                         goto default;
                     {
                         //LO
-                        var ret = convertAy8910Frequency(comPortY8910.RegTable[adrs + 1], dt, comPortY8910.ChipClockHz["Y8910"], dclk);
+                        var ret = convertAy8910Frequency(comPortY8910.RegTable[adrsTable + 1], dt, comPortY8910.ChipClockHz["Y8910"], dclk);
                         if (ret.noConverted)
                             goto default;
                         dt = ret.Lo;
-                        deferredWriteY8910(adrs, dt);
-                        deferredWriteY8910(adrs + 1, ret.Hi);
+                        deferredWriteY8910(adrs, dt, sc);
+                        deferredWriteY8910(adrs + 1, ret.Hi, sc);
                     }
                     break;
                 case 1:
@@ -5180,12 +5201,12 @@ namespace zanac.VGMPlayer
                         goto default;
                     {
                         //HI
-                        var ret = convertAy8910Frequency(dt, comPortY8910.RegTable[adrs - 1], comPortY8910.ChipClockHz["Y8910"], dclk);
+                        var ret = convertAy8910Frequency(dt, comPortY8910.RegTable[adrsTable - 1], comPortY8910.ChipClockHz["Y8910"], dclk);
                         if (ret.noConverted)
                             goto default;
                         dt = ret.Hi;
-                        deferredWriteY8910(adrs - 1, ret.Lo);
-                        deferredWriteY8910(adrs, dt);
+                        deferredWriteY8910(adrs - 1, ret.Lo, sc);
+                        deferredWriteY8910(adrs, dt, sc);
                     }
                     break;
                 case 6:
@@ -5195,7 +5216,7 @@ namespace zanac.VGMPlayer
                         var data = (int)Math.Round(dt * (dclk) / (double)comPortY8910.ChipClockHz["Y8910"]);
                         if (data > 32)
                             data = 32;
-                        deferredWriteY8910(adrs, (byte)data);
+                        deferredWriteY8910(adrs, (byte)data, sc);
                     }
                     break;
                 case 0xB:
@@ -5203,12 +5224,12 @@ namespace zanac.VGMPlayer
                         goto default;
                     {
                         //LO
-                        var ret = convertAy8910EnvFrequency(comPortY8910.RegTable[adrs + 1], dt, comPortY8910.ChipClockHz["Y8910"], dclk);
+                        var ret = convertAy8910EnvFrequency(comPortY8910.RegTable[adrsTable + 1], dt, comPortY8910.ChipClockHz["Y8910"], dclk);
                         if (ret.noConverted)
                             goto default;
                         dt = ret.Lo;
-                        deferredWriteY8910(adrs, dt);
-                        deferredWriteY8910(adrs + 1, ret.Hi);
+                        deferredWriteY8910(adrs, dt, sc);
+                        deferredWriteY8910(adrs + 1, ret.Hi, sc);
                     }
                     break;
                 case 0xC:
@@ -5216,27 +5237,47 @@ namespace zanac.VGMPlayer
                         goto default;
                     {
                         //HI
-                        var ret = convertAy8910EnvFrequency(dt, comPortY8910.RegTable[adrs - 1], comPortY8910.ChipClockHz["Y8910"], dclk);
+                        var ret = convertAy8910EnvFrequency(dt, comPortY8910.RegTable[adrsTable - 1], comPortY8910.ChipClockHz["Y8910"], dclk);
                         if (ret.noConverted)
                             goto default;
                         dt = ret.Hi;
-                        deferredWriteY8910(adrs - 1, ret.Lo);
-                        deferredWriteY8910(adrs, dt);
+                        deferredWriteY8910(adrs - 1, ret.Lo, sc);
+                        deferredWriteY8910(adrs, dt, sc);
                     }
                     break;
                 default:
-                    deferredWriteY8910(adrs, dt);
+                    deferredWriteY8910(adrs, dt, sc);
                     break;
             }
         }
 
-        private void deferredWriteDCSG(int data, uint dclk, bool? second = false)
+        protected void deferredWriteY8910(int adrs, int dt, bool secondChip)
+        {
+            switch (comPortY8910.SoundModuleType)
+            {
+                case VsifSoundModuleType.MSX_FTDI:
+                case VsifSoundModuleType.TurboR_FTDI:
+                    if (secondChip)
+                    {
+                        comPortY8910.DeferredWriteData(0x1e, (byte)0x10, (byte)adrs, (int)Program.Default.BitBangWaitAY8910);
+                        comPortY8910.DeferredWriteData(0x1e, (byte)0x11, (byte)dt, (int)Program.Default.BitBangWaitAY8910);
+                    }
+                    else
+                    {
+                        comPortY8910.DeferredWriteData(0x17, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitAY8910);
+                    }
+                    break;
+            }
+        }
+
+        private void deferredWriteDCSG(int data, uint dclk, bool? secondChip = false)
         {
             byte adrs = (byte)(data >> 4);
+            bool sc = secondChip.Value;
             if ((data & 0x80) != 0)
-                comPortDCSG.Tag["Last1stAddress"] = adrs;
-            else if (comPortDCSG.Tag.ContainsKey("Last1stAddress"))
-                adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress"] & 0x7);
+                comPortDCSG.Tag["Last1stAddress."+sc] = adrs;
+            else if (comPortDCSG.Tag.ContainsKey("Last1stAddress."+sc))
+                adrs = (byte)((byte)comPortDCSG.Tag["Last1stAddress."+sc] & 0x7);
 
             if (comPortDCSG != null)
             {
@@ -5253,8 +5294,8 @@ namespace zanac.VGMPlayer
                             var ret = convertDcsgFrequency(data & 0x3f, comPortDCSG.RegTable[adrs + 0x8] & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
-                            deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo, second.Value);
-                            deferredWriteDCSG(ret.Hi, second.Value);
+                            deferredWriteDCSG((0x80 | (adrs << 4)) | ret.Lo, sc);
+                            deferredWriteDCSG(ret.Hi, sc);
                         }
                         break;
                     case 0x8:
@@ -5268,57 +5309,46 @@ namespace zanac.VGMPlayer
                             var ret = convertDcsgFrequency(comPortDCSG.RegTable[adrs - 0x8] & 0x3f, data & 0xf, comPortDCSG.ChipClockHz["DCSG"], dclk);
                             if (ret.noConverted)
                                 goto default;
-                            deferredWriteDCSG((adrs << 4) + ret.Lo, second.Value);
-                            deferredWriteDCSG(ret.Hi, second.Value);
+                            deferredWriteDCSG((adrs << 4) + ret.Lo, sc);
+                            deferredWriteDCSG(ret.Hi, sc);
                         }
                         break;
                     default:
                         comPortDCSG.RegTable[adrs] = data;
-                        deferredWriteDCSG(data, second.Value);
+                        deferredWriteDCSG(data, sc);
                         break;
                 }
             }
         }
 
-        protected void deferredWriteDCSG(int data, bool second)
+        protected void deferredWriteDCSG(int data, bool secondChip)
         {
             switch (comPortDCSG.SoundModuleType)
             {
                 case VsifSoundModuleType.Genesis_FTDI:
                 case VsifSoundModuleType.Genesis:
                 case VsifSoundModuleType.Genesis_Low:
-                    if(!second)
+                    if (!secondChip)
                         comPortDCSG.DeferredWriteData(0, 0x14, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.SMS:
-                    if (!second)
+                    if (!secondChip)
                         comPortDCSG.DeferredWriteData(0, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.SMS_FTDI:
-                    if (!second)
+                    if (!secondChip)
                         comPortDCSG.DeferredWriteData(0, 0x00, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.MSX_FTDI:
                 case VsifSoundModuleType.TurboR_FTDI:
-                    if (!second)
+                    if (!secondChip)
                         comPortDCSG.DeferredWriteData(0xF, 0, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     break;
                 case VsifSoundModuleType.NanoDrive:
-                    if (!second)
+                    if (!secondChip)
                         comPortDCSG.DeferredWriteData(0x50, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
                     else
                         comPortDCSG.DeferredWriteData(0x30, 0xFF, (byte)data, (int)Program.Default.BitBangWaitDCSG);
-                    break;
-            }
-        }
-
-        protected void deferredWriteY8910(int adrs, int dt)
-        {
-            switch (comPortY8910.SoundModuleType)
-            {
-                case VsifSoundModuleType.MSX_FTDI:
-                case VsifSoundModuleType.TurboR_FTDI:
-                    comPortY8910.DeferredWriteData(0x17, (byte)adrs, (byte)dt, (int)Program.Default.BitBangWaitAY8910);
                     break;
             }
         }
