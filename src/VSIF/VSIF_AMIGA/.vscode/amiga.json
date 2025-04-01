@@ -1,0 +1,8 @@
+{
+    "includePath": [ "${workspaceFolder}" ],
+    "defines": [ ],
+    "shrinkler": {
+        "fast": "-h -o -1",
+        "slow": "-h -f dff180 -9"
+    }
+}

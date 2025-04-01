@@ -1,0 +1,9 @@
+{
+    "configurations": [
+        {
+            "name": "Amiga",
+            "configurationProvider": "BartmanAbyss.amiga-debug"
+        }
+    ],
+    "version": 4
+}

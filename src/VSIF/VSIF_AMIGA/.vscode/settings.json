@@ -1,0 +1,25 @@
+{
+    "[m68k]": {
+        "editor.rulers": []
+    },
+    "files.associations": {
+        "dmabits.h": "c",
+        "types.h": "c",
+        "audio.h": "c",
+        "bsdsocket.h": "c",
+        "exec.h": "c",
+        "gcc8_c_support.h": "c",
+        "io.h": "c",
+        "serial.h": "c",
+        "memory.h": "c",
+        "exec_protos.h": "c",
+        "ports.h": "c",
+        "alib_protos.h": "c",
+        "graphics.h": "c",
+        "gfxbase.h": "c",
+        "custom.h": "c",
+        "dosextens.h": "c",
+        "stdio.h": "c"
+    },
+    "amiga.program": "out/VSIF_AMIGA"
+}
